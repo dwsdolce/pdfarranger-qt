@@ -104,9 +104,13 @@ def check(offsets, lengths, total):
     return problems
 
 
-def repair(pdf, offsets, lengths, dry_run=False):
+def repair(pdf, offsets, lengths, dry_run=False, aliases=None):
     """Rewrite every /GoToR naming a known file into a local /GoTo."""
-    repaired = out_of_range = unknown = 0
+    import collections
+
+    repaired = out_of_range = 0
+    unknown = collections.Counter()
+    aliases = {k.casefold(): v for k, v in (aliases or {}).items()}
 
     def fix(obj):
         nonlocal repaired, out_of_range, unknown
@@ -122,9 +126,13 @@ def repair(pdf, offsets, lengths, dry_run=False):
         if raw is None:
             return
         name = os.path.basename(str(raw).replace("\\", "/"))
+        # A book can name the same file two ways -- the ARRL Handbook has links
+        # to both "3.pdf" and "Chapter 3.pdf" -- so let the caller say which
+        # names mean the same thing rather than guessing at a pattern.
+        name = aliases.get(name.casefold(), name)
         match = next((k for k in offsets if k.casefold() == name.casefold()), None)
         if match is None:
-            unknown += 1
+            unknown[str(raw)] += 1
             return
         dest = action.get(pikepdf.Name.D)
         if not (isinstance(dest, pikepdf.Array) and len(dest) >= 2):
@@ -172,6 +180,19 @@ def repair(pdf, offsets, lengths, dry_run=False):
     return repaired, out_of_range, unknown
 
 
+def iter_top_level(pdf):
+    """The top-level outline entries, read without rewriting anything."""
+    root = pdf.Root.get(pikepdf.Name.Outlines)
+    if root is None:
+        return
+    child = root.get(pikepdf.Name.First)
+    seen = set()
+    while child is not None and child.objgen not in seen:
+        seen.add(child.objgen)
+        yield child
+        child = child.get(pikepdf.Name.Next)
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("merged", help="the merged PDF to repair")
@@ -181,6 +202,14 @@ def main():
                         help="report what would change and write nothing")
     parser.add_argument("--force", action="store_true",
                         help="repair even if the layout check fails")
+    parser.add_argument("--keep-duplicates", action="store_true",
+                        help="do not collapse repeated bookmark trees")
+    parser.add_argument("--map", action="append", default=[], metavar="NAME=FILE",
+                        help="treat links naming NAME as naming FILE; repeatable")
+    parser.add_argument("--collapse-similar", action="store_true",
+                        help="also collapse trees that match on titles and "
+                             "structure but disagree on a few destinations "
+                             "(lossy: the first copy wins)")
     args = parser.parse_args()
 
     if not args.output and not args.dry_run:
@@ -215,11 +244,36 @@ def main():
             print("layout check  : every file's pages are exactly where its "
                   "bookmark says")
 
+        aliases = {}
+        for entry in args.map:
+            if "=" not in entry:
+                parser.error(f"--map wants NAME=FILE, got {entry!r}")
+            key, _sep, value = entry.partition("=")
+            aliases[key.strip()] = value.strip()
+
         repaired, out_of_range, unknown = repair(pdf, offsets, lengths,
-                                                 dry_run=args.dry_run)
+                                                 dry_run=args.dry_run,
+                                                 aliases=aliases)
         print(f"\nrepairable links : {repaired}")
         print(f"page out of range: {out_of_range}")
-        print(f"unknown target   : {unknown}  (left as they are)")
+        print(f"unknown target   : {sum(unknown.values())}  (left as they are)")
+        for name, count in unknown.most_common(10):
+            # Naming them is the point: an unrecognised target is usually the
+            # same file under a second name, and --map turns it into a repair.
+            print(f"     {count:>5}  {name}")
+
+        # Only after the links are repaired: until then the copies still point
+        # at different files and do not compare equal. A fresh open_outline()
+        # re-reads the raw /Dest edits made above -- verified, not assumed,
+        # given that the same context manager discarded them once already.
+        if not args.keep_duplicates and not args.dry_run:
+            from pdfarranger_qt.exporter_outlines import deduplicate_outlines
+
+            before = len(list(iter_top_level(pdf)))
+            removed = deduplicate_outlines(pdf, args.collapse_similar)
+            print(f"duplicate trees  : {removed} removed of {before} top-level")
+        elif args.keep_duplicates:
+            print("duplicate trees  : left alone (--keep-duplicates)")
 
         if args.dry_run:
             print("\ndry run - nothing written")

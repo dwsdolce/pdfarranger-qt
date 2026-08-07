@@ -405,7 +405,7 @@ def remap_link_annotations(pdf_input, pdf_output, pages, source_names=None):
     return remapped, dropped
 
 
-def deduplicate_outlines(pdf):
+def deduplicate_outlines(pdf, titles_only=False):
     """Drop top-level bookmark subtrees that repeat one already kept.
 
     A book shipped as one PDF per chapter puts the *complete* outline in every
@@ -418,6 +418,12 @@ def deduplicate_outlines(pdf):
     every descendant's depth, title and resolved destination page. Anything
     that differs anywhere, however slightly, is kept, because the alternative
     is silently deleting a bookmark that pointed somewhere else.
+
+    ``titles_only`` compares structure and titles but not destinations. That is
+    lossy -- two copies of a tree can disagree about where a given entry points,
+    and this keeps whichever came first -- so it is never the default. It exists
+    because a book can carry copies that agree on 401 of 403 entries, where
+    holding on to five near-identical trees serves nobody.
 
     Returns the number of top-level subtrees removed.
     """
@@ -435,7 +441,8 @@ def deduplicate_outlines(pdf):
         return None
 
     def signature(item, depth=0):
-        parts = [(depth, str(item.title), target(item))]
+        parts = [(depth, str(item.title),
+                  None if titles_only else target(item))]
         for child in item.children:
             parts.extend(signature(child, depth + 1))
         return parts
