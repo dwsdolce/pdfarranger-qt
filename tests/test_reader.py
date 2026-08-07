@@ -287,3 +287,106 @@ class TestReadingPosition(unittest.TestCase):
         self.win.set_read_mode(True)
         self.assertEqual(self.win.reader.current_page(),
                          self.win.reader.page_count() - 1)
+
+class TestModeAffordances(unittest.TestCase):
+    """A mode needs to be findable, and visibly on once you are in it."""
+
+    def setUp(self):
+        from pdfarranger_qt.mainwindow import MainWindow
+
+        self.win = MainWindow()
+        self.win.resize(1000, 700)
+        self.win.show()
+        self.win.open_paths([TEST_PDF])
+        self.win.modified = False
+        settle(timeout_ms=300)
+
+    def tearDown(self):
+        self.win.modified = False
+        self.win.close()
+
+    def button(self, action):
+        widget = self.win.toolbar.widgetForAction(action)
+        return None if widget is None else widget.isVisibleTo(self.win.toolbar)
+
+    def test_the_toolbar_offers_the_mode(self):
+        """Menu-only would leave it undiscoverable."""
+        self.assertIn(self.win.act_read_mode, self.win.toolbar.actions())
+        self.assertTrue(self.win.act_read_mode.isCheckable())
+
+    def test_the_status_bar_says_which_mode(self):
+        """showMessage() expires; this must not."""
+        self.assertEqual(self.win.status_mode.text(), "")
+        self.win.set_read_mode(True)
+        self.assertEqual(self.win.status_mode.text(), "Reading")
+        self.win.set_read_mode(False)
+        self.assertEqual(self.win.status_mode.text(), "")
+
+    def test_editing_buttons_are_hidden_while_reading(self):
+        self.assertTrue(self.button(self.win.act_rotate_left))
+        self.win.set_read_mode(True)
+        self.assertFalse(self.button(self.win.act_rotate_left))
+        self.assertFalse(self.button(self.win.act_undo))
+        # Open and Save still make sense in a reader.
+        self.assertTrue(self.button(self.win.act_open))
+        self.win.set_read_mode(False)
+        self.assertTrue(self.button(self.win.act_rotate_left))
+
+    def test_hiding_buttons_does_not_empty_the_menus(self):
+        """QAction.setVisible(False) hides it everywhere, including Page."""
+        self.win.set_read_mode(True)
+        for top in self.win.menuBar().actions():
+            if "Page" in top.text():
+                labels = [a.text() for a in top.menu().actions()
+                          if not a.isSeparator() and a.isVisible()]
+                self.assertTrue(any("Rotate" in x for x in labels), labels)
+                return
+        self.fail("no Page menu")
+
+
+class TestStatusPath(unittest.TestCase):
+    """Where the open document is. Neither the title nor Open Recent says."""
+
+    def setUp(self):
+        from pdfarranger_qt.mainwindow import MainWindow
+
+        self.win = MainWindow()
+        self.win.resize(1000, 700)
+        self.win.show()
+
+    def tearDown(self):
+        self.win.modified = False
+        self.win.close()
+
+    def test_empty_with_no_document(self):
+        self.assertEqual(self.win.status_path.text(), "")
+        self.assertEqual(self.win.status_path.toolTip(), "")
+
+    def test_shows_the_full_path_as_a_tooltip(self):
+        self.win.open_paths([TEST_PDF])
+        self.win.modified = False
+        self.assertEqual(self.win.status_path.toolTip(), os.path.abspath(TEST_PDF))
+
+    def test_visible_text_is_elided_not_truncated(self):
+        """Elided in the middle, so the drive and the filename both survive."""
+        self.win.open_paths([TEST_PDF])
+        self.win.modified = False
+        text = self.win.status_path.text()
+        self.assertTrue(text)
+        self.assertTrue(text.endswith("test.pdf"), text)
+
+    def test_it_updates_when_the_document_changes(self):
+        self.win.open_paths([TEST_PDF])
+        self.win.modified = False
+        first = self.win.status_path.toolTip()
+        self.win.open_paths([TEXT_PDF])
+        self.win.modified = False
+        self.assertNotEqual(self.win.status_path.toolTip(), first)
+        self.assertEqual(self.win.status_path.toolTip(), os.path.abspath(TEXT_PDF))
+
+    def test_it_is_selectable(self):
+        """So the path can be copied out, which is half the point of showing it."""
+        from PySide6.QtCore import Qt
+
+        self.assertTrue(self.win.status_path.textInteractionFlags()
+                        & Qt.TextSelectableByMouse)

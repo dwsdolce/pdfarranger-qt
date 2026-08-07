@@ -27,6 +27,7 @@ from typing import List, Optional
 
 from PySide6.QtCore import QProcess, QSettings, QSize, Qt, QTimer, QUrl
 from PySide6.QtGui import (QAction, QActionGroup, QDesktopServices,
+                           QFontMetrics,
                            QKeySequence)
 from PySide6.QtWidgets import (
     QApplication,
@@ -538,16 +539,28 @@ class MainWindow(QMainWindow):
             self.view.addAction(act)
 
     def _build_toolbar(self):
-        tb = self.addToolBar(_("Main"))
+        self.toolbar = tb = self.addToolBar(_("Main"))
         tb.setObjectName("main-toolbar")
         tb.setIconSize(QSize(20, 20))
         tb.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
         tb.addAction(self.act_open)
         tb.addAction(self.act_save)
         tb.addSeparator()
+        # Checkable, so the button stays visibly pressed while reading. A mode
+        # reachable only from a menu is a mode nobody finds, and one with no
+        # persistent indicator is a mode nobody notices they are in.
+        tb.addAction(self.act_read_mode)
+        self._toolbar_edit_separator = tb.addSeparator()
+        # Hidden rather than greyed while reading: a row of dead buttons reads
+        # as a broken arranger, where their absence reads as a reader.
+        self._toolbar_edit_actions = [
+            self.act_undo, self.act_redo,
+            self.act_rotate_left, self.act_rotate_right,
+            self.act_duplicate, self.act_delete,
+        ]
         tb.addAction(self.act_undo)
         tb.addAction(self.act_redo)
-        tb.addSeparator()
+        self._toolbar_edit_separator2 = tb.addSeparator()
         tb.addAction(self.act_rotate_left)
         tb.addAction(self.act_rotate_right)
         tb.addAction(self.act_duplicate)
@@ -555,9 +568,37 @@ class MainWindow(QMainWindow):
 
     def _build_statusbar(self):
         self.status_pages = QLabel()
+        # Where the open document actually is. The title bar and Open Recent
+        # both show only the basename, so with several similarly-named files
+        # there was nothing in the UI that answered "which one is this?".
+        self.status_path = QLabel()
+        self.status_path.setTextInteractionFlags(Qt.TextSelectableByMouse)
         self.status_selection = QLabel()
+        #: Permanent, unlike showMessage(), which expires after a few seconds
+        #: and would leave a mode with no visible indicator at all.
+        self.status_mode = QLabel()
         self.statusBar().addWidget(self.status_pages)
+        self.statusBar().addWidget(self.status_path, 1)
+        self.statusBar().addPermanentWidget(self.status_mode)
         self.statusBar().addPermanentWidget(self.status_selection)
+
+    def _update_status_path(self):
+        """Show the document's directory, elided to whatever room there is."""
+        if not self.current_path:
+            self.status_path.setText("")
+            self.status_path.setToolTip("")
+            return
+        full = os.path.abspath(self.current_path)
+        self.status_path.setToolTip(full)
+        metrics = QFontMetrics(self.status_path.font())
+        # Half the window at most, so it never crowds out the page count.
+        room = max(120, self.width() // 2)
+        self.status_path.setText(
+            metrics.elidedText(full, Qt.ElideMiddle, room))
+
+    def resizeEvent(self, event):
+        super().resizeEvent(event)
+        self._update_status_path()
 
     # -- state -------------------------------------------------------------
 
@@ -619,6 +660,16 @@ class MainWindow(QMainWindow):
             # Last, so it overrides everything the calls above just enabled.
             for act in self._editing_actions():
                 act.setEnabled(False)
+        self.status_mode.setText(_("Reading") if self.read_mode else "")
+        # The *buttons*, not the actions. QAction.setVisible(False) hides the
+        # action everywhere it appears, which emptied the Page menu of Rotate
+        # and friends as well as the toolbar.
+        for act in self._toolbar_edit_actions:
+            button = self.toolbar.widgetForAction(act)
+            if button is not None:
+                button.setVisible(not self.read_mode)
+        for sep in (self._toolbar_edit_separator, self._toolbar_edit_separator2):
+            sep.setVisible(not self.read_mode)
         self.act_read_mode.setEnabled(has_pages)
         self._retitle()
 
@@ -648,6 +699,7 @@ class MainWindow(QMainWindow):
         name = os.path.basename(self.current_path) if self.current_path else "Untitled"
         star = "*" if self.modified else ""
         self.setWindowTitle(f"{star}{name} - {APP_NAME}")
+        self._update_status_path()
 
     def _mark_modified(self):
         self.modified = True
