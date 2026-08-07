@@ -56,18 +56,32 @@ class TestI18n(unittest.TestCase):
         "_Page",
         "_Help",
         "_Duplicate",   # upstream has the action but no translated label
-        "_Reset Zoom",  # upstream has Zoom _Fit / Fit _One Page instead
+        "_Reset Zoom",  # upstream has no equivalent
+        # In upstream's menu.ui but in none of the 33 catalogues:
+        # untranslated there too, so nothing is being orphaned.
+        "Pass_word",
     }
 
     def test_menu_labels_come_from_upstream_msgids(self):
-        """Guard against reworded labels silently orphaning 33 translations."""
+        """Guard against reworded labels silently orphaning the translations.
+
+        Checks every catalogue, not just de.po. A msgid upstream added recently
+        may be translated in only a handful of languages -- `Fit _One Page` is
+        in six -- and rejecting it because German has not caught up would push
+        the label onto NEW_MSGIDS, where it stops being checked at all. The
+        question this asks is "does upstream use this string anywhere?".
+        """
+        import glob
         import re
 
-        po = os.path.join(os.path.dirname(HERE), "po", "de.po")
-        if not os.path.isfile(po):
+        catalogues = sorted(glob.glob(
+            os.path.join(os.path.dirname(HERE), "po", "*.po")))
+        if not catalogues:
             self.skipTest("po/ not present")
-        with open(po, encoding="utf-8") as fh:
-            msgids = set(re.findall(r'^msgid "(.*)"$', fh.read(), re.M))
+        msgids = set()
+        for path in catalogues:
+            with open(path, encoding="utf-8") as fh:
+                msgids |= set(re.findall(r'^msgid "(.*)"$', fh.read(), re.M))
 
         source = os.path.join(os.path.dirname(HERE), "pdfarranger_qt", "mainwindow.py")
         with open(source, encoding="utf-8") as fh:
@@ -76,8 +90,8 @@ class TestI18n(unittest.TestCase):
         unknown = [u for u in used if u not in msgids and u not in self.NEW_MSGIDS]
         self.assertEqual(
             unknown, [],
-            f"msgids absent from po/de.po: {unknown}. Check po/ for an existing "
-            f"label before adding these to NEW_MSGIDS.")
+            f"msgids absent from every catalogue in po/: {unknown}. Check po/ "
+            f"for an existing label before adding these to NEW_MSGIDS.")
 
 class TestTranslations(unittest.TestCase):
     """The catalogues have to actually load, not just be present.

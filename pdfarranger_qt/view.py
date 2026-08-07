@@ -174,6 +174,13 @@ class PageView(QListView):
         self.setViewMode(QListView.IconMode)
         self.setFlow(QListView.LeftToRight)
         self.setWrapping(True)
+        #: One page per row when true. Upstream's Fit One Page is not a zoom
+        #: level -- it is the same fit-the-whole-page zoom as Fit Multiple
+        #: Pages, with the column count pinned to 1 (`col_num = 1` in its
+        #: iconview sizing). Without this, a portrait page fitted to the
+        #: window's *height* leaves room for neighbours beside it, and you
+        #: never get a page on its own.
+        self._single_column = False
         self.setResizeMode(QListView.Adjust)
         self.setUniformItemSizes(False)
         self.setMovement(QListView.Static)  # the delegate positions items
@@ -304,6 +311,20 @@ class PageView(QListView):
         self._press_pos = None
         self._press_row = -1
         super().mouseReleaseEvent(event)
+
+    def set_single_column(self, single: bool):
+        """Pin the grid to one page per row, or let it flow again."""
+        if single == self._single_column:
+            return
+        self._single_column = single
+        # Wrapping off with a top-to-bottom flow is a single column; the normal
+        # grid is left-to-right with wrapping on.
+        self.setFlow(QListView.TopToBottom if single else QListView.LeftToRight)
+        self.setWrapping(not single)
+        # The same coalesced relayout the model-change path uses. Calling
+        # doItemsLayout() straight away here fights the pending render.
+        self._needs_layout = True
+        self._schedule_render()
 
     def keyPressEvent(self, event):
         if self._dragging and event.key() == Qt.Key_Escape:

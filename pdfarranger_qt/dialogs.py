@@ -690,6 +690,48 @@ class PreferencesDialog(BaseDialog):
         }
 
 
+class EncryptionPasswordDialog(BaseDialog):
+    """Ask for the password the saved document will be encrypted with.
+
+    Two fields rather than one: the password is not shown, it is not stored
+    anywhere recoverable, and getting it wrong makes the saved file unopenable.
+    A typo here is unrecoverable data loss, so it is worth the extra field.
+    """
+
+    def __init__(self, current="", parent=None):
+        super().__init__(_("Password"), parent)
+        body = QWidget()
+        form = QFormLayout(body)
+        self.first = QLineEdit(current or "")
+        self.first.setEchoMode(QLineEdit.Password)
+        self.second = QLineEdit(current or "")
+        self.second.setEchoMode(QLineEdit.Password)
+        form.addRow(_("Password"), self.first)
+        form.addRow(_("Confirm password"), self.second)
+        self.message = QLabel("")
+        self.message.setWordWrap(True)
+        form.addRow(self.message)
+        self.add(body)
+        self.finish()
+        for edit in (self.first, self.second):
+            edit.textChanged.connect(self._revalidate)
+        self._revalidate()
+
+    def _revalidate(self):
+        ok = bool(self.first.text()) and self.first.text() == self.second.text()
+        if not self.first.text():
+            self.message.setText(_("Enter a password, or cancel to leave the "
+                                   "document unencrypted."))
+        elif not ok:
+            self.message.setText(_("The passwords do not match."))
+        else:
+            self.message.setText("")
+        self.buttons.button(QDialogButtonBox.Ok).setEnabled(ok)
+
+    def value(self):
+        return self.first.text()
+
+
 class ShortcutsDialog(BaseDialog):
     """Editable list of action shortcuts (D11), in its own scrollable window.
 
@@ -812,18 +854,31 @@ def help_sections():
               "<b>Page Down</b> move a screenful at a time, and <b>Home</b> "
               "and <b>End</b> jump to the first and last page. Hold "
               "<b>Shift</b> with any of them to extend the selection."),
-            _("<b>Zoom Fit</b> (F) scales so one whole page fits in the "
-              "window — use it to work on a single page at a time. "
-              "<b>Fit Width</b> (Shift+F) fills the window across instead, "
-              "which shows the page wider but taller than the window. "
-              "Double-clicking the grid toggles Zoom Fit on and off."),
-            _("With pages selected, both commands fit the selection rather "
-              "than the whole document."),
+            _("<b>Fit One Page</b> (F) scales so a whole page fits in the "
+              "window and shows one page per row — use it to work on a single "
+              "page at a time. <b>Fit Multiple Pages</b> (Shift+M) uses the "
+              "same scale but lets as many pages sit side by side as the "
+              "window takes. <b>Fit Width</b> (Shift+F) fills the window "
+              "across instead, which shows the page wider but taller than the "
+              "window. Double-clicking the grid toggles Fit One Page on and "
+              "off."),
+            _("With pages selected, all three fit the selection rather than "
+              "the whole document."),
         ]),
         (_("Keyboard shortcuts"), [
             _("Every shortcut can be changed in "
               "<b>Edit ▸ Preferences ▸ Keyboard shortcuts</b>, where they are "
               "listed under the menu each one belongs to."),
+        ]),
+        (_("Passwords"), [
+            _("Opening an encrypted document asks for its password, which is "
+              "remembered until the document is closed."),
+            _("<b>File ▸ Password</b> encrypts the document when it is next "
+              "saved. It is a switch: turn it on and you are asked for a "
+              "password, turn it off and the next save is unencrypted. The "
+              "password is never written to your settings, so it applies to "
+              "this session only — and if you forget it, the file cannot be "
+              "recovered."),
         ]),
         (_("Files"), [
             _("Settings are stored by Qt in the per-user location for this "

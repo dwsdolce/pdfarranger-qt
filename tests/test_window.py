@@ -23,7 +23,7 @@ import pikepdf
 from PySide6.QtWidgets import QApplication
 from pdfarranger_qt.core import Dims, Sides
 
-from support import HERE, MESSAGE_BOXES, TEST_PDF, TEXT_PDF, settle
+from support import HERE, MESSAGE_BOXES, TEST_PDF, TEXT_PDF, settle, temp_path
 
 
 class TestPhase1Actions(unittest.TestCase):
@@ -592,3 +592,174 @@ class TestMenuLifetime(unittest.TestCase):
         """An explicit parent is what keeps ownership in C++."""
         for menu in self.win._menus:
             self.assertIs(menu.parent(), self.win, menu.title())
+
+class TestPhase4Parity(unittest.TestCase):
+    """The upstream features that were missing until phase 4."""
+
+    def setUp(self):
+        from pdfarranger_qt.mainwindow import MainWindow
+
+        self.win = MainWindow()
+        self.win.resize(1000, 700)
+        self.win.show()
+        self.win.open_paths([TEST_PDF])
+        self.win.modified = False
+        settle(timeout_ms=300)
+
+    def tearDown(self):
+        self.win.modified = False
+        self.win.close()
+
+    # -- New Window ----------------------------------------------------------
+
+    def test_new_window_launches_a_separate_process(self):
+        """A second process, not a second MainWindow.
+
+        The app is NON_UNIQUE by design: cross-instance drag depends on the two
+        windows genuinely being different processes.
+        """
+        from PySide6.QtCore import QProcess
+        from pdfarranger_qt import mainwindow
+
+        calls = []
+        original = mainwindow.QProcess.startDetached
+        mainwindow.QProcess.startDetached = (
+            lambda program, args, cwd: calls.append((program, args)) or (True, 1))
+        self.addCleanup(setattr, mainwindow.QProcess, "startDetached", original)
+        self.assertIs(mainwindow.QProcess, QProcess)
+
+        self.win.new_window()
+        self.assertEqual(len(calls), 1)
+        program, args = calls[0]
+        self.assertTrue(program)
+        # From source, re-run the package; frozen, the exe takes no arguments.
+        self.assertIn(args, ([], ["-m", "pdfarranger_qt"]))
+
+    def test_new_window_reports_a_failed_launch(self):
+        from pdfarranger_qt import mainwindow
+
+        original = mainwindow.QProcess.startDetached
+        mainwindow.QProcess.startDetached = lambda *a: (False, 0)
+        self.addCleanup(setattr, mainwindow.QProcess, "startDetached", original)
+        MESSAGE_BOXES.clear()
+        self.win.new_window()
+        self.assertEqual(MESSAGE_BOXES[-1][0], "warning")
+
+    # -- Password ------------------------------------------------------------
+
+    def test_password_round_trips_through_the_saved_file(self):
+        """The whole point: the file must actually be encrypted."""
+        import pikepdf
+
+        from pdfarranger_qt import dialogs
+
+        class Stub:
+            def __init__(self, *a, **k):
+                pass
+
+            def get_value(self):
+                return "s3cret"
+
+        original = dialogs.EncryptionPasswordDialog
+        dialogs.EncryptionPasswordDialog = Stub
+        self.addCleanup(setattr, dialogs, "EncryptionPasswordDialog", original)
+
+        self.win.act_password.setChecked(True)
+        self.win.set_password(True)
+        self.assertEqual(self.win.output_password, "s3cret")
+
+        out = temp_path("encrypted.pdf")
+        self.assertTrue(self.win._write([out], self.win.model.pages))
+        with self.assertRaises(pikepdf.PasswordError):
+            pikepdf.open(out)
+        with pikepdf.open(out, password="s3cret") as pdf:
+            self.assertEqual(len(pdf.pages), 2)
+
+    def test_cancelling_the_password_dialog_leaves_it_off(self):
+        """Checked-but-empty would look encrypted and not be."""
+        from pdfarranger_qt import dialogs
+
+        class Stub:
+            def __init__(self, *a, **k):
+                pass
+
+            def get_value(self):
+                return None
+
+        original = dialogs.EncryptionPasswordDialog
+        dialogs.EncryptionPasswordDialog = Stub
+        self.addCleanup(setattr, dialogs, "EncryptionPasswordDialog", original)
+
+        self.win.act_password.setChecked(True)
+        self.win.set_password(True)
+        self.assertIsNone(self.win.output_password)
+        self.assertFalse(self.win.act_password.isChecked())
+
+    def test_unchecking_clears_the_password(self):
+        self.win.output_password = "s3cret"
+        self.win.set_password(False)
+        self.assertIsNone(self.win.output_password)
+
+    def test_an_unencrypted_save_is_still_unencrypted(self):
+        import pikepdf
+
+        out = temp_path("plain.pdf")
+        self.assertTrue(self.win._write([out], self.win.model.pages))
+        with pikepdf.open(out) as pdf:      # no password required
+            self.assertEqual(len(pdf.pages), 2)
+
+    # -- Rasterised PDF (jpg) ------------------------------------------------
+
+    def test_rasterised_pdf_offers_both_formats(self):
+        labels = [a.text().replace("&", "") for a in self.win._shortcut_actions()]
+        self.assertIn("Export Selection to Rasterized PDF (png)…", labels)
+        self.assertIn("Export Selection to Rasterized PDF (jpg)…", labels)
+
+    def test_rasterised_jpg_writes_a_pdf(self):
+        from pdfarranger_qt import raster
+
+        out = temp_path("raster.pdf")
+        ok = raster.export_rasterised_pdf(
+            self.win.model.pages, self.win.docs.files_for_export(), out,
+            ppi=36, greyscale=False, image_format="jpg")
+        if not ok:
+            self.skipTest("img2pdf not available")
+        with open(out, "rb") as fh:
+            self.assertEqual(fh.read(5), b"%PDF-")
+
+    # -- Fit One Page / Fit Multiple Pages -----------------------------------
+
+    def test_fit_one_page_pins_a_single_column(self):
+        """Upstream's Fit One Page is the fit zoom plus col_num = 1."""
+        self.win.zoom_fit()
+        self.assertTrue(self.win.view._single_column)
+
+    def test_fit_multiple_pages_lets_the_grid_flow(self):
+        self.win.zoom_fit()
+        self.win.zoom_fit_multiple()
+        self.assertFalse(self.win.view._single_column)
+
+    def test_both_fits_use_the_same_zoom(self):
+        """They differ in column count, not scale."""
+        self.win.zoom_fit()
+        one = self.win.model.zoom
+        self.win.zoom_fit_multiple()
+        self.assertAlmostEqual(self.win.model.zoom, one, places=6)
+
+    def test_fit_width_releases_the_pinning(self):
+        self.win.zoom_fit()
+        self.win.zoom_fit_width()
+        self.assertFalse(self.win.view._single_column)
+
+    def test_single_column_puts_pages_on_separate_rows(self):
+        """The observable effect, not just the flag."""
+        self.win.zoom_fit_multiple()
+        self.win.model.set_zoom(0.05)     # tiny, so several would fit across
+        settle(timeout_ms=200)
+        self.win.view.set_single_column(True)
+        settle(timeout_ms=200)
+        view = self.win.view
+        first = view.visualRect(view.page_model.index(0, 0))
+        second = view.visualRect(view.page_model.index(1, 0))
+        self.assertEqual(first.left(), second.left())
+        self.assertGreater(second.top(), first.top())

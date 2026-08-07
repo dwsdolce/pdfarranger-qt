@@ -351,7 +351,7 @@ class TestShortcutOrdering(unittest.TestCase):
 
     def test_first_group_starts_with_the_first_menu_entry(self):
         _title, actions = self.win._shortcut_groups()[0]
-        self.assertEqual(actions[0].text().replace("&", ""), "Open")
+        self.assertEqual(actions[0].text().replace("&", ""), "New Window")
 
     def test_submenu_entries_are_included(self):
         """Paste As Odd Pages lives in a submenu and must still be rebindable."""

@@ -36,7 +36,14 @@ credit the original project.
   no concept of paragraphs or text flow, only glyphs at coordinates with subset
   fonts. **Out of scope.** Use PDF-XChange Editor or Acrobat for the rare cases.
 
-Everything still unported is Tier 1. Nothing remaining requires content editing.
+- **Tier 3 — reading** (continuous scroll, outline, go-to-page, text search).
+  Not editing at all, and not something upstream does — the GTK application is an
+  arranger you look at through thumbnails. **In scope as phase 6**, because the
+  Acrobat-like model in the background note above means opening a document and
+  *reading* it, not only rearranging it. See D14–D17.
+
+Everything still unported is Tier 1 or Tier 3. Nothing remaining requires content
+editing.
 
 ### Beyond parity — the reason for the port
 
@@ -44,9 +51,10 @@ Everything still unported is Tier 1. Nothing remaining requires content editing.
 - Real multi-select: rubber-band, shift-range, ctrl-toggle, ops across selection — **done**
 - Native drag-and-drop from Explorer, including images — **done**
 - Native dark mode — **free in Qt**
-- Split view: thumbnail grid alongside a full-page preview of the selection — *todo*
-- Dual-pane merging: two documents side by side, drag pages across — *todo*
-- Visible undo history rather than blind Ctrl-Z — *todo*
+- Split view: thumbnail grid alongside a full-page preview of the selection — *todo, phase 7*
+- Dual-pane merging: two documents side by side, drag pages across — *todo, phase 7*
+- Visible undo history rather than blind Ctrl-Z — *todo, phase 7*
+- Read mode: continuous-scroll page view with outline and go-to-page — *todo, phase 6*
 
 ---
 
@@ -67,19 +75,31 @@ Settled decisions and why. Anything not here is still open.
 | D9 | Reordering | **Hand-rolled drag in `PageView`**, not Qt item-view DnD | See §6. Qt's IconMode DnD answers "dropped onto which item"; page arranging is about the gaps between items. |
 | D10 | CLI surface | **Match upstream exactly**: `[files...]` and `--version` | Already implemented. The man page says "PDF Arranger doesn't receive any options"; nothing more is expected. |
 | D11 | Customisable shortcuts | **Yes — a shortcut editor in Preferences** | Upstream supports them but only via hand-editing `config.ini`, documented nowhere in the app or man page (see §8). D4 removed the ini, so the capability has to move into the UI. |
-| D12 | Phase 4 (split view, dual-pane, undo history) | **Deprioritised — last, and optional** | Not important to the user; they can live without them. This removes the sequencing risk that made D3 urgent: parity work can proceed without fear of reworking the window later. |
+| D12 | Phase 7 (split view, dual-pane, undo history) | **Deprioritised — last, and optional** | Not important to the user; they can live without them. This removes the sequencing risk that made D3 urgent: parity work can proceed without fear of reworking the window later. |
 | D13 | Application name and project identity | **"PDF Arranger Qt"**; distribution `pdfarranger-qt`; **new standalone repository keeping the full git history**, with upstream added as a read-only `upstream` remote — not a GitHub fork | A distinct name avoids passing this off as upstream's application, and had to be settled *before* anyone else runs it because D1 locked the `QSettings` scope. That scope is deliberately **left as `("pdfarranger", "pdfarranger_qt")`** despite the rename: moving it is exactly the orphaning D1 exists to prevent. Not a fork because GitHub disables code search in forks, the "forked from" banner would misrepresent a Qt rewrite of a deleted GTK app, and there is nothing to contribute back. History is kept because this is a real derivative work — `exporter_outlines.py` verbatim, geometry and pikepdf logic verbatim, 33 translation catalogues, upstream artwork — and the history is the provenance record behind those attribution claims. |
+
+| D14 | Read mode | **In scope, as a second view mode** — `QPdfView` swapped into the central widget, arrange actions disabled while it is showing | `QtPdf` is already a dependency for thumbnails, and `QPdfView` is a finished continuous-scroll widget on the same PDFium backend. The gap between "has a reader" and "has no reader" is wiring, not rendering. Reading is why the document was opened; making the user leave for a separate viewer is the PDF24 complaint the port exists to fix. |
+| D15 | What Read mode displays | **The edited page list, via an in-memory export** — *not* the renderer's `QPdfDocument` | Forced, not preferred. See §6 *Read mode*: the edits do not live in the `QPdfDocument`, and that document belongs to a worker thread. `SearchIndex` already does exactly this, so the machinery exists. |
+| D16 | Text selection and link following | **Out of the first cut** | Neither is exposed by `QPdfView` in 6.11.1 — verified against the installed API, not assumed. Both are buildable on `QPdfDocument.getSelection()` and `QPdfLinkModel`, but they are hand-written features, not wiring, and they do not block a usable reader. |
+| D17 | Annotation and markup | **Out of scope, permanently** | Tier 2 by another name. Qt exposes no annotation authoring, and adding it would mean owning an annotation model, hit-testing and appearance-stream generation. |
 
 ### Still open
 
-Repository housekeeping, once the new remote exists:
+The repository housekeeping that used to sit here is done: `origin` is
+`dwsdolce/pdfarranger-qt`, and `pyproject.toml` carries the real `Homepage`.
 
-- `git remote rename origin upstream` — `origin` still points at
-  `pdfarranger/pdfarranger` **for push as well as fetch**
-- `git remote set-url --push upstream DISABLED`, then add the real `origin`
-- Fix the `Homepage` placeholder in `pyproject.toml`
+Open questions for phase 6, none blocking a start:
 
-Otherwise nothing blocking. Remaining judgement calls are noted inline in the tracker.
+- **Refresh policy.** Re-export on every `contents_changed`, or only when Read
+  mode is entered? Entering is cheaper and simpler; live refresh is nicer when
+  flipping back and forth. Start with on-entry and measure.
+- **Scroll position across a refresh.** `QPdfPageNavigator` restores a page, but
+  an edit that reorders or deletes pages makes "the same page" meaningless.
+  Probably: keep the page number, clamp to range, accept the imprecision.
+- **Whether Read mode owns the Find UI.** `QPdfView.setSearchModel()` highlights
+  in place, which is better than the grid's row-selection answer. Sharing one
+  `SearchIndex` between the two is the appeal of D15, but the two views want
+  different result presentation.
 
 ### Notes on D11
 
@@ -103,9 +123,9 @@ Upstream's accelerator model, for reference when building the editor:
 ## 3. Menu map (D3)
 
 Upstream uses a hamburger popover. This port uses a real menubar. `*` marks
-not-yet-implemented.
+not-yet-implemented: Read Mode is phase 6, the rest are phase 7 (see D12).
 
-**File** — New · Open… · Import… ‖ Save · Save As… ‖ Export ▸ (Selection to Single
+**File** — New Window · Open… · Import… ‖ Save · Save As… ‖ Export ▸ (Selection to Single
 File · Selection to Individual Files · All Pages to Individual Files · Selection to
 PNG · Selection to JPEG · Selection to Rasterised PDF) ‖ Print… ‖
 Properties… ‖ Close · Quit
@@ -127,7 +147,8 @@ Extract ▸ (Copy Text · Copy Image) · Explode into Images
 **Arrange** — Reverse Order · Swap Odd/Even ‖ Split Pages… · Merge Pages… ‖
 Booklet ▸ (Split (unimposition) · Generate (imposition))
 
-**View** — Zoom In · Zoom Out · Zoom Fit · Fit Width · Reset Zoom ‖ Show Page Numbers\* ·
+**View** — Read Mode\* ‖ Zoom In · Zoom Out · Fit One Page · Fit Multiple Pages ·
+Fit Width · Reset Zoom ‖ Show Page Numbers\* ·
 Preview Pane\* ‖ Fullscreen
 
 **Help** — User Guide ‖ Project on GitHub · About
@@ -141,6 +162,13 @@ operations *on a page* (Page) from operations *on document order and composition
 ## 4. Progress tracker
 
 Legend: `[x]` done and tested · `[~]` partially done · `[ ]` not started
+
+Ordered by dependency, not by date, so the numbers do not run in the order the
+work happened: **phase 4 is outstanding while phase 5 is complete**, and that is
+the point. Phase 5 retired GTK and shipped installers — that is done. Finishing
+the *feature* port is phase 4, and until those boxes are ticked this is not yet a
+drop-in replacement for upstream. Phases 6 and 7 are additions on top, so they
+follow.
 
 ### Phase 0 — shared plumbing — **complete**
 
@@ -209,18 +237,8 @@ Legend: `[x]` done and tested · `[~]` partially done · `[ ]` not started
       backs, **Reverse Order** on the backs, then Paste As Even Pages. The
       backs come off a duplex feeder in reverse (64, 62, … 2), so interleaving
       them straight yields a structurally valid but content-wrong book. Worth
-      remembering when the crop/hide UI lands: the reverse step is easy to
-      forget and the result looks plausible.
-
-**Moved out of phase 1:**
-
-- **Generate Booklet → phase 2.** Imposition composes pages as layers, which
-  needs the same nested-layer helper (`paste_as_layer`) as Merge Pages. Building
-  it once, with Merge, beats half-implementing it twice.
-- **Extract → phase 3.** Not "extract pages to a file" as assumed: upstream's
-  `extract` copies the *image or text content* of a page to the clipboard, so it
-  needs image extraction and a text layer. Paste As Overlay/Underlay moved too —
-  both need the layer-offset dialog.
+      remembering whenever this workflow is touched: the reverse step is easy
+      to forget and the result looks plausible without it.
 
 ### Phase 2 — dialogs over already-ported backends — **complete**
 
@@ -245,11 +263,16 @@ Everything here works off `export.get_in_memory_pdf()` + `render.MemoryDocument`
 from phase 0, so what is searched, printed, trimmed or exported is the *edited*
 document -- crops, rotations and layers already applied -- not the source file.
 
-- [x] Find · Find Next · Find Previous · Find All (`search.py`)
+- [x] Find · Find Next · Find Previous · Find All (`search.py`) — selects the
+      matching *pages*; highlighting the hit inside the thumbnail is phase 4
 - [x] Crop White Borders (`raster.white_border_crops`)
 - [x] Image export to PNG/JPEG, with the ppi and greyscale preferences
 - [x] Rasterised-PDF export (flattens text to pixels, verified by round trip)
-- [x] Extract ▸ Copy Text · Copy Image · Explode into Images (`raster`, via pikepdf)
+- [x] Extract ▸ Copy Text · Copy Image · Explode into Images (`raster`, via pikepdf).
+      **Not** "extract pages to a file", which is the natural reading and the
+      wrong one: upstream's *extract* copies a page's image or text *content* to
+      the clipboard, which is why it needed image extraction and a text layer
+      rather than an export path
 - [x] Print (`printing.py`, `QPrinter`) — covered by tests: a `QPrinter` set to
       `PdfFormat` with an output file needs neither dialog nor spooler
 - [x] Theme (`theme.py`) — light/dark/system, applied at startup and immediately
@@ -261,16 +284,50 @@ Preferences are stored in `QSettings` under the keys in `dialogs.PREFERENCES`;
 rebound shortcuts live under `shortcuts/<action name>` and are reapplied at
 startup by `_restore_shortcuts()`.
 
-**Still bare:** search selects matching *pages* rather than highlighting the hit
-inside the thumbnail — the delegate would need to draw match rectangles.
+### Phase 4 — remaining parity gaps — *one item left*
 
-### Phase 4 — UI rework (beyond parity) — *deprioritised, see D12*
+Everything upstream's menu offers that this does not. Found by diffing the GTK
+`data/menu.ui` (recovered from `git log`) against `MainWindow._shortcut_groups()`:
+72 upstream entries, 4 with no equivalent here, plus one behaviour gap behind an
+action that does exist. Small, and unglamorous, but this is the list that decides
+whether someone can switch.
 
-- [ ] Split view with full-page preview
-- [ ] Dual-pane merging
-- [ ] Visible undo history
+- [ ] **Highlight search matches inside the thumbnail.** Find selects the
+      matching *pages*; upstream draws rectangles around the hits
+      (`show_find_results` → "Draw rectangles around found text"). `PageDelegate`
+      needs per-match geometry from `QPdfSearchModel` via `QPdfLink.rectangles()`,
+      mapped through the same crop and rotation the thumbnail already applies.
+      Phase 6 gets in-place highlighting free from `QPdfView.setSearchModel()`,
+      but that does not replace this: the grid is where multi-page results are read
+- [x] **New Window** — `QProcess.startDetached` on the interpreter (or the frozen
+      exe), *not* a second `MainWindow`: the app is `NON_UNIQUE` by design (§8),
+      and two windows in one process would share the temp directory and the
+      clipboard-owner checks that tell our drags from someone else's
+- [x] **Set/change document password.** `export.py` had taken `output_password`
+      through both export paths and built `pikepdf.Encryption(R=6)` all along;
+      **nothing in the UI ever passed it.** Now a checkable **File ▸ Password**
+      with a confirm-twice dialog. Cancelling leaves it off rather than
+      checked-with-no-password, which would look encrypted and not be. Verified
+      by round trip: the saved file raises `pikepdf.PasswordError` without it
+- [x] **Export Selection to Rasterized PDF (jpg)** — `export_rasterised()` was
+      already parameterised by format; only the action was missing
+- [x] **Fit One Page / Fit Multiple Pages.** Upstream's `win.zoom-fit` takes a
+      target, and the two differ **only in column count** — both use the same
+      fit-the-whole-page scale, and `fit_one_page` pins `col_num = 1`. The port's
+      Zoom Fit was therefore already the *multiple* variant; what was missing was
+      the single-column pinning. `PageView.set_single_column()` supplies it, and
+      any other zoom releases it
 
-### Phase 5 — finish the port — **complete**
+**Also fixed here:** the action was labelled `_("Swap Odd/Even Pages")` with a
+plain `_()`, so the msgid guard never checked it and the string appeared in no
+catalogue at all. It now uses `_m("Swap Odd/Even")` — upstream's msgid, which
+five catalogues translate — and the undo label matches the menu label again.
+
+With those done, diffing upstream's `menu.ui` against the port's actions leaves
+**no missing commands**. The one item above is a behaviour gap behind a command
+that does exist.
+
+### Phase 5 — retire GTK, package and ship — **complete**
 
 - [x] Single `README.md`, project-setup style; `TESTING.md`, `Win32.md` and
       `macOS.md` folded in and removed (all GTK-era build instructions)
@@ -313,6 +370,47 @@ but its doctests now run from `tests/test_core.py`.
 - [x] Rotate L/R · Duplicate · Delete · Undo/Redo · Select All · Invert Selection
 - [x] Zoom in/out/reset (ctrl+wheel), window geometry + zoom persistence
 - [x] `tests/` — 309 tests in per-module files, split out of `test_qt.py`
+
+
+### Phase 6 — Read mode (D14) — *not started*
+
+A second view mode, not a second application: the same window, the same document,
+a different central widget. Arrange stays the default.
+
+**Build**
+
+- [ ] `pdfarranger_qt/reader.py` — `ReaderView(QWidget)`: a `QPdfView` plus a
+      collapsible sidebar holding a `QTreeView` on `QPdfBookmarkModel`, and a
+      `QPdfPageSelector` in the toolbar
+- [ ] `MainWindow`: a `QStackedWidget` holding the existing `PageView` and the
+      new `ReaderView`; **View ▸ Read Mode** as a checkable action, and the
+      double-click-a-page path into it
+- [ ] `reader.load(pages, files)` — `get_in_memory_pdf()` → `MemoryDocument` →
+      `QPdfView.setDocument()` (D15)
+- [ ] Action gating: every page-editing action disabled while reading. One list,
+      driven from the same place as `_refresh_state`, or the two will drift
+- [ ] Per-document last page and zoom in `QSettings`, keyed on the path, capped
+      like the recent-files list so it cannot grow without bound
+- [ ] Wire `QPdfView.setSearchModel()` to the existing `SearchIndex` model
+- [ ] Help ▸ User Guide: a Read mode section. It is a mode, and modes are
+      exactly what users fail to discover
+
+**Deliberately not in the first cut** (D16, D17): text selection and copy, link
+following, facing-page layout, annotations.
+
+**Tests.** The reader is a Qt widget over PDFium, so the useful assertions are
+about wiring, not pixels: that the document handed to `QPdfView` reflects the
+edited page list rather than the original file (rotate a page, enter Read mode,
+check the page count and size), that arrange actions are disabled while reading
+and re-enabled on leaving, that the bookmark model populates for a document with
+an outline and is empty for one without, and that last-position survives a
+close/reopen. `tests/test_reader.py`.
+
+### Phase 7 — UI rework (beyond parity) — *deprioritised, see D12*
+
+- [ ] Split view with full-page preview
+- [ ] Dual-pane merging
+- [ ] Visible undo history
 
 ---
 
@@ -543,8 +641,8 @@ leftovers are copies of user documents.
 > **Both export paths now exist.** `export(preserve_first_document=...)` selects
 > between them: False merges bookmarks from every document (`export_doc`), True
 > keeps the first document's information via the pikepdf `Job` interface
-> (`export_doc_job`, needs pikepdf >= 8). The Preferences checkbox will drive it;
-> meanwhile it reads `QSettings` key `export/preserve-first-document`.
+> (`export_doc_job`, needs pikepdf >= 8). Driven by the Preferences checkbox,
+> stored as `QSettings` key `export/preserve-first-document`.
 
 > **Watch the msgids.** `tests/test_i18n.py::TestI18n` fails the build if a menu
 > label uses a string absent from `po/de.po` and not explicitly listed as new.
@@ -697,6 +795,60 @@ if an identity-shaped string ever lands in a tracked file.
 > is the one thing the command is for. It now fits both dimensions, against the
 > viewport less the delegate's `CELL_MARGIN`, the caption and the scrollbar
 > width; `Fit Width` (Shift+F) keeps the across-the-window behaviour.
+>
+> That fixed the *scale* but not the *layout*, and this note originally claimed
+> it amounted to upstream's **Fit One Page**. Checking upstream showed otherwise:
+> its two fit commands share this exact scale and differ only in column count
+> (`fit_one_page` pins `col_num = 1`), so what had been built was its **Fit
+> Multiple Pages**. A portrait page fitted to the window's *height* leaves room
+> for neighbours beside it, so without pinning you never get a page on its own.
+> `PageView.set_single_column()` was added in phase 4.
+
+
+### Read mode: what QtPdf actually gives you (D14–D16)
+
+Measured against the installed **PySide6 6.11.1**, not inferred from the docs.
+`QPdfView`'s entire own API, everything else being inherited from
+`QAbstractScrollArea`:
+
+```
+setDocument · document/documentChanged
+pageMode/setPageMode · PageMode {SinglePage, MultiPage}
+zoomMode/setZoomMode · ZoomMode {Custom, FitInView, FitToWidth} · zoomFactor
+pageNavigator · pageSpacing · documentMargins
+searchModel/setSearchModel · currentSearchResultIndex
+```
+
+So continuous scroll, the three zoom modes, page navigation with back/forward
+history (`QPdfPageNavigator.jump`), `QPdfBookmarkModel` bound to a `QTreeView`,
+and **search highlighting in place** are all wiring.
+
+Three things a first reading of the API promises but does not deliver:
+
+- **No text selection or copy.** `QPdfView` has no `selectAll`, no `copy`, no
+  selection property at all. `QPdfDocument.getSelection()` exists, so it can be
+  built — drag hit-testing, highlight painting, clipboard — but that is a
+  feature, not a connection.
+- **No link handling.** `QPdfLinkModel` is in `QtPdf`, but `QPdfView` exposes no
+  link property and no clicked signal. Internal links are not followed for you.
+- **No facing-page layout.** `PageMode` is `SinglePage` or `MultiPage` only.
+
+> **Read mode cannot share the renderer's `QPdfDocument`.** This is the tempting
+> shortcut — one parse, one PDFium instance — and it is wrong here twice over.
+>
+> First, **the edits are not in that document**. A `Page` in this port is a
+> *reference* into an immutable temp copy plus geometry: `angle`, `scale`,
+> `crop`, `hide`, `layerpages`. Rotation, cropping, reordering, duplication,
+> blank pages, imposition and layer compositing all live in the `Page` list.
+> A `QPdfView` on the renderer's document shows the original file — original
+> order, no rotations, no crops — silently disagreeing with the grid next to it.
+>
+> Second, **that document belongs to the render thread**. Handing it to a widget
+> on the GUI thread is a data race.
+>
+> The route is the one `SearchIndex._ensure` already takes: `get_in_memory_pdf()`
+> → `MemoryDocument` → `setDocument()`. One export per refresh, which is what
+> Find already pays, and it is WYSIWYG by construction.
 
 
 ### A note on content streams

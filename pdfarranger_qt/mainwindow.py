@@ -22,9 +22,10 @@ expects.
 """
 
 import os
+import sys
 from typing import List, Optional
 
-from PySide6.QtCore import QSettings, QSize, Qt, QTimer, QUrl
+from PySide6.QtCore import QProcess, QSettings, QSize, Qt, QTimer, QUrl
 from PySide6.QtGui import (QAction, QActionGroup, QDesktopServices,
                            QKeySequence)
 from PySide6.QtWidgets import (
@@ -80,6 +81,11 @@ class MainWindow(QMainWindow):
         #: Text search; rebuilt lazily whenever the document changes.
         self.search = SearchIndex()
         self.recent = RecentFiles(self.settings)
+        #: Encrypts the document on save when set. Deliberately not
+        #: persisted anywhere: it is a property of this session's
+        #: document, and writing it to QSettings would put a password
+        #: in the registry in clear text.
+        self.output_password = None
         #: Zoom to restore when double-click toggles fit back off.
         self._zoom_before_fit: Optional[float] = None
         self.import_dir = os.path.expanduser("~")
@@ -113,6 +119,10 @@ class MainWindow(QMainWindow):
 
     def _build_actions(self):
         st = QStyle.StandardPixmap
+        self.act_new_window = QAction(_m("_New Window"), self)
+        self.act_new_window.setShortcut(QKeySequence.New)
+        self.act_new_window.triggered.connect(self.new_window)
+
         self.act_open = QAction(self._icon(st.SP_DialogOpenButton), _m("_Open"), self)
         self.act_open.setShortcut(QKeySequence.Open)
         self.act_open.triggered.connect(self.open_file)
@@ -240,7 +250,7 @@ class MainWindow(QMainWindow):
         self.act_reverse = QAction(_("Reverse Order"), self)
         self.act_reverse.triggered.connect(self.reverse_order)
 
-        self.act_swap = QAction(_("Swap Odd/Even Pages"), self)
+        self.act_swap = QAction(_m("Swap Odd/Even"), self)
         self.act_swap.triggered.connect(self.swap_odd_even)
 
         self.act_split_booklet = QAction(_m("_Split (unimposition)"), self)
@@ -282,6 +292,10 @@ class MainWindow(QMainWindow):
         self.act_gen_booklet = QAction(_m("_Generate (imposition)"), self)
         self.act_gen_booklet.triggered.connect(self.generate_booklet)
 
+        self.act_password = QAction(_m("Pass_word"), self)
+        self.act_password.setCheckable(True)
+        self.act_password.triggered.connect(self.set_password)
+
         self.act_properties = QAction(_m("Edit _Properties"), self)
         self.act_properties.setShortcut(QKeySequence("Alt+Return"))
         self.act_properties.triggered.connect(self.edit_properties)
@@ -300,6 +314,11 @@ class MainWindow(QMainWindow):
             _m("Export Selection to _Rasterized PDF (png)…"), self)
         self.act_export_raster_pdf.triggered.connect(
             lambda: self.export_rasterised("png"))
+
+        self.act_export_raster_pdf_jpg = QAction(
+            _m("Export Selection to _Rasterized PDF (jpg)…"), self)
+        self.act_export_raster_pdf_jpg.triggered.connect(
+            lambda: self.export_rasterised("jpg"))
 
         self.act_copy_text = QAction(_("Copy Text"), self)
         self.act_copy_text.triggered.connect(self.copy_page_text)
@@ -342,9 +361,13 @@ class MainWindow(QMainWindow):
         self.act_paste_underlay.triggered.connect(lambda: self.paste_layer("UNDERLAY"))
 
         # -- view ---------------------------------------------------------
-        self.act_zoom_fit = QAction(_m("Zoom _Fit"), self)
+        self.act_zoom_fit = QAction(_m("Fit _One Page"), self)
         self.act_zoom_fit.setShortcut(QKeySequence("F"))
         self.act_zoom_fit.triggered.connect(self.zoom_fit)
+
+        self.act_zoom_fit_multi = QAction(_m("Fit _Multiple Pages"), self)
+        self.act_zoom_fit_multi.setShortcut(QKeySequence("Shift+M"))
+        self.act_zoom_fit_multi.triggered.connect(self.zoom_fit_multiple)
 
         self.act_zoom_fit_width = QAction(_("Fit Width"), self)
         self.act_zoom_fit_width.setShortcut(QKeySequence("Shift+F"))
@@ -378,6 +401,7 @@ class MainWindow(QMainWindow):
         self._menus = []
         bar = self.menuBar()
         m = self._menu(bar, _m("_File"))
+        m.addAction(self.act_new_window)
         m.addAction(self.act_open)
         self.recent_menu = self._menu(m, _("Open Recent"))
         self.recent_menu.aboutToShow.connect(self._rebuild_recent_menu)
@@ -393,11 +417,13 @@ class MainWindow(QMainWindow):
         export_menu.addAction(self.act_export_png)
         export_menu.addAction(self.act_export_jpg)
         export_menu.addAction(self.act_export_raster_pdf)
+        export_menu.addAction(self.act_export_raster_pdf_jpg)
         m.addSeparator()
         m.addSeparator()
         m.addAction(self.act_print)
         m.addSeparator()
         m.addAction(self.act_properties)
+        m.addAction(self.act_password)
         m.addSeparator()
         m.addAction(self.act_close)
         m.addAction(self.act_quit)
@@ -469,6 +495,7 @@ class MainWindow(QMainWindow):
         m.addAction(self.act_zoom_in)
         m.addAction(self.act_zoom_out)
         m.addAction(self.act_zoom_fit)
+        m.addAction(self.act_zoom_fit_multi)
         m.addAction(self.act_zoom_fit_width)
         m.addAction(self.act_zoom_reset)
         m.addSeparator()
@@ -522,7 +549,8 @@ class MainWindow(QMainWindow):
         for act in (self.act_save, self.act_save_as, self.act_import,
                     self.act_select_all, self.act_invert, self.act_close,
                     self.act_deselect, self.act_select_odd, self.act_select_even,
-                    self.act_zoom_fit, self.act_zoom_fit_width,
+                    self.act_zoom_fit, self.act_zoom_fit_multi,
+                    self.act_zoom_fit_width,
                     self.act_export_all_multi,
                     self.act_insert_blank, self.act_select_range,
                     self.act_properties, self.act_print, self.act_find,
@@ -550,7 +578,8 @@ class MainWindow(QMainWindow):
                     self.act_crop, self.act_hide, self.act_page_size,
                     self.act_split_pages, self.act_merge_pages,
                     self.act_crop_white, self.act_export_png, self.act_export_jpg,
-                    self.act_export_raster_pdf, self.act_copy_text,
+                    self.act_export_raster_pdf,
+                    self.act_export_raster_pdf_jpg, self.act_copy_text,
                     self.act_copy_image, self.act_explode):
             act.setEnabled(has_sel)
         # Reversing, swapping and unimposing all need a contiguous run.
@@ -669,6 +698,44 @@ class MainWindow(QMainWindow):
         self._refresh_state()
         return True
 
+    def set_password(self, checked: bool):
+        """Turn encryption on or off for the next save.
+
+        A toggle, matching upstream: checking it asks for a password, unchecking
+        it clears one. Cancelling the dialog leaves the action unchecked rather
+        than silently on-with-no-password, which would look encrypted and not be.
+        """
+        if not checked:
+            self.output_password = None
+            self.statusBar().showMessage(_("The document will not be encrypted."), 4000)
+            return
+        password = dialogs.EncryptionPasswordDialog(
+            self.output_password or "", self).get_value()
+        if not password:
+            self.act_password.setChecked(False)
+            return
+        self.output_password = password
+        self._mark_modified()
+        self.statusBar().showMessage(
+            _("The document will be encrypted when it is saved."), 4000)
+
+    def new_window(self):
+        """Launch a second instance.
+
+        The application is deliberately NON_UNIQUE (§8) — every launch is its own
+        process, which is what makes dragging pages between windows work. So this
+        starts a new process rather than constructing another MainWindow: two
+        windows in one process would share the undo stack's temp directory and
+        the clipboard-owner checks that tell "our" drags from someone else's.
+        """
+        if getattr(sys, "frozen", False):
+            program, arguments = sys.executable, []
+        else:
+            # sys.executable is the interpreter; re-run the package entry point.
+            program, arguments = sys.executable, ["-m", "pdfarranger_qt"]
+        if not QProcess.startDetached(program, arguments, os.getcwd())[0]:
+            QMessageBox.warning(self, APP_NAME, _("Could not open a new window."))
+
     def open_file(self):
         if not self._confirm_discard():
             return
@@ -731,6 +798,7 @@ class MainWindow(QMainWindow):
                 self.docs.files_for_export(), pages, dict(self.metadata), files_out,
                 preserve_first_document=self.settings.value(
                     "export/preserve-first-document", False, type=bool),
+                output_password=self.output_password,
             )
         except Exception as e:  # noqa: BLE001 - surfaced to the user
             QApplication.restoreOverrideCursor()
@@ -897,7 +965,7 @@ class MainWindow(QMainWindow):
         rows = self.view.selected_rows()
         if not self._is_contiguous(rows):
             return
-        self.model.undo.commit(_("Swap Odd/Even Pages"))
+        self.model.undo.commit(_("Swap Odd/Even"))
         self.model.swap_odd_even(rows)
         self._mark_modified()
 
@@ -978,6 +1046,19 @@ class MainWindow(QMainWindow):
             return
         self._set_zoom(min(space_w / widest, space_h / tallest),
                        from_fit_toggle=from_fit_toggle)
+        # Upstream's Fit One Page is this zoom *plus* a single column. Without
+        # the pinning a portrait page fitted to the window height leaves room
+        # for neighbours beside it, and you never see a page on its own.
+        self.view.set_single_column(True)
+
+    def zoom_fit_multiple(self):
+        """Fit whole pages, as many across as the window takes.
+
+        The same zoom as Fit One Page — upstream's two commands differ only in
+        column count (`fit_one_page` pins `col_num = 1`), not in scale.
+        """
+        self.zoom_fit()
+        self.view.set_single_column(False)
 
     def zoom_fit_width(self):
         """Scale so the widest page fills the window across."""
@@ -988,6 +1069,7 @@ class MainWindow(QMainWindow):
         space_w, _space_h = self._fit_space()
         if widest > 0 and space_w > 0:
             self._set_zoom(space_w / widest)
+            self.view.set_single_column(False)
 
     # -- page editing dialogs ----------------------------------------------
 
