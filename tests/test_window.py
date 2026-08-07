@@ -113,13 +113,36 @@ class TestPhase1Actions(unittest.TestCase):
         self.win.select_matching("copyname")
         self.assertEqual(self.win.view.selected_rows(), [0, 1, 2, 3])
 
-    def test_zoom_fit_uses_the_viewport_width(self):
+    def test_zoom_fit_shows_a_whole_page(self):
+        """Both dimensions. Fitting the width alone never shows a whole page."""
         self.win.view.set_selected_rows([0])
         self.win.zoom_fit()
         page = self.win.model.pages[0]
+        width, height = self.win.model.thumb_size(page)
+        viewport = self.win.view.viewport()
+        self.assertLessEqual(width, viewport.width())
+        self.assertLessEqual(height, viewport.height())
+        # And it fills one of the two, rather than being merely small enough.
+        self.assertTrue(width > viewport.width() * 0.7
+                        or height > viewport.height() * 0.7,
+                        f"{width}x{height} in {viewport.width()}x{viewport.height()}")
+
+    def test_fit_width_fills_the_window_across(self):
+        self.win.view.set_selected_rows([0])
+        self.win.zoom_fit_width()
+        page = self.win.model.pages[0]
         width = self.win.model.thumb_size(page)[0]
-        self.assertLessEqual(width, self.win.view.viewport().width())
-        self.assertGreater(width, self.win.view.viewport().width() * 0.7)
+        viewport = self.win.view.viewport()
+        self.assertLessEqual(width, viewport.width())
+        self.assertGreater(width, viewport.width() * 0.7)
+
+    def test_fit_width_is_wider_than_fit_page(self):
+        """The distinction is the whole point of having both."""
+        self.win.view.set_selected_rows([0])
+        self.win.zoom_fit()
+        fit_page = self.win.model.zoom
+        self.win.zoom_fit_width()
+        self.assertGreater(self.win.model.zoom, fit_page)
 
     def test_double_click_toggles_zoom_fit_and_back(self):
         before = self.win.model.zoom
@@ -463,14 +486,22 @@ class TestHelpMenu(unittest.TestCase):
         self.win.modified = False
         self.win.close()
 
-    def help_menu(self):
+    def help_menu_labels(self):
+        """Read the entries inside the loop and return plain strings.
+
+        Returning ``action.menu()`` does not work: PySide ties the QMenu's
+        lifetime to the QAction wrapper it came from, so the menu is already
+        destroyed by the time the caller touches it -- "Internal C++ object
+        (QMenu) already deleted".
+        """
         for action in self.win.menuBar().actions():
             if "Help" in action.text():
-                return action.menu()
+                return [a.text() for a in action.menu().actions()
+                        if not a.isSeparator()]
         self.fail("no Help menu")
 
     def test_help_menu_offers_the_project_page(self):
-        labels = [a.text() for a in self.help_menu().actions() if not a.isSeparator()]
+        labels = self.help_menu_labels()
         self.assertIn("Project on GitHub", labels)
         self.assertIn("User Guide", labels)
 

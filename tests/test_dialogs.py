@@ -326,3 +326,53 @@ class TestHelpDialog(unittest.TestCase):
         first = win._help_dialog
         win.show_help()
         self.assertIs(win._help_dialog, first)
+
+
+class TestShortcutOrdering(unittest.TestCase):
+    """The editor listed 73 actions in QObject construction order.
+
+    findChildren(QAction) returns children in the order they were built, not
+    menu order, so the list was unscannable: submenu entries scattered through
+    it and no relationship to where a command lives.
+    """
+
+    def setUp(self):
+        from pdfarranger_qt.mainwindow import MainWindow
+
+        self.win = MainWindow()
+
+    def tearDown(self):
+        self.win.modified = False
+        self.win.close()
+
+    def test_groups_follow_the_menu_bar(self):
+        titles = [t for t, _actions in self.win._shortcut_groups()]
+        self.assertEqual(titles, ["File", "Edit", "Page", "Arrange", "View", "Help"])
+
+    def test_first_group_starts_with_the_first_menu_entry(self):
+        _title, actions = self.win._shortcut_groups()[0]
+        self.assertEqual(actions[0].text().replace("&", ""), "Open")
+
+    def test_submenu_entries_are_included(self):
+        """Paste As Odd Pages lives in a submenu and must still be rebindable."""
+        labels = [a.text().replace("&", "") for a in self.win._shortcut_actions()]
+        self.assertIn("Paste As Odd Pages", labels)
+        self.assertIn("Export Selection to PNG Images…", labels)
+
+    def test_no_duplicates(self):
+        names = [a.objectName() or a.text() for a in self.win._shortcut_actions()]
+        self.assertEqual(len(names), len(set(names)))
+
+    def test_dialog_renders_the_groups(self):
+        from pdfarranger_qt.dialogs import ShortcutsDialog
+
+        groups = self.win._shortcut_groups()
+        dialog = ShortcutsDialog(groups)
+        self.assertEqual(len(dialog.edits), sum(len(a) for _t, a in groups))
+
+    def test_dialog_still_accepts_a_flat_list(self):
+        from pdfarranger_qt.dialogs import ShortcutsDialog
+
+        actions = self.win._shortcut_actions()
+        dialog = ShortcutsDialog(actions)
+        self.assertEqual(len(dialog.edits), len(actions))

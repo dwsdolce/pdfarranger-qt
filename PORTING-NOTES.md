@@ -127,7 +127,7 @@ Extract ▸ (Copy Text · Copy Image) · Explode into Images
 **Arrange** — Reverse Order · Swap Odd/Even ‖ Split Pages… · Merge Pages… ‖
 Booklet ▸ (Split (unimposition) · Generate (imposition))
 
-**View** — Zoom In · Zoom Out · Zoom Fit · Reset Zoom ‖ Show Page Numbers\* ·
+**View** — Zoom In · Zoom Out · Zoom Fit · Fit Width · Reset Zoom ‖ Show Page Numbers\* ·
 Preview Pane\* ‖ Fullscreen
 
 **Help** — User Guide ‖ Project on GitHub · About
@@ -666,6 +666,29 @@ if an identity-shaped string ever lands in a tracked file.
 > called `clear_recent()` directly, so it would have passed with the menu entry
 > wired to nothing. Where a bug report says "the menu item does nothing", the
 > test has to `trigger()` the `QAction` the user clicks.
+
+
+> **`QAction.menu()` does not keep its QMenu alive.** PySide ties the QMenu's
+> lifetime to the QAction *wrapper* it came from, so a helper that returns
+> `action.menu()` hands back an object whose C++ side is already gone —
+> "Internal C++ object (QMenu) already deleted". Read what you need inside the
+> loop, or keep the QAction referenced too. Confirmed by experiment: keeping
+> the QAction as well makes the same menu valid. Walking the menu bar does *not*
+> damage the live menus, which are owned by the window; only the transient
+> wrapper is affected.
+
+> **Shortcut order came from `findChildren(QAction)`**, which is QObject
+> construction order, not menu order — despite the docstring claiming
+> otherwise. 64 rebindable commands appeared in the order they happened to be
+> built, submenu entries scattered through, so nothing could be found.
+> `_shortcut_groups()` walks the menu bar instead and returns
+> `[(menu title, [actions])]`, which the dialog renders with a heading per menu.
+
+> **Zoom Fit fitted the width only.** A portrait page was therefore always
+> taller than the viewport and a whole page could never be seen at once, which
+> is the one thing the command is for. It now fits both dimensions, against the
+> viewport less the delegate's `CELL_MARGIN`, the caption and the scrollbar
+> width; `Fit Width` (Shift+F) keeps the across-the-window behaviour.
 
 
 ### A note on content streams

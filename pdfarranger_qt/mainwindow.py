@@ -345,6 +345,10 @@ class MainWindow(QMainWindow):
         self.act_zoom_fit.setShortcut(QKeySequence("F"))
         self.act_zoom_fit.triggered.connect(self.zoom_fit)
 
+        self.act_zoom_fit_width = QAction(_("Fit Width"), self)
+        self.act_zoom_fit_width.setShortcut(QKeySequence("Shift+F"))
+        self.act_zoom_fit_width.triggered.connect(self.zoom_fit_width)
+
         self.act_fullscreen = QAction(_("Fullscreen"), self)
         self.act_fullscreen.setShortcut(QKeySequence("F11"))
         self.act_fullscreen.setCheckable(True)
@@ -444,6 +448,7 @@ class MainWindow(QMainWindow):
         m.addAction(self.act_zoom_in)
         m.addAction(self.act_zoom_out)
         m.addAction(self.act_zoom_fit)
+        m.addAction(self.act_zoom_fit_width)
         m.addAction(self.act_zoom_reset)
         m.addSeparator()
         m.addAction(self.act_fullscreen)
@@ -496,7 +501,8 @@ class MainWindow(QMainWindow):
         for act in (self.act_save, self.act_save_as, self.act_import,
                     self.act_select_all, self.act_invert, self.act_close,
                     self.act_deselect, self.act_select_odd, self.act_select_even,
-                    self.act_zoom_fit, self.act_export_all_multi,
+                    self.act_zoom_fit, self.act_zoom_fit_width,
+                    self.act_export_all_multi,
                     self.act_insert_blank, self.act_select_range,
                     self.act_properties, self.act_print, self.act_find,
                     self.act_find_next, self.act_find_prev, self.act_find_all):
@@ -913,16 +919,54 @@ class MainWindow(QMainWindow):
 
     # -- view --------------------------------------------------------------
 
+    def _fit_reference(self):
+        """The pages a fit is measured against: the selection, else everything."""
+        return ([self.model.pages[r] for r in self.view.selected_rows()]
+                or self.model.pages)
+
+    def _fit_space(self):
+        """Viewport size less the chrome the delegate draws around a page.
+
+        The cell is the thumbnail plus CELL_MARGIN on every side plus the
+        caption underneath, and the vertical scrollbar takes width whether or
+        not it is showing at this zoom -- assume it will be.
+        """
+        from .view import CELL_MARGIN, LABEL_GAP
+
+        viewport = self.view.viewport()
+        caption = self.fontMetrics().height() + LABEL_GAP
+        scrollbar = self.view.verticalScrollBar().sizeHint().width()
+        return (viewport.width() - 2 * CELL_MARGIN - scrollbar,
+                viewport.height() - 2 * CELL_MARGIN - caption)
+
     def zoom_fit(self, from_fit_toggle: bool = False):
-        """Scale so the widest selected page (or the widest page) fits across."""
-        pages = ([self.model.pages[r] for r in self.view.selected_rows()]
-                 or self.model.pages)
+        """Scale so one whole page fits in the window.
+
+        Both dimensions, not just the width: fitting the width alone leaves a
+        portrait page taller than the viewport, so you can never see a whole
+        page at once -- which is the thing this is for. Fit Width is a separate
+        command for when across-the-page is what you want.
+        """
+        pages = self._fit_reference()
         if not pages:
             return
         widest = max(p.width_in_points() for p in pages)
-        available = self.view.viewport().width() - 40
-        if widest > 0 and available > 0:
-            self._set_zoom(available / widest, from_fit_toggle=from_fit_toggle)
+        tallest = max(p.height_in_points() for p in pages)
+        space_w, space_h = self._fit_space()
+        if widest <= 0 or tallest <= 0 or space_w <= 0 or space_h <= 0:
+            return
+        self._set_zoom(min(space_w / widest, space_h / tallest),
+                       from_fit_toggle=from_fit_toggle)
+
+    def zoom_fit_width(self):
+        """Scale so the widest page fills the window across."""
+        pages = self._fit_reference()
+        if not pages:
+            return
+        widest = max(p.width_in_points() for p in pages)
+        space_w, _space_h = self._fit_space()
+        if widest > 0 and space_w > 0:
+            self._set_zoom(space_w / widest)
 
     # -- page editing dialogs ----------------------------------------------
 
@@ -1303,14 +1347,49 @@ class MainWindow(QMainWindow):
 
     # -- preferences -------------------------------------------------------
 
+    def _shortcut_groups(self):
+        """Actions for the shortcut editor, grouped and ordered by menu.
+
+        Walks the menu bar rather than calling findChildren(QAction), which
+        returns QObject *creation* order -- so the editor used to list 73
+        actions in the order they happened to be constructed, with submenu
+        entries scattered through it and no way to find anything.
+        """
+        groups, seen = [], set()
+
+        def collect(menu, into):
+            for action in menu.actions():
+                if action.isSeparator():
+                    continue
+                if action.menu():
+                    collect(action.menu(), into)  # flatten submenus into the group
+                    continue
+                if not action.text():
+                    continue
+                name = action.objectName() or action.text()
+                if name in seen:
+                    continue  # the same action can appear in more than one menu
+                seen.add(name)
+                into.append(action)
+
+        for top in self.menuBar().actions():
+            menu = top.menu()
+            if menu is None:
+                continue
+            actions = []
+            collect(menu, actions)
+            if actions:
+                groups.append((top.text().replace("&", ""), actions))
+        return groups
+
     def _shortcut_actions(self):
-        """Actions offered in the shortcut editor, in menu order."""
-        return [a for a in self.findChildren(QAction) if a.text()]
+        """Every rebindable action, flattened out of :meth:`_shortcut_groups`."""
+        return [a for _title, actions in self._shortcut_groups() for a in actions]
 
     def edit_preferences(self):
         current = {key: self._preference(key) for key in dialogs.PREFERENCES}
         result = dialogs.PreferencesDialog(
-            current, self._shortcut_actions(), self).get_value()
+            current, self._shortcut_groups(), self).get_value()
         if result is None:
             return
         shortcuts = result.pop("shortcuts", {})

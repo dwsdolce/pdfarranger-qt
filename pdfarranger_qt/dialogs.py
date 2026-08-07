@@ -706,15 +706,18 @@ class ShortcutsDialog(BaseDialog):
         body = QWidget()
         form = QFormLayout(body)
         form.setLabelAlignment(Qt.AlignLeft)
-        for action in actions:
-            name = action.objectName() or action.text()
-            if name in self.edits:
-                continue  # the same action can appear in more than one menu
-            current = overrides.get(name, action.shortcut().toString())
-            edit = QKeySequenceEdit(QKeySequence(current))
-            edit.setClearButtonEnabled(True)
-            form.addRow(action.text().replace("&", ""), edit)
-            self.edits[name] = edit
+        for title, group in self._grouped(actions):
+            if title:
+                form.addRow(self._heading(title, first=not self.edits))
+            for action in group:
+                name = action.objectName() or action.text()
+                if name in self.edits:
+                    continue  # the same action can appear in more than one menu
+                current = overrides.get(name, action.shortcut().toString())
+                edit = QKeySequenceEdit(QKeySequence(current))
+                edit.setClearButtonEnabled(True)
+                form.addRow(action.text().replace("&", ""), edit)
+                self.edits[name] = edit
 
         scroll = QScrollArea()
         scroll.setWidget(body)
@@ -726,6 +729,25 @@ class ShortcutsDialog(BaseDialog):
         reset.clicked.connect(self._clear_all)
         self.finish()
         self.resize(520, 560)
+
+    @staticmethod
+    def _grouped(actions):
+        """Accept either [(title, [action])] or a bare [action].
+
+        The window passes the grouped form so the list reads in menu order;
+        the flat form keeps this usable on its own, and in tests.
+        """
+        if actions and isinstance(actions[0], tuple):
+            return list(actions)
+        return [(None, list(actions))]
+
+    @staticmethod
+    def _heading(title, first=False):
+        """A menu name, so the list can be scanned instead of read."""
+        label = QLabel(f"<b>{title}</b>")
+        margin = 0 if first else 12
+        label.setContentsMargins(0, margin, 0, 2)
+        return label
 
     def _clear_all(self):
         for edit in self.edits.values():
@@ -785,9 +807,23 @@ def help_sections():
             _("<b>Click and drag</b> on empty space — rubber-band select; keep "
               "scrolling to extend it"),
         ]),
+        (_("Moving around"), [
+            _("<b>Arrow keys</b> move between pages, <b>Page Up</b> and "
+              "<b>Page Down</b> move a screenful at a time, and <b>Home</b> "
+              "and <b>End</b> jump to the first and last page. Hold "
+              "<b>Shift</b> with any of them to extend the selection."),
+            _("<b>Zoom Fit</b> (F) scales so one whole page fits in the "
+              "window — use it to work on a single page at a time. "
+              "<b>Fit Width</b> (Shift+F) fills the window across instead, "
+              "which shows the page wider but taller than the window. "
+              "Double-clicking the grid toggles Zoom Fit on and off."),
+            _("With pages selected, both commands fit the selection rather "
+              "than the whole document."),
+        ]),
         (_("Keyboard shortcuts"), [
             _("Every shortcut can be changed in "
-              "<b>Edit ▸ Preferences ▸ Keyboard shortcuts</b>."),
+              "<b>Edit ▸ Preferences ▸ Keyboard shortcuts</b>, where they are "
+              "listed under the menu each one belongs to."),
         ]),
         (_("Files"), [
             _("Settings are stored by Qt in the per-user location for this "
