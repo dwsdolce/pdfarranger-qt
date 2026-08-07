@@ -158,6 +158,26 @@ class OutlineCopier:
             return self.remapper.remap_destination(self.file_idx, dest)
         return None
 
+    @staticmethod
+    def _is_external(source_item):
+        """True for bookmarks that point outside this document.
+
+        `/GoToR` (another file), `/URI` (the web), `/Launch` (an application)
+        and `/GoToE` (an embedded file) have nothing in this document to remap,
+        so there is no destination to resolve -- but they are still perfectly
+        good bookmarks and must be kept. Treating "no in-document destination"
+        as "no destination" deleted 18,131 of the 18,179 bookmarks in the ARRL
+        Handbook, whose subtree is entirely `/GoToR` links to companion PDFs,
+        and took the tree structure with them.
+        """
+        action = source_item.action
+        if action is None:
+            return False
+        return action.get(pikepdf.Name.S) in (
+            pikepdf.Name.GoToR, pikepdf.Name.URI,
+            pikepdf.Name.Launch, pikepdf.Name.GoToE,
+        )
+
     def _build_valid_tree(self, source_item):
         """Pass 1: Recursively filter and build a clean Python tree of surviving nodes."""
         final_dest = self._get_mapped_dest(source_item)
@@ -168,8 +188,9 @@ class OutlineCopier:
             if child_node is not None:
                 valid_children.append(child_node)
 
-        # An item is kept if it has a valid target destination OR contains surviving children
-        if final_dest is not None or valid_children:
+        # Kept if it has a valid target, points outside the document, or has
+        # surviving children.
+        if final_dest is not None or valid_children or self._is_external(source_item):
             return {
                 "source_item": source_item,
                 "destination": final_dest,
@@ -207,6 +228,88 @@ class OutlineCopier:
         node = self._build_valid_tree(source_item)
         if node is not None:
             self._insert_tree_node(node, new_parent_list)
+
+
+def remap_link_annotations(pdf_input, pdf_output, pages):
+    """Point copied link annotations back at pages in the output document.
+
+    `_copy_n_transform` copies each page's `/Annots` along with the page, but a
+    link's destination still refers to a page *object in the source document*.
+    After the copy that reference resolves to null: the `/Dest` array survives
+    with a dead target, which is what makes PDFium report "skipping link with
+    invalid page number -1" and what makes every in-document link in a saved
+    file do nothing.
+
+    Bookmarks never had this problem because `rebuild_outlines` remaps them
+    explicitly. Nothing did the same for annotations. The remapper is the same
+    one, so the fix is to run each link's destination through it.
+
+    External links (`/URI`, `/GoToR`) are left alone: they point outside this
+    document and have nothing to remap. Links whose target page is not in the
+    output -- it was deleted -- have their destination removed, leaving an
+    inert annotation rather than one that jumps somewhere arbitrary.
+    """
+    remapper = OutlineRemapper(pdf_input, pdf_output, pages)
+    remapped = dropped = 0
+
+    for out_idx, row in enumerate(pages):
+        file_idx = row.nfile - 1
+        source_pdf = pdf_input[file_idx]
+        if source_pdf is None:
+            continue
+        try:
+            source_page = source_pdf.pages[row.npage - 1]
+            out_page = pdf_output.pages[out_idx]
+        except IndexError:
+            continue
+        source_annots = source_page.obj.get(pikepdf.Name.Annots)
+        out_annots = out_page.obj.get(pikepdf.Name.Annots)
+        if source_annots is None or out_annots is None:
+            continue
+        # Same page, copied whole, so the arrays correspond element for
+        # element. If they somehow do not, leave the page alone rather than
+        # rewriting the wrong annotation's destination.
+        if len(source_annots) != len(out_annots):
+            continue
+
+        for source_annot, out_annot in zip(source_annots, out_annots):
+            if source_annot.get(pikepdf.Name.Subtype) != pikepdf.Name.Link:
+                continue
+            action = source_annot.get(pikepdf.Name.A)
+            in_action = False
+            dest = source_annot.get(pikepdf.Name.Dest)
+            if dest is None and action is not None:
+                if action.get(pikepdf.Name.S) != pikepdf.Name.GoTo:
+                    continue          # external: nothing of ours to fix
+                dest = action.get(pikepdf.Name.D)
+                in_action = True
+            if dest is None:
+                continue
+
+            new_dest = remapper.remap_destination(file_idx, dest)
+            if new_dest is None:
+                # The target page is not in the output. An annotation pointing
+                # at nothing is worse than one pointing nowhere.
+                if in_action and pikepdf.Name.A in out_annot:
+                    del out_annot[pikepdf.Name.A]
+                if pikepdf.Name.Dest in out_annot:
+                    del out_annot[pikepdf.Name.Dest]
+                dropped += 1
+                continue
+
+            if in_action:
+                out_annot.A = pikepdf.Dictionary(
+                    S=pikepdf.Name.GoTo, D=new_dest)
+                if pikepdf.Name.Dest in out_annot:
+                    del out_annot[pikepdf.Name.Dest]
+            else:
+                out_annot.Dest = new_dest
+                if pikepdf.Name.A in out_annot:
+                    del out_annot[pikepdf.Name.A]
+            remapped += 1
+
+    write_named_dests(pdf_output, remapper.new_named_dests)
+    return remapped, dropped
 
 
 def write_named_dests(pdf, named_dests):

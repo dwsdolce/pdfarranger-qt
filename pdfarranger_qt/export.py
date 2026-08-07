@@ -277,6 +277,12 @@ def export_doc(pdf_input, pages, mdata, files_out, quit_flag=None,
         from . import exporter_outlines
 
         exporter_outlines.rebuild_outlines(pdf_input, pdf_output, pages)
+    # Always, and regardless of outlines: a saved file whose internal links
+    # all point at nothing is broken however it was produced.
+    from . import exporter_outlines as _links
+
+    _links.remap_link_annotations(pdf_input, pdf_output, pages)
+
     if to_file:
         mdata = metadata.merge_doc(mdata, pdf_input)
         password = output_password

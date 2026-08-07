@@ -880,6 +880,48 @@ Three things a first reading of the API promises but does not deliver:
 > Find already pays, and it is WYSIWYG by construction.
 
 
+### Destinations do not survive a copy by themselves
+
+Two defects, both inherited from upstream, both found only because Read mode
+put a `QPdfView` in front of a real book — the ARRL 2021 Handbook, itself the
+product of a merge that did not fix its cross-file links.
+
+> **Link annotations were never remapped.** `_copy_n_transform` copies each
+> page's `/Annots` with the page, but a link's `/Dest` still refers to a page
+> *object in the source document*. After the copy that reference resolves to
+> null: the array survives with a dead target. Every in-document link in every
+> file this application saved did nothing, and PDFium said "skipping link with
+> invalid page number -1" once per link. Bookmarks never had the problem
+> because `rebuild_outlines` remaps them explicitly; nothing did the same for
+> annotations. `remap_link_annotations()` now runs on every export, using the
+> same `OutlineRemapper`. A link whose target page was deleted has its
+> destination removed rather than left dangling — an inert annotation beats one
+> aimed at whatever page took its place.
+
+> **`/GoToR` bookmarks were deleted.** `_get_mapped_dest` recognised only
+> `/GoTo`, so any bookmark pointing *outside* the document returned no
+> destination, and `_build_valid_tree` prunes items with neither a destination
+> nor surviving children. In the ARRL Handbook **18,131 of 18,179 bookmarks are
+> `/GoToR`** — links into companion PDFs — so the whole tree below the top level
+> vanished, and the 45 top-level entries were left as stubs. "No in-document
+> destination" is not "no destination": `/GoToR`, `/URI`, `/Launch` and
+> `/GoToE` are kept as they are, since there is nothing of ours to remap.
+
+**Why no existing test caught either.** The fixtures are all well-behaved —
+every destination resolves, so nothing is ever dropped and neither failure mode
+can appear. `tests/test_export_destinations.py` builds a document to the shape
+that broke: a mixed tree of internal and `/GoToR` bookmarks over pages carrying
+internal link annotations. Verified to fail 11 of 11 against the unfixed code.
+
+**What is still the document's fault.** The Handbook's `/GoToR` actions name
+sibling PDFs that the merge folded in but never repointed, so Acrobat shows the
+bookmarks and none of them jump. That is how the file arrived. After these
+fixes our re-export reproduces it exactly — same tree, same Qt warning counts —
+rather than adding damage or silently deleting the evidence. Repairing such
+links would mean recognising that a `/GoToR` target is a file being merged in
+the same operation, and is a feature, not a fix.
+
+
 ### A note on content streams
 
 Scaling and overlay *do* synthesize a content stream — they wrap the page as a Form
