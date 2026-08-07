@@ -73,7 +73,7 @@ All dependencies are declared in [pyproject.toml](pyproject.toml).
 ## Testing
 
 ```bash
-pytest tests/test_qt.py
+pytest tests
 ```
 
 The suite drives a real Qt application under the **offscreen** platform, so it exercises
@@ -82,12 +82,18 @@ of colour-scheme assertions need a real windowing system and skip by default; ru
 with:
 
 ```bash
-QT_QPA_PLATFORM=windows pytest tests/test_qt.py -k Theme
+QT_QPA_PLATFORM=windows pytest tests/test_theme.py
 ```
 
 Modal message boxes are replaced with recorders during the run — under the offscreen
 platform a single unexpected dialog would otherwise block the whole suite instead of
 failing one test.
+
+The test files mirror the package: `test_core.py`, `test_render.py`, `test_model.py`,
+`test_view.py`, `test_export.py` and so on, plus `test_window.py` for the menu actions
+and `test_packaging.py` for the project metadata. `tests/conftest.py` holds the
+once-per-process setup — the offscreen platform, the single `QApplication`, the
+message-box recorders — and `tests/support.py` the shared helpers and fixture paths.
 
 ## Documentation
 

@@ -1,9 +1,6 @@
 # -*- mode: python ; coding: utf-8 -*-
 """PyInstaller spec for the Qt edition.
 
-Not to be confused with `pdfarranger.spec` in the repository root, which is an
-RPM spec for packaging the GTK application on Fedora.
-
 Build from the repository root:
 
     pip install -e ".[packaging]"

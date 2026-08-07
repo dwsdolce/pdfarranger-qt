@@ -4,7 +4,7 @@ Project document: goal, decisions, menu design, progress tracker, and implementa
 notes. Started 2026-08-06.
 
 - **Run:** `python -m pdfarranger_qt [files...]`
-- **Test:** `pytest tests/test_qt.py`
+- **Test:** `pytest tests`
 - **Code:** `pdfarranger_qt/` — the whole application. The GTK `pdfarranger/`
   package was removed in phase 5; `git log` has it if it is ever needed again.
 - **Translations:** `python tools/build_mo.py` before running, to compile `po/`
@@ -293,7 +293,7 @@ inside the thumbnail — the delegate would need to draw match rectangles.
 covering outline rebuilding, repointed at `pdfarranger_qt.exporter_outlines`,
 which `diff` confirms is byte-for-byte upstream's. `tests/test_core.py` was
 retired because its `Page` tests target the `zoom` argument this port removed,
-but its doctests now run from `test_qt.py` via `load_tests`.
+but its doctests now run from `tests/test_core.py`.
 
 ### Done
 
@@ -309,7 +309,7 @@ but its doctests now run from `test_qt.py` via `load_tests`.
 - [x] Save · Save As · Export Selection · Close · Quit
 - [x] Rotate L/R · Duplicate · Delete · Undo/Redo · Select All · Invert Selection
 - [x] Zoom in/out/reset (ctrl+wheel), window geometry + zoom persistence
-- [x] `tests/test_qt.py` — 35 tests
+- [x] `tests/` — 309 tests in per-module files, split out of `test_qt.py`
 
 ---
 
@@ -468,7 +468,7 @@ The offscreen platform used by the tests reports `ColorScheme.Unknown` and
 ignores the setter, so the two tests that assert Qt actually changed skip there.
 They pass under `QT_QPA_PLATFORM=windows`, where `Light` becomes `Dark` and the
 palette's windowText flips `#000000` → `#ffffff`. Run
-`QT_QPA_PLATFORM=windows pytest tests/test_qt.py -k Theme` to exercise them.
+`QT_QPA_PLATFORM=windows pytest tests/test_theme.py` to exercise them.
 
 Page thumbnails deliberately stay white in dark mode: the delegate paints the
 sheet explicitly rather than from the palette, because a PDF page is paper.
@@ -543,16 +543,47 @@ leftovers are copies of user documents.
 > (`export_doc_job`, needs pikepdf >= 8). The Preferences checkbox will drive it;
 > meanwhile it reads `QSettings` key `export/preserve-first-document`.
 
-> **Watch the msgids.** `tests/test_qt.py::TestI18n` fails the build if a menu
+> **Watch the msgids.** `tests/test_i18n.py::TestI18n` fails the build if a menu
 > label uses a string absent from `po/de.po` and not explicitly listed as new.
 > Rewording a label without checking `po/` silently orphans 33 translations.
 
-### Legacy tests
+### Test layout
 
-`tests/test_exporter*.py` and `test_core.py` cover the pikepdf layer and are
-reusable in spirit, but they import the GTK modules, so they are not wired up.
-`tests/test.py` is a dogtail GUI test and does not survive the view rewrite.
-`tests/test_qt.py` is the new suite.
+One file per package module, so a failure names the layer it is in:
+
+| File | Covers |
+| --- | --- |
+| `test_core.py` | geometry, `Page`, `DocumentSet`, blank pages, `core` doctests |
+| `test_render.py` | render thread, thumbnail cache, `MemoryDocument` |
+| `test_model.py` | undo, reordering, list ops, scale/crop/split |
+| `test_view.py` | drag reorder, rubber band, relayout |
+| `test_export.py` | export paths, hidden pages, the pikepdf `Job` path |
+| `test_layers.py` | compositing one page onto another |
+| `test_booklet.py` | imposition and unimposition |
+| `test_clipboard.py` | wire format, drag payloads, cross-instance drops |
+| `test_raster.py` | rasterising, white-border detection, embedded images |
+| `test_search.py` · `test_printing.py` · `test_theme.py` · `test_recent.py` | as named |
+| `test_dialogs.py` | dialog widgets and the values they hand back |
+| `test_i18n.py` | msgid guard, translation loading, `i18n` doctests |
+| `test_window.py` | `MainWindow` actions, driven through the actions themselves |
+| `test_packaging.py` | project metadata, and a guard against GTK creeping back |
+| `test_exporter_outlines.py` | salvaged from upstream, unchanged |
+
+`tests/conftest.py` holds what must happen once per process and before any Qt
+import — the offscreen platform, the single `QApplication`, the message-box
+recorders. `tests/support.py` holds the shared helpers: `settle()`,
+`QtDocumentTestCase`, the fixture paths. A `TestCase` base class is not a
+pytest fixture, so it does not belong in a conftest.
+
+Upstream's own tests are gone apart from `test_exporter_outlines.py`: the rest
+imported the GTK modules, and `tests/test.py` was a dogtail GUI test that does
+not survive the view rewrite. Upstream's `test_core.py` was retired because its
+`Page` tests target the `zoom` argument this port removed.
+
+> **Doctests need a real test.** They used to hang off unittest's `load_tests`
+> hook, which pytest does not implement — under pytest the hook collected
+> nothing and 24 doctests silently never ran. They are now plain test methods
+> calling `doctest.testmod`, which both runners execute.
 
 ### A note on content streams
 

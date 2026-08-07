@@ -47,6 +47,7 @@ from .i18n import menu_label as _m
 from .i18n import ngettext
 from .export import export
 from .model import PageListModel
+from .recent import RecentFiles
 from .render import Renderer
 from .search import SearchIndex
 from .view import PageView
@@ -75,6 +76,7 @@ class MainWindow(QMainWindow):
         self.metadata: dict = {}
         #: Text search; rebuilt lazily whenever the document changes.
         self.search = SearchIndex()
+        self.recent = RecentFiles(self.settings)
         #: Zoom to restore when double-click toggles fit back off.
         self._zoom_before_fit: Optional[float] = None
         self.import_dir = os.path.expanduser("~")
@@ -347,6 +349,8 @@ class MainWindow(QMainWindow):
         bar = self.menuBar()
         m = bar.addMenu(_m("_File"))
         m.addAction(self.act_open)
+        self.recent_menu = m.addMenu(_("Open Recent"))
+        self.recent_menu.aboutToShow.connect(self._rebuild_recent_menu)
         m.addAction(self.act_import)
         m.addSeparator()
         m.addAction(self.act_save)
@@ -578,6 +582,41 @@ class MainWindow(QMainWindow):
         self.model.insert_pages(len(self.model.pages) if at is None else at, added)
         return len(added)
 
+    # -- recent files ------------------------------------------------------
+
+    def _rebuild_recent_menu(self):
+        """Rebuilt on aboutToShow, so it is never stale when it is looked at."""
+        self.recent_menu.clear()
+        paths = self.recent.paths()
+        if not paths:
+            empty = self.recent_menu.addAction(_("No recent files"))
+            empty.setEnabled(False)
+            return
+        for index, path in enumerate(paths, start=1):
+            # 1-9 then 0, matching the usual convention for ten entries.
+            digit = index % 10
+            action = self.recent_menu.addAction(
+                f"&{digit}  {os.path.basename(path)}")
+            action.setToolTip(path)
+            action.setStatusTip(path)
+            action.triggered.connect(lambda _checked=False, p=path: self.open_recent(p))
+        self.recent_menu.addSeparator()
+        self.recent_menu.addAction(_("Clear Menu"), self.clear_recent)
+
+    def open_recent(self, path: str):
+        """Open a file from the list, dropping it if it has gone."""
+        if not os.path.isfile(path):
+            QMessageBox.warning(
+                self, APP_NAME,
+                _("This file is no longer there:") + f"\n{path}")
+            self.recent.remove(path)
+            return
+        if self._confirm_discard():
+            self.open_paths([path])
+
+    def clear_recent(self):
+        self.recent.clear()
+
     def open_paths(self, paths: List[str]) -> bool:
         """Replace the current document with ``paths``.
 
@@ -590,6 +629,10 @@ class MainWindow(QMainWindow):
         self.current_path = paths[0] if paths[0].lower().endswith(".pdf") else None
         self.modified = len(paths) > 1
         self.model.undo.clear()
+        # Every file that went into this document, not just the first: opening
+        # several at once is a merge, and any of them may be worth reopening.
+        for path in paths:
+            self.recent.add(path)
         self._refresh_state()
         return True
 
@@ -626,6 +669,7 @@ class MainWindow(QMainWindow):
             return False
         if self._write([path], self.model.pages):
             self.current_path = path
+            self.recent.add(path)
             self._refresh_state()
             return True
         return False

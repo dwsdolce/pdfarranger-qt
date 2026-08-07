@@ -42,7 +42,6 @@ packaging = [
 pdfarranger-qt = "pdfarranger_qt.app:main"
 
 [project.urls]
-# TODO: point at the new repository once it exists.
 Homepage = "https://github.com/dwsdolce/pdfarranger-qt"
 
 [tool.setuptools.packages.find]
