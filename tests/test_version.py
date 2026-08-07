@@ -141,6 +141,31 @@ class TestBuildScripts(unittest.TestCase):
         match = re.search(r"^AppId=\{\{([0-9A-F-]{36})\}?", iss, re.M)
         self.assertIsNotNone(match, "AppId is missing or not a literal GUID")
 
+    def test_posix_scripts_are_executable_in_git(self):
+        """Windows sets core.filemode=false, so chmod +x is never recorded.
+
+        A script committed as 100644 arrives non-executable on Linux and macOS
+        and cannot be run as ./packaging/build_linux at all. git ls-files -s is
+        the only place the truth lives; the working-tree bit is meaningless
+        here.
+        """
+        listing = subprocess.run(["git", "ls-files", "-s", "packaging", "tools"],
+                                 cwd=ROOT, capture_output=True, text=True)
+        if listing.returncode != 0:
+            self.skipTest("not a git checkout")
+        modes = {}
+        for line in listing.stdout.splitlines():
+            meta, _tab, path = line.partition("	")
+            modes[path] = meta.split()[0]
+
+        need_exec = ["packaging/AppRun", "packaging/build_linux",
+                     "packaging/build_mac", "packaging/build_win",
+                     "packaging/make_icns.sh"]
+        for path in need_exec:
+            self.assertEqual(modes.get(path), "100755",
+                             f"{path} is not executable in git; fix with "
+                             f"git update-index --chmod=+x {path}")
+
     def test_the_spec_bundles_the_build_number(self):
         spec = self.read("pdfarranger-qt.spec")
         self.assertIn("version_build", spec)
