@@ -38,6 +38,7 @@ from PySide6.QtCore import (
     QPoint,
     QPointF,
     QRect,
+    QRectF,
     QSize,
     Qt,
     QTimer,
@@ -91,6 +92,42 @@ class PageDelegate(QStyledItemDelegate):
         w, h = self.model.thumb_size(page)
         return QSize(w + 2 * CELL_MARGIN, h + 2 * CELL_MARGIN + self._label_height(option))
 
+    def _paint_matches(self, painter, index, page, sheet):
+        """Box the search hits on the page, over the thumbnail.
+
+        The rectangles arrive in the *edited* page's own points, because the
+        search index renders the edited page list -- so crop, rotation and
+        scale are already in them and this is a plain scale into the sheet.
+        Confirmed against rotated and cropped pages, where the searched
+        document's page size matches ``Page.width_in_points()`` exactly.
+        """
+        rects = index.data(self.model.MatchRole)
+        if not rects:
+            return
+        width = page.width_in_points()
+        height = page.height_in_points()
+        if width <= 0 or height <= 0:
+            return
+        scale_x = sheet.width() / width
+        scale_y = sheet.height() / height
+
+        painter.save()
+        painter.setRenderHint(QPainter.Antialiasing, True)
+        painter.setBrush(QColor(255, 214, 0, 90))
+        painter.setPen(QPen(QColor(190, 140, 0, 200), 1))
+        for rect in rects:
+            box = QRectF(sheet.left() + rect.x() * scale_x,
+                         sheet.top() + rect.y() * scale_y,
+                         rect.width() * scale_x,
+                         rect.height() * scale_y).normalized()
+            # A hit on a small thumbnail can round to nothing; keep it visible.
+            if box.width() < 2:
+                box.setWidth(2)
+            if box.height() < 2:
+                box.setHeight(2)
+            painter.drawRect(box)
+        painter.restore()
+
     def paint(self, painter: QPainter, option, index: QModelIndex):
         page = index.data(self.model.PageRole)
         if page is None:
@@ -126,6 +163,8 @@ class PageDelegate(QStyledItemDelegate):
             # broken while the render thread catches up.
             painter.setPen(QPen(QColor(0, 0, 0, 25), 1))
             painter.drawLine(sheet.topLeft(), sheet.bottomRight())
+
+        self._paint_matches(painter, index, page, sheet)
 
         painter.setPen(QPen(QColor(0, 0, 0, 90), 1))
         painter.drawRect(sheet.adjusted(0, 0, -1, -1))

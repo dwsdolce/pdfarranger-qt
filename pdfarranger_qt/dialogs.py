@@ -865,6 +865,12 @@ def help_sections():
             _("With pages selected, all three fit the selection rather than "
               "the whole document."),
         ]),
+        (_("Finding text"), [
+            _("<b>Find</b> selects the pages that contain the phrase and boxes "
+              "each hit on the thumbnail, so you can see where on the page it "
+              "is. The boxes clear as soon as you change the document, since "
+              "the pages they were drawn for may have moved."),
+        ]),
         (_("Keyboard shortcuts"), [
             _("Every shortcut can be changed in "
               "<b>Edit ▸ Preferences ▸ Keyboard shortcuts</b>, where they are "

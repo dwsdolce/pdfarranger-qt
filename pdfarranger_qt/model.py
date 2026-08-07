@@ -105,6 +105,8 @@ class PageListModel(QAbstractListModel):
 
     PageRole = Qt.UserRole + 1
     ImageRole = Qt.UserRole + 2
+    #: Search hits on this page, as rectangles in the page's own points.
+    MatchRole = Qt.UserRole + 3
 
     #: Emitted whenever the page list changes in a way that affects the title
     #: bar or the status bar (count, modified flag).
@@ -122,7 +124,31 @@ class PageListModel(QAbstractListModel):
         self.selection_provider = lambda: []
         self.selection_setter = lambda rows: None
         self._key_rows = {}
+        #: {row: [QRectF]} for the current search, in page points. Empty when
+        #: nothing is being searched for.
+        self._matches = {}
         self.renderer.ready.connect(self._on_thumbnail_ready)
+
+    # -- search highlighting -----------------------------------------------
+
+    def set_matches(self, matches):
+        """Set the search hits to draw, as ``{row: [QRectF in page points]}``.
+
+        Rows outside the current page list are ignored rather than rejected: a
+        search result can outlive the edit that shortened the document.
+        """
+        rows = set(self._matches) | set(matches or {})
+        self._matches = {row: list(rects)
+                         for row, rects in (matches or {}).items()
+                         if 0 <= row < len(self.pages) and rects}
+        for row in rows:
+            if 0 <= row < len(self.pages):
+                index = self.index(row, 0)
+                self.dataChanged.emit(index, index, [self.MatchRole])
+
+    def clear_matches(self):
+        if self._matches:
+            self.set_matches({})
 
     # -- Qt model interface ------------------------------------------------
 
@@ -137,6 +163,8 @@ class PageListModel(QAbstractListModel):
             return page
         if role == self.ImageRole:
             return self.renderer.get(page.render_key(self.thumb_width(page)))
+        if role == self.MatchRole:
+            return self._matches.get(index.row())
         if role == Qt.DisplayRole:
             return page.description
         if role == Qt.ToolTipRole:

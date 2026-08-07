@@ -54,6 +54,7 @@ editing.
 - Split view: thumbnail grid alongside a full-page preview of the selection — *todo, phase 7*
 - Dual-pane merging: two documents side by side, drag pages across — *todo, phase 7*
 - Visible undo history rather than blind Ctrl-Z — *todo, phase 7*
+- Editing bookmarks at all, which upstream cannot do — *todo, phase 7*
 - Read mode: continuous-scroll page view with outline and go-to-page — **done**
 
 ---
@@ -287,7 +288,7 @@ Preferences are stored in `QSettings` under the keys in `dialogs.PREFERENCES`;
 rebound shortcuts live under `shortcuts/<action name>` and are reapplied at
 startup by `_restore_shortcuts()`.
 
-### Phase 4 — remaining parity gaps — *one item left*
+### Phase 4 — remaining parity gaps — **complete**
 
 Everything upstream's menu offers that this does not. Found by diffing the GTK
 `data/menu.ui` (recovered from `git log`) against `MainWindow._shortcut_groups()`:
@@ -295,13 +296,24 @@ Everything upstream's menu offers that this does not. Found by diffing the GTK
 action that does exist. Small, and unglamorous, but this is the list that decides
 whether someone can switch.
 
-- [ ] **Highlight search matches inside the thumbnail.** Find selects the
+- [x] **Highlight search matches inside the thumbnail.** Find selected the
       matching *pages*; upstream draws rectangles around the hits
-      (`show_find_results` → "Draw rectangles around found text"). `PageDelegate`
-      needs per-match geometry from `QPdfSearchModel` via `QPdfLink.rectangles()`,
-      mapped through the same crop and rotation the thumbnail already applies.
-      Phase 6 gets in-place highlighting free from `QPdfView.setSearchModel()`,
-      but that does not replace this: the grid is where multi-page results are read
+      (`show_find_results` → "Draw rectangles around found text").
+      `SearchIndex.rectangles(row)` returns them and `PageDelegate` boxes them
+      over the thumbnail.
+
+      **Far easier than this entry predicted**, and worth recording why. The
+      note assumed the rectangles would have to be mapped through the crop and
+      rotation the thumbnail applies. They do not: `SearchIndex` builds its
+      document with `get_in_memory_pdf`, so it searches the **edited** pages —
+      measured, `pagePointSize` equals `Page.width_in_points()` under rotation
+      and cropping alike, and the rectangles move with the page. The delegate
+      only scales points to pixels. The one catch is that a rotated hit comes
+      back with **negative** width and height, so the rectangles are normalised
+      before anyone tries to draw them.
+
+      Highlights are dropped on any edit: rows move when pages do, and a stale
+      box drawn in the right place on the wrong page is worse than none.
 - [x] **New Window** — `QProcess.startDetached` on the interpreter (or the frozen
       exe), *not* a second `MainWindow`: the app is `NON_UNIQUE` by design (§8),
       and two windows in one process would share the temp directory and the
@@ -440,6 +452,32 @@ close/reopen. `tests/test_reader.py`.
 - [ ] Split view with full-page preview
 - [ ] Dual-pane merging
 - [ ] Visible undo history
+- [ ] **Edit bookmarks — create, delete, rename, re-target, re-nest.** Upstream
+      has none of this: its `exporter_outlines.py` only *preserves* an outline
+      through an export, and neither its menu nor its window has a single
+      bookmark command. Nothing to port, so this is new work.
+
+      **The architectural catch.** The outline is not part of the document
+      model. A `Page` is a reference plus geometry, and the outline is *derived*
+      at export time by `rebuild_outlines()` reading it back out of the source
+      files. There is nowhere to put an edit. Making bookmarks editable means
+      the document owning an outline tree of its own — built on open, carried
+      through every page edit, and written on save *instead of* being rebuilt
+      from source. That is a second model beside the page list, with its own
+      undo entries, and it has to survive operations that move the pages it
+      points at. Reordering, deleting and duplicating pages all have to drag
+      the bookmarks along, which is exactly the remapping `OutlineRemapper`
+      does today at export — it would have to happen continuously instead.
+
+      Read mode already renders the outline in a `QTreeView`
+      (`ReaderView.outline`), which is the obvious place to edit it: rename in
+      place, drag to re-nest, delete, and "add a bookmark here" from the page
+      view. The tree widget is done; the model underneath it is the work.
+
+      Worth doing after the phase 4 highlighting item, which pushes on the same
+      geometry, and worth its own decision entry when it is picked up: whether
+      an edited outline survives a page edit that deletes its target, and
+      whether a bookmark is undoable separately from the pages.
 
 ---
 

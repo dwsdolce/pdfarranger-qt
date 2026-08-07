@@ -121,6 +121,9 @@ class MainWindow(QMainWindow):
         # Any edit invalidates the search index, which is built from
         # a render of the *edited* document.
         self.model.contents_changed.connect(self.search.invalidate)
+        # Rows move when pages do, so the highlights are stale the moment the
+        # document changes. Drop them rather than draw them in the wrong place.
+        self.model.contents_changed.connect(self.model.clear_matches)
         # The reader shows a snapshot of the page list, so an edit dates it.
         self.model.contents_changed.connect(self._invalidate_reader)
 
@@ -1614,8 +1617,10 @@ class MainWindow(QMainWindow):
         finally:
             QApplication.restoreOverrideCursor()
         count = len(matches)
-        # QPdfView highlights the hits itself, so the reader only needs
-        # the phrase; it keeps its own model over its own document.
+        # The grid draws the hits itself, from rectangles in the edited page's
+        # own points; the reader only needs the phrase, because QPdfView does
+        # its own highlighting over its own document.
+        self.model.set_matches({row: self.search.rectangles(row) for row in matches})
         self.reader.search(phrase)
         self.statusBar().showMessage(
             ngettext("%d page matches", "%d pages match", count) % count, 5000)

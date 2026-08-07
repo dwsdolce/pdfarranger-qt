@@ -92,6 +92,27 @@ class SearchIndex:
     def matches(self) -> List[int]:
         return list(self._pages)
 
+    def rectangles(self, row: int) -> List["QRectF"]:
+        """Where the hits are on one page, in that page's own points.
+
+        The index is built from ``get_in_memory_pdf``, so its pages are the
+        *edited* ones: crop, rotation and scale are already applied, and a
+        rectangle needs no transforming beyond a scale into thumbnail pixels.
+        Verified against rotated and cropped pages, where `pagePointSize`
+        matches `Page.width_in_points()` exactly.
+
+        Rotation gives back negative widths and heights, so the rectangles are
+        normalised before anyone tries to draw them.
+        """
+        if self._model is None or self._doc is None:
+            return []
+        if not 0 <= row < self._doc.page_count():
+            return []
+        out = []
+        for link in self._model.resultsOnPage(row):
+            out.extend(rect.normalized() for rect in link.rectangles())
+        return out
+
     def next(self) -> Optional[int]:
         """Row of the next matching page, wrapping around."""
         if not self._pages:
