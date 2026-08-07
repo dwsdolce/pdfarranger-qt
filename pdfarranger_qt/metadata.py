@@ -23,10 +23,6 @@ import json
 import traceback
 from datetime import datetime
 from dateutil import parser
-import gi
-gi.require_version('Gtk', '3.0')
-from gi.repository import Gtk
-from gi.repository import Pango
 _ = gettext.gettext
 
 # The producer property can be overridden by pikepdf
@@ -149,108 +145,4 @@ def _strtometa(value, name):
         return value
 
 
-class _EditedEventHandler(object):
-    """
-    Callbacks to save the data entered into the "Edit properties" fields.
 
-    For basic saving just the edited method would be needed. The rest is a
-    workaround for Gtk interpreting a lost focus (including clicking "Apply")
-    as a cancelled edit and therefore discarding the edit currently in progress.
-    To avoid that, we need to save the text on each changed event to
-    self.new_text and then save it to the liststore on canceled. We can not
-    save it directly to the liststore since that stops editing after each
-    keypress.
-    """
-
-    def __init__(self, liststore):
-        self.liststore = liststore
-        self.path = None
-        self.new_text = None
-
-    def started(self, _renderer, editable, path):
-        self.path = path
-        editable.connect("changed", self.editable_changed)
-
-    def editable_changed(self, editable):
-        self.new_text = editable.get_text()
-
-    @staticmethod
-    def _parse_date(string, parent):
-        try:
-            date = parser.parse(string)
-            return datetime.isoformat(date) # ISO-8601 formatted date
-        except ValueError:
-            if string:
-                msg = _('Invalid date format. Input discarded.')
-                d = Gtk.MessageDialog(parent=parent,
-                                      flags=Gtk.DialogFlags.MODAL,
-                                      type=Gtk.MessageType.ERROR,
-                                      buttons=Gtk.ButtonsType.OK,
-                                      message_format=msg)
-                d.run()
-                d.destroy()
-            return ''
-
-    def edited(self, _renderer, path, new_text, parent):
-        date_labels = [_LABELS[l] for l in [_CREATED, _MODIFIED]]
-        if self.liststore[path][0] in date_labels:
-            new_text = self._parse_date(new_text, parent)
-        self.liststore[path][1] = new_text
-
-    def canceled(self, _renderer):
-        if self.new_text is not None:
-            self.liststore[self.path][1] = self.new_text
-
-
-def edit(metadata, pdffiles, parent):
-    """
-    Edit the current meta data
-
-    :param metadata: The dictionary of meta data to modify
-    :param pdffiles: A list of PDF from witch to take the initial meta data
-    :param parent: The parent window
-    """
-    dialog = Gtk.Dialog(title=_('Edit properties'),
-                        parent=parent,
-                        flags=Gtk.DialogFlags.MODAL,
-                        buttons=(_("_Cancel"), Gtk.ResponseType.CANCEL,
-                                 _("_OK"), Gtk.ResponseType.OK))
-    ok_button = dialog.get_widget_for_response(response_id = Gtk.ResponseType.OK)
-    ok_button.grab_focus()
-    # Property, Value, XMP name (hidden)
-    liststore = Gtk.ListStore(str, str, str)
-    mergedmetadata = merge(metadata, pdffiles)
-    for xlabel, label in _LABELS.items():
-        metastr = _metatostr(mergedmetadata.get(xlabel, ''), xlabel)
-        liststore.append([label, metastr, xlabel])
-    treeview = Gtk.TreeView.new_with_model(liststore)
-    for i, v in enumerate([(_("Property"), False), (_("Value")+" "*30, True)]):
-        title, editable = v
-        renderer = Gtk.CellRendererText()
-        if editable:
-            renderer.props.ellipsize = Pango.EllipsizeMode.END
-            renderer.props.width_chars = 50
-            renderer.set_property("editable", True)
-            handler = _EditedEventHandler(liststore)
-            renderer.connect("editing-started", handler.started)
-            renderer.connect("edited", handler.edited, parent)
-            renderer.connect("editing-canceled", handler.canceled)
-        column = Gtk.TreeViewColumn(title, renderer, text=i)
-        treeview.append_column(column)
-    treeview.props.margin = 12
-    treeview.set_enable_search(False)
-    treeview.set_cursor(Gtk.TreePath(0), treeview.get_column(1), True)
-    dialog.vbox.pack_start(treeview, True, True, 0)
-    dialog.show_all()
-    result = dialog.run()
-    r = result == Gtk.ResponseType.OK
-    dialog.destroy()
-    if r:
-        for row in liststore:
-            # Capture invalid input when the emission of the edited signal is
-            # bypassed by pressing OK while editing.
-            if row[2] in [_CREATED, _MODIFIED]:
-                row[1] = handler._parse_date(row[1], parent)
-
-            metadata[row[2]] = _strtometa(row[1], row[2])
-    return r

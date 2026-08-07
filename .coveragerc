@@ -1,2 +1,0 @@
-# Empty file just to avoid a crash in coverage with
-# --concurrency=multiprocessing

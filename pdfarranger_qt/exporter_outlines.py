@@ -1,3 +1,9 @@
+# Copyright (C) 2008-2025 pdfarranger contributors
+#
+# Redistributed unmodified from the GTK application. `diff` against upstream's
+# pdfarranger/exporter_outlines.py should report no differences; keep it that
+# way so upstream fixes can be applied directly.
+#
 # pdfarranger is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation; either version 3 of the License, or

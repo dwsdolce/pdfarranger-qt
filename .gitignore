@@ -1,5 +1,26 @@
-__pycache__
+# Virtual environments. Both spellings: the rule used to be `venv/` only, which
+# silently failed to cover the `.venv/` this project actually uses.
 venv/
-tests/exporter/out.pdf
+.venv/
+env/
+.env/
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+dist/
+
+# Build output, including compiled translation catalogues (tools/build_mo.py)
 build/
-pdfarranger.egg-info/
+
+# Test and tool caches
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+
+# Test artefacts
+tests/exporter/out.pdf

@@ -1,129 +1,116 @@
-## About
+<p align="center">
+  <img src="data/icons/hicolor/scalable/apps/com.github.jeromerobert.pdfarranger.svg" width="120" alt="PDF Arranger Qt icon">
+</p>
 
-[![CodeQL](https://github.com/pdfarranger/pdfarranger/workflows/CodeQL/badge.svg)](https://github.com/pdfarranger/pdfarranger/actions?query=workflow%3ACodeQL "Code quality workflow status")
-[![Codacy Badge](https://app.codacy.com/project/badge/Grade/1be9c9a69f3a44b79612cc5b2887c0f7)](https://app.codacy.com/gh/pdfarranger/pdfarranger/dashboard)
-[![pdfarranger](https://github.com/pdfarranger/pdfarranger/workflows/pdfarranger/badge.svg)](https://github.com/pdfarranger/pdfarranger/actions?query=workflow%3Apdfarranger+branch%3Amain)
-[![codecov](https://codecov.io/gh/pdfarranger/pdfarranger/branch/main/graph/badge.svg)](https://codecov.io/gh/pdfarranger/pdfarranger)
+<h1 align="center">PDF Arranger Qt</h1>
 
-*PDF Arranger* is a small python-gtk application, which helps the user to merge
-or split PDF documents and rotate, crop and rearrange their pages using an
-interactive and intuitive graphical interface. It is a front end for
-[pikepdf](https://github.com/pikepdf/pikepdf).
+<p align="center">
+  <b>Open a PDF, rearrange it, and save once — merge, split, reorder, rotate, crop and impose pages against a live thumbnail grid.</b>
+</p>
 
-*PDF Arranger* is a fork of Konstantinos Poulios’s PDF-Shuffler
-(see [Savannah](https://savannah.nongnu.org/projects/pdfshuffler) or
-[Sourceforge](http://sourceforge.net/projects/pdfshuffler)).
-It’s a humble attempt to make the project a bit more active.
+---
 
-For more info see [User Manual](https://github.com/pdfarranger/pdfarranger/wiki/User-Manual).
+PDF Arranger Qt opens one or more PDFs as a single working document and lets you edit it as a
+whole: drag pages into order, rotate and crop them, split a page into tiles, lay one page
+over another, build a folded booklet, then write the result out once. Every change is made
+against an in-memory model with undo — nothing touches disk until you save.
 
-![screenshot of PDF Arranger](https://github.com/pdfarranger/pdfarranger/raw/main/data/screenshot.png)
+It is a **PySide6/Qt port** of [PDF Arranger](https://github.com/pdfarranger/pdfarranger),
+which is itself derived from PDF-Shuffler. The PDF work is done by
+[pikepdf](https://github.com/pikepdf/pikepdf); page rendering uses Qt's own PDFium-based
+`QtPdf`. Page *content* is never rewritten — only page order, geometry and composition.
 
-## Downloads
+## Features
 
-| [PDF Arranger for Windows](https://github.com/pdfarranger/pdfarranger/releases) | <a href='https://flathub.org/apps/details/com.github.jeromerobert.pdfarranger'><img width='120' alt='Download on Flathub' src='https://flathub.org/assets/badges/flathub-badge-en.svg'/></a> | <a href="https://snapcraft.io/pdfarranger"><img width='120' alt="Get it from the Snap Store" src="https://snapcraft.io/static/images/badges/en/snap-store-black.svg" /></a> | [More…](https://github.com/pdfarranger/pdfarranger/wiki/Binary-packages) |
-| --------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------- | ------------------------------------------------------------------------- |
+- **Arrange** — drag to reorder within the window or between running copies, with an
+  insertion caret; ctrl-drag to copy. Reverse a range, swap odd and even pages.
+- **Combine** — open several files as one document, import more at any point, paste pages
+  as odd or even to interleave two single-sided scans back together.
+- **Transform** — rotate, crop margins, hide margins, resize to any paper size, and trim
+  white borders automatically.
+- **Compose** — split a page into a grid, merge one page onto another as an overlay or
+  underlay, generate a folded booklet (imposition) or take one apart.
+- **Export** — save to one file or one file per page, to PNG or JPEG, or to a rasterised
+  PDF. Print, with a resolution setting. Edit document properties.
+- **Find** text across the document; extract a page's text or embedded image.
+- Asynchronous thumbnail rendering with an LRU cache, so large documents stay responsive.
+- Native light/dark theme, and every keyboard shortcut is rebindable.
 
+## Running from source
 
-### Linux and BSD packages
+### 1. Prerequisites
 
-[![Linux packages](https://repology.org/badge/vertical-allrepos/pdfarranger.svg?columns=4&exclude_unsupported=1)](https://repology.org/project/pdfarranger/versions)
+- Install Python 3.14 or later from <https://www.python.org/>.
+- Clone the repository:
+  - `git clone https://github.com/dwsdolce/pdfarranger-qt`
+  - `cd pdfarranger-qt`
 
-## Install from source
+### 2. System dependencies
 
-*PDF Arranger* requires [pikepdf](https://github.com/pikepdf/pikepdf) >= 6.
-Pip will automatically install the latest pikepdf if there is no pikepdf installed on the system.
+None. Qt, pikepdf and img2pdf all ship as wheels — there is no GTK, no PyGObject, no
+poppler and no system package to install on any platform.
 
-**On Debian-based distributions**
+### 3. Create a virtual environment (recommended)
 
-```
-sudo apt-get install python3-pip python3-wheel python3-gi python3-gi-cairo \
-    gir1.2-gtk-3.0 gir1.2-poppler-0.18 gir1.2-handy-1 python3-setuptools \
-    gettext python3-dateutil python3-venv
-```
+- `python3.14 -m venv .venv`
+- Activate it:
+  - Linux/macOS: `source .venv/bin/activate`
+  - Windows (PowerShell): `.\.venv\Scripts\Activate.ps1`
+  - Windows (Git Bash): `source .venv/Scripts/activate` (note `Scripts`, not `bin`)
 
-**On Arch Linux**
+### 4. Install the project
 
-```
-sudo pacman -S poppler-glib python-pip python-gobject gtk3 python-cairo libhandy
-```
+All dependencies are declared in [pyproject.toml](pyproject.toml).
 
-**On Fedora**
+- Run-only install: `pip install -e .`
+- Developer install (adds pytest and ruff): `pip install -e ".[dev]"`
 
-```
-sudo dnf install poppler-glib python3-pip python3-gobject gtk3 python3-cairo \
-    python3-wheel python3-pikepdf python3-img2pdf python3-dateutil libhandy
-```
+### 5. Launch
 
-**On FreeBSD**
+- `python -m pdfarranger_qt` — or `pdfarranger-qt` once installed
+- Optionally with files: `python -m pdfarranger_qt one.pdf two.pdf`
 
-```
-sudo pkg install devel/gettext devel/py-gobject3 devel/py-pip \
-    graphics/poppler-glib textproc/py-pikepdf x11-toolkits/gtk30 \
-    x11-toolkits/libhandy
-```
+## Testing
 
-**Install PDF Arranger in a virtual environment**
-
-Create a virtual environment in `/home/user/myenv`
-```
-python3 -m venv --system-site-packages ~/myenv
-```
-
-Install PDF Arranger
-
-```
-~/myenv/bin/pip3 install --upgrade https://github.com/pdfarranger/pdfarranger/zipball/main
-```
-
-Optionally create a symlink so that the app can be started from anywhere in a terminal with `pdfarranger`
-
-```
-sudo ln -s ~/myenv/bin/pdfarranger /usr/local/bin/pdfarranger
+```bash
+pytest tests/test_qt.py
 ```
 
-In addition, *PDF Arranger* supports image file import if [img2pdf](https://gitlab.mister-muffin.de/josch/img2pdf) is installed.
+The suite drives a real Qt application under the **offscreen** platform, so it exercises
+the render thread, the item model and the export path rather than mocking them. A couple
+of colour-scheme assertions need a real windowing system and skip by default; run them
+with:
 
-## For developers
-
-```
-git clone https://github.com/pdfarranger/pdfarranger.git
-cd pdfarranger
-./setup.py build
-python3 -m pdfarranger
+```bash
+QT_QPA_PLATFORM=windows pytest tests/test_qt.py -k Theme
 ```
 
-For testing see [TESTING.md](TESTING.md).
+Modal message boxes are replaced with recorders during the run — under the offscreen
+platform a single unexpected dialog would otherwise block the whole suite instead of
+failing one test.
 
-For Windows see [Win32.md](Win32.md).
+## Documentation
 
-For macOS see [macOS.md](macOS.md).
+**Help ▸ User Guide** inside the application covers the page operations, the mouse
+gestures and where settings are kept.
 
+[PORTING-NOTES.md](PORTING-NOTES.md) is the project document for the port: the decisions
+and why they were made, the menu design, a phase-by-phase tracker, and the implementation
+traps worth knowing about.
 
-## For translators
+## Configuration
 
-Translations are located in the following files:
+Settings are stored through `QSettings` in the per-user location for the platform — on
+Windows, the registry under `HKEY_CURRENT_USER\Software\pdfarranger`. That scope is
+deliberately unchanged from before the rename (decision D1): moving it would orphan
+saved window geometry, zoom and shortcuts. There is no
+configuration file to edit by hand; everything, including keyboard shortcuts, is in
+**Edit ▸ Preferences**.
 
-*   [`po`](po)`/LANG.po` for interface translation strings
-*   [data/com.github.jeromerobert.pdfarranger.metainfo.xml](data/com.github.jeromerobert.pdfarranger.metainfo.xml) for repository integration
-*   [data/com.github.jeromerobert.pdfarranger.desktop](data/com.github.jeromerobert.pdfarranger.desktop) for desktop integration
-*   [config.py](pdfarranger/config.py) `LANGUAGE_NAMES` for native language name in preferences drop-down list
+## License
 
-If you are not comfortable working with git, **you may edit translations directly from Github's web interface**. However, in the normal case
-you would contribute translations by following these steps:
+PDF Arranger Qt is free software, licensed under the GNU General Public License version 3 or
+later — see [COPYING](COPYING).
 
-*   Download the main branch (see [For developers](#for-developers))
-*   Checkout a new branch to save your changes: `git checkout -b update-translation-LANG`
-*   Run `po/updatepo.sh LANG`, where `LANG` is the locale you'd like to update
-*   Update your translations in `po/LANG.po` file, and commit them; do not commit changes to `po/pdfarranger.pot` which may have been
-    automatically regenerated
-*   If possible, test your translation to see it in context (see [For developers](#for-developers))
-*   Create a new pull request with your changes to the main branch
-
-If you are editing mnemonics accelerators (letters preceded by an underscore), here are some additional guidelines. However, if you have no idea what this means, don't worry about it.
-Try to follow these rules by priority order:
-
-*   be consistent with other GTK/GNOME software
-*   pick a unique letter **within that given menu** if possible
-*   pick the same letter as the original string if available
-*   pick a strong letter (e.g. in "Search and replace" rather pick `s`, `r` or `p` than `a`)
+Copyright © 2008–2017 Konstantinos Poulios, 2018–2025 Jerome Robert and contributors,
+2026 David Smith.
