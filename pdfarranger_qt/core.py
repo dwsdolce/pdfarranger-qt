@@ -761,5 +761,13 @@ class DocumentSet:
         """
         return [(d.copyname, d.password) for d in self.docs]
 
+    def source_names(self) -> List[str]:
+        """Original basenames, indexed by ``nfile - 1``.
+
+        Only the name, not the path: it exists to match the `/F` of a `/GoToR`
+        link, which is relative to wherever the file used to live.
+        """
+        return [d.basename or "" for d in self.docs]
+
     def uri(self, nfile: int) -> str:
         return pathlib.Path(self.docs[nfile - 1].copyname).as_uri()

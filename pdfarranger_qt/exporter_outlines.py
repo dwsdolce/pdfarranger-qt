@@ -23,6 +23,45 @@
 import warnings
 import pikepdf
 import decimal
+import os
+
+
+def external_target(action, source_names):
+    """(file index, page number, dest array) for a repairable `/GoToR`.
+
+    ``source_names`` is the basename of each document being exported, indexed
+    the same way as ``pdf_input``. Matching is on the basename alone and case
+    insensitive: the path in `/F` is relative to wherever the file used to sit,
+    which is not where it sits now.
+
+    Returns None when the action is not a remote jump, names a file that is not
+    part of this export, or carries no usable page number.
+    """
+    if action is None or not source_names:
+        return None
+    if action.get(pikepdf.Name.S) != pikepdf.Name.GoToR:
+        return None
+    spec = action.get(pikepdf.Name.F)
+    name = None
+    if isinstance(spec, pikepdf.Dictionary):
+        name = spec.get(pikepdf.Name.UF) or spec.get(pikepdf.Name.F)
+    elif spec is not None:
+        name = spec
+    if name is None:
+        return None
+    wanted = os.path.basename(str(name).replace("\\", "/")).casefold()
+    for idx, candidate in enumerate(source_names):
+        if candidate and os.path.basename(candidate).casefold() == wanted:
+            break
+    else:
+        return None
+    dest = action.get(pikepdf.Name.D)
+    if not isinstance(dest, pikepdf.Array) or len(dest) < 2:
+        return None
+    page = dest[0]
+    if not isinstance(page, (int, decimal.Decimal, float)):
+        return None
+    return idx, int(page), dest
 
 
 class OutlineRemapper:
@@ -103,6 +142,30 @@ class OutlineRemapper:
             dest_array, target_page_obj, file_idx, scale, original_name
         )
 
+    def remap_external_destination(self, target_file_idx, page_number, dest_array):
+        """Turn a `/GoToR` destination into an in-document one.
+
+        A remote destination names a *file* and gives a bare integer page index
+        into it, rather than pointing at a page object. When that file is one
+        of the documents being merged, the page it means is now in the output
+        and the link can be repaired -- which is the whole point: publishers
+        ship a book as one PDF per chapter, each carrying the complete outline
+        with every other chapter as a remote link, so a naive merge leaves
+        thousands of links pointing at files that are no longer beside it.
+
+        Returns None when that page was not included in the output, leaving the
+        caller to keep the remote link or drop the destination.
+        """
+        target_out_idx = self.page_index_map.get((target_file_idx, page_number, 0))
+        if target_out_idx is None:
+            return None
+        target_page_obj = self.pdf_output.pages[target_out_idx].obj
+        row = self.pages[target_out_idx]
+        scale = getattr(row, "scale", 1.0)
+        return self._new_dest_array(
+            dest_array, target_page_obj, target_file_idx, scale, None
+        )
+
     def _new_dest_array(
         self, dest_array, target_page_obj, file_idx, scale, original_name
     ):
@@ -141,12 +204,15 @@ class OutlineRemapper:
 class OutlineCopier:
     """Copy outline items from a source PDF, remapping destinations."""
 
-    def __init__(self, remapper, file_idx, source_pdf, pdf_output):
+    def __init__(self, remapper, file_idx, source_pdf, pdf_output,
+                 source_names=None):
         """Initialize with a remapper and the source file index."""
         self.remapper = remapper
         self.file_idx = file_idx
         self.source_pdf = source_pdf
         self.pdf_output = pdf_output
+        #: Basenames of the documents in this export, for repairing `/GoToR`.
+        self.source_names = source_names or []
 
     def _get_mapped_dest(self, source_item):
         """Extract and remap the destination from a source outline item."""
@@ -156,6 +222,13 @@ class OutlineCopier:
                 dest = source_item.action.get(pikepdf.Name.D)
         if dest is not None:
             return self.remapper.remap_destination(self.file_idx, dest)
+        # A link into another file that is *also* being exported points at a
+        # page we now own, so it can be made local.
+        external = external_target(source_item.action, self.source_names)
+        if external is not None:
+            target_idx, page_number, dest_array = external
+            return self.remapper.remap_external_destination(
+                target_idx, page_number, dest_array)
         return None
 
     @staticmethod
@@ -204,12 +277,19 @@ class OutlineCopier:
         final_dest = node["destination"]
 
         # 1. Instantiate the temporary OutlineItem object
+        copied = self.pdf_output.copy_foreign(
+            self.source_pdf.make_indirect(source_item.obj)
+        )
+        if final_dest is not None and pikepdf.Name.A in copied:
+            # pikepdf writes the resolved destination to /Dest. A surviving /A
+            # takes precedence in most readers, so a repaired cross-file link
+            # would still send them to the file it used to point at.
+            del copied[pikepdf.Name.A]
+
         new_item = pikepdf.OutlineItem(
             title=source_item.title,
             destination=final_dest,
-            obj=self.pdf_output.copy_foreign(
-                self.source_pdf.make_indirect(source_item.obj)
-            ),
+            obj=copied,
         )
 
         new_item.is_closed = (
@@ -230,7 +310,7 @@ class OutlineCopier:
             self._insert_tree_node(node, new_parent_list)
 
 
-def remap_link_annotations(pdf_input, pdf_output, pages):
+def remap_link_annotations(pdf_input, pdf_output, pages, source_names=None):
     """Point copied link annotations back at pages in the output document.
 
     `_copy_n_transform` copies each page's `/Annots` along with the page, but a
@@ -278,6 +358,19 @@ def remap_link_annotations(pdf_input, pdf_output, pages):
             action = source_annot.get(pikepdf.Name.A)
             in_action = False
             dest = source_annot.get(pikepdf.Name.Dest)
+            external = external_target(action, source_names)
+            if external is not None:
+                # A link into a file that is also part of this export.
+                target_idx, page_number, dest_array = external
+                new_dest = remapper.remap_external_destination(
+                    target_idx, page_number, dest_array)
+                if new_dest is not None:
+                    out_annot.A = pikepdf.Dictionary(
+                        S=pikepdf.Name.GoTo, D=new_dest)
+                    if pikepdf.Name.Dest in out_annot:
+                        del out_annot[pikepdf.Name.Dest]
+                    remapped += 1
+                continue
             if dest is None and action is not None:
                 if action.get(pikepdf.Name.S) != pikepdf.Name.GoTo:
                     continue          # external: nothing of ours to fix
@@ -312,6 +405,65 @@ def remap_link_annotations(pdf_input, pdf_output, pages):
     return remapped, dropped
 
 
+def deduplicate_outlines(pdf):
+    """Drop top-level bookmark subtrees that repeat one already kept.
+
+    A book shipped as one PDF per chapter puts the *complete* outline in every
+    file, so merging 45 chapters yields 45 copies of the same tree. Once
+    `/GoToR` links have been repaired the copies become genuinely identical --
+    same titles, same nesting, same destination pages -- and all but the first
+    are noise.
+
+    Only exact matches are removed. A subtree is compared on its whole shape:
+    every descendant's depth, title and resolved destination page. Anything
+    that differs anywhere, however slightly, is kept, because the alternative
+    is silently deleting a bookmark that pointed somewhere else.
+
+    Returns the number of top-level subtrees removed.
+    """
+    pages = {page.obj.objgen: n for n, page in enumerate(pdf.pages)}
+
+    def target(item):
+        dest = item.destination
+        if dest is None and item.action is not None:
+            dest = item.action.get(pikepdf.Name.D)
+        if isinstance(dest, pikepdf.Array) and len(dest):
+            first = dest[0]
+            if hasattr(first, "objgen"):
+                return pages.get(first.objgen)
+            return f"remote:{first}"
+        return None
+
+    def signature(item, depth=0):
+        parts = [(depth, str(item.title), target(item))]
+        for child in item.children:
+            parts.extend(signature(child, depth + 1))
+        return parts
+
+    with pdf.open_outline() as outline:
+        seen = set()
+        keep = []
+        for item in outline.root:
+            descendants = tuple(signature(item)[1:])
+            if descendants:
+                # Each copy's own root points at its own file's first page, so
+                # it differs between copies even when everything below is the
+                # same. The body is what identifies the tree.
+                key = ("tree", descendants)
+            else:
+                # A lone bookmark has no body to compare, so it has to match on
+                # what it says and where it goes.
+                key = ("leaf", str(item.title), target(item))
+            if key in seen:
+                continue
+            seen.add(key)
+            keep.append(item)
+        removed = len(outline.root) - len(keep)
+        if removed:
+            outline.root[:] = keep
+    return removed
+
+
 def write_named_dests(pdf, named_dests):
     """Write a list of (name, dest_array) pairs into the PDF's name tree."""
     if not named_dests:
@@ -327,7 +479,7 @@ def write_named_dests(pdf, named_dests):
         nt[name_str] = dest_array
 
 
-def rebuild_outlines(pdf_input, pdf_output, pages):
+def rebuild_outlines(pdf_input, pdf_output, pages, source_names=None):
     """Rebuild outlines in pdf_output by remapping bookmarks from pdf_input."""
     remapper = OutlineRemapper(pdf_input, pdf_output, pages)
     # preserve first-appearance order of source files, deduplicated
@@ -339,7 +491,8 @@ def rebuild_outlines(pdf_input, pdf_output, pages):
                 continue
             try:
                 with source_pdf.open_outline() as source_outline:
-                    copier = OutlineCopier(remapper, file_idx, source_pdf, pdf_output)
+                    copier = OutlineCopier(remapper, file_idx, source_pdf,
+                                           pdf_output, source_names)
                     for item in source_outline.root:
                         copier.copy_item(item, new_outline.root)
             except pikepdf.PdfError as e:
@@ -348,3 +501,9 @@ def rebuild_outlines(pdf_input, pdf_output, pages):
                 )
     if remapper.new_named_dests:
         write_named_dests(pdf_output, remapper.new_named_dests)
+    if source_names and len(ordered_file_indices) > 1:
+        # Only when several documents contributed, and only for subtrees that
+        # match exactly. A book shipped one chapter per file repeats its whole
+        # outline in each; after the cross-file links above are repaired those
+        # copies are identical, and keeping 45 of them helps nobody.
+        deduplicate_outlines(pdf_output)

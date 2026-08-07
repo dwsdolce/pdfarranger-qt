@@ -922,6 +922,55 @@ links would mean recognising that a `/GoToR` target is a file being merged in
 the same operation, and is a feature, not a fix.
 
 
+### Repairing a book that was merged badly
+
+Publishers ship a book as one PDF per chapter, each carrying the **complete**
+outline with every other chapter as a `/GoToR` link into a sibling file. The
+ARRL 2021 Handbook is 45 files; `3.pdf` alone has 1 local bookmark and 402
+remote ones into 44 siblings, 12 of them back to itself. Merge that with a tool
+that does not repoint the links — Acrobat and PDF24 both leave them — and you
+get a full bookmark tree in which **nothing navigates**, because the files those
+links name are no longer beside the result.
+
+Three pieces, all of which the port now has:
+
+1. **Repair on merge.** `external_target()` reads a `/GoToR` action's `/F` and
+   integer page number; when that basename is one of the documents in this
+   export, `OutlineRemapper.remap_external_destination()` turns it into a real
+   `/GoTo` at the page it now shares a document with. It goes through the same
+   `page_index_map` as everything else, so it follows reordering and deletion
+   rather than assuming concatenation. Opt-in: the caller passes
+   `source_names`, which `DocumentSet.source_names()` supplies. A file outside
+   the merge is left remote; a page left out of the export is not guessed at.
+2. **Collapse the copies.** After repair the N copies of the outline are
+   genuinely identical, so `deduplicate_outlines()` keeps the first and drops
+   exact matches — same titles, same nesting, same destination pages. It runs
+   only when more than one document contributed. A subtree is keyed on its
+   descendants (each copy's own root points at its own file's first page, so the
+   roots differ); a lone bookmark is keyed on title and target.
+3. **Repair a merge someone else did.** `tools/repair_merged_links.py` recovers
+   where each original landed from the merged file's own top-level bookmarks —
+   merge tools name one per input file — and checks the result really is a plain
+   concatenation before touching anything. On the Handbook: 45 of 45 files
+   located, layout check clean, **18,089 links repaired**, 42 left remote because
+   they name files outside the folder. It never writes in place.
+
+> **Do not mutate an outline through `pdf.open_outline()`.** The context manager
+> rebuilds the outline from its own `OutlineItem` objects when it exits, which
+> discards edits made to the underlying dictionaries. The first version of the
+> repair tool reported 18,089 repairs and changed absolutely nothing — the
+> before-and-after check is the only reason that was caught. Walk `/Outlines`
+> by `/First` and `/Next` instead, with a visited set: a malformed `/Next` chain
+> will otherwise loop forever.
+
+> **Qt reads a `/GoToR` page number as a local page.** The `/D` array's first
+> element is an index into the *remote* file, but `QPdfBookmarkModel` treats it
+> as a page of the current document — so unrepaired remote bookmarks appear to
+> work and land on the wrong page, and every chapter's "section 1" collapses
+> onto the same one. Acrobat is the one behaving correctly by refusing to jump.
+> This is why the reader looked more broken than the file it was showing.
+
+
 ### A note on content streams
 
 Scaling and overlay *do* synthesize a content stream — they wrap the page as a Form

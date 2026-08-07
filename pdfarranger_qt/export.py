@@ -254,7 +254,8 @@ def get_max_pdf_version(pdf_list: List[pikepdf.Pdf]) -> str:
 
 
 def export_doc(pdf_input, pages, mdata, files_out, quit_flag=None,
-               test_mode=False, output_password=None, with_outlines=False):
+               test_mode=False, output_password=None, with_outlines=False,
+               source_names=None):
     """Same as export() but taking already-opened pikepdf.Pdf objects."""
     pdf_output = pikepdf.Pdf.new()
     max_version = get_max_pdf_version([pdf_output, *pdf_input])
@@ -276,12 +277,13 @@ def export_doc(pdf_input, pages, mdata, files_out, quit_flag=None,
         # Imported here to avoid a circular import with exporter_outlines
         from . import exporter_outlines
 
-        exporter_outlines.rebuild_outlines(pdf_input, pdf_output, pages)
+        exporter_outlines.rebuild_outlines(pdf_input, pdf_output, pages,
+                                           source_names)
     # Always, and regardless of outlines: a saved file whose internal links
     # all point at nothing is broken however it was produced.
     from . import exporter_outlines as _links
 
-    _links.remap_link_annotations(pdf_input, pdf_output, pages)
+    _links.remap_link_annotations(pdf_input, pdf_output, pages, source_names)
 
     if to_file:
         mdata = metadata.merge_doc(mdata, pdf_input)
@@ -335,7 +337,8 @@ def _open_inputs(files, pages) -> List[Optional[pikepdf.Pdf]]:
 
 
 def get_in_memory_pdf(pages: List[Page], files: List[Tuple[str, str]],
-                      outlines: bool = False) -> bytes:
+                      outlines: bool = False,
+                      source_names: Optional[List[str]] = None) -> bytes:
     """Render ``pages`` to a PDF in memory, with all their edits applied.
 
     Several features need to look at the *result* of the edits rather than the
@@ -349,7 +352,8 @@ def get_in_memory_pdf(pages: List[Page], files: List[Tuple[str, str]],
     pdf_input = _open_inputs(files, pages)
     buf = io.BytesIO()
     try:
-        export_doc(pdf_input, pages, {}, [buf], None, with_outlines=outlines)
+        export_doc(pdf_input, pages, {}, [buf], None, with_outlines=outlines,
+                   source_names=source_names)
     finally:
         for pdf in pdf_input:
             if pdf is not None:
@@ -509,7 +513,8 @@ def export_doc_job(pdf_input, files, pages, mdata, files_out, quit_flag=None,
 def export(files: List[Tuple[str, str]], pages: List[Page], mdata: dict,
            files_out: List[str], quit_flag=None, test_mode: bool = False,
            output_password: Optional[str] = None,
-           preserve_first_document: bool = False) -> str:
+           preserve_first_document: bool = False,
+           source_names: Optional[List[str]] = None) -> str:
     """Write ``pages`` to ``files_out``.
 
     ``files`` is the ``(copyname, password)`` list from ``DocumentSet``; a page's
@@ -536,7 +541,8 @@ def export(files: List[Tuple[str, str]], pages: List[Page], mdata: dict,
                            test_mode, output_password=output_password)
         else:
             export_doc(pdf_input, pages, mdata, files_out, quit_flag, test_mode,
-                       output_password=output_password)
+                       output_password=output_password,
+                       source_names=source_names)
     finally:
         warnings.showwarning = backup
         for pdf in pdf_input:

@@ -831,7 +831,8 @@ class MainWindow(QMainWindow):
     def _load_reader(self) -> bool:
         QApplication.setOverrideCursor(Qt.WaitCursor)
         try:
-            ok = self.reader.load(self.model.pages, self.docs.files_for_export())
+            ok = self.reader.load(self.model.pages, self.docs.files_for_export(),
+                                  self.docs.source_names())
         finally:
             QApplication.restoreOverrideCursor()
         self._reader_stale = not ok
@@ -980,6 +981,9 @@ class MainWindow(QMainWindow):
                 preserve_first_document=self.settings.value(
                     "export/preserve-first-document", False, type=bool),
                 output_password=self.output_password,
+                # Lets a link into another file being saved alongside this one
+                # be repointed at the page it now shares a document with.
+                source_names=self.docs.source_names(),
             )
         except Exception as e:  # noqa: BLE001 - surfaced to the user
             QApplication.restoreOverrideCursor()

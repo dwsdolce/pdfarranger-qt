@@ -30,6 +30,8 @@ And it belongs to the render thread, so sharing it is a data race besides.
 ``SearchIndex`` already takes the same route, so the machinery is proven.
 """
 
+import logging
+
 from typing import List, Optional
 
 from PySide6.QtCore import QModelIndex, Qt, Signal
@@ -99,15 +101,20 @@ class ReaderView(QWidget):
 
     # -- document ----------------------------------------------------------
 
-    def load(self, pages, files) -> bool:
+    def load(self, pages, files, source_names=None) -> bool:
         """Render ``pages`` to an in-memory PDF and show it (D15).
 
         Returns False if the export or the load failed, leaving whatever was
         showing in place rather than blanking the view.
         """
         try:
-            data = get_in_memory_pdf(list(pages), files, outlines=True)
+            data = get_in_memory_pdf(list(pages), files, outlines=True,
+                                     source_names=source_names)
         except Exception:  # noqa: BLE001 - reported by the caller as "cannot read"
+            # Logged, not silent. Swallowing this once turned a crash in the
+            # export path into "the reader just returns False", and 42 tests
+            # failed with an assertion that said nothing about the cause.
+            logging.getLogger(__name__).exception("could not build the reader document")
             return False
         document = MemoryDocument(data)
         if not document.ok:

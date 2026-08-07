@@ -246,3 +246,195 @@ class TestExistingBehaviourIsUnchanged(DestinationCase):
         export(docs.files_for_export(), [p.duplicate() for p in pages], {}, [out])
         self.assertEqual(len(outline_tree(out)), len(outline_tree(plain)))
         self.assertEqual(link_health(out)[1], 0)
+
+def make_chapter(directory, name, pages, links=()):
+    """A chapter file, optionally with `/GoToR` bookmarks into its siblings."""
+    pdf = pikepdf.Pdf.new()
+    for _ in range(pages):
+        pdf.add_blank_page(page_size=(612, 792))
+    items = []
+    for title, target_file, target_page in links:
+        items.append(pdf.make_indirect(pikepdf.Dictionary(
+            Title=pikepdf.String(title),
+            A=pikepdf.Dictionary(
+                S=pikepdf.Name.GoToR,
+                F=pikepdf.Dictionary(Type=pikepdf.Name.Filespec,
+                                     F=pikepdf.String(target_file),
+                                     UF=pikepdf.String(target_file)),
+                D=pikepdf.Array([target_page, pikepdf.Name.XYZ, 0, 792, 0])))))
+    if items:
+        outlines = pdf.make_indirect(pikepdf.Dictionary(Type=pikepdf.Name.Outlines))
+        for n, entry in enumerate(items):
+            entry.Parent = outlines
+            if n:
+                entry.Prev = items[n - 1]
+            if n + 1 < len(items):
+                entry.Next = items[n + 1]
+        outlines.First, outlines.Last = items[0], items[-1]
+        outlines.Count = len(items)
+        pdf.Root.Outlines = outlines
+    path = os.path.join(directory, name)
+    pdf.save(path)
+    return path
+
+
+class TestCrossFileLinksAreRepaired(unittest.TestCase):
+    """Publishers ship a book as one PDF per chapter.
+
+    Each file carries the complete outline with every other chapter as a
+    `/GoToR` link, so merging them naively leaves thousands of links pointing at
+    files that are no longer beside the result -- which is exactly what happened
+    to the ARRL 2021 Handbook before it reached this project. When the file a
+    link names is part of the same merge, the page it means is now in the
+    output and the link can be made local.
+    """
+
+    def setUp(self):
+        import tempfile
+
+        self.dir = tempfile.mkdtemp()
+        self.docs = DocumentSet()
+        self.addCleanup(self.docs.cleanup)
+
+    def merge(self, *paths, keep=None):
+        pages = []
+        for path in paths:
+            pages += self.docs.add_file(path)
+        chosen = pages if keep is None else [pages[i] for i in keep]
+        out = temp_path("merged.pdf")
+        export(self.docs.files_for_export(), [p.duplicate() for p in chosen],
+               {}, [out], source_names=self.docs.source_names())
+        return out
+
+    def bookmarks(self, path):
+        """(title, kind, output page, remote target) for each bookmark."""
+        rows = []
+        with pikepdf.open(path) as pdf:
+            index = {p.obj.objgen: n for n, p in enumerate(pdf.pages)}
+            with pdf.open_outline() as ol:
+                for entry in ol.root:
+                    action = entry.obj.get("/A")
+                    kind = str(action.get("/S")) if action is not None else "/Dest"
+                    dest = entry.destination
+                    page = (index.get(dest[0].objgen)
+                            if dest is not None and len(dest)
+                            and hasattr(dest[0], "objgen") else None)
+                    target = (str(action["/F"].get("/F"))
+                              if action is not None and "/F" in action else "")
+                    rows.append((str(entry.title), kind, page, target))
+        return rows
+
+    def test_a_link_into_a_merged_file_becomes_local(self):
+        one = make_chapter(self.dir, "chapter1.pdf", 3,
+                           [("To chapter 2", "chapter2.pdf", 1)])
+        two = make_chapter(self.dir, "chapter2.pdf", 4)
+        rows = self.bookmarks(self.merge(one, two))
+        title, kind, page, _target = rows[0]
+        self.assertEqual(title, "To chapter 2")
+        self.assertNotEqual(kind, "/GoToR", "still points at another file")
+        # Three pages of chapter 1, then chapter 2's page index 1.
+        self.assertEqual(page, 4)
+
+    def test_a_link_to_a_file_outside_the_merge_is_left_alone(self):
+        one = make_chapter(self.dir, "chapter1.pdf", 3,
+                           [("Elsewhere", "not-in-the-merge.pdf", 0)])
+        rows = self.bookmarks(self.merge(one))
+        _title, kind, _page, target = rows[0]
+        self.assertEqual(kind, "/GoToR")
+        self.assertEqual(target, "not-in-the-merge.pdf")
+
+    def test_a_self_reference_is_repaired(self):
+        """Chapters link to themselves remotely too; those resolve as well."""
+        one = make_chapter(self.dir, "chapter1.pdf", 5,
+                           [("Back to my own page 3", "chapter1.pdf", 2)])
+        rows = self.bookmarks(self.merge(one))
+        self.assertNotEqual(rows[0][1], "/GoToR")
+        self.assertEqual(rows[0][2], 2)
+
+    def test_repair_follows_reordering(self):
+        """The target page is found wherever it ended up, not by offset."""
+        one = make_chapter(self.dir, "chapter1.pdf", 2,
+                           [("To chapter 2", "chapter2.pdf", 0)])
+        two = make_chapter(self.dir, "chapter2.pdf", 2)
+        # Reversed: chapter 2's first page is now the second page of the output.
+        rows = self.bookmarks(self.merge(one, two, keep=[3, 2, 1, 0]))
+        self.assertEqual(rows[0][2], 1)
+
+    def test_a_link_to_a_page_left_out_is_not_invented(self):
+        one = make_chapter(self.dir, "chapter1.pdf", 2,
+                           [("To chapter 2 page 4", "chapter2.pdf", 3)])
+        two = make_chapter(self.dir, "chapter2.pdf", 4)
+        rows = self.bookmarks(self.merge(one, two, keep=[0, 1, 2]))
+        _title, kind, page, _target = rows[0]
+        self.assertIsNone(page, "pointed at a page that was not exported")
+        self.assertEqual(kind, "/GoToR", "should stay remote rather than guess")
+
+    def test_without_source_names_nothing_is_repaired(self):
+        """Opt-in: the caller has to say which files are in the merge."""
+        one = make_chapter(self.dir, "chapter1.pdf", 3,
+                           [("To chapter 2", "chapter2.pdf", 1)])
+        two = make_chapter(self.dir, "chapter2.pdf", 4)
+        pages = self.docs.add_file(one) + self.docs.add_file(two)
+        out = temp_path("plain.pdf")
+        export(self.docs.files_for_export(), [p.duplicate() for p in pages],
+               {}, [out])
+        self.assertEqual(self.bookmarks(out)[0][1], "/GoToR")
+
+class TestDuplicateTreesAreCollapsed(unittest.TestCase):
+    """One outline per chapter file means N copies of it after a merge.
+
+    Once the cross-file links are repaired the copies are genuinely identical,
+    and 45 of them helps nobody. Only exact matches go: same titles, same
+    nesting, same destination pages.
+    """
+
+    def setUp(self):
+        import tempfile
+
+        self.dir = tempfile.mkdtemp()
+        self.docs = DocumentSet()
+        self.addCleanup(self.docs.cleanup)
+
+    def merge(self, *paths):
+        pages = []
+        for path in paths:
+            pages += self.docs.add_file(path)
+        out = temp_path("merged.pdf")
+        export(self.docs.files_for_export(), [p.duplicate() for p in pages],
+               {}, [out], source_names=self.docs.source_names())
+        return out
+
+    def roots(self, path):
+        with pikepdf.open(path) as pdf:
+            with pdf.open_outline() as ol:
+                return [str(i.title) for i in ol.root]
+
+    def test_identical_trees_collapse_to_one(self):
+        """Both files carry the same outline, as chapter files do."""
+        shared = [("Chapter A", "one.pdf", 0), ("Chapter B", "two.pdf", 0)]
+        one = make_chapter(self.dir, "one.pdf", 2, shared)
+        two = make_chapter(self.dir, "two.pdf", 2, shared)
+        merged = self.merge(one, two)
+        titles = self.roots(merged)
+        self.assertEqual(titles, ["Chapter A", "Chapter B"],
+                         "the second file's identical copy should be gone")
+
+    def test_different_trees_are_both_kept(self):
+        one = make_chapter(self.dir, "one.pdf", 2, [("Only in one", "one.pdf", 0)])
+        two = make_chapter(self.dir, "two.pdf", 2, [("Only in two", "two.pdf", 0)])
+        titles = self.roots(self.merge(one, two))
+        self.assertIn("Only in one", titles)
+        self.assertIn("Only in two", titles)
+
+    def test_a_single_file_is_never_deduplicated(self):
+        """Nothing to compare against, and no reason to touch it."""
+        one = make_chapter(self.dir, "one.pdf", 2,
+                           [("A", "one.pdf", 0), ("A", "one.pdf", 0)])
+        self.assertEqual(self.roots(self.merge(one)), ["A", "A"])
+
+    def test_same_title_different_target_is_kept(self):
+        """Titles alone are not evidence; the destination has to match too."""
+        one = make_chapter(self.dir, "one.pdf", 3, [("Start", "one.pdf", 0)])
+        two = make_chapter(self.dir, "two.pdf", 3, [("Start", "two.pdf", 2)])
+        titles = self.roots(self.merge(one, two))
+        self.assertEqual(titles.count("Start"), 2)
