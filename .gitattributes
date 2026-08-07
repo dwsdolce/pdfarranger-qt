@@ -1,0 +1,14 @@
+# Line endings for the build scripts. Deliberately narrow rather than a blanket
+# `* text=auto`, which would renormalise every file in the repository.
+#
+# A shell script with CRLF endings fails outright on Linux and macOS: the kernel
+# reads the shebang as `/bin/bash` and reports "bad interpreter". Git on
+# Windows will happily hand out CRLF unless told otherwise.
+packaging/AppRun       text eol=lf
+packaging/build_linux  text eol=lf
+packaging/build_mac    text eol=lf
+packaging/build_win    text eol=lf
+*.sh                   text eol=lf
+
+# The Windows shells want the opposite.
+*.bat text eol=crlf

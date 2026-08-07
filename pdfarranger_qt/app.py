@@ -22,13 +22,13 @@ import sys
 
 from PySide6.QtWidgets import QApplication
 
-from . import APP_NAME, __version__
+from . import APP_NAME, __version__, __version_string__
 
 
 def main(argv=None):
     parser = argparse.ArgumentParser(prog="pdfarranger-qt", description=APP_NAME)
     parser.add_argument("files", nargs="*", help="PDF or image files to open")
-    parser.add_argument("--version", action="version", version=__version__)
+    parser.add_argument("--version", action="version", version=__version_string__)
     args = parser.parse_args(argv if argv is not None else sys.argv[1:])
 
     app = QApplication(sys.argv[:1])
@@ -39,11 +39,10 @@ def main(argv=None):
     # Translations must be installed before any widget is built: menu labels and
     # dialog text are translated once, at construction. Hence also why changing
     # the language in Preferences asks for a restart.
-    from PySide6.QtCore import QSettings
-
     from . import i18n
+    from .settings import app_settings
 
-    settings = QSettings("pdfarranger", "pdfarranger_qt")
+    settings = app_settings()
     i18n.setup(settings.value("language", "") or None)
 
     # Imported after QApplication exists so QtPdf initialises against a live

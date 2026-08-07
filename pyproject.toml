@@ -33,6 +33,11 @@ dev = [
     "pytest>=9.0",
     "pytest-cov>=7.1",
     "ruff>=0.15",
+    # Also in the packaging extra below, so CI can build without pulling in the
+    # test tooling. Here so that one `pip install -e ".[dev]"` covers everything
+    # a developer needs, including packaging/build_win.
+    "pyinstaller>=6.0",
+    "babel>=2.12",
 ]
 packaging = [
     "pyinstaller>=6.0",

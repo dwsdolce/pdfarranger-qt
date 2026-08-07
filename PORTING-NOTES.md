@@ -61,7 +61,7 @@ Settled decisions and why. Anything not here is still open.
 | D3 | Menu structure | **Settle the full mapping before building dialogs** — see §3 | 25 more actions are coming. Deciding placement once beats reshuffling a menubar twelve times. |
 | D4 | Settings store | **`QSettings`**, everything exposed in the UI | The old `config.ini` held window geometry, print settings and accelerators; Qt has native mechanisms for all three. Carrying the format forward would mean carrying `Gtk.accelerator_parse` with it. Consequence: no ini file to point users at, so Preferences must expose every setting — including shortcuts (D11). |
 | D5 | Clipboard format | **Keep upstream's serialisation byte-for-byte** | Free, and lets the Qt and GTK versions interoperate via copy/paste during the transition. Constrains `Page.serialize()`, which is already ported. |
-| D6 | Packaging / installer | **Defer until GTK is gone** | A Qt PyInstaller spec is a different beast from the GTK one; maintaining both in parallel while things churn is wasted effort. Run from the venv meanwhile. |
+| D6 | Packaging / installer | **Defer until GTK is gone** — now done | A Qt PyInstaller spec is a different beast from the GTK one; maintaining both in parallel while things churn is wasted effort. Delivered once GTK was removed: see §6 *Building installers*. |
 | D7 | Booklets | **In scope** — both generate and split | Cheaper than first assessed: built entirely from blank pages, overlay layers and `Page.split()`, all of which are already ported or already planned. Neither needs a dialog. |
 | D8 | Rendering backend | **`QPdfDocument` (PDFium)** replaces poppler-glib + cairo | Wholesale replacement, not a translation. Confirmed the old path was `Poppler.Document.new_from_file` → `cairo.ImageSurface`. |
 | D9 | Reordering | **Hand-rolled drag in `PageView`**, not Qt item-view DnD | See §6. Qt's IconMode DnD answers "dropped onto which item"; page arranging is about the gaps between items. |
@@ -130,7 +130,7 @@ Booklet ▸ (Split (unimposition) · Generate (imposition))
 **View** — Zoom In · Zoom Out · Zoom Fit · Reset Zoom ‖ Show Page Numbers\* ·
 Preview Pane\* ‖ Fullscreen
 
-**Help** — User Guide ‖ About
+**Help** — User Guide ‖ Project on GitHub · About
 
 **Arrange** is a new top-level menu with no upstream equivalent. It separates
 operations *on a page* (Page) from operations *on document order and composition*
@@ -285,6 +285,9 @@ inside the thumbnail — the delegate would need to draw match rectangles.
       Windows. `app.py` calls `i18n.setup()` *before* building any widget
 - [x] PyInstaller spec at `packaging/pdfarranger-qt.spec`, bundling the compiled
       catalogues into `share/locale`
+- [x] **Installers for all three platforms** (D6, deferred until GTK was gone):
+      `packaging/build_win` + `.bat` (Inno Setup), `build_mac` (dmg/pkg),
+      `build_linux` (AppImage). Build number stamped from `git rev-list --count`
 - [x] **GTK removed**: `pdfarranger/`, `setup.py`, `setup_win32.py`,
       `snapcraft.yaml`, `pdfarranger.spec` (an *RPM* spec, not PyInstaller),
       `doc/`, `.prospector.yaml`, and the GTK-only CI workflows
@@ -584,6 +587,86 @@ not survive the view rewrite. Upstream's `test_core.py` was retired because its
 > hook, which pytest does not implement — under pytest the hook collected
 > nothing and 24 doctests silently never ran. They are now plain test methods
 > calling `doctest.testmod`, which both runners execute.
+
+### Building installers
+
+One script per platform in `packaging/`, all four steps the same: compile the
+catalogues, stamp the build number, run PyInstaller, wrap the result. README.md
+has the commands and the prerequisites; what follows is only the reasoning.
+
+**The version is four parts, `0.1.0.1349`.** `0.1.0` is `__version__` in
+`pdfarranger_qt/__init__.py` — the single place it is written down, with
+`pyproject.toml` held to it by `tests/test_packaging.py`. `1349` is
+`git rev-list --count HEAD`, so nothing is typed by hand and the number
+identifies the commit an installer was cut from. This mirrors how the sibling
+`guitar_tap` project does it.
+
+`tools/gen_version_build.py` writes two generated, uncommitted files:
+`pdfarranger_qt/version_build` (bundled, so the frozen app can report a build
+number with no git and no `.git`) and `build/installer_version` (read by the
+`.iss`). A source checkout needs neither — `_read_build()` asks git directly,
+anchored to the package directory rather than the process cwd, because the app
+may well have been launched from the directory of the PDF being opened.
+
+> **Why the installer version comes from a file.** The obvious route is
+> `ISCC /DMyAppVersion=…`, which is what `guitar_tap` does. It cannot be made to
+> work in both Windows shells: **Git Bash rewrites any argument that looks like a
+> Unix path**, so `/DMyAppVersion=0.1.0.1349` arrives as
+> `C:\Program Files\Git\DMyAppVersion=0.1.0.1349` and ISCC reports *"You may not
+> specify more than one script filename"*. The documented `//D` escape fixes Git
+> Bash and breaks Cygwin, which passes arguments through untouched. A file is
+> read identically by both, by cmd, and by the Inno Setup IDE.
+
+`packaging/build_win` calls `.venv/Scripts/python.exe` and `pyinstaller.exe` by
+path rather than sourcing `activate`, which does not work reliably under Cygwin:
+it exports Unix-style paths the native Windows interpreter cannot read.
+
+**The PDF association is an "Open with" entry, not the default handler.** This is
+an editor, not a reader; silently taking over every PDF double-click is not a
+decision an installer should make. The `.iss` registers a ProgId and adds it to
+`.pdf\OpenWithProgids`, leaving the user's default alone.
+
+**No Developer ID is committed.** The repository is public, so macOS signing and
+notarisation read `CODESIGN_IDENTITY`, `INSTALLER_IDENTITY` and `NOTARY_PROFILE`
+from the environment and are skipped when unset. `tests/test_version.py` fails
+if an identity-shaped string ever lands in a tracked file.
+
+> **`__main__.py` must use an absolute import.** PyInstaller uses it as the entry
+> *script*, running it as a top-level module with no package context, so
+> `from .app import main` dies at startup with *"attempted relative import with
+> no known parent package"*. It passes every `python -m pdfarranger_qt` test,
+> because `-m` sets `__package__`, and then fails only in the installed
+> application. `tests/test_version.py::TestEntryPoint` reproduces the frozen
+> execution model exactly -- run the file directly with the project root on
+> `PYTHONPATH` -- and was confirmed to fail against the broken version.
+
+> **A windowed PyInstaller app does not exit when it crashes.** It shows the
+> traceback in a native message box and waits, so "the process is still alive
+> after N seconds" is not evidence that it started: a crashed build looks
+> identical to a healthy one. Check `MainWindowTitle` for the real window title
+> instead. This is how the relative-import bug above got shipped and reported
+> back rather than caught.
+
+
+> **Tests must not share the user's settings scope.** `QSettings("pdfarranger",
+> "pdfarranger_qt")` is the *installed application's* store, so a test that
+> exercises the Preferences round trip wrote `language=de` and `theme=dark`
+> straight into it, rebound Duplicate to Ctrl+Shift+K, and the recent-files
+> tests refilled a list the user had just cleared. The redirect lives in
+> `pdfarranger_qt/settings.py`, which switches to a `pdfarranger.tests`
+> organisation whenever `PYTEST_CURRENT_TEST` is set — the same pattern the
+> sibling `guitar_tap` project uses. It **cannot** be done from `conftest.py`:
+> `QSettings.setDefaultFormat` affects only the argument-less constructor, so
+> redirecting it there looks right and silently keeps writing to the registry.
+> `tests/test_settings_scope.py` writes a value through the accessor and then
+> reads the real scope to prove it did not move, and fails if any module
+> constructs `QSettings` itself instead of calling `app_settings()`.
+
+> **Test the action, not the method behind it.** `test_clear_menu_empties_it`
+> called `clear_recent()` directly, so it would have passed with the menu entry
+> wired to nothing. Where a bug report says "the menu item does nothing", the
+> test has to `trigger()` the `QAction` the user clicks.
+
 
 ### A note on content streams
 

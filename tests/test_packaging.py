@@ -18,7 +18,6 @@
 
 import os
 import unittest
-import pikepdf
 
 from support import HERE
 
@@ -51,6 +50,24 @@ class TestPackaging(unittest.TestCase):
         from pdfarranger_qt import __version__
 
         self.assertEqual(self.pyproject()["project"]["version"], __version__)
+
+    def test_pyinstaller_is_declared(self):
+        """packaging/build_win runs pyinstaller out of the dev venv."""
+        extras = self.pyproject()["project"]["optional-dependencies"]
+        for group in ("dev", "packaging"):
+            names = " ".join(extras[group]).lower()
+            self.assertIn("pyinstaller", names, f"the {group} extra cannot build")
+
+    def test_babel_is_declared(self):
+        """tools/build_mo.py imports it, and the build scripts run that first."""
+        extras = self.pyproject()["project"]["optional-dependencies"]
+        self.assertIn("babel", " ".join(extras["dev"]).lower())
+
+    def test_project_url_matches_the_package(self):
+        """Help > Project on GitHub and pyproject must point at one place."""
+        from pdfarranger_qt import PROJECT_URL
+
+        self.assertEqual(self.pyproject()["project"]["urls"]["Homepage"], PROJECT_URL)
 
     def test_the_gtk_application_is_gone(self):
         """Phase 5 removed it; nothing may quietly import it again."""

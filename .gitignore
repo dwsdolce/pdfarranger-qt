@@ -15,6 +15,13 @@ dist/
 # Build output, including compiled translation catalogues (tools/build_mo.py)
 build/
 
+# Installer output (packaging/build_win)
+installer/
+
+# Stamped from the git commit count at build time by tools/gen_version_build.py.
+# Generated rather than committed, so it can never disagree with the checkout.
+pdfarranger_qt/version_build
+
 # Test and tool caches
 .pytest_cache/
 .ruff_cache/

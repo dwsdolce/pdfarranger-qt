@@ -19,7 +19,6 @@
 import unittest
 
 from pdfarranger_qt.core import Dims, Page, Sides
-from pdfarranger_qt.export import export
 
 
 class TestPageRangeParsing(unittest.TestCase):

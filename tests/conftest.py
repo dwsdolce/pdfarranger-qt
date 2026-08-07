@@ -37,11 +37,30 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 # Must precede QApplication: Qt reads it at construction.
 os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
 
+from PySide6.QtCore import QSettings  # noqa: E402
 from PySide6.QtWidgets import QApplication, QMessageBox  # noqa: E402
+
+from pdfarranger_qt.settings import (  # noqa: E402
+    APPLICATION, ORGANISATION, TEST_SUFFIX,
+)
 
 #: The one QApplication for the whole run. Qt permits only one, and creating it
 #: lazily inside a test makes the first test that runs subtly different.
 QT_APP = QApplication.instance() or QApplication(sys.argv[:1])
+
+# Every test run starts from factory defaults.
+#
+# The redirect itself is in the application, not here: pdfarranger_qt.settings
+# .app_settings() switches to a ".tests" organisation whenever
+# PYTEST_CURRENT_TEST is set. It cannot be done from a conftest, because
+# QSettings.setDefaultFormat has no effect on the
+# QSettings(organisation, application) constructor -- an earlier attempt to
+# redirect it here looked right and silently kept writing to the real store.
+# This wipe is the part that does belong here: it has to happen once, before
+# any test builds a window.
+_isolated = QSettings(ORGANISATION + TEST_SUFFIX, APPLICATION)
+_isolated.clear()
+_isolated.sync()
 
 #: Message boxes that would have been shown, as ``(kind, title, text)``.
 #: Tests clear this and assert on it; see ``support.last_message_box``.

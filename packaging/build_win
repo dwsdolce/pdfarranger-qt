@@ -1,0 +1,111 @@
+#!/bin/bash
+#
+# Build the Windows application bundle and installer.
+#
+#   packaging/build_win
+#
+# Produces:
+#   dist/pdfarranger-qt/          the PyInstaller bundle
+#   installer/PDF_Arranger_Qt_V<version>.exe
+#
+# Runs under Cygwin or Git Bash. Requires Inno Setup 6
+# (https://jrsoftware.org/isdl.php) and a venv with the dev extra installed:
+#   pip install -e ".[dev]"
+
+# Run from the project root regardless of where this script is invoked from.
+cd "$(dirname "$0")/.."
+
+#===============================================
+# Setup the correct python environment
+#===============================================
+# The venv executables are called by path rather than through `activate`, which
+# does not work reliably under Cygwin: it exports Unix-style paths that the
+# native Windows python cannot read.
+PYTHON=".venv/Scripts/python.exe"
+PYINSTALLER=".venv/Scripts/pyinstaller.exe"
+
+if [ ! -f "$PYTHON" ]; then
+    echo "No virtual environment at .venv"
+    echo "Create one, then: pip install -e \".[dev]\""
+    exit 1
+fi
+if [ ! -f "$PYINSTALLER" ]; then
+    echo "pyinstaller is not installed in .venv"
+    echo "Run: pip install -e \".[dev]\""
+    exit 1
+fi
+
+echo "Running build for $(uname -m) architecture"
+
+#===============================================
+# Clean-up
+#===============================================
+# build/mo is regenerated below; removing all of build/ keeps a stale catalogue
+# from a renamed language directory out of the bundle.
+rm -rf dist
+rm -rf build
+
+#===============================================
+# Compile the translation catalogues
+#===============================================
+"$PYTHON" tools/build_mo.py
+if [ $? -ne 0 ]; then
+    echo "Compiling translations failed"
+    exit 1
+fi
+
+#===============================================
+# Generate version_build from the git commit count
+#===============================================
+# Writes pdfarranger_qt/version_build for the frozen app, and
+# build/installer_version for the Inno Setup script.
+"$PYTHON" tools/gen_version_build.py
+if [ $? -ne 0 ]; then
+    echo "Generating version_build failed"
+    exit 1
+fi
+
+# The full version (e.g. 0.1.0.37), matching what the spec file produces.
+version=$("$PYTHON" tools/gen_version_build.py --print)
+if [ $? -ne 0 ]; then
+    echo "Reading the version failed"
+    exit 1
+fi
+echo "Creating installer for version ${version}"
+
+#===============================================
+# Run pyinstaller
+#===============================================
+"$PYINSTALLER" -y packaging/pdfarranger-qt.spec
+if [ $? -ne 0 ]; then
+    echo "Running pyinstaller failed"
+    exit 1
+fi
+
+#===============================================
+# Prepare installer path
+#===============================================
+# ISCC is a native Windows program, so it needs a Windows path. cygpath is
+# present in both Cygwin and Git Bash.
+installer_file=$(cygpath -w "$(pwd)/packaging/pdfarranger-qt.iss")
+ISCC_PATH="C:/Program Files (x86)/Inno Setup 6/ISCC.exe"
+
+if [ ! -f "$ISCC_PATH" ]; then
+    echo "Inno Setup 6 not found at ${ISCC_PATH}"
+    echo "Install it from https://jrsoftware.org/isdl.php"
+    exit 1
+fi
+
+#===============================================
+# You must install Inno Setup 6 to build the installer
+#===============================================
+# No /D argument: the script reads build/installer_version itself. Git Bash
+# rewrites arguments that look like Unix paths and Cygwin does not, so a
+# command-line define cannot be written to work in both shells.
+"$ISCC_PATH" "$installer_file"
+if [ $? -ne 0 ]; then
+    echo "Creating the installer failed"
+    exit 1
+fi
+
+echo "Installer created successfully: installer/PDF_Arranger_Qt_V${version}.exe"

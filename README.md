@@ -63,7 +63,10 @@ poppler and no system package to install on any platform.
 All dependencies are declared in [pyproject.toml](pyproject.toml).
 
 - Run-only install: `pip install -e .`
-- Developer install (adds pytest and ruff): `pip install -e ".[dev]"`
+- Developer install (adds pytest, ruff, Babel and PyInstaller): `pip install -e ".[dev]"`
+
+The `dev` extra is a superset — it covers running the tests *and* building installers.
+A build machine that never runs the tests can use the smaller `packaging` extra instead.
 
 ### 5. Launch
 
@@ -94,6 +97,64 @@ The test files mirror the package: `test_core.py`, `test_render.py`, `test_model
 and `test_packaging.py` for the project metadata. `tests/conftest.py` holds the
 once-per-process setup — the offscreen platform, the single `QApplication`, the
 message-box recorders — and `tests/support.py` the shared helpers and fixture paths.
+
+## Building installers
+
+One script per platform in [packaging/](packaging/). Each does the same four things —
+compile the translation catalogues, stamp the build number from git, run PyInstaller,
+then wrap the result in the platform's installer format.
+
+| Platform | Command | Produces |
+| --- | --- | --- |
+| Windows | `packaging\build_win.bat` (cmd)<br>`packaging/build_win` (Cygwin, Git Bash) | `installer/PDF_Arranger_Qt_V<version>.exe` |
+| macOS | `packaging/build_mac [dmg\|pkg]` | `PDF_Arranger_Qt_V<version>.dmg` |
+| Linux | `packaging/build_linux` | `dist/pdfarranger-qt-<version>-<arch>.AppImage` |
+
+All three need `pip install -e ".[dev]"` first. Each also needs one native tool that is
+not a Python package:
+
+- **Windows** — [Inno Setup 6](https://jrsoftware.org/isdl.php), expected at
+  `C:\Program Files (x86)\Inno Setup 6\ISCC.exe`
+- **macOS** — `create-dmg` (`brew install create-dmg`); `.icns` generation uses `sips`
+  and `iconutil`, which ship with the system
+- **Linux** — [appimagetool](https://github.com/AppImage/AppImageKit/releases), at
+  `~/bin/appimagetool` or wherever `APPIMAGETOOL` points
+
+### Version numbers
+
+The version is four parts, `0.1.0.1349`:
+
+- `0.1.0` is `__version__` in [pdfarranger_qt/\_\_init\_\_.py](pdfarranger_qt/__init__.py),
+  the single place it is written down. `pyproject.toml` must agree, and
+  `tests/test_packaging.py` fails if it drifts.
+- `1349` is the build number: `git rev-list --count HEAD`. Nothing is typed by hand, and
+  the number identifies the exact commit an installer was cut from.
+
+[tools/gen_version_build.py](tools/gen_version_build.py) writes it to two generated,
+uncommitted files — `pdfarranger_qt/version_build`, which PyInstaller bundles so the
+frozen app can report a build number without git, and `build/installer_version`, which
+the Inno Setup script reads. Running from a source checkout needs neither: the package
+asks git directly. **Help ▸ About** shows `0.1.0 (1349)`.
+
+The version reaches the installer through a file rather than an `ISCC /D` argument on
+purpose. Git Bash rewrites any argument that looks like a Unix path, so
+`/DMyAppVersion=…` arrives as `C:\Program Files\Git\DMyAppVersion=…`, while the `//`
+escape that fixes that is passed through literally by Cygwin. A file works in both, in
+cmd, and in the Inno Setup IDE.
+
+### Code signing
+
+macOS signing and notarisation are opt-in and read from the environment, so no Developer
+ID is committed to this public repository:
+
+```bash
+export CODESIGN_IDENTITY="Developer ID Application: Your Name (TEAMID)"
+export NOTARY_PROFILE="notarytool-profile"
+packaging/build_mac dmg
+```
+
+Without them the build succeeds unsigned, and Gatekeeper warns on first launch.
+Windows builds are unsigned.
 
 ## Documentation
 

@@ -21,8 +21,7 @@ import unittest
 import pikepdf
 
 from PySide6.QtWidgets import QApplication
-from pdfarranger_qt.core import Dims, Page, Sides
-from pdfarranger_qt.export import export
+from pdfarranger_qt.core import Dims, Sides
 
 from support import HERE, MESSAGE_BOXES, TEST_PDF, TEXT_PDF, settle
 
@@ -450,3 +449,54 @@ class TestPhase3WindowActions(unittest.TestCase):
         original = dialogs.PreferencesDialog
         dialogs.PreferencesDialog = Stub
         self.addCleanup(setattr, dialogs, "PreferencesDialog", original)
+
+
+class TestHelpMenu(unittest.TestCase):
+    """The Help menu's outward links."""
+
+    def setUp(self):
+        from pdfarranger_qt.mainwindow import MainWindow
+
+        self.win = MainWindow()
+
+    def tearDown(self):
+        self.win.modified = False
+        self.win.close()
+
+    def help_menu(self):
+        for action in self.win.menuBar().actions():
+            if "Help" in action.text():
+                return action.menu()
+        self.fail("no Help menu")
+
+    def test_help_menu_offers_the_project_page(self):
+        labels = [a.text() for a in self.help_menu().actions() if not a.isSeparator()]
+        self.assertIn("Project on GitHub", labels)
+        self.assertIn("User Guide", labels)
+
+    def test_project_action_opens_the_repository(self):
+        """Patched rather than really opened: this must not launch a browser."""
+        from PySide6.QtGui import QDesktopServices
+
+        from pdfarranger_qt import PROJECT_URL, mainwindow
+
+        opened = []
+        original = mainwindow.QDesktopServices.openUrl
+        mainwindow.QDesktopServices.openUrl = lambda url: opened.append(url.toString())
+        self.addCleanup(setattr, mainwindow.QDesktopServices, "openUrl", original)
+        self.assertIs(mainwindow.QDesktopServices, QDesktopServices)
+
+        self.win.act_project.trigger()
+        self.assertEqual(opened, [PROJECT_URL])
+
+    def test_about_names_the_project_url(self):
+        from pdfarranger_qt import PROJECT_URL, UPSTREAM_URL
+
+        MESSAGE_BOXES.clear()
+        self.win.act_about.trigger()
+        self.assertEqual(len(MESSAGE_BOXES), 1, "About did not show a box")
+        kind, title, text = MESSAGE_BOXES[0]
+        self.assertEqual(kind, "about")
+        self.assertIn(PROJECT_URL, text)
+        # Upstream stays credited; this is a derivative work.
+        self.assertIn(UPSTREAM_URL, text)

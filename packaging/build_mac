@@ -1,0 +1,209 @@
+#!/bin/zsh
+#
+# Build the macOS application bundle and a disk image or installer package.
+#
+#   packaging/build_mac            # defaults to dmg
+#   packaging/build_mac dmg|pkg
+#   packaging/build_mac help
+#
+# Produces:
+#   dist/PDF Arranger Qt.app
+#   PDF_Arranger_Qt_V<version>.dmg   (or .pkg)
+#
+# Signing and notarisation are opt-in, because an unsigned build is perfectly
+# usable locally and this repository is public - no Developer ID is baked in.
+# Set them in the environment to enable:
+#
+#   export CODESIGN_IDENTITY="Developer ID Application: Your Name (TEAMID)"
+#   export INSTALLER_IDENTITY="Developer ID Installer: Your Name (TEAMID)"
+#   export NOTARY_PROFILE="notarytool-profile"
+#
+# CODESIGN_IDENTITY is also read by packaging/pdfarranger-qt.spec, so the app
+# inside the image is signed as well as the image itself.
+#
+# Requires create-dmg for the dmg format (brew install create-dmg) and a venv
+# with the dev extra installed: pip install -e ".[dev]"
+
+# Run from the project root regardless of where this script is invoked from.
+cd "$(dirname "$0")/.."
+
+if [[ $# == 0 ]]
+then
+    format="dmg"
+elif [[ $# == 1 ]]
+then
+    if [[ "$1" == "help" ]]
+    then
+        echo "build_mac [dmg|pkg]"
+        exit 0
+    fi
+    format="$1"
+    if [[ $format != "dmg" && $format != "pkg" ]]
+    then
+        echo "Unknown installer format: $format"
+        echo "build_mac [dmg|pkg]"
+        exit 1
+    fi
+else
+    echo "build_mac [dmg|pkg]"
+    exit 1
+fi
+
+#===============================================
+# Setup the correct python environment
+#===============================================
+if [ -f ".venv/bin/activate" ]; then
+    echo "Activating virtual environment for Python"
+    source ".venv/bin/activate"
+    if [ $? -ne 0 ]; then
+        echo "Activating virtual environment failed"
+        exit 1
+    fi
+fi
+
+echo "Running build for `arch` architecture"
+
+#===============================================
+# Clean-up
+#===============================================
+# build/mo is regenerated below; removing all of build/ keeps a stale catalogue
+# from a renamed language directory out of the bundle.
+rm -rf dist
+rm -rf build
+
+#===============================================
+# Compile the translation catalogues
+#===============================================
+python tools/build_mo.py
+if [ $? -ne 0 ]; then
+    echo "Compiling translations failed"
+    exit 1
+fi
+
+#===============================================
+# Generate the .icns from the hicolor icon set
+#===============================================
+./packaging/make_icns.sh
+if [ $? -ne 0 ]; then
+    echo "Generating the icns failed"
+    exit 1
+fi
+
+#===============================================
+# Generate version_build from the git commit count
+#===============================================
+# Writes pdfarranger_qt/version_build, which the spec bundles so the
+# frozen app can report a build number without git.
+python tools/gen_version_build.py
+if [ $? -ne 0 ]; then
+    echo "Generating version_build failed"
+    exit 1
+fi
+
+# The full version (e.g. 0.1.0.37), matching what the spec file produces.
+VERSION=`python tools/gen_version_build.py --print`
+if [ $? -ne 0 ]; then
+    echo "Reading the version failed"
+    exit 1
+fi
+echo "Creating installer for version ${VERSION}"
+
+#===============================================
+# Run pyinstaller
+#===============================================
+pyinstaller -y packaging/pdfarranger-qt.spec
+if [ $? -ne 0 ]; then
+    echo "Running pyinstaller failed"
+    exit 1
+fi
+
+# COLLECT leaves the plain bundle directory next to the .app; only the .app
+# should end up in the image.
+echo "Removing dist/pdfarranger-qt"
+rm -rf dist/pdfarranger-qt
+
+#===============================================
+# Create the format.
+#===============================================
+echo "Creating the ${format}"
+installer_name="PDF_Arranger_Qt_V${VERSION}.${format}"
+test -f $installer_name && rm $installer_name
+
+if [[ $format == "dmg" ]]
+then
+    create-dmg \
+        --volname "PDF Arranger Qt $VERSION Install" \
+        --window-pos 1 1 \
+        --window-size 640 400 \
+        --icon-size 110 \
+        --icon "PDF Arranger Qt.app" 160 180 \
+        --app-drop-link 460 180 \
+        --hide-extension "PDF Arranger Qt.app" \
+        --format ULFO \
+        --volicon "build/pdfarranger-qt.icns" \
+        $installer_name \
+        "dist/"
+else
+    if [[ -z "$INSTALLER_IDENTITY" ]]; then
+        echo "INSTALLER_IDENTITY is not set - a pkg cannot be built unsigned"
+        echo "Set it, or build a dmg instead: packaging/build_mac dmg"
+        exit 1
+    fi
+    rm -rf packages
+    mkdir packages
+    pkgbuild --root ./dist \
+        --identifier "com.dolcesfogato.pdfarranger-qt" \
+        --version "${VERSION}" \
+        --install-location "/Applications" \
+        packages/PdfArrangerQt.pkg
+    productbuild --package-path ./packages \
+        --package packages/PdfArrangerQt.pkg \
+        --sign "$INSTALLER_IDENTITY" \
+        $installer_name
+fi
+if [ $? -ne 0 ]; then
+    echo "Creating the ${format} failed"
+    exit 1
+fi
+
+#===============================================
+# Sign, notarize and staple - all skipped when unconfigured.
+#===============================================
+if [[ -z "$CODESIGN_IDENTITY" ]]; then
+    echo "CODESIGN_IDENTITY is not set - leaving ${installer_name} unsigned."
+    echo "Gatekeeper will warn on first launch; right-click > Open to bypass."
+    echo "Done creating ${installer_name}"
+    exit 0
+fi
+
+if [[ $format == "dmg" ]]
+then
+    echo "Signing the ${format}"
+    /usr/bin/codesign -s "$CODESIGN_IDENTITY" $installer_name
+    if [ $? -ne 0 ]; then
+        echo "Signing the ${format} failed"
+        exit 1
+    fi
+fi
+
+if [[ -z "$NOTARY_PROFILE" ]]; then
+    echo "NOTARY_PROFILE is not set - skipping notarisation."
+    echo "Done creating ${installer_name}"
+    exit 0
+fi
+
+echo "Notarizing the ${format}"
+xcrun notarytool submit $installer_name --wait --keychain-profile "$NOTARY_PROFILE"
+if [ $? -ne 0 ]; then
+    echo "Notarizing the ${format} failed"
+    exit 1
+fi
+
+echo "Stapling the ${format}"
+xcrun stapler staple $installer_name
+if [ $? -ne 0 ]; then
+    echo "Stapling the ${format} failed"
+    exit 1
+fi
+
+echo "Done creating ${installer_name}"

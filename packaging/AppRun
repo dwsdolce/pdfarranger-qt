@@ -1,0 +1,9 @@
+#!/bin/bash
+# AppImage entry point. appimagetool requires this at the AppDir root.
+HERE="$(dirname "$(readlink -f "${0}")")"
+export LD_LIBRARY_PATH="${HERE}/usr/lib:${LD_LIBRARY_PATH}"
+
+# The catalogues are bundled under share/locale inside the PyInstaller
+# directory; i18n.locale_dirs finds them relative to sys._MEIPASS, so nothing
+# needs to be exported here.
+exec "${HERE}/usr/bin/pdfarranger-qt/pdfarranger-qt" "$@"

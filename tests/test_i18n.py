@@ -19,7 +19,6 @@
 import os
 import unittest
 
-from pdfarranger_qt.core import Page
 
 from support import HERE
 

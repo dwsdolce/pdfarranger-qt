@@ -147,6 +147,29 @@ class TestRecentFilesMenu(unittest.TestCase):
         self.win.clear_recent()
         self.assertEqual(self.win.recent.paths(), [])
 
+    def test_clearing_through_the_menu_item_empties_it(self):
+        """Drive the action, not the method behind it.
+
+        The test above calls clear_recent() directly, so it would still pass if
+        the menu entry were wired to nothing at all. This one triggers the
+        QAction the user actually clicks, and then rebuilds the menu the way
+        aboutToShow does, to check the entries are really gone.
+        """
+        self.win.recent.add(TEST_PDF)
+        self.win.recent.add(TEXT_PDF)
+        self.win.recent_menu.aboutToShow.emit()
+
+        clear = [a for a in self.win.recent_menu.actions()
+                 if not a.isSeparator() and a.text() == "Clear Menu"]
+        self.assertEqual(len(clear), 1, "no Clear Menu entry")
+        clear[0].trigger()
+        self.assertEqual(self.win.recent.paths(), [])
+
+        self.win.recent_menu.aboutToShow.emit()
+        labels = [a.text() for a in self.win.recent_menu.actions()
+                  if not a.isSeparator()]
+        self.assertEqual(labels, ["No recent files"])
+
     def test_opening_a_missing_file_warns_and_drops_it(self):
         missing = r"C:\definitely\not\here.pdf"
         self.win.recent.add(missing)

@@ -24,8 +24,9 @@ expects.
 import os
 from typing import List, Optional
 
-from PySide6.QtCore import QSettings, QSize, Qt, QTimer
-from PySide6.QtGui import QAction, QActionGroup, QKeySequence
+from PySide6.QtCore import QSettings, QSize, Qt, QTimer, QUrl
+from PySide6.QtGui import (QAction, QActionGroup, QDesktopServices,
+                           QKeySequence)
 from PySide6.QtWidgets import (
     QApplication,
     QDialog,
@@ -39,7 +40,8 @@ from PySide6.QtWidgets import (
     QStyle,
 )
 
-from . import APP_NAME, __version__
+from . import APP_NAME, PROJECT_URL, UPSTREAM_URL, __version_string__
+from .settings import app_settings
 from . import booklet, clipboard, dialogs, layers, printing, raster, theme
 from .core import DocumentSet, PDFDocError, Page
 from .i18n import gettext_ as _
@@ -61,7 +63,7 @@ class MainWindow(QMainWindow):
         super().__init__()
         # Locked by decision D1 in PORTING-NOTES.md: this scope must not change,
         # or saved geometry and zoom are silently orphaned.
-        self.settings = QSettings("pdfarranger", "pdfarranger_qt")
+        self.settings = app_settings()
         self.docs = DocumentSet()
         self.renderer = Renderer(self)
         self.model = PageListModel(self.renderer, self)
@@ -185,6 +187,9 @@ class MainWindow(QMainWindow):
         self.act_help = QAction(_("User Guide"), self)
         self.act_help.setShortcut(QKeySequence.HelpContents)
         self.act_help.triggered.connect(self.show_help)
+
+        self.act_project = QAction(_("Project on GitHub"), self)
+        self.act_project.triggered.connect(self.open_project_page)
 
         self.act_about = QAction(_m("_About"), self)
         self.act_about.triggered.connect(self.about)
@@ -446,6 +451,7 @@ class MainWindow(QMainWindow):
         m = bar.addMenu(_m("_Help"))
         m.addAction(self.act_help)
         m.addSeparator()
+        m.addAction(self.act_project)
         m.addAction(self.act_about)
 
         # Right-click on the grid gets the page-level commands.
@@ -1406,13 +1412,23 @@ class MainWindow(QMainWindow):
         self._help_dialog.raise_()
         self._help_dialog.activateWindow()
 
+    def open_project_page(self):
+        """Open the repository in the user's browser.
+
+        A menu entry rather than only a link in the About box: the label in a
+        QMessageBox is not a browser, so whether its links are followed depends
+        on the style. QDesktopServices always works.
+        """
+        QDesktopServices.openUrl(QUrl(PROJECT_URL))
+
     def about(self):
         QMessageBox.about(
             self, f"About {APP_NAME}",
             f"<h3>{APP_NAME}</h3>"
-            f"<p>Version {__version__}</p>"
+            f"<p>Version {__version_string__}</p>"
+            f"<p><a href='{PROJECT_URL}'>{PROJECT_URL}</a></p>"
             "<p>A PySide6 port of "
-            "<a href='https://github.com/pdfarranger/pdfarranger'>PDF Arranger</a>, "
+            f"<a href='{UPSTREAM_URL}'>PDF Arranger</a>, "
             "which is itself derived from PDF-Shuffler.</p>"
             "<p>Licensed under the GNU General Public License v3 or later.</p>",
         )
