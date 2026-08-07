@@ -254,7 +254,7 @@ def get_max_pdf_version(pdf_list: List[pikepdf.Pdf]) -> str:
 
 
 def export_doc(pdf_input, pages, mdata, files_out, quit_flag=None,
-               test_mode=False, output_password=None):
+               test_mode=False, output_password=None, with_outlines=False):
     """Same as export() but taking already-opened pikepdf.Pdf objects."""
     pdf_output = pikepdf.Pdf.new()
     max_version = get_max_pdf_version([pdf_output, *pdf_input])
@@ -263,17 +263,21 @@ def export_doc(pdf_input, pages, mdata, files_out, quit_flag=None,
         return
 
     # files_out entries are paths when saving and file-like objects when
-    # rendering to memory (previews, printing). Outlines, metadata and
-    # encryption are only meaningful for a real save, and pdf_input may hold
-    # None entries in the in-memory case.
+    # rendering to memory (previews, printing). Metadata and encryption are only
+    # meaningful for a real save.
     to_file = isinstance(files_out[0], str)
+    # Outlines used to be gated the same way, on the grounds that the in-memory
+    # callers -- white-border detection, image export, printing, search -- have
+    # no use for them. Read mode does: its sidebar is the outline. It is opt-in
+    # so those callers keep paying nothing for it. `rebuild_outlines` already
+    # skips `None` entries in pdf_input, so the in-memory case is safe.
     password = None
-    if to_file:
-        if len(files_out) == 1:
-            # Imported here to avoid a circular import with exporter_outlines
-            from . import exporter_outlines
+    if (to_file or with_outlines) and len(files_out) == 1:
+        # Imported here to avoid a circular import with exporter_outlines
+        from . import exporter_outlines
 
-            exporter_outlines.rebuild_outlines(pdf_input, pdf_output, pages)
+        exporter_outlines.rebuild_outlines(pdf_input, pdf_output, pages)
+    if to_file:
         mdata = metadata.merge_doc(mdata, pdf_input)
         password = output_password
     if password:
@@ -324,18 +328,22 @@ def _open_inputs(files, pages) -> List[Optional[pikepdf.Pdf]]:
     return pdf_input
 
 
-def get_in_memory_pdf(pages: List[Page], files: List[Tuple[str, str]]) -> bytes:
+def get_in_memory_pdf(pages: List[Page], files: List[Tuple[str, str]],
+                      outlines: bool = False) -> bytes:
     """Render ``pages`` to a PDF in memory, with all their edits applied.
 
     Several features need to look at the *result* of the edits rather than the
     source: detecting white borders, exporting images, previewing a crop. This
     is the Qt replacement for upstream's ``get_in_memory_poppler_doc()``; pair
     it with ``open_pdf_bytes()`` to get a QPdfDocument.
+
+    ``outlines`` rebuilds the bookmark tree as well. Off by default because
+    remapping outlines costs real work and only read mode wants them.
     """
     pdf_input = _open_inputs(files, pages)
     buf = io.BytesIO()
     try:
-        export_doc(pdf_input, pages, {}, [buf], None)
+        export_doc(pdf_input, pages, {}, [buf], None, with_outlines=outlines)
     finally:
         for pdf in pdf_input:
             if pdf is not None:

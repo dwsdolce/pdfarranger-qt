@@ -37,6 +37,7 @@ from PySide6.QtWidgets import (
     QLineEdit,
     QMainWindow,
     QMenu,
+    QStackedWidget,
     QMessageBox,
     QProgressDialog,
     QStyle,
@@ -44,7 +45,8 @@ from PySide6.QtWidgets import (
 
 from . import APP_NAME, PROJECT_URL, UPSTREAM_URL, __version_string__
 from .settings import app_settings
-from . import booklet, clipboard, dialogs, layers, printing, raster, theme
+from . import (booklet, clipboard, dialogs, layers, printing, raster,
+               reader, theme)
 from .core import DocumentSet, PDFDocError, Page
 from .i18n import gettext_ as _
 from .i18n import menu_label as _m
@@ -71,7 +73,14 @@ class MainWindow(QMainWindow):
         self.model = PageListModel(self.renderer, self)
         self.model.doc_password = self._password_for
         self.view = PageView(self.model, self)
-        self.setCentralWidget(self.view)
+        self.reader = reader.ReaderView(self)
+        # One stack, two modes. The grid stays index 0 and the default: this is
+        # an arranger that can read, not a reader that can arrange.
+        self.stack = QStackedWidget(self)
+        self.stack.addWidget(self.view)
+        self.stack.addWidget(self.reader)
+        self.setCentralWidget(self.stack)
+        self.reader.page_changed.connect(self._reader_page_changed)
         self.setAcceptDrops(True)
 
         self.current_path: Optional[str] = None
@@ -86,6 +95,11 @@ class MainWindow(QMainWindow):
         #: document, and writing it to QSettings would put a password
         #: in the registry in clear text.
         self.output_password = None
+        #: True while the reader is showing. The grid is always index 0.
+        self.read_mode = False
+        #: Set when an edit happens while reading, so the snapshot is rebuilt
+        #: on the next entry rather than on every keystroke.
+        self._reader_stale = True
         #: Zoom to restore when double-click toggles fit back off.
         self._zoom_before_fit: Optional[float] = None
         self.import_dir = os.path.expanduser("~")
@@ -106,6 +120,8 @@ class MainWindow(QMainWindow):
         # Any edit invalidates the search index, which is built from
         # a render of the *edited* document.
         self.model.contents_changed.connect(self.search.invalidate)
+        # The reader shows a snapshot of the page list, so an edit dates it.
+        self.model.contents_changed.connect(self._invalidate_reader)
 
         self._restore_geometry()
         self._restore_shortcuts()
@@ -373,6 +389,11 @@ class MainWindow(QMainWindow):
         self.act_zoom_fit_width.setShortcut(QKeySequence("Shift+F"))
         self.act_zoom_fit_width.triggered.connect(self.zoom_fit_width)
 
+        self.act_read_mode = QAction(_("Read Mode"), self)
+        self.act_read_mode.setCheckable(True)
+        self.act_read_mode.setShortcut(QKeySequence("Ctrl+E"))
+        self.act_read_mode.triggered.connect(self.set_read_mode)
+
         self.act_fullscreen = QAction(_("Fullscreen"), self)
         self.act_fullscreen.setShortcut(QKeySequence("F11"))
         self.act_fullscreen.setCheckable(True)
@@ -492,6 +513,8 @@ class MainWindow(QMainWindow):
         booklet_menu.addAction(self.act_split_booklet)
 
         m = self._menu(bar, _m("_View"))
+        m.addAction(self.act_read_mode)
+        m.addSeparator()
         m.addAction(self.act_zoom_in)
         m.addAction(self.act_zoom_out)
         m.addAction(self.act_zoom_fit)
@@ -542,6 +565,31 @@ class MainWindow(QMainWindow):
         doc = self.docs.docs[page.nfile - 1]
         return doc.password
 
+    def _editing_actions(self):
+        """Every action that changes the document.
+
+        Derived from the menus rather than listed by hand: a new editing
+        command added to Page or Arrange is disabled in read mode automatically,
+        where a hand-kept list would quietly miss it. View and Help never edit,
+        and File is filtered to the commands that write.
+        """
+        never_edits = {"File", "View", "Help"}
+        writes_in_file = {self.act_import, self.act_password}
+        out = []
+        for title, actions in self._shortcut_groups():
+            if title in never_edits:
+                out.extend(a for a in actions if a in writes_in_file)
+                continue
+            out.extend(actions)
+        # Find and Preferences live under Edit but change nothing.
+        harmless = {self.act_find, self.act_find_next, self.act_find_prev,
+                    self.act_find_all, self.act_preferences,
+                    self.act_copy, self.act_select_all, self.act_deselect,
+                    self.act_invert, self.act_select_odd, self.act_select_even,
+                    self.act_select_same_file, self.act_select_same_format,
+                    self.act_select_range}
+        return [a for a in out if a not in harmless]
+
     def _refresh_state(self):
         n = self.model.rowCount()
         has_pages = n > 0
@@ -567,6 +615,11 @@ class MainWindow(QMainWindow):
         redo_label = self.model.undo.redo_label()
         self.act_redo.setText(f"&Redo {redo_label}" if redo_label else _m("_Redo"))
         self._on_selection_changed(self.view.selected_rows())
+        if self.read_mode:
+            # Last, so it overrides everything the calls above just enabled.
+            for act in self._editing_actions():
+                act.setEnabled(False)
+        self.act_read_mode.setEnabled(has_pages)
         self._retitle()
 
     def _on_selection_changed(self, rows: List[int]):
@@ -697,6 +750,82 @@ class MainWindow(QMainWindow):
             self.recent.add(path)
         self._refresh_state()
         return True
+
+    # -- read mode (D14) ---------------------------------------------------
+
+    def set_read_mode(self, on: bool):
+        """Swap the central widget between the grid and the reader.
+
+        Entering re-exports the page list if anything changed since the last
+        time (D15), so what is read always matches what would be saved.
+        """
+        if on and not self.model.rowCount():
+            self.act_read_mode.setChecked(False)
+            return
+        if on and self._reader_stale and not self._load_reader():
+            self.act_read_mode.setChecked(False)
+            QMessageBox.warning(self, APP_NAME, _("This document cannot be read."))
+            return
+        self.read_mode = on
+        self.stack.setCurrentWidget(self.reader if on else self.view)
+        if on:
+            self._restore_reading_position()
+        else:
+            self._store_reading_position()
+        self.act_read_mode.setChecked(on)
+        self._refresh_state()
+        (self.reader if on else self.view).setFocus()
+
+    def _load_reader(self) -> bool:
+        QApplication.setOverrideCursor(Qt.WaitCursor)
+        try:
+            ok = self.reader.load(self.model.pages, self.docs.files_for_export())
+        finally:
+            QApplication.restoreOverrideCursor()
+        self._reader_stale = not ok
+        if ok:
+            # Carry any active Find over, so entering read mode keeps the
+            # highlights rather than silently dropping them.
+            self.reader.search(self.search.phrase)
+        return ok
+
+    def _invalidate_reader(self):
+        """An edit happened; the snapshot no longer matches the page list."""
+        self._reader_stale = True
+        if self.read_mode:
+            # Showing right now, so it has to be rebuilt immediately or the
+            # reader would silently disagree with the document.
+            self._load_reader()
+
+    def _reader_page_changed(self, page: int):
+        # Also fires while the document is being swapped or dropped.
+        if self.read_mode and self.reader.page_count():
+            self.statusBar().showMessage(self.reader.describe(), 3000)
+
+    def _reading_key(self) -> Optional[str]:
+        """Settings key for this document's reading position.
+
+        Keyed on the path, so an unsaved document has nowhere to remember and
+        deliberately does not try.
+        """
+        if not self.current_path:
+            return None
+        return "reading/" + os.path.normcase(os.path.abspath(self.current_path))
+
+    def _store_reading_position(self):
+        key = self._reading_key()
+        if key is None or not self.reader.page_count():
+            return
+        self.settings.setValue(key, self.reader.current_page())
+
+    def _restore_reading_position(self):
+        key = self._reading_key()
+        if key is None:
+            return
+        page = self.settings.value(key, 0, type=int)
+        if page:
+            # An edit may have removed pages since; go_to_page clamps.
+            self.reader.go_to_page(page)
 
     def set_password(self, checked: bool):
         """Turn encryption on or off for the next save.
@@ -1429,6 +1558,9 @@ class MainWindow(QMainWindow):
         finally:
             QApplication.restoreOverrideCursor()
         count = len(matches)
+        # QPdfView highlights the hits itself, so the reader only needs
+        # the phrase; it keeps its own model over its own document.
+        self.reader.search(phrase)
         self.statusBar().showMessage(
             ngettext("%d page matches", "%d pages match", count) % count, 5000)
         return matches
@@ -1649,6 +1781,10 @@ class MainWindow(QMainWindow):
         self.settings.setValue("window/geometry", self.saveGeometry())
         self.settings.setValue("window/state", self.saveState())
         self.search.invalidate()
+        # Before the widgets go: QPdfView owns the QPdfDocument handed to
+        # it and destroys it on teardown, and the page navigator emits
+        # currentPageChanged on the way out.
+        self.reader.clear()
         self.renderer.shutdown()
         self.docs.cleanup()
         super().closeEvent(event)

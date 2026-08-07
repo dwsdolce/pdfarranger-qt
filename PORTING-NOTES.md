@@ -54,7 +54,7 @@ editing.
 - Split view: thumbnail grid alongside a full-page preview of the selection — *todo, phase 7*
 - Dual-pane merging: two documents side by side, drag pages across — *todo, phase 7*
 - Visible undo history rather than blind Ctrl-Z — *todo, phase 7*
-- Read mode: continuous-scroll page view with outline and go-to-page — *todo, phase 6*
+- Read mode: continuous-scroll page view with outline and go-to-page — **done**
 
 ---
 
@@ -88,18 +88,21 @@ Settled decisions and why. Anything not here is still open.
 The repository housekeeping that used to sit here is done: `origin` is
 `dwsdolce/pdfarranger-qt`, and `pyproject.toml` carries the real `Homepage`.
 
-Open questions for phase 6, none blocking a start:
+Phase 6 opened three questions; the answers, now that it is built:
 
-- **Refresh policy.** Re-export on every `contents_changed`, or only when Read
-  mode is entered? Entering is cheaper and simpler; live refresh is nicer when
-  flipping back and forth. Start with on-entry and measure.
-- **Scroll position across a refresh.** `QPdfPageNavigator` restores a page, but
-  an edit that reorders or deletes pages makes "the same page" meaningless.
-  Probably: keep the page number, clamp to range, accept the imprecision.
-- **Whether Read mode owns the Find UI.** `QPdfView.setSearchModel()` highlights
-  in place, which is better than the grid's row-selection answer. Sharing one
-  `SearchIndex` between the two is the appeal of D15, but the two views want
-  different result presentation.
+- **Refresh policy** — lazy. An edit only marks the snapshot stale
+  (`_reader_stale`), and the re-export happens on the next entry into read mode.
+  The exception is an edit made *while* reading, which rebuilds immediately:
+  leaving it stale would show a document that visibly disagrees with the one
+  being edited.
+- **Scroll position across a refresh** — keep the page number and clamp, as
+  guessed. `go_to_page` bounds the request, so a stored page past the end lands
+  on the last page rather than failing.
+- **Find** — shared phrase, separate models. Running a search sets the phrase on
+  both, and `QPdfView` highlights the hits itself. The models cannot be shared:
+  `SearchIndex` builds its own in-memory copy for the grid, and a
+  `QPdfSearchModel` over that document would highlight using the wrong
+  geometry.
 
 ### Notes on D11
 
@@ -123,7 +126,7 @@ Upstream's accelerator model, for reference when building the editor:
 ## 3. Menu map (D3)
 
 Upstream uses a hamburger popover. This port uses a real menubar. `*` marks
-not-yet-implemented: Read Mode is phase 6, the rest are phase 7 (see D12).
+not-yet-implemented; the remaining ones are phase 7 (see D12).
 
 **File** — New Window · Open… · Import… ‖ Save · Save As… ‖ Export ▸ (Selection to Single
 File · Selection to Individual Files · All Pages to Individual Files · Selection to
@@ -147,7 +150,7 @@ Extract ▸ (Copy Text · Copy Image) · Explode into Images
 **Arrange** — Reverse Order · Swap Odd/Even ‖ Split Pages… · Merge Pages… ‖
 Booklet ▸ (Split (unimposition) · Generate (imposition))
 
-**View** — Read Mode\* ‖ Zoom In · Zoom Out · Fit One Page · Fit Multiple Pages ·
+**View** — Read Mode ‖ Zoom In · Zoom Out · Fit One Page · Fit Multiple Pages ·
 Fit Width · Reset Zoom ‖ Show Page Numbers\* ·
 Preview Pane\* ‖ Fullscreen
 
@@ -372,28 +375,54 @@ but its doctests now run from `tests/test_core.py`.
 - [x] `tests/` — 309 tests in per-module files, split out of `test_qt.py`
 
 
-### Phase 6 — Read mode (D14) — *not started*
+### Phase 6 — Read mode (D14) — **complete**
 
 A second view mode, not a second application: the same window, the same document,
 a different central widget. Arrange stays the default.
 
 **Build**
 
-- [ ] `pdfarranger_qt/reader.py` — `ReaderView(QWidget)`: a `QPdfView` plus a
-      collapsible sidebar holding a `QTreeView` on `QPdfBookmarkModel`, and a
-      `QPdfPageSelector` in the toolbar
-- [ ] `MainWindow`: a `QStackedWidget` holding the existing `PageView` and the
-      new `ReaderView`; **View ▸ Read Mode** as a checkable action, and the
-      double-click-a-page path into it
-- [ ] `reader.load(pages, files)` — `get_in_memory_pdf()` → `MemoryDocument` →
-      `QPdfView.setDocument()` (D15)
-- [ ] Action gating: every page-editing action disabled while reading. One list,
-      driven from the same place as `_refresh_state`, or the two will drift
-- [ ] Per-document last page and zoom in `QSettings`, keyed on the path, capped
-      like the recent-files list so it cannot grow without bound
-- [ ] Wire `QPdfView.setSearchModel()` to the existing `SearchIndex` model
-- [ ] Help ▸ User Guide: a Read mode section. It is a mode, and modes are
-      exactly what users fail to discover
+- [x] `pdfarranger_qt/reader.py` — `ReaderView`: a `QPdfView` beside a
+      `QTreeView` on `QPdfBookmarkModel`, in a `QSplitter`
+- [x] `MainWindow`: a `QStackedWidget` with the grid at index 0 and the reader
+      at 1; **View ▸ Read Mode** (Ctrl+E), checkable. **Not** double-click —
+      that already toggles Fit One Page, and silently reassigning it would
+      break a documented, tested gesture
+- [x] `reader.load(pages, files)` — `get_in_memory_pdf()` → `MemoryDocument` →
+      `setDocument()` (D15). Verified by rotating a page and reading the
+      rendered page size back: width and height swap
+- [x] Action gating, **derived from the menus** rather than hand-listed:
+      everything outside File/View/Help, less the commands that only look
+      (Find, Preferences, the Select group, Copy). A new editing command is
+      disabled in read mode without anyone remembering to add it
+- [x] Per-document last page in `QSettings` under `reading/<path>`. An unsaved
+      document has no key and does not try; a stored page past the end clamps,
+      because an edit can delete the page you were on
+- [x] The reader keeps **its own** `QPdfSearchModel` over its own document.
+      `SearchIndex` builds a separate in-memory copy for the grid, and pointing
+      `QPdfView` at that one would highlight using another document's geometry
+- [x] Help ▸ User Guide: a Read mode section
+
+**Zoom is not persisted.** `QPdfView` starts in `FitToWidth`, which is the right
+answer at any window size; restoring a saved factor would override it with one
+that suited a window you are no longer using.
+
+> **`get_in_memory_pdf()` gained an `outlines` flag.** Outlines were gated behind
+> `to_file` on the grounds that the in-memory callers — white-border detection,
+> image export, printing, search — have no use for them. Read mode's sidebar *is*
+> the outline, so it asks for them; the flag is off by default so nothing else
+> pays. `rebuild_outlines` already skipped `None` entries in `pdf_input`, so the
+> in-memory case needed no other change.
+
+> **`QPdfView` owns the `QPdfDocument` you give it** and destroys it with itself,
+> which leaves `MemoryDocument` holding a wrapper whose C++ side has gone. The
+> navigator also emits `currentPageChanged` while a document is being swapped or
+> dropped, so a handler that asks the reader anything during teardown gets
+> "Internal C++ object (QPdfDocument) already deleted". `clear()` drops its
+> reference *before* calling `setDocument(None)`, `closeEvent` clears the reader
+> before the widgets go, and `page_count()` catches the `RuntimeError` as a last
+> resort. Third instance of this ownership trap in the port; see also the
+> `QMenu` one above.
 
 **Deliberately not in the first cut** (D16, D17): text selection and copy, link
 following, facing-page layout, annotations.

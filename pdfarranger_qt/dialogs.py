@@ -870,6 +870,20 @@ def help_sections():
               "<b>Edit ▸ Preferences ▸ Keyboard shortcuts</b>, where they are "
               "listed under the menu each one belongs to."),
         ]),
+        (_("Read mode"), [
+            _("<b>View ▸ Read Mode</b> (Ctrl+E) swaps the thumbnail grid for a "
+              "continuous page view — for reading the document rather than "
+              "rearranging it. Press it again to go back."),
+            _("It shows the document <i>as edited</i>: rotations, crops, "
+              "deletions and reordering are all applied, so what you read is "
+              "what you would get if you saved. Editing commands are disabled "
+              "while reading, and any change you make in the grid is picked up "
+              "the next time you switch across."),
+            _("The sidebar lists the document's bookmarks, if it has any; "
+              "click one to jump to it. Find works here too and highlights the "
+              "matches on the page rather than only selecting pages. Your "
+              "place in each document is remembered between visits."),
+        ]),
         (_("Passwords"), [
             _("Opening an encrypted document asks for its password, which is "
               "remembered until the document is closed."),
