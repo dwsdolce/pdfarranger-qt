@@ -531,3 +531,64 @@ class TestHelpMenu(unittest.TestCase):
         self.assertIn(PROJECT_URL, text)
         # Upstream stays credited; this is a derivative work.
         self.assertIn(UPSTREAM_URL, text)
+
+
+class TestMenuLifetime(unittest.TestCase):
+    """Menus must outlive anything that merely looks at them.
+
+    PySide hands Python ownership of the QMenu returned by
+    QMenu.addMenu(title) and by QAction.menu(). Walking the menu bar - which
+    the shortcut editor does - therefore used to take a temporary reference to
+    every submenu and destroy it on the next garbage collection, so the next
+    File > Open Recent raised "Internal C++ object (QMenu) already deleted"
+    from _rebuild_recent_menu. Intermittent, because it depended on when the
+    collector ran.
+    """
+
+    def setUp(self):
+        from pdfarranger_qt.mainwindow import MainWindow
+
+        self.win = MainWindow()
+
+    def tearDown(self):
+        self.win.modified = False
+        self.win.close()
+
+    def alive(self, menu):
+        import shiboken6
+
+        return shiboken6.isValid(menu)
+
+    def test_submenus_survive_walking_the_menu_bar(self):
+        import gc
+
+        groups = self.win._shortcut_groups()
+        del groups
+        gc.collect()
+        self.assertTrue(self.alive(self.win.recent_menu),
+                        "the shortcut editor destroyed the Open Recent menu")
+
+    def test_recent_menu_still_rebuilds_afterwards(self):
+        """The exact failure that was reported: aboutToShow after a walk."""
+        import gc
+
+        self.win._shortcut_groups()
+        gc.collect()
+        self.win.recent_menu.aboutToShow.emit()  # raised RuntimeError
+        labels = [a.text() for a in self.win.recent_menu.actions()
+                  if not a.isSeparator()]
+        self.assertTrue(labels)
+
+    def test_every_menu_survives(self):
+        import gc
+
+        menus = list(self.win._menus)
+        self.win._shortcut_groups()
+        gc.collect()
+        dead = [i for i, menu in enumerate(menus) if not self.alive(menu)]
+        self.assertEqual(dead, [], f"{len(dead)} of {len(menus)} menus destroyed")
+
+    def test_menus_are_parented_to_the_window(self):
+        """An explicit parent is what keeps ownership in C++."""
+        for menu in self.win._menus:
+            self.assertIs(menu.parent(), self.win, menu.title())

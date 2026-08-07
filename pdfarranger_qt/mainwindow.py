@@ -35,6 +35,7 @@ from PySide6.QtWidgets import (
     QLabel,
     QLineEdit,
     QMainWindow,
+    QMenu,
     QMessageBox,
     QProgressDialog,
     QStyle,
@@ -354,17 +355,37 @@ class MainWindow(QMainWindow):
         self.act_fullscreen.setCheckable(True)
         self.act_fullscreen.triggered.connect(self.toggle_fullscreen)
 
+    def _menu(self, parent, title):
+        """Create a menu owned by the window, and add it to ``parent``.
+
+        Never `parent.addMenu(title)`. That returns a QMenu which PySide hands
+        to Python, so anything that later calls `action.menu()` -- the shortcut
+        editor walking the menu bar -- takes a temporary reference to it, and
+        destroying that temporary destroys the menu itself. The symptom is
+        "Internal C++ object (QMenu) already deleted" from an aboutToShow
+        handler, at whatever point the garbage collector happens to run.
+
+        Constructing it with the window as parent leaves ownership in C++,
+        where it belongs, and self._menus keeps a Python reference besides.
+        """
+        menu = QMenu(title, self)
+        self._menus.append(menu)
+        parent.addMenu(menu)
+        return menu
+
     def _build_menus(self):
+        # Strong references to every menu; see _menu().
+        self._menus = []
         bar = self.menuBar()
-        m = bar.addMenu(_m("_File"))
+        m = self._menu(bar, _m("_File"))
         m.addAction(self.act_open)
-        self.recent_menu = m.addMenu(_("Open Recent"))
+        self.recent_menu = self._menu(m, _("Open Recent"))
         self.recent_menu.aboutToShow.connect(self._rebuild_recent_menu)
         m.addAction(self.act_import)
         m.addSeparator()
         m.addAction(self.act_save)
         m.addAction(self.act_save_as)
-        export_menu = m.addMenu(_m("E_xport"))
+        export_menu = self._menu(m, _m("E_xport"))
         export_menu.addAction(self.act_export_sel)
         export_menu.addAction(self.act_export_sel_multi)
         export_menu.addAction(self.act_export_all_multi)
@@ -381,14 +402,14 @@ class MainWindow(QMainWindow):
         m.addAction(self.act_close)
         m.addAction(self.act_quit)
 
-        m = bar.addMenu(_m("_Edit"))
+        m = self._menu(bar, _m("_Edit"))
         m.addAction(self.act_undo)
         m.addAction(self.act_redo)
         m.addSeparator()
         m.addAction(self.act_cut)
         m.addAction(self.act_copy)
         m.addAction(self.act_paste)
-        paste_menu = m.addMenu(_m("Past_e Special"))
+        paste_menu = self._menu(m, _m("Past_e Special"))
         paste_menu.addAction(self.act_paste_before)
         paste_menu.addAction(self.act_paste_odd)
         paste_menu.addAction(self.act_paste_even)
@@ -396,7 +417,7 @@ class MainWindow(QMainWindow):
         paste_menu.addAction(self.act_paste_overlay)
         paste_menu.addAction(self.act_paste_underlay)
         m.addSeparator()
-        select_menu = m.addMenu(_m("_Select"))
+        select_menu = self._menu(m, _m("_Select"))
         select_menu.addAction(self.act_select_all)
         select_menu.addAction(self.act_deselect)
         select_menu.addAction(self.act_invert)
@@ -415,7 +436,7 @@ class MainWindow(QMainWindow):
         m.addSeparator()
         m.addAction(self.act_preferences)
 
-        m = bar.addMenu(_m("_Page"))
+        m = self._menu(bar, _m("_Page"))
         m.addAction(self.act_rotate_left)
         m.addAction(self.act_rotate_right)
         m.addSeparator()
@@ -428,23 +449,23 @@ class MainWindow(QMainWindow):
         m.addAction(self.act_delete)
         m.addAction(self.act_insert_blank)
         m.addSeparator()
-        extract_menu = m.addMenu(_m("_Extract"))
+        extract_menu = self._menu(m, _m("_Extract"))
         extract_menu.addAction(self.act_copy_text)
         extract_menu.addAction(self.act_copy_image)
         m.addAction(self.act_explode)
 
-        m = bar.addMenu(_("Arrange"))
+        m = self._menu(bar, _("Arrange"))
         m.addAction(self.act_reverse)
         m.addAction(self.act_swap)
         m.addSeparator()
         m.addAction(self.act_split_pages)
         m.addAction(self.act_merge_pages)
         m.addSeparator()
-        booklet_menu = m.addMenu(_m("_Booklet"))
+        booklet_menu = self._menu(m, _m("_Booklet"))
         booklet_menu.addAction(self.act_gen_booklet)
         booklet_menu.addAction(self.act_split_booklet)
 
-        m = bar.addMenu(_m("_View"))
+        m = self._menu(bar, _m("_View"))
         m.addAction(self.act_zoom_in)
         m.addAction(self.act_zoom_out)
         m.addAction(self.act_zoom_fit)
@@ -453,7 +474,7 @@ class MainWindow(QMainWindow):
         m.addSeparator()
         m.addAction(self.act_fullscreen)
 
-        m = bar.addMenu(_m("_Help"))
+        m = self._menu(bar, _m("_Help"))
         m.addAction(self.act_help)
         m.addSeparator()
         m.addAction(self.act_project)

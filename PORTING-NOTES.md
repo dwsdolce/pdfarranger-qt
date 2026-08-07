@@ -668,14 +668,22 @@ if an identity-shaped string ever lands in a tracked file.
 > test has to `trigger()` the `QAction` the user clicks.
 
 
-> **`QAction.menu()` does not keep its QMenu alive.** PySide ties the QMenu's
-> lifetime to the QAction *wrapper* it came from, so a helper that returns
-> `action.menu()` hands back an object whose C++ side is already gone —
-> "Internal C++ object (QMenu) already deleted". Read what you need inside the
-> loop, or keep the QAction referenced too. Confirmed by experiment: keeping
-> the QAction as well makes the same menu valid. Walking the menu bar does *not*
-> damage the live menus, which are owned by the window; only the transient
-> wrapper is affected.
+> **Never `parent.addMenu(title)`; always `QMenu(title, self)`.** PySide gives
+> *Python* ownership of the QMenu returned by `addMenu(title)` and by
+> `QAction.menu()`. So `_shortcut_groups()`, which walks the menu bar and calls
+> `action.menu()` on every submenu, took a temporary reference to each one and
+> destroyed it at the next garbage collection. The next File ▸ Open Recent then
+> raised "Internal C++ object (QMenu) already deleted" from
+> `_rebuild_recent_menu` — intermittently, since it depended on when the
+> collector ran. `MainWindow._menu()` constructs every menu with the window as
+> parent, which leaves ownership in C++, and keeps a reference in `self._menus`
+> besides.
+>
+> This shipped, briefly, and is worth reading as a lesson in bad verification:
+> the probe that declared the menus undamaged called `findChildren(QMenu)`
+> first, which created wrappers that kept them alive and hid the very bug being
+> looked for. `tests/test_window.py::TestMenuLifetime` forces a `gc.collect()`
+> after the walk and was confirmed to fail against the unsafe form.
 
 > **Shortcut order came from `findChildren(QAction)`**, which is QObject
 > construction order, not menu order — despite the docstring claiming
