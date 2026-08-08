@@ -34,9 +34,9 @@ import logging
 
 from typing import List, Optional
 
-from PySide6.QtCore import QModelIndex, Qt, Signal
+from PySide6.QtCore import QEvent, QModelIndex, Qt, Signal
 from PySide6.QtPdf import QPdfBookmarkModel, QPdfSearchModel
-from PySide6.QtPdfWidgets import QPdfView
+from PySide6.QtPdfWidgets import QPdfPageSelector, QPdfView
 from PySide6.QtWidgets import (
     QSplitter,
     QTreeView,
@@ -98,6 +98,20 @@ class ReaderView(QWidget):
         layout.addWidget(self.splitter)
 
         self.pdf_view.pageNavigator().currentPageChanged.connect(self.page_changed)
+        # QPdfView only scrolls. In SinglePage mode there is nowhere to scroll
+        # to, so PageUp/PageDown do nothing at all and the mode is unusable
+        # without this; in MultiPage they scroll but never reach the ends.
+        self.pdf_view.installEventFilter(self)
+        # The wheel arrives at the viewport, not the view.
+        self.pdf_view.viewport().installEventFilter(self)
+
+        # Qt's own page box: shows the current page, accepts a typed one, and
+        # understands page *labels*, so a book numbered i, ii, iii, 1, 2 reads
+        # the way it is printed rather than by index.
+        self.page_selector = QPdfPageSelector()
+        self.page_selector.currentPageChanged.connect(self._selector_moved)
+        self._syncing = False
+        self.page_changed.connect(self._sync_selector)
 
     # -- document ----------------------------------------------------------
 
@@ -126,6 +140,7 @@ class ReaderView(QWidget):
         self.pdf_view.setDocument(document.document)
         self.bookmarks.setDocument(document.document)
         self.search_model.setDocument(document.document)
+        self.page_selector.setDocument(document.document)
         self.outline.expandToDepth(1)
         # Only after the view has taken the new one: closing the document a
         # QPdfView is still pointing at crashes PDFium.
@@ -145,6 +160,7 @@ class ReaderView(QWidget):
         self.pdf_view.setDocument(None)
         self.bookmarks.setDocument(None)
         self.search_model.setDocument(None)
+        self.page_selector.setDocument(None)
         if document is not None:
             document.close()
 
@@ -174,6 +190,73 @@ class ReaderView(QWidget):
         page = max(0, min(page, max(0, self.page_count() - 1)))
         self.pdf_view.pageNavigator().jump(page, QPointF(0, 0))
 
+    def next_page(self):
+        self.go_to_page(self.current_page() + 1)
+
+    def previous_page(self):
+        self.go_to_page(self.current_page() - 1)
+
+    def first_page(self):
+        self.go_to_page(0)
+
+    def last_page(self):
+        self.go_to_page(self.page_count() - 1)
+
+    def _selector_moved(self, page: int):
+        """The user typed or spun a page number."""
+        if self._syncing or page == self.current_page():
+            return
+        self.go_to_page(page)
+
+    def _sync_selector(self, page: int):
+        """Follow the view, without bouncing the change straight back."""
+        self._syncing = True
+        try:
+            self.page_selector.setCurrentPage(page)
+        finally:
+            self._syncing = False
+
+    def page_label(self) -> str:
+        """What the page is called, which need not be its number."""
+        return self.page_selector.currentPageLabel()
+
+    def eventFilter(self, watched, event):
+        """Make the page keys navigate, not merely scroll.
+
+        `QPdfView` is a scroll area and nothing more: PageUp and PageDown move
+        the scrollbar, which happens to change page in a continuous view and
+        does nothing whatever in SinglePage mode, and Home/End are unhandled in
+        both. A reader is expected to have all four.
+        """
+        if (event.type() == QEvent.Wheel
+                and watched is self.pdf_view.viewport()
+                and event.modifiers() & Qt.ControlModifier):
+            # QPdfView does not zoom on ctrl+wheel, and the grid does; having
+            # the same gesture do nothing in one of the two views is worse than
+            # not offering it at all.
+            steps = event.angleDelta().y() / 120
+            if steps:
+                self.set_zoom(self.zoom() * (1.1 ** steps))
+            return True
+        if watched is not self.pdf_view or event.type() != QEvent.KeyPress:
+            return False
+        key = event.key()
+        if key == Qt.Key_Home:
+            self.first_page()
+            return True
+        if key == Qt.Key_End:
+            self.last_page()
+            return True
+        if not self.continuous():
+            # One page at a time: the scrollbar cannot take us anywhere.
+            if key in (Qt.Key_PageDown, Qt.Key_Down, Qt.Key_Right, Qt.Key_Space):
+                self.next_page()
+                return True
+            if key in (Qt.Key_PageUp, Qt.Key_Up, Qt.Key_Left, Qt.Key_Backspace):
+                self.previous_page()
+                return True
+        return False
+
     def _go_to_bookmark(self, index: QModelIndex):
         if not index.isValid():
             return
@@ -197,6 +280,42 @@ class ReaderView(QWidget):
 
     def zoom_out(self):
         self.set_zoom(self.zoom() / ZOOM_STEP)
+
+    def continuous(self) -> bool:
+        return self.pdf_view.pageMode() == QPdfView.PageMode.MultiPage
+
+    def set_continuous(self, on: bool):
+        """Continuous scrolling, or one page at a time.
+
+        Single page is not only a preference. `QPdfView` renders a page on
+        demand at full display resolution and draws nothing until that render
+        arrives -- measured at 48-58ms a page on a dense 1590-page book, so
+        roughly 17-20 pages a second. Scrolling faster than that outruns it and
+        leaves blanks. Showing one page at a time renders one page at a time,
+        so paging through stays sharp.
+        """
+        if on == self.continuous():
+            return
+        # Changing the mode relaunches the layout and leaves the scrollbar near
+        # the top, while the navigator goes on reporting the old page -- so the
+        # view shows the start of the document and nothing says otherwise.
+        # Remember where we were and go back there.
+        page = self.current_page()
+        self.pdf_view.setPageMode(
+            QPdfView.PageMode.MultiPage if on else QPdfView.PageMode.SinglePage)
+        self._restore_page(page)
+
+    def _restore_page(self, page: int):
+        """Put the view back on ``page``, scrollbar included.
+
+        `jump()` to the page the navigator already believes it is on does
+        nothing, so nudge it off and back.
+        """
+        if page <= 0 or page >= self.page_count():
+            self.go_to_page(page)
+            return
+        self.go_to_page(0)
+        self.go_to_page(page)
 
     def fit_page(self):
         self.pdf_view.setZoomMode(QPdfView.ZoomMode.FitInView)

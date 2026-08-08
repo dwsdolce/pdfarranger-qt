@@ -151,7 +151,8 @@ Extract ▸ (Copy Text · Copy Image) · Explode into Images
 **Arrange** — Reverse Order · Swap Odd/Even ‖ Split Pages… · Merge Pages… ‖
 Booklet ▸ (Split (unimposition) · Generate (imposition))
 
-**View** — Read Mode ‖ Zoom In · Zoom Out · Fit One Page · Fit Multiple Pages ·
+**View** — Read Mode · Continuous Scroll ‖ Previous/Next/First/Last Page ·
+Go to Page… ‖ Zoom In · Zoom Out · Fit One Page · Fit Multiple Pages ·
 Fit Width · Reset Zoom ‖ Show Page Numbers\* ·
 Preview Pane\* ‖ Fullscreen
 
@@ -395,7 +396,10 @@ a different central widget. Arrange stays the default.
 **Build**
 
 - [x] `pdfarranger_qt/reader.py` — `ReaderView`: a `QPdfView` beside a
-      `QTreeView` on `QPdfBookmarkModel`, in a `QSplitter`
+      `QTreeView` on `QPdfBookmarkModel`, in a `QSplitter`, with Qt's own
+      `QPdfPageSelector` on the toolbar. That widget rather than a spin box
+      because it understands page *labels*: a book numbered i, ii, iii, 1, 2
+      reads the way it is printed instead of by index
 - [x] `MainWindow`: a `QStackedWidget` with the grid at index 0 and the reader
       at 1; **View ▸ Read Mode** (Ctrl+E), checkable. **Not** double-click —
       that already toggles Fit One Page, and silently reassigning it would
@@ -452,6 +456,11 @@ close/reopen. `tests/test_reader.py`.
 - [ ] Split view with full-page preview
 - [ ] Dual-pane merging
 - [ ] Visible undo history
+- [ ] **Thumbnail placeholders while the reader scrolls.** See §6: `QPdfView`
+      draws nothing until a page render lands, and cannot be tuned. Painting an
+      upscaled thumbnail underneath would keep the view continuous, at the cost
+      of reimplementing Qt's page layout. **View ▸ Continuous Scroll** is the
+      cheap workaround already in place.
 - [ ] **Edit bookmarks — create, delete, rename, re-target, re-nest.** Upstream
       has none of this: its `exporter_outlines.py` only *preserves* an outline
       through an export, and neither its menu nor its window has a single
@@ -1007,6 +1016,112 @@ Three pieces, all of which the port now has:
 > work and land on the wrong page, and every chapter's "section 1" collapses
 > onto the same one. Acrobat is the one behaving correctly by refusing to jump.
 > This is why the reader looked more broken than the file it was showing.
+
+
+### Read mode goes blank when you scroll fast, and cannot be tuned
+
+`QPdfView` renders each page on demand, at full display resolution, and draws
+**nothing** until that render arrives. Measured on the ARRL Handbook — 1590
+dense pages — at a reader-sized 900 to 1200 pixels wide:
+
+| width | per page | pages/second |
+| --- | --- | --- |
+| 900 px | ~48 ms | ~21 |
+| 1200 px | ~58 ms | ~17 |
+
+Flick through a long document faster than that and you outrun it, so pages are
+blank until you stop. It is worst exactly where a reader is most useful: a big
+book, where nothing you scroll to is still cached.
+
+**Not a misconfiguration.** The view's private `QPdfPageRenderer` is reachable
+with `findChild` and is already `MultiThreaded`. And `QPdfView` exposes nothing
+to tune — its entire own API is `setDocument`, `pageMode`, `zoomMode`,
+`zoomFactor`, `pageNavigator`, `pageSpacing`, `documentMargins`, `searchModel`
+and `currentSearchResultIndex`. No cache size, no prefetch, no render quality.
+
+Acrobat stays continuous because it renders progressively (coarse first, then
+sharp), keeps a cache measured in megabytes, and renders tiles at the visible
+resolution. Qt does none of the three.
+
+> **`QPdfView` scrolls; it does not turn pages.** PageUp and PageDown move its
+> scrollbar, which happens to change page in a continuous view and does
+> *nothing at all* in `SinglePage` mode — so the toggle above shipped, briefly,
+> switching to a mode with no way to move through it. Home and End were
+> unhandled in both modes. `ReaderView` filters the view's key events and
+> navigates through `QPdfPageNavigator` instead, and the same commands are in
+> the View menu. Their menu shortcuts are `Ctrl+PageUp`/`Ctrl+PageDown`, not the
+> bare keys: those belong to whichever view has focus — the grid moves the
+> selection with them — and a window-wide shortcut would take them from both.
+
+> **Changing `pageMode` loses your place.** The layout is relaunched and the
+> scrollbar lands near the top, while `QPdfPageNavigator` goes on reporting the
+> page you were on — so the view shows the start of the document and nothing in
+> the interface admits it moved. `set_continuous()` remembers the page and goes
+> back to it. `jump()` to the page the navigator already believes it is on is a
+> no-op, so it has to be nudged off and back.
+
+**What was done:** **View ▸ Continuous Scroll**, on by default. Turning it off
+puts `QPdfView` in `SinglePage` mode, which renders one page at a time, so
+paging through with PageUp/PageDown stays sharp. It is a real command rather
+than a preference because it is the workaround for a rendering limit, not a
+matter of taste.
+
+**What was not, and why.** The tempting fix is to paint an upscaled thumbnail
+as a placeholder where the real render has not landed — Acrobat's perceptual
+trick, and the grid's `Renderer` already holds a bitmap of every page. It needs
+`paintEvent` overridden and the page rectangles computed by hand from
+`pagePointSize`, `zoomFactor`, `pageSpacing` and `documentMargins`, because
+`QPdfView` will not say where a page is. That means reimplementing Qt's page
+layout and keeping it in step across upgrades — the same shape of bet as
+`setScaledClipRect` and the `QMenu` ownership traps above, both of which broke
+quietly. Left as a phase 7 item.
+
+
+### One toolbar per mode, and why the first attempt did not work
+
+Read mode swaps the whole toolbar: **Arrange** carries Undo/Redo, Rotate,
+Duplicate and Delete; **Read** carries the page box, Previous/Next Page and the
+fit commands. Open, Save and Read Mode are on both, so the way out of a mode
+never moves. Only one is visible at a time.
+
+The first attempt kept a single toolbar and hid the editing buttons while
+reading. **It silently did nothing.** `QToolBar` drives its buttons' visibility
+from the *action*, so `widgetForAction(...).setVisible(False)` is undone at the
+next layout; and `QAction.setVisible(False)` — which does stick — takes the
+command out of the **menus** as well, which is what the whole exercise was
+trying to avoid. What shipped was a toolbar of dead buttons beside a page box
+that appeared and vanished: two paradigms at once, which is exactly how it was
+reported.
+
+> **`isVisibleTo()` is not "is it visible".** It answers "would this be shown if
+> its parent were", so it returns True for a widget that is merely greyed. The
+> test written to guard the hiding used it, passed, and asserted nothing. Ask
+> `isVisible()` or `isHidden()`; both were confirmed against the running
+> application before this was rewritten.
+
+Menus are left greying rather than hiding, which is the usual convention and was
+never in question.
+
+> **A command on two toolbars still needs to know which view it is driving.**
+> Fit One Page and Fit Width went onto the reader's toolbar while still wired to
+> `self.model.zoom`, so in read mode they rescaled thumbnails nobody could see
+> and appeared to do nothing. Zoom In/Out and Reset Zoom had the same fault.
+> They now dispatch on `self.read_mode`. Fit Multiple Pages is disabled while
+> reading instead: `QPdfView.ZoomMode` is `FitInView`, `FitToWidth` or `Custom`,
+> with no multi-column layout to fit to.
+>
+> Two `_zoom_by` definitions had also accumulated in the class, the later
+> grid-only one silently winning. Worth grepping for duplicate `def`s after a
+> session of patching.
+>
+> `QPdfView` does not zoom on ctrl+wheel either, and the grid does — the same
+> gesture doing nothing in one of two views is worse than not offering it — so
+> the reader filters wheel events on its **viewport**, which is where they
+> arrive, not on the view.
+
+Adding the page box to the single toolbar had also pushed Delete into the
+overflow chevron at 1100 px wide. Neither mode now carries both sets, so it
+fits.
 
 
 ### A note on content streams

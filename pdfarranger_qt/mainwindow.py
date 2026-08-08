@@ -82,6 +82,8 @@ class MainWindow(QMainWindow):
         self.stack.addWidget(self.reader)
         self.setCentralWidget(self.stack)
         self.reader.page_changed.connect(self._reader_page_changed)
+        self.reader.set_continuous(
+            self.settings.value("reader/continuous", True, type=bool))
         self.setAcceptDrops(True)
 
         self.current_path: Optional[str] = None
@@ -213,7 +215,7 @@ class MainWindow(QMainWindow):
 
         self.act_zoom_reset = QAction(_m("_Reset Zoom"), self)
         self.act_zoom_reset.setShortcut(QKeySequence("Ctrl+0"))
-        self.act_zoom_reset.triggered.connect(lambda: self._set_zoom(0.22))
+        self.act_zoom_reset.triggered.connect(self.reset_zoom)
 
         self.act_help = QAction(_("User Guide"), self)
         self.act_help.setShortcut(QKeySequence.HelpContents)
@@ -398,6 +400,34 @@ class MainWindow(QMainWindow):
         self.act_read_mode.setShortcut(QKeySequence("Ctrl+E"))
         self.act_read_mode.triggered.connect(self.set_read_mode)
 
+        self.act_continuous = QAction(_("Continuous Scroll"), self)
+        self.act_continuous.setCheckable(True)
+        self.act_continuous.setChecked(
+            self.settings.value("reader/continuous", True, type=bool))
+        self.act_continuous.triggered.connect(self.set_continuous_scroll)
+
+        # Ctrl+PageUp/Down rather than the bare keys: those belong to whichever
+        # view has focus -- the grid moves the selection with them, and the
+        # reader handles them itself -- and a window-wide shortcut would take
+        # them away from both.
+        self.act_next_page = QAction(_("Next Page"), self)
+        self.act_next_page.setShortcut(QKeySequence("Ctrl+PgDown"))
+        self.act_next_page.triggered.connect(lambda: self.reader.next_page())
+
+        self.act_prev_page = QAction(_("Previous Page"), self)
+        self.act_prev_page.setShortcut(QKeySequence("Ctrl+PgUp"))
+        self.act_prev_page.triggered.connect(lambda: self.reader.previous_page())
+
+        self.act_first_page = QAction(_("First Page"), self)
+        self.act_first_page.triggered.connect(lambda: self.reader.first_page())
+
+        self.act_last_page = QAction(_("Last Page"), self)
+        self.act_last_page.triggered.connect(lambda: self.reader.last_page())
+
+        self.act_go_to_page = QAction(_("Go to Page…"), self)
+        self.act_go_to_page.setShortcut(QKeySequence("Ctrl+G"))
+        self.act_go_to_page.triggered.connect(self.go_to_page)
+
         self.act_fullscreen = QAction(_("Fullscreen"), self)
         self.act_fullscreen.setShortcut(QKeySequence("F11"))
         self.act_fullscreen.setCheckable(True)
@@ -518,6 +548,12 @@ class MainWindow(QMainWindow):
 
         m = self._menu(bar, _m("_View"))
         m.addAction(self.act_read_mode)
+        m.addAction(self.act_continuous)
+        m.addAction(self.act_prev_page)
+        m.addAction(self.act_next_page)
+        m.addAction(self.act_first_page)
+        m.addAction(self.act_last_page)
+        m.addAction(self.act_go_to_page)
         m.addSeparator()
         m.addAction(self.act_zoom_in)
         m.addAction(self.act_zoom_out)
@@ -542,32 +578,52 @@ class MainWindow(QMainWindow):
             self.view.addAction(act)
 
     def _build_toolbar(self):
-        self.toolbar = tb = self.addToolBar(_("Main"))
-        tb.setObjectName("main-toolbar")
-        tb.setIconSize(QSize(20, 20))
-        tb.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
-        tb.addAction(self.act_open)
-        tb.addAction(self.act_save)
-        tb.addSeparator()
-        # Checkable, so the button stays visibly pressed while reading. A mode
-        # reachable only from a menu is a mode nobody finds, and one with no
-        # persistent indicator is a mode nobody notices they are in.
-        tb.addAction(self.act_read_mode)
-        self._toolbar_edit_separator = tb.addSeparator()
-        # Hidden rather than greyed while reading: a row of dead buttons reads
-        # as a broken arranger, where their absence reads as a reader.
-        self._toolbar_edit_actions = [
-            self.act_undo, self.act_redo,
-            self.act_rotate_left, self.act_rotate_right,
-            self.act_duplicate, self.act_delete,
-        ]
-        tb.addAction(self.act_undo)
-        tb.addAction(self.act_redo)
-        self._toolbar_edit_separator2 = tb.addSeparator()
-        tb.addAction(self.act_rotate_left)
-        tb.addAction(self.act_rotate_right)
-        tb.addAction(self.act_duplicate)
-        tb.addAction(self.act_delete)
+        # Two toolbars, one per mode, rather than one that greys out.
+        #
+        # The first attempt kept a single toolbar and hid the editing buttons
+        # while reading. It does not work: QToolBar drives its buttons'
+        # visibility from the action, so widgetForAction(...).setVisible(False)
+        # is undone at the next layout, and QAction.setVisible(False) would take
+        # the command out of the menus as well. The result was a toolbar full of
+        # dead buttons beside a page box that came and went -- two paradigms at
+        # once, which is what prompted this.
+        #
+        # Menus still grey rather than hide: they are the inventory of what the
+        # application can do, and a vanishing entry teaches nothing. A toolbar
+        # is the opposite -- what is useful right now.
+        self.toolbar = self.addToolBar(_("Arrange"))
+        self.toolbar.setObjectName("main-toolbar")
+        self.reader_toolbar = self.addToolBar(_("Read"))
+        self.reader_toolbar.setObjectName("reader-toolbar")
+        for bar in (self.toolbar, self.reader_toolbar):
+            bar.setIconSize(QSize(20, 20))
+            bar.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
+            # Shared by both, so the way out of a mode is always in the same
+            # place. One QAction can live in any number of widgets.
+            bar.addAction(self.act_open)
+            bar.addAction(self.act_save)
+            bar.addSeparator()
+            bar.addAction(self.act_read_mode)
+            bar.addSeparator()
+
+        self.toolbar.addAction(self.act_undo)
+        self.toolbar.addAction(self.act_redo)
+        self.toolbar.addSeparator()
+        self.toolbar.addAction(self.act_rotate_left)
+        self.toolbar.addAction(self.act_rotate_right)
+        self.toolbar.addAction(self.act_duplicate)
+        self.toolbar.addAction(self.act_delete)
+
+        self.reader_toolbar.addAction(self.act_prev_page)
+        self.reader_toolbar.addWidget(self.reader.page_selector)
+        self.toolbar_page_total = QLabel("")
+        self.toolbar_page_total.setContentsMargins(4, 0, 8, 0)
+        self.reader_toolbar.addWidget(self.toolbar_page_total)
+        self.reader_toolbar.addAction(self.act_next_page)
+        self.reader_toolbar.addSeparator()
+        self.reader_toolbar.addAction(self.act_zoom_fit)
+        self.reader_toolbar.addAction(self.act_zoom_fit_width)
+        self.reader_toolbar.setVisible(False)
 
     def _build_statusbar(self):
         self.status_pages = QLabel()
@@ -664,16 +720,16 @@ class MainWindow(QMainWindow):
             for act in self._editing_actions():
                 act.setEnabled(False)
         self.status_mode.setText(_("Reading") if self.read_mode else "")
-        # The *buttons*, not the actions. QAction.setVisible(False) hides the
-        # action everywhere it appears, which emptied the Page menu of Rotate
-        # and friends as well as the toolbar.
-        for act in self._toolbar_edit_actions:
-            button = self.toolbar.widgetForAction(act)
-            if button is not None:
-                button.setVisible(not self.read_mode)
-        for sep in (self._toolbar_edit_separator, self._toolbar_edit_separator2):
-            sep.setVisible(not self.read_mode)
         self.act_read_mode.setEnabled(has_pages)
+        for act in (self.act_continuous, self.act_next_page, self.act_prev_page,
+                    self.act_first_page, self.act_last_page, self.act_go_to_page):
+            act.setEnabled(self.read_mode)
+        # QPdfView has no multi-column layout, so this one is grid-only.
+        self.act_zoom_fit_multi.setEnabled(has_pages and not self.read_mode)
+        if hasattr(self, "reader_toolbar"):
+            self.toolbar.setVisible(not self.read_mode)
+            self.reader_toolbar.setVisible(self.read_mode)
+        self._update_page_total()
         self._retitle()
 
     def _on_selection_changed(self, rows: List[int]):
@@ -831,6 +887,28 @@ class MainWindow(QMainWindow):
         self._refresh_state()
         (self.reader if on else self.view).setFocus()
 
+    def go_to_page(self):
+        """Jump to a page by number, counting from 1 as the user does."""
+        total = self.reader.page_count()
+        if not total:
+            return
+        number, ok = QInputDialog.getInt(
+            self, _("Go to Page"), _("Page number:"),
+            self.reader.current_page() + 1, 1, total)
+        if ok:
+            self.reader.go_to_page(number - 1)
+
+    def set_continuous_scroll(self, on: bool):
+        """Continuous scrolling in read mode, or one page at a time.
+
+        Worth having as a real command rather than a preference: on a long,
+        dense document continuous scrolling can outrun QPdfView's rendering and
+        leave pages blank until it catches up, and one page at a time does not.
+        """
+        self.settings.setValue("reader/continuous", bool(on))
+        self.reader.set_continuous(bool(on))
+        self.act_continuous.setChecked(bool(on))
+
     def _load_reader(self) -> bool:
         QApplication.setOverrideCursor(Qt.WaitCursor)
         try:
@@ -853,10 +931,18 @@ class MainWindow(QMainWindow):
             # reader would silently disagree with the document.
             self._load_reader()
 
+    def _update_page_total(self):
+        """"of 1590" beside the page box, so the number has a scale."""
+        if not hasattr(self, "toolbar_page_total"):
+            return
+        total = self.reader.page_count() if self.read_mode else 0
+        self.toolbar_page_total.setText(_("of {}").format(total) if total else "")
+
     def _reader_page_changed(self, page: int):
         # Also fires while the document is being swapped or dropped.
         if self.read_mode and self.reader.page_count():
             self.statusBar().showMessage(self.reader.describe(), 3000)
+            self._update_page_total()
 
     def _reading_key(self) -> Optional[str]:
         """Settings key for this document's reading position.
@@ -1216,6 +1302,20 @@ class MainWindow(QMainWindow):
         return (viewport.width() - 2 * CELL_MARGIN - scrollbar,
                 viewport.height() - 2 * CELL_MARGIN - caption)
 
+    # -- zoom, in whichever view is showing --------------------------------
+
+    def _zoom_by(self, factor: float):
+        if self.read_mode:
+            self.reader.set_zoom(self.reader.zoom() * factor)
+            return
+        self._set_zoom(self.model.zoom * factor)
+
+    def reset_zoom(self):
+        if self.read_mode:
+            self.reader.set_zoom(1.0)
+            return
+        self._set_zoom(0.22)
+
     def zoom_fit(self, from_fit_toggle: bool = False):
         """Scale so one whole page fits in the window.
 
@@ -1224,6 +1324,11 @@ class MainWindow(QMainWindow):
         page at once -- which is the thing this is for. Fit Width is a separate
         command for when across-the-page is what you want.
         """
+        if self.read_mode:
+            # QPdfView fits against its own viewport; there is nothing here to
+            # measure and no column count to pin.
+            self.reader.fit_page()
+            return
         pages = self._fit_reference()
         if not pages:
             return
@@ -1250,6 +1355,9 @@ class MainWindow(QMainWindow):
 
     def zoom_fit_width(self):
         """Scale so the widest page fills the window across."""
+        if self.read_mode:
+            self.reader.fit_width()
+            return
         pages = self._fit_reference()
         if not pages:
             return
@@ -1769,9 +1877,6 @@ class MainWindow(QMainWindow):
             self.model.undo.current -= 1
 
     # -- view commands -----------------------------------------------------
-
-    def _zoom_by(self, factor: float):
-        self._set_zoom(self.model.zoom * factor)
 
     def _set_zoom(self, zoom: float, from_fit_toggle: bool = False):
         if not from_fit_toggle:

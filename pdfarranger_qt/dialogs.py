@@ -885,6 +885,17 @@ def help_sections():
               "what you would get if you saved. Editing commands are disabled "
               "while reading, and any change you make in the grid is picked up "
               "the next time you switch across."),
+            _("The toolbar shows which page you are on and how many there are; "
+              "type a number into it to jump there."),
+            _("<b>Page Up</b> and <b>Page Down</b> turn pages, <b>Home</b> and "
+              "<b>End</b> jump to the first and last, and <b>Ctrl+G</b> goes to "
+              "a page by number. The same commands are in the <b>View</b> menu, "
+              "where they can be given different keys."),
+            _("<b>View ▸ Continuous Scroll</b> is on by default. On a long, "
+              "densely illustrated document, scrolling quickly can outrun the "
+              "renderer and leave pages blank until it catches up; turning it "
+              "off shows one page at a time, which stays sharp as you page "
+              "through with Page Up and Page Down."),
             _("The sidebar lists the document's bookmarks, if it has any; "
               "click one to jump to it. Find works here too and highlights the "
               "matches on the page rather than only selecting pages. Your "

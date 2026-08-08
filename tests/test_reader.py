@@ -305,13 +305,10 @@ class TestModeAffordances(unittest.TestCase):
         self.win.modified = False
         self.win.close()
 
-    def button(self, action):
-        widget = self.win.toolbar.widgetForAction(action)
-        return None if widget is None else widget.isVisibleTo(self.win.toolbar)
-
     def test_the_toolbar_offers_the_mode(self):
-        """Menu-only would leave it undiscoverable."""
-        self.assertIn(self.win.act_read_mode, self.win.toolbar.actions())
+        """Menu-only would leave it undiscoverable, and it must be in both."""
+        for bar in (self.win.toolbar, self.win.reader_toolbar):
+            self.assertIn(self.win.act_read_mode, bar.actions())
         self.assertTrue(self.win.act_read_mode.isCheckable())
 
     def test_the_status_bar_says_which_mode(self):
@@ -322,18 +319,39 @@ class TestModeAffordances(unittest.TestCase):
         self.win.set_read_mode(False)
         self.assertEqual(self.win.status_mode.text(), "")
 
-    def test_editing_buttons_are_hidden_while_reading(self):
-        self.assertTrue(self.button(self.win.act_rotate_left))
-        self.win.set_read_mode(True)
-        self.assertFalse(self.button(self.win.act_rotate_left))
-        self.assertFalse(self.button(self.win.act_undo))
-        # Open and Save still make sense in a reader.
-        self.assertTrue(self.button(self.win.act_open))
-        self.win.set_read_mode(False)
-        self.assertTrue(self.button(self.win.act_rotate_left))
+    def test_the_toolbars_swap_with_the_mode(self):
+        """One toolbar per mode, rather than one full of dead buttons.
 
-    def test_hiding_buttons_does_not_empty_the_menus(self):
-        """QAction.setVisible(False) hides it everywhere, including Page."""
+        Asserted on the toolbars' own visibility. An earlier version of this
+        test asked widgetForAction(...).isVisibleTo(), which reports what
+        *would* be shown and so passed against a toolbar that was visibly
+        greyed out rather than hidden.
+        """
+        self.assertTrue(self.win.toolbar.isVisible())
+        self.assertFalse(self.win.reader_toolbar.isVisible())
+        self.win.set_read_mode(True)
+        self.assertFalse(self.win.toolbar.isVisible())
+        self.assertTrue(self.win.reader_toolbar.isVisible())
+        self.win.set_read_mode(False)
+        self.assertTrue(self.win.toolbar.isVisible())
+        self.assertFalse(self.win.reader_toolbar.isVisible())
+
+    def test_editing_commands_are_only_on_the_arrange_toolbar(self):
+        for action in (self.win.act_rotate_left, self.win.act_delete,
+                       self.win.act_undo, self.win.act_duplicate):
+            self.assertIn(action, self.win.toolbar.actions(), action.text())
+            self.assertNotIn(action, self.win.reader_toolbar.actions(),
+                             action.text())
+
+    def test_open_and_save_are_on_both(self):
+        """The way out of a mode should not move."""
+        for action in (self.win.act_open, self.win.act_save,
+                       self.win.act_read_mode):
+            for bar in (self.win.toolbar, self.win.reader_toolbar):
+                self.assertIn(action, bar.actions(), action.text())
+
+    def test_swapping_toolbars_does_not_empty_the_menus(self):
+        """Menus grey rather than hide; only the toolbars swap."""
         self.win.set_read_mode(True)
         for top in self.win.menuBar().actions():
             if "Page" in top.text():
@@ -390,3 +408,393 @@ class TestStatusPath(unittest.TestCase):
 
         self.assertTrue(self.win.status_path.textInteractionFlags()
                         & Qt.TextSelectableByMouse)
+
+class TestContinuousScroll(unittest.TestCase):
+    """One page at a time, or a continuous scroll.
+
+    Not merely a preference. QPdfView renders a page on demand at full display
+    resolution and draws nothing until that render arrives -- measured at
+    48-58ms a page on a dense 1590-page book, so roughly 17-20 pages a second.
+    Scroll faster and pages go blank until it catches up. Showing one page at a
+    time renders one page at a time, which does not.
+    """
+
+    def setUp(self):
+        from pdfarranger_qt.mainwindow import MainWindow
+
+        self.win = MainWindow()
+        self.win.resize(1000, 700)
+        self.win.show()
+        self.win.open_paths([OUTLINE_PDF])
+        self.win.modified = False
+        settle(timeout_ms=300)
+
+    def tearDown(self):
+        self.win.settings.setValue("reader/continuous", True)
+        self.win.modified = False
+        self.win.close()
+
+    def test_continuous_by_default(self):
+        self.assertTrue(self.win.reader.continuous())
+
+    def test_the_toggle_switches_the_page_mode(self):
+        from PySide6.QtPdfWidgets import QPdfView
+
+        self.win.set_continuous_scroll(False)
+        self.assertFalse(self.win.reader.continuous())
+        self.assertEqual(self.win.reader.pdf_view.pageMode(),
+                         QPdfView.PageMode.SinglePage)
+        self.win.set_continuous_scroll(True)
+        self.assertEqual(self.win.reader.pdf_view.pageMode(),
+                         QPdfView.PageMode.MultiPage)
+
+    def test_the_action_follows_the_state(self):
+        self.win.set_continuous_scroll(False)
+        self.assertFalse(self.win.act_continuous.isChecked())
+        self.win.set_continuous_scroll(True)
+        self.assertTrue(self.win.act_continuous.isChecked())
+
+    def test_it_only_applies_while_reading(self):
+        self.assertFalse(self.win.act_continuous.isEnabled())
+        self.win.set_read_mode(True)
+        self.assertTrue(self.win.act_continuous.isEnabled())
+        self.win.set_read_mode(False)
+        self.assertFalse(self.win.act_continuous.isEnabled())
+
+    def test_the_choice_is_remembered(self):
+        from pdfarranger_qt.mainwindow import MainWindow
+
+        self.win.set_continuous_scroll(False)
+        other = MainWindow()
+        self.addCleanup(other.close)
+        other.modified = False
+        self.assertFalse(other.reader.continuous())
+        self.assertFalse(other.act_continuous.isChecked())
+
+    def test_paging_still_works_in_single_page_mode(self):
+        self.win.set_read_mode(True)
+        self.win.set_continuous_scroll(False)
+        self.win.reader.go_to_page(2)
+        self.assertEqual(self.win.reader.current_page(), 2)
+
+class TestPageNavigation(unittest.TestCase):
+    """QPdfView only scrolls; a reader has to actually turn pages.
+
+    In SinglePage mode there is nowhere to scroll, so before this every key did
+    nothing at all and the mode was unusable. Home and End were unhandled in
+    both modes.
+    """
+
+    def setUp(self):
+        from pdfarranger_qt.mainwindow import MainWindow
+
+        self.win = MainWindow()
+        self.win.resize(1000, 700)
+        self.win.show()
+        self.win.open_paths([OUTLINE_PDF])      # four pages
+        self.win.modified = False
+        settle(timeout_ms=300)
+        self.win.set_read_mode(True)
+
+    def tearDown(self):
+        self.win.settings.setValue("reader/continuous", True)
+        self.win.modified = False
+        self.win.close()
+
+    def press(self, key):
+        from PySide6.QtCore import Qt
+        from PySide6.QtGui import QKeyEvent
+        from PySide6.QtWidgets import QApplication
+
+        view = self.win.reader.pdf_view
+        for kind in (QKeyEvent.KeyPress, QKeyEvent.KeyRelease):
+            QApplication.sendEvent(view, QKeyEvent(kind, key, Qt.NoModifier))
+
+    def test_the_keys_turn_pages_in_single_page_mode(self):
+        from PySide6.QtCore import Qt
+
+        self.win.set_continuous_scroll(False)
+        self.win.reader.go_to_page(0)
+        self.press(Qt.Key_PageDown)
+        self.assertEqual(self.win.reader.current_page(), 1)
+        self.press(Qt.Key_PageUp)
+        self.assertEqual(self.win.reader.current_page(), 0)
+
+    def test_home_and_end_work_in_both_modes(self):
+        from PySide6.QtCore import Qt
+
+        for continuous in (True, False):
+            with self.subTest(continuous=continuous):
+                self.win.set_continuous_scroll(continuous)
+                self.win.reader.go_to_page(1)
+                self.press(Qt.Key_End)
+                self.assertEqual(self.win.reader.current_page(),
+                                 self.win.reader.page_count() - 1)
+                self.press(Qt.Key_Home)
+                self.assertEqual(self.win.reader.current_page(), 0)
+
+    def test_navigation_clamps_at_both_ends(self):
+        self.win.reader.first_page()
+        self.win.reader.previous_page()
+        self.assertEqual(self.win.reader.current_page(), 0)
+        self.win.reader.last_page()
+        self.win.reader.next_page()
+        self.assertEqual(self.win.reader.current_page(),
+                         self.win.reader.page_count() - 1)
+
+    def test_the_menu_commands_navigate(self):
+        self.win.reader.go_to_page(0)
+        self.win.act_next_page.trigger()
+        self.assertEqual(self.win.reader.current_page(), 1)
+        self.win.act_prev_page.trigger()
+        self.assertEqual(self.win.reader.current_page(), 0)
+        self.win.act_last_page.trigger()
+        self.assertEqual(self.win.reader.current_page(), 3)
+        self.win.act_first_page.trigger()
+        self.assertEqual(self.win.reader.current_page(), 0)
+
+    def test_navigation_is_disabled_outside_read_mode(self):
+        self.win.set_read_mode(False)
+        for action in (self.win.act_next_page, self.win.act_prev_page,
+                       self.win.act_first_page, self.win.act_last_page,
+                       self.win.act_go_to_page):
+            self.assertFalse(action.isEnabled(), action.text())
+
+    def test_the_page_shortcuts_are_not_taken_from_the_grid(self):
+        """Bare PageUp/PageDown belong to whichever view has focus."""
+        from PySide6.QtGui import QKeySequence
+
+        for action in (self.win.act_next_page, self.win.act_prev_page):
+            sequence = action.shortcut().toString()
+            self.assertTrue(sequence.startswith("Ctrl+"), sequence)
+        self.assertEqual(self.win.act_next_page.shortcut(),
+                         QKeySequence("Ctrl+PgDown"))
+
+    def test_go_to_page_jumps(self):
+        from PySide6.QtWidgets import QInputDialog
+
+        original = QInputDialog.getInt
+        QInputDialog.getInt = lambda *a, **k: (3, True)
+        self.addCleanup(setattr, QInputDialog, "getInt", original)
+        self.win.go_to_page()
+        self.assertEqual(self.win.reader.current_page(), 2)   # 1-based in the UI
+
+    def test_go_to_page_cancelled_stays_put(self):
+        from PySide6.QtWidgets import QInputDialog
+
+        self.win.reader.go_to_page(1)
+        original = QInputDialog.getInt
+        QInputDialog.getInt = lambda *a, **k: (4, False)
+        self.addCleanup(setattr, QInputDialog, "getInt", original)
+        self.win.go_to_page()
+        self.assertEqual(self.win.reader.current_page(), 1)
+
+class TestPageSelector(unittest.TestCase):
+    """The page box on the toolbar: where you are, and where to go."""
+
+    def setUp(self):
+        from pdfarranger_qt.mainwindow import MainWindow
+
+        self.win = MainWindow()
+        self.win.resize(1000, 700)
+        self.win.show()
+        self.win.open_paths([OUTLINE_PDF])      # four pages
+        self.win.modified = False
+        settle(timeout_ms=300)
+
+    def tearDown(self):
+        self.win.modified = False
+        self.win.close()
+
+    def test_it_lives_on_the_reader_toolbar(self):
+        self.assertFalse(self.win.reader_toolbar.isVisible())
+        self.assertEqual(self.win.toolbar_page_total.text(), "")
+
+    def test_it_appears_while_reading(self):
+        self.win.set_read_mode(True)
+        self.assertTrue(self.win.reader_toolbar.isVisible())
+        self.assertTrue(self.win.reader.page_selector.isVisible())
+        self.assertEqual(self.win.toolbar_page_total.text(), "of 4")
+
+    def test_it_follows_the_view(self):
+        self.win.set_read_mode(True)
+        self.win.reader.go_to_page(2)
+        self.assertEqual(self.win.reader.page_selector.currentPage(), 2)
+
+    def test_the_view_follows_it(self):
+        """Typing a page number is the point of having the box."""
+        self.win.set_read_mode(True)
+        self.win.reader.page_selector.setCurrentPage(3)
+        self.assertEqual(self.win.reader.current_page(), 3)
+
+    def test_it_does_not_bounce(self):
+        """View and box each follow the other; neither may loop."""
+        self.win.set_read_mode(True)
+        self.win.reader.go_to_page(1)
+        self.assertEqual(self.win.reader.current_page(), 1)
+        self.assertEqual(self.win.reader.page_selector.currentPage(), 1)
+
+    def test_the_total_tracks_the_document(self):
+        self.win.set_read_mode(True)
+        self.assertEqual(self.win.toolbar_page_total.text(), "of 4")
+        self.win.set_read_mode(False)
+        self.win.view.set_selected_rows([0])
+        self.win.delete_selected()
+        self.win.set_read_mode(True)
+        self.assertEqual(self.win.toolbar_page_total.text(), "of 3")
+
+    def test_the_label_can_differ_from_the_number(self):
+        """Page labels are why this is Qt's widget and not a spin box."""
+        self.win.set_read_mode(True)
+        self.assertIsInstance(self.win.reader.page_label(), str)
+
+
+class TestModeChangeKeepsYourPlace(unittest.TestCase):
+    """Switching modes used to dump you back at the start.
+
+    `currentPage()` went on reporting the old page while the scrollbar was
+    reset near the top, so nothing in the interface admitted the view had
+    moved.
+    """
+
+    def setUp(self):
+        from pdfarranger_qt.mainwindow import MainWindow
+
+        self.win = MainWindow()
+        self.win.resize(1000, 700)
+        self.win.show()
+        self.win.open_paths([OUTLINE_PDF])
+        self.win.modified = False
+        settle(timeout_ms=300)
+        self.win.set_read_mode(True)
+
+    def tearDown(self):
+        self.win.settings.setValue("reader/continuous", True)
+        self.win.modified = False
+        self.win.close()
+
+    def scroll(self):
+        return self.win.reader.pdf_view.verticalScrollBar().value()
+
+    def test_the_page_survives_both_directions(self):
+        self.win.reader.go_to_page(2)
+        self.win.set_continuous_scroll(False)
+        self.assertEqual(self.win.reader.current_page(), 2)
+        self.win.set_continuous_scroll(True)
+        self.assertEqual(self.win.reader.current_page(), 2)
+
+    def test_the_scroll_position_comes_back(self):
+        """The page number alone was never the problem; this is."""
+        self.win.reader.go_to_page(2)
+        settle(timeout_ms=200)
+        before = self.scroll()
+        self.assertGreater(before, 0, "page 2 should not be at the very top")
+        self.win.set_continuous_scroll(False)
+        settle(timeout_ms=200)
+        self.win.set_continuous_scroll(True)
+        settle(timeout_ms=200)
+        self.assertEqual(self.scroll(), before)
+
+    def test_setting_the_same_mode_twice_does_nothing(self):
+        self.win.reader.go_to_page(2)
+        settle(timeout_ms=200)
+        before = self.scroll()
+        self.win.set_continuous_scroll(True)
+        self.assertEqual(self.scroll(), before)
+
+    def test_the_first_page_is_not_a_special_case(self):
+        self.win.reader.go_to_page(0)
+        self.win.set_continuous_scroll(False)
+        self.assertEqual(self.win.reader.current_page(), 0)
+        self.win.set_continuous_scroll(True)
+        self.assertEqual(self.win.reader.current_page(), 0)
+
+class TestZoomFollowsTheMode(unittest.TestCase):
+    """The zoom commands have to drive whichever view is showing.
+
+    They were wired straight to the grid, so in read mode Fit One Page, Fit
+    Width, Zoom In/Out and Reset Zoom all silently rescaled thumbnails nobody
+    could see. Two of them are on the reader's own toolbar.
+    """
+
+    def setUp(self):
+        from pdfarranger_qt.mainwindow import MainWindow
+
+        self.win = MainWindow()
+        self.win.resize(1100, 800)
+        self.win.show()
+        self.win.open_paths([OUTLINE_PDF])
+        self.win.modified = False
+        settle(timeout_ms=300)
+        self.win.set_read_mode(True)
+        settle(timeout_ms=200)
+
+    def tearDown(self):
+        self.win.modified = False
+        self.win.close()
+
+    def mode(self):
+        return self.win.reader.pdf_view.zoomMode()
+
+    def test_fit_one_page(self):
+        from PySide6.QtPdfWidgets import QPdfView
+
+        self.win.act_zoom_fit.trigger()
+        self.assertEqual(self.mode(), QPdfView.ZoomMode.FitInView)
+
+    def test_fit_width(self):
+        from PySide6.QtPdfWidgets import QPdfView
+
+        self.win.act_zoom_fit.trigger()
+        self.win.act_zoom_fit_width.trigger()
+        self.assertEqual(self.mode(), QPdfView.ZoomMode.FitToWidth)
+
+    def test_zoom_in_and_out(self):
+        self.win.act_zoom_in.trigger()
+        zoomed = self.win.reader.zoom()
+        self.assertGreater(zoomed, 1.0)
+        self.win.act_zoom_out.trigger()
+        self.assertLess(self.win.reader.zoom(), zoomed)
+
+    def test_reset_zoom(self):
+        self.win.act_zoom_in.trigger()
+        self.win.act_zoom_reset.trigger()
+        self.assertAlmostEqual(self.win.reader.zoom(), 1.0, places=3)
+
+    def test_ctrl_wheel_zooms(self):
+        """The grid zooms on ctrl+wheel; the same gesture must work here."""
+        from PySide6.QtCore import QPoint, QPointF, Qt
+        from PySide6.QtGui import QWheelEvent
+        from PySide6.QtWidgets import QApplication
+
+        view = self.win.reader.pdf_view
+        before = view.zoomFactor()
+        event = QWheelEvent(QPointF(100, 100), view.mapToGlobal(QPoint(100, 100)),
+                            QPoint(0, 0), QPoint(0, 120), Qt.NoButton,
+                            Qt.ControlModifier, Qt.NoScrollPhase, False)
+        QApplication.sendEvent(view.viewport(), event)
+        self.assertGreater(view.zoomFactor(), before)
+
+    def test_the_grid_zoom_is_left_alone(self):
+        """Zooming the reader must not quietly rescale the thumbnails."""
+        before = self.win.model.zoom
+        self.win.act_zoom_in.trigger()
+        self.win.act_zoom_fit.trigger()
+        self.win.act_zoom_fit_width.trigger()
+        self.assertAlmostEqual(self.win.model.zoom, before, places=9)
+
+    def test_fit_multiple_pages_is_grid_only(self):
+        """QPdfView has FitInView, FitToWidth and Custom. No columns."""
+        self.assertFalse(self.win.act_zoom_fit_multi.isEnabled())
+        self.win.set_read_mode(False)
+        self.assertTrue(self.win.act_zoom_fit_multi.isEnabled())
+
+    def test_the_grid_still_zooms_when_it_is_showing(self):
+        self.win.set_read_mode(False)
+        before = self.win.model.zoom
+        self.win.act_zoom_in.trigger()
+        self.assertGreater(self.win.model.zoom, before)
+
+    def test_the_reader_toolbar_carries_the_fit_commands(self):
+        for action in (self.win.act_zoom_fit, self.win.act_zoom_fit_width):
+            self.assertIn(action, self.win.reader_toolbar.actions(), action.text())
