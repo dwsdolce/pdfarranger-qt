@@ -293,7 +293,10 @@ startup by `_restore_shortcuts()`.
 ### Phase 4 — remaining parity gaps — **complete**
 
 Everything upstream's menu offers that this does not. Found by diffing the GTK
-`data/menu.ui` (recovered from `git log`) against `MainWindow._shortcut_groups()`:
+upstream's `data/menu.ui` against `MainWindow._shortcut_groups()`. The GTK
+files were removed from the working tree once the port was done, so that
+reference lives in history: `git show d2c7b917:data/menu.ui`, the last commit
+before `pdfarranger/` was deleted. Result:
 72 upstream entries, 4 with no equivalent here, plus one behaviour gap behind an
 action that does exist. Small, and unglamorous, but this is the list that decides
 whether someone can switch.

@@ -1,6 +1,6 @@
 ---
 name: Bug report
-about: Create a report to help us improve
+about: Report something that does not work as expected
 title: ''
 labels: ''
 assignees: ''
@@ -9,35 +9,55 @@ assignees: ''
 Describe the bug
 ----------------
 
-A clear and concise description of what the bug is.
+A clear and concise description of what goes wrong.
 
 To Reproduce
 ------------
 
-Steps to reproduce the behavior:
-1.  Go to '...'
+Steps to reproduce the behaviour:
+1.  Open '...'
 2.  Click on '....'
-3.  Scroll down to '....'
-4.  See error
+3.  See error
 
-Expected behavior
------------------
+Expected behaviour
+------------------
 
-A clear and concise description of what you expected to happen.
+What you expected to happen instead.
+
+Which view
+----------
+
+Does it happen while **arranging** (the thumbnail grid), while **reading**
+(View ▸ Read Mode), or both?
 
 Input files
 -----------
 
-Check if the bug appear only with some PDF or image files. If the bug is specific to some files please attach one to the issue.
+Does it happen with every document, or only some? If it is specific to one
+file, please attach it, or a few pages of it, if you are able to share it.
 
 Screenshots
 -----------
 
-If applicable, add screenshots to help explain your problem.
+If it is visual, a screenshot usually explains it faster than words.
 
-System and Versions
--------------------
+Console output
+--------------
 
--   PDF Arranger version and where you get it (distro package, flatpak, pip, git, download, ...)
--   pikepdf version and where you get it (distro package, pip, git, ...)
--   OS name and version (e.g.: Windows 10, Fedora 33, ...)
+If you can run it from a terminal, please include anything it printed:
+
+    python -m pdfarranger_qt
+
+Qt writes warnings there that never reach the window, and they are often the
+quickest route to the cause.
+
+Version
+-------
+
+-   **The full version from Help ▸ About** — it looks like `0.1.0 (1349)`, and
+    the number in brackets is the git commit the build came from. Please give
+    the whole thing; the release installers can be well behind `main`, and that
+    number is what says which code you are actually running.
+-   How you installed it: the Windows installer, or run from source
+-   OS name and version, e.g. Windows 11, Fedora 42, macOS 15
+-   If running from source: the output of `pip list` for PySide6 and pikepdf
