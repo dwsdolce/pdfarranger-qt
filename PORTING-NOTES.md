@@ -82,6 +82,7 @@ Settled decisions and why. Anything not here is still open.
 | D14 | Read mode | **In scope, as a second view mode** — `QPdfView` swapped into the central widget, arrange actions disabled while it is showing | `QtPdf` is already a dependency for thumbnails, and `QPdfView` is a finished continuous-scroll widget on the same PDFium backend. The gap between "has a reader" and "has no reader" is wiring, not rendering. Reading is why the document was opened; making the user leave for a separate viewer is the PDF24 complaint the port exists to fix. |
 | D15 | What Read mode displays | **The edited page list, via an in-memory export** — *not* the renderer's `QPdfDocument` | Forced, not preferred. See §6 *Read mode*: the edits do not live in the `QPdfDocument`, and that document belongs to a worker thread. `SearchIndex` already does exactly this, so the machinery exists. |
 | D16 | Text selection and link following | **Out of the first cut** | Neither is exposed by `QPdfView` in 6.11.1 — verified against the installed API, not assumed. Both are buildable on `QPdfDocument.getSelection()` and `QPdfLinkModel`, but they are hand-written features, not wiring, and they do not block a usable reader. |
+| D18 | PDF engine for the reader | **Open — leaning QtPdf; the outline round trip has now been tested, see §6** | Neither library provides a view widget, so that work is identical either way and the choice is only about what backs it. Measured: PyMuPDF renders 9–17% faster, but links come out *equivalent* — both give rect and target page, and both return (0,0) for a `/FitR` position — so the feature that raised the question is a wash. PyMuPDF's real advantages are `set_toc()` and per-word text geometry. `set_toc()` round-trips an ordinary outline intact (807 of 807, nesting preserved) but **raises** on the Handbook's `/GoToR` bookmarks — a PyMuPDF bug, which `exporter_outlines.py` already handles correctly. Against: 55.5 MB against QtPdf's 5.7 MB already shipped, a third engine beside pikepdf and PDFium, and AGPL — permitted with GPL-3 (§13, below) but it would stop that code going back upstream. See §6. |
 | D17 | Annotation and markup | **Out of scope, permanently** | Tier 2 by another name. Qt exposes no annotation authoring, and adding it would mean owning an annotation model, hit-testing and appearance-stream generation. |
 
 ### Still open
@@ -456,11 +457,28 @@ close/reopen. `tests/test_reader.py`.
 - [ ] Split view with full-page preview
 - [ ] Dual-pane merging
 - [ ] Visible undo history
-- [ ] **Thumbnail placeholders while the reader scrolls.** See §6: `QPdfView`
-      draws nothing until a page render lands, and cannot be tuned. Painting an
-      upscaled thumbnail underneath would keep the view continuous, at the cost
-      of reimplementing Qt's page layout. **View ▸ Continuous Scroll** is the
-      cheap workaround already in place.
+- [ ] **Own the reader's view, on the engine we already have.** The single
+      largest item here, and the one that unblocks most of the rest. Every
+      reader limitation met so far traces to `QPdfView` being a closed widget,
+      not to the engine underneath it — see *Which PDF engine* below. Replacing
+      it with a scroll area of our own, laying out pages rendered through
+      `QPdfDocument` and the existing `Renderer`/`ThumbnailCache`, would deliver
+      in one go:
+
+      - **link following**, internal and external — `QPdfLinkModel` already
+        supplies rectangles, target pages, URLs and `linkAt()` hit-testing
+      - **text selection and copy** — `QPdfDocument.getSelection()` is there
+      - **placeholders while scrolling**, so pages never go blank: the grid's
+        thumbnail cache already holds a bitmap of every page
+      - **a cache and prefetch policy we control**, which `QPdfView` does not
+        expose at all
+      - **facing pages**, which `QPdfView.PageMode` has no setting for
+
+      The cost is real and should not be understated: page layout, scrolling,
+      zoom anchoring, hit-testing and keyboard navigation all become ours to
+      get right, and `QPdfView` does them for free today. Comparable in size to
+      phase 6 itself. **View ▸ Continuous Scroll** is the cheap workaround in
+      the meantime.
 - [ ] **Edit bookmarks — create, delete, rename, re-target, re-nest.** Upstream
       has none of this: its `exporter_outlines.py` only *preserves* an outline
       through an export, and neither its menu nor its window has a single
@@ -1122,6 +1140,144 @@ never in question.
 Adding the page box to the single toolbar had also pushed Delete into the
 overflow chevron at 1100 px wide. Neither mode now carries both sets, so it
 fits.
+
+
+### Which PDF engine — and why not to change it
+
+Asked because read mode cannot follow links. Measured before answering: **QtPdf
+is not the limitation. `QPdfView` is.**
+
+`QPdfDocument` and its models already expose everything a full reader needs:
+
+| Need | Available today |
+| --- | --- |
+| Rendering | `QPdfDocument.render()` — already drives the thumbnails |
+| Text | `getAllText()` |
+| Selection | `getSelection()`, `getSelectionAtIndex()` |
+| Links | `QPdfLinkModel` — `Rectangle`, `Page`, `Url`, `Location`, `linkAt()` |
+| Search | `QPdfSearchModel` — already wired to both views |
+| Bookmarks | `QPdfBookmarkModel` — already wired |
+
+Verified against the repaired ARRL Handbook: page 0 reports 20 links with correct
+rectangles and target pages, and `linkAt(centre)` hit-tests to the right one. The
+`qt.pdf.links: link with invalid location and/or zoom` warnings cost only the
+precise *point* within the target page — `Location` comes back as (0, 0) — because
+`QPdfLinkModel` understands only `/XYZ` destinations. Tested all six: `/XYZ` is
+accepted, `/Fit`, `/FitH`, `/FitV`, `/FitR` and `/FitB` each warn. The Handbook's
+links are `/FitR` and `/FitH`, which are perfectly legal; the warning count is
+identical before and after our repair, so it is the document's, not ours.
+
+`QPdfView` uses none of it. That is the whole gap.
+
+**The alternatives, and why each was set aside**
+
+| Option | Verdict |
+| --- | --- |
+| **pypdfium2** | The same engine QtPdf wraps, so identical rendering. Gains direct PDFium access, loses Qt integration. No reason. |
+| **PyMuPDF** | Genuinely richer and faster, but **AGPL** — see below. |
+| **Poppler** | Good link support, and what upstream used. Reintroduces the native dependency the port deliberately shed; "no GTK, no poppler, no system package on any platform" is a stated selling point in the README. |
+| **pdf.js in QtWebEngine** | A complete viewer, for a ~150 MB dependency the PyInstaller spec excludes on purpose. |
+
+**Neither library ships a view widget**, so the scroll area, layout, zoom
+anchoring, hit-testing and keyboard navigation are the same work under both. The
+engine choice does not change the large cost; it only decides what backs it.
+
+Measured on the repaired Handbook:
+
+| | QtPdf | PyMuPDF |
+| --- | --- | --- |
+| render, 900 px | 13.5 ms/page | 11.2 ms/page |
+| render, thumbnail | 9.1 ms/page | 8.3 ms/page |
+| link rect and target page | yes | yes |
+| link position within the page | `(0,0)` on `/FitR` | **also `(0,0)`** |
+| per-word text geometry | no | 762 words in 254 ms |
+| write an outline | rebuild via pikepdf | `set_toc()` |
+| packaging | 5.7 MB, already shipped | 55.5 MB |
+
+**Links come out equivalent**, which is worth recording because it was expected to
+be PyMuPDF's advantage and is not: neither library turns a `/FitR` rectangle into
+a point. PyMuPDF's genuine advantages — `set_toc()` and word-level geometry —
+serve *bookmark editing* and *text selection*, neither of which has been started.
+
+**The outline round trip, tested** — because bookmark editing is the phase 7 item
+that would justify the switch, and `set_toc()` is the reason to want it.
+
+- On the **repaired** Handbook, whose bookmarks are local: `get_toc(simple=False)`
+  → `set_toc()` → save preserves **807 of 807** bookmarks, all still resolving,
+  nesting unchanged at depths 2/45/402/358. It rewrites `/Dest` arrays as
+  `/A /GoTo` actions, which is equivalent.
+- On the **original**, whose 18,131 bookmarks are `/GoToR`: **`set_toc()` raises**
+  `AttributeError: 'tuple' object has no attribute 'x'`. That is a PyMuPDF bug,
+  not the document's: `set_toc` replaces `dest_dict["to"]` with a tuple
+  (`__init__.py`, "transform target to PDF coordinates"), and `getDestStr`'s
+  `LINK_GOTOR` branch then reads `ddict["to"].x`. The `LINK_GOTO` branch unpacks
+  the tuple and survives, so the failure is specific to external bookmarks with a
+  page number.
+
+So `set_toc()` is a real convenience for ordinary documents and unusable on one
+of the two real files to hand. Working around it means pre-processing the TOC to
+avoid the broken branch — at which point the gap against the pikepdf machinery
+already written narrows considerably.
+
+The leaning is therefore to stay on QtPdf: it is already integrated, and
+`exporter_outlines.py` handles `/GoToR`, named destinations and cross-file repair
+that `set_toc()` currently crashes on. That is a reason about *this* codebase and
+these documents, not a claim that QtPdf is the better library — on the merits
+PyMuPDF is. Worth re-testing when bookmark editing starts, in case the `/GoToR`
+bug is fixed upstream by then.
+
+### If PyMuPDF is ever chosen: the licensing, in plain terms
+
+*Not legal advice — this is a reading of the licence texts, and worth confirming
+before it matters.*
+
+- Upstream PDF Arranger is **GPL-3.0-or-later**. This port is a derivative work,
+  so it stays GPL-3.0-or-later. That is settled and does not change.
+- PyMuPDF is offered under the **AGPL** or a commercial licence. Confirm the
+  current version and terms at the time of the decision rather than trusting this
+  note.
+- **The two combine legally, in one direction** — and this is the part that
+  looks wrong until you read the clause. GPLv3 §7 forbids adding "further
+  restrictions", and the AGPL's network requirement plainly is one, so the
+  natural conclusion is that the combination is impossible. **GPLv3 §13 is an
+  explicit carve-out from exactly that rule**, and it is in this repository's
+  own `COPYING`:
+
+  > **13. Use with the GNU Affero General Public License.**
+  >
+  > *Notwithstanding any other provision of this License*, you have permission
+  > to link or combine any covered work with a work licensed under version 3 of
+  > the GNU Affero General Public License into a single combined work, and to
+  > convey the resulting work. The terms of this License will continue to apply
+  > to the part which is the covered work, but the special requirements of the
+  > GNU Affero General Public License, section 13, concerning interaction
+  > through a network will apply to the combination as such.
+
+  The FSF added it in v3 for this purpose. Note the condition: it is **GPL-3**
+  that grants this. **GPL-2.0-only** code has no such clause and genuinely
+  cannot be combined with AGPLv3. Upstream is GPL-3.0-**or-later**, so the
+  carve-out applies here.
+
+What that means concretely:
+
+- **Nothing is relicensed.** Upstream's code stays GPL-3; PyMuPDF stays AGPL;
+  ours stays GPL-3. You cannot "replace the AGPL with the GPL" — that is not a
+  thing either party can do to the other's code, and it is not required.
+- **Upstream's licence is not violated**, because GPLv3 itself permits the
+  combination. The relationship with the original project is legally unaffected.
+- **The practical obligation is close to inert here.** The AGPL's extra
+  requirement is to offer source to users who interact with the software *over a
+  network*. A desktop page arranger has no such users. It would bind anyone who
+  later turned this into a web service — which is exactly what the clause exists
+  for.
+- **The one real cost is contribution back.** Code of ours that depends on
+  PyMuPDF could not be handed to upstream without imposing the network clause on
+  them. D13 already records that there is nothing to contribute back and no fork
+  relationship, so this is a small cost — but it is the one that touches the
+  relationship with the original, which is the part worth thinking about.
+
+Given the recommendation above is to keep QtPdf and own the view, this decision
+should not need making at all.
 
 
 ### A note on content streams
