@@ -1,19 +1,54 @@
 #!/bin/bash
 #
-# Build the Linux application bundle and an AppImage.
+# Build the Linux application bundle and its packages.
 #
-#   packaging/build_linux
+#   packaging/build_linux                  # all three packages
+#   packaging/build_linux app              # build only, no packages
+#   packaging/build_linux appimage         # one format, named explicitly
+#   packaging/build_linux deb,rpm          # or several
+#   packaging/build_linux help
 #
 # Produces:
 #   dist/pdfarranger-qt/                              the PyInstaller bundle
 #   dist/pdfarranger-qt-<version>-<arch>.AppImage
+#   dist/pdfarranger-qt-<version>-<arch>.deb
+#   dist/pdfarranger-qt-<version>-<arch>.rpm
 #
-# Requires appimagetool (https://github.com/AppImage/AppImageKit/releases),
-# found at ~/bin/appimagetool or wherever APPIMAGETOOL points, and a venv with
-# the dev extra installed: pip install -e ".[dev]"
+# The .deb and .rpm install the PyInstaller bundle under /opt - see
+# packaging/make_linux_package. They need dpkg-deb and rpmbuild respectively;
+# whichever is missing is reported and skipped rather than failing the build.
+#
+# The AppImage needs appimagetool
+# (https://github.com/AppImage/AppImageKit/releases), found at
+# ~/bin/appimagetool or wherever APPIMAGETOOL points. All of it needs a venv
+# with the dev extra installed: pip install -e ".[dev]"
 
 # Run from the project root regardless of where this script is invoked from.
 cd "$(dirname "$0")/.."
+
+usage() {
+    echo "build_linux [app|appimage|deb|rpm]"
+    echo "  app  build only, runnable from dist/pdfarranger-qt/pdfarranger-qt"
+    echo "  the rest are package formats, comma-separated;"
+    echo "  the default is appimage,deb,rpm"
+}
+
+mode="${1:-appimage,deb,rpm}"
+case "$mode" in
+    help) usage; exit 0 ;;
+    app) ;;
+    *)
+        # Validated up front: a typo should not be discovered after PyInstaller
+        # has spent a minute collecting Qt.
+        for fmt in ${mode//,/ }; do
+            case "$fmt" in
+                appimage|deb|rpm) ;;
+                *) echo "Unknown format: $fmt"; usage; exit 1 ;;
+            esac
+        done
+        ;;
+esac
+want() { case ",$mode," in *",$1,"*) return 0 ;; *) return 1 ;; esac; }
 
 #===============================================
 # Setup the correct python environment
@@ -63,7 +98,7 @@ if [ $? -ne 0 ]; then
     echo "Reading the version failed"
     exit 1
 fi
-echo "Creating AppImage for version ${VERSION}"
+echo "Building version ${VERSION}"
 
 #===============================================
 # Run pyinstaller
@@ -75,49 +110,117 @@ if [ $? -ne 0 ]; then
 fi
 
 #===============================================
-# Assemble AppDir
+# Drop the Qt plugins that cannot load
 #===============================================
-APPDIR=dist/AppDir
-rm -rf "$APPDIR"
-mkdir -p "$APPDIR/usr/bin" \
-         "$APPDIR/usr/share/applications" \
-         "$APPDIR/usr/share/icons/hicolor/256x256/apps"
+# PyInstaller's PySide6 hook collects every plugin type the shipped Qt
+# libraries reference, and the wheel ships all of Qt. The spec's excludes
+# already keep QtWebEngine and QtQuick out; what is left that cannot load is
+# one file.
+#
+# libqtiff wants libtiff.so.5, and current distributions ship libtiff.so.6,
+# whose soname is deliberately different because the ABI changed. Nothing here
+# can fix that - the PySide6 wheel bundles no libtiff of its own, and a .so.5
+# symlink onto .so.6 would be an ABI lie.
+#
+# Dropping it costs nothing, because Qt never decodes an image file for this
+# application. Images are imported through img2pdf, which decodes with Pillow -
+# core.img2pdf_supported_img is built from Pillow's registry - and Pillow's
+# wheel carries its own libtiff.so.6 under _internal/pillow.libs. From there
+# the image is a PDF, and QtPdf renders it. So *.tif in the file dialog is
+# Pillow's promise to keep, on every platform, and it does; the Qt plugin was
+# only ever dead weight that the .deb's dependency scan had to step around.
+QT_PLUGINS=dist/pdfarranger-qt/_internal/PySide6/Qt/plugins
+for dead in imageformats/libqtiff.so; do
+    if [ -e "$QT_PLUGINS/$dead" ]; then
+        echo "  dropping unloadable $dead"
+        rm -rf "${QT_PLUGINS:?}/$dead"
+    fi
+done
 
-# Payload: the PyInstaller bundle directory.
-cp -r dist/pdfarranger-qt "$APPDIR/usr/bin/"
-
-# Desktop entry - appimagetool requires it at both the AppDir root and
-# usr/share/applications.
-cp packaging/pdfarranger-qt.desktop "$APPDIR/"
-cp packaging/pdfarranger-qt.desktop "$APPDIR/usr/share/applications/"
-
-# Icon - 256x256 PNG at the AppDir root under the name the desktop entry's
-# Icon= field uses, and again in the hicolor theme.
-ICON=data/icons/hicolor/256x256/apps/com.github.jeromerobert.pdfarranger.png
-cp "$ICON" "$APPDIR/pdfarranger-qt.png"
-cp "$ICON" "$APPDIR/usr/share/icons/hicolor/256x256/apps/pdfarranger-qt.png"
-
-# AppRun launcher.
-cp packaging/AppRun "$APPDIR/AppRun"
-chmod +x "$APPDIR/AppRun"
-
-#===============================================
-# Build the AppImage
-#===============================================
-APPIMAGETOOL="${APPIMAGETOOL:-$HOME/bin/appimagetool}"
-if [ ! -x "$APPIMAGETOOL" ]; then
-    echo "appimagetool not found at $APPIMAGETOOL"
-    echo "Download it from https://github.com/AppImage/AppImageKit/releases"
-    echo "or set APPIMAGETOOL=/path/to/appimagetool"
-    exit 1
+if [ "$mode" = "app" ]; then
+    echo "Built dist/pdfarranger-qt - run dist/pdfarranger-qt/pdfarranger-qt"
+    exit 0
 fi
 
 ARCH=$(uname -m)
-OUT="dist/pdfarranger-qt-${VERSION}-${ARCH}.AppImage"
-ARCH=$ARCH "$APPIMAGETOOL" "$APPDIR" "$OUT"
-if [ $? -ne 0 ]; then
-    echo "appimagetool failed"
-    exit 1
+ICON=data/icons/hicolor/256x256/apps/com.github.jeromerobert.pdfarranger.png
+
+#===============================================
+# Assemble AppDir and build the AppImage
+#===============================================
+# Only for the AppImage. The .deb and .rpm are built straight from the
+# PyInstaller bundle below, so when no AppImage is wanted there is no reason to
+# copy the bundle a second time.
+if want appimage; then
+    APPDIR=dist/AppDir
+    rm -rf "$APPDIR"
+    mkdir -p "$APPDIR/usr/bin" \
+             "$APPDIR/usr/share/applications" \
+             "$APPDIR/usr/share/icons/hicolor/256x256/apps"
+
+    # Payload: the PyInstaller bundle directory.
+    cp -r dist/pdfarranger-qt "$APPDIR/usr/bin/"
+
+    # Desktop entry - appimagetool requires it at both the AppDir root and
+    # usr/share/applications.
+    cp packaging/pdfarranger-qt.desktop "$APPDIR/"
+    cp packaging/pdfarranger-qt.desktop "$APPDIR/usr/share/applications/"
+
+    # Icon - 256x256 PNG at the AppDir root under the name the desktop entry's
+    # Icon= field uses, and again in the hicolor theme.
+    cp "$ICON" "$APPDIR/pdfarranger-qt.png"
+    cp "$ICON" "$APPDIR/usr/share/icons/hicolor/256x256/apps/pdfarranger-qt.png"
+
+    # AppRun launcher.
+    cp packaging/AppRun "$APPDIR/AppRun"
+    chmod +x "$APPDIR/AppRun"
+
+    APPIMAGETOOL="${APPIMAGETOOL:-$HOME/bin/appimagetool}"
+    if [ ! -x "$APPIMAGETOOL" ]; then
+        echo "appimagetool not found at $APPIMAGETOOL"
+        echo "Download it from https://github.com/AppImage/AppImageKit/releases"
+        echo "or set APPIMAGETOOL=/path/to/appimagetool"
+        exit 1
+    fi
+
+    OUT="dist/pdfarranger-qt-${VERSION}-${ARCH}.AppImage"
+    ARCH=$ARCH "$APPIMAGETOOL" "$APPDIR" "$OUT"
+    if [ $? -ne 0 ]; then
+        echo "appimagetool failed"
+        exit 1
+    fi
+
+    echo "Built $OUT"
 fi
 
-echo "Built $OUT"
+#===============================================
+# .deb and .rpm
+#===============================================
+# PyInstaller has already produced a directory that runs in place, carrying its
+# own Python and Qt, so it is the payload as it stands - no AppDir in between.
+# The AppImage's AppRun is not carried over either: a package installs a wrapper
+# in /usr/bin instead. See packaging/make_linux_package.
+pkg_formats=""
+want deb && pkg_formats="deb"
+want rpm && pkg_formats="${pkg_formats:+$pkg_formats,}rpm"
+
+if [ -n "$pkg_formats" ]; then
+    packaging/make_linux_package \
+        --name pdfarranger-qt \
+        --stem pdfarranger-qt \
+        --version "$VERSION" \
+        --payload dist/pdfarranger-qt \
+        --binary pdfarranger-qt \
+        --desktop packaging/pdfarranger-qt.desktop \
+        --icon "$ICON" \
+        --icon-size 256x256 \
+        --copyright COPYING \
+        --summary "Merge, split, rearrange, rotate and crop PDF documents" \
+        --description "PDF Arranger Qt is a small application for rearranging PDF pages: merge documents, split them, reorder, rotate, crop and export a selection. This is a Qt port of PDF Arranger, which was itself a fork of PDF-Shuffler." \
+        --outdir dist \
+        --formats "$pkg_formats"
+    if [ $? -ne 0 ]; then
+        echo "Building the packages failed"
+        exit 1
+    fi
+fi

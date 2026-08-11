@@ -108,7 +108,7 @@ then wrap the result in the platform's installer format.
 | --- | --- | --- |
 | Windows | `packaging\build_win.bat` (cmd)<br>`packaging/build_win` (Cygwin, Git Bash) | `installer/PDF_Arranger_Qt_V<version>.exe` |
 | macOS | `packaging/build_mac [dmg\|pkg]` | `PDF_Arranger_Qt_V<version>.dmg` |
-| Linux | `packaging/build_linux` | `dist/pdfarranger-qt-<version>-<arch>.AppImage` |
+| Linux | `packaging/build_linux [app\|appimage\|deb\|rpm]` | `dist/pdfarranger-qt-<version>-<arch>.{AppImage,deb,rpm}` |
 
 All three need `pip install -e ".[dev]"` first. Each also needs one native tool that is
 not a Python package:
@@ -117,8 +117,35 @@ not a Python package:
   `C:\Program Files (x86)\Inno Setup 6\ISCC.exe`
 - **macOS** — `create-dmg` (`brew install create-dmg`); `.icns` generation uses `sips`
   and `iconutil`, which ship with the system
-- **Linux** — [appimagetool](https://github.com/AppImage/AppImageKit/releases), at
-  `~/bin/appimagetool` or wherever `APPIMAGETOOL` points
+- **Linux** — one per format: [appimagetool](https://github.com/AppImage/AppImageKit/releases)
+  for the AppImage, at `~/bin/appimagetool` or wherever `APPIMAGETOOL` points; `dpkg-deb`
+  and `dpkg-shlibdeps` (the `dpkg` package) for the `.deb`; `rpmbuild` (`rpm` on Debian and
+  Ubuntu, `rpm-build` on Fedora) for the `.rpm`
+
+### Linux packages
+
+`packaging/build_linux` builds all three formats by default. Name the ones you want
+instead — `packaging/build_linux deb,rpm` — or pass `app` to stop after PyInstaller and
+run the result straight out of `dist/pdfarranger-qt/`. A missing `dpkg-deb` or `rpmbuild`
+is reported and skipped rather than failing the build; a missing `appimagetool` is an
+error, since nothing else can produce an AppImage.
+
+The `.deb` and `.rpm` are built by [packaging/make_linux_package](packaging/make_linux_package)
+from the PyInstaller bundle as it stands, with no AppDir in between. Both install it under
+`/opt/pdfarranger-qt`, with a wrapper in `/usr/bin`, the desktop entry, the 256×256 icon
+and `COPYING` in the usual places. `/opt` keeps the bundle's own layout intact — it carries
+a private Qt and finds its catalogues next to the executable, exactly as it does inside the
+AppImage — and the FHS reserves `/opt` for self-contained packages like this one. The
+`.deb` gets real dependencies: every bundled ELF object is run through `dpkg-shlibdeps`,
+so a library we ship resolves to itself and only what the system must supply is listed.
+The `.rpm` turns the equivalent machinery off (`AutoReqProv: no`) rather than advertise the
+bundled Qt sonames to the rest of the system.
+
+The build also drops one Qt plugin the PySide6 wheel collects but no machine can load:
+`libqtiff.so`, which wants `libtiff.so.5` while current distributions ship `libtiff.so.6`.
+It is dead weight here rather than a lost format — images are imported through img2pdf,
+which decodes with Pillow and its own bundled `libtiff.so.6`, so `*.tif` works on every
+platform without Qt ever decoding an image file.
 
 ### Version numbers
 
