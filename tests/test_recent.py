@@ -21,6 +21,23 @@ import unittest
 
 from support import MESSAGE_BOXES, TEST_PDF, TEXT_PDF, settle
 
+#: Root of an absolute path, spelled the way the running platform spells it.
+_ROOT = "C:\\" if os.name == "nt" else "/"
+
+
+def a_path(*parts: str) -> str:
+    """An absolute path to a file that need not exist.
+
+    RecentFiles never opens these - it normalises and compares strings - but it
+    does so with os.path, which only recognises the local convention. A literal
+    "C:\\a.pdf" is an absolute path on Windows and a relative file with a
+    backslash in its name everywhere else, so abspath() prefixes it with the
+    working directory and basename() hands back the whole thing. Spelling the
+    root per platform keeps the ordering and de-duplication these tests are
+    about from turning into a test of path parsing.
+    """
+    return os.path.join(_ROOT, *parts)
+
 
 class TestRecentFiles(unittest.TestCase):
     """Ordering, de-duplication and capping, without building a window."""
@@ -39,23 +56,23 @@ class TestRecentFiles(unittest.TestCase):
 
     def test_most_recent_first(self):
         recent = self.store()
-        recent.add(r"C:\a.pdf")
-        recent.add(r"C:\b.pdf")
+        recent.add(a_path("a.pdf"))
+        recent.add(a_path("b.pdf"))
         self.assertEqual([os.path.basename(p) for p in recent.paths()],
                          ["b.pdf", "a.pdf"])
 
     def test_reopening_moves_to_the_top_without_duplicating(self):
         recent = self.store()
         for name in ("a.pdf", "b.pdf", "c.pdf"):
-            recent.add(os.path.join("C:\\", name))
-        recent.add(r"C:\a.pdf")
+            recent.add(a_path(name))
+        recent.add(a_path("a.pdf"))
         self.assertEqual([os.path.basename(p) for p in recent.paths()],
                          ["a.pdf", "c.pdf", "b.pdf"])
 
     def test_capped(self):
         recent = self.store(max_entries=3)
         for i in range(6):
-            recent.add(os.path.join("C:\\", f"f{i}.pdf"))
+            recent.add(a_path(f"f{i}.pdf"))
         paths = recent.paths()
         self.assertEqual(len(paths), 3)
         self.assertEqual(os.path.basename(paths[0]), "f5.pdf")
@@ -66,18 +83,18 @@ class TestRecentFiles(unittest.TestCase):
         self.assertTrue(os.path.isabs(recent.paths()[0]))
 
     def test_same_file_by_a_different_spelling_is_not_duplicated(self):
-        """Windows treats C:\\A.PDF and c:\\a.pdf as one file."""
+        """Windows treats C:\\Docs\\A.pdf and c:\\docs\\a.pdf as one file."""
         recent = self.store()
-        recent.add(r"C:\Docs\A.pdf")
-        recent.add(r"c:\docs\a.pdf")
+        recent.add(a_path("Docs", "A.pdf"))
+        recent.add(a_path("docs", "a.pdf"))
         expected = 1 if os.path.normcase("A") == os.path.normcase("a") else 2
         self.assertEqual(len(recent.paths()), expected)
 
     def test_remove_and_clear(self):
         recent = self.store()
-        recent.add(r"C:\a.pdf")
-        recent.add(r"C:\b.pdf")
-        recent.remove(r"C:\a.pdf")
+        recent.add(a_path("a.pdf"))
+        recent.add(a_path("b.pdf"))
+        recent.remove(a_path("a.pdf"))
         self.assertEqual(len(recent.paths()), 1)
         recent.clear()
         self.assertEqual(recent.paths(), [])
@@ -91,7 +108,7 @@ class TestRecentFiles(unittest.TestCase):
     def test_prune_missing(self):
         recent = self.store()
         recent.add(TEST_PDF)
-        recent.add(r"C:\definitely\not\here.pdf")
+        recent.add(a_path("definitely", "not", "here.pdf"))
         gone = recent.prune_missing()
         self.assertEqual(len(gone), 1)
         self.assertEqual(recent.paths(), [os.path.normpath(TEST_PDF)])
@@ -127,8 +144,8 @@ class TestRecentFilesMenu(unittest.TestCase):
         self.assertEqual(len(self.win.recent.paths()), 2)
 
     def test_menu_lists_entries_numbered(self):
-        self.win.recent.add(r"C:\one.pdf")
-        self.win.recent.add(r"C:\two.pdf")
+        self.win.recent.add(a_path("one.pdf"))
+        self.win.recent.add(a_path("two.pdf"))
         self.win._rebuild_recent_menu()
         labels = [a.text() for a in self.win.recent_menu.actions()
                   if not a.isSeparator()]
