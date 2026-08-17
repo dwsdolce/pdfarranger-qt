@@ -31,6 +31,21 @@ from pdfarranger_qt.settings import (
 )
 
 
+def scope_file(organisation: str) -> str:
+    """Where the running platform keeps the settings for an organisation.
+
+    The three platforms spell a scope differently and only Linux spells it with
+    the organisation in it verbatim, as ~/.config/<organisation>/<app>.conf.
+    Windows uses a registry key, and macOS a plist named after a bundle
+    identifier -- so the test organisation "pdfarranger.tests" arrives as
+    com.pdfarranger-tests, its inner dot rewritten to a hyphen because the dot
+    is what separates identifier components. Asking Qt for the name keeps these
+    tests about which scope the accessor picked rather than about how Qt spells
+    it; a literal fragment only matched on two platforms out of three.
+    """
+    return QSettings(organisation, APPLICATION).fileName()
+
+
 class TestSettingsScope(unittest.TestCase):
 
     def test_pytest_is_detected(self):
@@ -38,7 +53,7 @@ class TestSettingsScope(unittest.TestCase):
 
     def test_settings_are_redirected(self):
         store = app_settings()
-        self.assertIn(ORGANISATION + TEST_SUFFIX, store.fileName())
+        self.assertEqual(store.fileName(), scope_file(ORGANISATION + TEST_SUFFIX))
 
     def test_the_real_store_is_untouched(self):
         """Write through the accessor, then read the real scope directly."""
@@ -61,7 +76,8 @@ class TestSettingsScope(unittest.TestCase):
 
         window = MainWindow()
         self.addCleanup(window.close)
-        self.assertIn(ORGANISATION + TEST_SUFFIX, window.settings.fileName())
+        self.assertEqual(window.settings.fileName(),
+                         scope_file(ORGANISATION + TEST_SUFFIX))
 
     def test_production_scope_is_unchanged(self):
         """Decision D1: the real scope must not move, or settings are orphaned."""
