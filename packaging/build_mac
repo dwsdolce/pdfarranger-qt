@@ -27,6 +27,16 @@
 # Run from the project root regardless of where this script is invoked from.
 cd "$(dirname "$0")/.."
 
+#===============================================
+# Signing settings.
+#===============================================
+# Identity and notary profile live in one file outside every repository, so no
+# Developer ID is baked into the source and there is a single place to edit it.
+# Absent, the signing steps below detect the unset variables and the build goes
+# unsigned - which is the right behaviour for anyone who is not the maintainer.
+MACSIGN_ENV="${MACSIGN_ENV:-$HOME/.config/macsign.env}"
+[[ -f "$MACSIGN_ENV" ]] && source "$MACSIGN_ENV"
+
 if [[ $# == 0 ]]
 then
     format="dmg"
