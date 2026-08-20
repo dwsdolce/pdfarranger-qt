@@ -34,3 +34,17 @@ htmlcov/
 
 # Test artefacts
 tests/exporter/out.pdf
+
+# macOS installer output. The Windows build writes into installer/ and the
+# Linux one into dist/, both already ignored above, but packaging/build_mac
+# leaves the finished image in the project root. The wildcard also covers
+# create-dmg's rw.<pid>.*.dmg scratch image, which it removes on a clean run
+# and leaves behind on an interrupted one.
+*.dmg
+*.pkg
+
+# pkgbuild staging directory for the pkg format (packaging/build_mac)
+packages/
+
+# macOS Finder metadata
+.DS_Store
