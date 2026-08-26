@@ -1,0 +1,11 @@
+# Commits to skip when running `git blame`. Whitespace-only churn that would
+# otherwise make every line of a file look like it was last touched by it.
+#
+# Use it with:
+#     git blame --ignore-revs-file .git-blame-ignore-revs <file>
+# or once per clone:
+#     git config blame.ignoreRevsFile .git-blame-ignore-revs
+# GitHub reads this file automatically.
+
+# Normalise line endings to LF, with the binaries explicitly excluded
+aeaa49620a33f86e8d308d05192112cd29851cd1
