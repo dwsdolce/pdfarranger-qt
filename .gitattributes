@@ -1,9 +1,15 @@
-# Line endings for the build scripts. Deliberately narrow rather than a blanket
-# `* text=auto`, which would renormalise every file in the repository.
+# Line endings. Text is LF in the repository and in the working tree on every
+# platform, with two sets of exceptions below.
 #
+# This used to be a deliberately narrow file that pinned only the shell scripts,
+# to avoid renormalising the repository. The cost of leaving it narrow was 26
+# files committed with CRLF - 22 of them Python - which is how a four-line edit
+# to PORTING-NOTES.md once produced a 1346-line diff.
+* text=auto eol=lf
+
 # A shell script with CRLF endings fails outright on Linux and macOS: the kernel
-# reads the shebang as `/bin/bash` and reports "bad interpreter". Git on
-# Windows will happily hand out CRLF unless told otherwise.
+# reads the shebang as `/bin/bash` and reports "bad interpreter". Git on Windows
+# will happily hand out CRLF unless told otherwise.
 packaging/AppRun       text eol=lf
 packaging/build_linux  text eol=lf
 packaging/build_mac    text eol=lf
@@ -12,3 +18,17 @@ packaging/build_win    text eol=lf
 
 # The Windows shells want the opposite.
 *.bat text eol=crlf
+
+# Never translate these. `text=auto` decides from content, and a PDF is
+# text-shaped enough to be guessed wrong - an earlier attempt at renormalising
+# this repository corrupted the pdf and png files. 47 of the PDFs matched here
+# are the test suite's fixtures, so a wrong guess breaks the tests.
+#
+# Last matching rule wins, so these must stay below `* text=auto`.
+*.pdf   binary
+*.png   binary
+*.jpg   binary
+*.jpeg  binary
+*.ico   binary
+*.icns  binary
+*.mo    binary
