@@ -82,6 +82,7 @@ class MainWindow(QMainWindow):
         self.stack.addWidget(self.reader)
         self.setCentralWidget(self.stack)
         self.reader.page_changed.connect(self._reader_page_changed)
+        self.reader.selection_changed.connect(self._reader_selection_changed)
         self.reader.set_continuous(
             self.settings.value("reader/continuous", True, type=bool))
         self.setAcceptDrops(True)
@@ -183,7 +184,7 @@ class MainWindow(QMainWindow):
 
         self.act_select_all = QAction(_m("Select _All"), self)
         self.act_select_all.setShortcut(QKeySequence.SelectAll)
-        self.act_select_all.triggered.connect(self.view.selectAll)
+        self.act_select_all.triggered.connect(self.select_all)
 
         self.act_invert = QAction(_m("_Invert Selection"), self)
         self.act_invert.setShortcut(QKeySequence("Ctrl+Shift+A"))
@@ -724,6 +725,12 @@ class MainWindow(QMainWindow):
         for act in (self.act_continuous, self.act_next_page, self.act_prev_page,
                     self.act_first_page, self.act_last_page, self.act_go_to_page):
             act.setEnabled(self.read_mode)
+        if self.read_mode:
+            # The grid's selection is still there behind the reader, and it is
+            # not what Copy means now. Select All is always available; Copy
+            # waits for something to be selected.
+            self.act_copy.setEnabled(self.reader.has_selection())
+            self.act_select_all.setEnabled(has_pages)
         # The reader lays out one column; facing pages is phase 7 step 6.
         # So this one is grid-only.
         self.act_zoom_fit_multi.setEnabled(has_pages and not self.read_mode)
@@ -732,6 +739,11 @@ class MainWindow(QMainWindow):
             self.reader_toolbar.setVisible(self.read_mode)
         self._update_page_total()
         self._retitle()
+
+    def _reader_selection_changed(self, has_selection: bool):
+        """Copy follows the reader's selection, not the grid's, while reading."""
+        if self.read_mode:
+            self.act_copy.setEnabled(has_selection)
 
     def _on_selection_changed(self, rows: List[int]):
         has_sel = bool(rows)
@@ -1150,7 +1162,24 @@ class MainWindow(QMainWindow):
 
     # -- clipboard ---------------------------------------------------------
 
+    def select_all(self):
+        """Select All: the page's text while reading, every page otherwise."""
+        if self.read_mode:
+            self.reader.select_all()
+            return
+        self.view.selectAll()
+
     def copy_selected(self):
+        """Copy: the reader's selected text while reading, pages otherwise.
+
+        One command, two meanings, because the Edit menu belongs to whichever
+        view is in front. Copying serialised *pages* while the user is looking
+        at text they have just highlighted is the wrong answer to Ctrl+C, and
+        the grid keeps its own selection while read mode is showing, so the
+        action cannot simply be left to the grid.
+        """
+        if self.read_mode:
+            return self.reader.copy()
         rows = self.view.selected_rows()
         if not rows:
             return False

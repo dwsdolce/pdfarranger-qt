@@ -45,9 +45,9 @@ import math
 from typing import List, Optional, Sequence, Tuple
 
 from PySide6.QtCore import QPointF, QRectF, QSize, QSizeF, Qt, QUrl, Signal
-from PySide6.QtGui import QColor, QImage, QPainter, QPalette
+from PySide6.QtGui import QColor, QImage, QKeySequence, QPainter, QPalette
 from PySide6.QtPdf import QPdfDocumentRenderOptions, QPdfLinkModel
-from PySide6.QtWidgets import QAbstractScrollArea, QApplication, QFrame
+from PySide6.QtWidgets import QAbstractScrollArea, QApplication, QFrame, QMenu
 
 from .i18n import gettext_ as _
 
@@ -65,6 +65,9 @@ ZOOM_LIMITS = (0.1, 8.0)
 #: an opaque box or an outline both spoil in dense text.
 SEARCH_HIT = QColor(255, 210, 0, 90)
 SEARCH_CURRENT = QColor(255, 145, 0, 150)
+
+#: Selected text. Translucent for the same reason as the search highlights.
+SELECTION = QColor(60, 120, 220, 80)
 
 
 class FitMode:
@@ -273,6 +276,70 @@ def _is_finite_point(point) -> bool:
     return all(math.isfinite(v) for v in (point.x(), point.y()))
 
 
+class PageText:
+    """Where the text on a page is, so a stray click can find it.
+
+    `QPdfDocument.getSelection` wants both ends to land on an actual glyph: the
+    exact box of a line selects it, while a generous rectangle around the same
+    line selects nothing at all. Nobody drags that precisely, so a point is
+    snapped onto the nearest run of text first.
+
+    The runs come from one `getSelectionAtIndex` over the whole page -- its
+    `bounds()` is a polygon per run, 219 of them on a dense Handbook page
+    against 5909 characters -- and are cached, because a drag asks on every
+    mouse move.
+    """
+
+    #: Larger than any page's character count; getSelectionAtIndex clamps.
+    ALL = 10_000_000
+
+    def __init__(self, document=None):
+        self._document = document
+        self._runs: dict = {}
+
+    def set_document(self, document):
+        self._document = document
+        self._runs.clear()
+
+    def runs(self, page: int) -> List[QRectF]:
+        """Bounding boxes of every run of text on ``page``."""
+        cached = self._runs.get(page)
+        if cached is not None:
+            return cached
+        boxes: List[QRectF] = []
+        if self._document is not None:
+            try:
+                selection = self._document.getSelectionAtIndex(page, 0, self.ALL)
+                boxes = [poly.boundingRect() for poly in selection.bounds()]
+            except Exception:  # pragma: no cover - PDFium can be unhappy
+                boxes = []
+        self._runs[page] = boxes
+        return boxes
+
+    def snap(self, page: int, point: QPointF) -> Optional[QPointF]:
+        """``point`` moved just inside the nearest run, or None if no text.
+
+        Half a point inside rather than on the edge: a boundary coordinate is
+        exactly the case getSelection rejects.
+        """
+        boxes = self.runs(page)
+        if not boxes:
+            return None
+        best, best_distance = None, None
+        for box in boxes:
+            dx = max(box.left() - point.x(), 0.0, point.x() - box.right())
+            dy = max(box.top() - point.y(), 0.0, point.y() - box.bottom())
+            distance = dx * dx + dy * dy
+            if best_distance is None or distance < best_distance:
+                best, best_distance = box, distance
+        return QPointF(min(max(point.x(), best.left() + 0.5), best.right() - 0.5),
+                       min(max(point.y(), best.top() + 0.5), best.bottom() - 0.5))
+
+    def contains_text(self, page: int, point: QPointF) -> bool:
+        """Whether the point is actually on text, for the I-beam cursor."""
+        return any(box.contains(point) for box in self.runs(page))
+
+
 class SynchronousPages:
     """Renders a page on demand, on the calling thread, with a small cache.
 
@@ -342,6 +409,8 @@ class PageCanvas(QAbstractScrollArea):
 
     #: The page occupying most of the viewport changed.
     current_page_changed = Signal(int)
+    #: The text selection appeared or vanished, so a Copy command can follow it.
+    selection_changed = Signal(bool)
     #: A link to somewhere outside the document was activated. Not opened here:
     #: what a PDF may ask the desktop to do is a policy question, and a widget
     #: is the wrong place to decide it. See ReaderView.
@@ -360,6 +429,13 @@ class PageCanvas(QAbstractScrollArea):
         self._links = QPdfLinkModel(self)
         self._links_page = -1
         self._tooltip = ""
+        self._text = PageText()
+        self._document = None
+        #: (page, point-in-page) where the current drag started.
+        self._anchor = None
+        #: {page: QPdfSelection} for the pages the selection covers.
+        self._selection: dict = {}
+        self._selecting = False
         self._press = None
         self.viewport().setMouseTracking(True)
         self.setFrameShape(QFrame.NoFrame)
@@ -374,6 +450,9 @@ class PageCanvas(QAbstractScrollArea):
         sizes = sizes_from_document(document) if document is not None else []
         self._layout = PageLayout(sizes, zoom=self._layout.zoom)
         self._pages.set_document(document)
+        self._text.set_document(document)
+        self._document = document
+        self.clear_selection()
         self._links.setDocument(document)
         self._links_page = -1
         self._current = -1
@@ -630,6 +709,103 @@ class PageCanvas(QAbstractScrollArea):
                 best, best_share = index, share
         return best if best >= 0 else self._layout.nearest_page(top)
 
+    # -- selection ---------------------------------------------------------
+
+    def clear_selection(self):
+        if self._selection:
+            self._selection = {}
+            self.viewport().update()
+            self.selection_changed.emit(False)
+        self._anchor = None
+
+    def has_selection(self) -> bool:
+        return bool(self._selection)
+
+    def selected_text(self) -> str:
+        """Everything selected, in page order, pages joined by a newline."""
+        return "\n".join(self._selection[page].text()
+                          for page in sorted(self._selection)
+                          if self._selection[page].text())
+
+    def copy(self) -> bool:
+        """Put the selection on the clipboard. False if there was nothing."""
+        text = self.selected_text()
+        if not text:
+            return False
+        QApplication.clipboard().setText(text)
+        return True
+
+    def select_all_on(self, page: int):
+        if self._document is None:
+            return
+        selection = self._document.getSelectionAtIndex(page, 0, PageText.ALL)
+        self._set_selection({page: selection} if selection.isValid() else {})
+
+    def _extend_selection(self, page: int, point: QPointF):
+        """Select from the drag's anchor to ``point``.
+
+        Runs across pages, because `getSelection` is per page and a reader that
+        stops at a page break is not much of a reader: the first and last pages
+        are selected from the anchor and to the cursor respectively, and every
+        page between them entirely.
+        """
+        if self._anchor is None or self._document is None:
+            return
+        anchor_page, anchor_point = self._anchor
+        first, last = sorted((anchor_page, page))
+        start = anchor_point if anchor_page <= page else point
+        end = point if anchor_page <= page else anchor_point
+
+        found = {}
+        for index in range(first, last + 1):
+            if index == first == last:
+                selection = self._selection_between(index, start, end)
+            elif index == first:
+                selection = self._selection_between(index, start, None)
+            elif index == last:
+                selection = self._selection_between(index, None, end)
+            else:
+                selection = self._document.getSelectionAtIndex(index, 0, PageText.ALL)
+            if selection is not None and selection.isValid():
+                found[index] = selection
+        self._set_selection(found)
+
+    def _set_selection(self, selection: dict):
+        had = bool(self._selection)
+        self._selection = selection
+        self.viewport().update()
+        if bool(selection) != had:
+            self.selection_changed.emit(bool(selection))
+
+    def _selection_between(self, page: int, start, end):
+        """One page's worth, with a missing end meaning "to the edge of the text".
+
+        Both ends are snapped onto the nearest run first: getSelection wants a
+        glyph under each, and a drag does not oblige.
+        """
+        boxes = self._text.runs(page)
+        if not boxes:
+            return None
+        if start is None:
+            start = QPointF(boxes[0].left(), boxes[0].top())
+        if end is None:
+            last = boxes[-1]
+            end = QPointF(last.right(), last.bottom())
+        a = self._text.snap(page, start)
+        b = self._text.snap(page, end)
+        if a is None or b is None:
+            return None
+        return self._document.getSelection(page, a, b)
+
+    def _paint_selection(self, painter, index: int, offset: QPointF):
+        selection = self._selection.get(index)
+        if selection is None:
+            return
+        for polygon in selection.bounds():
+            rect = self._layout.rect_from_page(index, polygon.boundingRect())
+            rect.translate(-offset)
+            painter.fillRect(rect, SELECTION)
+
     # -- links -------------------------------------------------------------
 
     @staticmethod
@@ -791,11 +967,34 @@ class PageCanvas(QAbstractScrollArea):
         re-setting the same text restarts that delay and the tooltip never
         appears while the pointer drifts inside one link.
         """
-        link = self.link_at(QPointF(event.position()))
+        position = QPointF(event.position())
+
+        if self._press is not None and event.buttons() & Qt.LeftButton:
+            if (position - self._press).manhattanLength() > QApplication.startDragDistance():
+                self._selecting = True
+            if self._selecting:
+                found = self.to_page(position)
+                if found is None and self._layout.page_count:
+                    # Dragged into a margin or a gap: carry on from the nearest
+                    # page rather than stopping the selection dead.
+                    document_point = self.to_document(position)
+                    nearest = self._layout.nearest_page(document_point.y())
+                    found = (nearest,
+                             self._layout.point_in_page(nearest, document_point))
+                if found is not None:
+                    self._extend_selection(*found)
+                super().mouseMoveEvent(event)
+                return
+
+        link = self.link_at(position)
         if link is not None:
             self.viewport().setCursor(Qt.PointingHandCursor)
         else:
-            self.viewport().unsetCursor()
+            found = self.to_page(position)
+            if found is not None and self._text.contains_text(*found):
+                self.viewport().setCursor(Qt.IBeamCursor)
+            else:
+                self.viewport().unsetCursor()
         tooltip = self.link_description(link)
         if tooltip != self._tooltip:
             self._tooltip = tooltip
@@ -805,6 +1004,15 @@ class PageCanvas(QAbstractScrollArea):
     def mousePressEvent(self, event):
         if event.button() == Qt.LeftButton:
             self._press = QPointF(event.position())
+            self._selecting = False
+            found = self.to_page(self._press)
+            # Anchored even when the press lands off the text: the drag may
+            # arrive on some, and snapping will pull this end onto the nearest
+            # run when it does.
+            self._anchor = found if found is not None else None
+            if self._selection:
+                self.clear_selection()
+                self._anchor = found if found is not None else None
         super().mousePressEvent(event)
 
     def mouseReleaseEvent(self, event):
@@ -818,12 +1026,83 @@ class PageCanvas(QAbstractScrollArea):
             here = QPointF(event.position())
             moved = (here - self._press).manhattanLength()
             self._press = None
-            if moved <= QApplication.startDragDistance():
+            was_selecting, self._selecting = self._selecting, False
+            if moved <= QApplication.startDragDistance() and not was_selecting:
                 link = self.link_at(here)
                 if link is not None and self.follow(link):
                     event.accept()
                     return
         super().mouseReleaseEvent(event)
+
+    def contextMenuEvent(self, event):
+        """Right button: build the menu for what is under the pointer, and show it.
+
+        Building is separate from showing so it can be tested. `exec()` spins a
+        nested event loop and never returns without a user, which hangs a test
+        run rather than failing it -- and a hung suite is worse than a broken
+        one, because it tells you nothing.
+        """
+        menu = self.build_context_menu(QPointF(event.pos()))
+        menu.exec(event.globalPos())
+        event.accept()
+
+    def build_context_menu(self, position: QPointF) -> QMenu:
+        """The menu for a point, without showing it.
+
+        Built here rather than handed to the window because what belongs on it
+        depends on what the click landed on -- a link offers different commands
+        from a paragraph -- and the canvas is the only thing that knows.
+
+        A right-click on the page but outside the selection *moves* it, which is
+        what every text view does: getting Copy for the paragraph you selected
+        earlier, while pointing at a different one, is worse than no menu at
+        all. A click off the page entirely leaves the selection alone -- the
+        grey around a page is not "somewhere else on the page", and dropping a
+        selection because the pointer left the paper is the annoying half of
+        that rule without the useful half.
+        """
+        menu = QMenu(self)
+
+        link = self.link_at(position)
+        if link is not None:
+            url = link.url()
+            if url is not None and not url.isEmpty():
+                follow = menu.addAction(_("Open Link"))
+                follow.triggered.connect(lambda: self.follow(link))
+                copy_link = menu.addAction(_("Copy Link Address"))
+                copy_link.triggered.connect(
+                    lambda: QApplication.clipboard().setText(url.toString()))
+            else:
+                where = self.link_description(link)
+                follow = menu.addAction(_("Go to {}").format(where) if where
+                                        else _("Follow Link"))
+                follow.triggered.connect(lambda: self.follow(link))
+            menu.addSeparator()
+
+        found = self.to_page(position)
+        if found is not None and not self._point_in_selection(*found):
+            # Outside the current selection: move it here first.
+            self.clear_selection()
+
+        copy = menu.addAction(_("Copy"))
+        copy.setShortcut(QKeySequence.Copy)
+        copy.setEnabled(self.has_selection())
+        copy.triggered.connect(self.copy)
+
+        select_all = menu.addAction(_("Select All"))
+        select_all.setShortcut(QKeySequence.SelectAll)
+        select_all.setEnabled(self._document is not None and bool(self.page_count()))
+        page = found[0] if found is not None else max(0, self.current_page())
+        select_all.triggered.connect(lambda: self.select_all_on(page))
+
+        return menu
+
+    def _point_in_selection(self, page: int, page_point: QPointF) -> bool:
+        selection = self._selection.get(page)
+        if selection is None:
+            return False
+        return any(polygon.boundingRect().contains(page_point)
+                   for polygon in selection.bounds())
 
     def keyPressEvent(self, event):
         """Page keys navigate rather than merely scroll.
@@ -835,6 +1114,15 @@ class PageCanvas(QAbstractScrollArea):
         all four.
         """
         key = event.key()
+        if event.matches(QKeySequence.Copy):
+            if self.copy():
+                return
+        if event.matches(QKeySequence.SelectAll):
+            self.select_all_on(max(0, self.current_page()))
+            return
+        if key == Qt.Key_Escape and self._selection:
+            self.clear_selection()
+            return
         if key == Qt.Key_Home:
             self.first_page()
             return
@@ -907,5 +1195,6 @@ class PageCanvas(QAbstractScrollArea):
             # Blank paper is also what shows while there is no bitmap yet. Step
             # 5 draws the grid's thumbnail there instead, once there is an
             # asynchronous render worth waiting for.
+            self._paint_selection(painter, index, offset)
             self._paint_search(painter, index, offset)
         painter.end()

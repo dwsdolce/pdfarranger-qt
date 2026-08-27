@@ -27,13 +27,13 @@ import unittest
 from PySide6.QtCore import (
     QEvent, QModelIndex, QPointF, QRectF, QSize, QSizeF, Qt, QUrl,
 )
-from PySide6.QtGui import QKeyEvent, QMouseEvent
+from PySide6.QtGui import QContextMenuEvent, QKeyEvent, QMouseEvent
 from PySide6.QtPdf import QPdfLinkModel, QPdfSearchModel
-from PySide6.QtWidgets import QApplication
+from PySide6.QtWidgets import QApplication, QMenu
 
 from pdfarranger_qt.canvas import (
     DEFAULT_MARGIN, DEFAULT_SPACING, ZOOM_LIMITS, FitMode, PageCanvas, PageLayout,
-    SynchronousPages,
+    PageText, SynchronousPages,
 )
 from pdfarranger_qt.core import DocumentSet
 from pdfarranger_qt.export import get_in_memory_pdf
@@ -405,21 +405,32 @@ class TestCanvasParity(unittest.TestCase):
         settle(lambda: self.canvas.viewport().width() == 600)
         self.canvas.set_document(self.memory.document)
 
+    def resize_to(self, width, height):
+        """Resize and wait for the viewport to follow.
+
+        Not `settle(lambda: viewport().width() == width)`: a document means a
+        scroll bar, so the viewport is a dozen pixels narrower than the widget
+        and that predicate is never true. It waited out its whole timeout
+        instead -- eight seconds a call, a sixth of the suite across two tests.
+        """
+        before = (self.canvas.viewport().width(), self.canvas.viewport().height())
+        self.canvas.resize(width, height)
+        settle(lambda: (self.canvas.viewport().width(),
+                        self.canvas.viewport().height()) != before)
+
     # -- fit modes ---------------------------------------------------------
 
     def test_fit_width_survives_a_resize(self):
         """The reason the mode is remembered and not just its result."""
         self.canvas.zoom_to_width()
-        self.canvas.resize(900, 500)
-        settle(lambda: self.canvas.viewport().width() == 900)
+        self.resize_to(900, 500)
         self.assertAlmostEqual(self.canvas.layout.content_size().width(),
                                self.canvas.viewport().width(), delta=1)
 
     def test_fit_page_survives_a_resize(self):
         """One *page* fits, not the whole column: content_size() is every page."""
         self.canvas.zoom_to_page()
-        self.canvas.resize(400, 700)
-        settle(lambda: self.canvas.viewport().height() == 700)
+        self.resize_to(400, 700)
         rect = self.canvas.layout.page_rect(max(0, self.canvas.current_page()))
         margins = 2 * self.canvas.layout.margin_px()
         self.assertLessEqual(rect.width() + margins, self.canvas.viewport().width() + 1)
@@ -430,8 +441,7 @@ class TestCanvasParity(unittest.TestCase):
         self.canvas.zoom_to_width()
         self.canvas.set_zoom(1.0)
         self.assertEqual(self.canvas.fit_mode(), FitMode.NONE)
-        self.canvas.resize(900, 500)
-        settle(lambda: self.canvas.viewport().width() == 900)
+        self.resize_to(900, 500)
         self.assertAlmostEqual(self.canvas.zoom(), 1.0, places=6)
 
     def test_zoom_is_clamped(self):
@@ -987,3 +997,280 @@ class TestLinkTooltips(unittest.TestCase):
             def page(self): return -1
         self.assertEqual(PageCanvas.link_description(Nowhere()), "")
         self.assertEqual(PageCanvas.link_description(None), "")
+
+
+class TestSelection(unittest.TestCase):
+    """Selecting and copying text (phase 7 step 4).
+
+    QPdfView exposed none of this (D16). The awkward part is not the dragging
+    but QPdfDocument.getSelection, which wants a glyph under *both* ends: the
+    exact box of a line selects it, a generous rectangle around the same line
+    selects nothing. Points are snapped onto the nearest run first, so these
+    tests mostly probe that the snapping holds where a real drag would land.
+    """
+
+    def setUp(self):
+        self.docs = DocumentSet()
+        self.addCleanup(self.docs.cleanup)
+        pages = self.docs.add_file(OUTLINE_PDF)
+        self.memory = MemoryDocument(
+            get_in_memory_pdf(list(pages), self.docs.files_for_export()))
+        self.addCleanup(self.memory.close)
+        self.canvas = PageCanvas()
+        self.addCleanup(self.canvas.deleteLater)
+        self.canvas.resize(700, 900)
+        self.canvas.show()
+        settle(lambda: self.canvas.viewport().width() == 700)
+        self.canvas.set_document(self.memory.document)
+        self.canvas.go_to_page(0)
+        settle(timeout_ms=200)
+        QApplication.clipboard().clear()
+
+    def text_box(self, page=0):
+        return self.memory.document.getSelectionAtIndex(
+            page, 0, PageText.ALL).boundingRectangle()
+
+    def viewport_point(self, page, x, y):
+        return self.canvas.to_viewport(
+            self.canvas.layout.from_page(page, QPointF(x, y)))
+
+    def drag(self, start, end):
+        QApplication.sendEvent(self.canvas.viewport(), QMouseEvent(
+            QEvent.MouseButtonPress, start,
+            self.canvas.viewport().mapToGlobal(start.toPoint()),
+            Qt.LeftButton, Qt.LeftButton, Qt.NoModifier))
+        # Two moves: the first crosses the drag threshold, the second selects.
+        for point in (QPointF((start.x() + end.x()) / 2, (start.y() + end.y()) / 2), end):
+            QApplication.sendEvent(self.canvas.viewport(), QMouseEvent(
+                QEvent.MouseMove, point,
+                self.canvas.viewport().mapToGlobal(point.toPoint()),
+                Qt.NoButton, Qt.LeftButton, Qt.NoModifier))
+        QApplication.sendEvent(self.canvas.viewport(), QMouseEvent(
+            QEvent.MouseButtonRelease, end,
+            self.canvas.viewport().mapToGlobal(end.toPoint()),
+            Qt.LeftButton, Qt.LeftButton, Qt.NoModifier))
+
+    # -- snapping ----------------------------------------------------------
+
+    def test_snapping_rescues_a_point_off_the_text(self):
+        """The whole reason PageText exists."""
+        text = PageText(self.memory.document)
+        box = self.text_box()
+        stray = QPointF(box.left() - 30, box.top() - 20)
+        snapped = text.snap(0, stray)
+        self.assertIsNotNone(snapped)
+        self.assertTrue(any(r.contains(snapped) for r in text.runs(0)),
+                        "snapped point is still not on any run")
+
+    def test_snapping_leaves_a_point_already_on_text_alone(self):
+        text = PageText(self.memory.document)
+        inside = text.runs(0)[0].center()
+        snapped = text.snap(0, inside)
+        self.assertAlmostEqual(snapped.x(), inside.x(), delta=1)
+        self.assertAlmostEqual(snapped.y(), inside.y(), delta=1)
+
+    def test_a_page_without_text_snaps_to_nothing(self):
+        text = PageText(None)
+        self.assertIsNone(text.snap(0, QPointF(10, 10)))
+        self.assertEqual(text.runs(0), [])
+
+    def test_runs_are_cached(self):
+        text = PageText(self.memory.document)
+        self.assertIs(text.runs(0), text.runs(0))
+
+    # -- selecting ---------------------------------------------------------
+
+    def test_a_drag_selects_text(self):
+        box = self.text_box()
+        self.drag(self.viewport_point(0, box.left() - 20, box.top() - 10),
+                  self.viewport_point(0, box.right() + 20, box.center().y()))
+        self.assertTrue(self.canvas.has_selection(), "the drag selected nothing")
+        self.assertIn("Page", self.canvas.selected_text())
+
+    def test_a_click_does_not_select(self):
+        box = self.text_box()
+        point = self.viewport_point(0, box.center().x(), box.center().y())
+        self.drag(point, point)
+        self.assertFalse(self.canvas.has_selection())
+
+    def test_selecting_across_a_page_boundary(self):
+        """getSelection is per page; a reader that stops at the break is no use."""
+        if self.canvas.page_count() < 2:
+            self.skipTest("needs a multi-page fixture")
+        self.canvas.set_zoom(0.35)          # two pages visible at once
+        settle(timeout_ms=200)
+        self.canvas.go_to_page(0)
+        settle(timeout_ms=200)
+        first, second = self.text_box(0), self.text_box(1)
+        self.drag(self.viewport_point(0, first.center().x(), first.top() + 2),
+                  self.viewport_point(1, second.center().x(), second.bottom() - 2))
+        self.assertTrue(self.canvas.has_selection())
+        self.assertGreaterEqual(len(self.canvas._selection), 2,
+                                "the selection stopped at the page break")
+
+    def test_select_all_takes_the_page(self):
+        self.canvas.select_all_on(0)
+        self.assertTrue(self.canvas.has_selection())
+        self.assertIn("Page 1", self.canvas.selected_text())
+
+    def test_a_new_press_clears_the_previous_selection(self):
+        self.canvas.select_all_on(0)
+        self.assertTrue(self.canvas.has_selection())
+        point = self.viewport_point(0, 5, 5)
+        self.drag(point, point)
+        self.assertFalse(self.canvas.has_selection())
+
+    def test_escape_clears_the_selection(self):
+        self.canvas.select_all_on(0)
+        QApplication.sendEvent(self.canvas, QKeyEvent(
+            QEvent.KeyPress, Qt.Key_Escape, Qt.NoModifier))
+        self.assertFalse(self.canvas.has_selection())
+
+    # -- copying -----------------------------------------------------------
+
+    def test_copy_puts_the_selection_on_the_clipboard(self):
+        self.canvas.select_all_on(0)
+        self.assertTrue(self.canvas.copy())
+        self.assertIn("Page 1", QApplication.clipboard().text())
+
+    def test_copying_nothing_says_so(self):
+        self.assertFalse(self.canvas.copy())
+        self.assertEqual(QApplication.clipboard().text(), "")
+
+    def test_ctrl_c_copies(self):
+        self.canvas.select_all_on(0)
+        QApplication.sendEvent(self.canvas, QKeyEvent(
+            QEvent.KeyPress, Qt.Key_C, Qt.ControlModifier))
+        self.assertIn("Page 1", QApplication.clipboard().text())
+
+    def test_painting_a_selection_does_not_raise(self):
+        self.canvas.select_all_on(0)
+        self.canvas.viewport().repaint()
+
+
+class TestContextMenu(unittest.TestCase):
+    """The right-button menu, built from whatever is under the pointer.
+
+    Tested by calling the builder rather than by opening the menu: exec() spins
+    a nested event loop and would hang the suite. The actions are the thing
+    worth asserting anyway -- which ones appear, and whether they are enabled.
+    """
+
+    def setUp(self):
+        self.docs = DocumentSet()
+        self.addCleanup(self.docs.cleanup)
+        pages = self.docs.add_file(LINK_PDF)
+        self.memory = MemoryDocument(
+            get_in_memory_pdf(list(pages), self.docs.files_for_export()))
+        self.addCleanup(self.memory.close)
+        self.canvas = PageCanvas()
+        self.addCleanup(self.canvas.deleteLater)
+        self.canvas.resize(700, 600)
+        self.canvas.show()
+        settle(lambda: self.canvas.viewport().width() == 700)
+        self.canvas.set_document(self.memory.document)
+        self.canvas.go_to_page(0)
+        settle(timeout_ms=200)
+        QApplication.clipboard().clear()
+
+    def menu_at(self, point):
+        """Build the menu without showing it.
+
+        build_context_menu() exists precisely so this is possible: exec() spins
+        a nested event loop that never returns without a user, so a test that
+        opens the menu hangs the suite instead of failing it. Patching exec()
+        was the first attempt and it did not take -- it hung for five minutes.
+        """
+        menu = self.canvas.build_context_menu(point)
+        self.addCleanup(menu.deleteLater)
+        labels = [a.text() for a in menu.actions() if a.text()]
+        return {"labels": labels,
+                "actions": {a.text(): a for a in menu.actions() if a.text()}}
+
+    def links(self):
+        model = QPdfLinkModel()
+        model.setDocument(self.memory.document)
+        model.setPage(0)
+        return [model.index(r, 0).data(QPdfLinkModel.Role.Link.value)
+                for r in range(model.rowCount(QModelIndex()))]
+
+    def point_on(self, link):
+        return self.canvas.to_viewport(
+            self.canvas.layout.from_page(0, link.rectangles()[0].center()))
+
+    def test_over_a_page_it_offers_copy_and_select_all(self):
+        menu = self.menu_at(QPointF(350, 300))
+        self.assertIn("Copy", menu["labels"])
+        self.assertIn("Select All", menu["labels"])
+
+    def test_copy_is_disabled_with_nothing_selected(self):
+        menu = self.menu_at(QPointF(350, 300))
+        self.assertFalse(menu["actions"]["Copy"].isEnabled())
+
+    def test_copy_is_enabled_inside_a_selection(self):
+        self.canvas.select_all_on(0)
+        runs = self.canvas._text.runs(0)
+        inside = self.canvas.to_viewport(
+            self.canvas.layout.from_page(0, runs[0].center()))
+        menu = self.menu_at(inside)
+        self.assertTrue(menu["actions"]["Copy"].isEnabled())
+
+    def test_right_clicking_the_page_away_from_the_selection_drops_it(self):
+        """Offering to copy a selection somewhere else is worse than no menu."""
+        self.canvas.select_all_on(0)
+        self.assertTrue(self.canvas.has_selection())
+        rect = self.canvas.layout.page_rect(0)
+        blank = self.canvas.to_viewport(
+            QPointF(rect.center().x(), rect.bottom() - 10))   # on the page, no text
+        self.assertIsNotNone(self.canvas.to_page(blank))
+        self.menu_at(blank)
+        self.assertFalse(self.canvas.has_selection())
+
+    def test_right_clicking_the_margin_keeps_the_selection(self):
+        """Off the page is not "somewhere else on the page".
+
+        Right-clicking the grey around a page should still offer to copy what is
+        selected; destroying the selection because the pointer left the paper is
+        the annoying half of the rule above, without the useful half.
+        """
+        self.canvas.select_all_on(0)
+        self.menu_at(QPointF(3, 3))
+        self.assertTrue(self.canvas.has_selection())
+        menu = self.menu_at(QPointF(3, 3))
+        self.assertTrue(menu["actions"]["Copy"].isEnabled())
+
+    def test_over_an_external_link_it_offers_the_link_commands(self):
+        for link in self.links():
+            if link.url().isEmpty():
+                continue
+            menu = self.menu_at(self.point_on(link))
+            self.assertIn("Open Link", menu["labels"])
+            self.assertIn("Copy Link Address", menu["labels"])
+            return
+        self.fail("fixture has no external link")
+
+    def test_copy_link_address_puts_the_url_on_the_clipboard(self):
+        for link in self.links():
+            if link.url().isEmpty():
+                continue
+            menu = self.menu_at(self.point_on(link))
+            menu["actions"]["Copy Link Address"].trigger()
+            self.assertEqual(QApplication.clipboard().text(),
+                             link.url().toString())
+            return
+        self.fail("fixture has no external link")
+
+    def test_over_an_internal_link_it_names_the_target(self):
+        for link in self.links():
+            if not link.url().isEmpty():
+                continue
+            menu = self.menu_at(self.point_on(link))
+            self.assertTrue(any(label.startswith("Go to") for label in menu["labels"]),
+                            f"expected a 'Go to ...' entry, got {menu['labels']}")
+            return
+        self.fail("fixture has no internal link")
+
+    def test_no_link_commands_over_plain_text(self):
+        menu = self.menu_at(QPointF(350, 400))
+        self.assertNotIn("Open Link", menu["labels"])
+        self.assertNotIn("Copy Link Address", menu["labels"])

@@ -221,9 +221,9 @@ class TestReadModeSwitch(unittest.TestCase):
     def test_harmless_actions_stay_enabled(self):
         """Find and Preferences change nothing, so reading should not stop them."""
         self.win.set_read_mode(True)
-        for action in (self.win.act_find, self.win.act_preferences,
-                       self.win.act_copy):
+        for action in (self.win.act_find, self.win.act_preferences):
             self.assertTrue(action.isEnabled(), action.text())
+
 
     def test_the_gate_is_derived_not_hand_listed(self):
         """A new editing command must be disabled without anyone remembering."""
@@ -942,3 +942,65 @@ class TestExternalLinkPolicy(unittest.TestCase):
         self.reader._open_external(QUrl("example.com/no-scheme"))
         self.assertEqual(self.opened, [])
         self.assertEqual(len(self.refused), 1)
+
+
+class TestCopyFollowsTheReader(unittest.TestCase):
+    """Edit > Copy means the reader's text while reading, pages otherwise.
+
+    The grid keeps its own selection behind the reader, so leaving Copy to the
+    grid put serialised *pages* on the clipboard while the user was looking at
+    text they had just highlighted. Needs a fixture with text in it: TEST_PDF
+    has none, so Select All there selects nothing and proves nothing.
+    """
+
+    def setUp(self):
+        from PySide6.QtWidgets import QApplication as _App
+        from pdfarranger_qt.mainwindow import MainWindow
+
+        self.App = _App
+        MESSAGE_BOXES.clear()
+        self.win = MainWindow()
+        self.win.resize(900, 700)
+        self.win.show()
+        self.win.open_paths([OUTLINE_PDF])
+        self.win.modified = False
+        settle(timeout_ms=300)
+        self.win.set_read_mode(True)
+        settle(timeout_ms=400)
+        self.App.clipboard().clear()
+
+    def tearDown(self):
+        self.win.modified = False
+        self.win.close()
+
+    def test_copy_is_disabled_until_something_is_selected(self):
+        self.assertFalse(self.win.act_copy.isEnabled())
+        self.win.reader.select_all()
+        settle(timeout_ms=200)
+        self.assertTrue(self.win.act_copy.isEnabled())
+        self.win.reader.canvas.clear_selection()
+        settle(timeout_ms=200)
+        self.assertFalse(self.win.act_copy.isEnabled())
+
+    def test_copy_puts_the_text_on_the_clipboard_not_the_pages(self):
+        self.win.reader.select_all()
+        settle(timeout_ms=200)
+        self.win.act_copy.trigger()
+        clip = self.App.clipboard().text()
+        self.assertIn("Page 1", clip)
+        self.assertNotIn("///", clip, "that is the page serialisation format")
+
+    def test_select_all_selects_the_page_text_while_reading(self):
+        self.win.act_select_all.trigger()
+        settle(timeout_ms=200)
+        self.assertTrue(self.win.reader.has_selection())
+
+    def test_leaving_read_mode_gives_copy_back_to_the_grid(self):
+        self.win.set_read_mode(False)
+        settle(timeout_ms=200)
+        self.win.view.selectAll()
+        settle(timeout_ms=200)
+        self.assertTrue(self.win.act_copy.isEnabled())
+        self.win.act_copy.trigger()
+        self.assertIn("///", self.App.clipboard().text(),
+                      "the grid should be serialising pages again")

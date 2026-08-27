@@ -578,7 +578,12 @@ take a title and an `/XYZ` destination from.
             emitted rather than opened: `ReaderView.SAFE_SCHEMES` decides what a
             document may hand to the desktop, because a widget is the wrong
             place for that question and `file://` is the wrong answer
-      - [ ] Text selection and copy
+      - [x] Text selection and copy. Drag to select, across page boundaries;
+            Ctrl+C, Ctrl+A, Escape; I-beam over text. The awkward part is
+            `getSelection`, which wants a glyph under *both* ends -- the exact
+            box of a line selects it, a generous rectangle around the same line
+            selects nothing -- so `PageText` snaps each end onto the nearest run
+            of text first, from one `getSelectionAtIndex` per page, cached
       - [ ] Placeholders and prefetch
       - [ ] Facing pages
 - [ ] **Edit bookmarks — create, delete, rename, re-target, re-nest.** Upstream
@@ -1289,7 +1294,35 @@ This is why the same page can hold a link that works beside one that does not:
 | --- | --- | --- | --- |
 | `www.omikradio.org` | link | link | prefixed, on one line |
 | `handiham.org` | plain | plain | no `www.` or `http`, so neither matcher fires |
-| `www.arrl.org/part-97-amateur-radio` | plain | link | wrapped mid-URL as `www.\r\narrl.org/...`; Acrobat rejoins across the break, PDFium stops at it |
+| `www.arrl.org/part-97-amateur-radio` | plain | link | wrapped after `www.`; PDFium only rejoins a break that follows a **hyphen** |
+
+**The matcher, read rather than guessed.** PDFium is BSD-3 and open, so the rule
+is `CPDF_LinkExtract::ExtractLinks` in `core/fpdftext/cpdf_linkextract.cpp` --
+*fpdftext*, not fpdfdoc, which is the whole finding stated in the engine's own
+structure: this is text scanning, and `fpdfdoc` is where the real annotations
+live. What it does:
+
+- Two web prefixes only, `http` and `www.` (`kHttpScheme`, `kWWWAddrStart`), and
+  a bare `www.` match gets `http://` prepended -- which is why a page reading
+  `www.omikradio.org` yields a link whose URL is `http://www.omikradio.org`.
+  Nothing without one of those prefixes is ever a link, so `handiham.org` cannot
+  be one in any PDFium-based viewer.
+- **A line break is only stitched across when it follows a hyphen.** The
+  candidate is closed at any break unless `bAfterHyphen` is set, and only then
+  are `\n` and `\r` removed and scanning continued. The Handbook wraps after
+  `www.` -- a full stop, not a hyphen -- so the break ends the candidate, `www.`
+  alone reaches `CheckWebLink`, and is rejected. Acrobat rejoins regardless of
+  what precedes the break. Neither is wrong; they are different heuristics.
+- Trailing `)`, `,`, `>` and `.` are stripped before matching, so a
+  sentence-ending `arrl.org.` does not swallow the full stop.
+- Its own comment: *"Ftp address, file system links, data, blob etc. are not
+  checked."* PDFium never synthesises `ftp://`, `file://` or `data:`. So
+  `ReaderView.SAFE_SCHEMES` is belt-and-braces for inferred links -- but not for
+  the 1009 real annotations, which may carry any scheme at all, and are the
+  reason the allow list exists.
+
+`cpdf_linkextract_unittest.cpp` sits beside it and enumerates the accepted
+shapes, if the exact boundaries ever matter more than they do here.
 
 **Chrome behaves identically, because it is the same engine.** Chrome's PDF
 viewer is PDFium, so a wrapped URL is not a link there either, and the same

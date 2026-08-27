@@ -67,6 +67,8 @@ class ReaderView(QWidget):
 
     #: Emitted when the visible page changes, so the window can show it.
     page_changed = Signal(int)
+    #: Text was selected or deselected, so Edit > Copy can follow it.
+    selection_changed = Signal(bool)
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -101,6 +103,7 @@ class ReaderView(QWidget):
         layout.addWidget(self.splitter)
 
         self.canvas.current_page_changed.connect(self.page_changed)
+        self.canvas.selection_changed.connect(self.selection_changed)
         self.canvas.external_link_activated.connect(self._open_external)
         # No event filter: the page keys and ctrl+wheel are the canvas's own
         # handlers now. They had to be filtered in from outside while the view
@@ -339,6 +342,24 @@ class ReaderView(QWidget):
     def matches_on_page(self, page: int) -> int:
         """How many hits are on a page. Synchronous, unlike rowCount()."""
         return len(self.search_model.resultsOnPage(page))
+
+    # -- text selection ----------------------------------------------------
+
+    def has_selection(self) -> bool:
+        return self.canvas.has_selection()
+
+    def copy(self) -> bool:
+        """Put the selected text on the clipboard. False if nothing is selected."""
+        return self.canvas.copy()
+
+    def select_all(self):
+        """Select the text of the page being read.
+
+        The page rather than the document: Ctrl+A in the grid selects every
+        page, but the reader's equivalent would be every character of a 1590
+        page book, which is neither useful nor quick.
+        """
+        self.canvas.select_all_on(self.current_page())
 
     def outline_labels(self) -> List[str]:
         """Top-level outline entries, for tests and for the status bar."""
