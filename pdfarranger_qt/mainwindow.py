@@ -724,7 +724,8 @@ class MainWindow(QMainWindow):
         for act in (self.act_continuous, self.act_next_page, self.act_prev_page,
                     self.act_first_page, self.act_last_page, self.act_go_to_page):
             act.setEnabled(self.read_mode)
-        # QPdfView has no multi-column layout, so this one is grid-only.
+        # The reader lays out one column; facing pages is phase 7 step 6.
+        # So this one is grid-only.
         self.act_zoom_fit_multi.setEnabled(has_pages and not self.read_mode)
         if hasattr(self, "reader_toolbar"):
             self.toolbar.setVisible(not self.read_mode)
@@ -901,9 +902,13 @@ class MainWindow(QMainWindow):
     def set_continuous_scroll(self, on: bool):
         """Continuous scrolling in read mode, or one page at a time.
 
-        Worth having as a real command rather than a preference: on a long,
-        dense document continuous scrolling can outrun QPdfView's rendering and
-        leave pages blank until it catches up, and one page at a time does not.
+        Worth having as a real command rather than a preference. It began as a
+        workaround: QPdfView rendered on demand and left pages blank when
+        scrolling outran it. The reader's own view renders on the GUI thread
+        instead, so fast scrolling stutters rather than blanks, and phase 7
+        step 5 answers that properly with prefetch and placeholders. The mode
+        stays because reading one page at a time is a preference in its own
+        right, and it is a setting people already have.
         """
         self.settings.setValue("reader/continuous", bool(on))
         self.reader.set_continuous(bool(on))
@@ -1326,8 +1331,8 @@ class MainWindow(QMainWindow):
         command for when across-the-page is what you want.
         """
         if self.read_mode:
-            # QPdfView fits against its own viewport; there is nothing here to
-            # measure and no column count to pin.
+            # The reader fits against its own viewport; there is nothing here
+            # to measure and no column count to pin.
             self.reader.fit_page()
             return
         pages = self._fit_reference()
@@ -1727,8 +1732,8 @@ class MainWindow(QMainWindow):
             QApplication.restoreOverrideCursor()
         count = len(matches)
         # The grid draws the hits itself, from rectangles in the edited page's
-        # own points; the reader only needs the phrase, because QPdfView does
-        # its own highlighting over its own document.
+        # own points; the reader only needs the phrase, because it highlights
+        # from its own search model over its own document.
         self.model.set_matches({row: self.search.rectangles(row) for row in matches})
         self.reader.search(phrase)
         self.statusBar().showMessage(
@@ -1948,9 +1953,11 @@ class MainWindow(QMainWindow):
         self.settings.setValue("window/geometry", self.saveGeometry())
         self.settings.setValue("window/state", self.saveState())
         self.search.invalidate()
-        # Before the widgets go: QPdfView owns the QPdfDocument handed to
-        # it and destroys it on teardown, and the page navigator emits
-        # currentPageChanged on the way out.
+        # Before the widgets go. This used to be because QPdfView owned the
+        # QPdfDocument handed to it and destroyed it on teardown; the canvas
+        # only borrows it, but it does hold a reference, and closing a document
+        # it still points at crashes PDFium on the next paint. The order is
+        # still load-bearing, for a different reason than it was.
         self.reader.clear()
         self.renderer.shutdown()
         self.docs.cleanup()

@@ -438,6 +438,12 @@ that suited a window you are no longer using.
 > pays. `rebuild_outlines` already skipped `None` entries in `pdf_input`, so the
 > in-memory case needed no other change.
 
+> **Superseded by phase 7 step 2, and kept because the ordering it explains is
+> still load-bearing.** `PageCanvas` only *borrows* the document, so the
+> destruction below no longer happens -- but it holds a reference, and closing a
+> document it still points at crashes PDFium on the next paint. Same teardown
+> order, different reason. What follows was true of `QPdfView`:
+>
 > **`QPdfView` owns the `QPdfDocument` you give it** and destroys it with itself,
 > which leaves `MemoryDocument` holding a wrapper whose C++ side has gone. The
 > navigator also emits `currentPageChanged` while a document is being swapped or
@@ -1127,6 +1133,12 @@ Three pieces, all of which the port now has:
 
 ### Read mode goes blank when you scroll fast, and cannot be tuned
 
+> **Superseded by phase 7 step 2.** This section is why the reader's view was
+> replaced: every limitation in it is `QPdfView`'s, not the engine's. The canvas
+> renders on the GUI thread today, so fast scrolling stutters rather than blanks,
+> and step 5 answers it properly with prefetch and placeholders sized as a number
+> of pages at the current zoom. Kept as the record of what forced the decision.
+
 `QPdfView` renders each page on demand, at full display resolution, and draws
 **nothing** until that render arrives. Measured on the ARRL Handbook — 1590
 dense pages — at a reader-sized 900 to 1200 pixels wide:
@@ -1150,6 +1162,12 @@ Acrobat stays continuous because it renders progressively (coarse first, then
 sharp), keeps a cache measured in megabytes, and renders tiles at the visible
 resolution. Qt does none of the three.
 
+> **Superseded by phase 7 step 2.** The page keys are `PageCanvas`'s own
+> handlers now, so the event filter described below is gone; the behaviour it
+> describes is what the canvas implements deliberately, rather than a
+> workaround bolted onto someone else's widget. What follows was true of
+> `QPdfView`:
+>
 > **`QPdfView` scrolls; it does not turn pages.** PageUp and PageDown move its
 > scrollbar, which happens to change page in a continuous view and does
 > *nothing at all* in `SinglePage` mode — so the toggle above shipped, briefly,
