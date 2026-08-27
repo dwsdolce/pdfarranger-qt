@@ -584,7 +584,16 @@ take a title and an `/XYZ` destination from.
             box of a line selects it, a generous rectangle around the same line
             selects nothing -- so `PageText` snaps each end onto the nearest run
             of text first, from one `getSelectionAtIndex` per page, cached
-      - [ ] Placeholders and prefetch
+      - [x] Placeholders and prefetch. The hybrid section 6 settled: the
+            worker keeps the queue, the drain loop and the thread, while *what*
+            a task renders moved into the task and *where its document comes
+            from* into a provider -- `FileDocuments` for the grid, keyed by temp
+            copy, and `BytesDocument` for the reader, parsing its own copy on
+            the render thread because QPdfDocument is not thread-safe. Separate
+            caches, the reader's budget sized as `KEEP` pages at the current
+            zoom. Placeholders are the same page at another zoom, scaled, since
+            a cheap low-resolution pass does not exist. Painting a heavy
+            Handbook page went from a 247 ms block to 1.2 ms
       - [ ] Facing pages
 - [ ] **Edit bookmarks — create, delete, rename, re-target, re-nest.** Upstream
       has none of this: its `exporter_outlines.py` only *preserves* an outline

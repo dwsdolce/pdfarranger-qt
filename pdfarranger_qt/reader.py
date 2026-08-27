@@ -147,7 +147,7 @@ class ReaderView(QWidget):
         if not document.ok:
             document.close()
             return False
-        self._show(document)
+        self._show(document, data)
         return True
 
     def _load_source(self, copyname: str, password: str) -> bool:
@@ -165,14 +165,27 @@ class ReaderView(QWidget):
         if not document.ok:
             document.close()
             return False
-        self._show(document)
+        # The fast path has no bytes in hand: the render thread reads the same
+        # file instead, which is what makes the path fast in the first place.
+        try:
+            with open(copyname, "rb") as handle:
+                data = handle.read()
+        except OSError:
+            data = None
+        self._show(document, data)
         return True
 
-    def _show(self, document):
-        """Bind a document to every model, then drop the previous one."""
+    def _show(self, document, data=None):
+        """Bind a document to every model, then drop the previous one.
+
+        ``data`` is the document as bytes, handed to the canvas for its render
+        thread to parse separately: QPdfDocument is not thread-safe and this one
+        belongs to the GUI thread, where the search, bookmark and page-selector
+        models are bound to it.
+        """
         previous = self._document
         self._document = document
-        self.canvas.set_document(document.document)
+        self.canvas.set_document(document.document, data)
         self.bookmarks.setDocument(document.document)
         self.search_model.setDocument(document.document)
         self.page_selector.setDocument(document.document)
@@ -181,6 +194,10 @@ class ReaderView(QWidget):
         # canvas still holds a reference to crashes PDFium on its next paint.
         if previous is not None:
             previous.close()
+
+    def shutdown(self):
+        """Stop the canvas's render thread. Qt aborts if one outlives its widget."""
+        self.canvas.shutdown()
 
     def clear(self):
         """Drop the document. Safe to call more than once.

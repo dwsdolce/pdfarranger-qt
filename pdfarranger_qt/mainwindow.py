@@ -2051,6 +2051,7 @@ class MainWindow(QMainWindow):
         # it still points at crashes PDFium on the next paint. The order is
         # still load-bearing, for a different reason than it was.
         self.reader.clear()
+        self.reader.shutdown()
         self.renderer.shutdown()
         self.docs.cleanup()
         super().closeEvent(event)

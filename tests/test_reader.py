@@ -43,6 +43,9 @@ class TestReaderView(unittest.TestCase):
         self.reader = ReaderView()
         self.addCleanup(self.docs.cleanup)
         self.addCleanup(self.reader.clear)
+        # Owns a render thread now: Qt aborts the process if a QThread is
+        # destroyed while still running.
+        self.addCleanup(self.reader.shutdown)
 
     def load(self, path):
         pages = self.docs.add_file(path)
@@ -854,6 +857,9 @@ class TestReaderFastPath(unittest.TestCase):
         self.reader = ReaderView()
         self.addCleanup(self.docs.cleanup)
         self.addCleanup(self.reader.clear)
+        # Owns a render thread now: Qt aborts the process if a QThread is
+        # destroyed while still running.
+        self.addCleanup(self.reader.shutdown)
 
     def test_unmodified_list_offers_the_source(self):
         pages = self.docs.add_file(TEST_PDF)
@@ -898,6 +904,7 @@ class TestReaderFastPath(unittest.TestCase):
 
         fast = ReaderView()
         self.addCleanup(fast.clear)
+        self.addCleanup(fast.shutdown)
         self.assertTrue(fast.load(pages, files,
                                   source=self.docs.source_if_unmodified(pages)))
         direct = (fast.page_count(),
@@ -928,6 +935,9 @@ class TestExternalLinkPolicy(unittest.TestCase):
     def setUp(self):
         self.reader = ReaderView()
         self.addCleanup(self.reader.clear)
+        # Owns a render thread now: Qt aborts the process if a QThread is
+        # destroyed while still running.
+        self.addCleanup(self.reader.shutdown)
         self.opened = []
         self.refused = []
         self.reader.link_refused.connect(self.refused.append)

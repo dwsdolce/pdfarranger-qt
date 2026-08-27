@@ -135,15 +135,168 @@ class RenderTask:
         self.hide = hide
         self.width = width
 
+    def render(self, documents) -> Optional[QImage]:
+        """Render this page, with its edits applied, from ``documents``.
+
+        Moved off the worker so the worker knows nothing about what it renders:
+        the grid needs the page's angle, crop and hide applied here, and the
+        reader needs none of that. See PORTING-NOTES.md section 6.
+        """
+        doc = documents.get(self.copyname, self.password)
+        if doc is None or not 0 < self.npage <= doc.pageCount():
+            return None
+
+        size = doc.pagePointSize(self.npage - 1)
+        w, h = size.width(), size.height()
+        if self.angle in (90, 270):
+            w, h = h, w
+        if w <= 0 or h <= 0:
+            return None
+
+        crop = self.crop
+        visible_w = 1 - crop.left - crop.right
+        visible_h = 1 - crop.top - crop.bottom
+        if visible_w <= 0 or visible_h <= 0:
+            return None
+        # Scale so that the *cropped* result comes out at the requested width.
+        scale = self.width / (w * visible_w)
+        full = QSize(max(1, round(w * scale)), max(1, round(h * scale)))
+
+        options = QPdfDocumentRenderOptions()
+        options.setRotation(_ROTATIONS.get(self.angle % 360, _ROTATIONS[0]))
+        options.setScaledSize(full)
+        # Deliberately no setScaledClipRect: as of Qt 6.11 setting it makes
+        # PDFium ignore the rotation, so the page comes back upright inside a
+        # sideways frame. Render the whole page and cut the crop out below.
+
+        try:
+            image = doc.render(self.npage - 1, full, options)
+        except Exception:  # pragma: no cover - defensive, PDFium can be unhappy
+            return None
+        if image.isNull():
+            return None
+
+        if any(crop):
+            clip = QRect(
+                round(image.width() * crop.left),
+                round(image.height() * crop.top),
+                max(1, round(image.width() * visible_w)),
+                max(1, round(image.height() * visible_h)),
+            )
+            image = image.copy(clip.intersected(image.rect()))
+
+        self._paint_hidden(image, self.hide)
+        return image
+
+    @staticmethod
+    def _paint_hidden(image: QImage, hide):
+        """Blank out the areas the user asked to hide, as the GTK version does."""
+        if not any(hide):
+            return
+        w, h = image.width(), image.height()
+        bands = [
+            QRect(0, 0, round(w * hide.left), h),
+            QRect(w - round(w * hide.right), 0, round(w * hide.right), h),
+            QRect(0, 0, w, round(h * hide.top)),
+            QRect(0, h - round(h * hide.bottom), w, round(h * hide.bottom)),
+        ]
+        painter = QPainter(image)
+        painter.setPen(QColor(0, 0, 0, 0))
+        painter.setBrush(QColor(255, 255, 255))
+        for band in bands:
+            if band.width() > 0 and band.height() > 0:
+                painter.drawRect(band)
+        painter.end()
+
+
+class FileDocuments:
+    """One `QPdfDocument` per source file, opened on the render thread.
+
+    A provider: the worker owns the queue and the thread, and asks this for the
+    document a task needs. The grid renders from the immutable temp copies
+    `DocumentSet` keeps, so they are addressed by path.
+    """
+
+    def __init__(self):
+        self._docs: Dict[str, QPdfDocument] = {}
+
+    def get(self, copyname, password) -> Optional[QPdfDocument]:
+        doc = self._docs.get(copyname)
+        if doc is None:
+            doc = QPdfDocument(None)
+            if password:
+                doc.setPassword(password)
+            if doc.load(copyname) != QPdfDocument.Error.None_:
+                doc.close()
+                return None
+            self._docs[copyname] = doc
+        return doc
+
+    def close(self):
+        for doc in self._docs.values():
+            doc.close()
+        self._docs.clear()
+
+
+class BytesDocument:
+    """One `QPdfDocument` over a buffer, built on the render thread.
+
+    The reader's document (D15) lives on the GUI thread, bound to the search,
+    bookmark and page-selector models. QPdfDocument is not thread-safe and the
+    worker deliberately builds its own documents, so the *bytes* cross the
+    thread boundary and a second document is parsed from them here. QByteArray
+    is implicitly shared, so the buffer itself is not copied -- only PDFium's
+    parse state is duplicated, and that is the price of rendering off the GUI
+    thread at all.
+    """
+
+    def __init__(self):
+        self._data = None
+        self._array = None
+        self._buffer = None
+        self._document = None
+
+    def set_data(self, data: Optional[bytes]):
+        self.close()
+        self._data = data
+
+    def get(self, *_args) -> Optional[QPdfDocument]:
+        if self._document is not None:
+            return self._document
+        if self._data is None:
+            return None
+        self._array = QByteArray(self._data)
+        self._buffer = QBuffer(self._array)
+        self._buffer.open(QIODevice.ReadOnly)
+        self._document = QPdfDocument(None)
+        self._document.load(self._buffer)
+        if self._document.error() != QPdfDocument.Error.None_:
+            self.close()
+            return None
+        return self._document
+
+    def close(self):
+        if self._document is not None:
+            self._document.close()
+        if self._buffer is not None:
+            self._buffer.close()
+        self._document = self._array = self._buffer = None
+
 
 class _RenderWorker(QObject):
-    """Lives on the render thread. Owns one QPdfDocument per source file."""
+    """Lives on the render thread: a queue, a drain loop, and a provider.
+
+    Nothing here knows what a task renders or where its document comes from --
+    the task does the first and the provider the second. That is what lets the
+    grid and the reader share one thread and one queue while keeping separate
+    documents and separate caches (see PORTING-NOTES.md section 6).
+    """
 
     rendered = Signal(object, QImage)  # key, image
 
-    def __init__(self):
+    def __init__(self, documents=None):
         super().__init__()
-        self._docs: Dict[str, QPdfDocument] = {}
+        self.documents = documents if documents is not None else FileDocuments()
         self._mutex = QMutex()
         self._queue = collections.OrderedDict()
         self._stopping = False
@@ -175,94 +328,13 @@ class _RenderWorker(QObject):
                 if self._stopping or not self._queue:
                     return
                 _key, task = self._queue.popitem(last=False)
-            image = self._render(task)
+            image = task.render(self.documents)
             if image is not None and not image.isNull():
                 self.rendered.emit(task.key, image)
 
     @Slot()
     def shutdown(self):
-        for doc in self._docs.values():
-            doc.close()
-        self._docs.clear()
-
-    def _document(self, copyname, password) -> Optional[QPdfDocument]:
-        doc = self._docs.get(copyname)
-        if doc is None:
-            doc = QPdfDocument(None)
-            if password:
-                doc.setPassword(password)
-            if doc.load(copyname) != QPdfDocument.Error.None_:
-                doc.close()
-                return None
-            self._docs[copyname] = doc
-        return doc
-
-    def _render(self, task: RenderTask) -> Optional[QImage]:
-        doc = self._document(task.copyname, task.password)
-        if doc is None or not 0 < task.npage <= doc.pageCount():
-            return None
-
-        size = doc.pagePointSize(task.npage - 1)
-        w, h = size.width(), size.height()
-        if task.angle in (90, 270):
-            w, h = h, w
-        if w <= 0 or h <= 0:
-            return None
-
-        crop = task.crop
-        visible_w = 1 - crop.left - crop.right
-        visible_h = 1 - crop.top - crop.bottom
-        if visible_w <= 0 or visible_h <= 0:
-            return None
-        # Scale so that the *cropped* result comes out at the requested width.
-        scale = task.width / (w * visible_w)
-        full = QSize(max(1, round(w * scale)), max(1, round(h * scale)))
-
-        options = QPdfDocumentRenderOptions()
-        options.setRotation(_ROTATIONS.get(task.angle % 360, _ROTATIONS[0]))
-        options.setScaledSize(full)
-        # Deliberately no setScaledClipRect: as of Qt 6.11 setting it makes
-        # PDFium ignore the rotation, so the page comes back upright inside a
-        # sideways frame. Render the whole page and cut the crop out below.
-
-        try:
-            image = doc.render(task.npage - 1, full, options)
-        except Exception:  # pragma: no cover - defensive, PDFium can be unhappy
-            return None
-        if image.isNull():
-            return None
-
-        if any(crop):
-            clip = QRect(
-                round(image.width() * crop.left),
-                round(image.height() * crop.top),
-                max(1, round(image.width() * visible_w)),
-                max(1, round(image.height() * visible_h)),
-            )
-            image = image.copy(clip.intersected(image.rect()))
-
-        self._paint_hidden(image, task.hide)
-        return image
-
-    @staticmethod
-    def _paint_hidden(image: QImage, hide):
-        """Blank out the areas the user asked to hide, as the GTK version does."""
-        if not any(hide):
-            return
-        w, h = image.width(), image.height()
-        bands = [
-            QRect(0, 0, round(w * hide.left), h),
-            QRect(w - round(w * hide.right), 0, round(w * hide.right), h),
-            QRect(0, 0, w, round(h * hide.top)),
-            QRect(0, h - round(h * hide.bottom), w, round(h * hide.bottom)),
-        ]
-        painter = QPainter(image)
-        painter.setPen(QColor(0, 0, 0, 0))
-        painter.setBrush(QColor(255, 255, 255))
-        for band in bands:
-            if band.width() > 0 and band.height() > 0:
-                painter.drawRect(band)
-        painter.end()
+        self.documents.close()
 
 
 class ThumbnailCache:
@@ -285,6 +357,10 @@ class ThumbnailCache:
             del self._items[key]
         self._items[key] = image
         self._pixels += image.width() * image.height()
+        self.trim()
+
+    def trim(self):
+        """Evict oldest-first until the budget is met. Always keeps one."""
         while self._pixels > self.max_pixels and len(self._items) > 1:
             _k, old = self._items.popitem(last=False)
             self._pixels -= old.width() * old.height()
@@ -292,6 +368,10 @@ class ThumbnailCache:
     def clear(self):
         self._items.clear()
         self._pixels = 0
+
+    def items(self):
+        """Every cached (key, image). The reader scans these for a stand-in."""
+        return list(self._items.items())
 
     def __contains__(self, key):
         return key in self._items
@@ -301,20 +381,28 @@ class ThumbnailCache:
 
 
 class Renderer(QObject):
-    """UI-thread facade over the render thread and the thumbnail cache."""
+    """UI-thread facade over the render thread and one cache.
+
+    One per consumer. The grid and the reader each get their own, with their own
+    document provider and their own budget, because their bitmaps differ by two
+    orders of magnitude: a reader page at 2000 px is 21.2 MB against a 44 KB
+    thumbnail, so a shared cache would hold four reader pages and evict all ~575
+    thumbnails. See PORTING-NOTES.md section 6.
+    """
 
     #: Emitted once a requested key has a bitmap available in the cache.
     ready = Signal(object)  # key
     #: Emitted when the queue empties (useful for a status indicator).
     idle = Signal()
 
-    def __init__(self, parent=None, max_pixels=DEFAULT_CACHE_PIXELS):
+    def __init__(self, parent=None, max_pixels=DEFAULT_CACHE_PIXELS,
+                 documents=None, name="pdf-render"):
         super().__init__(parent)
         self.cache = ThumbnailCache(max_pixels)
         self._pending = set()
         self._thread = QThread()
-        self._thread.setObjectName("pdf-render")
-        self._worker = _RenderWorker()
+        self._thread.setObjectName(name)
+        self._worker = _RenderWorker(documents)
         self._worker.moveToThread(self._thread)
         self._worker.rendered.connect(self._on_rendered)
         self._thread.start()
@@ -339,6 +427,17 @@ class Renderer(QObject):
         """Drop everything not started yet -- called when the viewport moves."""
         self._worker.clear()
         self._pending.clear()
+
+    def set_budget(self, max_pixels: int):
+        """Resize the cache, dropping whatever no longer fits.
+
+        The reader sizes its budget as a number of *pages* at the current zoom,
+        so this is called on every zoom change: per-page cost swings two orders
+        of magnitude across the range, and a fixed pixel budget would hold forty
+        pages at one end and two at the other.
+        """
+        self.cache.max_pixels = max(1, int(max_pixels))
+        self.cache.trim()
 
     def invalidate(self):
         """Forget every rendered bitmap (after a zoom change, for instance)."""

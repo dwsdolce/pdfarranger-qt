@@ -40,16 +40,16 @@ two is how a hit test ends up half a page out on an external monitor.
 """
 
 import bisect
-import collections
 import math
 from typing import List, Optional, Sequence, Tuple
 
-from PySide6.QtCore import QPointF, QRectF, QSize, QSizeF, Qt, QUrl, Signal
+from PySide6.QtCore import QObject, QPointF, QRectF, QSize, QSizeF, Qt, QUrl, Signal
 from PySide6.QtGui import QColor, QImage, QKeySequence, QPainter, QPalette
 from PySide6.QtPdf import QPdfDocumentRenderOptions, QPdfLinkModel
 from PySide6.QtWidgets import QAbstractScrollArea, QApplication, QFrame, QMenu
 
 from .i18n import gettext_ as _
+from .render import BytesDocument, Renderer
 
 #: Gap between consecutive pages, and around the column, in logical pixels at
 #: zoom 1. Scaled with the zoom so the layout looks the same at every size.
@@ -340,57 +340,137 @@ class PageText:
         return any(box.contains(point) for box in self.runs(page))
 
 
-class SynchronousPages:
-    """Renders a page on demand, on the calling thread, with a small cache.
+class PageRenderTask:
+    """One page of the reader's document at one size.
 
-    Step 1's bitmap source, and deliberately the simplest thing that works.
-    Section 6 settles that the reader needs an asynchronous render with a cache
-    of its own -- a quarter of the Handbook's pages miss a 60 Hz frame at 2000 px
-    and the worst takes 247 ms -- but that is step 5, and nothing above this line
-    should have to change when it arrives. Hence the seam: the canvas asks for a
-    bitmap and gets one or None, and never learns which.
-
-    The budget is a number of *pages* at the current width rather than a fixed
-    pixel count, per section 6: per-page cost swings two orders of magnitude
-    across the zoom range, so a fixed budget holds forty pages at one end and two
-    at the other.
+    No angle, crop or hide: the reader shows an export with the edits already
+    applied (D15), so there is nothing left to apply. That asymmetry with the
+    grid's RenderTask is why the worker asks the *task* to render itself.
     """
 
-    #: Pages to keep. Current, plus a screenful either side.
-    KEEP = 5
+    __slots__ = ("key", "page", "size")
 
-    def __init__(self, document=None):
-        self._document = document
-        self._cache = collections.OrderedDict()
+    def __init__(self, key, page: int, size: QSize):
+        self.key = key
+        self.page = page
+        self.size = size
 
-    def set_document(self, document):
-        self._document = document
-        self._cache.clear()
-
-    def clear(self):
-        self._cache.clear()
-
-    def page_image(self, index: int, size: QSize) -> Optional[QImage]:
-        """A bitmap of ``index`` at ``size``, or None if it cannot be had."""
-        if self._document is None or size.width() <= 0 or size.height() <= 0:
+    def render(self, documents) -> Optional[QImage]:
+        document = documents.get()
+        if document is None or not 0 <= self.page < document.pageCount():
             return None
-        key = (index, size.width(), size.height())
-        image = self._cache.get(key)
-        if image is not None:
-            self._cache.move_to_end(key)
-            return image
         options = QPdfDocumentRenderOptions()
-        options.setScaledSize(size)
+        options.setScaledSize(self.size)
         try:
-            image = self._document.render(index, size, options)
+            return document.render(self.page, self.size, options)
         except Exception:  # pragma: no cover - PDFium can be unhappy
             return None
-        if image.isNull():
+
+
+class AsynchronousPages(QObject):
+    """The reader's bitmaps, rendered off the GUI thread, with placeholders.
+
+    Replaces the synchronous source step 1 left as a seam. Section 6 measured
+    why: a quarter of the Handbook's pages miss a 60 Hz frame at 2000 px and the
+    worst takes 247 ms, so rendering where the painting happens stutters
+    visibly. `page_image` therefore never blocks -- it answers with what it has
+    and asks for what it does not.
+
+    **A placeholder can only be a bitmap that already exists.** Rendering a
+    quick small one is not an option: the expensive pages are bound by parsing
+    and image decoding, not rasterising, so the Handbook's worst page costs
+    248 ms at 1000 px and 247 ms at 2000 px. What is available is the same page
+    at a *different* zoom, still in the cache, scaled to fit -- ugly, instant,
+    and the right shape, which is all a placeholder has to be.
+
+    The budget is a number of pages at the current size rather than a fixed
+    pixel count, because per-page cost swings two orders of magnitude across the
+    zoom range.
+    """
+
+    #: A page arrived; the canvas should repaint.
+    page_ready = Signal(int)
+
+    #: Pages to keep at the current size: the visible one, and a screenful
+    #: either side, so a scroll in either direction finds them already there.
+    KEEP = 5
+    #: How far ahead and behind to render before anyone asks.
+    PREFETCH = 2
+
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self._documents = BytesDocument()
+        self._renderer = Renderer(self, max_pixels=1, documents=self._documents,
+                                  name="pdf-reader")
+        self._renderer.ready.connect(self._arrived)
+        self._sizes = {}          # page -> the size most recently asked for
+
+    def set_document(self, document, data: Optional[bytes] = None):
+        """Point at a new document. ``data`` is what the render thread parses."""
+        self._renderer.invalidate()
+        self._sizes.clear()
+        self._documents.set_data(data)
+
+    def clear(self):
+        self._renderer.invalidate()
+        self._sizes.clear()
+
+    def shutdown(self):
+        self._renderer.shutdown()
+
+    def _arrived(self, key):
+        self.page_ready.emit(key[0])
+
+    def page_image(self, index: int, size: QSize) -> Optional[QImage]:
+        """The page at this size if it is ready, else the best stand-in.
+
+        Never blocks and never renders here. A miss queues the real render and
+        returns whatever the cache holds for this page at another size, which
+        the canvas scales into place.
+        """
+        if size.width() <= 0 or size.height() <= 0:
             return None
-        self._cache[key] = image
-        while len(self._cache) > self.KEEP:
-            self._cache.popitem(last=False)
-        return image
+        key = (index, size.width(), size.height())
+        image = self._renderer.get(key)
+        if image is not None:
+            return image
+        self._sizes[index] = size
+        self._request(index, size)
+        return self._stand_in(index)
+
+    def _stand_in(self, index: int) -> Optional[QImage]:
+        """The same page at some other size, if the cache still has one."""
+        best = None
+        for (page, width, _height), image in self._renderer.cache.items():
+            if page != index:
+                continue
+            # Prefer the largest available: upscaling a thumbnail looks worse
+            # than downscaling a page rendered for a bigger zoom.
+            if best is None or width > best[0]:
+                best = (width, image)
+        return best[1] if best is not None else None
+
+    def _request(self, index: int, size: QSize):
+        self._renderer.request([PageRenderTask((index, size.width(), size.height()),
+                                               index, size)])
+
+    def prefetch(self, around: int, size: QSize, page_count: int):
+        """Render the neighbours before they are scrolled to.
+
+        The only mitigation there is: the slow pages cannot be made faster, so
+        the answer is to have started them earlier. At ~250 ms for a heavy page,
+        two either side buys about two seconds of lead at reading pace.
+        """
+        if size.width() <= 0 or size.height() <= 0:
+            return
+        pixels = size.width() * size.height()
+        self._renderer.set_budget(max(1, pixels * self.KEEP))
+        for offset in range(1, self.PREFETCH + 1):
+            for index in (around - offset, around + offset):
+                if 0 <= index < page_count:
+                    key = (index, size.width(), size.height())
+                    if self._renderer.get(key) is None:
+                        self._request(index, size)
 
 
 class PageCanvas(QAbstractScrollArea):
@@ -419,7 +499,8 @@ class PageCanvas(QAbstractScrollArea):
     def __init__(self, parent=None):
         super().__init__(parent)
         self._layout = PageLayout([])
-        self._pages = SynchronousPages()
+        self._pages = AsynchronousPages(self)
+        self._pages.page_ready.connect(self._page_arrived)
         self._current = -1
         self._fit = FitMode.NONE
         self._continuous = True
@@ -445,11 +526,18 @@ class PageCanvas(QAbstractScrollArea):
 
     # -- document ----------------------------------------------------------
 
-    def set_document(self, document):
-        """Show ``document``, a QPdfDocument, or None to show nothing."""
+    def set_document(self, document, data: Optional[bytes] = None):
+        """Show ``document``, a QPdfDocument, or None to show nothing.
+
+        ``data`` is the same document as bytes, for the render thread to parse
+        into one of its own: QPdfDocument is not thread-safe, and this one is
+        bound to the search, bookmark and page-selector models on this thread.
+        Without it the reader still works, but every page paints as a
+        placeholder, because nothing can be rendered.
+        """
         sizes = sizes_from_document(document) if document is not None else []
         self._layout = PageLayout(sizes, zoom=self._layout.zoom)
-        self._pages.set_document(document)
+        self._pages.set_document(document, data)
         self._text.set_document(document)
         self._document = document
         self.clear_selection()
@@ -460,6 +548,16 @@ class PageCanvas(QAbstractScrollArea):
         self.viewport().update()
         if sizes:
             self._emit_current()
+
+    def shutdown(self):
+        """Stop the render thread and join it.
+
+        Explicit, like the grid's renderer: Qt aborts the process outright if a
+        QThread is destroyed while still running, so this cannot be left to
+        garbage collection. Called from ReaderView, and from any test that
+        builds a canvas of its own.
+        """
+        self._pages.shutdown()
 
     @property
     def layout(self) -> PageLayout:
@@ -678,6 +776,12 @@ class PageCanvas(QAbstractScrollArea):
         # keep the old scale, which is why the mode is remembered.
         self._reapply_fit()
 
+    def _page_arrived(self, index: int):
+        """A render finished. Repaint only if it is on screen."""
+        top = self.offset().y()
+        if index in self._layout.pages_in(top, top + self.viewport().height()):
+            self.viewport().update()
+
     def _scrolled(self, _value):
         self._emit_current()
         self.viewport().update()
@@ -796,6 +900,22 @@ class PageCanvas(QAbstractScrollArea):
         if a is None or b is None:
             return None
         return self._document.getSelection(page, a, b)
+
+    def _prefetch_around(self, visible):
+        """Ask for the neighbours of what was just painted.
+
+        After painting rather than before: what is on screen is what the render
+        thread should be working on first, and the queue moves a re-requested
+        key to the back, so asking for neighbours first would delay the page the
+        reader is actually looking at.
+        """
+        if not visible or not self._layout.page_count:
+            return
+        middle = visible[len(visible) // 2]
+        rect = self._layout.page_rect(middle)
+        size = QSize(max(1, int(round(rect.width()))),
+                     max(1, int(round(rect.height()))))
+        self._pages.prefetch(middle, size, self._layout.page_count)
 
     def _paint_selection(self, painter, index: int, offset: QPointF):
         selection = self._selection.get(index)
@@ -1178,7 +1298,8 @@ class PageCanvas(QAbstractScrollArea):
         if not self._continuous:
             band_top, band_bottom = self._band()
             top, bottom = max(top, band_top), min(bottom, band_bottom)
-        for index in self._layout.pages_in(top, bottom):
+        visible = list(self._layout.pages_in(top, bottom))
+        for index in visible:
             rect = self._layout.page_rect(index)
             target = QRectF(rect.topLeft() - offset, rect.size())
             size = QSize(max(1, int(round(rect.width()))),
@@ -1198,3 +1319,4 @@ class PageCanvas(QAbstractScrollArea):
             self._paint_selection(painter, index, offset)
             self._paint_search(painter, index, offset)
         painter.end()
+        self._prefetch_around(visible)

@@ -27,13 +27,13 @@ import unittest
 from PySide6.QtCore import (
     QEvent, QModelIndex, QPointF, QRectF, QSize, QSizeF, Qt, QUrl,
 )
-from PySide6.QtGui import QContextMenuEvent, QKeyEvent, QMouseEvent
+from PySide6.QtGui import QKeyEvent, QMouseEvent
 from PySide6.QtPdf import QPdfLinkModel, QPdfSearchModel
-from PySide6.QtWidgets import QApplication, QMenu
+from PySide6.QtWidgets import QApplication
 
 from pdfarranger_qt.canvas import (
     DEFAULT_MARGIN, DEFAULT_SPACING, ZOOM_LIMITS, FitMode, PageCanvas, PageLayout,
-    PageText, SynchronousPages,
+    AsynchronousPages, PageText,
 )
 from pdfarranger_qt.core import DocumentSet
 from pdfarranger_qt.export import get_in_memory_pdf
@@ -268,6 +268,7 @@ class TestPageCanvas(unittest.TestCase):
         self.addCleanup(self.memory.close)
         self.canvas = PageCanvas()
         self.addCleanup(self.canvas.deleteLater)
+        self.addCleanup(self.canvas.shutdown)
         self.canvas.resize(600, 500)
         # Shown, because a QAbstractScrollArea does not propagate a resize to
         # its viewport until it is laid out: before this the widget is 600x500
@@ -371,15 +372,9 @@ class TestPageCanvas(unittest.TestCase):
         self.canvas.go_to_page(self.canvas.page_count() - 1)
         self.canvas.viewport().repaint()
 
-    def test_the_bitmap_cache_is_bounded(self):
-        source = SynchronousPages(self.memory.document)
-        size = QSize(80, 100)
-        for i in range(SynchronousPages.KEEP + 3):
-            source.page_image(i % self.memory.page_count(), size)
-        self.assertLessEqual(len(source._cache), SynchronousPages.KEEP)
-
     def test_a_missing_bitmap_is_not_fatal(self):
-        source = SynchronousPages(None)
+        source = AsynchronousPages()
+        self.addCleanup(source.shutdown)
         self.assertIsNone(source.page_image(0, QSize(10, 10)))
 
 
@@ -400,6 +395,7 @@ class TestCanvasParity(unittest.TestCase):
         self.addCleanup(self.memory.close)
         self.canvas = PageCanvas()
         self.addCleanup(self.canvas.deleteLater)
+        self.addCleanup(self.canvas.shutdown)
         self.canvas.resize(600, 500)
         self.canvas.show()
         settle(lambda: self.canvas.viewport().width() == 600)
@@ -588,6 +584,7 @@ class TestCanvasPixels(unittest.TestCase):
         self.addCleanup(self.memory.close)
         self.canvas = PageCanvas()
         self.addCleanup(self.canvas.deleteLater)
+        self.addCleanup(self.canvas.shutdown)
         self.canvas.resize(500, 400)
         self.canvas.show()
         settle(lambda: self.canvas.viewport().width() == 500)
@@ -666,6 +663,7 @@ class TestLinks(unittest.TestCase):
         self.addCleanup(self.memory.close)
         self.canvas = PageCanvas()
         self.addCleanup(self.canvas.deleteLater)
+        self.addCleanup(self.canvas.shutdown)
         self.canvas.resize(700, 600)
         self.canvas.show()
         settle(lambda: self.canvas.viewport().width() == 700)
@@ -807,6 +805,7 @@ class TestExternalLinksAreFound(unittest.TestCase):
         self.addCleanup(self.memory.close)
         self.canvas = PageCanvas()
         self.addCleanup(self.canvas.deleteLater)
+        self.addCleanup(self.canvas.shutdown)
         self.canvas.resize(700, 600)
         self.canvas.show()
         settle(lambda: self.canvas.viewport().width() == 700)
@@ -823,7 +822,7 @@ class TestExternalLinksAreFound(unittest.TestCase):
 
     def test_the_fixture_has_an_external_link(self):
         """Guard: without one, the test below proves nothing."""
-        external = [l for l in self.links() if not l.url().isEmpty()]
+        external = [link for link in self.links() if not link.url().isEmpty()]
         self.assertTrue(external, "fixture has no external link")
         self.assertFalse(external[0].isValid(),
                          "isValid() is now True for an external link; the "
@@ -874,6 +873,7 @@ class TestBadDestinations(unittest.TestCase):
         self.addCleanup(self.memory.close)
         self.canvas = PageCanvas()
         self.addCleanup(self.canvas.deleteLater)
+        self.addCleanup(self.canvas.shutdown)
         self.canvas.resize(600, 500)
         self.canvas.show()
         settle(lambda: self.canvas.viewport().width() == 600)
@@ -933,6 +933,7 @@ class TestLinkTooltips(unittest.TestCase):
         self.addCleanup(self.memory.close)
         self.canvas = PageCanvas()
         self.addCleanup(self.canvas.deleteLater)
+        self.addCleanup(self.canvas.shutdown)
         self.canvas.resize(700, 600)
         self.canvas.show()
         settle(lambda: self.canvas.viewport().width() == 700)
@@ -1018,6 +1019,7 @@ class TestSelection(unittest.TestCase):
         self.addCleanup(self.memory.close)
         self.canvas = PageCanvas()
         self.addCleanup(self.canvas.deleteLater)
+        self.addCleanup(self.canvas.shutdown)
         self.canvas.resize(700, 900)
         self.canvas.show()
         settle(lambda: self.canvas.viewport().width() == 700)
@@ -1165,6 +1167,7 @@ class TestContextMenu(unittest.TestCase):
         self.addCleanup(self.memory.close)
         self.canvas = PageCanvas()
         self.addCleanup(self.canvas.deleteLater)
+        self.addCleanup(self.canvas.shutdown)
         self.canvas.resize(700, 600)
         self.canvas.show()
         settle(lambda: self.canvas.viewport().width() == 700)
@@ -1274,3 +1277,118 @@ class TestContextMenu(unittest.TestCase):
         menu = self.menu_at(QPointF(350, 400))
         self.assertNotIn("Open Link", menu["labels"])
         self.assertNotIn("Copy Link Address", menu["labels"])
+
+
+class TestAsynchronousPages(unittest.TestCase):
+    """Rendering off the GUI thread, with placeholders (phase 7 step 5).
+
+    Section 6 measured why this is not optional: a quarter of the Handbook's
+    pages miss a 60 Hz frame at 2000 px and the worst takes 247 ms, so painting
+    and rendering cannot share a thread. The interface is unchanged from the
+    synchronous source step 1 left as a seam -- page_image() answers with what
+    it has and asks for what it does not.
+    """
+
+    def setUp(self):
+        self.docs = DocumentSet()
+        self.addCleanup(self.docs.cleanup)
+        pages = self.docs.add_file(OUTLINE_PDF)
+        self.data = get_in_memory_pdf(list(pages), self.docs.files_for_export())
+        self.memory = MemoryDocument(self.data)
+        self.addCleanup(self.memory.close)
+        self.source = AsynchronousPages()
+        self.addCleanup(self.source.shutdown)
+        self.source.set_document(self.memory.document, self.data)
+
+    def wait_for(self, index, size):
+        settle(lambda: self.source._renderer.get(
+            (index, size.width(), size.height())) is not None, timeout_ms=5000)
+
+    def test_the_first_ask_does_not_block(self):
+        """It returns immediately, with nothing or a stand-in -- never a render."""
+        size = QSize(200, 260)
+        import time
+        start = time.perf_counter()
+        self.source.page_image(0, size)
+        elapsed = (time.perf_counter() - start) * 1000
+        self.assertLess(elapsed, 50, "page_image looks like it rendered inline")
+
+    def test_the_page_arrives_and_is_then_returned(self):
+        size = QSize(200, 260)
+        self.assertIsNone(self.source.page_image(0, size))
+        self.wait_for(0, size)
+        image = self.source.page_image(0, size)
+        self.assertIsNotNone(image)
+        self.assertEqual(image.size(), size)
+
+    def test_it_says_when_a_page_arrives(self):
+        seen = []
+        self.source.page_ready.connect(seen.append)
+        size = QSize(160, 200)
+        self.source.page_image(1, size)
+        settle(lambda: 1 in seen, timeout_ms=5000)
+        self.assertIn(1, seen)
+
+    def test_another_size_of_the_same_page_stands_in(self):
+        """The only placeholder available: rendering a quick small one is not.
+
+        Section 6: the Handbook's worst page costs 248 ms at 1000 px and 247 ms
+        at 2000 px, because the cost is parsing and image decode rather than
+        rasterising. So a cheap low-resolution pass does not exist.
+        """
+        small = QSize(120, 155)
+        self.source.page_image(0, small)
+        self.wait_for(0, small)
+
+        big = QSize(400, 515)
+        stand_in = self.source.page_image(0, big)
+        self.assertIsNotNone(stand_in, "no stand-in offered for a cached page")
+        self.assertEqual(stand_in.size(), small, "should be the cached bitmap")
+
+    def test_a_page_never_rendered_has_no_stand_in(self):
+        self.assertIsNone(self.source.page_image(3, QSize(200, 260)))
+
+    def test_the_budget_holds_a_screenful_of_pages(self):
+        size = QSize(300, 390)
+        self.source.prefetch(0, size, 4)
+        expected = size.width() * size.height() * AsynchronousPages.KEEP
+        self.assertEqual(self.source._renderer.cache.max_pixels, expected)
+
+    def test_the_budget_follows_the_zoom(self):
+        """A fixed pixel budget holds forty pages at one zoom and two at another."""
+        small, large = QSize(100, 130), QSize(800, 1040)
+        self.source.prefetch(0, small, 4)
+        at_small = self.source._renderer.cache.max_pixels
+        self.source.prefetch(0, large, 4)
+        self.assertGreater(self.source._renderer.cache.max_pixels, at_small)
+
+    def test_prefetch_asks_for_the_neighbours(self):
+        size = QSize(150, 195)
+        self.source.prefetch(1, size, 4)
+        for index in (0, 2, 3):
+            settle(lambda i=index: self.source._renderer.get(
+                (i, size.width(), size.height())) is not None, timeout_ms=5000)
+        for index in (0, 2, 3):
+            self.assertIsNotNone(
+                self.source._renderer.get((index, size.width(), size.height())),
+                f"page {index} was not prefetched")
+
+    def test_prefetch_stays_inside_the_document(self):
+        self.source.prefetch(0, QSize(150, 195), 4)      # would ask for -1, -2
+        settle(timeout_ms=400)                            # must not raise
+
+    def test_clearing_drops_everything(self):
+        size = QSize(200, 260)
+        self.source.page_image(0, size)
+        self.wait_for(0, size)
+        self.source.clear()
+        self.assertIsNone(self.source._renderer.get((0, size.width(), size.height())))
+
+    def test_a_source_with_no_bytes_renders_nothing(self):
+        """Without the bytes the render thread has no document of its own."""
+        source = AsynchronousPages()
+        self.addCleanup(source.shutdown)
+        source.set_document(self.memory.document, None)
+        self.assertIsNone(source.page_image(0, QSize(100, 130)))
+        settle(timeout_ms=300)
+        self.assertIsNone(source._renderer.get((0, 100, 130)))
