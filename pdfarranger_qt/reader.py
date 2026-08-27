@@ -33,9 +33,9 @@ And it belongs to the render thread, so sharing it is a data race besides.
 import logging
 from typing import List, Optional
 
-from PySide6.QtCore import QModelIndex, Qt, Signal
-from PySide6.QtGui import QDesktopServices
-from PySide6.QtPdf import QPdfBookmarkModel, QPdfSearchModel
+from PySide6.QtCore import QAbstractItemModel, QModelIndex, Qt, Signal
+from PySide6.QtGui import QBrush, QColor, QDesktopServices
+from PySide6.QtPdf import QPdfSearchModel
 from PySide6.QtPdfWidgets import QPdfPageSelector
 from PySide6.QtWidgets import (
     QSplitter,
@@ -47,6 +47,7 @@ from PySide6.QtWidgets import (
 from .canvas import ZOOM_LIMITS, ZOOM_STEP, PageCanvas
 from .export import get_in_memory_pdf
 from .i18n import gettext_ as _
+from .outline import Outline
 from .render import MemoryDocument
 
 
@@ -84,7 +85,13 @@ class ReaderView(QWidget):
         self.search_model = QPdfSearchModel(self)
         self.canvas.set_search_model(self.search_model)
 
-        self.bookmarks = QPdfBookmarkModel(self)
+        # Ours, not QPdfBookmarkModel: that reads whatever document the reader
+        # is showing and cannot be edited (D20).
+        self.bookmarks = OutlineModel(self)
+        #: Given a page uid, where that page is *now*. Set by the window, which
+        #: is the only thing that knows the page list. Without it a bookmark
+        #: cannot navigate, because it names a page rather than a position.
+        self.page_of_uid = None
         self.outline = QTreeView(self)
         self.outline.setModel(self.bookmarks)
         self.outline.setHeaderHidden(True)
@@ -186,7 +193,6 @@ class ReaderView(QWidget):
         previous = self._document
         self._document = document
         self.canvas.set_document(document.document, data)
-        self.bookmarks.setDocument(document.document)
         self.search_model.setDocument(document.document)
         self.page_selector.setDocument(document.document)
         self.outline.expandToDepth(1)
@@ -209,7 +215,6 @@ class ReaderView(QWidget):
         """
         document, self._document = self._document, None
         self.canvas.set_document(None)
-        self.bookmarks.setDocument(None)
         self.search_model.setDocument(None)
         self.page_selector.setDocument(None)
         if document is not None:
@@ -230,6 +235,11 @@ class ReaderView(QWidget):
             # exception.
             self._document = None
             return 0
+
+    def set_outline(self, outline):
+        """Show the document's outline. Called whenever it changes."""
+        self.bookmarks.set_outline(outline)
+        self.outline.expandToDepth(1)
 
     def has_outline(self) -> bool:
         return self.bookmarks.rowCount(QModelIndex()) > 0
@@ -296,12 +306,18 @@ class ReaderView(QWidget):
         QDesktopServices.openUrl(url)
 
     def _go_to_bookmark(self, index: QModelIndex):
-        if not index.isValid():
+        """Follow a bookmark to its page, if it still has one.
+
+        A dangling entry does nothing rather than jumping somewhere arbitrary --
+        it is marked in the tree, so the silence is explained rather than
+        mysterious.
+        """
+        item = self.bookmarks.bookmark(index)
+        if item is None or item.uid is None or self.page_of_uid is None:
             return
-        page = index.data(QPdfBookmarkModel.Role.Page.value)
-        if page is None:
-            return
-        self.go_to_page(int(page))
+        page = self.page_of_uid(item.uid)
+        if page is not None:
+            self.go_to_page(int(page))
 
     # -- zoom --------------------------------------------------------------
 
@@ -402,3 +418,108 @@ class ReaderView(QWidget):
         if not count:
             return _("Nothing to read.")
         return _("Page {} of {}").format(self.current_page() + 1, count)
+
+
+class OutlineModel(QAbstractItemModel):
+    """A tree over the document's own `Outline` (D20).
+
+    Replaces `QPdfBookmarkModel`, which reads whatever document the reader
+    happens to be showing and cannot be edited. This one is a view of the
+    outline the document owns, so an edit here is an edit to what will be saved.
+
+    A parent map is kept and rebuilt on reset. `Outline.parent_of` walks the
+    tree, and Qt asks for an item's parent constantly -- on 807 Handbook entries
+    that would be quadratic for no reason.
+    """
+
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self._outline = Outline()
+        self._parents = {}
+
+    def set_outline(self, outline: Outline):
+        self.beginResetModel()
+        self._outline = outline if outline is not None else Outline()
+        self._reindex()
+        self.endResetModel()
+
+    def _reindex(self):
+        self._parents = {}
+        def walk(items, parent):
+            for item in items:
+                self._parents[id(item)] = parent
+                walk(item.children, item)
+        walk(self._outline.roots, None)
+
+    def bookmark(self, index: QModelIndex):
+        return index.internalPointer() if index.isValid() else None
+
+    def index_of(self, item) -> QModelIndex:
+        """Where an entry lives, so a caller can select or edit it."""
+        if item is None:
+            return QModelIndex()
+        parent = self._parents.get(id(item))
+        siblings = self._outline.roots if parent is None else parent.children
+        try:
+            return self.createIndex(siblings.index(item), 0, item)
+        except ValueError:
+            return QModelIndex()
+
+    # -- QAbstractItemModel ------------------------------------------------
+
+    def index(self, row, column, parent=QModelIndex()):
+        if column != 0:
+            return QModelIndex()
+        items = (self._outline.roots if not parent.isValid()
+                 else parent.internalPointer().children)
+        if 0 <= row < len(items):
+            return self.createIndex(row, 0, items[row])
+        return QModelIndex()
+
+    def parent(self, index=QModelIndex()):
+        item = self.bookmark(index)
+        if item is None:
+            return QModelIndex()
+        return self.index_of(self._parents.get(id(item)))
+
+    def rowCount(self, parent=QModelIndex()):
+        if not parent.isValid():
+            return len(self._outline.roots)
+        return len(parent.internalPointer().children)
+
+    def columnCount(self, parent=QModelIndex()):
+        return 1
+
+    def flags(self, index):
+        if not index.isValid():
+            return Qt.NoItemFlags
+        return (Qt.ItemIsEnabled | Qt.ItemIsSelectable | Qt.ItemIsEditable)
+
+    def data(self, index, role=Qt.DisplayRole):
+        item = self.bookmark(index)
+        if item is None:
+            return None
+        if role in (Qt.DisplayRole, Qt.EditRole):
+            return item.title
+        if role == Qt.ForegroundRole and item.dangling:
+            # Marked rather than hidden or deleted: the page it wanted has gone,
+            # the title may still be worth keeping, and it can be re-homed.
+            return QBrush(QColor(150, 150, 150))
+        if role == Qt.ToolTipRole:
+            if item.dangling:
+                return _("This bookmark's page is no longer in the document")
+            if item.heading:
+                return _("This bookmark does not point at a page")
+        return None
+
+    def setData(self, index, value, role=Qt.EditRole):
+        """Rename. The caller commits an undo entry around the whole edit."""
+        item = self.bookmark(index)
+        if item is None or role != Qt.EditRole:
+            return False
+        title = str(value)
+        if title == item.title:
+            return False
+        item.title = title
+        self.dataChanged.emit(index, index, [Qt.DisplayRole, Qt.EditRole])
+        return True

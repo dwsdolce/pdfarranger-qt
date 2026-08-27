@@ -330,3 +330,52 @@ class TestOutlineThroughEditing(unittest.TestCase):
         settle(timeout_ms=400)
         self.assertEqual(len(self.win.model.pages), 8)
         self.assertEqual(self.titles(), ["Page 1", "Page 2", "Page 3", "Page 4"])
+
+    def test_the_sidebar_shows_the_documents_outline(self):
+        """End to end: the file's bookmarks reach the reader's tree."""
+        self.win.set_read_mode(True)
+        settle(timeout_ms=400)
+        self.assertEqual(self.win.reader.outline_labels(),
+                         ["Page 1", "Page 2", "Page 3", "Page 4"])
+
+    def test_a_dangling_bookmark_is_marked_in_the_tree(self):
+        """Marked rather than hidden, so a delete does not silently lose it."""
+        from PySide6.QtCore import QModelIndex, Qt
+
+        self.win.set_read_mode(True)
+        settle(timeout_ms=400)
+        self.win.view.set_selected_rows([1])
+        self.win.delete_selected()
+        settle(timeout_ms=300)
+
+        model = self.win.reader.bookmarks
+        titles = [model.index(r, 0, QModelIndex()).data() for r in range(4)]
+        self.assertEqual(titles, ["Page 1", "Page 2", "Page 3", "Page 4"])
+        greyed = [model.index(r, 0, QModelIndex()).data(Qt.ForegroundRole)
+                  is not None for r in range(4)]
+        self.assertEqual(greyed, [False, True, False, False],
+                         "the orphaned entry is not distinguished")
+
+    def test_the_tree_follows_an_undo(self):
+        from PySide6.QtCore import QModelIndex, Qt
+
+        self.win.set_read_mode(True)
+        settle(timeout_ms=400)
+        self.win.view.set_selected_rows([1])
+        self.win.delete_selected()
+        settle(timeout_ms=300)
+        self.win.undo()
+        settle(timeout_ms=400)
+        model = self.win.reader.bookmarks
+        self.assertEqual(model.rowCount(QModelIndex()), 4)
+        self.assertIsNone(model.index(1, 0, QModelIndex()).data(Qt.ForegroundRole),
+                          "still marked dangling after undo")
+
+    def test_clicking_a_bookmark_navigates_to_its_page(self):
+        self.win.set_read_mode(True)
+        settle(timeout_ms=400)
+        from PySide6.QtCore import QModelIndex
+        index = self.win.reader.bookmarks.index(2, 0, QModelIndex())
+        self.win.reader._go_to_bookmark(index)
+        settle(timeout_ms=300)
+        self.assertEqual(self.win.reader.current_page(), 2)

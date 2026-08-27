@@ -89,6 +89,10 @@ class MainWindow(QMainWindow):
         self.setCentralWidget(self.stack)
         self.reader.page_changed.connect(self._reader_page_changed)
         self.reader.selection_changed.connect(self._reader_selection_changed)
+        # The sidebar shows the document's outline, not the reader document's
+        # (D20), so the window keeps the two in step.
+        self.model.outline_changed.connect(self._refresh_outline)
+        self.reader.page_of_uid = self._page_of_uid
         self.reader.set_facing(
             self.settings.value("reader/facing", False, type=bool))
         self.reader.set_continuous(
@@ -788,6 +792,20 @@ class MainWindow(QMainWindow):
             self.reader_toolbar.setVisible(self.read_mode)
         self._update_page_total()
         self._retitle()
+
+    def _page_of_uid(self, uid):
+        """Where the page with this identity is *now*, or None if it has gone.
+
+        A bookmark names a page rather than a position (D20), so following one
+        is a lookup rather than an index.
+        """
+        for row, page in enumerate(self.model.pages):
+            if page.uid == uid:
+                return row
+        return None
+
+    def _refresh_outline(self):
+        self.reader.set_outline(self.model.outline)
 
     def _reader_selection_changed(self, has_selection: bool):
         """Copy follows the reader's selection, not the grid's, while reading."""

@@ -85,12 +85,21 @@ class TestReaderView(unittest.TestCase):
         self.reader.set_zoom(0.0001)
         self.assertGreaterEqual(self.reader.zoom(), ZOOM_LIMITS[0])
 
-    def test_outline_populates(self):
-        """Needs get_in_memory_pdf(outlines=True); it is off by default."""
+    def test_the_sidebar_shows_the_outline_it_is_given(self):
+        """The reader no longer derives one from the document it displays.
+
+        The outline belongs to the document now (D20) and is handed in, so the
+        sidebar shows the same tree whether the reader is showing the source
+        file or an in-memory export of an edited page list.
+        """
+        from pdfarranger_qt.outline import Bookmark, Outline
+
         self.load(OUTLINE_PDF)
+        self.assertFalse(self.reader.has_outline(), "nothing handed in yet")
+        self.reader.set_outline(Outline([Bookmark("Page 1", 1),
+                                         Bookmark("Page 2", 2)]))
         self.assertTrue(self.reader.has_outline())
-        self.assertEqual(self.reader.outline_labels(),
-                         ["Page 1", "Page 2", "Page 3", "Page 4"])
+        self.assertEqual(self.reader.outline_labels(), ["Page 1", "Page 2"])
 
     def test_no_outline_when_the_document_has_none(self):
         self.load(TEST_PDF)
@@ -98,12 +107,31 @@ class TestReaderView(unittest.TestCase):
         self.assertEqual(self.reader.outline_labels(), [])
 
     def test_clicking_a_bookmark_jumps(self):
+        """A bookmark names a page, so following one is a lookup."""
         from PySide6.QtCore import QModelIndex
 
-        self.load(OUTLINE_PDF)
-        index = self.reader.bookmarks.index(2, 0, QModelIndex())
-        self.reader._go_to_bookmark(index)
+        from pdfarranger_qt.outline import Bookmark, Outline
+
+        pages = self.load(OUTLINE_PDF)
+        self.reader.set_outline(Outline([Bookmark(p.description or str(i), p.uid)
+                                         for i, p in enumerate(pages)]))
+        self.reader.page_of_uid = lambda uid: next(
+            (row for row, p in enumerate(pages) if p.uid == uid), None)
+        self.reader._go_to_bookmark(self.reader.bookmarks.index(2, 0, QModelIndex()))
         self.assertEqual(self.reader.current_page(), 2)
+
+    def test_a_dangling_bookmark_goes_nowhere(self):
+        """Rather than jumping somewhere arbitrary. It is marked in the tree."""
+        from PySide6.QtCore import QModelIndex
+
+        from pdfarranger_qt.outline import Bookmark, Outline
+
+        self.load(OUTLINE_PDF)
+        self.reader.set_outline(Outline([Bookmark("gone", None, wanted_target=True)]))
+        self.reader.page_of_uid = lambda uid: None
+        self.reader.go_to_page(1)
+        self.reader._go_to_bookmark(self.reader.bookmarks.index(0, 0, QModelIndex()))
+        self.assertEqual(self.reader.current_page(), 1, "it moved")
 
     def test_search_highlights_in_place(self):
         self.load(TEXT_PDF)

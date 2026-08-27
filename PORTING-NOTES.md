@@ -621,10 +621,36 @@ take a title and an `/XYZ` destination from.
       place, drag to re-nest, delete, and "add a bookmark here" from the page
       view. The tree widget is done; the model underneath it is the work.
 
-      Worth doing after the phase 4 highlighting item, which pushes on the same
-      geometry, and worth its own decision entry when it is picked up: whether
-      an edited outline survives a page edit that deletes its target, and
-      whether a bookmark is undoable separately from the pages.
+      Both questions this was to answer are answered, in **D20** and in section
+      6 *Editing bookmarks*: an edited outline survives a page edit as a
+      *dangling* entry, and bookmarks share the page list's undo stack rather
+      than having one of their own.
+
+      Steps. Detail in section 6:
+
+      - [x] The model. `outline.py`: a `Bookmark` tree the document owns, free
+            of Qt and pikepdf so the awkward questions -- what a delete does to
+            children, what dangling means -- are testable exactly
+      - [x] Page identity. `Page.uid`, carried across `duplicate()` so undo
+            keeps a bookmark attached, and reassigned by the Duplicate command
+            so a copy does not inherit one (D20)
+      - [x] Undo. The outline is in `UndoState` beside the pages, so one stack
+            covers both and a delete and its bookmarks are restored together
+      - [x] Reading it from the loaded file. `read_outline()`, the counterpart
+            to `rebuild_outlines()`, resolving each destination to a uid and
+            telling a heading from a dangling entry on load
+      - [x] Keeping it right through editing: reorder is free, delete leaves
+            entries dangling, import concatenates at the root
+      - [x] Showing it. `OutlineModel` in `reader.py` replaces
+            `QPdfBookmarkModel` in the sidebar; dangling entries are greyed with
+            a tooltip saying why, and following one resolves a uid to the page's
+            current position rather than trusting an index. A parent map is
+            cached, since `Outline.parent_of` walks the tree and Qt asks for
+            parents constantly -- quadratic over the Handbook's 807 entries
+      - [ ] The commands: Add, Add Child, Re-home, Rename, Delete, Delete
+            Dangling — on the tree's context menu
+      - [ ] Writing it on save, in place of rebuilding from source
+      - [ ] Drag to re-nest within the tree
 
 ---
 
