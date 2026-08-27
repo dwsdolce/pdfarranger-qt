@@ -23,10 +23,14 @@ if it is half a page out, every one of them is.
 
 import unittest
 
-from PySide6.QtCore import QPointF, QRectF, QSize, QSizeF
+from PySide6.QtCore import QEvent, QModelIndex, QPointF, QRectF, QSize, QSizeF, Qt
+from PySide6.QtGui import QKeyEvent
+from PySide6.QtPdf import QPdfSearchModel
+from PySide6.QtWidgets import QApplication
 
 from pdfarranger_qt.canvas import (
-    DEFAULT_MARGIN, DEFAULT_SPACING, PageCanvas, PageLayout, SynchronousPages,
+    DEFAULT_MARGIN, DEFAULT_SPACING, ZOOM_LIMITS, FitMode, PageCanvas, PageLayout,
+    SynchronousPages,
 )
 from pdfarranger_qt.core import DocumentSet
 from pdfarranger_qt.export import get_in_memory_pdf
@@ -371,3 +375,259 @@ class TestPageCanvas(unittest.TestCase):
     def test_a_missing_bitmap_is_not_fatal(self):
         source = SynchronousPages(None)
         self.assertIsNone(source.page_image(0, QSize(10, 10)))
+
+
+class TestCanvasParity(unittest.TestCase):
+    """What QPdfView did for read mode, and now has to be done here.
+
+    These are the regressions the swap could introduce silently: a fit that
+    stops fitting after a resize, page keys that only scroll, a mode change that
+    loses the reader's place.
+    """
+
+    def setUp(self):
+        self.docs = DocumentSet()
+        self.addCleanup(self.docs.cleanup)
+        pages = self.docs.add_file(TEXT_PDF)
+        self.memory = MemoryDocument(
+            get_in_memory_pdf(list(pages), self.docs.files_for_export()))
+        self.addCleanup(self.memory.close)
+        self.canvas = PageCanvas()
+        self.addCleanup(self.canvas.deleteLater)
+        self.canvas.resize(600, 500)
+        self.canvas.show()
+        settle(lambda: self.canvas.viewport().width() == 600)
+        self.canvas.set_document(self.memory.document)
+
+    # -- fit modes ---------------------------------------------------------
+
+    def test_fit_width_survives_a_resize(self):
+        """The reason the mode is remembered and not just its result."""
+        self.canvas.zoom_to_width()
+        self.canvas.resize(900, 500)
+        settle(lambda: self.canvas.viewport().width() == 900)
+        self.assertAlmostEqual(self.canvas.layout.content_size().width(),
+                               self.canvas.viewport().width(), delta=1)
+
+    def test_fit_page_survives_a_resize(self):
+        """One *page* fits, not the whole column: content_size() is every page."""
+        self.canvas.zoom_to_page()
+        self.canvas.resize(400, 700)
+        settle(lambda: self.canvas.viewport().height() == 700)
+        rect = self.canvas.layout.page_rect(max(0, self.canvas.current_page()))
+        margins = 2 * self.canvas.layout.margin_px()
+        self.assertLessEqual(rect.width() + margins, self.canvas.viewport().width() + 1)
+        self.assertLessEqual(rect.height() + margins, self.canvas.viewport().height() + 1)
+
+    def test_an_explicit_zoom_does_not_re_fit(self):
+        """Zooming by hand means the window resizing should not undo it."""
+        self.canvas.zoom_to_width()
+        self.canvas.set_zoom(1.0)
+        self.assertEqual(self.canvas.fit_mode(), FitMode.NONE)
+        self.canvas.resize(900, 500)
+        settle(lambda: self.canvas.viewport().width() == 900)
+        self.assertAlmostEqual(self.canvas.zoom(), 1.0, places=6)
+
+    def test_zoom_is_clamped(self):
+        self.canvas.set_zoom(1000)
+        self.assertLessEqual(self.canvas.zoom(), ZOOM_LIMITS[1])
+        self.canvas.set_zoom(0.0001)
+        self.assertGreaterEqual(self.canvas.zoom(), ZOOM_LIMITS[0])
+
+    def test_zoom_in_and_out_are_inverse(self):
+        before = self.canvas.zoom()
+        self.canvas.zoom_in()
+        self.assertGreater(self.canvas.zoom(), before)
+        self.canvas.zoom_out()
+        self.assertAlmostEqual(self.canvas.zoom(), before, places=6)
+
+    # -- single page -------------------------------------------------------
+
+    def test_single_page_restricts_the_scroll_range_to_one_page(self):
+        if self.canvas.page_count() < 2:
+            self.skipTest("needs a multi-page fixture")
+        self.canvas.set_zoom(1.0)
+        continuous_max = self.canvas.verticalScrollBar().maximum()
+        self.canvas.set_continuous(False)
+        self.assertLess(self.canvas.verticalScrollBar().maximum()
+                        - self.canvas.verticalScrollBar().minimum(),
+                        continuous_max)
+
+    def test_changing_mode_keeps_the_reader_on_the_same_page(self):
+        """QPdfView dropped you at the top of the document on a mode change."""
+        if self.canvas.page_count() < 2:
+            self.skipTest("needs a multi-page fixture")
+        self.canvas.go_to_page(1)
+        self.canvas.set_continuous(False)
+        self.assertEqual(self.canvas.current_page(), 1)
+        self.canvas.set_continuous(True)
+        self.assertEqual(self.canvas.current_page(), 1)
+
+    def test_next_and_previous_move_the_window_in_single_page(self):
+        if self.canvas.page_count() < 2:
+            self.skipTest("needs a multi-page fixture")
+        self.canvas.set_continuous(False)
+        self.canvas.go_to_page(0)
+        self.canvas.next_page()
+        self.assertEqual(self.canvas.current_page(), 1)
+        self.canvas.previous_page()
+        self.assertEqual(self.canvas.current_page(), 0)
+
+    def test_navigation_clamps_at_both_ends(self):
+        self.canvas.first_page()
+        self.canvas.previous_page()
+        self.assertEqual(self.canvas.current_page(), 0)
+        self.canvas.last_page()
+        self.canvas.next_page()
+        self.assertEqual(self.canvas.current_page(), self.canvas.page_count() - 1)
+
+    def test_single_page_paints_only_that_page(self):
+        self.canvas.set_continuous(False)
+        self.canvas.viewport().repaint()          # must not raise
+
+    # -- keyboard ----------------------------------------------------------
+
+    def _key(self, key):
+        QApplication.sendEvent(
+            self.canvas, QKeyEvent(QEvent.KeyPress, key, Qt.NoModifier))
+
+    def test_home_and_end_navigate(self):
+        self._key(Qt.Key_End)
+        self.assertEqual(self.canvas.current_page(), self.canvas.page_count() - 1)
+        self._key(Qt.Key_Home)
+        self.assertEqual(self.canvas.current_page(), 0)
+
+    def test_page_keys_turn_the_page_when_showing_one(self):
+        if self.canvas.page_count() < 2:
+            self.skipTest("needs a multi-page fixture")
+        self.canvas.set_continuous(False)
+        self.canvas.go_to_page(0)
+        self._key(Qt.Key_PageDown)
+        self.assertEqual(self.canvas.current_page(), 1)
+        self._key(Qt.Key_PageUp)
+        self.assertEqual(self.canvas.current_page(), 0)
+
+    # -- search ------------------------------------------------------------
+
+    def test_search_highlights_paint_without_a_model(self):
+        self.canvas.set_search_model(None)
+        self.canvas.viewport().repaint()
+
+    def test_a_search_model_can_be_attached_and_replaced(self):
+        first = QPdfSearchModel()
+        first.setDocument(self.memory.document)
+        self.canvas.set_search_model(first)
+        second = QPdfSearchModel()
+        second.setDocument(self.memory.document)
+        self.canvas.set_search_model(second)      # must disconnect the first
+        self.canvas.viewport().repaint()
+
+    def test_search_highlights_are_drawn(self):
+        """Painted by us now: QPdfView used to do this and no longer will.
+
+        "tests" rather than a common word because this fixture's only text is
+        its own filename -- searching for "the" skipped the test, which meant
+        the painting it exists to exercise was never running.
+        """
+        model = QPdfSearchModel()
+        model.setDocument(self.memory.document)
+        model.setSearchString("tests")
+        settle(lambda: model.rowCount(QModelIndex()) > 0, timeout_ms=5000)
+        self.assertGreater(model.rowCount(QModelIndex()), 0,
+                           "fixture text changed; pick another phrase")
+        self.canvas.set_search_model(model)
+
+        hits = model.resultsOnPage(0)
+        self.assertTrue(hits, "the hit should be on page 0")
+        self.canvas.set_current_search_result(0)
+        self.canvas.viewport().repaint()
+        self.assertEqual(self.canvas._search_result, 0)
+
+        # The highlight lands on the page, in document space, where the layout
+        # says the hit is -- the mapping and the drawing agreeing is the point.
+        rect = hits[0].rectangles()[0]
+        drawn = self.canvas.layout.rect_from_page(0, rect)
+        self.assertTrue(self.canvas.layout.page_rect(0).intersects(drawn))
+
+    def test_a_current_result_out_of_range_is_harmless(self):
+        self.canvas.set_current_search_result(9999)
+        self.canvas.viewport().repaint()
+
+
+class TestCanvasPixels(unittest.TestCase):
+    """What the canvas actually draws, not merely where it says pages are.
+
+    Added after a bug no geometry assertion could see: PDFium renders with an
+    alpha channel and leaves the paper transparent, so the pages were drawn in
+    exactly the right places and the viewport's grey showed straight through
+    them. Every existing test passed. Only a pixel does.
+    """
+
+    def setUp(self):
+        self.docs = DocumentSet()
+        self.addCleanup(self.docs.cleanup)
+        pages = self.docs.add_file(TEXT_PDF)
+        self.memory = MemoryDocument(
+            get_in_memory_pdf(list(pages), self.docs.files_for_export()))
+        self.addCleanup(self.memory.close)
+        self.canvas = PageCanvas()
+        self.addCleanup(self.canvas.deleteLater)
+        self.canvas.resize(500, 400)
+        self.canvas.show()
+        settle(lambda: self.canvas.viewport().width() == 500)
+        self.canvas.set_document(self.memory.document)
+        self.canvas.go_to_page(0)
+        settle(timeout_ms=200)
+
+    def grab(self):
+        self.canvas.viewport().repaint()
+        return self.canvas.viewport().grab().toImage()
+
+    def on_page(self, index=0):
+        """A viewport point that is on the page *and* on screen.
+
+        The page is taller than the viewport, so its centre is below the visible
+        band; sampling there reads an out-of-range pixel, which comes back black
+        and fails for the wrong reason.
+        """
+        rect = self.canvas.layout.page_rect(index)
+        in_view = QRectF(self.canvas.to_viewport(rect.topLeft()), rect.size())
+        visible = in_view.intersected(QRectF(self.canvas.viewport().rect()))
+        self.assertFalse(visible.isEmpty(), "no part of the page is on screen")
+        return visible.center().toPoint()
+
+    def test_the_page_is_paper_coloured_not_the_background(self):
+        """The one that would have caught the transparent-paper bug."""
+        shot = self.grab()
+        point = self.on_page()
+        colour = shot.pixelColor(point)
+        self.assertGreater(colour.lightness(), 200,
+                           f"page is {colour.name()} at {point}, not paper")
+
+    def test_the_gap_between_pages_is_not_paper(self):
+        """The inverse, or a viewport painted entirely white would also pass.
+
+        Scrolled to put the gap on screen rather than skipped when it is not:
+        a skipped test here would leave the assertion above unbalanced, which is
+        exactly how the transparent paper survived in the first place.
+        """
+        if self.canvas.page_count() < 2:
+            self.skipTest("needs a multi-page fixture")
+        rect = self.canvas.layout.page_rect(0)
+        gap_y = rect.bottom() + DEFAULT_SPACING * self.canvas.zoom() / 2
+        # Put the gap in the middle of the viewport.
+        self.canvas.verticalScrollBar().setValue(
+            int(round(gap_y - self.canvas.viewport().height() / 2)))
+        settle(timeout_ms=200)
+        point = self.canvas.to_viewport(QPointF(rect.center().x(), gap_y)).toPoint()
+        self.assertTrue(self.canvas.viewport().rect().contains(point),
+                        "the gap should now be on screen")
+        colour = self.grab().pixelColor(point)
+        self.assertLess(colour.lightness(), 200,
+                        f"the gap is {colour.name()}; pages are not distinguishable")
+
+    def test_a_page_with_no_bitmap_still_draws_paper(self):
+        """The column has to keep its shape while a render is outstanding."""
+        point = self.on_page()
+        self.canvas._pages.set_document(None)      # every request now misses
+        self.assertGreater(self.grab().pixelColor(point).lightness(), 200)

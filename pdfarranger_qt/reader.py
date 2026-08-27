@@ -23,20 +23,19 @@ Why a snapshot and not the renderer's own ``QPdfDocument``: a ``Page`` in this
 port is a *reference* into an immutable temp copy plus geometry -- angle, scale,
 crop, hide, layerpages. Rotation, cropping, reordering, duplication, blank
 pages, imposition and layer compositing all live in the page *list*, never in
-the document the thumbnails render from. Pointing a ``QPdfView`` at that
-document would show the original file: right pages, wrong order, no rotations.
+the document the thumbnails render from. Pointing the reader at that document
+would show the original file: right pages, wrong order, no rotations.
 And it belongs to the render thread, so sharing it is a data race besides.
 
 ``SearchIndex`` already takes the same route, so the machinery is proven.
 """
 
 import logging
-
 from typing import List, Optional
 
-from PySide6.QtCore import QEvent, QModelIndex, Qt, Signal
+from PySide6.QtCore import QModelIndex, Qt, Signal
 from PySide6.QtPdf import QPdfBookmarkModel, QPdfSearchModel
-from PySide6.QtPdfWidgets import QPdfPageSelector, QPdfView
+from PySide6.QtPdfWidgets import QPdfPageSelector
 from PySide6.QtWidgets import (
     QSplitter,
     QTreeView,
@@ -44,21 +43,25 @@ from PySide6.QtWidgets import (
     QWidget,
 )
 
+from .canvas import ZOOM_LIMITS, ZOOM_STEP, PageCanvas
 from .export import get_in_memory_pdf
 from .i18n import gettext_ as _
 from .render import MemoryDocument
 
-#: Matches the zoom steps the grid uses, so ctrl+wheel feels the same in both.
-ZOOM_STEP = 1.1
-ZOOM_LIMITS = (0.1, 8.0)
-
 
 class ReaderView(QWidget):
-    """A `QPdfView` with an outline sidebar.
+    """A `PageCanvas` with an outline sidebar.
 
-    Deliberately thin: `QPdfView` already does continuous scroll, the zoom
-    modes, page navigation and search highlighting. What it does *not* do, as of
-    Qt 6.11, is text selection, link following or facing-page layout -- see D16.
+    Was a `QPdfView`, which did continuous scroll, the zoom modes, navigation
+    and search highlighting -- and nothing else. Text selection, link following
+    and facing pages are not exposed by it at all (D16), and neither is any
+    control over what it renders or caches, so phase 7 replaced it with a view
+    of our own. The engine is unchanged (D18): this swapped the widget, not the
+    renderer.
+
+    Still deliberately thin. The canvas owns the geometry and the painting; this
+    owns the outline, the page selector and the document, and is what the window
+    talks to.
     """
 
     #: Emitted when the visible page changes, so the window can show it.
@@ -68,16 +71,15 @@ class ReaderView(QWidget):
         super().__init__(parent)
         self._document: Optional[MemoryDocument] = None
 
-        self.pdf_view = QPdfView(self)
-        self.pdf_view.setPageMode(QPdfView.PageMode.MultiPage)
-        self.pdf_view.setZoomMode(QPdfView.ZoomMode.FitToWidth)
+        self.canvas = PageCanvas(self)
+        self.canvas.zoom_to_width()
 
         # The reader's own search model, over the reader's own document.
         # SearchIndex builds a separate in-memory copy for the grid; pointing
-        # QPdfView at that one would highlight using another document's page
+        # the canvas at that one would highlight using another document's page
         # geometry. Same page list, so the row numbers still line up.
         self.search_model = QPdfSearchModel(self)
-        self.pdf_view.setSearchModel(self.search_model)
+        self.canvas.set_search_model(self.search_model)
 
         self.bookmarks = QPdfBookmarkModel(self)
         self.outline = QTreeView(self)
@@ -89,7 +91,7 @@ class ReaderView(QWidget):
 
         self.splitter = QSplitter(Qt.Horizontal, self)
         self.splitter.addWidget(self.outline)
-        self.splitter.addWidget(self.pdf_view)
+        self.splitter.addWidget(self.canvas)
         self.splitter.setStretchFactor(1, 1)
         self.splitter.setSizes([220, 780])
 
@@ -97,13 +99,10 @@ class ReaderView(QWidget):
         layout.setContentsMargins(0, 0, 0, 0)
         layout.addWidget(self.splitter)
 
-        self.pdf_view.pageNavigator().currentPageChanged.connect(self.page_changed)
-        # QPdfView only scrolls. In SinglePage mode there is nowhere to scroll
-        # to, so PageUp/PageDown do nothing at all and the mode is unusable
-        # without this; in MultiPage they scroll but never reach the ends.
-        self.pdf_view.installEventFilter(self)
-        # The wheel arrives at the viewport, not the view.
-        self.pdf_view.viewport().installEventFilter(self)
+        self.canvas.current_page_changed.connect(self.page_changed)
+        # No event filter: the page keys and ctrl+wheel are the canvas's own
+        # handlers now. They had to be filtered in from outside while the view
+        # was QPdfView, which is a scroll area and nothing more.
 
         # Qt's own page box: shows the current page, accepts a typed one, and
         # understands page *labels*, so a book numbered i, ii, iii, 1, 2 reads
@@ -168,13 +167,13 @@ class ReaderView(QWidget):
         """Bind a document to every model, then drop the previous one."""
         previous = self._document
         self._document = document
-        self.pdf_view.setDocument(document.document)
+        self.canvas.set_document(document.document)
         self.bookmarks.setDocument(document.document)
         self.search_model.setDocument(document.document)
         self.page_selector.setDocument(document.document)
         self.outline.expandToDepth(1)
-        # Only after the view has taken the new one: closing the document a
-        # QPdfView is still pointing at crashes PDFium.
+        # Only after the view has taken the new one: closing a document the
+        # canvas still holds a reference to crashes PDFium on its next paint.
         if previous is not None:
             previous.close()
 
@@ -187,7 +186,7 @@ class ReaderView(QWidget):
         "Internal C++ object (QPdfDocument) already deleted".
         """
         document, self._document = self._document, None
-        self.pdf_view.setDocument(None)
+        self.canvas.set_document(None)
         self.bookmarks.setDocument(None)
         self.search_model.setDocument(None)
         self.page_selector.setDocument(None)
@@ -200,9 +199,13 @@ class ReaderView(QWidget):
         try:
             return self._document.page_count()
         except RuntimeError:
-            # QPdfView takes ownership of the QPdfDocument it is given and
-            # destroys it with itself, which leaves this MemoryDocument holding
-            # a wrapper whose C++ side has gone. Only reachable during teardown.
+            # Kept from when the view was QPdfView, which took ownership of the
+            # QPdfDocument it was given and destroyed it with itself, leaving
+            # this MemoryDocument holding a wrapper whose C++ side had gone.
+            # PageCanvas only borrows the document, so this should no longer be
+            # reachable -- but it costs one branch during teardown, and the
+            # failure it guards against is a hard crash rather than an
+            # exception.
             self._document = None
             return 0
 
@@ -212,25 +215,22 @@ class ReaderView(QWidget):
     # -- navigation --------------------------------------------------------
 
     def current_page(self) -> int:
-        return self.pdf_view.pageNavigator().currentPage()
+        return max(0, self.canvas.current_page())
 
     def go_to_page(self, page: int):
-        from PySide6.QtCore import QPointF
-
-        page = max(0, min(page, max(0, self.page_count() - 1)))
-        self.pdf_view.pageNavigator().jump(page, QPointF(0, 0))
+        self.canvas.go_to_page(page)
 
     def next_page(self):
-        self.go_to_page(self.current_page() + 1)
+        self.canvas.next_page()
 
     def previous_page(self):
-        self.go_to_page(self.current_page() - 1)
+        self.canvas.previous_page()
 
     def first_page(self):
-        self.go_to_page(0)
+        self.canvas.first_page()
 
     def last_page(self):
-        self.go_to_page(self.page_count() - 1)
+        self.canvas.last_page()
 
     def _selector_moved(self, page: int):
         """The user typed or spun a page number."""
@@ -250,43 +250,6 @@ class ReaderView(QWidget):
         """What the page is called, which need not be its number."""
         return self.page_selector.currentPageLabel()
 
-    def eventFilter(self, watched, event):
-        """Make the page keys navigate, not merely scroll.
-
-        `QPdfView` is a scroll area and nothing more: PageUp and PageDown move
-        the scrollbar, which happens to change page in a continuous view and
-        does nothing whatever in SinglePage mode, and Home/End are unhandled in
-        both. A reader is expected to have all four.
-        """
-        if (event.type() == QEvent.Wheel
-                and watched is self.pdf_view.viewport()
-                and event.modifiers() & Qt.ControlModifier):
-            # QPdfView does not zoom on ctrl+wheel, and the grid does; having
-            # the same gesture do nothing in one of the two views is worse than
-            # not offering it at all.
-            steps = event.angleDelta().y() / 120
-            if steps:
-                self.set_zoom(self.zoom() * (1.1 ** steps))
-            return True
-        if watched is not self.pdf_view or event.type() != QEvent.KeyPress:
-            return False
-        key = event.key()
-        if key == Qt.Key_Home:
-            self.first_page()
-            return True
-        if key == Qt.Key_End:
-            self.last_page()
-            return True
-        if not self.continuous():
-            # One page at a time: the scrollbar cannot take us anywhere.
-            if key in (Qt.Key_PageDown, Qt.Key_Down, Qt.Key_Right, Qt.Key_Space):
-                self.next_page()
-                return True
-            if key in (Qt.Key_PageUp, Qt.Key_Up, Qt.Key_Left, Qt.Key_Backspace):
-                self.previous_page()
-                return True
-        return False
-
     def _go_to_bookmark(self, index: QModelIndex):
         if not index.isValid():
             return
@@ -298,12 +261,11 @@ class ReaderView(QWidget):
     # -- zoom --------------------------------------------------------------
 
     def zoom(self) -> float:
-        return self.pdf_view.zoomFactor()
+        return self.canvas.zoom()
 
     def set_zoom(self, factor: float):
         low, high = ZOOM_LIMITS
-        self.pdf_view.setZoomMode(QPdfView.ZoomMode.Custom)
-        self.pdf_view.setZoomFactor(max(low, min(factor, high)))
+        self.canvas.set_zoom(max(low, min(factor, high)))
 
     def zoom_in(self):
         self.set_zoom(self.zoom() * ZOOM_STEP)
@@ -312,58 +274,42 @@ class ReaderView(QWidget):
         self.set_zoom(self.zoom() / ZOOM_STEP)
 
     def continuous(self) -> bool:
-        return self.pdf_view.pageMode() == QPdfView.PageMode.MultiPage
+        return self.canvas.continuous()
 
     def set_continuous(self, on: bool):
         """Continuous scrolling, or one page at a time.
 
-        Single page is not only a preference. `QPdfView` renders a page on
-        demand at full display resolution and draws nothing until that render
-        arrives -- measured at 48-58ms a page on a dense 1590-page book, so
-        roughly 17-20 pages a second. Scrolling faster than that outruns it and
-        leaves blanks. Showing one page at a time renders one page at a time,
-        so paging through stays sharp.
-        """
-        if on == self.continuous():
-            return
-        # Changing the mode relaunches the layout and leaves the scrollbar near
-        # the top, while the navigator goes on reporting the old page -- so the
-        # view shows the start of the document and nothing says otherwise.
-        # Remember where we were and go back there.
-        page = self.current_page()
-        self.pdf_view.setPageMode(
-            QPdfView.PageMode.MultiPage if on else QPdfView.PageMode.SinglePage)
-        self._restore_page(page)
+        Single page was also a workaround: `QPdfView` rendered on demand at full
+        display resolution and drew nothing until that render arrived -- 48-58ms
+        a page on a dense 1590-page book, so scrolling outran it and left blanks.
+        The canvas will answer that properly with placeholders and prefetch
+        (phase 7 step 5). The mode stays because reading one page at a time is a
+        preference in its own right, and it is a setting people already have.
 
-    def _restore_page(self, page: int):
-        """Put the view back on ``page``, scrollbar included.
-
-        `jump()` to the page the navigator already believes it is on does
-        nothing, so nudge it off and back.
+        The old implementation had to remember the page and put it back, because
+        changing QPdfView's mode relaunched the layout and left the scrollbar
+        near the top while the navigator went on reporting the old page. The
+        canvas keeps its place across the change, so that dance is gone.
         """
-        if page <= 0 or page >= self.page_count():
-            self.go_to_page(page)
-            return
-        self.go_to_page(0)
-        self.go_to_page(page)
+        self.canvas.set_continuous(on)
 
     def fit_page(self):
-        self.pdf_view.setZoomMode(QPdfView.ZoomMode.FitInView)
+        self.canvas.zoom_to_page()
 
     def fit_width(self):
-        self.pdf_view.setZoomMode(QPdfView.ZoomMode.FitToWidth)
+        self.canvas.zoom_to_width()
 
     # -- search ------------------------------------------------------------
 
     def search(self, phrase: str):
-        """Highlight ``phrase`` in place. `QPdfView` does the drawing."""
+        """Highlight ``phrase`` in place. The canvas draws the highlights."""
         self.search_model.setSearchString(phrase or "")
 
     def search_phrase(self) -> str:
         return self.search_model.searchString()
 
     def show_search_result(self, index: int):
-        self.pdf_view.setCurrentSearchResultIndex(index)
+        self.canvas.set_current_search_result(index)
 
     def matches_on_page(self, page: int) -> int:
         """How many hits are on a page. Synchronous, unlike rowCount()."""

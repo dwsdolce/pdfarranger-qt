@@ -44,7 +44,7 @@ import collections
 from typing import List, Optional, Sequence, Tuple
 
 from PySide6.QtCore import QPointF, QRectF, QSize, QSizeF, Qt, Signal
-from PySide6.QtGui import QImage, QPainter, QPalette
+from PySide6.QtGui import QColor, QImage, QPainter, QPalette
 from PySide6.QtPdf import QPdfDocumentRenderOptions
 from PySide6.QtWidgets import QAbstractScrollArea, QFrame
 
@@ -52,6 +52,30 @@ from PySide6.QtWidgets import QAbstractScrollArea, QFrame
 #: zoom 1. Scaled with the zoom so the layout looks the same at every size.
 DEFAULT_SPACING = 12.0
 DEFAULT_MARGIN = 12.0
+
+#: What a zoom step multiplies by, and how far zoom may go. Matched to the
+#: values read mode already used, so the swap does not change how it feels.
+ZOOM_STEP = 1.2
+ZOOM_LIMITS = (0.1, 8.0)
+
+#: Search highlights. Translucent so the word underneath stays readable, which
+#: an opaque box or an outline both spoil in dense text.
+SEARCH_HIT = QColor(255, 210, 0, 90)
+SEARCH_CURRENT = QColor(255, 145, 0, 150)
+
+
+class FitMode:
+    """Whether a zoom was chosen or derived, and from what.
+
+    `QPdfView` had this as ZoomMode and it has to survive a resize: a window
+    dragged wider while fit-to-width is on should re-fit, not keep the old
+    scale. A plain zoom factor cannot express that, which is why the mode is
+    remembered rather than only its result.
+    """
+
+    NONE = "none"
+    WIDTH = "width"
+    PAGE = "page"
 
 
 class PageLayout:
@@ -99,6 +123,10 @@ class PageLayout:
     @property
     def zoom(self) -> float:
         return self._zoom
+
+    def margin_px(self) -> float:
+        """The margin at the current zoom, which callers need to place a page."""
+        return self._margin * self._zoom
 
     @property
     def page_count(self) -> int:
@@ -306,6 +334,11 @@ class PageCanvas(QAbstractScrollArea):
         self._layout = PageLayout([])
         self._pages = SynchronousPages()
         self._current = -1
+        self._fit = FitMode.NONE
+        self._continuous = True
+        self._single = 0
+        self._search = None
+        self._search_result = -1
         self.setFrameShape(QFrame.NoFrame)
         self.viewport().setAutoFillBackground(True)
         self.verticalScrollBar().valueChanged.connect(self._scrolled)
@@ -337,12 +370,19 @@ class PageCanvas(QAbstractScrollArea):
     def zoom(self) -> float:
         return self._layout.zoom
 
-    def set_zoom(self, zoom: float, anchor: Optional[QPointF] = None):
+    def set_zoom(self, zoom: float, anchor: Optional[QPointF] = None,
+                 fit: str = FitMode.NONE):
         """Re-scale, keeping ``anchor`` (a viewport point) over the same spot.
 
         Without an anchor the viewport centre is held, which is what a menu
         zoom should do. Ctrl+wheel passes the cursor instead.
+
+        Setting a zoom directly clears any fit mode, so a window resized after
+        an explicit zoom keeps that zoom. ``fit`` is for the fit helpers below,
+        which need the mode remembered rather than only its result.
         """
+        zoom = max(ZOOM_LIMITS[0], min(float(zoom), ZOOM_LIMITS[1]))
+        self._fit = fit
         if not self._layout.page_count:
             self._layout.set_zoom(zoom)
             return
@@ -370,13 +410,57 @@ class PageCanvas(QAbstractScrollArea):
         self.viewport().update()
 
     def zoom_to_width(self):
-        self.set_zoom(self._layout.zoom_for_width(self.viewport().width()))
+        """Fit the width, and keep fitting it as the window changes."""
+        self.set_zoom(self._layout.zoom_for_width(self.viewport().width()),
+                      fit=FitMode.WIDTH)
 
     def zoom_to_page(self):
+        """Fit a whole page, and keep fitting it as the window changes."""
         index = max(0, self.current_page())
-        self.set_zoom(self._layout.zoom_for_page(QSizeF(self.viewport().size()), index))
+        self.set_zoom(self._layout.zoom_for_page(QSizeF(self.viewport().size()), index),
+                      fit=FitMode.PAGE)
+
+    def fit_mode(self) -> str:
+        return self._fit
+
+    def zoom_in(self):
+        self.set_zoom(self.zoom() * ZOOM_STEP)
+
+    def zoom_out(self):
+        self.set_zoom(self.zoom() / ZOOM_STEP)
+
+    def _reapply_fit(self):
+        """Re-derive the zoom after a resize, if it was derived to begin with."""
+        if self._fit == FitMode.WIDTH:
+            self.zoom_to_width()
+        elif self._fit == FitMode.PAGE:
+            self.zoom_to_page()
 
     # -- navigation --------------------------------------------------------
+
+    def continuous(self) -> bool:
+        return self._continuous
+
+    def set_continuous(self, on: bool):
+        """Scroll the whole document, or show one page at a time.
+
+        The layout does not change: the column is always the whole document, and
+        single-page mode is the *scroll range* restricted to one page's extent.
+        Keeping one layout means page rectangles, hit testing and every
+        coordinate mapping behave identically in both modes -- a second layout
+        for single-page would be a second set of geometry bugs.
+        """
+        on = bool(on)
+        if on == self._continuous:
+            return
+        page = max(0, self.current_page())
+        self._continuous = on
+        self._single = page
+        self._update_ranges()
+        # The restricted range clamps the scrollbar somewhere arbitrary; put it
+        # back on the page the reader was actually looking at.
+        self.go_to_page(page)
+        self.viewport().update()
 
     def current_page(self) -> int:
         return self._current
@@ -386,8 +470,26 @@ class PageCanvas(QAbstractScrollArea):
         if not self._layout.page_count:
             return
         index = min(max(index, 0), self._layout.page_count - 1)
-        top = self._layout.page_rect(index).top() - self._layout._margin * self._layout.zoom
+        if not self._continuous and index != self._single:
+            # Move the window before scrolling into it, or the scrollbar is
+            # clamped to the page we are leaving.
+            self._single = index
+            self._update_ranges()
+        top = self._layout.page_rect(index).top() - self._layout.margin_px()
         self.verticalScrollBar().setValue(int(round(top)))
+        self._emit_current()
+
+    def next_page(self):
+        self.go_to_page(max(0, self.current_page()) + 1)
+
+    def previous_page(self):
+        self.go_to_page(max(0, self.current_page()) - 1)
+
+    def first_page(self):
+        self.go_to_page(0)
+
+    def last_page(self):
+        self.go_to_page(self._layout.page_count - 1)
 
     def go_to(self, index: int, point: QPointF):
         """Scroll so a point on a page is visible, for a link or a search hit."""
@@ -439,11 +541,23 @@ class PageCanvas(QAbstractScrollArea):
 
     # -- Qt ----------------------------------------------------------------
 
+    def _band(self) -> Tuple[float, float]:
+        """The scrollable extent, which is the document unless showing one page."""
+        content = self._layout.content_size()
+        if self._continuous or not self._layout.page_count:
+            return 0.0, content.height()
+        index = min(max(self._single, 0), self._layout.page_count - 1)
+        rect = self._layout.page_rect(index)
+        margin = self._layout.margin_px()
+        return rect.top() - margin, rect.bottom() + margin
+
     def _update_ranges(self):
         content = self._layout.content_size()
         view = self.viewport().size()
         vbar, hbar = self.verticalScrollBar(), self.horizontalScrollBar()
-        vbar.setRange(0, max(0, int(round(content.height() - view.height()))))
+        top, bottom = self._band()
+        vbar.setRange(int(round(top)), max(int(round(top)),
+                                           int(round(bottom - view.height()))))
         vbar.setPageStep(view.height())
         vbar.setSingleStep(max(1, view.height() // 12))
         hbar.setRange(0, max(0, int(round(content.width() - view.width()))))
@@ -453,6 +567,9 @@ class PageCanvas(QAbstractScrollArea):
     def resizeEvent(self, event):
         super().resizeEvent(event)
         self._update_ranges()
+        # A window dragged wider under fit-to-width should re-fit rather than
+        # keep the old scale, which is why the mode is remembered.
+        self._reapply_fit()
 
     def _scrolled(self, _value):
         self._emit_current()
@@ -473,6 +590,8 @@ class PageCanvas(QAbstractScrollArea):
         """
         if not self._layout.page_count:
             return -1
+        if not self._continuous:
+            return min(max(self._single, 0), self._layout.page_count - 1)
         top = self.verticalScrollBar().value()
         bottom = top + self.viewport().height()
         best, best_share = -1, 0.0
@@ -483,6 +602,122 @@ class PageCanvas(QAbstractScrollArea):
                 best, best_share = index, share
         return best if best >= 0 else self._layout.nearest_page(top)
 
+    # -- search ------------------------------------------------------------
+
+    def set_search_model(self, model):
+        """Highlight this model's hits. `QPdfView` drew these for us."""
+        if self._search is not None:
+            try:
+                self._search.dataChanged.disconnect(self._search_changed)
+            except (RuntimeError, TypeError):  # already gone, or never connected
+                pass
+        self._search = model
+        if model is not None:
+            model.dataChanged.connect(self._search_changed)
+        self.viewport().update()
+
+    def _search_changed(self, *_args):
+        self.viewport().update()
+
+    def set_current_search_result(self, index: int):
+        """Emphasise one hit among the highlights, and scroll it into view."""
+        self._search_result = index
+        if self._search is None or index < 0:
+            self.viewport().update()
+            return
+        link = self._search.resultAtIndex(index)
+        if link is None:
+            self.viewport().update()
+            return
+        rects = link.rectangles()
+        if rects:
+            self.go_to(link.page(), rects[0].topLeft())
+        self.viewport().update()
+
+    def _paint_search(self, painter, index: int, offset: QPointF):
+        """Draw this page's hits, the current one picked out.
+
+        Translucent fill rather than an outline, so a hit inside dense text is
+        visible without hiding the word it found.
+        """
+        if self._search is None:
+            return
+        try:
+            links = self._search.resultsOnPage(index)
+        except (RuntimeError, AttributeError):  # pragma: no cover - model gone
+            return
+        if not links:
+            return
+        current = None
+        if self._search_result >= 0:
+            found = self._search.resultAtIndex(self._search_result)
+            if found is not None and found.page() == index:
+                current = [QRectF(r) for r in found.rectangles()]
+        for link in links:
+            for rect in link.rectangles():
+                drawn = self._layout.rect_from_page(index, rect)
+                drawn.translate(-offset)
+                is_current = current is not None and any(
+                    abs(rect.x() - c.x()) < 0.01 and abs(rect.y() - c.y()) < 0.01
+                    for c in current)
+                painter.fillRect(drawn, SEARCH_CURRENT if is_current else SEARCH_HIT)
+
+    # -- input -------------------------------------------------------------
+
+    def keyPressEvent(self, event):
+        """Page keys navigate rather than merely scroll.
+
+        Carried over from the event filter read mode needed around `QPdfView`,
+        which is a scroll area and nothing more: PageUp and PageDown moved the
+        scrollbar, which did nothing at all when one page filled the view, and
+        Home and End were unhandled in both modes. A reader is expected to have
+        all four.
+        """
+        key = event.key()
+        if key == Qt.Key_Home:
+            self.first_page()
+            return
+        if key == Qt.Key_End:
+            self.last_page()
+            return
+        if not self._continuous:
+            if key in (Qt.Key_PageDown, Qt.Key_Down, Qt.Key_Right, Qt.Key_Space):
+                self.next_page()
+                return
+            if key in (Qt.Key_PageUp, Qt.Key_Up, Qt.Key_Left, Qt.Key_Backspace):
+                self.previous_page()
+                return
+        super().keyPressEvent(event)
+
+    def wheelEvent(self, event):
+        """Ctrl+wheel zooms about the cursor, as the grid does.
+
+        The same gesture doing nothing in one of the two views is worse than not
+        offering it at all, which is why read mode filtered for this around
+        `QPdfView`. Here it is simply the widget's own event.
+        """
+        if event.modifiers() & Qt.ControlModifier:
+            steps = event.angleDelta().y() / 120.0
+            if steps:
+                self.set_zoom(self.zoom() * (1.1 ** steps),
+                              anchor=QPointF(event.position()))
+            event.accept()
+            return
+        if not self._continuous:
+            # One page at a time: there is often nothing to scroll to, so the
+            # wheel turns the page instead of doing nothing.
+            steps = event.angleDelta().y()
+            bar = self.verticalScrollBar()
+            if steps < 0 and bar.value() >= bar.maximum():
+                self.next_page()
+                event.accept()
+                return
+            if steps > 0 and bar.value() <= bar.minimum():
+                self.previous_page()
+                event.accept()
+                return
+        super().wheelEvent(event)
+
     def paintEvent(self, _event):
         painter = QPainter(self.viewport())
         painter.fillRect(self.viewport().rect(), self.palette().brush(QPalette.Dark))
@@ -491,16 +726,25 @@ class PageCanvas(QAbstractScrollArea):
         offset = self.offset()
         top = offset.y()
         bottom = top + self.viewport().height()
+        if not self._continuous:
+            band_top, band_bottom = self._band()
+            top, bottom = max(top, band_top), min(bottom, band_bottom)
         for index in self._layout.pages_in(top, bottom):
             rect = self._layout.page_rect(index)
             target = QRectF(rect.topLeft() - offset, rect.size())
             size = QSize(max(1, int(round(rect.width()))),
                          max(1, int(round(rect.height()))))
+            # White paper first, always. PDFium renders with an alpha channel
+            # and leaves the page itself transparent, so drawing the bitmap
+            # straight onto the viewport shows the grey through it and a page
+            # never looks like a page. Nothing offscreen catches this: the
+            # geometry is right either way, and only the pixels are wrong.
+            painter.fillRect(target, Qt.white)
             image = self._pages.page_image(index, size)
-            if image is None:
-                # No bitmap yet: a white sheet, so the column keeps its shape.
-                # Step 5 puts the grid's thumbnail here instead of nothing.
-                painter.fillRect(target, Qt.white)
-            else:
+            if image is not None:
                 painter.drawImage(target, image)
+            # Blank paper is also what shows while there is no bitmap yet. Step
+            # 5 draws the grid's thumbnail there instead, once there is an
+            # asynchronous render worth waiting for.
+            self._paint_search(painter, index, offset)
         painter.end()

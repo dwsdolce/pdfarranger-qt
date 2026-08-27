@@ -554,11 +554,16 @@ take a title and an `/XYZ` destination from.
 
       Steps, each leaving read mode usable. Detail in section 6:
 
-      - [ ] Canvas: page layout, scrolling, and the coordinate mapping
-            everything else is built on
-      - [ ] Parity with what `QPdfView` did — continuous and single page, fit
+      - [x] Canvas: page layout, scrolling, and the coordinate mapping
+            everything else is built on. `canvas.py`: `PageLayout` for the
+            geometry, `PageCanvas` for the widget, `SynchronousPages` as the
+            bitmap seam step 5 replaces
+      - [x] Parity with what `QPdfView` did — continuous and single page, fit
             page and width, zoom with the anchor under the cursor, keyboard
-            navigation, the page selector, search highlighting
+            navigation, the page selector, search highlighting. `QPdfView` is
+            gone from read mode; one page at a time is the scroll range
+            restricted to one page's extent rather than a second layout, so
+            hit testing behaves identically in both modes
       - [ ] Link following, internal and external
       - [ ] Text selection and copy
       - [ ] Placeholders and prefetch

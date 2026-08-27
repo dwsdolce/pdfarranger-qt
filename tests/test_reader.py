@@ -438,15 +438,22 @@ class TestContinuousScroll(unittest.TestCase):
         self.assertTrue(self.win.reader.continuous())
 
     def test_the_toggle_switches_the_page_mode(self):
-        from PySide6.QtPdfWidgets import QPdfView
+        """The toggle reaches the view, not just the wrapper's own flag.
 
+        This used to compare QPdfView.PageMode. The canvas has no such enum --
+        one page at a time is its scroll range restricted to a single page's
+        extent -- so the mode is read back off the canvas instead. The range
+        itself is asserted in test_canvas.py, which has a document loaded; this
+        class never enters read mode, so the reader here has no pages and no
+        range to compare.
+        """
+        canvas = self.win.reader.canvas
         self.win.set_continuous_scroll(False)
         self.assertFalse(self.win.reader.continuous())
-        self.assertEqual(self.win.reader.pdf_view.pageMode(),
-                         QPdfView.PageMode.SinglePage)
+        self.assertFalse(canvas.continuous())
         self.win.set_continuous_scroll(True)
-        self.assertEqual(self.win.reader.pdf_view.pageMode(),
-                         QPdfView.PageMode.MultiPage)
+        self.assertTrue(self.win.reader.continuous())
+        self.assertTrue(canvas.continuous())
 
     def test_the_action_follows_the_state(self):
         self.win.set_continuous_scroll(False)
@@ -506,7 +513,7 @@ class TestPageNavigation(unittest.TestCase):
         from PySide6.QtGui import QKeyEvent
         from PySide6.QtWidgets import QApplication
 
-        view = self.win.reader.pdf_view
+        view = self.win.reader.canvas
         for kind in (QKeyEvent.KeyPress, QKeyEvent.KeyRelease):
             QApplication.sendEvent(view, QKeyEvent(kind, key, Qt.NoModifier))
 
@@ -674,7 +681,7 @@ class TestModeChangeKeepsYourPlace(unittest.TestCase):
         self.win.close()
 
     def scroll(self):
-        return self.win.reader.pdf_view.verticalScrollBar().value()
+        return self.win.reader.canvas.verticalScrollBar().value()
 
     def test_the_page_survives_both_directions(self):
         self.win.reader.go_to_page(2)
@@ -734,20 +741,20 @@ class TestZoomFollowsTheMode(unittest.TestCase):
         self.win.close()
 
     def mode(self):
-        return self.win.reader.pdf_view.zoomMode()
+        return self.win.reader.canvas.fit_mode()
 
     def test_fit_one_page(self):
-        from PySide6.QtPdfWidgets import QPdfView
+        from pdfarranger_qt.canvas import FitMode
 
         self.win.act_zoom_fit.trigger()
-        self.assertEqual(self.mode(), QPdfView.ZoomMode.FitInView)
+        self.assertEqual(self.mode(), FitMode.PAGE)
 
     def test_fit_width(self):
-        from PySide6.QtPdfWidgets import QPdfView
+        from pdfarranger_qt.canvas import FitMode
 
         self.win.act_zoom_fit.trigger()
         self.win.act_zoom_fit_width.trigger()
-        self.assertEqual(self.mode(), QPdfView.ZoomMode.FitToWidth)
+        self.assertEqual(self.mode(), FitMode.WIDTH)
 
     def test_zoom_in_and_out(self):
         self.win.act_zoom_in.trigger()
@@ -767,13 +774,13 @@ class TestZoomFollowsTheMode(unittest.TestCase):
         from PySide6.QtGui import QWheelEvent
         from PySide6.QtWidgets import QApplication
 
-        view = self.win.reader.pdf_view
-        before = view.zoomFactor()
+        view = self.win.reader.canvas
+        before = self.win.reader.zoom()
         event = QWheelEvent(QPointF(100, 100), view.mapToGlobal(QPoint(100, 100)),
                             QPoint(0, 0), QPoint(0, 120), Qt.NoButton,
                             Qt.ControlModifier, Qt.NoScrollPhase, False)
         QApplication.sendEvent(view.viewport(), event)
-        self.assertGreater(view.zoomFactor(), before)
+        self.assertGreater(self.win.reader.zoom(), before)
 
     def test_the_grid_zoom_is_left_alone(self):
         """Zooming the reader must not quietly rescale the thumbnails."""
