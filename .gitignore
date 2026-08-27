@@ -48,3 +48,12 @@ packages/
 
 # macOS Finder metadata
 .DS_Store
+
+# Licensed reference documents used for testing. Kept out of the repository for
+# copyright reasons rather than size: the ARRL Handbook is licensed to the
+# maintainer and is not ours to redistribute. It is the document the reader and
+# outline work is measured against (see PORTING-NOTES.md section 6), so it wants
+# to sit in the project root where tools/bench_render.py can reach it.
+#
+# Root level only. The 47 PDF fixtures under tests/ are tracked and unaffected.
+/*.pdf

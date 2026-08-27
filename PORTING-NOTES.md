@@ -62,8 +62,7 @@ editing.
 ## 2. Decisions
 
 Settled decisions and why, numbered in the order they were taken. Anything
-not here is still open — as is D18 below, the one entry in the table that
-has not landed.
+not here is still open.
 
 | # | Decision | Choice | Rationale |
 |---|----------|--------|-----------|
@@ -84,12 +83,12 @@ has not landed.
 | D15 | What Read mode displays | **The edited page list, via an in-memory export** — *not* the renderer's `QPdfDocument` | Forced, not preferred. See §6 *Read mode*: the edits do not live in the `QPdfDocument`, and that document belongs to a worker thread. `SearchIndex` already does exactly this, so the machinery exists. |
 | D16 | Text selection and link following | **Out of the first cut** | Neither is exposed by `QPdfView` in 6.11.1 — verified against the installed API, not assumed. Both are buildable on `QPdfDocument.getSelection()` and `QPdfLinkModel`, but they are hand-written features, not wiring, and they do not block a usable reader. |
 | D17 | Annotation and markup | **Out of scope, permanently** | Tier 2 by another name. Qt exposes no annotation authoring, and adding it would mean owning an annotation model, hit-testing and appearance-stream generation. |
-| D18 | PDF engine for the reader | **Open — leaning QtPdf; the outline round trip has now been tested, see §6** | Neither library provides a view widget, so that work is identical either way and the choice is only about what backs it. Measured: PyMuPDF renders 9–17% faster, but links come out *equivalent* — both give rect and target page, and both return (0,0) for a `/FitR` position — so the feature that raised the question is a wash. PyMuPDF's real advantages are `set_toc()` and per-word text geometry. `set_toc()` round-trips an ordinary outline intact (807 of 807, nesting preserved) but **raises** on the Handbook's `/GoToR` bookmarks — a PyMuPDF bug, which `exporter_outlines.py` already handles correctly. Against: 55.5 MB against QtPdf's 5.7 MB already shipped, a third engine beside pikepdf and PDFium, and AGPL — permitted with GPL-3 (§13, below) but it would stop that code going back upstream. See §6. |
+| D18 | PDF engine for the reader | **QtPdf — stay on it** | Settled when phase 7 was picked up. Neither library provides a view widget, so that work is identical either way and the choice only decides what backs it. Measured: PyMuPDF renders 9–17% faster, but links come out *equivalent* — both give rect and target page, and both return (0,0) for a `/FitR` position — so the feature that raised the question is a wash. PyMuPDF's two real advantages, `set_toc()` and per-word text geometry, are precisely the ones bookmark editing and text selection would use, which is why this was left open until those items began. `set_toc()` round-trips an ordinary outline intact (807 of 807, nesting preserved) but **raises** on the Handbook's `/GoToR` bookmarks — a PyMuPDF bug — and bookmarks are written by `exporter_outlines.py` at export in any case, which handles `/GoToR`, named destinations and cross-file repair correctly. That leaves word-level geometry as the only surviving advantage, a refinement on `QPdfDocument.getSelection()`, bought for 55.5 MB against QtPdf's 5.7 MB already shipped, a third engine beside pikepdf and PDFium, and AGPL — permitted with GPL-3 (§13) but it would stop that code going back upstream. A judgement about *this* codebase and these documents, not a claim that QtPdf is the better library; on the merits PyMuPDF is. Re-test the `/GoToR` bug if bookmark editing ever stalls on outline writing. See §6. |
 
 ### Still open
 
-The one decision not yet taken is **D18** — which PDF engine backs the reader.
-It is leaning QtPdf, the measurements are in §6, and nothing is blocked on it.
+Nothing is open. D18, the reader's PDF engine, was the last one and is settled
+above: QtPdf, decided when phase 7 was picked up.
 
 The repository housekeeping that used to sit here is done: `origin` is
 `dwsdolce/pdfarranger-qt`, and `pyproject.toml` carries the real `Homepage`.
@@ -485,7 +484,7 @@ close/reopen. `tests/test_reader.py`.
       zoom anchoring, hit-testing and keyboard navigation all become ours to
       get right, and `QPdfView` does them for free today. Comparable in size to
       phase 6 itself. **View ▸ Continuous Scroll** is the cheap workaround in
-      the meantime.
+      the meantime. Planned in §6 *Owning the reader's view*.
 - [ ] **Edit bookmarks — create, delete, rename, re-target, re-nest.** Upstream
       has none of this: its `exporter_outlines.py` only *preserves* an outline
       through an export, and neither its menu nor its window has a single
@@ -1101,6 +1100,117 @@ layout and keeping it in step across upgrades — the same shape of bet as
 `setScaledClipRect` and the `QMenu` ownership traps above, both of which broke
 quietly. Left as a phase 7 item.
 
+
+### Owning the reader's view — the plan
+
+Phase 7's largest item, and the prerequisite for two of the three things wanted
+from phase 7: text selection and link following (D16) both need control of
+painting and of mapping a screen point into page space. Bookmark *editing* does
+not depend on this — the outline tree already exists — but bookmark *authoring*
+gets much better with it, because a selection supplies both the title and an
+`/XYZ` destination point instead of a bare page number.
+
+**What is being replaced, and what is not.** Only `QPdfView`. `ReaderView` keeps
+its splitter, the `QTreeView` outline over `QPdfBookmarkModel`, the
+`QPdfPageSelector` with its page labels, and the `QPdfSearchModel`. The engine is
+unchanged (D18). This is a widget swap, not a rewrite of read mode.
+
+**Reuse rather than invention.** Three pieces of this already exist:
+
+- `PageView` in `view.py` is a hand-rolled scrolling grid with its own
+  `paintEvent`, `resizeEvent`, `wheelEvent` and mouse handling, built because
+  Qt's item-view DnD answers the wrong question (D9). The reader's canvas is the
+  same shape of widget with a simpler layout, and the cell-geometry trap in
+  *Cell geometry must be relaid out by hand* applies unchanged.
+- `Renderer` and `ThumbnailCache` in `render.py` already do asynchronous
+  rendering with an LRU cache off the GUI thread.
+- `QPdfLinkModel` gives `Rectangle`, `Page`, `Url`, `Location` and `linkAt()`,
+  and `QPdfDocument.getSelection()`/`getSelectionAtIndex()` give text. Both were
+  verified against the repaired Handbook: 20 links on page 0, correct rectangles
+  and targets, `linkAt(centre)` hitting the right one.
+
+**Measured before deciding.** Every page of two documents rendered once, cold,
+on a 1512x982 screen at device pixel ratio 2 -- so 2000 px is roughly what a
+maximised window asks for and 1000 px a half-width one.
+
+| Document | Width | median | p90 | p99 | max | over 16.7 ms |
+| --- | --- | --- | --- | --- | --- | --- |
+| Manual, 80 pp | 1000 | 2.7 ms | 23.4 ms | 61.1 ms | 61.1 ms | 18% |
+| Manual, 80 pp | 2000 | 6.0 ms | 43.0 ms | 80.4 ms | 80.4 ms | 28% |
+| Handbook, 1590 pp | 1000 | 7.2 ms | 19.1 ms | 88.3 ms | 248.2 ms | 13% |
+| Handbook, 1590 pp | 2000 | 11.4 ms | 24.9 ms | 103.9 ms | 247.4 ms | 25% |
+
+Read the median and the tail separately: the distribution is bimodal, so the
+mean describes no actual page. Text pages cost 2-11 ms; plates and schematics
+cost 40-250 ms, and they are the same pages at every size (Handbook p1425,
+p1327, p1325, p1488).
+
+**The tail does not scale with resolution.** The Handbook's worst page costs
+248.2 ms at 1000 px and 247.4 ms at 2000 px -- four times the pixels, no extra
+cost -- while the median rises only 1.6x. The expensive pages are bound by
+parsing and image decoding, not by rasterising.
+
+Two decisions follow, and the second is the one that would not have been
+guessed:
+
+1. **Rendering is asynchronous, and the reader gets its own cache** -- the
+   hybrid of the two approaches first considered. A quarter-second stall is
+   plainly visible and a quarter of the Handbook's pages miss a frame at 2000
+   px, so rendering on the GUI thread is out. But the reader's bitmaps are
+   21.2 MB each at that size, and `DEFAULT_CACHE_PIXELS` is 96 MB, so a shared
+   cache holds **four reader pages** and evicts every one of the ~575
+   thumbnails the grid keeps. Share the thread, the queue and the lifecycle;
+   give each consumer its own document provider (file-backed with edit
+   geometry for the grid, bytes-backed for the reader's export) and its own
+   `ThumbnailCache`. The class already takes `max_pixels`, so per-consumer
+   budgets need no new code.
+
+   Size the reader's budget as *a number of pages at the current zoom* --
+   `max_pixels = k * current_page_pixels`, recomputed when zoom changes --
+   rather than a fixed pixel count. Per-page cost swings by two orders of
+   magnitude across the zoom range, so a fixed budget holds forty pages at one
+   end and two at the other. The grid keeps a fixed budget, where it is right,
+   because thumbnails are all roughly one size.
+
+2. **A placeholder can only be a bitmap that already exists.** The obvious
+   design -- render something small and quick, replace it when the real one
+   arrives -- does not work here, because for precisely the pages that need a
+   placeholder, rendering small costs the same as rendering large. So the
+   placeholder is the grid's existing thumbnail scaled up, or the previous
+   zoom level's bitmap where there is one, and never a render issued for the
+   purpose.
+
+**Prefetch is the only mitigation**, since the slow pages cannot be made fast.
+At ~250 ms for a heavy page, current +/- 2 buys about two seconds of lead at
+reading pace, which is enough; a fast flick outruns any prefetch, which is
+exactly when the placeholders above have to carry it.
+
+**Order of work.** Each step should leave read mode usable:
+
+1. **Canvas with layout and scrolling only** — one column of pages at a fixed
+   zoom, painted from bitmaps, with a page-geometry model mapping document
+   coordinates to viewport coordinates and back. That mapping is the whole
+   foundation: selection, links and destinations are all built on it.
+2. **Parity with what `QPdfView` did** — continuous and single-page modes, fit
+   page and fit width, zoom in and out with the anchor under the cursor,
+   PageUp/PageDown/Home/End, the page selector, and search highlighting through
+   the existing `QPdfSearchModel`. Nothing new is visible to the user yet, and
+   this is the step that can regress behaviour, so it is where the existing
+   reader tests earn their keep.
+3. **Link following** — draw nothing, hit-test on click through `linkAt()`,
+   navigate for an internal target and hand a URL to the desktop for an external
+   one. Cheapest new feature, and it proves the coordinate mapping.
+4. **Text selection** — drag to select, paint the selection, copy to clipboard.
+   Word and line snapping via `getSelectionAtIndex()`.
+5. **Placeholders and prefetch**, once the render source is settled.
+6. **Facing pages**, which is a layout change and nothing more by this point.
+
+**What must not regress.** The reader has accumulated behaviour that is easy to
+lose in a swap: the event filter that makes PageUp/PageDown work at all (the
+wheel arrives at the viewport, not the view), page *labels* rather than indices
+in the selector, the stale-snapshot rebuild on entering read mode, and the
+separate search model over the reader's own document — pointing one view at the
+other's document highlights with the wrong geometry.
 
 ### One toolbar per mode, and why the first attempt did not work
 
