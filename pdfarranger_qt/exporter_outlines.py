@@ -514,3 +514,100 @@ def rebuild_outlines(pdf_input, pdf_output, pages, source_names=None):
         # outline in each; after the cross-file links above are repaired those
         # copies are identical, and keeping 45 of them helps nobody.
         deduplicate_outlines(pdf_output)
+
+
+def read_outline(pdf_input, pages, source_names=None):
+    """Read the outline out of the *source* documents, as an editable tree (D20).
+
+    The counterpart of `rebuild_outlines`, which derives an outline at export
+    time by reading the sources and remapping their destinations into the
+    output. That is right for preserving an outline and useless for editing one:
+    there is nowhere to put a change. This reads the same information once, when
+    the document is opened, into a tree the document owns.
+
+    Each destination is resolved to a **page uid** rather than a page number.
+    See `outline.py`: a uid survives reordering, deleting and undo, and a number
+    survives none of them.
+
+    A bookmark whose target page is not in the list -- a page range was imported,
+    or the target was deleted before this ran -- arrives with no uid and is
+    *dangling*: kept, shown as such, and skipped when the outline is written.
+    """
+    from .outline import Bookmark, Outline
+
+    # Where each source page ended up, if it did. First copy wins: a duplicated
+    # page is a new page with its own identity, and bookmarks stay with the
+    # original (D20).
+    uid_of = {}
+    for row in pages:
+        uid_of.setdefault((row.nfile - 1, row.npage - 1), row.uid)
+
+    roots = []
+    for file_idx, pdf in enumerate(pdf_input):
+        if pdf is None or pikepdf.Name.Outlines not in pdf.Root:
+            continue
+        rev_map = {p.obj.objgen: i for i, p in enumerate(pdf.pages)}
+        dests = {}
+        if pikepdf.Name.Dests in pdf.Root:
+            for k, v in pdf.Root.Dests.items():
+                dests[str(k).lstrip("/")] = v
+        if pikepdf.Name.Names in pdf.Root and pikepdf.Name.Dests in pdf.Root.Names:
+            dests.update(dict(pikepdf.NameTree(pdf.Root.Names.Dests).items()))
+
+        def page_index(dest):
+            """The source page a destination names, or None."""
+            if isinstance(dest, (pikepdf.String, pikepdf.Name)):
+                found = dests.get(str(dest).lstrip("/"))
+                if not found:
+                    return None
+                try:
+                    dest = found.D
+                except (AttributeError, ValueError):
+                    dest = found
+            if not isinstance(dest, pikepdf.Array) or len(dest) < 1:
+                return None
+            target = dest[0]
+            if not hasattr(target, "objgen"):
+                return None
+            return rev_map.get(target.objgen)
+
+        def uid_for(item, _file_idx=file_idx):
+            # External targets (/GoToR) point into another file entirely. They
+            # are left without a uid rather than guessed at: this is the same
+            # /GoToR that PyMuPDF's set_toc() crashes on (D18), and a wrong
+            # guess is worse than an honest "points nowhere".
+            try:
+                dest = item.destination
+            except (AttributeError, ValueError):
+                return None
+            if dest is None:
+                return None
+            index = page_index(dest)
+            if index is None:
+                return None
+            return uid_of.get((_file_idx, index))
+
+        def declared(item):
+            """Whether the file's entry carried a destination at all.
+
+            This is what tells a deliberate heading from a broken bookmark on
+            load: no destination means a heading, a destination that will not
+            resolve means dangling. Both arrive with no uid.
+            """
+            try:
+                return item.destination is not None
+            except (AttributeError, ValueError):
+                return False
+
+        def convert(item):
+            return Bookmark(str(item.title or ""), uid_for(item),
+                            [convert(child) for child in item.children],
+                            declared(item))
+
+        try:
+            with pdf.open_outline() as outline:
+                roots.extend(convert(item) for item in outline.root)
+        except pikepdf.PdfError as e:
+            warnings.warn(f"Could not read bookmarks from document "
+                          f"{file_idx + 1}: {e}")
+    return Outline(roots)

@@ -1964,7 +1964,8 @@ class MainWindow(QMainWindow):
             # ctrl-drop in place still duplicates, unlike a move, which is a no-op.
             self.model.undo.commit(_("Copy"))
             self.model.insert_pages(
-                dest, [self.model.pages[r].duplicate() for r in rows])
+                dest, [self.model.pages[r].duplicate(new_identity=True)
+                       for r in rows])
             self._mark_modified()
             return
         before = sum(1 for r in rows if r < dest)

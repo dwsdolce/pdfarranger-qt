@@ -28,6 +28,7 @@ from typing import List, Optional
 from PySide6.QtCore import QAbstractListModel, QModelIndex, Qt, Signal
 
 from .core import Dims, Page, Sides
+from .outline import Outline
 from .render import RenderTask
 
 
@@ -36,6 +37,14 @@ class UndoState:
     label: str
     pages: List[Page]
     selection: List[int] = field(default_factory=list)
+    outline: Optional["Outline"] = None
+    """The bookmark tree as it stood (D20).
+
+    In the same snapshot as the pages, deliberately, so there is one history
+    rather than two that can disagree: undoing a rename and undoing a rotation
+    come off the same stack, and a page delete and the bookmarks pointing at it
+    are restored together.
+    """
 
 
 class UndoManager:
@@ -55,6 +64,7 @@ class UndoManager:
             label,
             [p.duplicate() for p in self.model.pages],
             list(self.model.selected_rows()),
+            self.model.outline.duplicate(),
         )
 
     def commit(self, label: str):
@@ -111,10 +121,15 @@ class PageListModel(QAbstractListModel):
     #: Emitted whenever the page list changes in a way that affects the title
     #: bar or the status bar (count, modified flag).
     contents_changed = Signal()
+    #: The bookmark tree changed: edited, restored by undo, or newly loaded.
+    outline_changed = Signal()
 
     def __init__(self, renderer, parent=None):
         super().__init__(parent)
         self.pages: List[Page] = []
+        self.outline = Outline()
+        """The document's bookmarks (D20). Owned here rather than derived at
+        export time, which is what makes them editable at all."""
         self.renderer = renderer
         self.undo = UndoManager(self)
         #: Rendered pixels per PDF point. Every page is drawn at the same zoom,
@@ -242,7 +257,9 @@ class PageListModel(QAbstractListModel):
         rows = sorted(set(rows))
         if not rows:
             return
-        copies = [self.pages[r].duplicate() for r in rows]
+        # New pages, so new identities (D20): a bookmark on the original must
+        # not silently point at the copy as well.
+        copies = [self.pages[r].duplicate(new_identity=True) for r in rows]
         self.insert_pages(rows[-1] + 1, copies)
 
     def insert_interleaved(self, at: int, pages: List[Page], after: bool):
@@ -409,8 +426,14 @@ class PageListModel(QAbstractListModel):
     def restore(self, state: UndoState):
         self.beginResetModel()
         self.pages = [p.duplicate() for p in state.pages]
+        # Both, together. The pages carry their uids across duplicate(), so a
+        # bookmark whose page was deleted finds it again here rather than
+        # staying dangling -- which is the whole reason the two share a stack.
+        if state.outline is not None:
+            self.outline = state.outline.duplicate()
         self._key_rows.clear()
         self.endResetModel()
+        self.outline_changed.emit()
         self.selection_setter(state.selection)
         self.contents_changed.emit()
 

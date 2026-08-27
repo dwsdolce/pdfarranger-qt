@@ -85,6 +85,7 @@ not here is still open.
 | D17 | Annotation and markup | **Out of scope, permanently** | Tier 2 by another name. Qt exposes no annotation authoring, and adding it would mean owning an annotation model, hit-testing and appearance-stream generation. |
 | D18 | PDF engine for the reader | **QtPdf — stay on it** | Settled when phase 7 was picked up. Neither library provides a view widget, so that work is identical either way and the choice only decides what backs it. Measured: PyMuPDF renders 9–17% faster, but links come out *equivalent* — both give rect and target page, and both return (0,0) for a `/FitR` position — so the feature that raised the question is a wash. PyMuPDF's two real advantages, `set_toc()` and per-word text geometry, are precisely the ones bookmark editing and text selection would use, which is why this was left open until those items began. `set_toc()` round-trips an ordinary outline intact (807 of 807, nesting preserved) but **raises** on the Handbook's `/GoToR` bookmarks — a PyMuPDF bug — and bookmarks are written by `exporter_outlines.py` at export in any case, which handles `/GoToR`, named destinations and cross-file repair correctly. That leaves word-level geometry as the only surviving advantage, a refinement on `QPdfDocument.getSelection()`, bought for 55.5 MB against QtPdf's 5.7 MB already shipped, a third engine beside pikepdf and PDFium, and AGPL — permitted with GPL-3 (§13) but it would stop that code going back upstream. A judgement about *this* codebase and these documents, not a claim that QtPdf is the better library; on the merits PyMuPDF is. Re-test the `/GoToR` bug if bookmark editing ever stalls on outline writing. See §6. |
 | D19 | Read mode's document when nothing has been edited | **Open the source file directly, skipping the export** | D15 has read mode show an in-memory export of the edited page list, which is right when there are edits and pure cost when there are not: entering read mode on a 1590 page book took 3.6 s and peaked at 1.7 GB to reproduce a file already on disk. `DocumentSet.source_if_unmodified()` returns the source when the list is one document, whole, in order and unmodified, and None otherwise, so the export stays the default and the fast path is the exception. Measured end to end: 639 ms and 746 MB against 4190 ms and 2226 MB. Verified equivalent before building, not after: same page count, same page sizes, an 807-entry outline with identical titles and nesting, and a search giving 156 hits at identical coordinates on both documents. The *working copy* rather than the original, because `PDFDoc` never touches the copy again and that is what makes saving over the opened file safe. Does not weaken D15 -- the export remains what read mode does whenever a page has been touched. |
+| D20 | What a bookmark points at, and how it survives editing | **A stable page id, assigned once and copied by `Page.duplicate()`; the outline lives in the undo state beside the page list** | The outline has to survive operations that move, delete and duplicate the pages it targets, so the question is what a bookmark holds. *Object identity* is out: `UndoManager.snapshot` rebuilds every page with `duplicate()`, so one undo would leave every bookmark pointing at an orphan. *Page indices* are out too — every reorder, delete and insert would have to remap them, which is `OutlineRemapper`'s export-time work happening continuously and getting it wrong once is silent corruption. A **uid on the page**, preserved by `duplicate()` and therefore by undo, costs one field and makes reordering free: nothing to remap, because nothing refers to position. Deleting a page leaves its bookmarks *dangling* rather than deleting them — they are skipped on export and reconnect on undo, which is what makes the pair undoable together. The user-facing Duplicate command assigns fresh uids to its copies, so bookmarks stay with the original page rather than following both. And the outline is snapshotted with the pages, so there is one history rather than two that can disagree: undoing a rename and undoing a rotation come off the same stack. |
 
 ### Still open
 
@@ -535,35 +536,33 @@ take a title and an `/XYZ` destination from.
 - [ ] Split view with full-page preview
 - [ ] Dual-pane merging
 - [ ] Visible undo history
-- [ ] **Own the reader's view, on the engine we already have.** The single
-      largest item here, and the one that unblocks most of the rest. Every
-      reader limitation met so far traces to `QPdfView` being a closed widget,
-      not to the engine underneath it — see *Which PDF engine* below. Replacing
-      it with a scroll area of our own, laying out pages rendered through
-      `QPdfDocument` and the existing `Renderer`/`ThumbnailCache`, would deliver
-      in one go:
+- [x] **Own the reader's view, on the engine we already have.** Done, and it
+      cost about what was predicted -- comparable in size to phase 6. Every
+      reader limitation met until then traced to `QPdfView` being a closed
+      widget rather than to the engine underneath, so replacing it with a scroll
+      area of our own delivered link following, text selection and copy, a cache
+      and prefetch policy we control, and facing pages, none of which
+      `QPdfView` exposed at all.
 
-      - **link following**, internal and external — `QPdfLinkModel` already
-        supplies rectangles, target pages, URLs and `linkAt()` hit-testing
-      - **text selection and copy** — `QPdfDocument.getSelection()` is there
-      - **placeholders while scrolling**, so pages never go blank: the grid's
-        thumbnail cache already holds a bitmap of every page
-      - **a cache and prefetch policy we control**, which `QPdfView` does not
-        expose at all
-      - **facing pages**, which `QPdfView.PageMode` has no setting for
+      Page layout, scrolling, zoom anchoring, hit-testing and keyboard
+      navigation duly became ours to get right. The thing that made that
+      tractable was putting the geometry in `PageLayout` and keeping the widget
+      thin: single-page mode is a restricted scroll range and facing pages is
+      two indices to a row, so neither is a second layout, and hit testing,
+      selection and links work the same in every mode.
 
-      The cost is real and should not be understated: page layout, scrolling,
-      zoom anchoring, hit-testing and keyboard navigation all become ours to
-      get right, and `QPdfView` does them for free today. Comparable in size to
-      phase 6 itself. **View ▸ Continuous Scroll** is the cheap workaround in
-      the meantime. Planned in §6 *Owning the reader's view*.
-
-      Steps, each leaving read mode usable. Detail in section 6:
+      One prediction was wrong. "Placeholders while scrolling, so pages never
+      go blank: the grid's thumbnail cache already holds a bitmap of every
+      page" -- it does not, it holds the thumbnails the grid has displayed, and
+      a cheap low-resolution render does not exist besides (see *Why Acrobat is
+      smoother*). What shipped is a proxy tier of the reader's own, and pages
+      still blank on a first visit.
 
       - [x] Canvas: page layout, scrolling, and the coordinate mapping
             everything else is built on. `canvas.py`: `PageLayout` for the
-            geometry, `PageCanvas` for the widget, `SynchronousPages` as the
-            bitmap seam step 5 replaces
+            geometry, `PageCanvas` for the widget, and a synchronous
+            bitmap source as a deliberate seam, which step 5 replaced and
+            deleted
       - [x] Parity with what `QPdfView` did — continuous and single page, fit
             page and width, zoom with the anchor under the cursor, keyboard
             navigation, the page selector, search highlighting. `QPdfView` is
@@ -1427,6 +1426,75 @@ and evicted the very pages they were meant to stand in for, and the reader's
 cache was constructed with a budget of *one pixel* on the theory that the first
 paint would size it -- which left every render before that paint evicted the
 instant it arrived.
+
+### Editing bookmarks — the design
+
+Settled with David before building, and worth reading before changing any of it:
+several of these look arbitrary and are not.
+
+**Where.** Read mode, in the outline sidebar that is already there. Bookmarks
+are a reading construct -- you notice you want one while reading -- and the
+tree, its navigation and its selection all exist. Arrange mode gets nothing: the
+one operation that would suit it, picking a target page out of the grid, is
+covered by "re-home to the page I am on".
+
+**What a bookmark points at** is D20: a page uid, not an index and not the
+object. See there.
+
+**The outline comes from the file that was loaded**, once, on open --
+`read_outline()` in `exporter_outlines.py`, the counterpart to
+`rebuild_outlines()`. That matters more than it sounds. Read mode shows an
+in-memory *export* of the page list (D15) whenever anything has been edited, and
+the D19 fast path shows the source file when nothing has; so the sidebar's
+outline came from one document or the other depending on edit state, and was a
+*reconstruction* in the first case. Owning it removes the question.
+
+`deduplicate_outlines()` runs at read time rather than at export. A book shipped
+one chapter per file repeats its whole outline in each -- the Handbook has 45 --
+and collapsing them where the user can see and edit the result is better than
+doing it invisibly on save.
+
+**Importing a second file concatenates its outline at the root.** No wrapper
+node per file: that is exactly the shape the Handbook already has, and its `1`
+wrapper is the first thing anyone would want to delete.
+
+**The commands**, on the tree's context menu:
+
+| command | behaviour |
+| --- | --- |
+| Add | Sibling *after* the selected entry, or end of root; title from the selected text, else the page label. What Acrobat's Ctrl+B does |
+| Add Child | The same, nested. Free to offer here, and easier than dragging |
+| Re-home | Target becomes the current page. **The title is kept** -- it may have been edited, and need not match anything in the document |
+| Rename | One act, one undo entry: undo returns to before the rename began, not to a half-typed state |
+| Delete | Children are **promoted** into its place, not deleted with it |
+| Delete Dangling | Session-orphaned entries only. See below |
+
+Deleting a node promoting its children is what makes the Handbook's `1` wrapper
+removable in one operation, which is the case that prompted all of this.
+
+**Editing bookmarks marks the document modified.** The outline is part of the
+document; a save writes it.
+
+**Dangling bookmarks.** A bookmark whose page has gone is *kept*, marked, and
+re-homable, rather than deleted. The rule everything follows from: **whatever is
+in the outline gets saved, so a reload looks the same.**
+
+Three states, and the difference is worth keeping straight:
+
+- *targeted* -- resolves to a page in the document
+- *heading* -- no destination at all, which is legal and deliberate. The
+  Handbook's `1` is one
+- *dangling* -- declared a target that cannot be honoured
+
+Both of the last two arrive with no page. They are still distinguishable **on
+load**: a heading has no destination in the file, a dangling entry has one that
+does not resolve. So the tree can mark them correctly on open without guessing,
+and Delete Dangling can leave real headings alone.
+
+The one thing that cannot survive is *our own* dangling through a save. Once the
+page is gone there is no valid way to write "points at a page that no longer
+exists", so it is written without a destination and comes back as a heading. A
+narrow loss, and the alternative -- a private key in the PDF -- is worse.
 
 ### Owning the reader's view — the plan
 

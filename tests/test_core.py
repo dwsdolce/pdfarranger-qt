@@ -109,3 +109,35 @@ class TestDoctests(unittest.TestCase):
         result = doctest.testmod(core, verbose=False)
         self.assertEqual(result.failed, 0)
         self.assertGreater(result.attempted, 0, "no doctests found in core")
+
+
+class TestPageIdentity(unittest.TestCase):
+    """A page keeps an identity that survives editing (D20).
+
+    Bookmarks need something to point at. Not the index, which every reorder
+    invalidates; not the object, because UndoManager.snapshot rebuilds the whole
+    list with duplicate() and one undo would leave every reference an orphan.
+    """
+
+    def page(self):
+        return Page(1, 1, "x.pdf")
+
+    def test_pages_have_distinct_identities(self):
+        self.assertNotEqual(self.page().uid, self.page().uid)
+
+    def test_a_snapshot_copy_keeps_the_identity(self):
+        """What makes undo reconnect a bookmark rather than orphan it."""
+        page = self.page()
+        self.assertEqual(page.duplicate().uid, page.uid)
+
+    def test_a_new_page_gets_a_new_identity(self):
+        """The Duplicate command, so a bookmark does not follow both copies."""
+        page = self.page()
+        self.assertNotEqual(page.duplicate(new_identity=True).uid, page.uid)
+
+    def test_the_copy_is_otherwise_the_same(self):
+        page = self.page()
+        page.rotate(90)
+        copy = page.duplicate(new_identity=True)
+        self.assertEqual(copy.angle, page.angle)
+        self.assertEqual(copy.npage, page.npage)

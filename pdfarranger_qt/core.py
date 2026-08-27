@@ -38,6 +38,7 @@ __all__ = [
 ]
 
 import copy
+import itertools
 import mimetypes
 import os
 import pathlib
@@ -267,6 +268,11 @@ class Dims(NamedTuple):
         )
 
 
+#: Page identities. A counter rather than anything derived from content: two
+#: pages can be identical in every respect and still be different pages.
+_page_uids = itertools.count(1)
+
+
 class BasePage:
     """Common base class for Page and LayerPage"""
 
@@ -330,6 +336,16 @@ class Page(BasePage):
         layerpages=(),
     ):
         super().__init__(nfile, npage, copyname, angle, scale, Sides(*crop), size_orig)
+        self.uid = next(_page_uids)
+        """Identity that survives editing, for anything pointing *at* a page.
+
+        Bookmarks need it (D20). Not the index, which every reorder invalidates,
+        and not the object, which `UndoManager.snapshot` replaces wholesale --
+        it rebuilds the list with `duplicate()`, so after one undo an object
+        reference would name an orphan. `duplicate()` carries the uid across, so
+        undo keeps a bookmark attached; the Duplicate *command* assigns fresh
+        ones, so a copied page does not inherit the original's bookmarks.
+        """
         self.hide = Sides(*hide)
         """Left, right, top, bottom hide"""
         self.description = description
@@ -375,9 +391,19 @@ class Page(BasePage):
         ts += list(self.crop) + list(self.hide) + list(lpdata)
         return "///".join([str(v) for v in ts])
 
-    def duplicate(self) -> "Page":
+    def duplicate(self, new_identity: bool = False) -> "Page":
+        """A copy of this page.
+
+        The uid is carried over by default, because the commonest caller is
+        `UndoManager.snapshot`, and a snapshot is meant to *be* these pages
+        rather than to resemble them. Pass ``new_identity`` where the copy is a
+        genuinely new page -- the Duplicate command, paste -- so that whatever
+        points at the original does not silently point at both.
+        """
         r = copy.copy(self)
         r.layerpages = [lp.duplicate() for lp in r.layerpages]
+        if new_identity:
+            r.uid = next(_page_uids)
         return r
 
     def split(self, vcrops, hcrops) -> List["Page"]:
