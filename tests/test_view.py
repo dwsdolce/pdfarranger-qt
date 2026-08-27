@@ -48,6 +48,8 @@ class TestDragReorder(unittest.TestCase):
         self.win.modified = False
         settle(timeout_ms=600)
 
+        # These exercise the grid, and a window now opens into the reader.
+        self.win.set_read_mode(False)
     def tearDown(self):
         self.win.modified = False
         self.win.close()
@@ -182,6 +184,8 @@ class TestRubberBandScroll(unittest.TestCase):
         self.win.modified = False
         settle(timeout_ms=600)
 
+        # These exercise the grid, and a window now opens into the reader.
+        self.win.set_read_mode(False)
     def tearDown(self):
         self.win.modified = False
         self.win.close()

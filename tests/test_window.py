@@ -44,6 +44,8 @@ class TestPhase1Actions(unittest.TestCase):
         self.win.modified = False
         settle(timeout_ms=400)
 
+        # These exercise the grid, and a window now opens into the reader.
+        self.win.set_read_mode(False)
     def tearDown(self):
         self.win.modified = False
         self.win.close()
@@ -606,6 +608,8 @@ class TestPhase4Parity(unittest.TestCase):
         self.win.modified = False
         settle(timeout_ms=300)
 
+        # These exercise the grid, and a window now opens into the reader.
+        self.win.set_read_mode(False)
     def tearDown(self):
         self.win.modified = False
         self.win.close()

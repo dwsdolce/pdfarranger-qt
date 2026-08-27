@@ -197,9 +197,22 @@ class TestReadModeSwitch(unittest.TestCase):
         self.win.modified = False
         self.win.close()
 
-    def test_grid_is_the_default(self):
+    def test_the_reader_is_the_default(self):
+        """Opening a document lands in read mode.
+
+        Reading is what a document is opened for; arranging is something you
+        then decide to do to it. The toggle is labelled for what it switches to,
+        so it reads "Arrange Mode" and is unchecked while reading.
+        """
+        self.assertTrue(self.win.read_mode)
+        self.assertIs(self.win.stack.currentWidget(), self.win.reader)
+        self.assertFalse(self.win.act_arrange_mode.isChecked())
+
+    def test_arrange_mode_switches_back_to_the_grid(self):
+        self.win.set_arrange_mode(True)
         self.assertFalse(self.win.read_mode)
         self.assertIs(self.win.stack.currentWidget(), self.win.view)
+        self.assertTrue(self.win.act_arrange_mode.isChecked())
 
     def test_switching_swaps_the_central_widget(self):
         self.win.set_read_mode(True)
@@ -233,12 +246,25 @@ class TestReadModeSwitch(unittest.TestCase):
         for never in ("&Find…", "Preferences", "&About"):
             self.assertNotIn(never, names)
 
-    def test_read_mode_refuses_an_empty_document(self):
+    def test_an_empty_document_still_reads(self):
+        """It used to refuse, back when the grid was the default.
+
+        An empty window is a reader with no document in it, not an arranger
+        nobody asked for, and the toggle stays enabled so there is no way to be
+        stranded in either view.
+        """
         self.win.close_document()
-        self.win.act_read_mode.setChecked(True)
-        self.win.set_read_mode(True)
+        self.assertTrue(self.win.read_mode)
+        self.assertIs(self.win.stack.currentWidget(), self.win.reader)
+        self.assertEqual(self.win.reader.page_count(), 0)
+        self.assertTrue(self.win.act_arrange_mode.isEnabled())
+
+    def test_closing_keeps_whichever_mode_you_were_in(self):
+        """Closing a document does not change what the window is for."""
+        self.win.set_arrange_mode(True)
+        self.win.close_document()
         self.assertFalse(self.win.read_mode)
-        self.assertFalse(self.win.act_read_mode.isChecked())
+        self.assertIs(self.win.stack.currentWidget(), self.win.view)
 
     def test_search_phrase_carries_into_read_mode(self):
         self.win.open_paths([TEXT_PDF])
@@ -310,16 +336,19 @@ class TestModeAffordances(unittest.TestCase):
     def test_the_toolbar_offers_the_mode(self):
         """Menu-only would leave it undiscoverable, and it must be in both."""
         for bar in (self.win.toolbar, self.win.reader_toolbar):
-            self.assertIn(self.win.act_read_mode, bar.actions())
-        self.assertTrue(self.win.act_read_mode.isCheckable())
+            self.assertIn(self.win.act_arrange_mode, bar.actions())
+        self.assertTrue(self.win.act_arrange_mode.isCheckable())
 
     def test_the_status_bar_says_which_mode(self):
-        """showMessage() expires; this must not."""
-        self.assertEqual(self.win.status_mode.text(), "")
-        self.win.set_read_mode(True)
+        """showMessage() expires; this must not.
+
+        Opening lands in read mode, so the sequence starts there.
+        """
         self.assertEqual(self.win.status_mode.text(), "Reading")
         self.win.set_read_mode(False)
         self.assertEqual(self.win.status_mode.text(), "")
+        self.win.set_read_mode(True)
+        self.assertEqual(self.win.status_mode.text(), "Reading")
 
     def test_the_toolbars_swap_with_the_mode(self):
         """One toolbar per mode, rather than one full of dead buttons.
@@ -329,11 +358,11 @@ class TestModeAffordances(unittest.TestCase):
         *would* be shown and so passed against a toolbar that was visibly
         greyed out rather than hidden.
         """
-        self.assertTrue(self.win.toolbar.isVisible())
-        self.assertFalse(self.win.reader_toolbar.isVisible())
-        self.win.set_read_mode(True)
         self.assertFalse(self.win.toolbar.isVisible())
         self.assertTrue(self.win.reader_toolbar.isVisible())
+        self.win.set_read_mode(False)
+        self.assertTrue(self.win.toolbar.isVisible())
+        self.assertFalse(self.win.reader_toolbar.isVisible())
         self.win.set_read_mode(False)
         self.assertTrue(self.win.toolbar.isVisible())
         self.assertFalse(self.win.reader_toolbar.isVisible())
@@ -348,7 +377,7 @@ class TestModeAffordances(unittest.TestCase):
     def test_open_and_save_are_on_both(self):
         """The way out of a mode should not move."""
         for action in (self.win.act_open, self.win.act_save,
-                       self.win.act_read_mode):
+                       self.win.act_arrange_mode):
             for bar in (self.win.toolbar, self.win.reader_toolbar):
                 self.assertIn(action, bar.actions(), action.text())
 
@@ -464,11 +493,11 @@ class TestContinuousScroll(unittest.TestCase):
         self.assertTrue(self.win.act_continuous.isChecked())
 
     def test_it_only_applies_while_reading(self):
-        self.assertFalse(self.win.act_continuous.isEnabled())
-        self.win.set_read_mode(True)
         self.assertTrue(self.win.act_continuous.isEnabled())
         self.win.set_read_mode(False)
         self.assertFalse(self.win.act_continuous.isEnabled())
+        self.win.set_read_mode(True)
+        self.assertTrue(self.win.act_continuous.isEnabled())
 
     def test_the_choice_is_remembered(self):
         from pdfarranger_qt.mainwindow import MainWindow
@@ -616,6 +645,8 @@ class TestPageSelector(unittest.TestCase):
         self.win.close()
 
     def test_it_lives_on_the_reader_toolbar(self):
+        """Hidden while arranging, which is no longer where a window starts."""
+        self.win.set_read_mode(False)
         self.assertFalse(self.win.reader_toolbar.isVisible())
         self.assertEqual(self.win.toolbar_page_total.text(), "")
 
@@ -1004,3 +1035,103 @@ class TestCopyFollowsTheReader(unittest.TestCase):
         self.win.act_copy.trigger()
         self.assertIn("///", self.App.clipboard().text(),
                       "the grid should be serialising pages again")
+
+
+class TestEditMenuFollowsTheMode(unittest.TestCase):
+    """Which Edit commands mean something while reading, and which do not.
+
+    Selecting means something in both modes -- text while reading, pages while
+    arranging -- so Select All, Deselect and Copy follow the mode. The rest of
+    the Select commands only ever act on the page grid, which is not on screen
+    while reading: they used to stay enabled and quietly change a selection
+    nobody could see, which looks exactly like a broken command.
+    """
+
+    def setUp(self):
+        from PySide6.QtWidgets import QApplication as _App
+        from pdfarranger_qt.mainwindow import MainWindow
+
+        self.App = _App
+        MESSAGE_BOXES.clear()
+        self.win = MainWindow()
+        self.win.resize(900, 700)
+        self.win.show()
+        self.win.open_paths([OUTLINE_PDF])
+        self.win.modified = False
+        settle(timeout_ms=400)
+
+    def tearDown(self):
+        self.win.modified = False
+        self.win.close()
+
+    def grid_only(self):
+        return {"Invert": self.win.act_invert,
+                "Select Odd": self.win.act_select_odd,
+                "Select Even": self.win.act_select_even,
+                "Same File": self.win.act_select_same_file,
+                "Same Format": self.win.act_select_same_format,
+                "Select Range": self.win.act_select_range}
+
+    def test_grid_only_selection_is_disabled_while_reading(self):
+        self.assertTrue(self.win.read_mode)
+        for name, action in self.grid_only().items():
+            self.assertFalse(action.isEnabled(),
+                             f"{name} acts on a grid that is not on screen")
+
+    def test_grid_only_selection_comes_back_while_arranging(self):
+        self.win.set_arrange_mode(True)
+        settle(timeout_ms=200)
+        for name, action in self.grid_only().items():
+            self.assertTrue(action.isEnabled(), name)
+
+    def test_select_all_and_deselect_work_in_both_modes(self):
+        for action in (self.win.act_select_all, self.win.act_deselect):
+            self.assertTrue(action.isEnabled(), action.text())
+        self.win.set_arrange_mode(True)
+        settle(timeout_ms=200)
+        for action in (self.win.act_select_all, self.win.act_deselect):
+            self.assertTrue(action.isEnabled(), action.text())
+
+    def test_deselect_clears_the_readers_text_selection(self):
+        """The point David made: selecting has a meaning here, so clearing does."""
+        self.win.act_select_all.trigger()
+        settle(timeout_ms=200)
+        self.assertTrue(self.win.reader.has_selection())
+        self.win.act_deselect.trigger()
+        settle(timeout_ms=200)
+        self.assertFalse(self.win.reader.has_selection())
+
+    def test_deselect_still_clears_the_grid_while_arranging(self):
+        self.win.set_arrange_mode(True)
+        settle(timeout_ms=200)
+        self.win.act_select_all.trigger()
+        self.assertTrue(self.win.view.selected_rows())
+        self.win.act_deselect.trigger()
+        self.assertFalse(self.win.view.selected_rows())
+
+    def menu_named(self, title):
+        return next(a.menu() for a in self.win.menuBar().actions()
+                    if a.text().replace("&", "") == title)
+
+    def test_the_select_submenu_lives_under_arrange(self):
+        """Page selection is arranging vocabulary now that arranging is a mode."""
+        arrange = self.menu_named("Arrange")
+        edit = self.menu_named("Edit")
+        self.assertIn("Select", [a.text().replace("&", "")
+                                 for a in arrange.actions() if a.menu()])
+        self.assertNotIn("Select", [a.text().replace("&", "")
+                                    for a in edit.actions() if a.menu()])
+
+    def test_select_all_and_deselect_stay_in_edit(self):
+        """Both modes reach them, so both modes should find them in one place."""
+        items = [a.text().replace("&", "") for a in self.menu_named("Edit").actions()]
+        self.assertIn("Select All", items)
+        self.assertIn("Deselect All", items)
+
+    def test_the_paste_commands_say_what_they_need(self):
+        """Five permanently-greyed entries with no explanation is the worst of it."""
+        for action in (self.win.act_paste, self.win.act_paste_before,
+                       self.win.act_paste_odd, self.win.act_paste_even,
+                       self.win.act_paste_overlay, self.win.act_paste_underlay):
+            self.assertTrue(action.toolTip(), action.text())
+            self.assertIn("pages", action.toolTip().lower())

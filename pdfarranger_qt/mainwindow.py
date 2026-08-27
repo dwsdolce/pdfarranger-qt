@@ -75,11 +75,17 @@ class MainWindow(QMainWindow):
         self.model.doc_password = self._password_for
         self.view = PageView(self.model, self)
         self.reader = reader.ReaderView(self)
-        # One stack, two modes. The grid stays index 0 and the default: this is
-        # an arranger that can read, not a reader that can arrange.
+        # One stack, two modes. The reader is what a window shows, opened or
+        # empty; the grid is where you go to change the document you are
+        # reading. That is the other way round from how this started -- it was
+        # an arranger that could read -- and the grid keeps index 0 only because
+        # moving it would churn every test that indexes the stack.
         self.stack = QStackedWidget(self)
         self.stack.addWidget(self.view)
         self.stack.addWidget(self.reader)
+        # Reading is the default state, so a window that has never opened a
+        # document still shows the reader rather than an arranger.
+        self.stack.setCurrentWidget(self.reader)
         self.setCentralWidget(self.stack)
         self.reader.page_changed.connect(self._reader_page_changed)
         self.reader.selection_changed.connect(self._reader_selection_changed)
@@ -100,7 +106,8 @@ class MainWindow(QMainWindow):
         #: in the registry in clear text.
         self.output_password = None
         #: True while the reader is showing. The grid is always index 0.
-        self.read_mode = False
+        #: Reading is the default; an empty window is a reader with no document.
+        self.read_mode = True
         #: Set when an edit happens while reading, so the snapshot is rebuilt
         #: on the next entry rather than on every keystroke.
         self._reader_stale = True
@@ -253,7 +260,7 @@ class MainWindow(QMainWindow):
 
         # -- selection ----------------------------------------------------
         self.act_deselect = QAction(_m("_Deselect All"), self)
-        self.act_deselect.triggered.connect(self.view.clearSelection)
+        self.act_deselect.triggered.connect(self.deselect)
 
         self.act_select_odd = QAction(_m("Select _Odd Pages"), self)
         self.act_select_odd.triggered.connect(lambda: self.select_parity(1))
@@ -396,10 +403,16 @@ class MainWindow(QMainWindow):
         self.act_zoom_fit_width.setShortcut(QKeySequence("Shift+F"))
         self.act_zoom_fit_width.triggered.connect(self.zoom_fit_width)
 
-        self.act_read_mode = QAction(_("Read Mode"), self)
-        self.act_read_mode.setCheckable(True)
-        self.act_read_mode.setShortcut(QKeySequence("Ctrl+E"))
-        self.act_read_mode.triggered.connect(self.set_read_mode)
+        # Labelled for what it switches *to*, and checked while arranging:
+        # reading is the default state now, so the command a reader wants is
+        # "let me rearrange this", not "let me read it".
+        self.act_arrange_mode = QAction(_("Arrange Mode"), self)
+        self.act_arrange_mode.setCheckable(True)
+        # Unchecked from the start: an empty window is a reader waiting for a
+        # document. Keeps "checked means the grid is showing" true everywhere.
+        self.act_arrange_mode.setChecked(False)
+        self.act_arrange_mode.setShortcut(QKeySequence("Ctrl+E"))
+        self.act_arrange_mode.triggered.connect(self.set_arrange_mode)
 
         self.act_continuous = QAction(_("Continuous Scroll"), self)
         self.act_continuous.setCheckable(True)
@@ -484,6 +497,16 @@ class MainWindow(QMainWindow):
         m.addAction(self.act_close)
         m.addAction(self.act_quit)
 
+        # Five permanently-greyed entries with no explanation is the most
+        # confusing thing in this menu: they need *pages* on the clipboard, not
+        # text, and nothing on screen says so until one is there to hover.
+        needs_pages = _("Needs pages copied from a document")
+        for act in (self.act_paste, self.act_paste_before, self.act_paste_odd,
+                    self.act_paste_even, self.act_paste_overlay,
+                    self.act_paste_underlay):
+            act.setStatusTip(needs_pages)
+            act.setToolTip(needs_pages)
+
         m = self._menu(bar, _m("_Edit"))
         m.addAction(self.act_undo)
         m.addAction(self.act_redo)
@@ -499,17 +522,11 @@ class MainWindow(QMainWindow):
         paste_menu.addAction(self.act_paste_overlay)
         paste_menu.addAction(self.act_paste_underlay)
         m.addSeparator()
-        select_menu = self._menu(m, _m("_Select"))
-        select_menu.addAction(self.act_select_all)
-        select_menu.addAction(self.act_deselect)
-        select_menu.addAction(self.act_invert)
-        select_menu.addSeparator()
-        select_menu.addAction(self.act_select_odd)
-        select_menu.addAction(self.act_select_even)
-        select_menu.addAction(self.act_select_same_file)
-        select_menu.addAction(self.act_select_same_format)
-        select_menu.addSeparator()
-        select_menu.addAction(self.act_select_range)
+        # Select All and Deselect stay in Edit: they mean something in either
+        # mode. The rest are page-selection commands and have moved to Arrange,
+        # which is now a mode you deliberately enter rather than the default.
+        m.addAction(self.act_select_all)
+        m.addAction(self.act_deselect)
         m.addSeparator()
         m.addAction(self.act_find)
         m.addAction(self.act_find_next)
@@ -537,6 +554,18 @@ class MainWindow(QMainWindow):
         m.addAction(self.act_explode)
 
         m = self._menu(bar, _("Arrange"))
+        select_menu = self._menu(m, _m("_Select"))
+        select_menu.addAction(self.act_select_all)
+        select_menu.addAction(self.act_deselect)
+        select_menu.addAction(self.act_invert)
+        select_menu.addSeparator()
+        select_menu.addAction(self.act_select_odd)
+        select_menu.addAction(self.act_select_even)
+        select_menu.addAction(self.act_select_same_file)
+        select_menu.addAction(self.act_select_same_format)
+        select_menu.addSeparator()
+        select_menu.addAction(self.act_select_range)
+        m.addSeparator()
         m.addAction(self.act_reverse)
         m.addAction(self.act_swap)
         m.addSeparator()
@@ -548,7 +577,7 @@ class MainWindow(QMainWindow):
         booklet_menu.addAction(self.act_split_booklet)
 
         m = self._menu(bar, _m("_View"))
-        m.addAction(self.act_read_mode)
+        m.addAction(self.act_arrange_mode)
         m.addAction(self.act_continuous)
         m.addAction(self.act_prev_page)
         m.addAction(self.act_next_page)
@@ -604,7 +633,7 @@ class MainWindow(QMainWindow):
             bar.addAction(self.act_open)
             bar.addAction(self.act_save)
             bar.addSeparator()
-            bar.addAction(self.act_read_mode)
+            bar.addAction(self.act_arrange_mode)
             bar.addSeparator()
 
         self.toolbar.addAction(self.act_undo)
@@ -682,13 +711,18 @@ class MainWindow(QMainWindow):
                 out.extend(a for a in actions if a in writes_in_file)
                 continue
             out.extend(actions)
-        # Find and Preferences live under Edit but change nothing.
+        # Find and Preferences live under Edit but change nothing. Copy,
+        # Select All and Deselect are here because they mean something in both
+        # modes -- text while reading, pages while arranging.
+        #
+        # The rest of the Select commands are deliberately *not* exempt. They
+        # only ever act on the page grid, and while reading that grid is not on
+        # screen: leaving them enabled meant Select Odd Pages quietly changed a
+        # selection nobody could see, which is indistinguishable from the
+        # command being broken. Greyed out, they say which mode they belong to.
         harmless = {self.act_find, self.act_find_next, self.act_find_prev,
                     self.act_find_all, self.act_preferences,
-                    self.act_copy, self.act_select_all, self.act_deselect,
-                    self.act_invert, self.act_select_odd, self.act_select_even,
-                    self.act_select_same_file, self.act_select_same_format,
-                    self.act_select_range}
+                    self.act_copy, self.act_select_all, self.act_deselect}
         return [a for a in out if a not in harmless]
 
     def _refresh_state(self):
@@ -721,10 +755,15 @@ class MainWindow(QMainWindow):
             for act in self._editing_actions():
                 act.setEnabled(False)
         self.status_mode.setText(_("Reading") if self.read_mode else "")
-        self.act_read_mode.setEnabled(has_pages)
+        # Always available: switching view is not an edit, and with no document
+        # both views are empty, so there is nothing to protect the user from.
+        self.act_arrange_mode.setEnabled(True)
         for act in (self.act_continuous, self.act_next_page, self.act_prev_page,
                     self.act_first_page, self.act_last_page, self.act_go_to_page):
-            act.setEnabled(self.read_mode)
+            # Pages as well as the mode: read mode is now the state an empty
+            # window is in, and "Next Page" with no document is a button that
+            # cannot do anything.
+            act.setEnabled(self.read_mode and has_pages)
         if self.read_mode:
             # The grid's selection is still there behind the reader, and it is
             # not what Copy means now. Select All is always available; Copy
@@ -873,9 +912,17 @@ class MainWindow(QMainWindow):
         for path in paths:
             self.recent.add(path)
         self._refresh_state()
+        # Reading is what a document is opened for; arranging is a thing you
+        # then decide to do to it. Falls back to the grid on its own if the
+        # document cannot be read, which set_read_mode reports.
+        self.set_read_mode(True)
         return True
 
     # -- read mode (D14) ---------------------------------------------------
+
+    def set_arrange_mode(self, on: bool):
+        """The toggle the user sees: checked means arranging."""
+        self.set_read_mode(not on)
 
     def set_read_mode(self, on: bool):
         """Swap the central widget between the grid and the reader.
@@ -884,10 +931,12 @@ class MainWindow(QMainWindow):
         time (D15), so what is read always matches what would be saved.
         """
         if on and not self.model.rowCount():
-            self.act_read_mode.setChecked(False)
-            return
-        if on and self._reader_stale and not self._load_reader():
-            self.act_read_mode.setChecked(False)
+            # Nothing to read, but reading is the mode this application is in:
+            # an empty window should look like a reader waiting for a document,
+            # not like an arranger nobody asked for. Just show it empty.
+            self.reader.clear()
+        elif on and self._reader_stale and not self._load_reader():
+            self.act_arrange_mode.setChecked(True)
             QMessageBox.warning(self, APP_NAME, _("This document cannot be read."))
             return
         self.read_mode = on
@@ -896,7 +945,7 @@ class MainWindow(QMainWindow):
             self._restore_reading_position()
         else:
             self._store_reading_position()
-        self.act_read_mode.setChecked(on)
+        self.act_arrange_mode.setChecked(not on)
         self._refresh_state()
         (self.reader if on else self.view).setFocus()
 
@@ -1109,6 +1158,10 @@ class MainWindow(QMainWindow):
         if not self._confirm_discard():
             return
         self._reset_document()
+        # The mode is kept. Closing a document does not change what the window
+        # is for, and the reader shows empty rather than stranding anyone now
+        # that the toggle stays enabled without pages.
+        self.reader.clear()
         self._refresh_state()
 
     def _reset_document(self):
@@ -1161,6 +1214,16 @@ class MainWindow(QMainWindow):
         self._mark_modified()
 
     # -- clipboard ---------------------------------------------------------
+
+    def deselect(self):
+        """Deselect: the reader's text while reading, the grid's pages otherwise.
+
+        Selecting has a meaning in both modes, so clearing it does too.
+        """
+        if self.read_mode:
+            self.reader.canvas.clear_selection()
+            return
+        self.view.clearSelection()
 
     def select_all(self):
         """Select All: the page's text while reading, every page otherwise."""
