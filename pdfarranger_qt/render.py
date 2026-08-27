@@ -76,6 +76,25 @@ class MemoryDocument:
         self.document.load(self._buffer)
         self.error = self.document.error()
 
+    @classmethod
+    def from_file(cls, path: str, password: str = "") -> "MemoryDocument":
+        """The same wrapper over a file on disk, with no bytes in memory.
+
+        For read mode's fast path: when the page list is unmodified there is
+        nothing to export, and PDFium reads the file lazily rather than holding
+        it. Same interface so callers cannot tell the two apart -- there is no
+        buffer here, and ``close()`` closes nothing extra.
+        """
+        self = cls.__new__(cls)
+        self._array = None
+        self._buffer = None
+        self.document = QPdfDocument(None)
+        if password:
+            self.document.setPassword(password)
+        # The QString overload does return the error, unlike the QIODevice one.
+        self.error = self.document.load(path)
+        return self
+
     @property
     def ok(self) -> bool:
         return (self.error == QPdfDocument.Error.None_
@@ -86,7 +105,8 @@ class MemoryDocument:
 
     def close(self):
         self.document.close()
-        self._buffer.close()
+        if self._buffer is not None:
+            self._buffer.close()
 
     def __enter__(self) -> "MemoryDocument":
         return self

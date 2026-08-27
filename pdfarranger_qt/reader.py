@@ -115,12 +115,21 @@ class ReaderView(QWidget):
 
     # -- document ----------------------------------------------------------
 
-    def load(self, pages, files, source_names=None) -> bool:
+    def load(self, pages, files, source_names=None, source=None) -> bool:
         """Render ``pages`` to an in-memory PDF and show it (D15).
 
         Returns False if the export or the load failed, leaving whatever was
         showing in place rather than blanking the view.
+
+        ``source`` is the ``(copyname, password)`` of a file the page list is a
+        1:1 view of, from ``DocumentSet.source_if_unmodified``, or None. When
+        given, that file is opened directly and the export is skipped: on a
+        1590 page book the export costs 3.6 s and peaks at 1.7 GB against a
+        63 ms parse, for a document that is byte-for-byte what is already on
+        disk. See PORTING-NOTES.md section 6.
         """
+        if source is not None and self._load_source(*source):
+            return True
         try:
             data = get_in_memory_pdf(list(pages), files, outlines=True,
                                      source_names=source_names)
@@ -134,7 +143,29 @@ class ReaderView(QWidget):
         if not document.ok:
             document.close()
             return False
+        self._show(document)
+        return True
 
+    def _load_source(self, copyname: str, password: str) -> bool:
+        """Open a source file directly, skipping the export. False to fall back.
+
+        Deliberately silent on failure: the caller retries through the export,
+        which is the path that has always worked, so a source that will not open
+        costs a slow read mode rather than a broken one.
+        """
+        try:
+            document = MemoryDocument.from_file(copyname, password)
+        except Exception:  # noqa: BLE001 - falling back is the whole point
+            logging.getLogger(__name__).exception("could not open %s", copyname)
+            return False
+        if not document.ok:
+            document.close()
+            return False
+        self._show(document)
+        return True
+
+    def _show(self, document):
+        """Bind a document to every model, then drop the previous one."""
         previous = self._document
         self._document = document
         self.pdf_view.setDocument(document.document)
@@ -146,7 +177,6 @@ class ReaderView(QWidget):
         # QPdfView is still pointing at crashes PDFium.
         if previous is not None:
             previous.close()
-        return True
 
     def clear(self):
         """Drop the document. Safe to call more than once.

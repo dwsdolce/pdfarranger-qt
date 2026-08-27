@@ -84,6 +84,7 @@ not here is still open.
 | D16 | Text selection and link following | **Out of the first cut** | Neither is exposed by `QPdfView` in 6.11.1 — verified against the installed API, not assumed. Both are buildable on `QPdfDocument.getSelection()` and `QPdfLinkModel`, but they are hand-written features, not wiring, and they do not block a usable reader. |
 | D17 | Annotation and markup | **Out of scope, permanently** | Tier 2 by another name. Qt exposes no annotation authoring, and adding it would mean owning an annotation model, hit-testing and appearance-stream generation. |
 | D18 | PDF engine for the reader | **QtPdf — stay on it** | Settled when phase 7 was picked up. Neither library provides a view widget, so that work is identical either way and the choice only decides what backs it. Measured: PyMuPDF renders 9–17% faster, but links come out *equivalent* — both give rect and target page, and both return (0,0) for a `/FitR` position — so the feature that raised the question is a wash. PyMuPDF's two real advantages, `set_toc()` and per-word text geometry, are precisely the ones bookmark editing and text selection would use, which is why this was left open until those items began. `set_toc()` round-trips an ordinary outline intact (807 of 807, nesting preserved) but **raises** on the Handbook's `/GoToR` bookmarks — a PyMuPDF bug — and bookmarks are written by `exporter_outlines.py` at export in any case, which handles `/GoToR`, named destinations and cross-file repair correctly. That leaves word-level geometry as the only surviving advantage, a refinement on `QPdfDocument.getSelection()`, bought for 55.5 MB against QtPdf's 5.7 MB already shipped, a third engine beside pikepdf and PDFium, and AGPL — permitted with GPL-3 (§13) but it would stop that code going back upstream. A judgement about *this* codebase and these documents, not a claim that QtPdf is the better library; on the merits PyMuPDF is. Re-test the `/GoToR` bug if bookmark editing ever stalls on outline writing. See §6. |
+| D19 | Read mode's document when nothing has been edited | **Open the source file directly, skipping the export** | D15 has read mode show an in-memory export of the edited page list, which is right when there are edits and pure cost when there are not: entering read mode on a 1590 page book took 3.6 s and peaked at 1.7 GB to reproduce a file already on disk. `DocumentSet.source_if_unmodified()` returns the source when the list is one document, whole, in order and unmodified, and None otherwise, so the export stays the default and the fast path is the exception. Measured end to end: 639 ms and 746 MB against 4190 ms and 2226 MB. Verified equivalent before building, not after: same page count, same page sizes, an 807-entry outline with identical titles and nesting, and a search giving 156 hits at identical coordinates on both documents. The *working copy* rather than the original, because `PDFDoc` never touches the copy again and that is what makes saving over the opened file safe. Does not weaken D15 -- the export remains what read mode does whenever a page has been touched. |
 
 ### Still open
 
@@ -458,7 +459,72 @@ and re-enabled on leaving, that the bookmark model populates for a document with
 an outline and is empty for one without, and that last-position survives a
 close/reopen. `tests/test_reader.py`.
 
+### Phase 6a — entering read mode without the export — **complete**
+
+Read mode pays 3.6 seconds and peaks at 1.7 GB to open a 255 MB book, because
+D15 has it export the edited page list before it shows anything. Measured in
+section 6, *Entering read mode costs more than reading does*. When the page list
+is unmodified that export reproduces the file already on disk, and can be
+skipped for the price of a 63 ms parse.
+
+Not beyond-parity work, and not part of phase 7: this is a defect in what phase 6
+shipped. It is first because it is small, independent of the reader rewrite, and
+fixes the case D14 says the reader exists for — reading a book that has not been
+edited.
+
+**Check before building.** The fast path is only viable if both hold, and
+neither is assumed:
+
+- [x] Search, bookmarks and page numbering line up when `ReaderView` holds the
+      source document rather than an export. Verified on the Handbook: same
+      1590 pages, no page differing in size, an outline of 807 entries with
+      identical titles and nesting, and a search for "antenna" giving 156 hits
+      at identical page and rectangle on both. Checked because section 6
+      *Read mode* warns about pointing a view at another document's geometry,
+      and because the outline is what `/GoToR` has broken before
+- [x] An unmodified page list can be recognised cheaply. `Page.unmodified()`
+      already existed for the per-page half — angle, crop, hide, scale and
+      layers — and was used nowhere; the list-level half is one pass checking
+      a single `nfile`, contiguous `npage`, and a count matching the document
+
+**Build**
+
+- [x] `DocumentSet.source_if_unmodified()`, asked at *entry to read mode*
+      rather than at open time. The choice is a property of the current page
+      list, not an intention the user declared — the reasoning is in section 6
+      and is the part worth not re-deriving. Returns the working copy, never
+      the original
+- [x] `ReaderView.load` takes an optional `source` and opens it through
+      `MemoryDocument.from_file`, falling back to the export if it will not
+      open — a source that cannot be read costs a slow read mode, not a broken
+      one. Both paths end in one `_show()`, so the fast one cannot drift out of
+      step with what the models are bound to. It degrades on its own: one edit
+      and the next entry falls back, with no state to track.
+      **Measured end to end on the Handbook: 639 ms and 746 MB peak, against
+      4190 ms and 2226 MB for the export.**
+- [x] D19 records it: the fast path changes what the reader is looking at,
+      which D15 deliberately settled the other way
+
+**Tests.** That an unmodified list yields a reader document with the same page
+count and page sizes as the source; that a single rotation sends the next entry
+back through the export; that search and the outline still resolve on the fast
+path; and that both paths agree on page numbering. The timing is not a test —
+`tools/bench_export.py` measures it, and no assertion should depend on a wall
+clock.
+
+**Left for later.** The edited case keeps the 3.6 seconds, and the first edit
+gives up the fast path for the rest of the session. Moving the export off the
+GUI thread is the general fix and a much larger change, since it makes the
+reader's document asynchronous.
+
 ### Phase 7 — UI rework (beyond parity) — *deprioritised, see D12*
+
+D12 deprioritised this phase as optional, and the first three items below stay
+that way. The last two do not: owning the reader's view and editing bookmarks
+are what was actually wanted from phase 7, and are active work as of phase 6a
+above. The reader's view comes first because text selection and link following
+are built on it (D16), and bookmark authoring is much better with a selection to
+take a title and an `/XYZ` destination from.
 
 - [ ] Split view with full-page preview
 - [ ] Dual-pane merging
@@ -485,6 +551,18 @@ close/reopen. `tests/test_reader.py`.
       get right, and `QPdfView` does them for free today. Comparable in size to
       phase 6 itself. **View ▸ Continuous Scroll** is the cheap workaround in
       the meantime. Planned in §6 *Owning the reader's view*.
+
+      Steps, each leaving read mode usable. Detail in section 6:
+
+      - [ ] Canvas: page layout, scrolling, and the coordinate mapping
+            everything else is built on
+      - [ ] Parity with what `QPdfView` did — continuous and single page, fit
+            page and width, zoom with the anchor under the cursor, keyboard
+            navigation, the page selector, search highlighting
+      - [ ] Link following, internal and external
+      - [ ] Text selection and copy
+      - [ ] Placeholders and prefetch
+      - [ ] Facing pages
 - [ ] **Edit bookmarks — create, delete, rename, re-target, re-nest.** Upstream
       has none of this: its `exporter_outlines.py` only *preserves* an outline
       through an export, and neither its menu nor its window has a single

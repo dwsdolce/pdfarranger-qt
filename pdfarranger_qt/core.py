@@ -761,6 +761,42 @@ class DocumentSet:
         """
         return [(d.copyname, d.password) for d in self.docs]
 
+    def source_if_unmodified(self, pages) -> Optional[Tuple[str, str]]:
+        """``(copyname, password)`` if ``pages`` is a 1:1 view of one source.
+
+        Read mode shows an in-memory export of the edited page list (D15), which
+        on a large document costs seconds and gigabytes -- see PORTING-NOTES.md
+        section 6, *Entering read mode costs more than reading does*. When
+        nothing has been edited that export reproduces a file that already
+        exists, so the reader can open it instead. Returns None when it cannot,
+        and the caller exports as before.
+
+        1:1 means: every page from the same document, every page unmodified,
+        and the whole document in its original order, so the reader's page
+        numbers, outline and search all line up with the source.
+
+        The *copy* rather than the original: ``PDFDoc`` never touches the copy
+        again, which is what makes it safe to save over the file the user
+        opened. Handing the reader the original would put PDFium on a file that
+        a save can rewrite underneath it.
+
+        Cheap by design -- this runs on every entry into read mode.
+        """
+        if not pages:
+            return None
+        nfile = pages[0].nfile
+        if not 0 < nfile <= len(self.docs):
+            return None
+        doc = self.docs[nfile - 1]
+        if len(pages) != doc.n_pages:
+            return None
+        for expected, page in enumerate(pages, start=1):
+            if (page.nfile != nfile
+                    or page.npage != expected
+                    or not page.unmodified()):
+                return None
+        return doc.copyname, doc.password
+
     def source_names(self) -> List[str]:
         """Original basenames, indexed by ``nfile - 1``.
 

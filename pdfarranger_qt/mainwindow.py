@@ -913,7 +913,8 @@ class MainWindow(QMainWindow):
         QApplication.setOverrideCursor(Qt.WaitCursor)
         try:
             ok = self.reader.load(self.model.pages, self.docs.files_for_export(),
-                                  self.docs.source_names())
+                                  self.docs.source_names(),
+                                  self.docs.source_if_unmodified(self.model.pages))
         finally:
             QApplication.restoreOverrideCursor()
         self._reader_stale = not ok

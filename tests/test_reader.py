@@ -798,3 +798,79 @@ class TestZoomFollowsTheMode(unittest.TestCase):
     def test_the_reader_toolbar_carries_the_fit_commands(self):
         for action in (self.win.act_zoom_fit, self.win.act_zoom_fit_width):
             self.assertIn(action, self.win.reader_toolbar.actions(), action.text())
+
+
+class TestReaderFastPath(unittest.TestCase):
+    """Phase 6a: an unmodified page list opens the source, not an export.
+
+    The export costs 3.6 s and peaks at 1.7 GB on a 1590 page book to reproduce
+    a file that is already on disk -- see PORTING-NOTES.md section 6. These
+    assert the two paths are interchangeable, and that the fast one is given up
+    the moment anything is edited.
+    """
+
+    def setUp(self):
+        self.docs = DocumentSet()
+        self.reader = ReaderView()
+        self.addCleanup(self.docs.cleanup)
+        self.addCleanup(self.reader.clear)
+
+    def test_unmodified_list_offers_the_source(self):
+        pages = self.docs.add_file(TEST_PDF)
+        source = self.docs.source_if_unmodified(pages)
+        self.assertIsNotNone(source)
+        copyname, _password = source
+        # The working copy, never the original: PDFDoc leaves the copy alone,
+        # which is what makes saving over the opened file safe.
+        self.assertEqual(copyname, self.docs.docs[0].copyname)
+        self.assertNotEqual(copyname, self.docs.docs[0].filename)
+
+    def test_one_rotation_gives_up_the_fast_path(self):
+        pages = self.docs.add_file(TEST_PDF)
+        self.assertIsNotNone(self.docs.source_if_unmodified(pages))
+        pages[0].rotate(90)
+        self.assertIsNone(self.docs.source_if_unmodified(pages))
+
+    def test_reordering_gives_up_the_fast_path(self):
+        pages = self.docs.add_file(TEST_PDF)
+        self.assertIsNone(self.docs.source_if_unmodified(list(reversed(pages))))
+
+    def test_a_missing_page_gives_up_the_fast_path(self):
+        pages = self.docs.add_file(TEST_PDF)
+        self.assertIsNone(self.docs.source_if_unmodified(pages[:1]))
+
+    def test_two_files_give_up_the_fast_path(self):
+        pages = self.docs.add_file(TEST_PDF)
+        pages += self.docs.add_file(TEXT_PDF)
+        self.assertIsNone(self.docs.source_if_unmodified(pages))
+
+    def test_an_empty_list_offers_nothing(self):
+        self.assertIsNone(self.docs.source_if_unmodified([]))
+
+    def test_both_paths_agree_on_the_document(self):
+        """The point of the whole exercise: same document either way."""
+        pages = self.docs.add_file(TEXT_PDF)
+        files = self.docs.files_for_export()
+
+        self.assertTrue(self.reader.load(pages, files))          # export path
+        exported = (self.reader.page_count(),
+                    self.reader._document.document.pagePointSize(0))
+
+        fast = ReaderView()
+        self.addCleanup(fast.clear)
+        self.assertTrue(fast.load(pages, files,
+                                  source=self.docs.source_if_unmodified(pages)))
+        direct = (fast.page_count(),
+                  fast._document.document.pagePointSize(0))
+
+        self.assertEqual(exported[0], direct[0])
+        self.assertEqual(round(exported[1].width(), 2), round(direct[1].width(), 2))
+        self.assertEqual(round(exported[1].height(), 2), round(direct[1].height(), 2))
+
+    def test_an_unopenable_source_falls_back_to_the_export(self):
+        """A source that will not open costs a slow read mode, not a broken one."""
+        pages = self.docs.add_file(TEST_PDF)
+        ok = self.reader.load(pages, self.docs.files_for_export(),
+                              source=(os.path.join(HERE, "no-such-file.pdf"), ""))
+        self.assertTrue(ok)
+        self.assertEqual(self.reader.page_count(), 2)
