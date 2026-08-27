@@ -24,6 +24,8 @@ list and not the source file, which is what D15 turns on.
 import os
 import unittest
 
+from PySide6.QtCore import QUrl
+
 from pdfarranger_qt.core import DocumentSet
 from pdfarranger_qt.reader import ReaderView
 
@@ -881,3 +883,62 @@ class TestReaderFastPath(unittest.TestCase):
                               source=(os.path.join(HERE, "no-such-file.pdf"), ""))
         self.assertTrue(ok)
         self.assertEqual(self.reader.page_count(), 2)
+
+
+class TestExternalLinkPolicy(unittest.TestCase):
+    """What a PDF is allowed to ask the desktop to open.
+
+    A PDF is an untrusted document that arrived from somewhere, and its links
+    are whatever its author wrote. QDesktopServices.openUrl would happily act on
+    file:// or on whatever schemes a given machine has registered, so the reader
+    decides rather than the document.
+    """
+
+    def setUp(self):
+        self.reader = ReaderView()
+        self.addCleanup(self.reader.clear)
+        self.opened = []
+        self.refused = []
+        self.reader.link_refused.connect(self.refused.append)
+        # Patched rather than really opened: the point of the test is precisely
+        # that this call is the dangerous one.
+        import pdfarranger_qt.reader as module
+        self.real = module.QDesktopServices.openUrl
+        module.QDesktopServices.openUrl = lambda url: self.opened.append(url.toString())
+        self.addCleanup(setattr, module.QDesktopServices, "openUrl", self.real)
+
+    def test_http_and_https_are_opened(self):
+        for url in ("http://example.com/a", "https://example.com/b"):
+            self.reader._open_external(QUrl(url))
+        self.assertEqual(self.opened, ["http://example.com/a", "https://example.com/b"])
+        self.assertEqual(self.refused, [])
+
+    def test_mailto_is_opened(self):
+        self.reader._open_external(QUrl("mailto:someone@example.com"))
+        self.assertEqual(len(self.opened), 1)
+
+    def test_file_urls_are_refused(self):
+        """The one that matters: a document must not walk the local disk."""
+        self.reader._open_external(QUrl("file:///etc/passwd"))
+        self.assertEqual(self.opened, [])
+        self.assertEqual(len(self.refused), 1)
+
+    def test_unknown_schemes_are_refused(self):
+        for url in ("javascript:alert(1)", "smb://host/share", "vscode://x",
+                    "data:text/html,<script>x</script>"):
+            self.reader._open_external(QUrl(url))
+        self.assertEqual(self.opened, [])
+        self.assertEqual(len(self.refused), 4)
+
+    def test_the_scheme_check_is_case_insensitive(self):
+        """HTTP:// is http://; FILE:// is still refused."""
+        self.reader._open_external(QUrl("HTTP://example.com/"))
+        self.assertEqual(len(self.opened), 1)
+        self.reader._open_external(QUrl("FILE:///etc/passwd"))
+        self.assertEqual(len(self.opened), 1)
+        self.assertEqual(len(self.refused), 1)
+
+    def test_a_schemeless_url_is_refused(self):
+        self.reader._open_external(QUrl("example.com/no-scheme"))
+        self.assertEqual(self.opened, [])
+        self.assertEqual(len(self.refused), 1)

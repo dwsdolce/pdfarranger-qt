@@ -41,12 +41,15 @@ two is how a hit test ends up half a page out on an external monitor.
 
 import bisect
 import collections
+import math
 from typing import List, Optional, Sequence, Tuple
 
-from PySide6.QtCore import QPointF, QRectF, QSize, QSizeF, Qt, Signal
+from PySide6.QtCore import QPointF, QRectF, QSize, QSizeF, Qt, QUrl, Signal
 from PySide6.QtGui import QColor, QImage, QPainter, QPalette
-from PySide6.QtPdf import QPdfDocumentRenderOptions
-from PySide6.QtWidgets import QAbstractScrollArea, QFrame
+from PySide6.QtPdf import QPdfDocumentRenderOptions, QPdfLinkModel
+from PySide6.QtWidgets import QAbstractScrollArea, QApplication, QFrame
+
+from .i18n import gettext_ as _
 
 #: Gap between consecutive pages, and around the column, in logical pixels at
 #: zoom 1. Scaled with the zoom so the layout looks the same at every size.
@@ -259,6 +262,17 @@ def sizes_from_document(document, count: Optional[int] = None) -> List[QSizeF]:
     return [document.pagePointSize(i) for i in range(n)]
 
 
+def _is_finite_point(point) -> bool:
+    """Whether a point is usable arithmetic rather than NaN or infinity.
+
+    QtPdf reports an unparsable destination as NaN and says so in a warning. NaN
+    compares false against every value, zero included, so it passes any "is this
+    the default?" test and only fails later, in whatever first tries to make an
+    integer of it.
+    """
+    return all(math.isfinite(v) for v in (point.x(), point.y()))
+
+
 class SynchronousPages:
     """Renders a page on demand, on the calling thread, with a small cache.
 
@@ -328,6 +342,10 @@ class PageCanvas(QAbstractScrollArea):
 
     #: The page occupying most of the viewport changed.
     current_page_changed = Signal(int)
+    #: A link to somewhere outside the document was activated. Not opened here:
+    #: what a PDF may ask the desktop to do is a policy question, and a widget
+    #: is the wrong place to decide it. See ReaderView.
+    external_link_activated = Signal(QUrl)
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -339,6 +357,11 @@ class PageCanvas(QAbstractScrollArea):
         self._single = 0
         self._search = None
         self._search_result = -1
+        self._links = QPdfLinkModel(self)
+        self._links_page = -1
+        self._tooltip = ""
+        self._press = None
+        self.viewport().setMouseTracking(True)
         self.setFrameShape(QFrame.NoFrame)
         self.viewport().setAutoFillBackground(True)
         self.verticalScrollBar().valueChanged.connect(self._scrolled)
@@ -351,6 +374,8 @@ class PageCanvas(QAbstractScrollArea):
         sizes = sizes_from_document(document) if document is not None else []
         self._layout = PageLayout(sizes, zoom=self._layout.zoom)
         self._pages.set_document(document)
+        self._links.setDocument(document)
+        self._links_page = -1
         self._current = -1
         self._update_ranges()
         self.viewport().update()
@@ -496,6 +521,9 @@ class PageCanvas(QAbstractScrollArea):
         if not self._layout.page_count:
             return
         target = self._layout.from_page(index, point)
+        if not _is_finite_point(target):
+            self.go_to_page(index)
+            return
         self.verticalScrollBar().setValue(int(round(target.y() - self.viewport().height() / 4)))
         self.horizontalScrollBar().setValue(
             int(round(target.x() - self.viewport().width() / 2)))
@@ -602,6 +630,79 @@ class PageCanvas(QAbstractScrollArea):
                 best, best_share = index, share
         return best if best >= 0 else self._layout.nearest_page(top)
 
+    # -- links -------------------------------------------------------------
+
+    @staticmethod
+    def usable_link(link) -> bool:
+        """Whether a link points somewhere we can go.
+
+        **Not** `QPdfLink.isValid()`, which is the trap here. It requires a page,
+        and an external link has `page() == -1` because it does not point into
+        this document at all -- so `isValid()` is False for every http and
+        mailto link even when the rectangles and the URL are perfectly good.
+        Filtering on it silently discarded every external link in the Handbook:
+        the pages that appeared to work were the ones whose links happen to be
+        internal.
+        """
+        if link is None:
+            return False
+        url = link.url()
+        return (url is not None and not url.isEmpty()) or link.page() >= 0
+
+    def link_at(self, point: QPointF):
+        """The link under a *viewport* point, or None.
+
+        `QPdfLinkModel` is per page, so the page is set first; `linkAt` then
+        takes a point in that page's own points, which is exactly what the
+        layout hands back.
+
+        The page the model is on is remembered because `setPage` resets the
+        model, and this runs on every mouse move to decide the cursor.
+        """
+        found = self.to_page(point)
+        if found is None:
+            return None
+        index, page_point = found
+        if index != self._links_page:
+            self._links.setPage(index)
+            self._links_page = index
+        link = self._links.linkAt(page_point)
+        return link if self.usable_link(link) else None
+
+    def follow(self, link) -> bool:
+        """Go where ``link`` points, or emit it if that is outside the document.
+
+        Returns False for a link that goes nowhere usable, so a caller can say
+        so rather than appearing to do nothing.
+        """
+        if link is None:
+            return False
+        url = link.url()
+        if url is not None and not url.isEmpty():
+            self.external_link_activated.emit(url)
+            return True
+        page = link.page()
+        if page < 0 or page >= self._layout.page_count:
+            return False
+        # `location` is (0, 0) for every destination type but /XYZ -- QtPdf
+        # understands no other, verified across all six (section 6). So a
+        # /FitR or /FitH link lands at the top of the right page rather than at
+        # the right spot on it, which is the document's fault and not ours, and
+        # is still better than not moving at all.
+        #
+        # It can also be NaN. QtPdf logs "invalid location and/or zoom" for
+        # these and hands back what it parsed; the Handbook's bookmarks show
+        # "nan nan nan" in that warning. NaN compares false against everything,
+        # including zero, so it slips past a == 0 test and reaches
+        # int(round(nan)), which raises ValueError and kills the click.
+        where = link.location()
+        if where is None or not _is_finite_point(where) or (
+                where.x() == 0 and where.y() == 0):
+            self.go_to_page(page)
+        else:
+            self.go_to(page, where)
+        return True
+
     # -- search ------------------------------------------------------------
 
     def set_search_model(self, model):
@@ -663,6 +764,66 @@ class PageCanvas(QAbstractScrollArea):
                 painter.fillRect(drawn, SEARCH_CURRENT if is_current else SEARCH_HIT)
 
     # -- input -------------------------------------------------------------
+
+    @staticmethod
+    def link_description(link) -> str:
+        """Where a link goes, for a tooltip. Empty if it goes nowhere."""
+        if link is None:
+            return ""
+        url = link.url()
+        if url is not None and not url.isEmpty():
+            return url.toString()
+        page = link.page()
+        return _("Page {}").format(page + 1) if page >= 0 else ""
+
+    def mouseMoveEvent(self, event):
+        """A pointing hand over a link, and a tooltip saying where it goes.
+
+        The tooltip is worth more here than in most readers. Most of this
+        document's links are not the document's at all -- PDFium infers them
+        from the text (see PORTING-NOTES.md section 6) -- so what a link points
+        at is not always what the words under the cursor appear to say, and a
+        truncated or rejoined URL is invisible until you have already followed
+        it.
+
+        Set as the viewport's tooltip rather than shown directly, so Qt supplies
+        the usual hover delay and placement, and only when the target changes:
+        re-setting the same text restarts that delay and the tooltip never
+        appears while the pointer drifts inside one link.
+        """
+        link = self.link_at(QPointF(event.position()))
+        if link is not None:
+            self.viewport().setCursor(Qt.PointingHandCursor)
+        else:
+            self.viewport().unsetCursor()
+        tooltip = self.link_description(link)
+        if tooltip != self._tooltip:
+            self._tooltip = tooltip
+            self.viewport().setToolTip(tooltip)
+        super().mouseMoveEvent(event)
+
+    def mousePressEvent(self, event):
+        if event.button() == Qt.LeftButton:
+            self._press = QPointF(event.position())
+        super().mousePressEvent(event)
+
+    def mouseReleaseEvent(self, event):
+        """Follow a link on release, and only if the pointer stayed put.
+
+        On release rather than press so a click can still be abandoned by moving
+        away, and with a movement threshold so the drag that step 4 will use for
+        selecting text does not also fire off a link.
+        """
+        if event.button() == Qt.LeftButton and self._press is not None:
+            here = QPointF(event.position())
+            moved = (here - self._press).manhattanLength()
+            self._press = None
+            if moved <= QApplication.startDragDistance():
+                link = self.link_at(here)
+                if link is not None and self.follow(link):
+                    event.accept()
+                    return
+        super().mouseReleaseEvent(event)
 
     def keyPressEvent(self, event):
         """Page keys navigate rather than merely scroll.

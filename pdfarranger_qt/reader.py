@@ -34,6 +34,7 @@ import logging
 from typing import List, Optional
 
 from PySide6.QtCore import QModelIndex, Qt, Signal
+from PySide6.QtGui import QDesktopServices
 from PySide6.QtPdf import QPdfBookmarkModel, QPdfSearchModel
 from PySide6.QtPdfWidgets import QPdfPageSelector
 from PySide6.QtWidgets import (
@@ -100,6 +101,7 @@ class ReaderView(QWidget):
         layout.addWidget(self.splitter)
 
         self.canvas.current_page_changed.connect(self.page_changed)
+        self.canvas.external_link_activated.connect(self._open_external)
         # No event filter: the page keys and ctrl+wheel are the canvas's own
         # handlers now. They had to be filtered in from outside while the view
         # was QPdfView, which is a scroll area and nothing more.
@@ -249,6 +251,29 @@ class ReaderView(QWidget):
     def page_label(self) -> str:
         """What the page is called, which need not be its number."""
         return self.page_selector.currentPageLabel()
+
+    #: Schemes a link in a PDF may hand to the desktop. Deliberately short.
+    #:
+    #: A PDF is an untrusted document that arrived from somewhere, and its links
+    #: are whatever its author wrote. Handing an arbitrary URL to
+    #: QDesktopServices lets the document choose what the operating system opens
+    #: -- `file://` walks the local disk, and the schemes registered on a given
+    #: machine are not knowable from here. So this is an allow list rather than
+    #: a deny list: the cost of omitting a scheme is a link that does nothing
+    #: and says so, which is a great deal cheaper than the reverse.
+    SAFE_SCHEMES = frozenset({"http", "https", "mailto", "ftp", "ftps"})
+
+    #: A link was refused because of its scheme, so the window can say so.
+    link_refused = Signal(str)
+
+    def _open_external(self, url):
+        """Hand a link to the desktop, if its scheme is one we allow."""
+        scheme = (url.scheme() or "").lower()
+        if scheme not in self.SAFE_SCHEMES:
+            logging.getLogger(__name__).info("refused link with scheme %r", scheme)
+            self.link_refused.emit(url.toString())
+            return
+        QDesktopServices.openUrl(url)
 
     def _go_to_bookmark(self, index: QModelIndex):
         if not index.isValid():

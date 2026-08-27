@@ -570,7 +570,14 @@ take a title and an `/XYZ` destination from.
             gone from read mode; one page at a time is the scroll range
             restricted to one page's extent rather than a second layout, so
             hit testing behaves identically in both modes
-      - [ ] Link following, internal and external
+      - [x] Link following, internal and external. Hit-tested through the
+            layout's mapping, which is what it was built for; verified against
+            the Handbook, where all 20 links on page 0 resolve. A `/FitR`
+            destination reports (0, 0), as section 6 measured, so those land at
+            the top of the right page rather than nowhere. External links are
+            emitted rather than opened: `ReaderView.SAFE_SCHEMES` decides what a
+            document may hand to the desktop, because a widget is the wrong
+            place for that question and `file://` is the wrong answer
       - [ ] Text selection and copy
       - [ ] Placeholders and prefetch
       - [ ] Facing pages
@@ -1262,6 +1269,58 @@ the export, with no state to track.
 
 Worth its own decision entry when picked up: the fast path changes what the
 reader is looking at, which D15 deliberately settled the other way.
+
+### Most of a document's links are not in the document
+
+Found while testing phase 7 step 3 against the Handbook, and worth knowing
+before anyone reports a link as broken.
+
+**PDFium invents links.** The ARRL Handbook carries 1009 real `/Link`
+annotations, but on only **34 of its 1590 pages**. Every link on the other
+1556 pages -- including all of the ones on the Resources pages that started this
+-- has no annotation behind it at all: PDFium scans the page text for URL-shaped
+strings and synthesises a link. Acrobat does the same thing, with its own
+matcher. So two viewers can disagree about whether a piece of text is a link,
+and both are right about their own inference.
+
+This is why the same page can hold a link that works beside one that does not:
+
+| text on the page | PDFium | Acrobat | why |
+| --- | --- | --- | --- |
+| `www.omikradio.org` | link | link | prefixed, on one line |
+| `handiham.org` | plain | plain | no `www.` or `http`, so neither matcher fires |
+| `www.arrl.org/part-97-amateur-radio` | plain | link | wrapped mid-URL as `www.\r\narrl.org/...`; Acrobat rejoins across the break, PDFium stops at it |
+
+**Chrome behaves identically, because it is the same engine.** Chrome's PDF
+viewer is PDFium, so a wrapped URL is not a link there either, and the same
+report exists against Chrome upstream. The recommendation there is to fix the
+PDF -- that is, to add real `/Link` annotations -- which is the correct answer
+and confirms this is engine behaviour rather than anything to work around in a
+viewer.
+
+None of it is ours to fix and none of it is the document's fault either -- the
+author never marked these up. Writing a better matcher is possible and is a
+different feature: it would have to rejoin wrapped lines without linkifying a
+section number like `1.21` or a sentence-ending `arrl.org.`, and it would still
+disagree with somebody. The honest answer to "why is this not a link" is that no
+one ever said it was one, and the fix that actually works is on the document
+side: annotate it, and every viewer agrees.
+
+**A synthesised link has no page, and `isValid()` says so.** `QPdfLink.isValid()`
+requires a page, and a link to somewhere outside the document has `page() == -1`.
+So every external link -- every one of these inferred ones included -- reports
+`isValid() == False` while carrying a perfectly good rectangle and URL. Using it
+as the "is this a real link?" filter silently drops all of them: the Handbook
+hit-tested 45 of 68 links, and the 23 missing were exactly the external ones. Use
+"has a URL, or has a page" instead; `PageCanvas.usable_link` is that, and
+`tests/text_and_link.pdf` exists because every other link fixture in the suite is
+internal and none of them could have caught it.
+
+**And a destination can be NaN.** QtPdf logs `invalid location and/or zoom` and
+hands back what it parsed; the Handbook's bookmarks produce `nan nan nan`. NaN
+compares false against everything including zero, so it slips past a check for
+the default (0, 0) and only fails later, inside `int(round(...))`, which raises
+`ValueError` and kills the click that reached it.
 
 ### Owning the reader's view — the plan
 

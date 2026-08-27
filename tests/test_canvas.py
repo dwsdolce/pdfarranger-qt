@@ -21,11 +21,14 @@ what link following, text selection and search highlighting are all built on:
 if it is half a page out, every one of them is.
 """
 
+import os
 import unittest
 
-from PySide6.QtCore import QEvent, QModelIndex, QPointF, QRectF, QSize, QSizeF, Qt
-from PySide6.QtGui import QKeyEvent
-from PySide6.QtPdf import QPdfSearchModel
+from PySide6.QtCore import (
+    QEvent, QModelIndex, QPointF, QRectF, QSize, QSizeF, Qt, QUrl,
+)
+from PySide6.QtGui import QKeyEvent, QMouseEvent
+from PySide6.QtPdf import QPdfLinkModel, QPdfSearchModel
 from PySide6.QtWidgets import QApplication
 
 from pdfarranger_qt.canvas import (
@@ -35,7 +38,10 @@ from pdfarranger_qt.canvas import (
 from pdfarranger_qt.core import DocumentSet
 from pdfarranger_qt.export import get_in_memory_pdf
 from pdfarranger_qt.render import MemoryDocument
-from support import TEXT_PDF, settle
+from support import HERE, TEXT_PDF, settle
+
+OUTLINE_PDF = os.path.join(HERE, "exporter", "outlines.pdf")
+LINK_PDF = os.path.join(HERE, "text_and_link.pdf")
 
 LETTER = QSizeF(612, 792)
 A4 = QSizeF(595, 842)
@@ -631,3 +637,353 @@ class TestCanvasPixels(unittest.TestCase):
         point = self.on_page()
         self.canvas._pages.set_document(None)      # every request now misses
         self.assertGreater(self.grab().pixelColor(point).lightness(), 200)
+
+
+class TestLinks(unittest.TestCase):
+    """Following links: the first thing the reader can do that QPdfView could not.
+
+    outlines.pdf is the fixture because its pages carry real internal links -- a
+    "Page N" list that jumps -- so the hit testing runs against a document
+    rather than a constructed one.
+    """
+
+    def setUp(self):
+        self.docs = DocumentSet()
+        self.addCleanup(self.docs.cleanup)
+        pages = self.docs.add_file(OUTLINE_PDF)
+        self.memory = MemoryDocument(
+            get_in_memory_pdf(list(pages), self.docs.files_for_export()))
+        self.addCleanup(self.memory.close)
+        self.canvas = PageCanvas()
+        self.addCleanup(self.canvas.deleteLater)
+        self.canvas.resize(700, 600)
+        self.canvas.show()
+        settle(lambda: self.canvas.viewport().width() == 700)
+        self.canvas.set_document(self.memory.document)
+        self.canvas.go_to_page(0)
+        settle(timeout_ms=200)
+
+    def links_on(self, page=0):
+        model = QPdfLinkModel()
+        model.setDocument(self.memory.document)
+        model.setPage(page)
+        return [model.index(r, 0).data(QPdfLinkModel.Role.Link.value)
+                for r in range(model.rowCount(QModelIndex()))]
+
+    def a_link(self, page=0):
+        """The first link on a page, straight from the model."""
+        links = self.links_on(page)
+        self.assertTrue(links, "fixture has no links")
+        return links[0]
+
+    def a_link_elsewhere(self, page=0):
+        """A link that actually goes somewhere else.
+
+        The first link on page 0 of this fixture points at page 0, so asking for
+        "the first link" and skipping when it does not navigate quietly turned
+        three of the tests below into no-ops.
+        """
+        for link in self.links_on(page):
+            if link.page() != page:
+                return link
+        self.fail("no link on this page goes to another page")
+
+    def test_the_fixture_has_links(self):
+        """Guard: if this fails the rest are vacuous."""
+        model = QPdfLinkModel()
+        model.setDocument(self.memory.document)
+        model.setPage(0)
+        self.assertGreater(model.rowCount(QModelIndex()), 0)
+
+    def test_a_point_on_a_link_finds_it(self):
+        """Hit testing end to end: viewport point, through the layout, to a link."""
+        link = self.a_link(0)
+        centre = link.rectangles()[0].center()
+        viewport_point = self.canvas.to_viewport(
+            self.canvas.layout.from_page(0, centre))
+        found = self.canvas.link_at(viewport_point)
+        self.assertIsNotNone(found, "no link found where the model says one is")
+        self.assertEqual(found.page(), link.page())
+
+    def test_a_point_off_any_link_finds_nothing(self):
+        rect = self.canvas.layout.page_rect(0)
+        # Bottom of the page, well below the link list at the top.
+        low = QPointF(rect.center().x(), rect.bottom() - 5)
+        self.assertIsNone(self.canvas.link_at(self.canvas.to_viewport(low)))
+
+    def test_a_point_in_the_margin_finds_nothing(self):
+        self.assertIsNone(self.canvas.link_at(QPointF(2, 2)))
+
+    def test_following_an_internal_link_navigates(self):
+        link = self.a_link_elsewhere(0)
+        target = link.page()
+        self.assertTrue(self.canvas.follow(link))
+        settle(timeout_ms=200)
+        self.assertEqual(self.canvas.current_page(), target)
+
+    def test_following_an_external_link_emits_rather_than_opening(self):
+        """The widget must not decide what the desktop opens."""
+        seen = []
+        self.canvas.external_link_activated.connect(seen.append)
+
+        class FakeLink:
+            def url(self): return QUrl("https://example.com/x")
+            def page(self): return 0
+            def location(self): return QPointF(0, 0)
+            def isValid(self): return True
+
+        self.assertTrue(self.canvas.follow(FakeLink()))
+        self.assertEqual([u.toString() for u in seen], ["https://example.com/x"])
+
+    def test_following_nothing_is_harmless(self):
+        self.assertFalse(self.canvas.follow(None))
+
+    def test_a_link_to_a_page_that_is_not_there_is_refused(self):
+        class Bogus:
+            def url(self): return QUrl()
+            def page(self): return 9999
+            def location(self): return QPointF(0, 0)
+            def isValid(self): return True
+
+        self.assertFalse(self.canvas.follow(Bogus()))
+
+    def test_a_click_on_a_link_follows_it(self):
+        """Through the real mouse events, not by calling follow() directly."""
+        link = self.a_link_elsewhere(0)
+        target = link.page()
+        point = self.canvas.to_viewport(
+            self.canvas.layout.from_page(0, link.rectangles()[0].center()))
+        self.click(point, point)
+        settle(timeout_ms=200)
+        self.assertEqual(self.canvas.current_page(), target)
+
+    def test_a_drag_does_not_follow_a_link(self):
+        """Step 4 selects text by dragging; it must not fire links off."""
+        link = self.a_link_elsewhere(0)
+        start = self.canvas.to_viewport(
+            self.canvas.layout.from_page(0, link.rectangles()[0].center()))
+        far = QPointF(start.x() + 120, start.y() + 90)
+        self.click(start, far)
+        settle(timeout_ms=200)
+        self.assertEqual(self.canvas.current_page(), 0, "a drag followed a link")
+
+    def click(self, press_at, release_at):
+        for kind, point, button in (
+                (QEvent.MouseButtonPress, press_at, Qt.LeftButton),
+                (QEvent.MouseButtonRelease, release_at, Qt.LeftButton)):
+            QApplication.sendEvent(self.canvas.viewport(), QMouseEvent(
+                kind, point, self.canvas.viewport().mapToGlobal(point.toPoint()),
+                button, button, Qt.NoModifier))
+
+
+class TestExternalLinksAreFound(unittest.TestCase):
+    """External links must hit-test, which they did not.
+
+    `QPdfLink.isValid()` requires a page, and an external link has page -1
+    because it does not point into this document -- so filtering hits on
+    isValid() threw away every http and mailto link while leaving internal ones
+    working. The whole suite passed: outlines.pdf's links are all internal, so
+    nothing exercised the case.
+
+    text_and_link.pdf therefore has one of each.
+    """
+
+    def setUp(self):
+        self.docs = DocumentSet()
+        self.addCleanup(self.docs.cleanup)
+        pages = self.docs.add_file(LINK_PDF)
+        self.memory = MemoryDocument(
+            get_in_memory_pdf(list(pages), self.docs.files_for_export()))
+        self.addCleanup(self.memory.close)
+        self.canvas = PageCanvas()
+        self.addCleanup(self.canvas.deleteLater)
+        self.canvas.resize(700, 600)
+        self.canvas.show()
+        settle(lambda: self.canvas.viewport().width() == 700)
+        self.canvas.set_document(self.memory.document)
+        self.canvas.go_to_page(0)
+        settle(timeout_ms=200)
+
+    def links(self):
+        model = QPdfLinkModel()
+        model.setDocument(self.memory.document)
+        model.setPage(0)
+        return [model.index(r, 0).data(QPdfLinkModel.Role.Link.value)
+                for r in range(model.rowCount(QModelIndex()))]
+
+    def test_the_fixture_has_an_external_link(self):
+        """Guard: without one, the test below proves nothing."""
+        external = [l for l in self.links() if not l.url().isEmpty()]
+        self.assertTrue(external, "fixture has no external link")
+        self.assertFalse(external[0].isValid(),
+                         "isValid() is now True for an external link; the "
+                         "usable_link() comment needs revisiting")
+
+    def test_an_external_link_hit_tests(self):
+        for link in self.links():
+            if link.url().isEmpty():
+                continue
+            point = self.canvas.to_viewport(
+                self.canvas.layout.from_page(0, link.rectangles()[0].center()))
+            found = self.canvas.link_at(point)
+            self.assertIsNotNone(
+                found, f"external link {link.url().toString()} was not found")
+            self.assertEqual(found.url().toString(), link.url().toString())
+
+    def test_usable_link_accepts_both_kinds(self):
+        for link in self.links():
+            self.assertTrue(PageCanvas.usable_link(link),
+                            f"rejected {link.url().toString()!r} page={link.page()}")
+
+    def test_usable_link_rejects_nothing_useful(self):
+        self.assertFalse(PageCanvas.usable_link(None))
+
+        class Empty:
+            def url(self): return QUrl()
+            def page(self): return -1
+
+        self.assertFalse(PageCanvas.usable_link(Empty()))
+
+
+class TestBadDestinations(unittest.TestCase):
+    """Links whose destination QtPdf could not parse.
+
+    It logs "invalid location and/or zoom" and hands back what it managed --
+    which for the Handbook's bookmarks is "nan nan nan". NaN compares false
+    against everything including zero, so it slips past a check for the default
+    (0, 0) and only fails later, inside int(round(...)), which raises ValueError
+    and kills the click that got there.
+    """
+
+    def setUp(self):
+        self.docs = DocumentSet()
+        self.addCleanup(self.docs.cleanup)
+        pages = self.docs.add_file(OUTLINE_PDF)
+        self.memory = MemoryDocument(
+            get_in_memory_pdf(list(pages), self.docs.files_for_export()))
+        self.addCleanup(self.memory.close)
+        self.canvas = PageCanvas()
+        self.addCleanup(self.canvas.deleteLater)
+        self.canvas.resize(600, 500)
+        self.canvas.show()
+        settle(lambda: self.canvas.viewport().width() == 600)
+        self.canvas.set_document(self.memory.document)
+
+    def link_to(self, x, y, page=1):
+        class Link:
+            def url(self): return QUrl()
+            def page(self): return page
+            def location(self): return QPointF(x, y)
+            def isValid(self): return True
+        return Link()
+
+    def test_a_nan_destination_still_goes_to_the_page(self):
+        nan = float("nan")
+        self.assertTrue(self.canvas.follow(self.link_to(nan, nan)))
+        settle(timeout_ms=200)
+        self.assertEqual(self.canvas.current_page(), 1)
+
+    def test_one_nan_coordinate_is_enough_to_fall_back(self):
+        self.assertTrue(self.canvas.follow(self.link_to(100.0, float("nan"))))
+        settle(timeout_ms=200)
+        self.assertEqual(self.canvas.current_page(), 1)
+
+    def test_an_infinite_destination_falls_back_too(self):
+        self.assertTrue(self.canvas.follow(self.link_to(float("inf"), 10.0)))
+        settle(timeout_ms=200)
+        self.assertEqual(self.canvas.current_page(), 1)
+
+    def test_a_real_destination_is_still_used(self):
+        """The fallback must not swallow the good case."""
+        self.assertTrue(self.canvas.follow(self.link_to(50.0, 300.0)))
+        settle(timeout_ms=200)
+        self.assertEqual(self.canvas.current_page(), 1)
+
+    def test_go_to_survives_a_nan_point(self):
+        nan = float("nan")
+        self.canvas.go_to(1, QPointF(nan, nan))     # must not raise
+        settle(timeout_ms=200)
+        self.assertEqual(self.canvas.current_page(), 1)
+
+
+class TestLinkTooltips(unittest.TestCase):
+    """Hovering a link says where it goes.
+
+    Worth more here than in most readers: most of this document's links are
+    inferred by PDFium from the text rather than declared by the document, so
+    the words under the cursor are not reliably the target.
+    """
+
+    def setUp(self):
+        self.docs = DocumentSet()
+        self.addCleanup(self.docs.cleanup)
+        pages = self.docs.add_file(LINK_PDF)
+        self.memory = MemoryDocument(
+            get_in_memory_pdf(list(pages), self.docs.files_for_export()))
+        self.addCleanup(self.memory.close)
+        self.canvas = PageCanvas()
+        self.addCleanup(self.canvas.deleteLater)
+        self.canvas.resize(700, 600)
+        self.canvas.show()
+        settle(lambda: self.canvas.viewport().width() == 700)
+        self.canvas.set_document(self.memory.document)
+        self.canvas.go_to_page(0)
+        settle(timeout_ms=200)
+
+    def links(self):
+        model = QPdfLinkModel()
+        model.setDocument(self.memory.document)
+        model.setPage(0)
+        return [model.index(r, 0).data(QPdfLinkModel.Role.Link.value)
+                for r in range(model.rowCount(QModelIndex()))]
+
+    def hover(self, point):
+        QApplication.sendEvent(self.canvas.viewport(), QMouseEvent(
+            QEvent.MouseMove, point,
+            self.canvas.viewport().mapToGlobal(point.toPoint()),
+            Qt.NoButton, Qt.NoButton, Qt.NoModifier))
+
+    def point_on(self, link):
+        return self.canvas.to_viewport(
+            self.canvas.layout.from_page(0, link.rectangles()[0].center()))
+
+    def test_an_external_link_shows_its_url(self):
+        for link in self.links():
+            if link.url().isEmpty():
+                continue
+            self.hover(self.point_on(link))
+            self.assertEqual(self.canvas.viewport().toolTip(),
+                             link.url().toString())
+            return
+        self.fail("fixture has no external link")
+
+    def test_an_internal_link_shows_its_page(self):
+        for link in self.links():
+            if not link.url().isEmpty():
+                continue
+            self.hover(self.point_on(link))
+            tip = self.canvas.viewport().toolTip()
+            self.assertIn(str(link.page() + 1), tip,
+                          f"tooltip {tip!r} should name the target page")
+            return
+        self.fail("fixture has no internal link")
+
+    def test_the_cursor_becomes_a_hand_over_a_link(self):
+        self.hover(self.point_on(self.links()[0]))
+        self.assertEqual(self.canvas.viewport().cursor().shape(),
+                         Qt.PointingHandCursor)
+
+    def test_moving_off_a_link_clears_both(self):
+        self.hover(self.point_on(self.links()[0]))
+        self.assertNotEqual(self.canvas.viewport().toolTip(), "")
+        self.hover(QPointF(3, 3))                      # the margin
+        self.assertEqual(self.canvas.viewport().toolTip(), "")
+        self.assertNotEqual(self.canvas.viewport().cursor().shape(),
+                            Qt.PointingHandCursor)
+
+    def test_a_link_going_nowhere_describes_nothing(self):
+        class Nowhere:
+            def url(self): return QUrl()
+            def page(self): return -1
+        self.assertEqual(PageCanvas.link_description(Nowhere()), "")
+        self.assertEqual(PageCanvas.link_description(None), "")
