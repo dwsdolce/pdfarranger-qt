@@ -93,6 +93,12 @@ class MainWindow(QMainWindow):
         # (D20), so the window keeps the two in step.
         self.model.outline_changed.connect(self._refresh_outline)
         self.reader.page_of_uid = self._page_of_uid
+        self.reader.uid_of_page = self._uid_of_page
+        # Bookmark commands live on the tree, undo lives here. The reader says
+        # what it is about to do and the window records it, so a bookmark edit
+        # and a page edit come off one stack (D20).
+        self.reader.outline_edit_begun.connect(self.model.undo.commit)
+        self.reader.outline_edited.connect(self._outline_edited)
         self.reader.set_facing(
             self.settings.value("reader/facing", False, type=bool))
         self.reader.set_continuous(
@@ -793,6 +799,12 @@ class MainWindow(QMainWindow):
         self._update_page_total()
         self._retitle()
 
+    def _uid_of_page(self, page):
+        """The identity of the page at a position, for a bookmark added there."""
+        if 0 <= page < len(self.model.pages):
+            return self.model.pages[page].uid
+        return None
+
     def _page_of_uid(self, uid):
         """Where the page with this identity is *now*, or None if it has gone.
 
@@ -805,7 +817,23 @@ class MainWindow(QMainWindow):
         return None
 
     def _refresh_outline(self):
+        """Rebuild the sidebar's tree, for a load or an undo.
+
+        A full reset, which collapses the tree -- right for a document that has
+        just arrived or been restored wholesale, and wrong for a single command,
+        which is why the commands update their rows themselves.
+        """
         self.reader.set_outline(self.model.outline)
+
+    def _outline_edited(self):
+        """A bookmark command changed the outline.
+
+        The outline is part of the document, so a save writes it -- but only the
+        outline changed, so the reader's rendered document is still current and
+        is deliberately *not* invalidated. Re-exporting 1590 pages because a
+        bookmark was renamed would be a strange way to spend four seconds.
+        """
+        self._mark_modified()
 
     def _reader_selection_changed(self, has_selection: bool):
         """Copy follows the reader's selection, not the grid's, while reading."""
@@ -2114,6 +2142,13 @@ class MainWindow(QMainWindow):
             return
         self.settings.setValue("window/geometry", self.saveGeometry())
         self.settings.setValue("window/state", self.saveState())
+        # Belt and braces, not a fix for anything observed: a normal quit does
+        # flush these, because QSettings syncs from its destructor and from an
+        # idle event loop. It is here for the exit that is not normal -- if the
+        # process aborts during interpreter shutdown, as it does when a thread
+        # outlives the window (see *Shutting down*), the destructor never runs.
+        # Cheap, and the alternative is losing the window position to a crash.
+        self.settings.sync()
         self.search.invalidate()
         # Before the widgets go. This used to be because QPdfView owned the
         # QPdfDocument handed to it and destroyed it on teardown; the canvas

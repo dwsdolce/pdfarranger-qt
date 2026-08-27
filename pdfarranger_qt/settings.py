@@ -35,13 +35,47 @@ APPLICATION = "pdfarranger_qt"
 TEST_SUFFIX = ".tests"
 
 
+def scratch_path() -> str:
+    """The file a test run keeps its settings in: an ini, one per process.
+
+    Not named ``test_...``: pytest collects anything so prefixed that a test
+    module imports, and would report this function as a failing test.
+
+    Per *process*, because two pytest runs at once would otherwise share a store
+    -- and the recent-files list accumulates, so a run in the background made an
+    unrelated foreground run fail. Reproducible: four concurrent runs of
+    `tests/test_recent.py`, one failure.
+
+    An **ini file under the temp directory**, rather than the platform's native
+    scope, because a scope per process means a file per process and those have
+    to be removable. On macOS they are not, reliably: the native store is
+    written back asynchronously, so deleting the plist at exit races the write
+    and loses. 595 stray plists had built up in ~/Library/Preferences before
+    anyone looked. A temp file can simply be deleted, and the temp directory is
+    swept anyway if it is not.
+
+    The suite is isolated from the *user's* settings by `under_test` below; this
+    is the other half, isolating a run from another run.
+    """
+    import tempfile
+    return os.path.join(tempfile.gettempdir(),
+                        f"{ORGANISATION}{TEST_SUFFIX}.{os.getpid()}.ini")
+
+
 def under_test() -> bool:
     """True while pytest is running a test.
 
     pytest sets ``PYTEST_CURRENT_TEST`` for the duration of each test's setup,
     call and teardown, which covers every point at which a window is built.
+
+    Only pytest sets it, which is the hole: a script run by hand that imports
+    this package gets the *real* store and will write to it on close. One such
+    script put a test fixture into the user's recent files and overwrote their
+    saved window geometry. `PDFARRANGER_QT_TEST_SETTINGS` is here so a script
+    can opt in deliberately -- set it to anything before importing the package.
     """
-    return "PYTEST_CURRENT_TEST" in os.environ
+    return ("PYTEST_CURRENT_TEST" in os.environ
+            or "PDFARRANGER_QT_TEST_SETTINGS" in os.environ)
 
 
 def app_settings() -> QSettings:
@@ -59,5 +93,5 @@ def app_settings() -> QSettings:
     files tests kept refilling a list the user had just cleared.
     """
     if under_test():
-        return QSettings(ORGANISATION + TEST_SUFFIX, APPLICATION)
+        return QSettings(scratch_path(), QSettings.IniFormat)
     return QSettings(ORGANISATION, APPLICATION)

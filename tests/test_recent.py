@@ -43,12 +43,24 @@ class TestRecentFiles(unittest.TestCase):
     """Ordering, de-duplication and capping, without building a window."""
 
     def store(self, max_entries=10):
+        """A RecentFiles over a throwaway ini file.
+
+        An ini file in a temp directory rather than a native scope keyed by
+        ``id(self)``: that spelling left one real file per test behind, because
+        ``clear()`` empties a store without removing it, and 595 of them had
+        accumulated in ~/Library/Preferences before anyone looked. A temp
+        directory is removed whole, on every platform, and cannot collide with
+        another run.
+        """
+        import shutil
+        import tempfile
         from PySide6.QtCore import QSettings
         from pdfarranger_qt.recent import RecentFiles
 
-        settings = QSettings("pdfarranger-test", f"recent-{id(self)}")
-        settings.clear()
-        self.addCleanup(settings.clear)
+        directory = tempfile.mkdtemp(prefix="pdfarranger-recent-")
+        self.addCleanup(shutil.rmtree, directory, ignore_errors=True)
+        settings = QSettings(os.path.join(directory, "recent.ini"),
+                             QSettings.IniFormat)
         return RecentFiles(settings, max_entries=max_entries)
 
     def test_starts_empty(self):

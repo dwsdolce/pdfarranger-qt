@@ -107,6 +107,21 @@ class TestEditing(unittest.TestCase):
     def test_removing_a_stranger_says_so(self):
         self.assertFalse(sample().remove(Bookmark("elsewhere", 9)))
 
+    def test_remove_subtree_takes_the_children_with_it(self):
+        """The other half of remove: throwing a chapter away with its sections."""
+        outline = sample()
+        self.assertTrue(outline.remove_subtree(outline.roots[0]))
+        self.assertEqual(titles(outline), ["Chapter 2", "  2.1"])
+
+    def test_remove_subtree_works_on_a_child(self):
+        outline = sample()
+        outline.remove_subtree(outline.roots[0].children[0])
+        self.assertEqual(titles(outline),
+                         ["Chapter 1", "  1.2", "Chapter 2", "  2.1"])
+
+    def test_remove_subtree_refuses_an_entry_that_is_not_there(self):
+        self.assertFalse(sample().remove_subtree(Bookmark("Elsewhere", 9)))
+
     def test_moving_to_another_parent(self):
         outline = sample()
         section = outline.roots[0].children[0]
@@ -379,3 +394,345 @@ class TestOutlineThroughEditing(unittest.TestCase):
         self.win.reader._go_to_bookmark(index)
         settle(timeout_ms=300)
         self.assertEqual(self.win.reader.current_page(), 2)
+
+
+class TestBookmarkCommands(unittest.TestCase):
+    """The commands on the outline tree's context menu.
+
+    Through a real window again, and for the same reason: a command is a
+    snapshot on the page list's undo stack, a change to the tree the reader
+    shows, and a document that now needs saving. Testing the `Outline`
+    operations alone would prove none of that.
+    """
+
+    def setUp(self):
+        from PySide6.QtWidgets import QApplication  # noqa: F401
+        from pdfarranger_qt.mainwindow import MainWindow
+
+        self.win = MainWindow()
+        self.win.resize(900, 700)
+        self.win.show()
+        self.win.open_paths([OUTLINE_PDF])
+        self.win.set_read_mode(True)
+        settle(timeout_ms=500)
+        self.win.modified = False
+
+    def tearDown(self):
+        self.win.modified = False
+        self.win.close()
+
+    # -- helpers -----------------------------------------------------------
+
+    def reader(self):
+        return self.win.reader
+
+    def outline(self):
+        return self.win.model.outline
+
+    def titles(self):
+        return [f"{'  ' * depth}{item.title}" for depth, item in self.outline().walk()]
+
+    def index_of_root(self, row):
+        from PySide6.QtCore import QModelIndex
+        return self.win.reader.bookmarks.index(row, 0, QModelIndex())
+
+    def set_outline(self, outline):
+        """Replace the document's outline, the way a load would."""
+        self.win.model.outline = outline
+        self.win.model.outline_changed.emit()
+        settle(timeout_ms=200)
+
+    def uid(self, page):
+        return self.win.model.pages[page].uid
+
+    # -- add ---------------------------------------------------------------
+
+    def test_add_puts_a_sibling_after_the_selected_entry(self):
+        self.reader().canvas.clear_selection()
+        self.reader().go_to_page(2)
+        settle(timeout_ms=300)
+        self.assertTrue(self.reader().add_bookmark(self.index_of_root(0)))
+        self.assertEqual(self.titles(),
+                         ["Page 1", "Page 3", "Page 2", "Page 3", "Page 4"],
+                         "the new entry is not the second one")
+
+    def test_the_new_entry_points_at_the_page_being_read(self):
+        self.reader().go_to_page(2)
+        settle(timeout_ms=300)
+        self.reader().add_bookmark(self.index_of_root(0))
+        self.assertEqual(self.outline().roots[1].uid, self.uid(2))
+
+    def test_add_with_nothing_selected_goes_to_the_end(self):
+        from PySide6.QtCore import QModelIndex
+        self.reader().add_bookmark(QModelIndex())
+        self.assertEqual(len(self.outline().roots), 5)
+        self.assertEqual(self.titles()[:4],
+                         ["Page 1", "Page 2", "Page 3", "Page 4"])
+
+    def test_add_child_nests_under_the_selected_entry(self):
+        self.reader().add_bookmark(self.index_of_root(0), as_child=True)
+        self.assertEqual(len(self.outline().roots), 4)
+        self.assertEqual(len(self.outline().roots[0].children), 1)
+
+    def test_add_child_needs_something_to_nest_under(self):
+        from PySide6.QtCore import QModelIndex
+        self.assertFalse(self.reader().add_bookmark(QModelIndex(), as_child=True))
+        self.assertEqual(len(self.outline()), 4)
+
+    def test_the_title_comes_from_the_selected_text(self):
+        """Which is why text selection had to be built first."""
+        self.reader().canvas.select_all_on(0)
+        settle(timeout_ms=300)
+        self.assertTrue(self.reader().has_selection())
+        self.reader().add_bookmark(self.index_of_root(0))
+        self.assertTrue(self.outline().roots[1].title.startswith("Page 1"))
+
+    def test_a_selection_crossing_lines_arrives_as_one_line(self):
+        self.reader().canvas.select_all_on(0)
+        settle(timeout_ms=300)
+        title = self.reader().title_here()
+        self.assertNotIn("\n", title)
+        self.assertNotIn("\r", title)
+
+    def test_the_title_falls_back_to_the_page_label(self):
+        self.reader().canvas.clear_selection()
+        self.reader().go_to_page(3)
+        settle(timeout_ms=300)
+        self.assertEqual(self.reader().title_here(), "Page 4")
+
+    def test_adding_marks_the_document_modified(self):
+        """The outline is part of the document, so a save has to write it."""
+        self.reader().add_bookmark(self.index_of_root(0))
+        self.assertTrue(self.win.modified)
+
+    def test_adding_takes_one_undo_entry(self):
+        self.reader().add_bookmark(self.index_of_root(0))
+        self.assertEqual(self.win.model.undo.undo_label(), "Add Bookmark")
+        self.win.undo()
+        settle(timeout_ms=300)
+        self.assertEqual(self.titles(), ["Page 1", "Page 2", "Page 3", "Page 4"])
+
+    # -- re-home -----------------------------------------------------------
+
+    def test_rehome_points_the_entry_at_the_current_page(self):
+        self.reader().go_to_page(3)
+        settle(timeout_ms=300)
+        self.assertTrue(self.reader().rehome_bookmark(self.index_of_root(0)))
+        self.assertEqual(self.outline().roots[0].uid, self.uid(3))
+
+    def test_rehome_keeps_the_title(self):
+        """It may have been edited, and need not match anything on the page."""
+        self.outline().roots[0].title = "Something I typed"
+        self.reader().go_to_page(3)
+        settle(timeout_ms=300)
+        self.reader().rehome_bookmark(self.index_of_root(0))
+        self.assertEqual(self.outline().roots[0].title, "Something I typed")
+
+    def test_rehoming_repairs_a_dangling_entry(self):
+        self.win.view.set_selected_rows([1])
+        self.win.delete_selected()
+        settle(timeout_ms=300)
+        self.assertEqual(len(self.outline().dangling()), 1)
+
+        self.reader().go_to_page(0)
+        settle(timeout_ms=300)
+        self.reader().rehome_bookmark(self.index_of_root(1))
+        self.assertEqual(self.outline().dangling(), [])
+        self.assertEqual(self.outline().roots[1].title, "Page 2")
+
+    def test_rehoming_to_the_same_page_is_not_an_edit(self):
+        self.reader().go_to_page(0)
+        settle(timeout_ms=300)
+        self.assertFalse(self.reader().rehome_bookmark(self.index_of_root(0)))
+        self.assertFalse(self.win.modified)
+
+    # -- rename ------------------------------------------------------------
+
+    def test_rename_is_one_act_and_one_undo_entry(self):
+        from PySide6.QtCore import Qt
+        model = self.win.reader.bookmarks
+        self.assertTrue(model.setData(self.index_of_root(0), "Preface", Qt.EditRole))
+        self.assertEqual(self.outline().roots[0].title, "Preface")
+        self.assertEqual(self.win.model.undo.undo_label(), "Rename Bookmark")
+        self.win.undo()
+        settle(timeout_ms=300)
+        self.assertEqual(self.outline().roots[0].title, "Page 1")
+
+    def test_a_rename_that_changed_nothing_takes_no_undo_entry(self):
+        from PySide6.QtCore import Qt
+        model = self.win.reader.bookmarks
+        self.assertFalse(model.setData(self.index_of_root(0), "Page 1", Qt.EditRole))
+        self.assertFalse(self.win.model.undo.can_undo)
+        self.assertFalse(self.win.modified)
+
+    # -- delete ------------------------------------------------------------
+
+    def test_delete_promotes_the_children(self):
+        """The Handbook's "1" wrapper, removable without its 800 entries."""
+        self.set_outline(Outline([
+            Bookmark("1", None, [Bookmark("Handbook", self.uid(0),
+                                          [Bookmark("Chapter 1", self.uid(1))]),
+                                 Bookmark("Index", self.uid(2))]),
+        ]))
+        self.assertTrue(self.reader().delete_bookmark(self.index_of_root(0)))
+        self.assertEqual(self.titles(), ["Handbook", "  Chapter 1", "Index"])
+
+    def test_the_tree_follows_a_delete_without_being_reset(self):
+        """Row signals, not a reset: a reset collapses an 807-entry tree."""
+        from PySide6.QtCore import QModelIndex
+        self.set_outline(Outline([
+            Bookmark("1", None, [Bookmark("Handbook", self.uid(0))]),
+        ]))
+        model = self.win.reader.bookmarks
+        resets = []
+        model.modelAboutToBeReset.connect(lambda: resets.append(1))
+        self.reader().delete_bookmark(self.index_of_root(0))
+        self.assertEqual(model.rowCount(QModelIndex()), 1)
+        self.assertEqual(self.index_of_root(0).data(), "Handbook")
+        self.assertEqual(model.rowCount(self.index_of_root(0)), 0)
+        self.assertEqual(resets, [], "the tree was reset instead of updated")
+
+    def test_a_bookmark_edit_does_not_date_the_rendered_document(self):
+        """Only the outline changed. Re-exporting 1590 pages would be absurd."""
+        self.assertFalse(self.win._reader_stale)
+        self.reader().add_bookmark(self.index_of_root(0))
+        self.assertTrue(self.win.modified)
+        self.assertFalse(self.win._reader_stale)
+
+    def test_deleting_is_undoable(self):
+        self.reader().delete_bookmark(self.index_of_root(1))
+        self.assertEqual(self.titles(), ["Page 1", "Page 3", "Page 4"])
+        self.assertEqual(self.win.model.undo.undo_label(), "Delete Bookmark")
+        self.win.undo()
+        settle(timeout_ms=300)
+        self.assertEqual(self.titles(), ["Page 1", "Page 2", "Page 3", "Page 4"])
+
+    def test_delete_with_children_takes_the_whole_subtree(self):
+        self.set_outline(Outline([
+            Bookmark("Chapter 1", self.uid(0),
+                     [Bookmark("1.1", self.uid(1)), Bookmark("1.2", self.uid(2))]),
+            Bookmark("Chapter 2", self.uid(3)),
+        ]))
+        self.assertTrue(self.reader().delete_bookmark_tree(self.index_of_root(0)))
+        self.assertEqual(self.titles(), ["Chapter 2"])
+        self.assertEqual(self.win.model.undo.undo_label(),
+                         "Delete Bookmark and Children")
+
+    def test_delete_with_children_is_undoable(self):
+        self.set_outline(Outline([
+            Bookmark("Chapter 1", self.uid(0), [Bookmark("1.1", self.uid(1))]),
+        ]))
+        self.reader().delete_bookmark_tree(self.index_of_root(0))
+        self.assertEqual(self.titles(), [])
+        self.win.undo()
+        settle(timeout_ms=300)
+        self.assertEqual(self.titles(), ["Chapter 1", "  1.1"])
+
+    def test_delete_and_delete_with_children_differ_only_in_the_children(self):
+        """Which is the whole point of having both."""
+        def fresh():
+            self.set_outline(Outline([
+                Bookmark("1", None, [Bookmark("Handbook", self.uid(0))]),
+            ]))
+        fresh()
+        self.reader().delete_bookmark(self.index_of_root(0))
+        self.assertEqual(self.titles(), ["Handbook"])
+        fresh()
+        self.reader().delete_bookmark_tree(self.index_of_root(0))
+        self.assertEqual(self.titles(), [])
+
+    def test_delete_with_children_is_off_on_a_leaf(self):
+        """There it would be Delete under another name."""
+        self.set_outline(Outline([
+            Bookmark("Leaf", self.uid(0)),
+            Bookmark("Branch", self.uid(1), [Bookmark("Twig", self.uid(2))]),
+        ]))
+        for row, expected in ((0, False), (1, True)):
+            menu = self.reader().build_outline_menu(self.index_of_root(row))
+            self.addCleanup(menu.deleteLater)
+            action = [a for a in menu.actions()
+                      if a.text() == "Delete with Children"][0]
+            self.assertEqual(action.isEnabled(), expected)
+
+    # -- delete dangling ---------------------------------------------------
+
+    def test_delete_dangling_leaves_headings_alone(self):
+        """A heading points nowhere on purpose. Eating it would be the bug."""
+        self.set_outline(Outline([
+            Bookmark("Part One", None),
+            Bookmark("Lost", None, wanted_target=True),
+            Bookmark("Page 1", self.uid(0)),
+        ]))
+        self.assertEqual(self.reader().delete_dangling_bookmarks(), 1)
+        self.assertEqual(self.titles(), ["Part One", "Page 1"])
+
+    def test_delete_dangling_promotes_children_too(self):
+        self.set_outline(Outline([
+            Bookmark("Lost", None, wanted_target=True,
+                     children=[Bookmark("Kept", self.uid(0))]),
+        ]))
+        self.reader().delete_dangling_bookmarks()
+        self.assertEqual(self.titles(), ["Kept"])
+
+    def test_nested_dangling_entries_all_go(self):
+        self.set_outline(Outline([
+            Bookmark("Lost", None, wanted_target=True,
+                     children=[Bookmark("Also lost", None, wanted_target=True),
+                               Bookmark("Kept", self.uid(0))]),
+        ]))
+        self.assertEqual(self.reader().delete_dangling_bookmarks(), 2)
+        self.assertEqual(self.titles(), ["Kept"])
+
+    def test_delete_dangling_is_one_undo_entry_for_the_lot(self):
+        self.win.view.set_selected_rows([1, 2])
+        self.win.delete_selected()
+        settle(timeout_ms=300)
+        self.assertEqual(self.reader().delete_dangling_bookmarks(), 2)
+        self.assertEqual(self.titles(), ["Page 1", "Page 4"])
+        self.assertEqual(self.win.model.undo.undo_label(),
+                         "Delete Dangling Bookmarks")
+        self.win.undo()
+        settle(timeout_ms=300)
+        self.assertEqual(len(self.outline()), 4)
+
+    def test_delete_dangling_does_nothing_when_nothing_dangles(self):
+        self.assertEqual(self.reader().delete_dangling_bookmarks(), 0)
+        self.assertFalse(self.win.modified)
+
+    # -- the menu ----------------------------------------------------------
+
+    def test_the_menu_offers_the_commands(self):
+        menu = self.reader().build_outline_menu(self.index_of_root(0))
+        self.addCleanup(menu.deleteLater)
+        self.assertEqual([a.text() for a in menu.actions() if not a.isSeparator()],
+                         ["Add Bookmark Here", "Add Child Bookmark Here",
+                          "Re-home to This Page", "Rename", "Delete",
+                          "Delete with Children", "Delete Dangling Bookmarks"])
+
+    def test_commands_needing_an_entry_are_off_over_empty_space(self):
+        from PySide6.QtCore import QModelIndex
+        menu = self.reader().build_outline_menu(QModelIndex())
+        self.addCleanup(menu.deleteLater)
+        enabled = {a.text(): a.isEnabled()
+                   for a in menu.actions() if not a.isSeparator()}
+        self.assertTrue(enabled["Add Bookmark Here"])
+        self.assertFalse(enabled["Add Child Bookmark Here"])
+        self.assertFalse(enabled["Re-home to This Page"])
+        self.assertFalse(enabled["Rename"])
+        self.assertFalse(enabled["Delete"])
+
+    def test_delete_dangling_is_off_until_something_dangles(self):
+        menu = self.reader().build_outline_menu(self.index_of_root(0))
+        self.addCleanup(menu.deleteLater)
+        off = [a for a in menu.actions()
+               if a.text() == "Delete Dangling Bookmarks"][0]
+        self.assertFalse(off.isEnabled())
+
+        self.win.view.set_selected_rows([1])
+        self.win.delete_selected()
+        settle(timeout_ms=300)
+        menu = self.reader().build_outline_menu(self.index_of_root(0))
+        self.addCleanup(menu.deleteLater)
+        on = [a for a in menu.actions()
+              if a.text() == "Delete Dangling Bookmarks"][0]
+        self.assertTrue(on.isEnabled())

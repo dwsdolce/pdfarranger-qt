@@ -38,6 +38,7 @@ from PySide6.QtGui import QBrush, QColor, QDesktopServices
 from PySide6.QtPdf import QPdfSearchModel
 from PySide6.QtPdfWidgets import QPdfPageSelector
 from PySide6.QtWidgets import (
+    QMenu,
     QSplitter,
     QTreeView,
     QVBoxLayout,
@@ -70,6 +71,13 @@ class ReaderView(QWidget):
     page_changed = Signal(int)
     #: Text was selected or deselected, so Edit > Copy can follow it.
     selection_changed = Signal(bool)
+    #: A bookmark command is about to change the outline; the argument labels
+    #: the undo entry. The window snapshots on this, because it owns the undo
+    #: stack -- the outline shares the page list's history rather than keeping
+    #: one of its own (D20).
+    outline_edit_begun = Signal(str)
+    #: The outline changed, so the document is modified.
+    outline_edited = Signal()
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -92,12 +100,22 @@ class ReaderView(QWidget):
         #: is the only thing that knows the page list. Without it a bookmark
         #: cannot navigate, because it names a page rather than a position.
         self.page_of_uid = None
+        #: The inverse: the identity of the page at a given position. Set by the
+        #: window too, and needed by every command that points a bookmark at
+        #: "the page I am on".
+        self.uid_of_page = None
         self.outline = QTreeView(self)
         self.outline.setModel(self.bookmarks)
         self.outline.setHeaderHidden(True)
+        # Renaming is a command, not a side effect of clicking twice: a click
+        # in this tree navigates.
         self.outline.setEditTriggers(QTreeView.NoEditTriggers)
         self.outline.activated.connect(self._go_to_bookmark)
         self.outline.clicked.connect(self._go_to_bookmark)
+        self.outline.setContextMenuPolicy(Qt.CustomContextMenu)
+        self.outline.customContextMenuRequested.connect(self._outline_menu_at)
+        self.bookmarks.about_to_edit.connect(self.outline_edit_begun)
+        self.bookmarks.edited.connect(self.outline_edited)
 
         self.splitter = QSplitter(Qt.Horizontal, self)
         self.splitter.addWidget(self.outline)
@@ -319,6 +337,149 @@ class ReaderView(QWidget):
         if page is not None:
             self.go_to_page(int(page))
 
+    # -- editing bookmarks -------------------------------------------------
+    #
+    # Read mode, because a bookmark is a reading construct: you notice you want
+    # one while reading, and the tree, its navigation and its selection are all
+    # already here. Arrange mode gets none of these -- the one command that
+    # would suit a grid, picking a target page out of it, is what "re-home to
+    # the page I am on" already is.
+    #
+    # The commands mutate the outline through the model, which snapshots first
+    # by way of `outline_edit_begun`. Nothing here touches undo itself: the
+    # outline rides the page list's stack (D20), and that stack belongs to the
+    # window.
+
+    def current_uid(self):
+        """The identity of the page being read, or None if there is not one."""
+        if self.uid_of_page is None or not self.page_count():
+            return None
+        return self.uid_of_page(self.current_page())
+
+    def title_here(self) -> str:
+        """What a bookmark added now should be called.
+
+        The selected text if there is any -- which is why text selection had to
+        come first, and is how anyone actually titles a bookmark: select the
+        heading, add. Whitespace is collapsed because a selection that crosses a
+        line break arrives with the break in it, and truncated because a
+        selection can be a page.
+
+        With nothing selected, the page's own label rather than a placeholder:
+        "Page iv" on a document numbered in roman is at least true, and it is
+        one rename away from being right.
+        """
+        text = " ".join(self.canvas.selected_text().split())
+        if text:
+            return text[:120].strip()
+        return _("Page {}").format(self.page_label() or self.current_page() + 1)
+
+    def _target(self, index) -> QModelIndex:
+        """The entry a command acts on: the one given, else the current one."""
+        if index is None:
+            return self.outline.currentIndex()
+        return index
+
+    def add_bookmark(self, index=None, as_child: bool = False) -> bool:
+        """Add an entry pointing at the page being read."""
+        uid = self.current_uid()
+        if uid is None:
+            return False
+        added = self.bookmarks.add_bookmark(self._target(index),
+                                            self.title_here(), uid,
+                                            as_child=as_child)
+        if not added.isValid():
+            return False
+        # Select it and show it, but do not open the editor: Add and Rename are
+        # separate acts with separate undo entries, and starting an edit here
+        # would make one command look like two on the stack.
+        self.outline.setCurrentIndex(added)
+        self.outline.scrollTo(added)
+        return True
+
+    def rehome_bookmark(self, index=None) -> bool:
+        """Point the selected entry at the page being read."""
+        uid = self.current_uid()
+        if uid is None:
+            return False
+        return self.bookmarks.rehome(self._target(index), uid)
+
+    def rename_bookmark(self, index=None) -> bool:
+        """Open the tree's inline editor. The model commits when it closes."""
+        target = self._target(index)
+        if not target.isValid():
+            return False
+        self.outline.setCurrentIndex(target)
+        self.outline.edit(target)
+        return True
+
+    def delete_bookmark(self, index=None) -> bool:
+        return self.bookmarks.delete_bookmark(self._target(index))
+
+    def delete_bookmark_tree(self, index=None) -> bool:
+        """Delete an entry and its whole subtree, rather than promoting."""
+        return self.bookmarks.delete_subtree(self._target(index))
+
+    def delete_dangling_bookmarks(self) -> int:
+        return self.bookmarks.delete_dangling()
+
+    def build_outline_menu(self, index=None) -> QMenu:
+        """The outline tree's context menu.
+
+        Split from the event handler so the tests can inspect it. Building and
+        exec-ing in one place once hung the suite for five minutes: `QMenu.exec`
+        is a modal event loop, and there is no way to look at a menu that is
+        showing without also dismissing it.
+        """
+        target = self._target(index)
+        item = self.bookmarks.bookmark(target)
+        readable = bool(self.page_count()) and self.current_uid() is not None
+        menu = QMenu(self.outline)
+
+        add = menu.addAction(_("Add Bookmark Here"))
+        add.setEnabled(readable)
+        add.triggered.connect(lambda: self.add_bookmark(target))
+
+        add_child = menu.addAction(_("Add Child Bookmark Here"))
+        add_child.setEnabled(readable and item is not None)
+        add_child.triggered.connect(lambda: self.add_bookmark(target, as_child=True))
+
+        menu.addSeparator()
+
+        rehome = menu.addAction(_("Re-home to This Page"))
+        rehome.setEnabled(readable and item is not None)
+        rehome.triggered.connect(lambda: self.rehome_bookmark(target))
+
+        rename = menu.addAction(_("Rename"))
+        rename.setEnabled(item is not None)
+        rename.triggered.connect(lambda: self.rename_bookmark(target))
+
+        menu.addSeparator()
+
+        delete = menu.addAction(_("Delete"))
+        delete.setEnabled(item is not None)
+        delete.triggered.connect(lambda: self.delete_bookmark(target))
+
+        # Off on a leaf, where it would be Delete under another name. The two
+        # differ only in what happens to the children.
+        delete_tree = menu.addAction(_("Delete with Children"))
+        delete_tree.setEnabled(item is not None and bool(item.children))
+        delete_tree.triggered.connect(lambda: self.delete_bookmark_tree(target))
+
+        dangling = menu.addAction(_("Delete Dangling Bookmarks"))
+        dangling.setEnabled(bool(self.bookmarks.dangling_count()))
+        dangling.triggered.connect(self.delete_dangling_bookmarks)
+
+        return menu
+
+    def _outline_menu_at(self, position):
+        index = self.outline.indexAt(position)
+        if index.isValid():
+            # Right-clicking an entry acts on it, whatever was selected before.
+            self.outline.setCurrentIndex(index)
+        menu = self.build_outline_menu(index if index.isValid() else QModelIndex())
+        menu.exec(self.outline.viewport().mapToGlobal(position))
+
     # -- zoom --------------------------------------------------------------
 
     def zoom(self) -> float:
@@ -432,6 +593,15 @@ class OutlineModel(QAbstractItemModel):
     that would be quadratic for no reason.
     """
 
+    #: About to change the tree; the argument labels the undo entry. Emitted
+    #: *before* the change, because that is when a snapshot has to be taken --
+    #: undo restores the state a command started from, not the one it left.
+    about_to_edit = Signal(str)
+    #: The tree changed, so the document is modified and needs saving. Separate
+    #: from the row signals above it, which say what moved rather than what it
+    #: means.
+    edited = Signal()
+
     def __init__(self, parent=None):
         super().__init__(parent)
         self._outline = Outline()
@@ -453,6 +623,10 @@ class OutlineModel(QAbstractItemModel):
 
     def bookmark(self, index: QModelIndex):
         return index.internalPointer() if index.isValid() else None
+
+    def dangling_count(self) -> int:
+        """How many entries lost their page, so a menu can offer to clear them."""
+        return len(self._outline.dangling())
 
     def index_of(self, item) -> QModelIndex:
         """Where an entry lives, so a caller can select or edit it."""
@@ -513,13 +687,171 @@ class OutlineModel(QAbstractItemModel):
         return None
 
     def setData(self, index, value, role=Qt.EditRole):
-        """Rename. The caller commits an undo entry around the whole edit."""
+        """Rename, from the tree's own inline editor.
+
+        One act, one undo entry: the snapshot is taken here, when the editor
+        commits, rather than on every keystroke -- so undo returns to the title
+        as it was before the rename began, not to a half-typed state. A rename
+        that changed nothing is not an edit and takes no entry.
+        """
         item = self.bookmark(index)
         if item is None or role != Qt.EditRole:
             return False
         title = str(value)
         if title == item.title:
             return False
+        self.about_to_edit.emit(_("Rename Bookmark"))
         item.title = title
         self.dataChanged.emit(index, index, [Qt.DisplayRole, Qt.EditRole])
+        self.edited.emit()
+        return True
+
+    # -- editing -----------------------------------------------------------
+    #
+    # Every one of these does its own begin/end row calls rather than resetting
+    # the model. A reset would be four lines shorter and would collapse the
+    # tree and drop the selection on every edit -- on the Handbook's 807
+    # entries, re-expanding to find where you were is the whole cost of the
+    # command. Resets are left to the two things that really are wholesale: a
+    # newly loaded document, and an undo.
+
+    def add_bookmark(self, index, title: str, uid, as_child: bool = False):
+        """Insert an entry and return its index. Invalid if it could not be.
+
+        Sibling *after* the selected entry, or nested under it as the last
+        child; with nothing selected, at the end of the root. Following the
+        selection rather than reading order because the tree is what the user is
+        pointing at -- which is also what Acrobat's Ctrl+B does.
+        """
+        item = self.bookmark(index)
+        if as_child and item is None:
+            return QModelIndex()
+        if item is None:
+            parent_item, row = None, len(self._outline.roots)
+        elif as_child:
+            parent_item, row = item, len(item.children)
+        else:
+            parent_item = self._parents.get(id(item))
+            siblings = (self._outline.roots if parent_item is None
+                        else parent_item.children)
+            row = siblings.index(item) + 1
+
+        self.about_to_edit.emit(_("Add Child Bookmark") if as_child
+                                else _("Add Bookmark"))
+        self.beginInsertRows(self.index_of(parent_item), row, row)
+        added = self._outline.add(title, uid, parent_item, row)
+        self._reindex()
+        self.endInsertRows()
+        self.edited.emit()
+        return self.index_of(added)
+
+    def rehome(self, index, uid) -> bool:
+        """Point an entry at a different page, **keeping its title**.
+
+        The title is not touched: it may have been edited into something that
+        matches nothing on the new page, and re-homing is how a dangling entry
+        is repaired -- replacing the title would throw away the reason it was
+        worth keeping.
+        """
+        item = self.bookmark(index)
+        if item is None or uid is None or item.uid == uid:
+            return False
+        self.about_to_edit.emit(_("Re-home Bookmark"))
+        item.uid = uid
+        item.wanted_target = True
+        self.dataChanged.emit(index, index,
+                              [Qt.ForegroundRole, Qt.ToolTipRole])
+        self.edited.emit()
+        return True
+
+    def delete_bookmark(self, index) -> bool:
+        """Remove an entry; its children are promoted into its place.
+
+        Promoted rather than deleted with it: that is what makes the Handbook's
+        "1" wrapper removable in one operation without taking the 800 entries
+        under it, which is the case this whole feature started from.
+        """
+        if self.bookmark(index) is None:
+            return False
+        self.about_to_edit.emit(_("Delete Bookmark"))
+        self._remove_promoting(self.bookmark(index))
+        self.edited.emit()
+        return True
+
+    def delete_subtree(self, index) -> bool:
+        """Remove an entry and everything under it.
+
+        The other half of Delete. Promotion is what unwraps a container node;
+        this is what throws a chapter away with its sections, and doing that by
+        promoting and then deleting each child would be one undo entry per
+        bookmark.
+        """
+        item = self.bookmark(index)
+        if item is None:
+            return False
+        parent_item = self._parents.get(id(item))
+        siblings = (self._outline.roots if parent_item is None
+                    else parent_item.children)
+        try:
+            row = siblings.index(item)
+        except ValueError:
+            return False
+        self.about_to_edit.emit(_("Delete Bookmark and Children"))
+        self.beginRemoveRows(self.index_of(parent_item), row, row)
+        siblings.pop(row)
+        self._reindex()
+        self.endRemoveRows()
+        self.edited.emit()
+        return True
+
+    def delete_dangling(self) -> int:
+        """Remove every entry whose page has gone. Returns how many.
+
+        Dangling only -- a *heading* points nowhere on purpose and must survive
+        this. The two are told apart by whether the entry ever declared a
+        destination, which is why `Bookmark.wanted_target` exists.
+
+        One undo entry for the lot: it is one command, however many it removes.
+        """
+        lost = self._outline.dangling()
+        if not lost:
+            return 0
+        self.about_to_edit.emit(_("Delete Dangling Bookmarks"))
+        for item in lost:
+            # Looked up afresh each time: removing a dangling parent promotes
+            # its children, so an entry's position -- and its parent -- may have
+            # moved since the list was taken. The entries themselves are all
+            # still in the tree, promotion being a move rather than a delete.
+            self._remove_promoting(item)
+        self.edited.emit()
+        return len(lost)
+
+    def _remove_promoting(self, item):
+        """The row surgery behind Delete, without the undo bracket.
+
+        Two operations, because that is what the view has to be told: the
+        children move out to stand where their parent stood, and then the parent
+        goes. Doing it as a reset instead would lose the tree's expansion.
+        """
+        parent_item = self._parents.get(id(item))
+        parent_index = self.index_of(parent_item)
+        siblings = (self._outline.roots if parent_item is None
+                    else parent_item.children)
+        try:
+            row = siblings.index(item)
+        except ValueError:
+            return False
+        children = len(item.children)
+        if children:
+            self.beginMoveRows(self.index_of(item), 0, children - 1,
+                               parent_index, row)
+            siblings[row:row] = item.children
+            item.children = []
+            self._reindex()
+            self.endMoveRows()
+        # The promotion pushed it down by as many rows as it had children.
+        self.beginRemoveRows(parent_index, row + children, row + children)
+        siblings.pop(row + children)
+        self._reindex()
+        self.endRemoveRows()
         return True

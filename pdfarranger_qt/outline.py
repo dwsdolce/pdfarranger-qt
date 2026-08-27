@@ -181,6 +181,21 @@ class Outline:
         target.children = []
         return True
 
+    def remove_subtree(self, target: Bookmark) -> bool:
+        """Delete an entry *and everything under it*.
+
+        The other half of `remove`, which promotes. Promotion is right for
+        unwrapping -- lifting a book out of the container node it arrived in --
+        and useless for the opposite job, throwing away a chapter along with its
+        sections. Doing that by promoting first and then deleting each child in
+        turn would be one undo entry per bookmark and a great deal of clicking.
+        """
+        siblings = self.siblings_of(target)
+        if siblings is None:
+            return False
+        siblings.remove(target)
+        return True
+
     def move(self, target: Bookmark, parent: Optional[Bookmark],
              index: int) -> bool:
         """Re-nest or reorder an entry, children and all.

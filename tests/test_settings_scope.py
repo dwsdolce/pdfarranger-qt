@@ -27,7 +27,8 @@ from PySide6.QtCore import QSettings
 
 from pdfarranger_qt import settings as app_settings_module
 from pdfarranger_qt.settings import (
-    APPLICATION, ORGANISATION, TEST_SUFFIX, app_settings, under_test,
+    APPLICATION, ORGANISATION, TEST_SUFFIX, app_settings, scratch_path,
+    under_test,
 )
 
 
@@ -53,7 +54,7 @@ class TestSettingsScope(unittest.TestCase):
 
     def test_settings_are_redirected(self):
         store = app_settings()
-        self.assertEqual(store.fileName(), scope_file(ORGANISATION + TEST_SUFFIX))
+        self.assertEqual(store.fileName(), scratch_path())
 
     def test_the_real_store_is_untouched(self):
         """Write through the accessor, then read the real scope directly."""
@@ -76,8 +77,36 @@ class TestSettingsScope(unittest.TestCase):
 
         window = MainWindow()
         self.addCleanup(window.close)
-        self.assertEqual(window.settings.fileName(),
-                         scope_file(ORGANISATION + TEST_SUFFIX))
+        self.assertEqual(window.settings.fileName(), scratch_path())
+
+    def test_the_scope_is_private_to_this_process(self):
+        """Two runs at once must not share a store.
+
+        They did, and it showed up as a flake rather than as anything
+        obviously about settings: a suite running in the background made a
+        foreground run of the recent-files tests fail, because both were
+        clearing and filling the same list. Four concurrent runs, one failure,
+        reproducibly.
+        """
+        import os
+        self.assertIn(str(os.getpid()), scratch_path())
+        self.assertTrue(os.path.basename(scratch_path())
+                        .startswith(ORGANISATION + TEST_SUFFIX))
+        self.assertNotEqual(os.path.dirname(scratch_path()), "")
+
+    def test_a_script_can_opt_in_without_pytest(self):
+        """The hole that put a fixture in the real recent-files list.
+
+        `under_test` keys off PYTEST_CURRENT_TEST, which only pytest sets, so a
+        script run by hand gets the *installed* application's store and writes
+        to it on close. This is the deliberate way in.
+        """
+        import os
+        from unittest import mock
+        with mock.patch.dict(os.environ, {}, clear=True):
+            self.assertFalse(under_test())
+            os.environ["PDFARRANGER_QT_TEST_SETTINGS"] = "1"
+            self.assertTrue(under_test())
 
     def test_production_scope_is_unchanged(self):
         """Decision D1: the real scope must not move, or settings are orphaned."""

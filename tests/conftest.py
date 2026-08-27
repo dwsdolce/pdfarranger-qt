@@ -28,6 +28,7 @@ Shared test *helpers* live in ``support.py`` instead; this file is only for
 things that must be global and singular.
 """
 
+import atexit
 import os
 import sys
 
@@ -40,9 +41,7 @@ os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
 from PySide6.QtCore import QSettings  # noqa: E402
 from PySide6.QtWidgets import QApplication, QMessageBox  # noqa: E402
 
-from pdfarranger_qt.settings import (  # noqa: E402
-    APPLICATION, ORGANISATION, TEST_SUFFIX,
-)
+from pdfarranger_qt.settings import scratch_path  # noqa: E402
 
 #: The one QApplication for the whole run. Qt permits only one, and creating it
 #: lazily inside a test makes the first test that runs subtly different.
@@ -58,9 +57,35 @@ QT_APP = QApplication.instance() or QApplication(sys.argv[:1])
 # redirect it here looked right and silently kept writing to the real store.
 # This wipe is the part that does belong here: it has to happen once, before
 # any test builds a window.
-_isolated = QSettings(ORGANISATION + TEST_SUFFIX, APPLICATION)
+#
+# The scope is per process (settings.scratch_organisation), so this wipe cannot
+# pull the rug from under a second run happening at the same time -- which it
+# used to: a suite running in the background made a foreground run of
+# tests/test_recent.py fail, because both were clearing and filling one shared
+# recent-files list.
+_isolated = QSettings(scratch_path(), QSettings.IniFormat)
 _isolated.clear()
 _isolated.sync()
+
+
+@atexit.register
+def _remove_scratch_settings():
+    """Take the process's scratch scope away with it.
+
+    A scope per process means a file per process, and without this they pile up
+    -- 595 stray plists accumulated in ~/Library/Preferences from an earlier
+    version of this. clear() empties a store without removing it, so the file
+    goes too. It is an ini under the temp directory precisely so that this can
+    work: deleting a native macOS plist races the asynchronous write-back.
+    """
+    _isolated.clear()
+    _isolated.sync()
+    path = _isolated.fileName()
+    try:
+        if os.path.isfile(path):
+            os.remove(path)
+    except OSError:            # a registry key on Windows, or already gone
+        pass
 
 #: Message boxes that would have been shown, as ``(kind, title, text)``.
 #: Tests clear this and assert on it; see ``support.last_message_box``.

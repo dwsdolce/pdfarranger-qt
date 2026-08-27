@@ -536,13 +536,18 @@ take a title and an `/XYZ` destination from.
 - [ ] Split view with full-page preview
 - [ ] Dual-pane merging
 - [ ] Visible undo history
-- [x] **Own the reader's view, on the engine we already have.** Done, and it
-      cost about what was predicted -- comparable in size to phase 6. Every
-      reader limitation met until then traced to `QPdfView` being a closed
-      widget rather than to the engine underneath, so replacing it with a scroll
-      area of our own delivered link following, text selection and copy, a cache
-      and prefetch policy we control, and facing pages, none of which
-      `QPdfView` exposed at all.
+- [ ] **Own the reader's view, on the engine we already have.** The widget
+      replacement itself is done, and cost about what was predicted --
+      comparable in size to phase 6. Every reader limitation met until then
+      traced to `QPdfView` being a closed widget rather than to the engine
+      underneath, so replacing it with a scroll area of our own delivered link
+      following, text selection and copy, a cache and prefetch policy we
+      control, and facing pages, none of which `QPdfView` exposed at all.
+
+      **Not complete.** One step below is open: keyboard text selection. Text
+      selection is one of this item's own deliverables, and only the mouse half
+      of it is built, so this stays unchecked until the caret and shift+arrow
+      land. Everything else here is done.
 
       Page layout, scrolling, zoom anchoring, hit-testing and keyboard
       navigation duly became ours to get right. The thing that made that
@@ -582,7 +587,28 @@ take a title and an `/XYZ` destination from.
             `getSelection`, which wants a glyph under *both* ends -- the exact
             box of a line selects it, a generous rectangle around the same line
             selects nothing -- so `PageText` snaps each end onto the nearest run
-            of text first, from one `getSelectionAtIndex` per page, cached
+            of text first, from one `getSelectionAtIndex` per page, cached.
+
+            Since extended with **double-click to select a word** and
+            **shift+click to extend**, both of which need a character index
+            under the pointer that PDFium does not offer directly. The rule the
+            two follow -- granularity follows the precision of the gesture, and
+            a selection is a function of its two ends and never of the route
+            taken to them -- is section 6, *Extending a selection*, along with
+            what Acrobat does instead and why it was not copied
+      - [ ] **Keyboard text selection: an insertion caret and shift+arrow.**
+            The one selection gesture Acrobat has that this does not. In
+            Acrobat you click to place a caret and then extend by character or
+            line with shift+arrow; here a click leaves an anchor but nothing
+            visible, and the arrow keys scroll and change pages.
+
+            Three things to settle before building it. The caret has to be
+            *painted* -- an invisible one is why shift+click needed no caret
+            and this does. The arrow keys have to be shared with scrolling and
+            page navigation, which they currently own outright. And the
+            keyboard stays character-granular, unlike the mouse, so
+            `extend_to`'s word snapping is not reused: see section 6,
+            *Extending a selection*, for why the two differ
       - [x] Placeholders and prefetch. The hybrid section 6 settled: the
             worker keeps the queue, the drain loop and the thread, while *what*
             a task renders moved into the task and *where its document comes
@@ -647,8 +673,12 @@ take a title and an `/XYZ` destination from.
             current position rather than trusting an index. A parent map is
             cached, since `Outline.parent_of` walks the tree and Qt asks for
             parents constantly -- quadratic over the Handbook's 807 entries
-      - [ ] The commands: Add, Add Child, Re-home, Rename, Delete, Delete
-            Dangling — on the tree's context menu
+      - [x] The commands: Add, Add Child, Re-home, Rename, Delete, Delete
+            Dangling — on the tree's context menu. Each snapshots first, through
+            the reader's `outline_edit_begun`, so a bookmark edit and a page
+            edit come off one stack; each updates its own rows rather than
+            resetting the model, which would collapse an 807-entry tree on every
+            command. Only a load and an undo reset it
       - [ ] Writing it on save, in place of rebuilding from source
       - [ ] Drag to re-nest within the tree
 
@@ -1493,10 +1523,46 @@ wrapper is the first thing anyone would want to delete.
 | Re-home | Target becomes the current page. **The title is kept** -- it may have been edited, and need not match anything in the document |
 | Rename | One act, one undo entry: undo returns to before the rename began, not to a half-typed state |
 | Delete | Children are **promoted** into its place, not deleted with it |
-| Delete Dangling | Session-orphaned entries only. See below |
+| Delete with Children | The subtree, all of it. Off on a leaf, where it would be Delete under another name |
+| Delete Dangling | Every dangling entry, however it came to dangle. **Headings are left alone** -- that is what the third state is for. One undo entry for the lot, and children are promoted as above |
 
 Deleting a node promoting its children is what makes the Handbook's `1` wrapper
-removable in one operation, which is the case that prompted all of this.
+removable in one operation, which is the case that prompted all of this. Delete
+with Children is the opposite job -- throwing a chapter away along with its
+sections -- and it is a separate command rather than a modifier because doing it
+by promoting and then deleting each child in turn is one undo entry per bookmark
+and a great deal of clicking.
+
+Three things about the commands that the design above does not decide, settled
+while building them:
+
+*They bracket themselves.* `OutlineModel` emits `about_to_edit(label)` before it
+touches anything and `edited` afterwards; `ReaderView` forwards both, and the
+window turns the first into `undo.commit(label)` and the second into "modified".
+The reader never touches the undo stack, which belongs to the page list -- and
+the snapshot has to be taken *before* the change, because undo restores the
+state a command started from.
+
+*They move rows rather than resetting the model.* A reset is four lines shorter
+and collapses the tree and drops the selection every time -- on 807 entries,
+finding your place again is the entire cost of the command. Delete is the awkward
+one, because promoting children is two operations as far as a view is concerned:
+the children move out to stand where their parent stood, then the parent goes.
+Resets are left to the two things that really are wholesale, a newly loaded
+document and an undo.
+
+*An outline edit does not date the rendered document.* Only the outline changed,
+so the reader's in-memory export is still current. Re-exporting 1590 pages
+because a bookmark was renamed would be a strange way to spend four seconds.
+
+One deliberate omission: Add does not open the rename editor on the entry it
+just made. Acrobat does, and it saves a step -- but Add and Rename are separate
+acts with separate undo entries, and starting an editor here would make one
+command look like two on the stack. Cheap to change if it turns out to grate.
+
+Until the outline is written on save (the next step), these edits live in the
+document and its undo history but not in the file: a save still rebuilds the
+outline from the sources the way it always has.
 
 **Editing bookmarks marks the document modified.** The outline is part of the
 document; a save writes it.
@@ -1521,6 +1587,128 @@ The one thing that cannot survive is *our own* dangling through a save. Once the
 page is gone there is no valid way to write "points at a page that no longer
 exists", so it is written without a destination and comes back as a heading. A
 narrow loss, and the alternative -- a private key in the PDF -- is worse.
+
+### Double-click selects a word
+
+PDFium has no "which character is at this point". What it has is
+`getSelection(page, from, to)`, which needs a glyph under *both* ends -- the
+same fussiness `PageText` already snaps around for dragging. So the character
+index under the pointer is found the roundabout way: select from the start of
+the page's text up to the point, and ask how long that came out. A page-wide
+selection thrown away immediately, which is fine once per click -- this is the
+machinery shift+click extension uses too -- and would not be once per mouse
+move, which is why dragging does not use it.
+
+Which glyph that index names -- the one under the pointer or the one before it
+-- depends on where in the glyph the pointer sat, because characters are not
+equally wide. Rather than trying to be exact, `word_bounds` tries both, word
+first. That makes the boundary cases behave: clicking the first letter of a word
+finds the word rather than the space in front of it.
+
+A word is alphanumerics and the underscore. A hyphen breaks one, so
+double-clicking in "pdfarranger-qt" gets you one half -- deliberate, because the
+other rule makes selecting one half of a compound impossible. A click that lands
+on no word selects the single character it hit, the way a text view does.
+
+**A double-click on a link follows the link.** Qt delivers the first click's
+release before it can know a second is coming, and that release is what follows
+a link. Deferring it behind `doubleClickInterval` would put 400 ms of latency on
+every link in the document to rescue a gesture nobody makes on a link. So the
+click wins, which is what every PDF reader does -- and it is why the fixture for
+these tests is `test_raster_image_text.pdf`: it is the only one with a line of
+prose that PDFium does not infer a link from.
+
+### Extending a selection, and why it is not Acrobat's rule
+
+Shift+click extends the selection from the anchor to the click. Shift's only job
+is to say "keep the anchor" rather than "start again" -- it does not change how
+the selection is measured. The anchor outlives the drag that set it, because
+extending from a position placed earlier is the entire point; a plain click that
+selects nothing still leaves one behind, which is Acrobat's insertion point
+under another name.
+
+**The rule: granularity follows the precision of the gesture.**
+
+| gesture | granularity |
+| --- | --- |
+| drag | character, both ends. It is continuous -- you watch it and stop where you like |
+| shift+click | the anchor end keeps its character; the moving end grows outward to a whole word. One discrete shot at a position, so snapping the end it moves is help rather than interference |
+| double-click | the word, by definition |
+| shift+drag | a drag whose anchor came from earlier, so: character |
+
+**Acrobat does the opposite and we deliberately did not copy it.** Measured in
+Acrobat, by David, on real documents: dragging inside the starting word selects
+by character; crossing out of that word selects the starting word *whole* and
+every subsequent word whole; dragging back in returns the first word to
+characters but leaves the rest by word; and moving *towards* the anchor gives
+characters again until the direction reverses. Hyphens and punctuation split the
+added words but not the starting one -- which is not a separate rule, it is the
+same fact, since the starting word is never word-segmented at all.
+
+The direction dependence is the disqualifying part: the same two endpoints give
+different selections depending on the path the mouse took to reach them, so the
+gesture cannot be described, only demonstrated. Here a selection is a function
+of its two ends and nothing else, which is what most of
+`TestExtendingASelection` checks.
+
+**Indices, not points.** The drag path stays point-based and untouched.
+Extension is index-based, because deciding which end moves means asking which
+comes first in *reading* order, and comparing geometrically -- page, then y,
+then x -- gets that wrong on a two-column page like the Handbook's, where the
+top of the right column follows the bottom of the left one. PDFium's character
+indices are already in reading order. The index of a point costs one page-wide
+`getSelection`, which is why an ordinary press does not pay for it: the anchor
+records a point, and the index is worked out only when a later shift+click
+actually reads it.
+
+**A shifted press does not follow the link under it.** Most of these documents'
+text is link as far as PDFium is concerned (see *Most of a document's links are
+not in the document*), so without that exemption the gesture would fail on
+exactly the documents it exists for.
+
+Still to come, as its own step: a painted caret and shift+arrow, which is how
+Acrobat does character-exact keyboard extension. It needs a visible insertion
+point and it collides with the arrow keys, which currently scroll and change
+pages.
+
+### Test settings: isolated from the user, and from each other
+
+Two separate guarantees, and only the first one existed for a long time.
+
+**From the user.** `settings.app_settings()` is the single accessor, and it
+switches to a scratch store whenever `under_test()` says so. Without it the
+suite wrote into the store the *installed* application reads: an earlier version
+set the real app to German in a dark theme, rebound Duplicate, and refilled the
+recent files list after the user had cleared it. `tests/test_settings_scope.py`
+holds the line, including a test that greps the package to make sure no module
+builds a `QSettings` of its own.
+
+**The hole in it:** the trigger is `PYTEST_CURRENT_TEST`, which only pytest
+sets. A script run by hand that imports the package gets the **real** store and
+writes to it on close. One did: it put a test fixture into the user's recent
+files and overwrote their saved window geometry, which looked for an afternoon
+like a bug in geometry restoring. `PDFARRANGER_QT_TEST_SETTINGS` now exists so
+such a script can opt in deliberately -- set it to anything before importing.
+
+**From each other.** The scratch store is **one file per process**, because two
+runs at once otherwise share it. That showed up as a flake with nothing about
+settings in it: a suite running in the background made a foreground run of
+`tests/test_recent.py` fail, since both were clearing and filling one
+recent-files list. Reproducible at four concurrent runs; six now pass.
+
+**Why an ini file under the temp directory** rather than the platform's native
+scope: a scope per process means a file per process, and those have to be
+removable. On macOS they are not, reliably -- the native store is written back
+asynchronously, so deleting the plist at exit races the write and loses. 595
+stray plists had accumulated in `~/Library/Preferences` before anyone counted.
+An ini file deletes cleanly, and the temp directory is swept anyway if the
+`atexit` hook does not run.
+
+A related trap worth knowing about, because it wasted an afternoon: `conftest.py`
+wipes the scratch store **at import**, and `tests/support.py` imports
+`conftest`. So a hand-written probe that imports `support` to reuse `settle()`
+clears the settings before it reads them, and any round-trip it is trying to
+measure comes back empty.
 
 ### Owning the reader's view — the plan
 

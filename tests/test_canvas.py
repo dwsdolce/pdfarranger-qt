@@ -1795,3 +1795,357 @@ class TestQueuePriority(unittest.TestCase):
         self.worker.push([self.task(f"bg{i}") for i in range(1000)])
         self.worker.push([self.task("visible")], urgent=True)
         self.assertEqual(self.queued()[0], "visible")
+
+
+class TestWordBounds(unittest.TestCase):
+    """Where a word starts and ends, given where the click landed.
+
+    Pure string work, so the boundary cases are exact here rather than sampled
+    through a mouse event: which side of a glyph PDFium counts the click on
+    varies with the glyph, and this is the code that has to not care.
+    """
+
+    TEXT = "https://example.com go to page 2"
+
+    def bounds(self, index):
+        start, end = PageText.word_bounds(self.TEXT, index)
+        return self.TEXT[start:end]
+
+    def test_a_click_inside_a_word_takes_the_word(self):
+        self.assertEqual(self.bounds(self.TEXT.index("example") + 3), "example")
+
+    def test_a_click_on_the_first_letter_takes_the_word(self):
+        self.assertEqual(self.bounds(self.TEXT.index("example")), "example")
+
+    def test_a_click_on_the_last_letter_takes_the_word(self):
+        self.assertEqual(self.bounds(self.TEXT.index("example") + 6), "example")
+
+    def test_a_click_one_past_the_end_takes_the_word_behind_it(self):
+        """PDFium may report the glyph after the pointer rather than under it."""
+        self.assertEqual(self.bounds(self.TEXT.index("example") + 7), "example")
+
+    def test_punctuation_breaks_a_word(self):
+        """Selecting one half of a compound has to stay possible."""
+        self.assertEqual(PageText.word_bounds("pdfarranger-qt", 2),
+                         (0, len("pdfarranger")))
+
+    def test_a_click_on_punctuation_takes_the_character(self):
+        text = "a // b"
+        start, end = PageText.word_bounds(text, 3)
+        self.assertEqual(text[start:end], "/")
+
+    def test_a_digit_is_a_word(self):
+        self.assertEqual(self.bounds(len(self.TEXT) - 1), "2")
+
+    def test_the_first_character_is_reachable(self):
+        self.assertEqual(self.bounds(0), "https")
+
+    def test_an_index_past_the_end_is_clamped(self):
+        self.assertEqual(self.bounds(len(self.TEXT) + 10), "2")
+
+    def test_there_is_no_word_on_an_empty_page(self):
+        self.assertIsNone(PageText.word_bounds("", 0))
+
+
+class TestWordSelection(unittest.TestCase):
+    """Double-click selects a word.
+
+    test_raster_image_text.pdf rather than the usual fixtures: its page carries
+    one line of prose and **no links**, which the other two cannot offer. A
+    single click on a link follows it, and Qt delivers that click's release
+    before it knows a second one is coming -- so on a page that is entirely
+    link, a double-click navigates first and there is nothing left to select.
+    That is what every PDF reader does, and it is why the fixture matters.
+    """
+
+    def setUp(self):
+        self.docs = DocumentSet()
+        self.addCleanup(self.docs.cleanup)
+        pages = self.docs.add_file(TEXT_PDF)
+        self.memory = MemoryDocument(
+            get_in_memory_pdf(list(pages), self.docs.files_for_export()))
+        self.addCleanup(self.memory.close)
+        self.canvas = PageCanvas()
+        self.addCleanup(self.canvas.deleteLater)
+        self.addCleanup(self.canvas.shutdown)
+        self.canvas.resize(700, 900)
+        self.canvas.show()
+        settle(lambda: self.canvas.viewport().width() == 700)
+        self.canvas.set_document(self.memory.document)
+        self.canvas.go_to_page(0)
+        settle(timeout_ms=200)
+
+    def line(self, page=0):
+        return PageText(self.memory.document).runs(page)[0]
+
+    def point_on(self, box, fraction):
+        """A viewport point a fraction of the way along a run of text."""
+        page_point = QPointF(box.left() + box.width() * fraction, box.center().y())
+        return self.canvas.to_viewport(self.canvas.layout.from_page(0, page_point))
+
+    def double_click(self, point):
+        """Press, release, second press as a double, release. What Qt sends."""
+        viewport = self.canvas.viewport()
+        globally = viewport.mapToGlobal(point.toPoint())
+        for kind in (QEvent.MouseButtonPress, QEvent.MouseButtonRelease,
+                     QEvent.MouseButtonDblClick, QEvent.MouseButtonRelease):
+            QApplication.sendEvent(viewport, QMouseEvent(
+                kind, point, globally, Qt.LeftButton, Qt.LeftButton, Qt.NoModifier))
+
+    def test_double_clicking_a_word_selects_it(self):
+        self.double_click(self.point_on(self.line(), 0.04))
+        self.assertEqual(self.canvas.selected_text(), "tests")
+
+    def test_it_selects_the_word_that_was_clicked(self):
+        self.double_click(self.point_on(self.line(), 0.5))
+        self.assertEqual(self.canvas.selected_text(), "test_raster_image_text")
+
+    def test_an_underscore_holds_a_word_together(self):
+        """Which is the rule that makes an identifier one double-click."""
+        self.double_click(self.point_on(self.line(), 0.3))
+        self.assertEqual(self.canvas.selected_text(), "test_raster_image_text")
+
+    def test_a_single_click_still_clears_the_selection(self):
+        self.double_click(self.point_on(self.line(), 0.04))
+        self.assertTrue(self.canvas.has_selection())
+        point = self.point_on(self.line(), 0.5)
+        viewport = self.canvas.viewport()
+        QApplication.sendEvent(viewport, QMouseEvent(
+            QEvent.MouseButtonPress, point, viewport.mapToGlobal(point.toPoint()),
+            Qt.LeftButton, Qt.LeftButton, Qt.NoModifier))
+        self.assertFalse(self.canvas.has_selection())
+
+    def test_it_tells_the_window_there_is_a_selection(self):
+        """So Edit > Copy lights up, the same as a drag does."""
+        seen = []
+        self.canvas.selection_changed.connect(seen.append)
+        self.double_click(self.point_on(self.line(), 0.04))
+        self.assertEqual(seen, [True])
+        self.assertTrue(self.canvas.has_selection())
+
+    def test_the_selected_word_can_be_copied(self):
+        QApplication.clipboard().clear()
+        self.double_click(self.point_on(self.line(), 0.04))
+        self.assertTrue(self.canvas.copy())
+        self.assertEqual(QApplication.clipboard().text(), "tests")
+
+    def test_double_clicking_off_the_page_selects_nothing(self):
+        self.double_click(QPointF(2, 2))
+        self.assertFalse(self.canvas.has_selection())
+
+    def test_the_page_text_is_cached(self):
+        """A double-click reads the whole page; doing it twice is waste."""
+        text = PageText(self.memory.document)
+        self.assertEqual(text.text(0), text.text(0))
+        self.assertIn("test_raster_image_text", text.text(0))
+
+
+class TestExtendingASelection(unittest.TestCase):
+    """Shift+click extends from the anchor, snapping only the end it moves.
+
+    The rule, which is deliberately not Acrobat's: **granularity follows the
+    precision of the gesture.** A drag is continuous -- you watch it and stop
+    where you like -- so it selects by character. A shifted click is one
+    discrete shot at a position, so the end it moves grows outward to a whole
+    word. Acrobat is the other way round and snaps a *drag*, with hysteresis, so
+    the same two endpoints give different selections depending on the path the
+    mouse took to reach them. Everything here is a function of the two ends and
+    nothing else, which is what these tests are mostly checking.
+    """
+
+    def setUp(self):
+        self.docs = DocumentSet()
+        self.addCleanup(self.docs.cleanup)
+        pages = self.docs.add_file(TEXT_PDF)
+        self.memory = MemoryDocument(
+            get_in_memory_pdf(list(pages), self.docs.files_for_export()))
+        self.addCleanup(self.memory.close)
+        self.canvas = PageCanvas()
+        self.addCleanup(self.canvas.deleteLater)
+        self.addCleanup(self.canvas.shutdown)
+        self.canvas.resize(700, 900)
+        self.canvas.show()
+        settle(lambda: self.canvas.viewport().width() == 700)
+        self.canvas.set_document(self.memory.document)
+        self.canvas.go_to_page(0)
+        settle(timeout_ms=200)
+        self.text = PageText(self.memory.document)
+
+    #: 'tests/test_raster_image_text.pdf' -- one line, no links, and an
+    #: underscored word long enough to land inside repeatedly.
+    def line(self):
+        return self.text.runs(0)[0]
+
+    def at(self, fraction):
+        """A viewport point a fraction of the way along the line."""
+        box = self.line()
+        return self.canvas.to_viewport(self.canvas.layout.from_page(
+            0, QPointF(box.left() + box.width() * fraction, box.center().y())))
+
+    def send(self, kind, point, modifiers=Qt.NoModifier):
+        QApplication.sendEvent(self.canvas.viewport(), QMouseEvent(
+            kind, point, self.canvas.viewport().mapToGlobal(point.toPoint()),
+            Qt.LeftButton, Qt.LeftButton, modifiers))
+
+    def click(self, fraction, modifiers=Qt.NoModifier):
+        point = self.at(fraction)
+        self.send(QEvent.MouseButtonPress, point, modifiers)
+        self.send(QEvent.MouseButtonRelease, point, modifiers)
+
+    def drag(self, start, end, modifiers=Qt.NoModifier):
+        first, last = self.at(start), self.at(end)
+        self.send(QEvent.MouseButtonPress, first, modifiers)
+        for point in (QPointF((first.x() + last.x()) / 2, first.y()), last):
+            QApplication.sendEvent(self.canvas.viewport(), QMouseEvent(
+                QEvent.MouseMove, point,
+                self.canvas.viewport().mapToGlobal(point.toPoint()),
+                Qt.NoButton, Qt.LeftButton, modifiers))
+        self.send(QEvent.MouseButtonRelease, last, modifiers)
+
+    # -- the anchor --------------------------------------------------------
+
+    def test_a_plain_click_leaves_an_anchor_behind(self):
+        """Which is what shift+click extends from -- Acrobat's insertion point."""
+        self.click(0.02)
+        self.assertIsNotNone(self.canvas._anchor)
+        self.assertFalse(self.canvas.has_selection())
+
+    def test_shift_click_extends_from_the_last_click(self):
+        self.click(0.02)
+        self.click(0.5, Qt.ShiftModifier)
+        self.assertEqual(self.canvas.selected_text(),
+                         "tests/test_raster_image_text")
+
+    def test_the_anchor_end_keeps_its_character(self):
+        """It was placed deliberately; only the moving end is a guess."""
+        self.click(0.1)                     # inside test_raster_image_text
+        self.click(0.95, Qt.ShiftModifier)
+        selected = self.canvas.selected_text()
+        self.assertTrue(selected.endswith(".pdf"), selected)
+        self.assertFalse(selected.startswith("test_raster"),
+                         "the anchor end was snapped back to its word")
+
+    def test_the_moving_end_grows_to_a_whole_word(self):
+        self.click(0.02)
+        self.click(0.3, Qt.ShiftModifier)   # lands inside the long word
+        self.assertTrue(self.canvas.selected_text().endswith("image_text"))
+
+    def test_it_extends_backwards_too(self):
+        self.click(0.95)
+        self.click(0.3, Qt.ShiftModifier)
+        selected = self.canvas.selected_text()
+        self.assertTrue(selected.startswith("test_raster_image_text"), selected)
+
+    def test_shift_click_with_no_anchor_is_a_plain_click(self):
+        self.canvas._anchor = None
+        self.canvas._anchor_span = None
+        self.click(0.5, Qt.ShiftModifier)
+        self.assertFalse(self.canvas.has_selection())
+        self.assertIsNotNone(self.canvas._anchor)
+
+    # -- path independence -------------------------------------------------
+
+    def test_repeated_shift_clicks_re_extend_from_the_same_anchor(self):
+        """Adjusting the far end must not drag the near end along behind it."""
+        self.click(0.02)
+        self.click(0.95, Qt.ShiftModifier)
+        far = self.canvas.selected_text()
+        self.click(0.3, Qt.ShiftModifier)
+        near = self.canvas.selected_text()
+        self.click(0.95, Qt.ShiftModifier)
+        self.assertEqual(self.canvas.selected_text(), far,
+                         "going back out gave a different answer")
+        self.assertNotEqual(near, far)
+
+    def test_the_route_taken_does_not_change_the_result(self):
+        """The whole reason for not copying Acrobat."""
+        self.click(0.02)
+        self.click(0.7, Qt.ShiftModifier)
+        direct = self.canvas.selected_text()
+
+        self.click(0.02)
+        for fraction in (0.95, 0.1, 0.5, 0.7):    # wander about first
+            self.click(fraction, Qt.ShiftModifier)
+        self.assertEqual(self.canvas.selected_text(), direct)
+
+    # -- after a double-click ----------------------------------------------
+
+    def test_extending_from_a_double_click_keeps_that_word_whole(self):
+        self.canvas.select_word_at(0, self.canvas.to_page(self.at(0.02))[1])
+        self.assertEqual(self.canvas.selected_text(), "tests")
+        self.click(0.5, Qt.ShiftModifier)
+        self.assertTrue(self.canvas.selected_text().startswith("tests"))
+
+    def test_extending_backwards_from_a_double_click_keeps_it_whole(self):
+        self.canvas.select_word_at(0, self.canvas.to_page(self.at(0.5))[1])
+        self.assertEqual(self.canvas.selected_text(), "test_raster_image_text")
+        self.click(0.02, Qt.ShiftModifier)
+        self.assertTrue(self.canvas.selected_text().endswith("image_text"))
+
+    # -- dragging is untouched ---------------------------------------------
+
+    def test_dragging_still_selects_by_character(self):
+        """The deviation from Acrobat, pinned down: a drag never snaps."""
+        self.drag(0.1, 0.7)
+        selected = self.canvas.selected_text()
+        self.assertTrue(selected)
+        self.assertFalse(selected.startswith("tests/"),
+                         "the drag snapped its start to a word")
+        self.assertNotIn(".pdf", selected)
+
+    def test_shift_dragging_is_a_drag_and_selects_by_character(self):
+        """Shift only says which anchor to use; the gesture decides the rest."""
+        self.click(0.1)
+        self.drag(0.7, 0.75, Qt.ShiftModifier)
+        selected = self.canvas.selected_text()
+        self.assertTrue(selected)
+        self.assertFalse(selected.startswith("tests/"), selected)
+
+
+class TestExtendingOverALink(unittest.TestCase):
+    """A shifted press must not follow the link under it.
+
+    Worth its own fixture: nearly all of this document's text is a link as far
+    as PDFium is concerned, which is also true of the Handbook, so a shift+click
+    that navigated would make the gesture unusable on exactly the documents it
+    is for.
+    """
+
+    def setUp(self):
+        self.docs = DocumentSet()
+        self.addCleanup(self.docs.cleanup)
+        pages = self.docs.add_file(LINK_PDF)
+        self.memory = MemoryDocument(
+            get_in_memory_pdf(list(pages), self.docs.files_for_export()))
+        self.addCleanup(self.memory.close)
+        self.canvas = PageCanvas()
+        self.addCleanup(self.canvas.deleteLater)
+        self.addCleanup(self.canvas.shutdown)
+        self.canvas.resize(700, 600)
+        self.canvas.show()
+        settle(lambda: self.canvas.viewport().width() == 700)
+        self.canvas.set_document(self.memory.document)
+        self.canvas.go_to_page(0)
+        settle(timeout_ms=200)
+
+    def test_a_shifted_press_extends_instead_of_following(self):
+        text = PageText(self.memory.document)
+        box = text.runs(0)[1]           # "go to page 2" -- an internal link
+        def viewport(fraction):
+            return self.canvas.to_viewport(self.canvas.layout.from_page(
+                0, QPointF(box.left() + box.width() * fraction,
+                           box.center().y())))
+        # Seeded rather than clicked: a *plain* click on this line follows the
+        # link, which is correct and is not what this test is about.
+        self.canvas._anchor = (0, self.canvas.to_page(viewport(0.05))[1])
+        self.canvas._anchor_span = None
+
+        moved = []
+        self.canvas.current_page_changed.connect(moved.append)
+        point = viewport(0.6)
+        for kind in (QEvent.MouseButtonPress, QEvent.MouseButtonRelease):
+            QApplication.sendEvent(self.canvas.viewport(), QMouseEvent(
+                kind, point, self.canvas.viewport().mapToGlobal(point.toPoint()),
+                Qt.LeftButton, Qt.LeftButton, Qt.ShiftModifier))
+        self.assertEqual(moved, [], "the shifted click followed the link")
+        self.assertTrue(self.canvas.has_selection())

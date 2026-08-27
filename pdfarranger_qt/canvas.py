@@ -396,10 +396,12 @@ class PageText:
     def __init__(self, document=None):
         self._document = document
         self._runs: dict = {}
+        self._texts: dict = {}
 
     def set_document(self, document):
         self._document = document
         self._runs.clear()
+        self._texts.clear()
 
     def runs(self, page: int) -> List[QRectF]:
         """Bounding boxes of every run of text on ``page``."""
@@ -438,6 +440,70 @@ class PageText:
     def contains_text(self, page: int, point: QPointF) -> bool:
         """Whether the point is actually on text, for the I-beam cursor."""
         return any(box.contains(point) for box in self.runs(page))
+
+    def text(self, page: int) -> str:
+        """The whole page's text, in the index space `getSelection` reports.
+
+        Cached separately from the runs, and only filled when something asks --
+        which is the click gestures, never a drag. The runs cache is populated
+        by every drag across every page it passes, and carrying 5909 characters
+        a page along with it would cost about 9 MB on the Handbook to serve
+        features that only ever look at one page at a time.
+        """
+        cached = self._texts.get(page)
+        if cached is not None:
+            return cached
+        text = ""
+        if self._document is not None:
+            try:
+                text = self._document.getSelectionAtIndex(page, 0, self.ALL).text()
+            except Exception:  # pragma: no cover - PDFium can be unhappy
+                text = ""
+        self._texts[page] = text
+        return text
+
+    @staticmethod
+    def word_character(character: str) -> bool:
+        """What counts as part of a word.
+
+        Alphanumerics and the underscore, which is what every text view does. A
+        hyphen breaks a word, so double-clicking in "pdfarranger-qt" gets you
+        one half of it -- deliberate, because the other rule makes selecting one
+        half of a hyphenated compound impossible.
+        """
+        return character.isalnum() or character == "_"
+
+    @classmethod
+    def word_bounds(cls, text: str, index: int):
+        """``(start, end)`` of the word around ``index``, or None if there is none.
+
+        ``index`` is where the click landed, to within a character: PDFium
+        reports how many characters lie before a point, and whether that is the
+        glyph under the cursor or the one before it depends on where in the
+        glyph the pointer sat. So both are tried, word first -- which makes the
+        boundary cases behave: clicking the first letter of a word finds the
+        word rather than the space in front of it, and clicking the last letter
+        finds it rather than the space behind.
+
+        A click that is on no word at all selects the single character it hit,
+        the way a text view does. Nothing at all would be indistinguishable
+        from a double-click that failed.
+        """
+        if not text:
+            return None
+        here = min(max(index, 0), len(text) - 1)
+        if not cls.word_character(text[here]) and here > 0 \
+                and cls.word_character(text[here - 1]):
+            here -= 1
+        if not cls.word_character(text[here]):
+            return here, here + 1
+        start = here
+        while start > 0 and cls.word_character(text[start - 1]):
+            start -= 1
+        end = here + 1
+        while end < len(text) and cls.word_character(text[end]):
+            end += 1
+        return start, end
 
 
 class PageRenderTask:
@@ -681,8 +747,18 @@ class PageCanvas(QAbstractScrollArea):
         self._tooltip = ""
         self._text = PageText()
         self._document = None
-        #: (page, point-in-page) where the current drag started.
+        #: (page, point-in-page) where the current drag started, and where a
+        #: shifted click extends *from*. Outlives the drag: shift+click's whole
+        #: purpose is to extend from a position placed earlier.
         self._anchor = None
+        #: The anchor as ``(page, low index, high index)`` when it covers a span
+        #: rather than a position -- which is what a double-click leaves behind.
+        #: None means "one position", worked out from `_anchor` when needed;
+        #: doing it lazily keeps an ordinary press free of the page-wide lookup.
+        self._anchor_span = None
+        #: True between a shifted press and its release, so the release does not
+        #: also follow a link.
+        self._extending = False
         #: {page: QPdfSelection} for the pages the selection covers.
         self._selection: dict = {}
         self._selecting = False
@@ -1018,6 +1094,7 @@ class PageCanvas(QAbstractScrollArea):
             self.viewport().update()
             self.selection_changed.emit(False)
         self._anchor = None
+        self._anchor_span = None
 
     def has_selection(self) -> bool:
         return bool(self._selection)
@@ -1041,6 +1118,133 @@ class PageCanvas(QAbstractScrollArea):
             return
         selection = self._document.getSelectionAtIndex(page, 0, PageText.ALL)
         self._set_selection({page: selection} if selection.isValid() else {})
+
+    def index_at(self, page: int, point: QPointF):
+        """Which character a point is on, or None if the page has no text.
+
+        PDFium has no "what character is at this point"; what it has is
+        `getSelection`, which needs a glyph under *both* ends. So the index is
+        found the roundabout way -- select from the start of the page's text up
+        to the point, and ask how long that came out. A page-wide selection,
+        thrown away immediately, which is fine for something that happens once
+        per click and would not be for something that happened per mouse move.
+        That is why dragging does not use this.
+        """
+        if self._document is None:
+            return None
+        boxes = self._text.runs(page)
+        if not boxes:
+            return None
+        start = self._text.snap(page, QPointF(boxes[0].left(), boxes[0].top()))
+        here = self._text.snap(page, point)
+        if start is None or here is None:
+            return None
+        lead = self._document.getSelection(page, start, here)
+        # Invalid means the point is at the very beginning of the text, where
+        # there is nothing in front of it to select.
+        return lead.endIndex() if lead.isValid() else 0
+
+    def word_at(self, page: int, point: QPointF):
+        """``(start, end)`` of the word under a point, or None."""
+        index = self.index_at(page, point)
+        if index is None:
+            return None
+        return self._text.word_bounds(self._text.text(page), index)
+
+    def select_word_at(self, page: int, point: QPointF) -> bool:
+        """Select the word under a point. False if there is no text there."""
+        bounds = self.word_at(page, point)
+        if bounds is None:
+            return False
+        word = self._document.getSelectionAtIndex(page, bounds[0],
+                                                  bounds[1] - bounds[0])
+        if not word.isValid():
+            return False
+        self._set_selection({page: word})
+        # The word becomes the anchor, so a shift+click after a double-click
+        # extends from its far side and leaves the word itself whole.
+        self._anchor = (page, point)
+        self._anchor_span = (page, bounds[0], bounds[1])
+        return True
+
+    def _anchor_indices(self):
+        """The anchor as ``(page, low, high)`` in character indices, or None.
+
+        A double-click records its span exactly, for free. An ordinary press
+        records only a point, and the index is worked out here rather than
+        there: every press in the document would otherwise pay for a page-wide
+        lookup that only a later shift+click will ever read.
+        """
+        if self._anchor_span is not None:
+            return self._anchor_span
+        if self._anchor is None:
+            return None
+        page, point = self._anchor
+        index = self.index_at(page, point)
+        return None if index is None else (page, index, index)
+
+    def extend_to(self, page: int, point: QPointF) -> bool:
+        """Extend the selection to a point, for a shifted click.
+
+        **The anchor end stays exactly where it was put; the moving end grows
+        outward to cover the whole word.** Granularity follows the precision of
+        the gesture: a drag is continuous and you can watch it and stop where
+        you like, so it selects by character (`_extend_selection`, untouched); a
+        shifted click is one discrete shot at a position, so snapping the end it
+        moves is real help rather than interference.
+
+        Deliberately *not* Acrobat, which is the other way round -- it snaps a
+        drag and does so with hysteresis, so the same two endpoints give
+        different selections depending on the path the mouse took to reach them.
+        Here the selection is a function of its two ends and nothing else. See
+        PORTING-NOTES.md section 6.
+
+        Indices rather than points, unlike the drag, because deciding which end
+        moves means asking which comes first in *reading* order. Comparing
+        geometrically -- page, then y, then x -- gets that wrong on a two-column
+        page like the Handbook's, where the top of the right column is after the
+        bottom of the left one. PDFium's indices are already in reading order.
+        """
+        if self._document is None:
+            return False
+        anchor = self._anchor_indices()
+        if anchor is None:
+            return False
+        anchor_page, anchor_low, anchor_high = anchor
+        moved = self.index_at(page, point)
+        if moved is None:
+            return False
+        bounds = self._text.word_bounds(self._text.text(page), moved)
+        if bounds is None:
+            return False
+        word_start, word_end = bounds
+
+        # Which end of the anchor is the fixed one: extending forward keeps its
+        # low end, backward its high end. For a press those are the same index,
+        # and for a double-clicked word this is what leaves the word whole.
+        found = {}
+        if (page, moved) >= (anchor_page, anchor_high):
+            first, low = anchor_page, anchor_low
+            last, high = page, word_end
+        else:
+            first, low = page, word_start
+            last, high = anchor_page, anchor_high
+        for index in range(first, last + 1):
+            if first == last:
+                selection = self._document.getSelectionAtIndex(
+                    index, low, max(0, high - low))
+            elif index == first:
+                selection = self._document.getSelectionAtIndex(
+                    index, low, PageText.ALL)
+            elif index == last:
+                selection = self._document.getSelectionAtIndex(index, 0, high)
+            else:
+                selection = self._document.getSelectionAtIndex(
+                    index, 0, PageText.ALL)
+            if selection is not None and selection.isValid():
+                found[index] = selection
+        self._set_selection(found)
+        return bool(found)
 
     def _extend_selection(self, page: int, point: QPointF):
         """Select from the drag's anchor to ``point``.
@@ -1340,18 +1544,55 @@ class PageCanvas(QAbstractScrollArea):
         super().mouseMoveEvent(event)
 
     def mousePressEvent(self, event):
+        """Plain press starts a selection here; shifted press extends to here.
+
+        That is shift's only job -- it says "keep the anchor" rather than "start
+        again". It does not change how the selection is measured: what it
+        extends by is decided by whether the gesture turns out to be a click or
+        a drag, which is `extend_to` and `_extend_selection` respectively.
+        """
         if event.button() == Qt.LeftButton:
             self._press = QPointF(event.position())
             self._selecting = False
             found = self.to_page(self._press)
-            # Anchored even when the press lands off the text: the drag may
-            # arrive on some, and snapping will pull this end onto the nearest
-            # run when it does.
-            self._anchor = found if found is not None else None
-            if self._selection:
-                self.clear_selection()
+            extending = (bool(event.modifiers() & Qt.ShiftModifier)
+                         and self._anchor is not None)
+            self._extending = extending
+            if extending:
+                # No clear_selection() here: it would drop the anchor, which is
+                # the one thing this gesture needs to keep.
+                if found is not None:
+                    self.extend_to(*found)
+            else:
+                # Anchored even when the press lands off the text: the drag may
+                # arrive on some, and snapping will pull this end onto the
+                # nearest run when it does.
+                if self._selection:
+                    self.clear_selection()
                 self._anchor = found if found is not None else None
+                self._anchor_span = None
         super().mousePressEvent(event)
+
+    def mouseDoubleClickEvent(self, event):
+        """Second click of a double: select the word under it.
+
+        The press before it cleared the selection and set an anchor, and the
+        release after it would follow a link -- so both are stood down here,
+        or double-clicking a word inside a link would select it and then
+        navigate away from it.
+        """
+        if event.button() == Qt.LeftButton:
+            found = self.to_page(QPointF(event.position()))
+            if found is not None and self.select_word_at(*found):
+                # The anchor is left alone: select_word_at has just set it to
+                # the word, so a shift+click after this extends from the word's
+                # far side and leaves it whole.
+                self._press = None
+                self._selecting = False
+                self._extending = False
+                event.accept()
+                return
+        super().mouseDoubleClickEvent(event)
 
     def mouseReleaseEvent(self, event):
         """Follow a link on release, and only if the pointer stayed put.
@@ -1359,13 +1600,20 @@ class PageCanvas(QAbstractScrollArea):
         On release rather than press so a click can still be abandoned by moving
         away, and with a movement threshold so the drag that step 4 will use for
         selecting text does not also fire off a link.
+
+        A shifted press is exempt: it was extending a selection, and following
+        the link under it would throw that selection away and navigate. Most of
+        this document's text is link as far as PDFium is concerned (see section
+        6), so without this the gesture would barely work.
         """
         if event.button() == Qt.LeftButton and self._press is not None:
             here = QPointF(event.position())
             moved = (here - self._press).manhattanLength()
             self._press = None
             was_selecting, self._selecting = self._selecting, False
-            if moved <= QApplication.startDragDistance() and not was_selecting:
+            was_extending, self._extending = self._extending, False
+            if (moved <= QApplication.startDragDistance()
+                    and not was_selecting and not was_extending):
                 link = self.link_at(here)
                 if link is not None and self.follow(link):
                     event.accept()
