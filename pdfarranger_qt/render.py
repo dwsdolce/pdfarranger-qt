@@ -303,12 +303,26 @@ class _RenderWorker(QObject):
 
     # -- called from the UI thread (guarded by the mutex) -------------------
 
-    def push(self, tasks):
+    def push(self, tasks, urgent: bool = False):
+        """Queue tasks. ``urgent`` puts them at the front.
+
+        The queue drains from the front, so "front" means next. Asking again for
+        something already queued used to move it to the *back* -- which meant
+        re-requesting the page under the reader's eyes demoted it behind
+        everything queued since, exactly backwards. A repeat request now leaves
+        the position alone unless it is urgent, in which case it jumps.
+
+        Urgency is what keeps a background pass from starving the foreground:
+        enqueue a thousand proxies and the visible page still renders next.
+        """
         with QMutexLocker(self._mutex):
             for task in tasks:
-                # Re-requesting a key moves it to the back of the queue.
-                self._queue.pop(task.key, None)
-                self._queue[task.key] = task
+                if urgent:
+                    self._queue.pop(task.key, None)
+                    self._queue[task.key] = task
+                    self._queue.move_to_end(task.key, last=False)
+                elif task.key not in self._queue:
+                    self._queue[task.key] = task
 
     def clear(self):
         with QMutexLocker(self._mutex):
@@ -369,6 +383,14 @@ class ThumbnailCache:
         self._items.clear()
         self._pixels = 0
 
+    def discard(self, key):
+        """Drop one entry, if present. Returns whether there was one."""
+        image = self._items.pop(key, None)
+        if image is None:
+            return False
+        self._pixels -= image.width() * image.height()
+        return True
+
     def items(self):
         """Every cached (key, image). The reader scans these for a stand-in."""
         return list(self._items.items())
@@ -410,13 +432,19 @@ class Renderer(QObject):
     def get(self, key) -> Optional[QImage]:
         return self.cache.get(key)
 
-    def request(self, tasks):
-        """Queue tasks whose results are not cached yet."""
-        wanted = [t for t in tasks if t.key not in self.cache and t.key not in self._pending]
+    def request(self, tasks, urgent: bool = False):
+        """Queue tasks whose results are not cached yet.
+
+        ``urgent`` jumps the queue, for what is on screen now. A repeat request
+        for something already pending is not dropped when urgent: it may have
+        been queued as background work and now be wanted immediately.
+        """
+        wanted = [t for t in tasks if t.key not in self.cache
+                  and (urgent or t.key not in self._pending)]
         if not wanted:
             return
         self._pending.update(t.key for t in wanted)
-        self._worker.push(wanted)
+        self._worker.push(wanted, urgent=urgent)
         self._kick()
 
     def _kick(self):

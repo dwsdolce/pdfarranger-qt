@@ -49,7 +49,11 @@ print(f"  p99      {pct(0.99):6.1f}ms")
 print(f"  max      {ms[-1]:6.1f}ms")
 print(f"  mean     {statistics.mean(ms):6.1f}ms")
 print()
-print("  slowest pages:", ", ".join(f"p{p}={t:.0f}ms"
+# Page numbers as the application shows them, counting from 1. Reporting the
+# 0-based index instead cost an hour of talking past each other: the benchmark
+# said page 1425 was slow, the app showed a page of plain text at 1425, and the
+# slow one was actually 1426.
+print("  slowest pages:", ", ".join(f"p{p + 1}={t:.0f}ms"
       for t, p in sorted(times, reverse=True)[:5]))
 over = sum(1 for t in ms if t > 16.7)
 print(f"  pages over one 60Hz frame (16.7ms): {over}/{n} ({100*over/n:.0f}%)")

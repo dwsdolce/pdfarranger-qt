@@ -40,6 +40,7 @@ two is how a hit test ends up half a page out on an external monitor.
 """
 
 import bisect
+import collections
 import math
 from typing import List, Optional, Sequence, Tuple
 
@@ -49,7 +50,7 @@ from PySide6.QtPdf import QPdfDocumentRenderOptions, QPdfLinkModel
 from PySide6.QtWidgets import QAbstractScrollArea, QApplication, QFrame, QMenu
 
 from .i18n import gettext_ as _
-from .render import BytesDocument, Renderer
+from .render import DEFAULT_CACHE_PIXELS, BytesDocument, Renderer
 
 #: Gap between consecutive pages, and around the column, in logical pixels at
 #: zoom 1. Scaled with the zoom so the layout looks the same at every size.
@@ -492,6 +493,13 @@ class AsynchronousPages(QObject):
 
     #: How many rows ahead and behind to render before anyone asks.
     PREFETCH_ROWS = 2
+    #: Width of the low-resolution copy kept for every page ever rendered.
+    #: 120 px is 75 KB a page, so the whole 1590-page Handbook is 116 MB --
+    #: against 21 MB for a *single* page at 2000 px.
+    PROXY_WIDTH = 120
+    #: Proxies to keep. Enough for a large book; they are small enough that the
+    #: number hardly matters, and a bound is better than none.
+    PROXY_PAGES = 3000
     #: Spare room in the cache beyond what is visible and prefetched, so a
     #: bitmap is never evicted by the very request that will need it next.
     SLACK = 2
@@ -499,26 +507,58 @@ class AsynchronousPages(QObject):
     def __init__(self, parent=None):
         super().__init__(parent)
         self._documents = BytesDocument()
-        self._renderer = Renderer(self, max_pixels=1, documents=self._documents,
-                                  name="pdf-reader")
+        # A real budget from the start. It was 1 pixel, on the theory that
+        # prefetch() would size it properly on the first paint -- but that
+        # leaves every render before the first paint evicted the instant it
+        # arrives, and a source used without painting with no cache at all.
+        # prefetch() still narrows this to a number of pages at the current
+        # zoom; this is only the floor.
+        self._renderer = Renderer(self, max_pixels=DEFAULT_CACHE_PIXELS,
+                                  documents=self._documents, name="pdf-reader")
         self._renderer.ready.connect(self._arrived)
         self._sizes = {}          # page -> the size most recently asked for
+        #: Low-resolution copies, kept far longer than the full-size ones.
+        #: Rendering small is not cheaper -- a heavy page costs 134 ms at 80 px
+        #: against 186 ms at 2000 px, because the cost is parsing and image
+        #: decoding rather than rasterising -- but *keeping* small is enormously
+        #: cheaper, and that is the lever. A page rendered once never blanks
+        #: again, which is what most reading actually does: move back and forth
+        #: over pages already seen.
+        self._proxies: collections.OrderedDict = collections.OrderedDict()
 
     def set_document(self, document, data: Optional[bytes] = None):
         """Point at a new document. ``data`` is what the render thread parses."""
         self._renderer.invalidate()
         self._sizes.clear()
+        self._proxies.clear()
         self._documents.set_data(data)
 
     def clear(self):
         self._renderer.invalidate()
         self._sizes.clear()
+        self._proxies.clear()
 
     def shutdown(self):
         self._renderer.shutdown()
 
     def _arrived(self, key):
-        self.page_ready.emit(key[0])
+        page, width, _height = key
+        if width == self.PROXY_WIDTH:
+            image = self._renderer.get(key)
+            if image is not None:
+                self._keep_proxy(page, image)
+            # Out of the shared cache once it is safely kept. That cache is
+            # sized in full-size pages and holds only a handful of them, so a
+            # proxy landing in it evicts a page somebody is looking at -- which
+            # is exactly what happened the first time this was wired up.
+            self._renderer.cache.discard(key)
+        self.page_ready.emit(page)
+
+    def _keep_proxy(self, page: int, image):
+        self._proxies.pop(page, None)
+        self._proxies[page] = image
+        while len(self._proxies) > self.PROXY_PAGES:
+            self._proxies.popitem(last=False)
 
     def page_image(self, index: int, size: QSize) -> Optional[QImage]:
         """The page at this size if it is ready, else the best stand-in.
@@ -534,24 +574,47 @@ class AsynchronousPages(QObject):
         if image is not None:
             return image
         self._sizes[index] = size
-        self._request(index, size)
+        # Urgent: this page is being painted right now.
+        self._request(index, size, urgent=True)
+        self._request_proxy(index, size.height() / max(1, size.width()))
         return self._stand_in(index)
 
     def _stand_in(self, index: int) -> Optional[QImage]:
-        """The same page at some other size, if the cache still has one."""
+        """The best bitmap we already hold for this page, at any size.
+
+        The full-size cache first, since downscaling a page rendered for a
+        bigger zoom beats upscaling anything; then the proxy, which is where a
+        page that has been visited once and evicted since will be found. The
+        proxy is why scrolling back over a chapter you have read does not blank
+        the way it did.
+        """
         best = None
         for (page, width, _height), image in self._renderer.cache.items():
             if page != index:
                 continue
-            # Prefer the largest available: upscaling a thumbnail looks worse
-            # than downscaling a page rendered for a bigger zoom.
             if best is None or width > best[0]:
                 best = (width, image)
-        return best[1] if best is not None else None
+        if best is not None:
+            return best[1]
+        return self._proxies.get(index)
 
-    def _request(self, index: int, size: QSize):
-        self._renderer.request([PageRenderTask((index, size.width(), size.height()),
-                                               index, size)])
+    def _request(self, index: int, size: QSize, urgent: bool = False):
+        self._renderer.request(
+            [PageRenderTask((index, size.width(), size.height()), index, size)],
+            urgent=urgent)
+
+    def _request_proxy(self, index: int, aspect: float):
+        """Queue the low-resolution copy, if this page has never had one.
+
+        Never urgent: it exists so a *future* visit does not blank, and jumping
+        the queue with it would delay the page being looked at now.
+        """
+        if index in self._proxies:
+            return
+        height = max(1, int(round(self.PROXY_WIDTH * aspect)))
+        size = QSize(self.PROXY_WIDTH, height)
+        self._renderer.request(
+            [PageRenderTask((index, size.width(), size.height()), index, size)])
 
     def prefetch(self, pages, size: QSize, keep: int):
         """Render ``pages`` before they are asked for, and hold ``keep`` of them.
@@ -571,10 +634,12 @@ class AsynchronousPages(QObject):
             return
         pixels = size.width() * size.height()
         self._renderer.set_budget(max(1, pixels * max(1, keep)))
+        aspect = size.height() / max(1, size.width())
         for index in pages:
             key = (index, size.width(), size.height())
             if self._renderer.get(key) is None:
                 self._request(index, size)
+            self._request_proxy(index, aspect)
 
 
 class PageCanvas(QAbstractScrollArea):

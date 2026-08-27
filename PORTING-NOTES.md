@@ -1369,6 +1369,65 @@ compares false against everything including zero, so it slips past a check for
 the default (0, 0) and only fails later, inside `int(round(...))`, which raises
 `ValueError` and kills the click that reached it.
 
+### Why Acrobat is smoother, and what we did about it
+
+David flung a freshly opened Handbook from page 1 to page 1590 in Acrobat and
+every page he crossed was drawn. Ours blank and fill. Worth knowing why, because
+the obvious explanations are all wrong.
+
+**It is not a cache.** 1590 pages at 5.1 ms median is eight seconds of
+rendering; the fling took a second. Acrobat did not render those pages.
+
+**It is not embedded thumbnails.** A PDF may carry a `/Thumb` per page, and
+Acrobat writes them. This document has **0 of 1590**.
+
+**It is not scaled JPEG decoding**, which was the best remaining theory --
+libjpeg decodes at 1/8 scale cheaply, so a proxy could be nearly free. The
+expensive pages are not JPEG-bound. App page 1426 carries 6933 image XObjects of
+which **6932 are one pixel tall**: a figure's gradient background drawn as
+thousands of slivers, so the cost is per-object overhead. App page 1328 is the
+other shape, 10.6 Mpx of Flate, which has no scaled-decode path at all. Neither
+shrinks with output size, which is exactly the flat curve measured above.
+
+**It is progressive rendering with a deadline** -- draw what completes, abandon
+the rest, so a slow page looks nearly finished rather than blank. PDFium
+supports it through `FPDF_RenderPageBitmap_Start`/`_Continue`; **QtPdf exposes
+only an atomic render**. Measured with pypdfium2 at 1000 px and a 16 ms budget:
+
+| app page | shape | atomic | first slice | what you would see |
+| --- | --- | --- | --- | --- |
+| 1426 | 6932 one-pixel slivers | 140 ms | **16 ms** | a complete, readable page |
+| 1328 | 10.6 Mpx Flate image | 233 ms | **93 ms** | **blank** |
+| 1326 | as above | 145 ms | 103 ms | blank |
+| ordinary text | | 2-5 ms | one slice | complete anyway |
+
+So it rescues one failure mode and not the other: PDFium checks the pause
+callback between drawing operations, and a single large image decode is one
+operation. Not enough to justify a second copy of PDFium in the bundle, 7.1 MB,
+and a version that can drift from Qt's -- so D8 stands. Acrobat is evidently
+doing more than this with its own decoder.
+
+**What was done instead**, both cheap:
+
+- **A proxy tier.** Every page rendered keeps a 120 px copy, in its own store
+  rather than the full-size cache -- 75 KB a page against 21 MB, so the whole
+  Handbook is 116 MB against 21 MB for a *single* page at 2000 px. It does not
+  help a first fling over pages never seen; it means a page read once never
+  blanks again, which is what most reading actually does. Measured: reading
+  forward through fourteen pages and scrolling back over them gives **zero**
+  blanks, where every one of them used to re-render.
+- **Queue priority.** The queue drains from the front and a repeat request used
+  to move a key to the *back*, so asking again for the page under the reader's
+  eyes demoted it behind everything queued since. Visible pages are now urgent
+  and jump; proxies never are. This is also what would stop a background pass
+  starving the foreground, if one is ever added.
+
+Two bugs found while wiring that up: proxies first shared the full-size cache
+and evicted the very pages they were meant to stand in for, and the reader's
+cache was constructed with a budget of *one pixel* on the theory that the first
+paint would size it -- which left every render before that paint evicted the
+instant it arrived.
+
 ### Owning the reader's view — the plan
 
 Phase 7's largest item, and the prerequisite for two of the three things wanted
@@ -1410,8 +1469,15 @@ maximised window asks for and 1000 px a half-width one.
 
 Read the median and the tail separately: the distribution is bimodal, so the
 mean describes no actual page. Text pages cost 2-11 ms; plates and schematics
-cost 40-250 ms, and they are the same pages at every size (Handbook p1425,
-p1327, p1325, p1488).
+cost 40-250 ms, and they are the same pages at every size (Handbook pages
+1426, 1328, 1326 and 1489 as the application numbers them).
+
+**Page numbers here are the application's, counting from 1.** The benchmarks
+report them that way too, since they did not always: the tool named page 1425,
+the app showed plain text at 1425, and the slow page was 1426. A tool whose
+output cannot be matched against the window is a trap, and this is the second
+time the two conventions have caused confusion -- bookmark targets being the
+first.
 
 **The tail does not scale with resolution.** The Handbook's worst page costs
 248.2 ms at 1000 px and 247.4 ms at 2000 px -- four times the pixels, no extra

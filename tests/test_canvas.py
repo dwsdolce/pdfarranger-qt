@@ -35,7 +35,7 @@ from pdfarranger_qt.canvas import (
     DEFAULT_MARGIN, DEFAULT_SPACING, ZOOM_LIMITS, FitMode, PageCanvas, PageLayout,
     AsynchronousPages, PageText,
 )
-from pdfarranger_qt.core import DocumentSet
+from pdfarranger_qt.core import DocumentSet, Sides
 from pdfarranger_qt.export import get_in_memory_pdf
 from pdfarranger_qt.render import MemoryDocument
 from support import HERE, TEXT_PDF, settle
@@ -1672,3 +1672,126 @@ class TestFacingSurvivesADocument(unittest.TestCase):
         self.canvas.set_document(self.memory.document, self.data)
         self.assertFalse(self.canvas.facing())
         self.assertEqual(tuple(self.canvas.layout.row_of(1)), (1,))
+
+
+class TestProxyTier(unittest.TestCase):
+    """A low-resolution copy of every page ever rendered.
+
+    Rendering small is not cheaper -- a heavy Handbook page costs 134 ms at
+    80 px against 186 ms at 2000 px, because the cost is parsing and image
+    decoding rather than rasterising. But *keeping* small is enormously cheaper:
+    75 KB a page at 120 px against 21 MB at 2000 px. So a page rendered once
+    never blanks again, which covers most real reading -- moving back and forth
+    over pages already seen.
+    """
+
+    def setUp(self):
+        self.docs = DocumentSet()
+        self.addCleanup(self.docs.cleanup)
+        pages = []
+        for _ in range(3):
+            pages += self.docs.add_file(OUTLINE_PDF)
+        self.data = get_in_memory_pdf(list(pages), self.docs.files_for_export())
+        self.memory = MemoryDocument(self.data)
+        self.addCleanup(self.memory.close)
+        self.source = AsynchronousPages()
+        self.addCleanup(self.source.shutdown)
+        self.source.set_document(self.memory.document, self.data)
+
+    def wait_for_proxy(self, page):
+        settle(lambda: page in self.source._proxies, timeout_ms=5000)
+
+    def test_asking_for_a_page_also_makes_a_proxy(self):
+        self.source.page_image(0, QSize(300, 390))
+        self.wait_for_proxy(0)
+        self.assertIn(0, self.source._proxies)
+        self.assertEqual(self.source._proxies[0].width(),
+                         AsynchronousPages.PROXY_WIDTH)
+
+    def test_the_proxy_stands_in_after_the_full_page_is_evicted(self):
+        """The point of the whole tier: a revisit does not blank."""
+        size = QSize(300, 390)
+        self.source.page_image(0, size)
+        self.wait_for_proxy(0)
+        settle(lambda: self.source._renderer.get((0, 300, 390)) is not None,
+               timeout_ms=5000)
+
+        self.source._renderer.invalidate()          # as eviction would
+        self.assertIsNone(self.source._renderer.get((0, 300, 390)))
+
+        stand_in = self.source.page_image(0, size)
+        self.assertIsNotNone(stand_in, "a page read once still blanked")
+        self.assertEqual(stand_in.width(), AsynchronousPages.PROXY_WIDTH)
+
+    def test_a_proxy_does_not_evict_a_full_size_page(self):
+        """They shared one cache at first, and the proxy evicted the page."""
+        size = QSize(300, 390)
+        self.source.page_image(0, size)
+        self.wait_for_proxy(0)
+        settle(timeout_ms=600)
+        image = self.source.page_image(0, size)
+        self.assertIsNotNone(image)
+        self.assertEqual(image.size(), size, "the proxy displaced the real page")
+
+    def test_proxies_are_not_in_the_full_size_cache(self):
+        self.source.page_image(0, QSize(300, 390))
+        self.wait_for_proxy(0)
+        settle(timeout_ms=400)
+        widths = {w for (_p, w, _h), _img in self.source._renderer.cache.items()}
+        self.assertNotIn(AsynchronousPages.PROXY_WIDTH, widths)
+
+    def test_a_page_is_proxied_only_once(self):
+        self.source.page_image(0, QSize(300, 390))
+        self.wait_for_proxy(0)
+        first = self.source._proxies[0]
+        self.source.page_image(0, QSize(500, 650))
+        settle(timeout_ms=400)
+        self.assertIs(self.source._proxies[0], first)
+
+    def test_clearing_drops_the_proxies_too(self):
+        self.source.page_image(0, QSize(300, 390))
+        self.wait_for_proxy(0)
+        self.source.clear()
+        self.assertEqual(len(self.source._proxies), 0)
+
+
+class TestQueuePriority(unittest.TestCase):
+    """What is on screen renders before what merely might be.
+
+    The queue drains from the front, and a repeat request used to move a key to
+    the *back* -- so asking again for the page under the reader's eyes demoted
+    it behind everything queued since. Backwards, and it is what would let a
+    background pass starve the foreground.
+    """
+
+    def setUp(self):
+        from pdfarranger_qt.render import RenderTask, _RenderWorker
+        self.worker = _RenderWorker()
+        self.Task = RenderTask
+
+    def task(self, key):
+        return self.Task(key, "x.pdf", "", 1, 0, Sides(), Sides(), 100)
+
+    def queued(self):
+        return list(self.worker._queue)
+
+    def test_ordinary_requests_queue_behind(self):
+        self.worker.push([self.task("a"), self.task("b")])
+        self.assertEqual(self.queued(), ["a", "b"])
+
+    def test_an_urgent_request_jumps_the_queue(self):
+        self.worker.push([self.task("a"), self.task("b"), self.task("c")])
+        self.worker.push([self.task("c")], urgent=True)
+        self.assertEqual(self.queued()[0], "c")
+
+    def test_repeating_a_request_does_not_demote_it(self):
+        """The bug: asking again for what you are looking at sent it to the back."""
+        self.worker.push([self.task("a"), self.task("b")])
+        self.worker.push([self.task("a")])
+        self.assertEqual(self.queued(), ["a", "b"])
+
+    def test_urgent_work_beats_a_backlog(self):
+        """A thousand background proxies must not delay the visible page."""
+        self.worker.push([self.task(f"bg{i}") for i in range(1000)])
+        self.worker.push([self.task("visible")], urgent=True)
+        self.assertEqual(self.queued()[0], "visible")
