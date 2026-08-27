@@ -1348,23 +1348,24 @@ class TestAsynchronousPages(unittest.TestCase):
     def test_a_page_never_rendered_has_no_stand_in(self):
         self.assertIsNone(self.source.page_image(3, QSize(200, 260)))
 
-    def test_the_budget_holds_a_screenful_of_pages(self):
+    def test_the_budget_is_what_the_caller_asks_for(self):
+        """Only the layout knows how many pages are on screen at once."""
         size = QSize(300, 390)
-        self.source.prefetch(0, size, 4)
-        expected = size.width() * size.height() * AsynchronousPages.KEEP
-        self.assertEqual(self.source._renderer.cache.max_pixels, expected)
+        self.source.prefetch([0, 1], size, keep=7)
+        self.assertEqual(self.source._renderer.cache.max_pixels,
+                         size.width() * size.height() * 7)
 
     def test_the_budget_follows_the_zoom(self):
         """A fixed pixel budget holds forty pages at one zoom and two at another."""
         small, large = QSize(100, 130), QSize(800, 1040)
-        self.source.prefetch(0, small, 4)
+        self.source.prefetch([0], small, keep=4)
         at_small = self.source._renderer.cache.max_pixels
-        self.source.prefetch(0, large, 4)
+        self.source.prefetch([0], large, keep=4)
         self.assertGreater(self.source._renderer.cache.max_pixels, at_small)
 
-    def test_prefetch_asks_for_the_neighbours(self):
+    def test_prefetch_renders_what_it_is_given(self):
         size = QSize(150, 195)
-        self.source.prefetch(1, size, 4)
+        self.source.prefetch([0, 2, 3], size, keep=6)
         for index in (0, 2, 3):
             settle(lambda i=index: self.source._renderer.get(
                 (i, size.width(), size.height())) is not None, timeout_ms=5000)
@@ -1373,9 +1374,9 @@ class TestAsynchronousPages(unittest.TestCase):
                 self.source._renderer.get((index, size.width(), size.height())),
                 f"page {index} was not prefetched")
 
-    def test_prefetch_stays_inside_the_document(self):
-        self.source.prefetch(0, QSize(150, 195), 4)      # would ask for -1, -2
-        settle(timeout_ms=400)                            # must not raise
+    def test_prefetching_nothing_is_harmless(self):
+        self.source.prefetch([], QSize(150, 195), keep=4)
+        settle(timeout_ms=200)
 
     def test_clearing_drops_everything(self):
         size = QSize(200, 260)
@@ -1392,3 +1393,282 @@ class TestAsynchronousPages(unittest.TestCase):
         self.assertIsNone(source.page_image(0, QSize(100, 130)))
         settle(timeout_ms=300)
         self.assertIsNone(source._renderer.get((0, 100, 130)))
+
+
+class TestFacingPages(unittest.TestCase):
+    """Two pages to a row (phase 7 step 6).
+
+    The one thing QPdfView.PageMode had no setting for. Done as rows in the
+    layout rather than a mode in the widget, so hit testing, selection, links
+    and the coordinate mapping work unchanged -- a second layout would have been
+    a second set of geometry bugs.
+    """
+
+    LETTER = QSizeF(612, 792)
+    WIDE = QSizeF(792, 612)
+
+    def layout(self, count=6, facing=True, cover=True, sizes=None):
+        sizes = sizes or [QSizeF(self.LETTER) for _ in range(count)]
+        return PageLayout(sizes, zoom=1.0, facing=facing, cover=cover)
+
+    def rows(self, layout):
+        seen, out = set(), []
+        for index in range(layout.page_count):
+            row = tuple(layout.row_of(index))
+            if row not in seen:
+                seen.add(row)
+                out.append(row)
+        return out
+
+    def test_a_cover_sits_alone_then_pages_pair_up(self):
+        """How a book actually falls open, and how every reader spells it."""
+        self.assertEqual(self.rows(self.layout(6, cover=True)),
+                         [(0,), (1, 2), (3, 4), (5,)])
+
+    def test_without_a_cover_the_pairs_start_at_the_first_page(self):
+        self.assertEqual(self.rows(self.layout(6, cover=False)),
+                         [(0, 1), (2, 3), (4, 5)])
+
+    def test_an_odd_page_count_leaves_a_single_at_the_end(self):
+        self.assertEqual(self.rows(self.layout(5, cover=False)),
+                         [(0, 1), (2, 3), (4,)])
+
+    def test_one_page_per_row_when_facing_is_off(self):
+        self.assertEqual(self.rows(self.layout(4, facing=False)),
+                         [(0,), (1,), (2,), (3,)])
+
+    def test_a_spread_is_side_by_side_and_top_aligned(self):
+        layout = self.layout(4, cover=False)
+        left, right = layout.page_rect(0), layout.page_rect(1)
+        self.assertAlmostEqual(left.top(), right.top(), places=6)
+        self.assertGreater(right.left(), left.right(), "pages overlap")
+        self.assertAlmostEqual(right.left() - left.right(), DEFAULT_SPACING, places=6)
+
+    def test_a_spread_is_centred_as_a_group(self):
+        layout = self.layout(4, cover=False)
+        left, right = layout.page_rect(0), layout.page_rect(1)
+        middle = (left.left() + right.right()) / 2
+        self.assertAlmostEqual(middle, layout.content_size().width() / 2, places=6)
+
+    def test_a_row_is_as_tall_as_its_tallest_page(self):
+        """A landscape plate facing a portrait one is the case that catches
+        an assumption of uniform size, and the Handbook has several."""
+        layout = self.layout(facing=True, cover=False,
+                             sizes=[self.WIDE, self.LETTER, self.LETTER, self.LETTER])
+        first, second = layout.page_rect(0), layout.page_rect(1)
+        third = layout.page_rect(2)
+        self.assertGreater(third.top(), second.bottom() - 1,
+                           "the next row overlaps the taller page beside it")
+
+    def test_facing_halves_the_height(self):
+        tall = self.layout(6, facing=False).content_size().height()
+        wide = self.layout(6, facing=True, cover=False).content_size().height()
+        self.assertLess(wide, tall * 0.6)
+
+    def test_both_halves_of_a_spread_are_visible_together(self):
+        """Whole rows, which is what makes this a layout change and nothing more."""
+        layout = self.layout(6, cover=False)
+        rect = layout.page_rect(0)
+        found = layout.pages_in(rect.top() + 1, rect.bottom() - 1)
+        self.assertEqual(list(found), [0, 1])
+
+    def test_the_mapping_still_round_trips(self):
+        """Everything above rests on this, so facing must not disturb it."""
+        layout = self.layout(6, cover=True)
+        for index in range(layout.page_count):
+            for point in (QPointF(0, 0), QPointF(100, 200), QPointF(600, 780)):
+                back = layout.point_in_page(index, layout.from_page(index, point))
+                self.assertAlmostEqual(back.x(), point.x(), places=6)
+                self.assertAlmostEqual(back.y(), point.y(), places=6)
+
+    def test_a_point_finds_the_right_half_of_a_spread(self):
+        layout = self.layout(4, cover=False)
+        for index in (0, 1):
+            rect = layout.page_rect(index)
+            self.assertEqual(layout.page_at(rect.center()), index)
+
+    def test_the_gap_between_a_spread_is_on_no_page(self):
+        layout = self.layout(4, cover=False)
+        left = layout.page_rect(0)
+        between = QPointF(left.right() + DEFAULT_SPACING / 2, left.center().y())
+        self.assertIsNone(layout.page_at(between))
+
+    def test_visibility_agrees_with_brute_force_when_facing(self):
+        """Whole rows, deliberately.
+
+        The single-column version of this compares page rectangles, which works
+        there because a row is a page. Facing a portrait page with a landscape
+        one makes the row taller than its shorter half, so a band can cross the
+        row while missing that page -- and both halves are still returned,
+        because a spread is painted together. So the brute force here is over
+        *rows*, which is what pages_in() promises.
+        """
+        layout = PageLayout([self.LETTER, self.WIDE, self.LETTER, self.LETTER,
+                             self.WIDE, self.LETTER] * 3,
+                            zoom=1.2, facing=True, cover=True)
+        height = layout.content_size().height()
+        for top in range(0, int(height), 53):
+            band = (float(top), float(top) + 300)
+            fast = list(layout.pages_in(*band))
+            slow = []
+            for index in range(layout.page_count):
+                row = layout.row_of(index)
+                row_top = min(layout.page_rect(i).top() for i in row)
+                row_bottom = max(layout.page_rect(i).bottom() for i in row)
+                if row_top < band[1] and row_bottom > band[0]:
+                    slow.append(index)
+            self.assertEqual(sorted(fast), sorted(slow), f"disagreed over {band}")
+
+    def test_a_short_page_beside_a_tall_one_is_still_painted(self):
+        """The behaviour the test above had to be corrected to describe."""
+        layout = PageLayout([self.LETTER, self.WIDE, self.LETTER, self.LETTER],
+                            zoom=1.0, facing=True, cover=False)
+        tall, short = layout.page_rect(0), layout.page_rect(1)
+        self.assertGreater(tall.bottom(), short.bottom(), "fixture is not lopsided")
+        band = (short.bottom() + 1, tall.bottom() - 1)
+        self.assertEqual(list(layout.pages_in(*band)), [0, 1],
+                         "the short half of the spread was dropped")
+
+    def test_fit_width_fits_the_spread_not_the_page(self):
+        """Fitting a page and then showing two would come out twice as wide."""
+        layout = self.layout(6, cover=False)
+        layout.set_zoom(layout.zoom_for_width(1000))
+        self.assertAlmostEqual(layout.content_size().width(), 1000, places=6)
+
+    def test_fit_page_fits_the_whole_spread(self):
+        layout = self.layout(6, cover=False)
+        layout.set_zoom(layout.zoom_for_page(QSizeF(900, 700), index=1))
+        left, right = layout.page_rect(0), layout.page_rect(1)
+        margins = 2 * layout.margin_px()
+        self.assertLessEqual(right.right() - left.left() + margins, 900 + 1e-6)
+
+
+class TestCacheHoldsWhatIsVisible(unittest.TestCase):
+    """The budget must cover everything on screen at once, plus prefetch.
+
+    A constant would not do it. With facing pages a viewport shows four pages or
+    more, and prefetching two rows either side asks for as many again -- against
+    a fixed budget of five, every paint evicted something still on screen,
+    re-rendered it, and evicted its neighbour in turn. On screen that is a page
+    flickering between blank and rendered, and no geometry assertion can see it.
+    """
+
+    def setUp(self):
+        self.docs = DocumentSet()
+        self.addCleanup(self.docs.cleanup)
+        # Four copies, for sixteen pages. A four-page document cannot show this
+        # bug at all -- the first version of this test used one and passed
+        # against the very budget it was written to catch, because four pages
+        # never exceed a cache that holds five.
+        pages = []
+        for _ in range(4):
+            pages += self.docs.add_file(OUTLINE_PDF)
+        self.data = get_in_memory_pdf(list(pages), self.docs.files_for_export())
+        self.memory = MemoryDocument(self.data)
+        self.addCleanup(self.memory.close)
+        self.canvas = PageCanvas()
+        self.addCleanup(self.canvas.deleteLater)
+        self.addCleanup(self.canvas.shutdown)
+        self.canvas.resize(900, 700)
+        self.canvas.show()
+        settle(lambda: self.canvas.viewport().width() == 900)
+        self.canvas.set_document(self.memory.document, self.data)
+        self.assertGreaterEqual(self.canvas.page_count(), 12)
+
+    def visible(self):
+        top = self.canvas.offset().y()
+        return list(self.canvas.layout.pages_in(top, top + self.canvas.viewport().height()))
+
+    def cached(self, page):
+        rect = self.canvas.layout.page_rect(page)
+        return self.canvas._pages._renderer.get(
+            (page, int(round(rect.width())), int(round(rect.height()))))
+
+    def settle_paints(self, times=4):
+        for _ in range(times):
+            self.canvas.viewport().repaint()
+            settle(timeout_ms=250)
+
+    def check_nothing_visible_is_evicted(self):
+        self.settle_paints()
+        pages = self.visible()
+        self.assertTrue(pages, "nothing is visible to check")
+        missing = [p for p in pages if self.cached(p) is None]
+        self.assertEqual(missing, [],
+                         f"visible pages {missing} were evicted while on screen")
+
+    def test_single_column_keeps_what_is_visible(self):
+        self.canvas.set_zoom(0.22)        # more pages than any fixed budget
+        settle(timeout_ms=200)
+        self.check_nothing_visible_is_evicted()
+
+    def test_facing_pages_keeps_what_is_visible(self):
+        """The case that flickered."""
+        self.canvas.set_facing(True)
+        self.canvas.set_zoom(0.22)
+        settle(timeout_ms=200)
+        self.check_nothing_visible_is_evicted()
+
+    def test_the_budget_covers_the_visible_pages_and_more(self):
+        self.canvas.set_facing(True)
+        self.canvas.set_zoom(0.22)
+        settle(timeout_ms=200)
+        self.settle_paints(2)
+        pages = self.visible()
+        rect = self.canvas.layout.page_rect(pages[0])
+        per_page = rect.width() * rect.height()
+        budget = self.canvas._pages._renderer.cache.max_pixels / per_page
+        self.assertGreaterEqual(budget, len(pages),
+                                "the cache cannot hold one screenful")
+
+
+class TestFacingSurvivesADocument(unittest.TestCase):
+    """Facing pages belongs to the reader, not to the document.
+
+    set_document() rebuilds the layout, and a new document arrives whenever an
+    edit makes the snapshot stale (D15) as well as at startup. Dropping the
+    facing flag there meant the remembered setting was applied to an empty
+    layout and thrown away the moment a document loaded: the menu said facing,
+    the pages said otherwise, and toggling twice was the only way to fix it.
+    """
+
+    def setUp(self):
+        self.docs = DocumentSet()
+        self.addCleanup(self.docs.cleanup)
+        pages = self.docs.add_file(OUTLINE_PDF)
+        self.data = get_in_memory_pdf(list(pages), self.docs.files_for_export())
+        self.memory = MemoryDocument(self.data)
+        self.addCleanup(self.memory.close)
+        self.canvas = PageCanvas()
+        self.addCleanup(self.canvas.deleteLater)
+        self.addCleanup(self.canvas.shutdown)
+        self.canvas.resize(800, 600)
+        self.canvas.show()
+        settle(lambda: self.canvas.viewport().width() == 800)
+
+    def test_facing_set_before_a_document_survives_it_arriving(self):
+        """Exactly the startup order: the setting is restored, then a file opens."""
+        self.canvas.set_facing(True)
+        self.assertTrue(self.canvas.facing())
+        self.canvas.set_document(self.memory.document, self.data)
+        self.assertTrue(self.canvas.facing(), "the document load dropped it")
+        self.assertEqual(tuple(self.canvas.layout.row_of(1)), (1, 2))
+
+    def test_facing_survives_a_second_document(self):
+        """An edit makes the snapshot stale and a fresh export replaces it."""
+        self.canvas.set_document(self.memory.document, self.data)
+        self.canvas.set_facing(True)
+        self.canvas.set_document(self.memory.document, self.data)
+        self.assertTrue(self.canvas.facing())
+
+    def test_the_zoom_survives_too(self):
+        """It always did; this is the assertion that would have caught the pair."""
+        self.canvas.set_document(self.memory.document, self.data)
+        self.canvas.set_zoom(2.0)
+        self.canvas.set_document(self.memory.document, self.data)
+        self.assertAlmostEqual(self.canvas.zoom(), 2.0, places=6)
+
+    def test_single_column_stays_single(self):
+        self.canvas.set_document(self.memory.document, self.data)
+        self.assertFalse(self.canvas.facing())
+        self.assertEqual(tuple(self.canvas.layout.row_of(1)), (1,))

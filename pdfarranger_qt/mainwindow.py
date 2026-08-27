@@ -89,6 +89,8 @@ class MainWindow(QMainWindow):
         self.setCentralWidget(self.stack)
         self.reader.page_changed.connect(self._reader_page_changed)
         self.reader.selection_changed.connect(self._reader_selection_changed)
+        self.reader.set_facing(
+            self.settings.value("reader/facing", False, type=bool))
         self.reader.set_continuous(
             self.settings.value("reader/continuous", True, type=bool))
         self.setAcceptDrops(True)
@@ -414,6 +416,12 @@ class MainWindow(QMainWindow):
         self.act_arrange_mode.setShortcut(QKeySequence("Ctrl+E"))
         self.act_arrange_mode.triggered.connect(self.set_arrange_mode)
 
+        self.act_facing = QAction(_("Facing Pages"), self)
+        self.act_facing.setCheckable(True)
+        self.act_facing.setChecked(
+            self.settings.value("reader/facing", False, type=bool))
+        self.act_facing.triggered.connect(self.set_facing_pages)
+
         self.act_continuous = QAction(_("Continuous Scroll"), self)
         self.act_continuous.setCheckable(True)
         self.act_continuous.setChecked(
@@ -579,6 +587,7 @@ class MainWindow(QMainWindow):
         m = self._menu(bar, _m("_View"))
         m.addAction(self.act_arrange_mode)
         m.addAction(self.act_continuous)
+        m.addAction(self.act_facing)
         m.addAction(self.act_prev_page)
         m.addAction(self.act_next_page)
         m.addAction(self.act_first_page)
@@ -758,8 +767,9 @@ class MainWindow(QMainWindow):
         # Always available: switching view is not an edit, and with no document
         # both views are empty, so there is nothing to protect the user from.
         self.act_arrange_mode.setEnabled(True)
-        for act in (self.act_continuous, self.act_next_page, self.act_prev_page,
-                    self.act_first_page, self.act_last_page, self.act_go_to_page):
+        for act in (self.act_continuous, self.act_facing, self.act_next_page,
+                    self.act_prev_page, self.act_first_page, self.act_last_page,
+                    self.act_go_to_page):
             # Pages as well as the mode: read mode is now the state an empty
             # window is in, and "Next Page" with no document is a button that
             # cannot do anything.
@@ -974,6 +984,16 @@ class MainWindow(QMainWindow):
         self.settings.setValue("reader/continuous", bool(on))
         self.reader.set_continuous(bool(on))
         self.act_continuous.setChecked(bool(on))
+
+    def set_facing_pages(self, on: bool):
+        """Two pages side by side while reading, or one.
+
+        Remembered like the scroll mode: it is a way of reading rather than a
+        property of a document.
+        """
+        self.settings.setValue("reader/facing", bool(on))
+        self.reader.set_facing(bool(on))
+        self.act_facing.setChecked(bool(on))
 
     def _load_reader(self) -> bool:
         QApplication.setOverrideCursor(Qt.WaitCursor)

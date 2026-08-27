@@ -594,7 +594,12 @@ take a title and an `/XYZ` destination from.
             zoom. Placeholders are the same page at another zoom, scaled, since
             a cheap low-resolution pass does not exist. Painting a heavy
             Handbook page went from a 247 ms block to 1.2 ms
-      - [ ] Facing pages
+      - [x] Facing pages — the one thing `QPdfView.PageMode` had no setting
+            for. Done as *rows* in `PageLayout` rather than a mode in the
+            widget, so hit testing, selection, links and the coordinate mapping
+            work unchanged; a cover sits alone so the spreads that follow fall
+            (2,3), (4,5), the way a book opens. Fit measures the widest row, or
+            a fit-one-page would show half a spread
 - [ ] **Edit bookmarks — create, delete, rename, re-target, re-nest.** Upstream
       has none of this: its `exporter_outlines.py` only *preserves* an outline
       through an export, and neither its menu nor its window has a single

@@ -85,46 +85,115 @@ class FitMode:
 
 
 class PageLayout:
-    """A single column of pages, centred, with a gap between each.
+    """Pages in rows, centred, with a gap between each.
+
+    One page per row ordinarily; two when facing pages are on, which is the only
+    thing `QPdfView.PageMode` had no setting for at all. Rows rather than a
+    special case, so page rectangles, hit testing and every coordinate mapping
+    below work the same either way -- a second layout for facing pages would be
+    a second set of geometry bugs, which is the reasoning that kept single-page
+    mode out of here too.
 
     Sizes are in PDF points and may differ per page -- a book with one landscape
     plate in it is the case that breaks a layout assuming a uniform size, and
-    the Handbook has several.
+    the Handbook has several. A row is as tall as its tallest page.
 
-    Offsets are precomputed and searched with ``bisect``: ``pages_in()`` runs on
-    every paint and every scroll, and a linear scan over 1590 pages is a cost
-    that grows with the document for no reason.
+    Row offsets are precomputed and searched with ``bisect``: ``pages_in()``
+    runs on every paint and every scroll, and a linear scan over 1590 pages is
+    a cost that grows with the document for no reason.
     """
 
     def __init__(self, sizes: Sequence[QSizeF], zoom: float = 1.0,
-                 spacing: float = DEFAULT_SPACING, margin: float = DEFAULT_MARGIN):
+                 spacing: float = DEFAULT_SPACING, margin: float = DEFAULT_MARGIN,
+                 facing: bool = False, cover: bool = True):
         self._sizes = [QSizeF(s) for s in sizes]
         self._spacing = float(spacing)
         self._margin = float(margin)
+        self._facing = bool(facing)
+        self._cover = bool(cover)
         self._zoom = 1.0
+        self._rows: List[List[int]] = []
+        self._row_of: List[int] = []
         self._tops: List[float] = []
         self._height = 0.0
         self._width = 0.0
         self.set_zoom(zoom)
+
+    # -- rows --------------------------------------------------------------
+
+    def _build_rows(self):
+        """Group pages into rows: one each, or two when facing.
+
+        ``cover`` puts page 1 alone on the first row, so the spreads that follow
+        are (2,3), (4,5) and so on -- which is how a book actually falls open,
+        and how every reader that offers this spells it. Without it the pairs
+        start at the first page.
+        """
+        count = len(self._sizes)
+        if not self._facing:
+            self._rows = [[i] for i in range(count)]
+        else:
+            self._rows = []
+            index = 0
+            if self._cover and count:
+                self._rows.append([0])
+                index = 1
+            while index < count:
+                self._rows.append([i for i in (index, index + 1) if i < count])
+                index += 2
+        self._row_of = [0] * count
+        for number, row in enumerate(self._rows):
+            for page in row:
+                self._row_of[page] = number
+
+    def set_facing(self, facing: bool, cover: Optional[bool] = None):
+        """Two pages to a row, or one. Re-lays out at the current zoom."""
+        self._facing = bool(facing)
+        if cover is not None:
+            self._cover = bool(cover)
+        self.set_zoom(self._zoom)
+
+    @property
+    def facing(self) -> bool:
+        return self._facing
+
+    @property
+    def cover(self) -> bool:
+        return self._cover
+
+    def row_of(self, index: int) -> List[int]:
+        """The pages sharing a row with ``index``, in order."""
+        return list(self._rows[self._row_of[index]])
 
     # -- geometry ----------------------------------------------------------
 
     def set_zoom(self, zoom: float):
         """Re-lay out at a new scale. Cheap enough to call while dragging."""
         self._zoom = max(0.01, float(zoom))
+        self._build_rows()
         gap = self._spacing * self._zoom
         margin = self._margin * self._zoom
         y = margin
         self._tops = []
         widest = 0.0
-        for size in self._sizes:
+        for row in self._rows:
             self._tops.append(y)
-            y += size.height() * self._zoom + gap
-        for size in self._sizes:
-            widest = max(widest, size.width() * self._zoom)
+            # As tall as the tallest page on it, and as wide as the sum plus the
+            # gaps between: a landscape plate facing a portrait one is the case
+            # that catches an assumption of uniform size.
+            y += self._row_height(row) + gap
+            widest = max(widest, self._row_width(row))
         # The trailing gap is not part of the content; the bottom margin is.
-        self._height = (y - gap + margin) if self._sizes else 0.0
+        self._height = (y - gap + margin) if self._rows else 0.0
         self._width = widest + 2 * margin
+
+    def _row_height(self, row) -> float:
+        return max(self._sizes[i].height() * self._zoom for i in row)
+
+    def _row_width(self, row) -> float:
+        gap = self._spacing * self._zoom
+        return (sum(self._sizes[i].width() * self._zoom for i in row)
+                + gap * (len(row) - 1))
 
     @property
     def zoom(self) -> float:
@@ -143,32 +212,47 @@ class PageLayout:
         return QSizeF(self._width, self._height)
 
     def page_rect(self, index: int) -> QRectF:
-        """Where page ``index`` sits in document pixels."""
-        size = self._sizes[index]
-        w = size.width() * self._zoom
-        h = size.height() * self._zoom
-        return QRectF((self._width - w) / 2.0, self._tops[index], w, h)
+        """Where page ``index`` sits in document pixels.
 
-    def pages_in(self, top: float, bottom: float) -> range:
-        """Indices whose rectangles intersect the band ``top``..``bottom``.
-
-        A half-open range, empty when nothing intersects. Touching edges do not
-        count as intersecting, so a page exactly one pixel above the viewport is
-        not rendered.
+        The row is centred as a group and its pages laid left to right, so a
+        spread stays centred even when its two pages differ in width. Pages are
+        top-aligned within a row, which is what a book does.
         """
-        if not self._sizes or bottom <= top:
-            return range(0, 0)
-        # First page whose bottom edge is past `top`.
-        first = bisect.bisect_right(self._tops, top)
-        first = max(0, first - 1)
-        while first < len(self._sizes) and self._bottom(first) <= top:
-            first += 1
-        # One past the last page whose top edge is before `bottom`.
-        last = bisect.bisect_left(self._tops, bottom)
-        return range(first, max(first, last))
+        row_number = self._row_of[index]
+        row = self._rows[row_number]
+        gap = self._spacing * self._zoom
+        x = (self._width - self._row_width(row)) / 2.0
+        for page in row:
+            w = self._sizes[page].width() * self._zoom
+            if page == index:
+                h = self._sizes[page].height() * self._zoom
+                return QRectF(x, self._tops[row_number], w, h)
+            x += w + gap
+        raise KeyError(index)  # pragma: no cover - _row_of guarantees the page
 
-    def _bottom(self, index: int) -> float:
-        return self._tops[index] + self._sizes[index].height() * self._zoom
+    def pages_in(self, top: float, bottom: float) -> List[int]:
+        """Indices whose rows intersect the band ``top``..``bottom``, in order.
+
+        Empty when nothing intersects. Touching edges do not count, so a page
+        exactly one pixel above the viewport is not rendered. Whole rows: both
+        halves of a spread are painted together, which is what makes facing
+        pages a layout change and nothing more.
+        """
+        if not self._rows or bottom <= top:
+            return []
+        # First row whose bottom edge is past `top`.
+        first = max(0, bisect.bisect_right(self._tops, top) - 1)
+        while first < len(self._rows) and self._row_bottom(first) <= top:
+            first += 1
+        # One past the last row whose top edge is before `bottom`.
+        last = bisect.bisect_left(self._tops, bottom)
+        pages = []
+        for number in range(first, max(first, last)):
+            pages.extend(self._rows[number])
+        return pages
+
+    def _row_bottom(self, number: int) -> float:
+        return self._tops[number] + self._row_height(self._rows[number])
 
     # -- mapping -----------------------------------------------------------
 
@@ -220,10 +304,11 @@ class PageLayout:
         Never None, so callers scrolling or extending a selection always have
         somewhere to land. Clamps at both ends.
         """
-        if not self._sizes:
+        if not self._rows:
             raise ValueError("no pages")
-        index = bisect.bisect_right(self._tops, y) - 1
-        return min(max(index, 0), len(self._sizes) - 1)
+        number = bisect.bisect_right(self._tops, y) - 1
+        number = min(max(number, 0), len(self._rows) - 1)
+        return self._rows[number][0]
 
     # -- fitting -----------------------------------------------------------
 
@@ -233,26 +318,40 @@ class PageLayout:
         The margins scale with the zoom, so they belong *inside* the division:
         subtracting them first and dividing by the page alone overshoots, and
         fit-width then raises the horizontal scroll bar it exists to avoid.
+
+        Measured on the widest *row*, so a spread fits rather than each of its
+        halves separately -- fitting a page and then showing two of them side by
+        side is how facing pages would come out twice as wide as the window.
         """
-        widest = max((s.width() for s in self._sizes), default=0.0)
+        if not self._rows:
+            return 1.0
+        widest = max(
+            (sum(self._sizes[i].width() for i in row) + self._spacing * (len(row) - 1))
+            for row in self._rows)
         if widest <= 0:
             return 1.0
         return max(0.01, viewport_width / (widest + 2 * self._margin))
 
     def zoom_for_page(self, viewport: QSizeF, index: int = 0) -> float:
-        """The zoom at which one whole page fits, both dimensions.
+        """The zoom at which one whole row fits, both dimensions.
 
-        Margins inside the division for the same reason as ``zoom_for_width``.
-        The vertical margin is counted once above and once below, matching the
-        content height for a single page.
+        The row rather than the page, for the same reason as ``zoom_for_width``:
+        with facing pages on, "fit one page" means the spread you are looking
+        at, not half of it.
+
+        Margins inside the division, as above. The vertical margin is counted
+        once above and once below, matching the content height for one row.
         """
-        if not self._sizes:
+        if not self._rows:
             return 1.0
-        size = self._sizes[index]
-        if size.width() <= 0 or size.height() <= 0:
+        row = self._rows[self._row_of[index]]
+        width = (sum(self._sizes[i].width() for i in row)
+                 + self._spacing * (len(row) - 1))
+        height = max(self._sizes[i].height() for i in row)
+        if width <= 0 or height <= 0:
             return 1.0
-        return max(0.01, min(viewport.width() / (size.width() + 2 * self._margin),
-                             viewport.height() / (size.height() + 2 * self._margin)))
+        return max(0.01, min(viewport.width() / (width + 2 * self._margin),
+                             viewport.height() / (height + 2 * self._margin)))
 
 
 def sizes_from_document(document, count: Optional[int] = None) -> List[QSizeF]:
@@ -391,11 +490,11 @@ class AsynchronousPages(QObject):
     #: A page arrived; the canvas should repaint.
     page_ready = Signal(int)
 
-    #: Pages to keep at the current size: the visible one, and a screenful
-    #: either side, so a scroll in either direction finds them already there.
-    KEEP = 5
-    #: How far ahead and behind to render before anyone asks.
-    PREFETCH = 2
+    #: How many rows ahead and behind to render before anyone asks.
+    PREFETCH_ROWS = 2
+    #: Spare room in the cache beyond what is visible and prefetched, so a
+    #: bitmap is never evicted by the very request that will need it next.
+    SLACK = 2
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -454,23 +553,28 @@ class AsynchronousPages(QObject):
         self._renderer.request([PageRenderTask((index, size.width(), size.height()),
                                                index, size)])
 
-    def prefetch(self, around: int, size: QSize, page_count: int):
-        """Render the neighbours before they are scrolled to.
+    def prefetch(self, pages, size: QSize, keep: int):
+        """Render ``pages`` before they are asked for, and hold ``keep`` of them.
 
         The only mitigation there is: the slow pages cannot be made faster, so
         the answer is to have started them earlier. At ~250 ms for a heavy page,
-        two either side buys about two seconds of lead at reading pace.
+        a couple of screenfuls either side buys about two seconds of lead at
+        reading pace.
+
+        ``keep`` comes from the caller because only the layout knows how many
+        pages are on screen at once. Sizing it as a constant is what made facing
+        pages flicker: four pages visible and four prefetched against a budget
+        of five meant every paint evicted something still on screen, re-rendered
+        it, and evicted its neighbour in turn.
         """
         if size.width() <= 0 or size.height() <= 0:
             return
         pixels = size.width() * size.height()
-        self._renderer.set_budget(max(1, pixels * self.KEEP))
-        for offset in range(1, self.PREFETCH + 1):
-            for index in (around - offset, around + offset):
-                if 0 <= index < page_count:
-                    key = (index, size.width(), size.height())
-                    if self._renderer.get(key) is None:
-                        self._request(index, size)
+        self._renderer.set_budget(max(1, pixels * max(1, keep)))
+        for index in pages:
+            key = (index, size.width(), size.height())
+            if self._renderer.get(key) is None:
+                self._request(index, size)
 
 
 class PageCanvas(QAbstractScrollArea):
@@ -536,7 +640,14 @@ class PageCanvas(QAbstractScrollArea):
         placeholder, because nothing can be rendered.
         """
         sizes = sizes_from_document(document) if document is not None else []
-        self._layout = PageLayout(sizes, zoom=self._layout.zoom)
+        # Carrying the zoom *and* the facing mode across: these belong to the
+        # reader, not to the document, and a new document arrives every time an
+        # edit makes the snapshot stale. Dropping facing here meant the setting
+        # was restored at startup, applied to an empty layout, and thrown away
+        # the moment a document loaded.
+        self._layout = PageLayout(sizes, zoom=self._layout.zoom,
+                                  facing=self._layout.facing,
+                                  cover=self._layout.cover)
         self._pages.set_document(document, data)
         self._text.set_document(document)
         self._document = document
@@ -639,6 +750,27 @@ class PageCanvas(QAbstractScrollArea):
             self.zoom_to_page()
 
     # -- navigation --------------------------------------------------------
+
+    def facing(self) -> bool:
+        return self._layout.facing
+
+    def set_facing(self, on: bool, cover: Optional[bool] = None):
+        """Two pages to a row, or one, keeping the reader's place.
+
+        A relayout moves every page, so the page being read is put back where it
+        was afterwards -- the same courtesy the continuous/single toggle gets,
+        and for the same reason: a mode change that silently jumps to the front
+        of the book is worse than not offering the mode.
+        """
+        if bool(on) == self._layout.facing and cover is None:
+            return
+        page = max(0, self.current_page())
+        self._layout.set_facing(on, cover)
+        self._pages.clear()
+        self._reapply_fit()
+        self._update_ranges()
+        self.go_to_page(page)
+        self.viewport().update()
 
     def continuous(self) -> bool:
         return self._continuous
@@ -902,12 +1034,16 @@ class PageCanvas(QAbstractScrollArea):
         return self._document.getSelection(page, a, b)
 
     def _prefetch_around(self, visible):
-        """Ask for the neighbours of what was just painted.
+        """Ask for the rows around what was just painted.
 
         After painting rather than before: what is on screen is what the render
         thread should be working on first, and the queue moves a re-requested
         key to the back, so asking for neighbours first would delay the page the
         reader is actually looking at.
+
+        Rows rather than pages, because with facing pages on, "the next two"
+        means the next two *spreads* -- and because the cache has to be big
+        enough for everything visible at once, which a page count cannot say.
         """
         if not visible or not self._layout.page_count:
             return
@@ -915,7 +1051,24 @@ class PageCanvas(QAbstractScrollArea):
         rect = self._layout.page_rect(middle)
         size = QSize(max(1, int(round(rect.width()))),
                      max(1, int(round(rect.height()))))
-        self._pages.prefetch(middle, size, self._layout.page_count)
+
+        wanted = list(visible)
+        row = self._layout.row_of(middle)
+        per_row = max(1, len(row))
+        first, last = visible[0], visible[-1]
+        for step in range(1, AsynchronousPages.PREFETCH_ROWS + 1):
+            for index in (first - step * per_row, last + step * per_row):
+                for page in self._pages_of_row(index):
+                    if page not in wanted:
+                        wanted.append(page)
+        keep = len(wanted) + AsynchronousPages.SLACK
+        self._pages.prefetch(wanted, size, keep)
+
+    def _pages_of_row(self, index: int):
+        """Every page sharing a row with ``index``, or nothing if out of range."""
+        if not 0 <= index < self._layout.page_count:
+            return []
+        return self._layout.row_of(index)
 
     def _paint_selection(self, painter, index: int, offset: QPointF):
         selection = self._selection.get(index)

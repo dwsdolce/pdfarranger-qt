@@ -318,6 +318,17 @@ class ReaderView(QWidget):
     def zoom_out(self):
         self.set_zoom(self.zoom() / ZOOM_STEP)
 
+    def facing(self) -> bool:
+        return self.canvas.facing()
+
+    def set_facing(self, on: bool):
+        """Show two pages side by side, the way a book falls open.
+
+        The one thing `QPdfView.PageMode` had no setting for at all (see section
+        6), so it arrives with our own view rather than as a wiring change.
+        """
+        self.canvas.set_facing(on)
+
     def continuous(self) -> bool:
         return self.canvas.continuous()
 

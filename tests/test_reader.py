@@ -1145,3 +1145,79 @@ class TestEditMenuFollowsTheMode(unittest.TestCase):
                        self.win.act_paste_overlay, self.win.act_paste_underlay):
             self.assertTrue(action.toolTip(), action.text())
             self.assertIn("pages", action.toolTip().lower())
+
+
+class TestFacingPagesCommand(unittest.TestCase):
+    """View > Facing Pages: remembered, and it keeps your place."""
+
+    def setUp(self):
+        from pdfarranger_qt.mainwindow import MainWindow
+
+        MESSAGE_BOXES.clear()
+        self.win = MainWindow()
+        self.win.resize(1000, 700)
+        self.win.show()
+        self.win.open_paths([OUTLINE_PDF])
+        self.win.modified = False
+        settle(timeout_ms=400)
+        self.addCleanup(self.win.settings.setValue, "reader/facing", False)
+
+    def tearDown(self):
+        self.win.modified = False
+        self.win.close()
+
+    def test_it_only_applies_while_reading(self):
+        self.assertTrue(self.win.act_facing.isEnabled())
+        self.win.set_arrange_mode(True)
+        settle(timeout_ms=200)
+        self.assertFalse(self.win.act_facing.isEnabled())
+
+    def test_turning_it_on_pairs_the_pages(self):
+        self.win.set_facing_pages(True)
+        settle(timeout_ms=300)
+        self.assertTrue(self.win.reader.facing())
+        layout = self.win.reader.canvas.layout
+        self.assertEqual(tuple(layout.row_of(1)), (1, 2))
+
+    def test_it_keeps_the_page_you_were_on(self):
+        """A relayout moves everything; jumping to the front is worse than no mode.
+
+        "The same page" means the same page is still in front of you, not the
+        same page *number*: with a cover, page 2 joins the spread (1, 2), and
+        the current page of a spread is its left half. Asserting the number
+        would be asserting that spreads do not exist.
+        """
+        if self.win.reader.page_count() < 3:
+            self.skipTest("needs a longer fixture")
+        self.win.reader.go_to_page(2)
+        settle(timeout_ms=300)
+        self.win.set_facing_pages(True)
+        settle(timeout_ms=300)
+        canvas = self.win.reader.canvas
+        self.assertIn(2, canvas.layout.row_of(canvas.current_page()),
+                      "page 2 is no longer on screen")
+
+    def test_the_current_page_of_a_spread_is_its_left_half(self):
+        self.win.set_facing_pages(True)
+        settle(timeout_ms=300)
+        self.win.reader.go_to_page(2)
+        settle(timeout_ms=300)
+        self.assertEqual(self.win.reader.current_page(), 1)
+
+    def test_the_choice_is_remembered(self):
+        from pdfarranger_qt.mainwindow import MainWindow
+
+        self.win.set_facing_pages(True)
+        other = MainWindow()
+        self.addCleanup(other.close)
+        self.assertTrue(other.act_facing.isChecked())
+
+    def test_it_survives_a_rebuild_of_the_reader(self):
+        """Entering read mode re-exports; the mode must not be lost with it."""
+        self.win.set_facing_pages(True)
+        self.win.set_arrange_mode(True)
+        settle(timeout_ms=200)
+        self.win.model.pages[0].rotate(90)      # makes the snapshot stale
+        self.win.set_arrange_mode(False)
+        settle(timeout_ms=500)
+        self.assertTrue(self.win.reader.facing())
