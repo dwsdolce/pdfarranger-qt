@@ -21,9 +21,13 @@ edit, what a dangling entry means, what happens to the children of a deleted
 heading -- are answerable exactly rather than by poking a widget.
 """
 
+import os
 import unittest
 
 from pdfarranger_qt.outline import Bookmark, Outline, from_pdf_outline
+from support import HERE, settle
+
+OUTLINE_PDF = os.path.join(HERE, "exporter", "outlines.pdf")
 
 
 def sample() -> Outline:
@@ -214,3 +218,115 @@ class TestBuilding(unittest.TestCase):
     def test_a_missing_title_is_empty_rather_than_absent(self):
         outline = from_pdf_outline([self.FakeItem(None, 1)], lambda i: i.dest)
         self.assertEqual(outline.roots[0].title, "")
+
+
+class TestOutlineThroughEditing(unittest.TestCase):
+    """The outline through a document's life (D20).
+
+    The behaviour David asked for: edits, including undo, keep the bookmarks
+    right. Driven through a real window, because the interesting part is the
+    interaction between the page list, the undo stack and the outline, and a
+    unit test of any one of them would miss it.
+    """
+
+    def setUp(self):
+        from PySide6.QtWidgets import QApplication  # noqa: F401
+        from pdfarranger_qt.mainwindow import MainWindow
+
+        self.win = MainWindow()
+        self.win.resize(900, 700)
+        self.win.show()
+        self.win.open_paths([OUTLINE_PDF])
+        self.win.modified = False
+        settle(timeout_ms=400)
+
+    def tearDown(self):
+        self.win.modified = False
+        self.win.close()
+
+    def outline(self):
+        return self.win.model.outline
+
+    def titles(self):
+        return [b.title for _d, b in self.outline().walk()]
+
+    def test_the_outline_is_read_from_the_loaded_file(self):
+        self.assertEqual(self.titles(), ["Page 1", "Page 2", "Page 3", "Page 4"])
+
+    def test_every_bookmark_points_at_a_page(self):
+        uids = {p.uid for p in self.win.model.pages}
+        for _depth, item in self.outline().walk():
+            self.assertIn(item.uid, uids, item.title)
+
+    def test_reordering_pages_leaves_the_bookmarks_alone(self):
+        """Nothing here refers to a position, so there is nothing to remap."""
+        before = [(b.title, b.uid) for _d, b in self.outline().walk()]
+        self.win.model.move_rows([0], 4)
+        settle(timeout_ms=200)
+        self.assertEqual([(b.title, b.uid) for _d, b in self.outline().walk()], before)
+
+    def test_deleting_a_page_leaves_its_bookmark_dangling(self):
+        target = self.win.model.pages[1].uid
+        self.win.view.set_selected_rows([1])
+        self.win.delete_selected()
+        settle(timeout_ms=200)
+        dangling = self.outline().dangling()
+        self.assertEqual([b.title for b in dangling], ["Page 2"])
+        self.assertNotIn(target, {p.uid for p in self.win.model.pages})
+
+    def test_the_dangling_bookmark_is_kept_not_removed(self):
+        """Its title may have been edited, and it has to be re-homable."""
+        self.win.view.set_selected_rows([1])
+        self.win.delete_selected()
+        settle(timeout_ms=200)
+        self.assertEqual(len(self.outline()), 4)
+
+    def test_undoing_the_delete_reattaches_the_bookmark(self):
+        """One snapshot covers both, so the page and its bookmark come back together."""
+        self.win.view.set_selected_rows([1])
+        self.win.delete_selected()
+        settle(timeout_ms=200)
+        self.assertEqual(len(self.outline().dangling()), 1)
+
+        self.win.undo()
+        settle(timeout_ms=300)
+        self.assertEqual(self.outline().dangling(), [],
+                         "the bookmark did not find its page again")
+        self.assertEqual(len(self.win.model.pages), 4)
+
+    def test_duplicating_a_page_does_not_duplicate_its_bookmarks(self):
+        """The copy is a new page with its own identity (D20)."""
+        self.win.view.set_selected_rows([0])
+        self.win.model.undo.commit("Duplicate")
+        self.win.model.duplicate([0])
+        settle(timeout_ms=200)
+        self.assertEqual(self.titles().count("Page 1"), 1)
+        self.assertEqual(len(self.win.model.pages), 5)
+
+    def test_importing_a_second_file_concatenates_at_the_root(self):
+        """No wrapper node per file: that is the shape a merged book has.
+
+        A *copy* of the fixture, because importing the same path again reuses
+        the document already loaded -- one source, one outline read, and the
+        second set of pages are duplicates whose bookmarks stay with the first
+        (D20). Two different files is the case this is about.
+        """
+        import shutil
+        import tempfile
+
+        second = os.path.join(tempfile.mkdtemp(), "second.pdf")
+        shutil.copy(OUTLINE_PDF, second)
+        self.addCleanup(shutil.rmtree, os.path.dirname(second), ignore_errors=True)
+
+        self.win._load_paths([second])
+        settle(timeout_ms=400)
+        self.assertEqual(self.titles(),
+                         ["Page 1", "Page 2", "Page 3", "Page 4"] * 2)
+        self.assertEqual(len(self.win.model.pages), 8)
+
+    def test_importing_the_same_file_again_does_not_duplicate_bookmarks(self):
+        """The second copy's pages are duplicates; bookmarks stay with the first."""
+        self.win._load_paths([OUTLINE_PDF])
+        settle(timeout_ms=400)
+        self.assertEqual(len(self.win.model.pages), 8)
+        self.assertEqual(self.titles(), ["Page 1", "Page 2", "Page 3", "Page 4"])

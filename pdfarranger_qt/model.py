@@ -222,6 +222,8 @@ class PageListModel(QAbstractListModel):
             del self.pages[first : last + 1]
             self.endRemoveRows()
         self._key_rows.clear()
+        # Bookmarks pointing at the pages just removed become dangling (D20).
+        self.sync_outline()
         self.contents_changed.emit()
 
     def move_rows(self, rows: List[int], dest: int):
@@ -416,6 +418,21 @@ class PageListModel(QAbstractListModel):
             self.endResetModel()
             self.contents_changed.emit()
         return added
+
+    def sync_outline(self):
+        """Let the outline notice pages that have gone (D20).
+
+        Called after anything that can shrink the list. The bookmarks are kept
+        and marked dangling rather than deleted -- their titles may have been
+        edited, and undo restores the uid along with the page, since both come
+        off the same snapshot.
+        """
+        if not self.outline:
+            return
+        lost = self.outline.orphan(p.uid for p in self.pages)
+        if lost:
+            self.outline_changed.emit()
+        return lost
 
     def _touch(self, rows):
         """Signal that these rows changed appearance and possibly geometry."""

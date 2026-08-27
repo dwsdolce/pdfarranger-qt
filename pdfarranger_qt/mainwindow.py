@@ -868,7 +868,38 @@ class MainWindow(QMainWindow):
             return 0
         self.model.undo.commit("Import")
         self.model.insert_pages(len(self.model.pages) if at is None else at, added)
+        self._load_outline()
         return len(added)
+
+    def _load_outline(self):
+        """Read the bookmarks out of the loaded files (D20).
+
+        From the source documents, once, rather than from whatever the reader
+        happens to be showing: read mode shows an in-memory export when anything
+        has been edited and the file itself when nothing has, so deriving the
+        outline from it would mean a different answer depending on edit state.
+
+        Importing concatenates: a second file's bookmarks join at the root with
+        no wrapper node, which is the shape a merged book already has.
+        """
+        import pikepdf
+
+        from . import exporter_outlines
+
+        opened = []
+        try:
+            for doc in self.docs.docs:
+                try:
+                    opened.append(pikepdf.open(doc.copyname))
+                except Exception:  # noqa: BLE001 - a file we cannot read has no outline
+                    opened.append(None)
+            self.model.outline = exporter_outlines.read_outline(
+                opened, self.model.pages, self.docs.source_names())
+        finally:
+            for pdf in opened:
+                if pdf is not None:
+                    pdf.close()
+        self.model.outline_changed.emit()
 
     # -- recent files ------------------------------------------------------
 
