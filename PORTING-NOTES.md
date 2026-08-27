@@ -1101,6 +1101,67 @@ layout and keeping it in step across upgrades — the same shape of bet as
 quietly. Left as a phase 7 item.
 
 
+### Entering read mode costs more than reading does
+
+Measured on the ARRL Handbook, 1590 pages, 255 MB on disk, with
+`tools/bench_export.py`:
+
+| Step | Time | Peak RSS |
+| --- | --- | --- |
+| `add_file`, including the working copy | 846 ms | 451 MB |
+| `get_in_memory_pdf(outlines=False)` | 2938 ms | 1287 MB |
+| `get_in_memory_pdf(outlines=True)` -- what read mode calls | **3572 ms** | **1724 MB** |
+| `MemoryDocument` (QByteArray + PDFium parse) | 63 ms | +0 |
+
+**3.6 seconds and 1.7 GB to open the reader**, against 247 ms for the slowest
+single page render. Roughly seven times the file's size resident, and fourteen
+times the cost of the thing the render benchmarks were about.
+
+The cost is the export, not the document. `MemoryDocument` is 63 ms because
+PDFium parses lazily, so the reader's `QPdfDocument` is nearly free; producing
+the 254 MB of bytes it reads is not. Outline remapping is 634 ms of the total --
+real, as `get_in_memory_pdf`'s docstring warns, but only 22%. The remaining 2.9 s
+is spent writing out a document that already exists on disk, unchanged.
+
+**This is current behaviour, not a property of the planned view.** Read mode does
+it today. And the refresh policy recorded in section 2 has an edit made *while*
+reading rebuild immediately rather than lazily, so on a document this size that
+is a 3.6 second freeze on the GUI thread, mid-read.
+
+**The fast path, proposed.** D15 exports because the edits do not live in the
+reader's `QPdfDocument`. When there are no edits, there is nothing to apply: a
+page list that is one source file, in order, with no rotation, crop, hide, scale,
+layers or inserted blanks is 1:1 with the file on disk, and the reader could open
+that file directly for the price of the 63 ms parse.
+
+That is not an edge case. It is D14's stated reason for having a reader at all --
+*reading is why the document was opened* -- so someone who opens a book to read it
+currently pays the whole 3.6 s and 1.7 GB for a transformation that changes
+nothing.
+
+**Note what the question is not.** It is tempting to ask how to tell, at open
+time, whether a file is being opened to read or to arrange. That guess is not
+needed and could not be made reliably: the choice belongs at *entry to read
+mode*, where it is a property of the current page list rather than an intention.
+Unmodified takes the source; anything else exports as it does now. It also
+degrades correctly on its own -- make one edit and the next entry falls back to
+the export, with no state to track.
+
+**Still open.** Two things, if the fast path is taken:
+
+- The edited case keeps the 3.6 s, and the first edit gives up the fast path for
+  the rest of the session. Moving the export off the GUI thread, with the reader
+  holding the previous document until the new one is ready, is the general fix
+  and a larger change: it makes the reader's document asynchronous.
+- Verify that search, bookmarks and page numbering line up when the reader holds
+  the source rather than an export. They should, an unmodified list being 1:1,
+  but *Read mode* above warns specifically about pointing a view at another
+  document's geometry, and that warning is the reason to check rather than
+  assume.
+
+Worth its own decision entry when picked up: the fast path changes what the
+reader is looking at, which D15 deliberately settled the other way.
+
 ### Owning the reader's view — the plan
 
 Phase 7's largest item, and the prerequisite for two of the three things wanted
