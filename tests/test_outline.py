@@ -736,3 +736,497 @@ class TestBookmarkCommands(unittest.TestCase):
         on = [a for a in menu.actions()
               if a.text() == "Delete Dangling Bookmarks"][0]
         self.assertTrue(on.isEnabled())
+
+
+class TestOutlineSurvivesASave(unittest.TestCase):
+    """Edit, save, reload: the tree comes back (D20, step 8).
+
+    The test the whole design exists for. Until the outline was written on save
+    every bookmark command worked, marked the document modified, undid
+    correctly -- and was discarded by the next save, which rebuilt the outline
+    from the source files. A feature that lies is worse than one that is
+    missing, so this is an end-to-end round trip rather than a unit test of the
+    writer.
+    """
+
+    def setUp(self):
+        import tempfile
+        from PySide6.QtWidgets import QApplication  # noqa: F401
+        from pdfarranger_qt.mainwindow import MainWindow
+
+        self.dir = tempfile.mkdtemp()
+        self.addCleanup(__import__("shutil").rmtree, self.dir, ignore_errors=True)
+        self.out = os.path.join(self.dir, "saved.pdf")
+        self.win = MainWindow()
+        self.win.resize(900, 700)
+        self.win.show()
+        self.win.open_paths([OUTLINE_PDF])
+        settle(timeout_ms=400)
+
+    def tearDown(self):
+        self.win.modified = False
+        self.win.close()
+
+    def save(self):
+        self.assertTrue(self.win._write([self.out], self.win.model.pages,
+                                        outline=self.win.model.outline),
+                        "the save failed")
+
+    def reload(self):
+        """Open the saved file in a fresh window and return its outline."""
+        from pdfarranger_qt.mainwindow import MainWindow
+        second = MainWindow()
+        self.addCleanup(second.close)
+        second.modified = False
+        second.open_paths([self.out])
+        settle(timeout_ms=400)
+        self.addCleanup(setattr, second, "modified", False)
+        return second.model.outline
+
+    def titles(self, outline):
+        return [f"{'  ' * d}{b.title}" for d, b in outline.walk()]
+
+    def test_an_unedited_outline_round_trips(self):
+        self.save()
+        self.assertEqual(self.titles(self.reload()),
+                         ["Page 1", "Page 2", "Page 3", "Page 4"])
+
+    def test_a_rename_survives(self):
+        from PySide6.QtCore import QModelIndex, Qt
+        self.win.set_read_mode(True)
+        settle(timeout_ms=400)
+        index = self.win.reader.bookmarks.index(0, 0, QModelIndex())
+        self.win.reader.bookmarks.setData(index, "Preface", Qt.EditRole)
+        self.save()
+        self.assertEqual(self.titles(self.reload())[0], "Preface")
+
+    def test_a_delete_survives(self):
+        self.win.model.outline.remove(self.win.model.outline.roots[1])
+        self.save()
+        self.assertEqual(self.titles(self.reload()),
+                         ["Page 1", "Page 3", "Page 4"])
+
+    def test_nesting_survives(self):
+        outline = self.win.model.outline
+        second = outline.roots[1]
+        outline.move(second, outline.roots[0], 0)
+        self.save()
+        self.assertEqual(self.titles(self.reload()),
+                         ["Page 1", "  Page 2", "Page 3", "Page 4"])
+
+    def test_each_bookmark_still_points_at_its_own_page(self):
+        """A uid became a position; the position has to be the right one."""
+        outline = self.win.model.outline
+        outline.move(outline.roots[0], None, len(outline.roots))   # goes last
+        self.save()
+        reloaded = self.reload()
+        self.assertEqual([b.title for _d, b in reloaded.walk()],
+                         ["Page 2", "Page 3", "Page 4", "Page 1"])
+        # Reading the saved file back resolves each destination afresh, so a
+        # bookmark that came back with a uid at all landed on a real page.
+        for _depth, item in reloaded.walk():
+            self.assertIsNotNone(item.uid, item.title)
+
+    def test_the_within_page_position_is_kept(self):
+        """Dropping it would flatten every bookmark to the top of its page."""
+        outline = self.win.model.outline
+        outline.roots[0].view = ("XYZ", 100.0, 700.0, None)
+        self.save()
+        reloaded = self.reload()
+        self.assertEqual(reloaded.roots[0].view[0], "XYZ")
+        self.assertEqual(reloaded.roots[0].view[1], 100.0)
+        self.assertEqual(reloaded.roots[0].view[2], 700.0)
+
+    def test_a_heading_comes_back_as_a_heading(self):
+        from pdfarranger_qt.outline import Bookmark
+        self.win.model.outline.roots.insert(0, Bookmark("Part One", None))
+        self.save()
+        reloaded = self.reload()
+        self.assertEqual(reloaded.roots[0].title, "Part One")
+        self.assertTrue(reloaded.roots[0].heading)
+        self.assertFalse(reloaded.roots[0].dangling)
+
+    def test_a_dangling_entry_comes_back_as_a_heading(self):
+        """The one loss the design accepts, pinned down so it stays narrow.
+
+        There is no valid way to write "points at a page that no longer
+        exists", so it is written without a destination -- which is what a
+        heading is. The title survives, which is the part worth keeping.
+        """
+        self.win.view.set_selected_rows([1])
+        self.win.delete_selected()
+        settle(timeout_ms=300)
+        self.assertEqual([b.title for b in self.win.model.outline.dangling()],
+                         ["Page 2"])
+        self.save()
+        reloaded = self.reload()
+        entry = [b for _d, b in reloaded.walk() if b.title == "Page 2"][0]
+        self.assertTrue(entry.heading)
+        self.assertEqual(reloaded.dangling(), [])
+
+    def test_an_exported_selection_keeps_only_what_it_can(self):
+        """Pruned: the entries whose pages went, and their edits, come along."""
+        from PySide6.QtCore import QModelIndex, Qt
+        self.win.set_read_mode(True)
+        settle(timeout_ms=400)
+        index = self.win.reader.bookmarks.index(0, 0, QModelIndex())
+        self.win.reader.bookmarks.setData(index, "Preface", Qt.EditRole)
+
+        part = os.path.join(self.dir, "part.pdf")
+        self.win._write([part], self.win.model.pages[:2], mark_saved=False,
+                        outline=self.win.model.outline)
+        from pdfarranger_qt.mainwindow import MainWindow
+        second = MainWindow()
+        self.addCleanup(second.close)
+        second.modified = False
+        second.open_paths([part])
+        settle(timeout_ms=400)
+        self.addCleanup(setattr, second, "modified", False)
+        self.assertEqual(len(second.model.pages), 2)
+        self.assertEqual(self.titles(second.model.outline), ["Preface", "Page 2"],
+                         "a selection kept a bookmark with nowhere to point, "
+                         "or exported a stale title")
+
+
+class TestDragToReNest(unittest.TestCase):
+    """Drag inside the outline tree (D20, the ninth step).
+
+    Driven through the model's drop handler rather than by synthesising drag
+    events: what is worth testing is where an entry lands and that one drag is
+    one undo entry, and Qt's drag machinery is not ours to prove.
+    """
+
+    def setUp(self):
+        from PySide6.QtWidgets import QApplication  # noqa: F401
+        from pdfarranger_qt.mainwindow import MainWindow
+
+        self.win = MainWindow()
+        self.win.resize(900, 700)
+        self.win.show()
+        self.win.open_paths([OUTLINE_PDF])
+        self.win.set_read_mode(True)
+        settle(timeout_ms=500)
+        self.win.modified = False
+        self.model = self.win.reader.bookmarks
+
+    def tearDown(self):
+        self.win.modified = False
+        self.win.close()
+
+    def outline(self):
+        return self.win.model.outline
+
+    def titles(self):
+        return [f"{'  ' * d}{b.title}" for d, b in self.outline().walk()]
+
+    def root(self, row):
+        from PySide6.QtCore import QModelIndex
+        return self.model.index(row, 0, QModelIndex())
+
+    def drop(self, source_row, row, parent):
+        """Drag the root entry at ``source_row`` to ``(row, parent)``."""
+        from PySide6.QtCore import Qt
+        data = self.model.mimeData([self.root(source_row)])
+        return self.model.dropMimeData(data, Qt.MoveAction, row, 0, parent)
+
+    # -- what a drop carries -----------------------------------------------
+
+    def test_a_path_survives_the_round_trip(self):
+        from PySide6.QtCore import Qt
+        self.outline().move(self.outline().roots[1], self.outline().roots[0], 0)
+        self.model.set_outline(self.outline())
+        nested = self.model.index(0, 0, self.root(0))
+        data = self.model.mimeData([nested])
+        self.assertEqual(self.model._dragged(data).title, "Page 2")
+        del Qt
+
+    # -- nesting -----------------------------------------------------------
+
+    def test_dropping_onto_an_entry_nests_it(self):
+        """row < 0 is Qt for "onto this one rather than between two"."""
+        self.assertTrue(self.drop(1, -1, self.root(0)))
+        self.assertEqual(self.titles(),
+                         ["Page 1", "  Page 2", "Page 3", "Page 4"])
+
+    def test_dropping_between_siblings_reorders(self):
+        from PySide6.QtCore import QModelIndex
+        self.assertTrue(self.drop(0, 3, QModelIndex()))
+        self.assertEqual(self.titles(), ["Page 2", "Page 3", "Page 1", "Page 4"])
+
+    def test_a_drag_forward_lands_where_it_was_dropped(self):
+        """beginMoveRows and Outline.move both adjust; doing it twice was a bug
+        waiting to happen, and this is the case that would have caught it."""
+        from PySide6.QtCore import QModelIndex
+        self.drop(0, 4, QModelIndex())
+        self.assertEqual(self.titles(), ["Page 2", "Page 3", "Page 4", "Page 1"])
+
+    def test_a_nested_entry_can_come_back_out(self):
+        from PySide6.QtCore import QModelIndex
+        self.drop(1, -1, self.root(0))
+        self.assertEqual(self.titles()[1], "  Page 2")
+        data = self.model.mimeData([self.model.index(0, 0, self.root(0))])
+        from PySide6.QtCore import Qt
+        self.assertTrue(self.model.dropMimeData(data, Qt.MoveAction, 1, 0,
+                                                QModelIndex()))
+        self.assertEqual(self.titles(),
+                         ["Page 1", "Page 2", "Page 3", "Page 4"])
+
+    def test_children_travel_with_their_parent(self):
+        self.drop(1, -1, self.root(0))          # Page 2 under Page 1
+        self.assertTrue(self.drop(0, -1, self.root(1)))   # Page 1 under Page 3
+        self.assertEqual(self.titles(),
+                         ["Page 3", "  Page 1", "    Page 2", "Page 4"])
+
+    # -- what is refused ---------------------------------------------------
+
+    def test_an_entry_cannot_be_dropped_into_its_own_subtree(self):
+        """It would detach the subtree from the tree and lose it."""
+        from PySide6.QtCore import Qt
+        self.drop(1, -1, self.root(0))          # Page 2 under Page 1
+        child = self.model.index(0, 0, self.root(0))
+        data = self.model.mimeData([self.root(0)])
+        self.assertFalse(self.model.canDropMimeData(data, Qt.MoveAction, -1, 0,
+                                                    child))
+        self.assertFalse(self.model.dropMimeData(data, Qt.MoveAction, -1, 0,
+                                                 child))
+        self.assertEqual(self.titles()[:2], ["Page 1", "  Page 2"])
+
+    def test_dropping_an_entry_where_it_already_is_does_nothing(self):
+        from PySide6.QtCore import Qt, QModelIndex
+        data = self.model.mimeData([self.root(1)])
+        for row in (1, 2):
+            self.assertFalse(self.model.canDropMimeData(data, Qt.MoveAction,
+                                                        row, 0, QModelIndex()))
+        self.assertFalse(self.win.modified, "a no-op drop marked the document")
+
+    # -- the document ------------------------------------------------------
+
+    def test_a_drag_is_one_undo_entry(self):
+        self.drop(1, -1, self.root(0))
+        self.assertEqual(self.win.model.undo.undo_label(), "Move Bookmark")
+        self.win.undo()
+        settle(timeout_ms=300)
+        self.assertEqual(self.titles(),
+                         ["Page 1", "Page 2", "Page 3", "Page 4"])
+
+    def test_a_drag_marks_the_document_modified(self):
+        self.drop(1, -1, self.root(0))
+        self.assertTrue(self.win.modified)
+
+    def test_the_tree_is_not_reset_by_a_drag(self):
+        resets = []
+        self.model.modelAboutToBeReset.connect(lambda: resets.append(1))
+        self.drop(1, -1, self.root(0))
+        self.assertEqual(resets, [], "the tree was reset instead of moved")
+
+
+class TestClosingADocument(unittest.TestCase):
+    """The outline goes with the document it came from.
+
+    It is not derived from the page list any more (D20), so emptying the pages
+    does not empty it: closing a file left its whole tree sitting in the
+    sidebar, still editable, still saveable into the next document opened.
+    """
+
+    def setUp(self):
+        from PySide6.QtWidgets import QApplication  # noqa: F401
+        from pdfarranger_qt.mainwindow import MainWindow
+
+        self.win = MainWindow()
+        self.win.resize(900, 700)
+        self.win.show()
+        self.win.open_paths([OUTLINE_PDF])
+        self.win.set_read_mode(True)
+        settle(timeout_ms=500)
+        self.win.modified = False
+
+    def tearDown(self):
+        self.win.modified = False
+        self.win.close()
+
+    def test_the_fixture_has_an_outline_to_begin_with(self):
+        self.assertEqual(len(self.win.model.outline), 4)
+        self.assertEqual(self.win.reader.outline_labels(),
+                         ["Page 1", "Page 2", "Page 3", "Page 4"])
+
+    def test_closing_empties_the_outline(self):
+        self.win.close_document()
+        settle(timeout_ms=300)
+        self.assertEqual(len(self.win.model.outline), 0)
+
+    def test_closing_empties_the_sidebar(self):
+        from PySide6.QtCore import QModelIndex
+        self.win.close_document()
+        settle(timeout_ms=300)
+        self.assertEqual(self.win.reader.outline_labels(), [])
+        self.assertEqual(self.win.reader.bookmarks.rowCount(QModelIndex()), 0)
+        self.assertFalse(self.win.reader.has_outline())
+
+    def test_opening_another_document_replaces_the_outline(self):
+        """Not concatenates -- open replaces, import is what adds."""
+        self.win.open_paths([OUTLINE_PDF])
+        settle(timeout_ms=500)
+        self.assertEqual(self.win.reader.outline_labels(),
+                         ["Page 1", "Page 2", "Page 3", "Page 4"])
+        self.assertEqual(len(self.win.model.outline), 4)
+
+
+class TestMovingPagesALongWay(unittest.TestCase):
+    """Move to Start / End / Page, and why they are not cut and paste.
+
+    David's case: relocating one page in a 1300 page book without scrolling to
+    the far end. Cut and paste can do the move, but a pasted page is a *new*
+    page with a new uid (D20) -- so its bookmarks stay behind, dangling, which
+    is what he found. These commands move the pages themselves, so identity and
+    bookmarks survive. That is the property worth testing, not the arithmetic.
+    """
+
+    def setUp(self):
+        from PySide6.QtWidgets import QApplication  # noqa: F401
+        from pdfarranger_qt.mainwindow import MainWindow
+
+        self.win = MainWindow()
+        self.win.resize(900, 700)
+        self.win.show()
+        self.win.open_paths([OUTLINE_PDF])
+        settle(timeout_ms=400)
+        self.win.modified = False
+
+    def tearDown(self):
+        self.win.modified = False
+        self.win.close()
+
+    def uids(self):
+        return [p.uid for p in self.win.model.pages]
+
+    def titles(self):
+        return [b.title for _d, b in self.win.model.outline.walk()]
+
+    # -- where the pages land ---------------------------------------------
+
+    def test_move_to_start(self):
+        before = self.uids()
+        self.win.view.set_selected_rows([3])
+        self.win.move_to_start()
+        self.assertEqual(self.uids(),
+                         [before[3], before[0], before[1], before[2]])
+
+    def test_move_to_end(self):
+        before = self.uids()
+        self.win.view.set_selected_rows([0])
+        self.win.move_to_end()
+        self.assertEqual(self.uids(),
+                         [before[1], before[2], before[3], before[0]])
+
+    def test_a_page_becomes_the_number_asked_for(self):
+        """Forwards, where "becomes page N" and "lands before page N" differ."""
+        before = self.uids()
+        self.win.view.set_selected_rows([0])
+        self.win._move_selection_to(2)          # becomes page 3
+        self.assertEqual(self.uids().index(before[0]), 2)
+
+    def test_it_becomes_that_number_going_backwards_too(self):
+        before = self.uids()
+        self.win.view.set_selected_rows([3])
+        self.win._move_selection_to(1)          # becomes page 2
+        self.assertEqual(self.uids().index(before[3]), 1)
+
+    def test_a_block_stays_together_and_in_order(self):
+        before = self.uids()
+        self.win.view.set_selected_rows([0, 1])
+        self.win.move_to_end()
+        self.assertEqual(self.uids()[-2:], [before[0], before[1]])
+
+    def test_asking_past_the_end_lands_at_the_end(self):
+        before = self.uids()
+        self.win.view.set_selected_rows([0])
+        self.win._move_selection_to(999)
+        self.assertEqual(self.uids()[-1], before[0])
+
+    # -- the point of the exercise ----------------------------------------
+
+    def test_the_bookmarks_come_along(self):
+        """The reason these exist rather than cut and paste."""
+        self.win.view.set_selected_rows([3])
+        self.win.move_to_start()
+        settle(timeout_ms=200)
+        self.assertEqual(self.win.model.outline.dangling(), [],
+                         "moving a page stranded its bookmark")
+        self.assertEqual(self.titles(),
+                         ["Page 1", "Page 2", "Page 3", "Page 4"])
+
+    def test_a_page_through_the_clipboard_is_a_new_page(self):
+        """Which is why cut and paste is not a move.
+
+        Driven through the clipboard *codec* and the model, not through
+        QClipboard: the offscreen platform does not keep what is put on it, so
+        `copy_selected` fails and `cut_selected` never gets as far as the part
+        under test. The path exercised here is the one paste actually uses.
+        """
+        from pdfarranger_qt import clipboard
+        original = self.win.model.pages[3]
+        rebuilt = self.win.docs.pages_from_clipboard(
+            clipboard.parse(clipboard.serialize([original])))
+        self.assertEqual(len(rebuilt), 1)
+        self.assertNotEqual(rebuilt[0].uid, original.uid,
+                            "a pasted page kept the original's identity")
+
+    def test_so_a_cut_and_paste_leaves_the_bookmark_behind(self):
+        """The behaviour David hit, on record.
+
+        Not a complaint about cut and paste: a pasted page really is a new page
+        (D20), the clipboard is a cross-process byte format (D5), and bookmarks
+        staying with the original is the same rule that stops Duplicate
+        duplicating them. It is simply not a move -- and on a document too long
+        to scroll, a move is what you wanted.
+        """
+        from pdfarranger_qt import clipboard
+        original = self.win.model.pages[3]
+        rebuilt = self.win.docs.pages_from_clipboard(
+            clipboard.parse(clipboard.serialize([original])))
+
+        self.win.view.set_selected_rows([3])
+        self.win.delete_selected()               # what a cut does to the list
+        settle(timeout_ms=200)
+        self.assertEqual([b.title for b in self.win.model.outline.dangling()],
+                         ["Page 4"])
+
+        self.win.model.insert_pages(0, rebuilt)  # and what a paste does
+        settle(timeout_ms=200)
+        self.assertEqual(len(self.win.model.pages), 4)
+        self.assertEqual([b.title for b in self.win.model.outline.dangling()],
+                         ["Page 4"], "the pasted page reconnected the bookmark")
+
+    # -- the document ------------------------------------------------------
+
+    def test_a_move_is_one_undo_entry(self):
+        before = self.uids()
+        self.win.view.set_selected_rows([3])
+        self.win.move_to_start()
+        self.assertEqual(self.win.model.undo.undo_label(), "Move")
+        self.win.undo()
+        settle(timeout_ms=300)
+        self.assertEqual(self.uids(), before)
+
+    def test_moving_marks_the_document_modified(self):
+        self.win.view.set_selected_rows([3])
+        self.win.move_to_start()
+        self.assertTrue(self.win.modified)
+
+    def test_moving_a_page_to_where_it_already_is_does_nothing(self):
+        self.win.view.set_selected_rows([1])
+        self.win._move_selection_to(1)
+        self.assertFalse(self.win.modified)
+        self.assertFalse(self.win.model.undo.can_undo)
+
+    def test_the_commands_need_a_selection(self):
+        self.win.view.set_selected_rows([])
+        self.win.move_to_start()
+        self.win.move_to_end()
+        self.assertFalse(self.win.modified)
+
+    def test_they_are_on_the_grids_context_menu(self):
+        """Right-click is where the selection already is."""
+        labels = [a.text() for a in self.win.view.actions()]
+        for wanted in ("Move to Start", "Move to End", "Move to Page…"):
+            self.assertIn(wanted, labels)

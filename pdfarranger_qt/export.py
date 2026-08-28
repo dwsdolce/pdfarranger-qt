@@ -255,8 +255,14 @@ def get_max_pdf_version(pdf_list: List[pikepdf.Pdf]) -> str:
 
 def export_doc(pdf_input, pages, mdata, files_out, quit_flag=None,
                test_mode=False, output_password=None, with_outlines=False,
-               source_names=None):
-    """Same as export() but taking already-opened pikepdf.Pdf objects."""
+               source_names=None, outline=None, prune_outline=False):
+    """Same as export() but taking already-opened pikepdf.Pdf objects.
+
+    ``outline`` is the document's own bookmark tree (D20). When given it is
+    written as it stands, which is what makes a bookmark edit survive a save;
+    without it the outline is rebuilt from the source files as it always was, so
+    every caller that has no such tree behaves exactly as before.
+    """
     pdf_output = pikepdf.Pdf.new()
     max_version = get_max_pdf_version([pdf_output, *pdf_input])
     _copy_n_transform(pdf_input, pdf_output, pages, quit_flag)
@@ -277,8 +283,12 @@ def export_doc(pdf_input, pages, mdata, files_out, quit_flag=None,
         # Imported here to avoid a circular import with exporter_outlines
         from . import exporter_outlines
 
-        exporter_outlines.rebuild_outlines(pdf_input, pdf_output, pages,
-                                           source_names)
+        if outline is not None:
+            exporter_outlines.write_outline(pdf_output, outline, pages,
+                                            source_names, prune=prune_outline)
+        else:
+            exporter_outlines.rebuild_outlines(pdf_input, pdf_output, pages,
+                                               source_names)
     # Always, and regardless of outlines: a saved file whose internal links
     # all point at nothing is broken however it was produced.
     from . import exporter_outlines as _links
@@ -514,7 +524,8 @@ def export(files: List[Tuple[str, str]], pages: List[Page], mdata: dict,
            files_out: List[str], quit_flag=None, test_mode: bool = False,
            output_password: Optional[str] = None,
            preserve_first_document: bool = False,
-           source_names: Optional[List[str]] = None) -> str:
+           source_names: Optional[List[str]] = None,
+           outline=None, prune_outline: bool = False) -> str:
     """Write ``pages`` to ``files_out``.
 
     ``files`` is the ``(copyname, password)`` list from ``DocumentSet``; a page's
@@ -525,6 +536,13 @@ def export(files: List[Tuple[str, str]], pages: List[Page], mdata: dict,
     is the "Saving/exporting to single file" preference: False merges bookmarks
     from every document, True keeps the first document's information via the
     pikepdf Job interface. Ignored on pikepdf < 8.
+
+    ``outline`` is the document's edited bookmark tree (D20), written in place
+    of one rebuilt from the sources. It reaches only the merging path: the
+    ``preserve_first_document`` path hands the whole job to pikepdf, which keeps
+    the first document's outline and gives us nowhere to put ours. That
+    preference and edited bookmarks are therefore mutually exclusive, and the
+    window says so rather than saving an outline the user cannot see.
     """
     collected = []
 
@@ -542,7 +560,8 @@ def export(files: List[Tuple[str, str]], pages: List[Page], mdata: dict,
         else:
             export_doc(pdf_input, pages, mdata, files_out, quit_flag, test_mode,
                        output_password=output_password,
-                       source_names=source_names)
+                       source_names=source_names, outline=outline,
+                       prune_outline=prune_outline)
     finally:
         warnings.showwarning = backup
         for pdf in pdf_input:

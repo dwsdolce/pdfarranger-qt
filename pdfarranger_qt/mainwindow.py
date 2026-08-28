@@ -21,6 +21,7 @@ real menu bar with a tool bar for the common ones, which is what the platform
 expects.
 """
 
+import logging
 import os
 import sys
 from typing import List, Optional
@@ -54,6 +55,7 @@ from .i18n import menu_label as _m
 from .i18n import ngettext
 from .export import export
 from .model import PageListModel
+from .outline import Outline
 from .recent import RecentFiles
 from .render import Renderer
 from .search import SearchIndex
@@ -289,6 +291,21 @@ class MainWindow(QMainWindow):
             lambda: self.select_matching("size_in_points"))
 
         # -- arrange ------------------------------------------------------
+        # Moving a page a long way. Cut and paste can do it, but a pasted page
+        # is a *new* page with a new uid (D20), so its bookmarks stay behind
+        # dangling -- these keep the page itself and carry them along.
+        self.act_move_to_start = QAction(_("Move to Start"), self)
+        self.act_move_to_start.setShortcut(QKeySequence("Ctrl+Shift+Home"))
+        self.act_move_to_start.triggered.connect(self.move_to_start)
+
+        self.act_move_to_end = QAction(_("Move to End"), self)
+        self.act_move_to_end.setShortcut(QKeySequence("Ctrl+Shift+End"))
+        self.act_move_to_end.triggered.connect(self.move_to_end)
+
+        self.act_move_to_page = QAction(_("Move to Page…"), self)
+        self.act_move_to_page.setShortcut(QKeySequence("Ctrl+Shift+G"))
+        self.act_move_to_page.triggered.connect(self.move_to_page)
+
         self.act_reverse = QAction(_("Reverse Order"), self)
         self.act_reverse.triggered.connect(self.reverse_order)
 
@@ -584,6 +601,10 @@ class MainWindow(QMainWindow):
         select_menu.addSeparator()
         select_menu.addAction(self.act_select_range)
         m.addSeparator()
+        m.addAction(self.act_move_to_start)
+        m.addAction(self.act_move_to_end)
+        m.addAction(self.act_move_to_page)
+        m.addSeparator()
         m.addAction(self.act_reverse)
         m.addAction(self.act_swap)
         m.addSeparator()
@@ -623,7 +644,9 @@ class MainWindow(QMainWindow):
         self.view.setContextMenuPolicy(Qt.ActionsContextMenu)
         for act in (self.act_cut, self.act_copy, self.act_paste,
                     self.act_rotate_left, self.act_rotate_right,
-                    self.act_duplicate, self.act_delete):
+                    self.act_duplicate, self.act_delete,
+                    self.act_move_to_start, self.act_move_to_end,
+                    self.act_move_to_page):
             self.view.addAction(act)
 
     def _build_toolbar(self):
@@ -848,6 +871,8 @@ class MainWindow(QMainWindow):
                     self.act_select_same_file, self.act_select_same_format,
                     self.act_crop, self.act_hide, self.act_page_size,
                     self.act_split_pages, self.act_merge_pages,
+                    self.act_move_to_start, self.act_move_to_end,
+                    self.act_move_to_page,
                     self.act_crop_white, self.act_export_png, self.act_export_jpg,
                     self.act_export_raster_pdf,
                     self.act_export_raster_pdf_jpg, self.act_copy_text,
@@ -941,6 +966,17 @@ class MainWindow(QMainWindow):
                     opened.append(None)
             self.model.outline = exporter_outlines.read_outline(
                 opened, self.model.pages, self.docs.source_names())
+            # Collapse the repeated copies a chaptered book carries -- the
+            # Handbook merged from 45 files has 45 copies of one tree. At read
+            # time rather than at save, so the user sees and edits the
+            # collapsed result instead of it happening invisibly underneath
+            # them. Only across several files: one document repeating a subtree
+            # is doing so on purpose.
+            if len({p.nfile for p in self.model.pages}) > 1:
+                removed = self.model.outline.deduplicate()
+                if removed:
+                    logging.getLogger(__name__).info(
+                        "collapsed %d repeated outline copies", removed)
         finally:
             for pdf in opened:
                 if pdf is not None:
@@ -1195,14 +1231,16 @@ class MainWindow(QMainWindow):
     def save(self):
         if not self.current_path:
             return self.save_as()
-        return self._write([self.current_path], self.model.pages)
+        return self._write([self.current_path], self.model.pages,
+                           outline=self.model.outline)
 
     def save_as(self):
         start = self.current_path or os.path.join(self.import_dir, "output.pdf")
         path, _f = QFileDialog.getSaveFileName(self, _("Save As…"), start, PDF_FILTER)
         if not path:
             return False
-        if self._write([path], self.model.pages):
+        if self._write([path], self.model.pages,
+                       outline=self.model.outline):
             self.current_path = path
             self.recent.add(path)
             self._refresh_state()
@@ -1216,9 +1254,19 @@ class MainWindow(QMainWindow):
         start = os.path.join(self.import_dir, "selection.pdf")
         path, _f = QFileDialog.getSaveFileName(self, _("Export…"), start, PDF_FILTER)
         if path:
-            self._write([path], [self.model.pages[r] for r in rows], mark_saved=False)
+            self._write([path], [self.model.pages[r] for r in rows],
+                        mark_saved=False, outline=self.model.outline)
 
-    def _write(self, files_out, pages, mark_saved=True) -> bool:
+    def _write(self, files_out, pages, mark_saved=True, outline=None) -> bool:
+        """Write ``pages`` out. ``outline`` is the document's bookmarks (D20).
+
+        Given for a full save and for an export of a *selection* alike, so that
+        a renamed bookmark exports under the name you gave it rather than the
+        one it had in the source file. The difference is pruning: an export of a
+        subset keeps only entries with a destination in it or a kept descendant,
+        because most of the tree points at pages that are not there and would
+        otherwise arrive as a crowd of empty headings.
+        """
         if not pages:
             QMessageBox.information(self, APP_NAME, _("There is nothing to save."))
             return False
@@ -1237,6 +1285,13 @@ class MainWindow(QMainWindow):
                 # Lets a link into another file being saved alongside this one
                 # be repointed at the page it now shares a document with.
                 source_names=self.docs.source_names(),
+                # The edited tree, in place of one rebuilt from the sources.
+                # Without this every bookmark command is undone by the save.
+                outline=outline,
+                # A subset of the pages keeps only the bookmarks that still
+                # have somewhere to point; a whole document keeps everything,
+                # including the headings the user put there deliberately.
+                prune_outline=len(pages) != len(self.model.pages),
             )
         except Exception as e:  # noqa: BLE001 - surfaced to the user
             QApplication.restoreOverrideCursor()
@@ -1270,6 +1325,13 @@ class MainWindow(QMainWindow):
         self.modified = False
         self.metadata = {}
         self.search.invalidate()
+        # The outline goes with the document it came from. It is not derived
+        # from the page list any more (D20), so emptying the pages does not
+        # empty it, and closing a file used to leave its whole tree sitting in
+        # the sidebar. Both callers want this: opening replaces it a moment
+        # later, closing should end with nothing.
+        self.model.outline = Outline()
+        self.model.outline_changed.emit()
 
     def _confirm_discard(self) -> bool:
         if not self.modified:
@@ -1421,6 +1483,50 @@ class MainWindow(QMainWindow):
     @staticmethod
     def _is_contiguous(rows: List[int]) -> bool:
         return len(rows) > 1 and rows == list(range(rows[0], rows[-1] + 1))
+
+    def move_to_start(self):
+        """Selected pages become the first pages of the document."""
+        self._move_selection_to(0)
+
+    def move_to_end(self):
+        """Selected pages become the last pages of the document."""
+        self._move_selection_to(len(self.model.pages) - len(self.view.selected_rows()))
+
+    def move_to_page(self):
+        """Ask for a page number and move the selection there.
+
+        "Becomes page N", counting from 1 as the user does: the first selected
+        page ends up at that number. Not "lands in front of whatever is page N
+        now", which differs by one whenever the move goes forwards and is the
+        sort of off-by-one that is obvious to whoever wrote it and to nobody
+        else.
+        """
+        rows = self.view.selected_rows()
+        if not rows:
+            return
+        number, ok = QInputDialog.getInt(
+            self, _("Move to Page"), _("Page number:"),
+            rows[0] + 1, 1, len(self.model.pages))
+        if ok:
+            self._move_selection_to(number - 1)
+
+    def _move_selection_to(self, position: int):
+        """Move the selection so its first page becomes ``position``, 0-based.
+
+        The point of these commands over cut and paste, on a document too long
+        to scroll: they move the pages themselves, so a page keeps its identity
+        and the bookmarks pointing at it come along (D20). A pasted page is a
+        new page and leaves them behind dangling.
+        """
+        rows = self.view.selected_rows()
+        if not rows:
+            return
+        position = max(0, min(position, len(self.model.pages) - len(rows)))
+        if rows == list(range(position, position + len(rows))):
+            return          # already there: not an edit
+        self.model.undo.commit(_("Move"))
+        self.model.move_rows_to(rows, position)
+        self._mark_modified()
 
     def reverse_order(self):
         rows = self.view.selected_rows()

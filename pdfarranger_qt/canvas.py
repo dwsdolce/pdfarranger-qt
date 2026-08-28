@@ -204,6 +204,12 @@ class PageLayout:
         """The margin at the current zoom, which callers need to place a page."""
         return self._margin * self._zoom
 
+    def page_height(self, index: int):
+        """A page's height in its own points, or None if there is no such page."""
+        if 0 <= index < len(self._sizes):
+            return self._sizes[index].height()
+        return None
+
     @property
     def page_count(self) -> int:
         return len(self._sizes)
@@ -1098,6 +1104,26 @@ class PageCanvas(QAbstractScrollArea):
 
     def has_selection(self) -> bool:
         return bool(self._selection)
+
+    def selection_view(self):
+        """A PDF destination view for where the selection starts, or None.
+
+        ``("XYZ", left, top, None)`` in the page's own coordinate space, so a
+        bookmark made from a selected heading lands on that heading rather than
+        at the top of its page. The y axis is flipped: PDF measures from the
+        bottom of the page and everything here measures from the top.
+        """
+        if not self._selection:
+            return None
+        page = min(self._selection)
+        bounds = self._selection[page].bounds()
+        if not bounds:
+            return None
+        box = bounds[0].boundingRect()
+        height = self._layout.page_height(page)
+        if height is None:
+            return None
+        return ("XYZ", float(box.left()), float(height - box.top()), None)
 
     def selected_text(self) -> str:
         """Everything selected, in page order, pages joined by a newline."""

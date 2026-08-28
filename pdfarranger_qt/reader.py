@@ -112,6 +112,14 @@ class ReaderView(QWidget):
         self.outline.setEditTriggers(QTreeView.NoEditTriggers)
         self.outline.activated.connect(self._go_to_bookmark)
         self.outline.clicked.connect(self._go_to_bookmark)
+        # Drag inside the tree re-nests and reorders. InternalMove, so Qt does
+        # not offer to copy: there is one outline and an entry is in exactly one
+        # place in it.
+        self.outline.setDragEnabled(True)
+        self.outline.setAcceptDrops(True)
+        self.outline.setDropIndicatorShown(True)
+        self.outline.setDragDropMode(QTreeView.InternalMove)
+        self.outline.setDefaultDropAction(Qt.MoveAction)
         self.outline.setContextMenuPolicy(Qt.CustomContextMenu)
         self.outline.customContextMenuRequested.connect(self._outline_menu_at)
         self.bookmarks.about_to_edit.connect(self.outline_edit_begun)
@@ -160,7 +168,10 @@ class ReaderView(QWidget):
         if source is not None and self._load_source(*source):
             return True
         try:
-            data = get_in_memory_pdf(list(pages), files, outlines=True,
+            # No outlines: the sidebar reads the document's own tree (D20), not
+            # this export's, so building one here is work thrown away on every
+            # mode switch -- and on a 1590 page book that is not free.
+            data = get_in_memory_pdf(list(pages), files,
                                      source_names=source_names)
         except Exception:  # noqa: BLE001 - reported by the caller as "cannot read"
             # Logged, not silent. Swallowing this once turned a crash in the
@@ -387,7 +398,8 @@ class ReaderView(QWidget):
             return False
         added = self.bookmarks.add_bookmark(self._target(index),
                                             self.title_here(), uid,
-                                            as_child=as_child)
+                                            as_child=as_child,
+                                            view=self.canvas.selection_view())
         if not added.isValid():
             return False
         # Select it and show it, but do not open the editor: Add and Rename are
@@ -666,8 +678,120 @@ class OutlineModel(QAbstractItemModel):
 
     def flags(self, index):
         if not index.isValid():
-            return Qt.NoItemFlags
-        return (Qt.ItemIsEnabled | Qt.ItemIsSelectable | Qt.ItemIsEditable)
+            # Drop-enabled, or nothing could be dragged out to the top level.
+            return Qt.ItemIsDropEnabled
+        return (Qt.ItemIsEnabled | Qt.ItemIsSelectable | Qt.ItemIsEditable
+                | Qt.ItemIsDragEnabled | Qt.ItemIsDropEnabled)
+
+    # -- drag to re-nest ---------------------------------------------------
+
+    #: Our own type rather than Qt's `x-qabstractitemmodeldatalist`, which
+    #: encodes a row and column and is awkward to turn back into a tree
+    #: position. This carries the path from the root -- "0/2/1" -- which
+    #: survives being decoded without guessing.
+    BOOKMARK_MIME = "application/x-pdfarranger-bookmark"
+
+    def supportedDropActions(self):
+        return Qt.MoveAction
+
+    def mimeTypes(self):
+        return [self.BOOKMARK_MIME]
+
+    def path_of(self, item):
+        """Where an entry sits, as indices from the root. None if it is absent."""
+        path = []
+        while item is not None:
+            parent = self._parents.get(id(item))
+            siblings = self._outline.roots if parent is None else parent.children
+            try:
+                path.append(siblings.index(item))
+            except ValueError:
+                return None
+            item = parent
+        return tuple(reversed(path))
+
+    def at_path(self, path):
+        """The entry at a path from `path_of`, or None."""
+        items, item = self._outline.roots, None
+        for step in path:
+            if not 0 <= step < len(items):
+                return None
+            item = items[step]
+            items = item.children
+        return item
+
+    def mimeData(self, indexes):
+        from PySide6.QtCore import QMimeData
+        data = QMimeData()
+        for index in indexes:
+            path = self.path_of(self.bookmark(index))
+            if path is not None:
+                data.setData(self.BOOKMARK_MIME,
+                             "/".join(str(n) for n in path).encode())
+                break
+        return data
+
+    def _dragged(self, data):
+        """The entry a drop is carrying, or None."""
+        if not data.hasFormat(self.BOOKMARK_MIME):
+            return None
+        raw = bytes(data.data(self.BOOKMARK_MIME)).decode()
+        try:
+            return self.at_path(tuple(int(n) for n in raw.split("/") if n != ""))
+        except ValueError:
+            return None
+
+    def _drop_target(self, item, row, parent):
+        """``(parent bookmark, index)`` for a drop, or None if it is not allowed.
+
+        ``row < 0`` is Qt for "onto this entry rather than between two", which
+        is the nesting case and appends. A drop that would put an entry inside
+        its own subtree is refused here as well as by `Outline.move`, so the
+        view can grey it while the drag is still in the air.
+        """
+        if item is None:
+            return None
+        into = self.bookmark(parent)
+        if into is not None and any(child is into for _d, child in item.walk()):
+            return None
+        siblings = self._outline.roots if into is None else into.children
+        index = len(siblings) if row < 0 else row
+        here = self._parents.get(id(item))
+        if here is into:
+            at = siblings.index(item)
+            if index in (at, at + 1):
+                return None          # dropped where it already is
+        return into, index
+
+    def canDropMimeData(self, data, action, row, column, parent):
+        return self._drop_target(self._dragged(data), row, parent) is not None
+
+    def dropMimeData(self, data, action, row, column, parent):
+        """Re-nest or reorder by drag. One move, one undo entry.
+
+        `beginMoveRows` and `Outline.move` both take the destination in
+        *pre-move* coordinates and both do their own adjusting, so they get the
+        same number -- adjusting it here as well would move the entry one place
+        short every time it travelled forwards among its own siblings.
+        """
+        if action == Qt.IgnoreAction:
+            return True
+        item = self._dragged(data)
+        target = self._drop_target(item, row, parent)
+        if target is None:
+            return False
+        into, index = target
+        here = self._parents.get(id(item))
+        source = self.index_of(here)
+        at = (self._outline.roots if here is None else here.children).index(item)
+
+        self.about_to_edit.emit(_("Move Bookmark"))
+        self.beginMoveRows(source, at, at, self.index_of(into), index)
+        moved = self._outline.move(item, into, index)
+        self._reindex()
+        self.endMoveRows()
+        self.edited.emit()
+        return moved
 
     def data(self, index, role=Qt.DisplayRole):
         item = self.bookmark(index)
@@ -715,7 +839,8 @@ class OutlineModel(QAbstractItemModel):
     # command. Resets are left to the two things that really are wholesale: a
     # newly loaded document, and an undo.
 
-    def add_bookmark(self, index, title: str, uid, as_child: bool = False):
+    def add_bookmark(self, index, title: str, uid, as_child: bool = False,
+                     view=None):
         """Insert an entry and return its index. Invalid if it could not be.
 
         Sibling *after* the selected entry, or nested under it as the last
@@ -739,7 +864,7 @@ class OutlineModel(QAbstractItemModel):
         self.about_to_edit.emit(_("Add Child Bookmark") if as_child
                                 else _("Add Bookmark"))
         self.beginInsertRows(self.index_of(parent_item), row, row)
-        added = self._outline.add(title, uid, parent_item, row)
+        added = self._outline.add(title, uid, parent_item, row, view=view)
         self._reindex()
         self.endInsertRows()
         self.edited.emit()
@@ -759,6 +884,10 @@ class OutlineModel(QAbstractItemModel):
         self.about_to_edit.emit(_("Re-home Bookmark"))
         item.uid = uid
         item.wanted_target = True
+        # A position on the old page means nothing on the new one, and an
+        # external target has just been replaced by a local one.
+        item.view = None
+        item.external = None
         self.dataChanged.emit(index, index,
                               [Qt.ForegroundRole, Qt.ToolTipRole])
         self.edited.emit()

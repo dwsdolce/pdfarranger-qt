@@ -227,15 +227,35 @@ class PageListModel(QAbstractListModel):
         self.contents_changed.emit()
 
     def move_rows(self, rows: List[int], dest: int):
-        """Move rows so they land immediately before original index ``dest``."""
+        """Move rows so they land immediately before original index ``dest``.
+
+        What a *drop* means: ``dest`` names a gap in the list as it stands, so
+        it has to discount the rows about to be lifted out from in front of it.
+        Callers that know where the pages should end up want `move_rows_to`,
+        which takes that position directly.
+        """
+        rows = sorted(set(r for r in rows if 0 <= r < len(self.pages)))
+        if not rows:
+            return
+        # How many of the moved rows sit before the insertion point.
+        before = sum(1 for r in rows if r < dest)
+        self.move_rows_to(rows, dest - before)
+
+    def move_rows_to(self, rows: List[int], position: int):
+        """Move rows so the first of them *becomes* page ``position``, 0-based.
+
+        The position is counted in the list with the moved rows already taken
+        out of it, which is what "make this page 1300" means: a page moved
+        forwards would otherwise land one short, because it vacated a slot in
+        front of its own destination. Clamped, so asking for a position past the
+        end puts the block at the end.
+        """
         rows = sorted(set(r for r in rows if 0 <= r < len(self.pages)))
         if not rows:
             return
         moving = [self.pages[r] for r in rows]
-        # How many of the moved rows sit before the insertion point.
-        before = sum(1 for r in rows if r < dest)
         remaining = [p for i, p in enumerate(self.pages) if i not in set(rows)]
-        target = max(0, min(dest - before, len(remaining)))
+        target = max(0, min(position, len(remaining)))
         self.beginResetModel()
         self.pages = remaining[:target] + moving + remaining[target:]
         self._key_rows.clear()

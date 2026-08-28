@@ -625,10 +625,11 @@ take a title and an `/XYZ` destination from.
             work unchanged; a cover sits alone so the spreads that follow fall
             (2,3), (4,5), the way a book opens. Fit measures the widest row, or
             a fit-one-page would show half a spread
-- [ ] **Edit bookmarks — create, delete, rename, re-target, re-nest.** Upstream
-      has none of this: its `exporter_outlines.py` only *preserves* an outline
-      through an export, and neither its menu nor its window has a single
-      bookmark command. Nothing to port, so this is new work.
+- [x] **Edit bookmarks — create, delete, rename, re-target, re-nest.** Done:
+      nine steps, all below. Upstream has none of this -- its
+      `exporter_outlines.py` only *preserves* an outline through an export, and
+      neither its menu nor its window has a single bookmark command. Nothing to
+      port, so this was new work throughout.
 
       **The architectural catch.** The outline is not part of the document
       model. A `Page` is a reference plus geometry, and the outline is *derived*
@@ -679,8 +680,18 @@ take a title and an `/XYZ` destination from.
             edit come off one stack; each updates its own rows rather than
             resetting the model, which would collapse an 807-entry tree on every
             command. Only a load and an undo reset it
-      - [ ] Writing it on save, in place of rebuilding from source
-      - [ ] Drag to re-nest within the tree
+      - [x] Writing it on save, in place of rebuilding from source. The step
+            the rest was waiting on: until it landed every command worked,
+            marked the document modified and undid correctly, and was discarded
+            by the next save. `write_outline` is the counterpart of
+            `read_outline`; `export_doc` takes the tree and falls back to
+            `rebuild_outlines` when it has none, so every in-memory caller is
+            untouched. See section 6, *Saving the outline*
+      - [x] Drag to re-nest within the tree. `InternalMove` over a mime type
+            of our own carrying the entry's path from the root, because Qt's
+            own encoding is a row and a column and a tree position is neither.
+            One drag, one undo entry; refused into an entry's own subtree, and
+            a no-op when dropped where it already was
 
 ---
 
@@ -1709,6 +1720,143 @@ wipes the scratch store **at import**, and `tests/support.py` imports
 `conftest`. So a hand-written probe that imports `support` to reuse `settle()`
 clears the settings before it reads them, and any round-trip it is trying to
 measure comes back empty.
+
+### Moving a page a long way, and why cut and paste is not a move
+
+David's case: relocate one page in a 1300 page book without scrolling to the far
+end. The obvious answer is cut and paste, and he tried it -- the page moved and
+its bookmark was left behind, dangling.
+
+That is D20 doing exactly what it says. `pages_from_clipboard` rebuilds pages
+through `add_file`, so a pasted page is a **new page with a new uid**; the
+bookmarks stayed with the original, and the original had gone. `Page.duplicate`
+names paste as a new-identity case in as many words. It is the same rule that
+stops the Duplicate command duplicating bookmarks, and it cannot be otherwise
+while the clipboard is a cross-process byte format (D5): a paste can happen in
+another process, or twice.
+
+So cut and paste is a copy-and-delete. **Move to Start**, **Move to End** and
+**Move to Page…** are the move -- they reorder the page list, so a page keeps
+its identity and everything pointing at it comes along for free. That makes them
+more than a convenience: they are the only way to relocate a page without
+breaking its bookmarks.
+
+`move_rows_to(rows, position)` takes the position the pages should *end up* at,
+counted with the moved rows already lifted out. `move_rows(rows, dest)` -- what
+a drop calls -- now converts into it. The two differ by exactly the number of
+moved rows in front of the destination, which is nothing when moving backwards
+and off by one when moving forwards: the sort of error that is invisible until
+someone moves a page the other way.
+
+"Becomes page N", not "lands in front of what is page N now". Settled with
+David before building, because the two differ by one whenever the move goes
+forwards, and picking wrong is obvious to whoever wrote it and to nobody else.
+
+### Closing a document has to empty the outline
+
+Found by David immediately after the save work landed: open a file, edit its
+bookmarks, save, close -- and the whole tree stayed in the sidebar.
+
+The cause is the point of D20. The outline used to be *derived*, so emptying the
+page list emptied it by construction. Now the document owns it, and
+`_reset_document` cleared the pages, the undo stack, the document set, the path,
+the metadata and the search index -- everything except the one thing that had
+just stopped being derived. Nothing in the old arrangement could have gone
+wrong here, which is exactly why nothing checked it.
+
+Worth stating what the bug actually risked, because "a stale sidebar" undersells
+it: the entries were still live. They were editable, they were in the undo
+state, and they would have been written into the *next* document saved from that
+window.
+
+### Dragging in the outline tree
+
+`Outline.move` already existed and was tested, so this is Qt plumbing, with two
+things in it worth remembering.
+
+**What a drop carries is a path, not an index.** Qt's own
+`x-qabstractitemmodeldatalist` encodes a row and a column, and a position in a
+tree is neither; turning one back into "which bookmark" means guessing. The mime
+type here carries the entry's path from the root -- `0/2/1` -- which decodes
+without ambiguity.
+
+**Both halves adjust, so only one of them may.** `beginMoveRows` and
+`Outline.move` each take the destination in *pre-move* coordinates and each do
+their own shifting for the case where an entry travels forward among its own
+siblings. Adjusting it in the drop handler as well lands the entry one place
+short, every time, in exactly that case and no other -- which is the sort of
+thing that ships. Two tests cover it, and both fail if the adjustment is added
+back.
+
+Refusals are made in `canDropMimeData` as well as in the move itself, so the
+view greys a drop that would put an entry inside its own subtree while the drag
+is still in the air rather than swallowing it on release. A drop where the entry
+already sits is refused the same way: it is not an edit, and it should not mark
+the document modified or take an undo entry.
+
+### Saving the outline
+
+The step the other eight were waiting on. Until it landed, every bookmark
+command worked, marked the document modified and undid correctly -- and was
+thrown away by the next save, which rebuilt the outline from the source files.
+A feature that lies is worse than one that is missing.
+
+Three things had to be preserved on the way, none of them obvious from the
+model alone. `rebuild_outlines` does four jobs, not one.
+
+**Within-page position.** A destination is not a page, it is a page *and a
+view*: `/XYZ 100 700` lands part-way down. `read_outline` resolved to a page and
+kept nothing else, so writing our tree back would have flattened every bookmark
+in the Handbook to the top of its page. `Bookmark.view` now keeps the
+destination's tail as plain values -- the page still comes from the uid, so
+reordering stays free (D20), and only the position on it is remembered.
+Re-homing clears it, because a position on the old page means nothing on the
+new one, and Add sets it from the selection, so a bookmark made from a selected
+heading lands on that heading.
+
+**Targets outside the document.** `/GoToR`, `/URI`, `/Launch`, `/GoToE`. There
+is nothing here to resolve, but they are perfectly good bookmarks -- treating
+"no in-document destination" as "no destination" once deleted 18,131 of the
+Handbook's 18,179. `Bookmark.external` keeps the action opaquely and writes it
+back verbatim. Opaque on purpose: `outline.py` never looks inside it, which is
+what keeps that module free of pikepdf.
+
+This also fixed a display bug nobody had reported. Before `external` existed,
+every cross-file bookmark arrived with no uid and a declared destination -- the
+definition of *dangling* -- so the sidebar greyed them all and said their page
+was gone, which was never true.
+
+**Cross-file repair, and why it moved.** A `/GoToR` naming a file that is *also*
+being loaded is a local jump once merged, and `external_target` already knew how
+to spot one. That repair now happens in `read_outline` rather than at export,
+because deduplication depends on it: the 45 copies of a chaptered book's outline
+only become identical once their cross-file links resolve to the same pages.
+Which is the other half --
+
+**Deduplication moved to read time**, as section 4 always said it should. It is
+an `Outline` method now, the same rule as `deduplicate_outlines` applied to our
+own tree: a top-level subtree goes only if its whole shape -- every descendant's
+depth, title and target -- repeats one already kept. It runs only when several
+files contributed, because one document repeating a subtree is doing so on
+purpose.
+
+**Exporting a selection prunes.** The tree belongs to the document, so most of
+it points at pages a subset does not contain. The rule: keep an entry only if it
+has a destination in the file or a kept descendant. That way a deliberate
+heading survives if anything under it did, the crowd of empty headings does not
+arrive, and -- the reason for doing this rather than falling back to
+`rebuild_outlines` -- an exported selection carries your *edits*, so a renamed
+bookmark exports under the name you gave it.
+
+**What still cannot survive** is our own dangling. There is no valid way to
+write "points at a page that no longer exists", so it is written without a
+destination and comes back as a heading. The title survives, which is the part
+worth keeping.
+
+One thing got cheaper on the way: read mode's export no longer asks for
+outlines. The sidebar reads the document's own tree, so building one into a
+throwaway export was work discarded on every mode switch -- and on a 1590 page
+book that is not free.
 
 ### Owning the reader's view — the plan
 

@@ -64,6 +64,60 @@ def external_target(action, source_names):
     return idx, int(page), dest
 
 
+#: Actions that point somewhere other than a page of this document.
+EXTERNAL_ACTIONS = (
+    pikepdf.Name.GoToR, pikepdf.Name.URI,
+    pikepdf.Name.Launch, pikepdf.Name.GoToE,
+)
+
+
+def action_of(item):
+    """An outline item's action, or None."""
+    try:
+        return item.action
+    except (AttributeError, ValueError):
+        return None
+
+
+def is_external_action(action) -> bool:
+    """True for an action that leaves this document.
+
+    `/GoToR` (another file), `/URI` (the web), `/Launch` (an application) and
+    `/GoToE` (an embedded file) have nothing here to resolve -- but they are
+    still perfectly good bookmarks. Treating "no in-document destination" as
+    "no destination" once deleted 18,131 of the ARRL Handbook's 18,179
+    bookmarks and took the tree structure with them.
+    """
+    if action is None:
+        return False
+    return action.get(pikepdf.Name.S) in EXTERNAL_ACTIONS
+
+
+def view_of(dest):
+    """A destination's view -- everything after the page -- as plain Python.
+
+    ``("XYZ", 100.0, 700.0, None)``, ``("Fit",)`` and so on, or None when there
+    is nothing to say. The *page* is not in here: that comes from the bookmark's
+    page uid, so reordering stays free (D20) and only the position on the page
+    is remembered.
+
+    Plain values rather than pikepdf objects, so `outline.py` can hold one
+    without importing pikepdf and an undo snapshot can copy it.
+    """
+    if not isinstance(dest, pikepdf.Array) or len(dest) < 2:
+        return None
+    tail = []
+    for value in dest[1:]:
+        if isinstance(value, pikepdf.Name):
+            tail.append(str(value).lstrip("/"))
+        else:
+            try:
+                tail.append(float(value))
+            except (TypeError, ValueError):
+                tail.append(None)
+    return tuple(tail) or None
+
+
 class OutlineRemapper:
     """
     Maps source-file bookmark destinations to their new locations in the output PDF.
@@ -243,13 +297,7 @@ class OutlineCopier:
         Handbook, whose subtree is entirely `/GoToR` links to companion PDFs,
         and took the tree structure with them.
         """
-        action = source_item.action
-        if action is None:
-            return False
-        return action.get(pikepdf.Name.S) in (
-            pikepdf.Name.GoToR, pikepdf.Name.URI,
-            pikepdf.Name.Launch, pikepdf.Name.GoToE,
-        )
+        return is_external_action(action_of(source_item))
 
     def _build_valid_tree(self, source_item):
         """Pass 1: Recursively filter and build a clean Python tree of surviving nodes."""
@@ -554,16 +602,21 @@ def read_outline(pdf_input, pages, source_names=None):
         if pikepdf.Name.Names in pdf.Root and pikepdf.Name.Dests in pdf.Root.Names:
             dests.update(dict(pikepdf.NameTree(pdf.Root.Names.Dests).items()))
 
-        def page_index(dest):
-            """The source page a destination names, or None."""
+        def resolve_named(dest):
+            """A named destination followed to the array it stands for."""
             if isinstance(dest, (pikepdf.String, pikepdf.Name)):
                 found = dests.get(str(dest).lstrip("/"))
                 if not found:
                     return None
                 try:
-                    dest = found.D
+                    return found.D
                 except (AttributeError, ValueError):
-                    dest = found
+                    return found
+            return dest
+
+        def page_index(dest):
+            """The source page a destination names, or None."""
+            dest = resolve_named(dest)
             if not isinstance(dest, pikepdf.Array) or len(dest) < 1:
                 return None
             target = dest[0]
@@ -571,38 +624,58 @@ def read_outline(pdf_input, pages, source_names=None):
                 return None
             return rev_map.get(target.objgen)
 
-        def uid_for(item, _file_idx=file_idx):
-            # External targets (/GoToR) point into another file entirely. They
-            # are left without a uid rather than guessed at: this is the same
-            # /GoToR that PyMuPDF's set_toc() crashes on (D18), and a wrong
-            # guess is worse than an honest "points nowhere".
+        def destination_of(item):
+            """The item's own destination, whether direct or inside a `/GoTo`."""
             try:
                 dest = item.destination
             except (AttributeError, ValueError):
-                return None
-            if dest is None:
-                return None
-            index = page_index(dest)
-            if index is None:
-                return None
-            return uid_of.get((_file_idx, index))
+                dest = None
+            if dest is not None:
+                return dest
+            action = action_of(item)
+            if action is not None and action.get(pikepdf.Name.S) == pikepdf.Name.GoTo:
+                return action.get(pikepdf.Name.D)
+            return None
 
-        def declared(item):
-            """Whether the file's entry carried a destination at all.
+        def resolve(item, _file_idx=file_idx):
+            """``(uid, view, external, declared)`` for one source item.
 
-            This is what tells a deliberate heading from a broken bookmark on
-            load: no destination means a heading, a destination that will not
-            resolve means dangling. Both arrive with no uid.
+            Four outcomes, in the order they are tried: a destination in this
+            file; a `/GoToR` into a file that is *also* being loaded, which is
+            repaired into a local target here rather than at export; a target
+            genuinely outside, kept opaquely; and nothing at all, a heading.
             """
-            try:
-                return item.destination is not None
-            except (AttributeError, ValueError):
-                return False
+            dest = destination_of(item)
+            if dest is not None:
+                array = resolve_named(dest)
+                view = view_of(array)
+                index = page_index(dest)
+                if index is None:
+                    return None, view, None, True     # declared, unresolvable
+                return uid_of.get((_file_idx, index)), view, None, True
+
+            action = action_of(item)
+            # A jump into a companion file that is part of this document is a
+            # local jump once merged. Repairing it *here* rather than at export
+            # is what lets the 45 identical copies of a chaptered book's outline
+            # be recognised as identical and collapsed -- they only match once
+            # their cross-file links resolve to the same pages.
+            found = external_target(action, source_names)
+            if found is not None:
+                target_idx, page_number, dest_array = found
+                uid = uid_of.get((target_idx, page_number))
+                if uid is not None:
+                    return uid, view_of(dest_array), None, True
+
+            if is_external_action(action):
+                return None, None, action, True
+            return None, None, None, False
 
         def convert(item):
-            return Bookmark(str(item.title or ""), uid_for(item),
+            uid, view, external, declared = resolve(item)
+            return Bookmark(str(item.title or ""), uid,
                             [convert(child) for child in item.children],
-                            declared(item))
+                            declared, view, external)
 
         try:
             with pdf.open_outline() as outline:
@@ -611,3 +684,86 @@ def read_outline(pdf_input, pages, source_names=None):
             warnings.warn(f"Could not read bookmarks from document "
                           f"{file_idx + 1}: {e}")
     return Outline(roots)
+
+
+def write_outline(pdf_output, outline, pages, source_names=None, prune=False):
+    """Write the document's own outline into the output (D20).
+
+    The counterpart of `read_outline`, and what replaces `rebuild_outlines`
+    once the document owns its bookmarks: the outline that gets saved is the
+    one the user edited, not one derived afresh from the source files. Without
+    this every bookmark command is undone by the next save.
+
+    Each entry is written from what it holds:
+
+    * a **page uid** becomes that page's position in this export, plus the
+      `view` remembered from where it was read -- so a bookmark into the middle
+      of a page still lands there, and one that has been re-homed lands at the
+      top of its new page because re-homing clears the view.
+    * an **external** target is written back as it came. `/GoToR`, `/URI`,
+      `/Launch` and `/GoToE` have nothing here to remap; the repairable kind was
+      already turned into a local uid when the outline was read.
+    * anything else is written **without a destination**, which covers both a
+      deliberate heading and an entry whose page has gone. That is the one
+      thing a dangling bookmark cannot survive: there is no valid way to write
+      "points at a page that no longer exists", so it comes back as a heading.
+      A narrow loss, and the alternative -- a private key in the PDF -- is
+      worse.
+
+    ``prune`` is for exporting a *subset* of the pages, where most of the tree
+    points at pages that are not in the file. The rule: keep an entry only if
+    it has a destination here or a kept descendant. So a deliberate heading
+    survives if anything under it did, and the crowd of empty headings that
+    would otherwise arrive does not. Off for a full save, where a heading is
+    kept because the user put it there.
+    """
+    position = {}
+    for index, row in enumerate(pages):
+        position.setdefault(row.uid, index)
+
+    def destination(item):
+        """The destination array for a local target, or None."""
+        index = position.get(item.uid)
+        if index is None:
+            return None
+        array = [pdf_output.pages[index].obj]
+        view = item.view or ("Fit",)
+        for value in view:
+            if isinstance(value, str):
+                array.append(pikepdf.Name("/" + value))
+            elif value is None:
+                array.append(None)
+            else:
+                array.append(value)
+        return pikepdf.Array(array)
+
+    def survives(item):
+        """Whether a pruned export keeps this entry."""
+        if item.uid is not None and item.uid in position:
+            return True
+        if item.external is not None:
+            return True
+        return any(survives(child) for child in item.children)
+
+    def build(item):
+        dest, action = None, None
+        if item.uid is not None:
+            dest = destination(item)
+        if dest is None and item.external is not None:
+            # Copied rather than referenced: the action belongs to a source
+            # document that this output knows nothing about.
+            try:
+                action = pdf_output.copy_foreign(item.external)
+            except Exception:  # noqa: BLE001 - an action we cannot carry over
+                action = None
+        entry = pikepdf.OutlineItem(item.title, destination=dest, action=action)
+        for child in item.children:
+            if not prune or survives(child):
+                entry.children.append(build(child))
+        return entry
+
+    with pdf_output.open_outline() as new_outline:
+        del new_outline.root[:]
+        for item in outline.roots:
+            if not prune or survives(item):
+                new_outline.root.append(build(item))

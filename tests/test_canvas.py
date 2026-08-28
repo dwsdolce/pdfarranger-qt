@@ -1304,14 +1304,23 @@ class TestAsynchronousPages(unittest.TestCase):
         settle(lambda: self.source._renderer.get(
             (index, size.width(), size.height())) is not None, timeout_ms=5000)
 
-    def test_the_first_ask_does_not_block(self):
-        """It returns immediately, with nothing or a stand-in -- never a render."""
+    def test_the_first_ask_does_not_render_inline(self):
+        """It answers with nothing or a stand-in -- never with the render.
+
+        Asserted on *what comes back* rather than on how long it took. This
+        used to time the call and require it under 50 ms, which is a proxy for
+        the real property and one a cold process fails: the first run after a
+        checkout pays for bytecode compilation and a cold file cache, so it
+        flaked roughly one run in five and passed on every run after.
+
+        An image at exactly the size asked for is the failure this is about,
+        because nothing but an inline render could have produced one.
+        """
         size = QSize(200, 260)
-        import time
-        start = time.perf_counter()
-        self.source.page_image(0, size)
-        elapsed = (time.perf_counter() - start) * 1000
-        self.assertLess(elapsed, 50, "page_image looks like it rendered inline")
+        first = self.source.page_image(0, size)
+        if first is not None:
+            self.assertNotEqual(first.size(), size,
+                                "page_image rendered inline instead of queuing")
 
     def test_the_page_arrives_and_is_then_returned(self):
         size = QSize(200, 260)
