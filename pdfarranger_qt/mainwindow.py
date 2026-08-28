@@ -770,7 +770,7 @@ class MainWindow(QMainWindow):
     def _refresh_state(self):
         n = self.model.rowCount()
         has_pages = n > 0
-        self.status_pages.setText(f"{n} page{'s' if n != 1 else ''}" if has_pages else "No document")
+        self._update_status_pages()
         for act in (self.act_save, self.act_save_as, self.act_import,
                     self.act_select_all, self.act_invert, self.act_close,
                     self.act_deselect, self.act_select_odd, self.act_select_even,
@@ -938,7 +938,15 @@ class MainWindow(QMainWindow):
         if not added:
             return 0
         self.model.undo.commit("Import")
-        self.model.insert_pages(len(self.model.pages) if at is None else at, added)
+        # Inserting selects what arrived, so you can see where it landed in a
+        # long document and act on it -- which is the point when importing or
+        # pasting, and pointless when *opening*: every page is new, so selecting
+        # every page says nothing. It also had a consequence, since a selection
+        # now tells the reader where to open: a document that arrived with all
+        # of itself selected could never resume where it was last read.
+        whole_document = not self.model.pages
+        self.model.insert_pages(len(self.model.pages) if at is None else at,
+                                added, select=not whole_document)
         self._load_outline()
         return len(added)
 
@@ -1065,9 +1073,13 @@ class MainWindow(QMainWindow):
         self.read_mode = on
         self.stack.setCurrentWidget(self.reader if on else self.view)
         if on:
-            self._restore_reading_position()
+            self._open_reader_at_selection()
         else:
             self._store_reading_position()
+            # Show where you had got to, without touching the selection: it
+            # means something in this mode and nothing in the reader, so a trip
+            # to read something must not come back having changed it.
+            self.view.scroll_to_row(self.reader.current_page())
         self.act_arrange_mode.setChecked(not on)
         self._refresh_state()
         (self.reader if on else self.view).setFocus()
@@ -1131,6 +1143,25 @@ class MainWindow(QMainWindow):
             # reader would silently disagree with the document.
             self._load_reader()
 
+    def _update_status_pages(self):
+        """How big the document is, or where you are in it while reading.
+
+        One label, because in read mode the two say the same thing: "Page 14 of
+        1590" carries the total as well. Permanent, unlike `showMessage`, which
+        is what this used to be -- a three second message emitted only when the
+        page *changed*, so the reader showed nothing at all until you scrolled
+        and nothing again a moment later.
+        """
+        n = self.model.rowCount()
+        if not n:
+            self.status_pages.setText(_("No document"))
+            return
+        if self.read_mode and self.reader.page_count():
+            self.status_pages.setText(self.reader.describe())
+            return
+        self.status_pages.setText(
+            ngettext("%d page", "%d pages", n) % n)
+
     def _update_page_total(self):
         """"of 1590" beside the page box, so the number has a scale."""
         if not hasattr(self, "toolbar_page_total"):
@@ -1141,8 +1172,30 @@ class MainWindow(QMainWindow):
     def _reader_page_changed(self, page: int):
         # Also fires while the document is being swapped or dropped.
         if self.read_mode and self.reader.page_count():
-            self.statusBar().showMessage(self.reader.describe(), 3000)
+            self._update_status_pages()
             self._update_page_total()
+
+    def _open_reader_at_selection(self):
+        """Read from the selected page, else resume where reading left off.
+
+        A selection is something the user just did deliberately, so it wins over
+        the stored position, whose job is to reopen a *document* where they left
+        it. The first page of a multi-page selection: "start here" is the only
+        reading of it, and a rule with no "unless" in it beats one that tries to
+        be clever about what several selected pages might have meant.
+
+        No "unless every page is selected" either, though it took a detour to
+        avoid needing one: opening a document used to select the lot, which
+        would have made this rule swallow the stored position entirely. That was
+        a side effect of "inserting pages selects them" -- right for importing
+        and pasting, meaningless for opening -- and it is fixed where it
+        happens rather than worked around here.
+        """
+        rows = self.view.selected_rows()
+        if rows:
+            self.reader.go_to_page(rows[0])
+        else:
+            self._restore_reading_position()
 
     def _reading_key(self) -> Optional[str]:
         """Settings key for this document's reading position.

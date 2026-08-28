@@ -245,6 +245,10 @@ class PageView(QListView):
         # Drag state.
         self._press_pos = None
         self._press_row = -1
+        #: Where a shift-click measures from: the last plainly clicked page.
+        self._anchor_row = -1
+        #: True between a shift-click we handled and its release.
+        self._extending = False
         self._last_move_pos = None
         self._dragging = False
         self._drop_index = -1
@@ -274,7 +278,7 @@ class PageView(QListView):
     def selected_rows(self):
         return sorted(i.row() for i in self.selectionModel().selectedIndexes())
 
-    def set_selected_rows(self, rows):
+    def set_selected_rows(self, rows, scroll: bool = True):
         sel = self.selectionModel()
         n = self.page_model.rowCount()
         rows = [r for r in rows if 0 <= r < n]
@@ -282,8 +286,23 @@ class PageView(QListView):
         for first, last in contiguous_blocks(sorted(set(rows))):
             selection.select(self.page_model.index(first, 0), self.page_model.index(last, 0))
         sel.select(selection, QItemSelectionModel.ClearAndSelect)
-        if rows:
+        if rows and scroll:
             self.scrollTo(self.page_model.index(rows[0], 0), QAbstractItemView.EnsureVisible)
+
+    def scroll_to_row(self, row: int):
+        """Bring a row into view **without** selecting it.
+
+        For coming back from read mode: selection means something here and
+        nothing there, so a trip to the reader must not resteal it.
+
+        Centred rather than merely made visible. Nothing marks the page once it
+        arrives -- that is the point of leaving the selection alone -- so
+        putting it against the top or bottom edge would be showing you the page
+        without telling you which one it is.
+        """
+        if 0 <= row < self.page_model.rowCount():
+            self.scrollTo(self.page_model.index(row, 0),
+                          QAbstractItemView.PositionAtCenter)
 
     def selectionChanged(self, selected, deselected):
         super().selectionChanged(selected, deselected)
@@ -296,9 +315,71 @@ class PageView(QListView):
             index = self.indexAt(event.position().toPoint())
             self._press_pos = event.position().toPoint()
             self._press_row = index.row() if index.isValid() else -1
+            if index.isValid() and event.modifiers() & Qt.ShiftModifier:
+                self.extend_selection_to(
+                    index.row(),
+                    add=bool(event.modifiers() & Qt.ControlModifier))
+                # Ours from here until the button comes up. Everything Qt
+                # would otherwise do to this gesture is wrong: it redoes the
+                # selection on *release* from the position it recorded at the
+                # last press it saw -- the plain click that set the anchor, so
+                # it draws its rectangle between exactly the two pages we just
+                # handled properly -- and it treats a held button with a twitch
+                # of movement as a drag-selection and rewrites the range again.
+                # Both depend on where the pointer lands, which is why this
+                # misbehaved intermittently rather than always.
+                self._extending = True
+                self._press_pos = None
+                self._press_row = -1
+                event.accept()
+                return
+            if index.isValid():
+                self._anchor_row = index.row()
         super().mousePressEvent(event)
 
+    def extend_selection_to(self, row: int, add: bool = False):
+        """Select every page from the anchor to ``row``, inclusive.
+
+        Qt's own shift handling is no use here. `ExtendedSelection` on a
+        QListView in **IconMode** selects by *rectangle*: it takes what a box
+        drawn between the two items happens to touch. On a single column that
+        is the same thing as a range, which is why nobody notices; on a wrapped
+        grid of pages that are not all the same width it is neither the range
+        you asked for nor anything you could predict, and with the delegate
+        placing the items itself it frequently selects only the page clicked.
+
+        So the range is computed here, from the last page clicked without a
+        modifier. ``add`` is shift+ctrl -- extend without dropping what is
+        already selected.
+
+        No scrolling: you clicked the far end, so it is already on screen, and
+        `set_selected_rows` would otherwise jump the view back to the anchor.
+        """
+        count = self.page_model.rowCount()
+        if not 0 <= row < count:
+            return
+        anchor = self._anchor_row
+        if not 0 <= anchor < count:
+            anchor = row
+            self._anchor_row = row
+        first, last = sorted((anchor, row))
+        rows = list(range(first, last + 1))
+        if add:
+            rows = sorted(set(self.selected_rows()) | set(rows))
+        self.set_selected_rows(rows, scroll=False)
+        # Keep the keyboard where the mouse left it, without disturbing what
+        # was just selected.
+        self.selectionModel().setCurrentIndex(
+            self.page_model.index(row, 0), QItemSelectionModel.NoUpdate)
+
     def mouseMoveEvent(self, event):
+        if self._extending:
+            # Ours until the button comes up. Qt would otherwise treat the held
+            # button as a drag-selection and rewrite the range on the first
+            # twitch of the mouse -- which is most of why this misbehaved
+            # intermittently rather than always.
+            event.accept()
+            return
         if self._dragging:
             pos = event.position().toPoint()
             if not self.viewport().rect().contains(pos):
@@ -349,6 +430,10 @@ class PageView(QListView):
             return
         self._press_pos = None
         self._press_row = -1
+        if self._extending:
+            self._extending = False
+            event.accept()
+            return
         super().mouseReleaseEvent(event)
 
     def set_single_column(self, single: bool):

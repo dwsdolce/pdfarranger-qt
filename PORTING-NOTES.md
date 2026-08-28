@@ -1721,6 +1721,109 @@ wipes the scratch store **at import**, and `tests/support.py` imports
 clears the settings before it reads them, and any round-trip it is trying to
 measure comes back empty.
 
+### Shift-click selects a rectangle, not a range
+
+Reported by David with a screenshot: shift-clicking across the grid selected
+pages 1-2 and 5-17 but not 3, 4 or 18. Not a range, and not obviously anything.
+
+`ExtendedSelection` on a `QListView` in **IconMode** selects by *rectangle* --
+Qt takes the box spanned between the anchor and the clicked item and selects
+what it touches. In a single column that is indistinguishable from a range,
+which is why this is not a famous problem. On a wrapped grid it is a block; on a
+wrapped grid of pages that are *not all the same width*, with the delegate
+placing the items itself, it is neither the range you asked for nor anything you
+could predict, and often it selects only the page clicked.
+
+So the range is computed in `mousePressEvent`, which was ours already (D9), from
+the last page clicked without a modifier. Shift+ctrl extends without dropping
+what is already selected. Extending deliberately does not scroll -- you clicked
+the far end, so it is on screen, and `set_selected_rows` would otherwise jump
+the view back to the anchor, which is why it grew a `scroll` parameter.
+
+**Handling the press is not enough, and this is the part that cost two rounds.**
+Qt has to be kept out of the whole gesture, press to release, because it will
+undo the range in two more places:
+
+- On **release**, it redoes the selection from the position it recorded at the
+  last press it saw. Our handler returns before Qt sees the shifted press, so
+  that position is still the plain click that set the anchor -- and Qt draws its
+  rectangle between exactly the two pages we had just handled properly.
+- On **mouse move**, it treats a held button as a drag-selection and rewrites
+  the range on the first twitch of the pointer.
+
+Both depend on where the pointer happens to land, which is why the bug was
+intermittent rather than reliable -- "sometimes works and sometimes does not",
+which is a much worse thing to debug than "never works". An `_extending` flag
+now owns the gesture until the button comes up.
+
+Qt's rubber band is left alone. Selecting a rectangle is exactly right when the
+user is dragging one out; it is only wrong as an interpretation of shift.
+
+### Opening a document selects nothing
+
+`insert_pages` selects what it inserted. That is right for **Import** and
+**Paste** -- it shows you where the pages landed in a document too long to scan
+and lets you act on them straight away -- and meaningless for **Open**, where
+every page is new and selecting every page points out nothing.
+
+Nobody had noticed because nothing depended on it, until a selection began
+telling the reader where to open (above): a document that arrived with all of
+itself selected would always have sent the reader to page 1, and the stored
+reading position could never apply again. The first fix was a special case in
+the reader rule -- "unless everything is selected" -- which David rightly asked
+about, because the real question was why opening selected everything at all. It
+is fixed where it happens instead, and the special case is gone.
+
+Two tests in `test_reader.py` were relying on it for a selection they needed but
+never asked for. Both now say what they want, and one of them got stronger for
+it: "editing actions are disabled while reading" means more when there *is*
+something selected to edit.
+
+### The status bar has to keep saying where you are
+
+Read mode showed "Page 14 of 1590" through `showMessage(..., 3000)`, emitted
+only from `_reader_page_changed`. So it said nothing at all until you scrolled,
+and nothing again three seconds later -- and switching modes left whatever had
+been there before. The comment on the mode label two lines above it in
+`_build_statusbar` already said why that mechanism is wrong; the page position
+had simply not been given the same treatment.
+
+It is now the same permanent label that counts the document, because in read
+mode the two say the same thing: "Page 14 of 1590" carries the total as well.
+`_refresh_state` sets it, so a mode switch updates it like everything else, and
+`_reader_page_changed` keeps it current while scrolling.
+
+### The current page follows you between the modes
+
+Switching to read mode reads the **selected** page, the first of them when
+several are selected. Switching back **scrolls** the grid to the page you were
+reading and leaves the selection exactly as it was.
+
+The asymmetry is deliberate, and it is David's: *selection means something when
+arranging and nothing when reading*. Going in, a selection is the clearest
+possible statement of which page you want; coming back, restealing the selection
+would destroy something the reader never had any use for. So one direction reads
+the selection and the other only scrolls.
+
+No special case for a multi-page selection. "Start here" is the only reading of
+it, and a rule with no "unless" beats one that tries to guess what several
+selected pages might have meant.
+
+Because nothing marks the page once the grid scrolls to it -- that being the
+point of leaving the selection alone -- `scroll_to_row` centres it rather than
+merely making it visible. At the edge of the viewport it would be showing you
+the page without telling you which one it is.
+
+**What this displaced.** Entering read mode used to restore `reading/<path>`, a
+position persisted per document and written on the way out. That still happens
+when nothing is selected, which is its real job: reopening a document where you
+left it. A selection is something the user just did, and wins.
+
+Worth keeping straight, because the two are not symmetric: the reader's page is
+persisted across sessions, and the arranger's selection is not persisted at all.
+It survives a mode switch only because nothing clears it, and it is restored by
+*undo* -- `UndoState.selection` -- and by nothing else.
+
 ### Moving a page a long way, and why cut and paste is not a move
 
 David's case: relocate one page in a 1300 page book without scrolling to the far

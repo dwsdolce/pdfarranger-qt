@@ -252,6 +252,10 @@ class TestReadModeSwitch(unittest.TestCase):
         self.assertIs(self.win.stack.currentWidget(), self.win.view)
 
     def test_editing_actions_are_disabled_while_reading(self):
+        # With pages selected, so that reading is the only reason they could be
+        # disabled. Opening a document deliberately selects nothing, so a test
+        # that wants a selection has to say so.
+        self.win.view.set_selected_rows([0])
         editing = [self.win.act_rotate_left, self.win.act_delete,
                    self.win.act_duplicate, self.win.act_crop,
                    self.win.act_reverse, self.win.act_merge_pages,
@@ -1117,6 +1121,9 @@ class TestEditMenuFollowsTheMode(unittest.TestCase):
                              f"{name} acts on a grid that is not on screen")
 
     def test_grid_only_selection_comes_back_while_arranging(self):
+        # Some of these need something selected to act on, and opening a
+        # document deliberately selects nothing.
+        self.win.view.set_selected_rows([0])
         self.win.set_arrange_mode(True)
         settle(timeout_ms=200)
         for name, action in self.grid_only().items():
