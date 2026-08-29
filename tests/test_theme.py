@@ -16,23 +16,74 @@
 
 """Applying the colour-scheme preference."""
 
+import contextlib
 import unittest
 
 
 def color_schemes_supported() -> bool:
-    """The offscreen platform has no colour scheme; it always reports Unknown.
+    """Whether this platform has a colour scheme at all.
 
-    Verified on a real windows platform that setColorScheme() does take effect
-    there (Light -> Dark, palette windowText #000000 -> #ffffff), so these
-    assertions are skipped rather than weakened.
+    The offscreen plugin the suite runs under does not: it reports Unknown and
+    ignores the setter. Real platforms honour it -- verified on Windows, where
+    Light becomes Dark and the palette's windowText flips #000000 to #ffffff,
+    and on macOS, where all of these pass under QT_QPA_PLATFORM=cocoa.
     """
     from PySide6.QtCore import Qt
     from PySide6.QtGui import QGuiApplication
 
     return QGuiApplication.styleHints().colorScheme() != Qt.ColorScheme.Unknown
 
+
+class RecordingHints:
+    """A stand-in for QStyleHints that remembers what it was asked for."""
+
+    def __init__(self):
+        from PySide6.QtCore import Qt
+
+        self.calls = []
+        self._scheme = Qt.ColorScheme.Unknown
+
+    def setColorScheme(self, scheme):
+        self.calls.append(scheme)
+        self._scheme = scheme
+
+    def unsetColorScheme(self):
+        from PySide6.QtCore import Qt
+
+        self.calls.append(None)          # None is "hand it back to the OS"
+        self._scheme = Qt.ColorScheme.Unknown
+
+    def colorScheme(self):
+        return self._scheme
+
+
+@contextlib.contextmanager
+def recording_hints():
+    """Run `theme.apply` against a stand-in, on any platform.
+
+    These assertions used to be skipped wherever the platform had no colour
+    scheme, which is every ordinary run of this suite -- so the two tests that
+    mattered most never ran. The fix is the same one the flaky render timing
+    got: assert the part that is *ours*.
+
+    What is ours is the call. DARK asks Qt for Qt.ColorScheme.Dark, SYSTEM
+    unsets it. Whether the platform then honours that is the platform's
+    business, genuinely not this module's, and the tests below still check it
+    for real wherever it can be checked.
+    """
+    from unittest import mock
+
+    from pdfarranger_qt import theme
+
+    hints = RecordingHints()
+    stand_in = mock.Mock()
+    stand_in.styleHints.return_value = hints
+    with mock.patch.object(theme, "QGuiApplication", stand_in):
+        yield hints
+
+
 class TestTheme(unittest.TestCase):
-    """Name mapping is always checked; the Qt effect only where the platform has one."""
+    """What `apply` asks Qt for, checked everywhere; what Qt does with it, where it can be."""
 
     def tearDown(self):
         from pdfarranger_qt import theme
@@ -57,27 +108,57 @@ class TestTheme(unittest.TestCase):
         self.assertEqual(theme.apply(theme.SYSTEM), theme.SYSTEM)
 
     def test_dark_reaches_qt(self):
-        if not color_schemes_supported():
-            self.skipTest("platform has no colour scheme (offscreen)")
+        """DARK asks Qt for a dark scheme, and gets one where that is possible."""
         from PySide6.QtCore import Qt
         from PySide6.QtGui import QGuiApplication
         from pdfarranger_qt import theme
 
-        theme.apply(theme.DARK)
-        self.assertEqual(QGuiApplication.styleHints().colorScheme(),
-                         Qt.ColorScheme.Dark)
-        self.assertEqual(theme.current(), theme.DARK)
+        with recording_hints() as hints:
+            self.assertEqual(theme.apply(theme.DARK), theme.DARK)
+            self.assertEqual(hints.calls, [Qt.ColorScheme.Dark])
+            self.assertEqual(theme.current(), theme.DARK)
+
+        if color_schemes_supported():
+            theme.apply(theme.DARK)
+            self.assertEqual(QGuiApplication.styleHints().colorScheme(),
+                             Qt.ColorScheme.Dark)
+            self.assertEqual(theme.current(), theme.DARK)
 
     def test_light_reaches_qt(self):
-        if not color_schemes_supported():
-            self.skipTest("platform has no colour scheme (offscreen)")
+        """And the same for light, which is a different enum and a real mistake."""
         from PySide6.QtCore import Qt
         from PySide6.QtGui import QGuiApplication
         from pdfarranger_qt import theme
 
-        theme.apply(theme.LIGHT)
-        self.assertEqual(QGuiApplication.styleHints().colorScheme(),
-                         Qt.ColorScheme.Light)
+        with recording_hints() as hints:
+            self.assertEqual(theme.apply(theme.LIGHT), theme.LIGHT)
+            self.assertEqual(hints.calls, [Qt.ColorScheme.Light])
+            self.assertEqual(theme.current(), theme.LIGHT)
+
+        if color_schemes_supported():
+            theme.apply(theme.LIGHT)
+            self.assertEqual(QGuiApplication.styleHints().colorScheme(),
+                             Qt.ColorScheme.Light)
+
+    def test_system_unsets_rather_than_choosing(self):
+        """The third branch, which nothing checked before.
+
+        "System" is not a scheme Qt can be set to -- it is `unsetColorScheme`,
+        after which Qt follows the OS on its own. Setting Light and calling it
+        system would look right in every other test here.
+        """
+        from pdfarranger_qt import theme
+
+        with recording_hints() as hints:
+            self.assertEqual(theme.apply(theme.SYSTEM), theme.SYSTEM)
+            self.assertEqual(hints.calls, [None])
+
+    def test_an_unknown_name_also_unsets(self):
+        from pdfarranger_qt import theme
+
+        with recording_hints() as hints:
+            self.assertEqual(theme.apply("chartreuse"), theme.SYSTEM)
+            self.assertEqual(hints.calls, [None])
 
     def test_preferences_apply_the_theme_without_a_restart(self):
         from pdfarranger_qt import dialogs, theme

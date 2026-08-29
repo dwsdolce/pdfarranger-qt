@@ -34,10 +34,11 @@ import logging
 from typing import List, Optional
 
 from PySide6.QtCore import QAbstractItemModel, QModelIndex, Qt, Signal
-from PySide6.QtGui import QBrush, QColor, QDesktopServices
+from PySide6.QtGui import QBrush, QColor, QDesktopServices, QFont
 from PySide6.QtPdf import QPdfSearchModel
 from PySide6.QtPdfWidgets import QPdfPageSelector
 from PySide6.QtWidgets import (
+    QColorDialog,
     QMenu,
     QSplitter,
     QTreeView,
@@ -48,7 +49,7 @@ from PySide6.QtWidgets import (
 from .canvas import ZOOM_LIMITS, ZOOM_STEP, PageCanvas
 from .export import get_in_memory_pdf
 from .i18n import gettext_ as _
-from .outline import Outline
+from .outline import BOLD, ITALIC, Outline
 from .render import MemoryDocument
 
 
@@ -120,6 +121,11 @@ class ReaderView(QWidget):
         self.outline.setDropIndicatorShown(True)
         self.outline.setDragDropMode(QTreeView.InternalMove)
         self.outline.setDefaultDropAction(Qt.MoveAction)
+        #: True while the tree is being opened to match the document, so the
+        #: signals that fire do not write the same values straight back.
+        self._seeding = False
+        self.outline.expanded.connect(self._note_expanded)
+        self.outline.collapsed.connect(self._note_collapsed)
         self.outline.setContextMenuPolicy(Qt.CustomContextMenu)
         self.outline.customContextMenuRequested.connect(self._outline_menu_at)
         self.bookmarks.about_to_edit.connect(self.outline_edit_begun)
@@ -224,7 +230,6 @@ class ReaderView(QWidget):
         self.canvas.set_document(document.document, data)
         self.search_model.setDocument(document.document)
         self.page_selector.setDocument(document.document)
-        self.outline.expandToDepth(1)
         # Only after the view has taken the new one: closing a document the
         # canvas still holds a reference to crashes PDFium on its next paint.
         if previous is not None:
@@ -268,7 +273,62 @@ class ReaderView(QWidget):
     def set_outline(self, outline):
         """Show the document's outline. Called whenever it changes."""
         self.bookmarks.set_outline(outline)
-        self.outline.expandToDepth(1)
+        self.apply_expansion()
+
+    def apply_expansion(self):
+        """Open the tree the way the *document* says, not to a fixed depth.
+
+        This used to be `expandToDepth(1)` regardless. That has to go, because
+        what the tree shows is now what a save writes: leaving it at a fixed
+        depth would mean any save -- for a rotation, for anything -- silently
+        rewriting the document's collapse state to two levels deep.
+
+        So a book that ships collapsed opens collapsed, and one that says
+        nothing opens expanded, which is what `/Count` absent or positive means.
+        Faithful rather than friendly, deliberately: the fallback is the silent
+        rewrite in a smaller form.
+        """
+        self._seeding = True
+        try:
+            self._expand_from_model()
+        finally:
+            self._seeding = False
+
+    def _expand_from_model(self, parent=QModelIndex()):
+        for row in range(self.bookmarks.rowCount(parent)):
+            index = self.bookmarks.index(row, 0, parent)
+            item = self.bookmarks.bookmark(index)
+            if item is None or not item.children:
+                continue
+            self.outline.setExpanded(index, not item.closed)
+            self._expand_from_model(index)
+
+    def _note_expanded(self, index):
+        self._note_expansion(index, closed=False)
+
+    def _note_collapsed(self, index):
+        self._note_expansion(index, closed=True)
+
+    def _note_expansion(self, index, closed: bool):
+        """Record what the user opened or shut, without calling it an edit.
+
+        Acrobat's behaviour, chosen deliberately (see PORTING-NOTES section 6):
+        the panel's shape is written when the document is saved, but toggling it
+        is not itself a modification. So reading a document and opening a
+        chapter to look inside costs nothing -- no dirty flag, no undo entry --
+        and if you save for any other reason the shape you left it in goes with
+        it.
+
+        Acrobat's own version of this has a trap: its Save does nothing on an
+        unmodified document, so people resort to Save As or adding and deleting
+        an annotation to force it. Ours writes whenever asked, so the trap does
+        not carry over.
+        """
+        if self._seeding:
+            return
+        item = self.bookmarks.bookmark(index)
+        if item is not None:
+            item.closed = closed
 
     def has_outline(self) -> bool:
         return self.bookmarks.rowCount(QModelIndex()) > 0
@@ -425,6 +485,63 @@ class ReaderView(QWidget):
         self.outline.edit(target)
         return True
 
+    def toggle_bold(self, index=None) -> bool:
+        return self._toggle_style(index, BOLD)
+
+    def toggle_italic(self, index=None) -> bool:
+        return self._toggle_style(index, ITALIC)
+
+    def _toggle_style(self, index, bit: int) -> bool:
+        target = self._target(index)
+        item = self.bookmarks.bookmark(target)
+        if item is None:
+            return False
+        return self.bookmarks.set_flags(target, item.flags ^ bit)
+
+    def choose_colour(self, index=None) -> bool:
+        """Pick a colour for the entry. Cancelling changes nothing."""
+        target = self._target(index)
+        item = self.bookmarks.bookmark(target)
+        if item is None:
+            return False
+        start = (QColor.fromRgbF(*item.colour) if item.colour is not None
+                 else QColor(Qt.black))
+        chosen = QColorDialog.getColor(start, self, _("Bookmark Colour"))
+        if not chosen.isValid():
+            return False
+        return self.bookmarks.set_colour(
+            target, (chosen.redF(), chosen.greenF(), chosen.blueF()))
+
+    def clear_colour(self, index=None) -> bool:
+        """Back to the viewer's default, which is not the same as black."""
+        return self.bookmarks.set_colour(self._target(index), None)
+
+    def expand_all_children(self, index=None) -> bool:
+        return self._expand_subtree(index, expand=True)
+
+    def collapse_all_children(self, index=None) -> bool:
+        return self._expand_subtree(index, expand=False)
+
+    def _expand_subtree(self, index, expand: bool) -> bool:
+        """Open or shut an entry and everything beneath it.
+
+        Not an edit, for the same reason a single toggle is not: this is the
+        shape of the panel, and it is written when the document is saved rather
+        than marking it modified. So it goes through the same `expanded` and
+        `collapsed` signals as clicking the arrows, and each entry it touches
+        records itself.
+        """
+        target = self._target(index)
+        if not target.isValid():
+            return False
+        stack = [target]
+        while stack:
+            current = stack.pop()
+            self.outline.setExpanded(current, expand)
+            for row in range(self.bookmarks.rowCount(current)):
+                stack.append(self.bookmarks.index(row, 0, current))
+        return True
+
     def delete_bookmark(self, index=None) -> bool:
         return self.bookmarks.delete_bookmark(self._target(index))
 
@@ -465,6 +582,35 @@ class ReaderView(QWidget):
         rename = menu.addAction(_("Rename"))
         rename.setEnabled(item is not None)
         rename.triggered.connect(lambda: self.rename_bookmark(target))
+
+        style = menu.addMenu(_("Style"))
+        style.setEnabled(item is not None)
+        bold = style.addAction(_("Bold"))
+        bold.setCheckable(True)
+        bold.setChecked(bool(item is not None and item.flags & BOLD))
+        bold.triggered.connect(lambda: self.toggle_bold(target))
+        italic = style.addAction(_("Italic"))
+        italic.setCheckable(True)
+        italic.setChecked(bool(item is not None and item.flags & ITALIC))
+        italic.triggered.connect(lambda: self.toggle_italic(target))
+        style.addSeparator()
+        colour = style.addAction(_("Colour…"))
+        colour.triggered.connect(lambda: self.choose_colour(target))
+        default = style.addAction(_("Default Colour"))
+        default.setEnabled(item is not None and item.colour is not None)
+        default.triggered.connect(lambda: self.clear_colour(target))
+
+        menu.addSeparator()
+
+        # Expanding is not an edit -- see `_note_expansion` -- so these sit
+        # apart from the commands that are.
+        has_children = bool(item is not None and item.children)
+        expand = menu.addAction(_("Expand All Children"))
+        expand.setEnabled(has_children)
+        expand.triggered.connect(lambda: self.expand_all_children(target))
+        collapse = menu.addAction(_("Collapse All Children"))
+        collapse.setEnabled(has_children)
+        collapse.triggered.connect(lambda: self.collapse_all_children(target))
 
         menu.addSeparator()
 
@@ -799,10 +945,21 @@ class OutlineModel(QAbstractItemModel):
             return None
         if role in (Qt.DisplayRole, Qt.EditRole):
             return item.title
-        if role == Qt.ForegroundRole and item.dangling:
-            # Marked rather than hidden or deleted: the page it wanted has gone,
-            # the title may still be worth keeping, and it can be re-homed.
-            return QBrush(QColor(150, 150, 150))
+        if role == Qt.FontRole and item.flags:
+            font = QFont()
+            font.setItalic(bool(item.flags & ITALIC))
+            font.setBold(bool(item.flags & BOLD))
+            return font
+        if role == Qt.ForegroundRole:
+            if item.dangling:
+                # Marked rather than hidden or deleted: the page it wanted has
+                # gone, the title may still be worth keeping, and it can be
+                # re-homed. This wins over the entry's own colour: a state the
+                # user needs to see beats a decoration they chose.
+                return QBrush(QColor(150, 150, 150))
+            if item.colour is not None:
+                red, green, blue = item.colour
+                return QBrush(QColor.fromRgbF(red, green, blue))
         if role == Qt.ToolTipRole:
             if item.dangling:
                 return _("This bookmark's page is no longer in the document")
@@ -869,6 +1026,28 @@ class OutlineModel(QAbstractItemModel):
         self.endInsertRows()
         self.edited.emit()
         return self.index_of(added)
+
+    def set_flags(self, index, flags: int) -> bool:
+        """Set bold and italic. `/F`: 1 is italic, 2 is bold."""
+        item = self.bookmark(index)
+        if item is None or item.flags == flags:
+            return False
+        self.about_to_edit.emit(_("Bookmark Style"))
+        item.flags = flags
+        self.dataChanged.emit(index, index, [Qt.FontRole])
+        self.edited.emit()
+        return True
+
+    def set_colour(self, index, colour) -> bool:
+        """Set the entry's colour, or None for the viewer's default."""
+        item = self.bookmark(index)
+        if item is None or item.colour == colour:
+            return False
+        self.about_to_edit.emit(_("Bookmark Colour"))
+        item.colour = colour
+        self.dataChanged.emit(index, index, [Qt.ForegroundRole])
+        self.edited.emit()
+        return True
 
     def rehome(self, index, uid) -> bool:
         """Point an entry at a different page, **keeping its title**.

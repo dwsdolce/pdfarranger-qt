@@ -38,15 +38,23 @@ implementation detail:
 
 from typing import Iterator, List, Optional
 
+#: Bits of a bookmark's `flags`, mirroring the PDF outline item's `/F`. Checked
+#: against pikepdf rather than assumed: italic alone gives 1, bold alone 2, both
+#: 3. These two are all the spec defines -- there is no third.
+ITALIC = 1
+BOLD = 2
+
 
 class Bookmark:
     """One entry: a title, the page it points at, and its children."""
 
-    __slots__ = ("title", "uid", "children", "wanted_target", "view", "external")
+    __slots__ = ("title", "uid", "children", "wanted_target", "view", "external",
+                 "colour", "flags", "closed")
 
     def __init__(self, title: str, uid: Optional[int] = None,
                  children: Optional[List["Bookmark"]] = None,
-                 wanted_target: bool = False, view=None, external=None):
+                 wanted_target: bool = False, view=None, external=None,
+                 colour=None, flags: int = 0, closed: bool = False):
         self.title = title
         self.uid = uid
         """The page's identity, or None for an entry that points nowhere."""
@@ -87,6 +95,28 @@ class Bookmark:
         Opaque on purpose -- this module never looks inside it, which is what
         keeps the module free of pikepdf. The writer knows what it is.
         """
+        self.colour = colour
+        """``(r, g, b)`` in 0..1, or None for the viewer's default.
+
+        The PDF outline item's `/C`. pikepdf has no API for it -- `OutlineItem`
+        offers `bold`, `italic` and `is_closed` and nothing else -- so it has to
+        be written into the raw dictionary, which is why it was the easiest of
+        the three to lose.
+        """
+        self.flags = flags
+        """`/F`, a bitfield: **1 is italic, 2 is bold**, so 3 is both.
+
+        Those two bits are all the spec defines; there is no third.
+        """
+        self.closed = closed
+        """Whether the entry is collapsed when the document is opened.
+
+        Stored in the *sign* of `/Count`, not as a key of its own, which is why
+        it used to survive an export by accident while colour and flags did not.
+
+        This is the state the **file** carries, not what happens to be expanded
+        in the sidebar. Browsing an outline must not modify the document.
+        """
         self.children: List["Bookmark"] = list(children or [])
 
     @property
@@ -116,7 +146,8 @@ class Bookmark:
     def duplicate(self) -> "Bookmark":
         return Bookmark(self.title, self.uid,
                         [child.duplicate() for child in self.children],
-                        self.wanted_target, self.view, self.external)
+                        self.wanted_target, self.view, self.external,
+                        self.colour, self.flags, self.closed)
 
     def walk(self, depth: int = 0) -> Iterator[tuple]:
         """Every entry in reading order, as ``(depth, bookmark)``."""

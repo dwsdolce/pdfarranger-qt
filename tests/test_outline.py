@@ -24,7 +24,9 @@ heading -- are answerable exactly rather than by poking a widget.
 import os
 import unittest
 
-from pdfarranger_qt.outline import Bookmark, Outline, from_pdf_outline
+from pdfarranger_qt.outline import (
+    BOLD, ITALIC, Bookmark, Outline, from_pdf_outline,
+)
 from support import HERE, settle
 
 OUTLINE_PDF = os.path.join(HERE, "exporter", "outlines.pdf")
@@ -706,8 +708,10 @@ class TestBookmarkCommands(unittest.TestCase):
         self.addCleanup(menu.deleteLater)
         self.assertEqual([a.text() for a in menu.actions() if not a.isSeparator()],
                          ["Add Bookmark Here", "Add Child Bookmark Here",
-                          "Re-home to This Page", "Rename", "Delete",
-                          "Delete with Children", "Delete Dangling Bookmarks"])
+                          "Re-home to This Page", "Rename", "Style",
+                          "Expand All Children", "Collapse All Children",
+                          "Delete", "Delete with Children",
+                          "Delete Dangling Bookmarks"])
 
     def test_commands_needing_an_entry_are_off_over_empty_space(self):
         from PySide6.QtCore import QModelIndex
@@ -1230,3 +1234,252 @@ class TestMovingPagesALongWay(unittest.TestCase):
         labels = [a.text() for a in self.win.view.actions()]
         for wanted in ("Move to Start", "Move to End", "Move to Page…"):
             self.assertIn(wanted, labels)
+
+
+class TestBookmarkAppearance(unittest.TestCase):
+    """Colour, bold/italic and the collapsed state (the xfail's real subject).
+
+    All three used to be dropped on save. The test that was supposed to cover
+    them was xfailed against pikepdf, but it never reached the code it named:
+    assigning `parent.obj = pikepdf.Dictionary()` is discarded when
+    `open_outline()` writes the tree back, so its styles never entered the
+    source document at all.
+    """
+
+    def setUp(self):
+        import shutil
+        import tempfile
+        import pikepdf
+        from PySide6.QtWidgets import QApplication  # noqa: F401
+        from pdfarranger_qt.mainwindow import MainWindow
+
+        self.dir = tempfile.mkdtemp()
+        self.addCleanup(shutil.rmtree, self.dir, ignore_errors=True)
+        self.styled = os.path.join(self.dir, "styled.pdf")
+        with pikepdf.open(OUTLINE_PDF) as pdf:
+            with pdf.open_outline() as ol:
+                ol.root[0].bold = True
+                ol.root[0].italic = True
+                ol.root[0].children.append(pikepdf.OutlineItem("Sub", 1))
+                ol.root[0].is_closed = True
+            # /C has no pikepdf API, so it goes into the dictionary directly.
+            pdf.Root.Outlines.First[pikepdf.Name.C] = pikepdf.Array([1.0, 0.0, 0.0])
+            pdf.save(self.styled)
+
+        self.win = MainWindow()
+        self.win.resize(900, 700)
+        self.win.show()
+        self.win.open_paths([self.styled])
+        self.win.set_read_mode(True)
+        settle(timeout_ms=500)
+        self.win.modified = False
+        self.model = self.win.reader.bookmarks
+
+    def tearDown(self):
+        self.win.modified = False
+        self.win.close()
+
+    def root(self, row=0):
+        from PySide6.QtCore import QModelIndex
+        return self.model.index(row, 0, QModelIndex())
+
+    def saved_first(self):
+        """Save, reopen with pikepdf, and hand back the first outline item."""
+        import pikepdf
+        out = os.path.join(self.dir, "saved.pdf")
+        self.win._write([out], self.win.model.pages,
+                        outline=self.win.model.outline)
+        pdf = pikepdf.open(out)
+        self.addCleanup(pdf.close)
+        with pdf.open_outline() as ol:
+            item = ol.root[0]
+            colour = (list(item.obj[pikepdf.Name.C])
+                      if pikepdf.Name.C in item.obj else None)
+            flags = (int(item.obj[pikepdf.Name.F])
+                     if pikepdf.Name.F in item.obj else 0)
+            return colour, flags, item.is_closed
+
+    # -- reading -----------------------------------------------------------
+
+    def test_the_appearance_is_read_from_the_file(self):
+        entry = self.win.model.outline.roots[0]
+        self.assertEqual(entry.colour, (1.0, 0.0, 0.0))
+        self.assertEqual(entry.flags, BOLD | ITALIC)
+        self.assertTrue(entry.closed)
+
+    def test_it_survives_a_save(self):
+        """The data loss this whole exercise was about."""
+        colour, flags, closed = self.saved_first()
+        self.assertEqual(colour, [1, 0, 0])
+        self.assertEqual(flags, BOLD | ITALIC)
+        self.assertTrue(closed)
+
+    def test_the_tree_shows_it(self):
+        """Editing an attribute you cannot see would be a strange feature."""
+        from PySide6.QtCore import Qt
+        font = self.root().data(Qt.FontRole)
+        self.assertIsNotNone(font)
+        self.assertTrue(font.bold())
+        self.assertTrue(font.italic())
+        brush = self.root().data(Qt.ForegroundRole)
+        self.assertEqual(brush.color().red(), 255)
+
+    def test_dangling_grey_beats_the_entrys_own_colour(self):
+        """A state the user needs to see beats a decoration they chose."""
+        from PySide6.QtCore import Qt
+        self.win.view.set_selected_rows([0])
+        self.win.delete_selected()
+        settle(timeout_ms=300)
+        self.assertTrue(self.win.model.outline.roots[0].dangling)
+        brush = self.root().data(Qt.ForegroundRole)
+        self.assertEqual((brush.color().red(), brush.color().green(),
+                          brush.color().blue()), (150, 150, 150))
+
+    # -- editing -----------------------------------------------------------
+
+    def test_bold_toggles_and_is_undoable(self):
+        self.assertTrue(self.win.reader.toggle_bold(self.root()))
+        self.assertEqual(self.win.model.outline.roots[0].flags, ITALIC)
+        self.assertTrue(self.win.modified)
+        self.assertEqual(self.win.model.undo.undo_label(), "Bookmark Style")
+        self.win.undo()
+        settle(timeout_ms=300)
+        self.assertEqual(self.win.model.outline.roots[0].flags, BOLD | ITALIC)
+
+    def test_italic_toggles_independently(self):
+        self.win.reader.toggle_italic(self.root())
+        self.assertEqual(self.win.model.outline.roots[0].flags, BOLD)
+
+    def test_a_colour_can_be_set_and_cleared(self):
+        self.assertTrue(self.model.set_colour(self.root(), (0.0, 0.0, 1.0)))
+        self.assertEqual(self.win.model.outline.roots[0].colour, (0.0, 0.0, 1.0))
+        self.assertTrue(self.win.reader.clear_colour(self.root()))
+        self.assertIsNone(self.win.model.outline.roots[0].colour)
+
+    def test_the_default_colour_is_not_black(self):
+        """Clearing /C is not the same as setting it to black."""
+        self.model.set_colour(self.root(), (0.0, 0.0, 0.0))
+        colour, _flags, _closed = self.saved_first()
+        self.assertEqual(colour, [0, 0, 0])
+
+    def test_an_edit_reaches_the_saved_file(self):
+        self.model.set_colour(self.root(), (0.0, 0.0, 1.0))
+        self.win.reader.toggle_bold(self.root())
+        colour, flags, _closed = self.saved_first()
+        self.assertEqual(colour, [0, 0, 1])
+        self.assertEqual(flags, ITALIC)
+
+    def test_setting_what_is_already_there_is_not_an_edit(self):
+        self.assertFalse(self.model.set_flags(self.root(), BOLD | ITALIC))
+        self.assertFalse(self.model.set_colour(self.root(), (1.0, 0.0, 0.0)))
+        self.assertFalse(self.win.modified)
+
+
+class TestOutlineExpansion(unittest.TestCase):
+    """Acrobat's rule: the panel's shape is saved, but toggling is not an edit."""
+
+    def setUp(self):
+        import shutil
+        import tempfile
+        import pikepdf
+        from PySide6.QtWidgets import QApplication  # noqa: F401
+        from pdfarranger_qt.mainwindow import MainWindow
+
+        self.dir = tempfile.mkdtemp()
+        self.addCleanup(shutil.rmtree, self.dir, ignore_errors=True)
+        self.nested = os.path.join(self.dir, "nested.pdf")
+        with pikepdf.open(OUTLINE_PDF) as pdf:
+            with pdf.open_outline() as ol:
+                deep = pikepdf.OutlineItem("Deep", 2)
+                deep.children.append(pikepdf.OutlineItem("Deeper", 3))
+                ol.root[0].children.append(deep)
+                ol.root[0].is_closed = True      # the file says: start shut
+            pdf.save(self.nested)
+
+        self.win = MainWindow()
+        self.win.resize(900, 700)
+        self.win.show()
+        self.win.open_paths([self.nested])
+        self.win.set_read_mode(True)
+        settle(timeout_ms=500)
+        self.win.modified = False
+        self.model = self.win.reader.bookmarks
+        self.tree = self.win.reader.outline
+
+    def tearDown(self):
+        self.win.modified = False
+        self.win.close()
+
+    def root(self, row=0):
+        from PySide6.QtCore import QModelIndex
+        return self.model.index(row, 0, QModelIndex())
+
+    # -- seeding -----------------------------------------------------------
+
+    def test_the_tree_opens_the_way_the_document_says(self):
+        """Not expandToDepth(1), which would rewrite the document on any save."""
+        self.assertFalse(self.tree.isExpanded(self.root()))
+        self.assertTrue(self.win.model.outline.roots[0].closed)
+
+    def test_an_entry_the_file_leaves_open_opens(self):
+        self.assertTrue(self.tree.isExpanded(self.root(1))
+                        or not self.model.rowCount(self.root(1)))
+
+    # -- toggling is not an edit -------------------------------------------
+
+    def test_expanding_does_not_modify_the_document(self):
+        """Reading a document must not cost you a save prompt."""
+        self.tree.expand(self.root())
+        settle(timeout_ms=200)
+        self.assertFalse(self.win.modified)
+        self.assertFalse(self.win.model.undo.can_undo)
+
+    def test_expanding_is_still_remembered(self):
+        self.tree.expand(self.root())
+        settle(timeout_ms=200)
+        self.assertFalse(self.win.model.outline.roots[0].closed)
+
+    def test_the_shape_you_left_it_in_is_what_gets_saved(self):
+        import pikepdf
+        self.tree.expand(self.root())
+        settle(timeout_ms=200)
+        out = os.path.join(self.dir, "saved.pdf")
+        self.win._write([out], self.win.model.pages,
+                        outline=self.win.model.outline)
+        with pikepdf.open(out) as pdf, pdf.open_outline() as ol:
+            self.assertFalse(ol.root[0].is_closed)
+
+    # -- expand and collapse all children ----------------------------------
+
+    def test_expand_all_children_opens_the_whole_subtree(self):
+        self.assertTrue(self.win.reader.expand_all_children(self.root()))
+        settle(timeout_ms=200)
+        chapter = self.win.model.outline.roots[0]
+        self.assertFalse(chapter.closed)
+        for _depth, entry in chapter.walk():
+            if entry.children:
+                self.assertFalse(entry.closed, entry.title)
+
+    def test_collapse_all_children_shuts_the_whole_subtree(self):
+        self.win.reader.expand_all_children(self.root())
+        settle(timeout_ms=200)
+        self.assertTrue(self.win.reader.collapse_all_children(self.root()))
+        settle(timeout_ms=200)
+        chapter = self.win.model.outline.roots[0]
+        for _depth, entry in chapter.walk():
+            if entry.children:
+                self.assertTrue(entry.closed, entry.title)
+
+    def test_they_reach_more_than_one_level_down(self):
+        """The point of "all children" over clicking the arrow."""
+        self.win.reader.expand_all_children(self.root())
+        settle(timeout_ms=200)
+        deep = self.model.index(0, 0, self.root())
+        while self.model.rowCount(deep):
+            self.assertTrue(self.tree.isExpanded(deep))
+            deep = self.model.index(0, 0, deep)
+
+    def test_expanding_everything_is_not_an_edit_either(self):
+        self.win.reader.expand_all_children(self.root())
+        settle(timeout_ms=200)
+        self.assertFalse(self.win.modified)

@@ -847,10 +847,28 @@ is `unsetColorScheme()`, and Qt follows the OS by itself from there. That is all
 explicit override is one call.
 
 The offscreen platform used by the tests reports `ColorScheme.Unknown` and
-ignores the setter, so the two tests that assert Qt actually changed skip there.
-They pass under `QT_QPA_PLATFORM=windows`, where `Light` becomes `Dark` and the
-palette's windowText flips `#000000` → `#ffffff`. Run
-`QT_QPA_PLATFORM=windows pytest tests/test_theme.py` to exercise them.
+ignores the setter. The two tests that assert Qt actually changed therefore used
+to *skip* on every ordinary run of the suite -- which meant the two tests that
+mattered most here almost never ran, and a swapped light/dark mapping would have
+sailed through.
+
+They now assert the part that is ours: `apply(DARK)` asks Qt for
+`Qt.ColorScheme.Dark`, `apply(SYSTEM)` calls `unsetColorScheme`. That is
+checkable anywhere, against a stand-in for `QStyleHints`. Whether the platform
+honours the request is the platform's business, and is still asserted for real
+wherever it can be -- the same tests make the stronger assertion when
+`color_schemes_supported()`. Zero skips, and swapping `Light` and `Dark` in
+`_SCHEMES` now fails them under offscreen, which it did not before.
+
+The same reasoning as the render-timing flake in section 7: when an assertion
+depends on something the environment may not provide, assert the call rather
+than the consequence. It also closed a hole nobody had noticed -- nothing
+verified that "system" *unsets* rather than picking a scheme, so setting Light
+and calling it system would have passed every test here.
+
+Verified on real platforms: `QT_QPA_PLATFORM=windows`, where `Light` becomes
+`Dark` and the palette's windowText flips `#000000` → `#ffffff`, and
+`QT_QPA_PLATFORM=cocoa`.
 
 Page thumbnails deliberately stay white in dark mode: the delegate paints the
 sheet explicitly rather than from the palette, because a PDF page is paper.
@@ -1871,6 +1889,69 @@ Worth stating what the bug actually risked, because "a stale sidebar" undersells
 it: the entries were still live. They were editable, they were in the undo
 state, and they would have been written into the *next* document saved from that
 window.
+
+### How a bookmark looks, and who decides when it is collapsed
+
+A PDF outline item has exactly three presentation attributes beside its title
+and its target. All three were being thrown away on save, and the test that was
+supposed to cover them had never once run the code it named.
+
+| attribute | key | note |
+| --- | --- | --- |
+| colour | `/C` | RGB, 0..1. pikepdf has **no API for it** -- `OutlineItem` offers `bold`, `italic`, `is_closed` and nothing else -- so it is written into the dictionary directly |
+| bold / italic | `/F` | a bitfield: **1 italic, 2 bold**, so 3 is both. Those two bits are all the spec defines |
+| collapsed | sign of `/Count` | negative closed, positive open. Not a key of its own, which is why it used to survive an export by accident while the other two did not |
+
+**Why the old test proved nothing.** It built its fixture with `parent.obj =
+pikepdf.Dictionary()` and set `/C` and `/F` on that. pikepdf discards a
+hand-assigned `obj` when `open_outline()` writes the tree back, so the styles
+never entered the source document and the test failed in its own setup. It was
+marked xfail against pikepdf, which hid that completely. The lesson is the same
+one the skipped theme tests taught: a test that never runs the code it names is
+worse than no test, because it reads like coverage.
+
+The blamed cause was real, though, and applies to `rebuild_outlines`: that hands
+`OutlineItem` a `copy_foreign`'d dictionary, and pikepdf rebuilds the dictionary
+from its own fields on write, dropping anything it does not know about.
+`write_outline` sidesteps it -- bold and italic through pikepdf's API, `/C`
+written afterwards by walking the tree just written alongside the one it came
+from. `rebuild_outlines` was left alone: since D20 it is on no path that saves a
+file, because every save and export supplies the document's own outline.
+
+**Collapsed state follows Acrobat, deliberately.** The panel's shape is written
+when the document is saved, and toggling it is *not* itself a modification. So
+reading a document and opening a chapter costs nothing -- no dirty flag, no undo
+entry -- and if you save for any other reason, the shape you left it in goes
+with it. David's argument, and it is the right one: if you never save, expansion
+cannot affect anything; if you are saving, it is because something really
+changed, and the panel may as well come along.
+
+Acrobat's own version has a trap that ours does not inherit. Its Save does
+nothing on an unmodified document, so people resort to Save As, or to adding an
+annotation and deleting it, purely to make the save happen -- there are forum
+threads about little else. Our Save writes whenever it is asked, so the state
+goes out without the trick.
+
+This forced one change with visible consequences: the sidebar no longer opens at
+`expandToDepth(1)`. It opens the way the *document* says, because "what you see
+is what gets saved" would otherwise mean any save at all -- for a rotation, for
+anything -- silently rewriting the collapse state to two levels deep. A book
+that ships collapsed opens collapsed; one that says nothing opens expanded,
+which is what an absent or positive `/Count` means. Faithful rather than
+friendly, because the friendly fallback reintroduces the silent rewrite in a
+smaller form.
+
+**Editing.** Bold, Italic, Colour and Default Colour are on the tree's context
+menu, and unlike expanding they *are* edits: undo entry, document modified. The
+tree draws all three, since an attribute you cannot see is a strange thing to be
+able to change -- with one precedence rule, that the grey of a dangling entry
+beats the entry's own colour. A state the reader needs beats a decoration they
+chose.
+
+Expand All Children and Collapse All Children work on any node and reach the
+whole subtree, not one level. They go through the same `expanded` and
+`collapsed` signals as clicking the arrows, so they are recorded the same way
+and are not edits either.
 
 ### Dragging in the outline tree
 

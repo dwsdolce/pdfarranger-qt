@@ -821,44 +821,22 @@ class TestScaling:
 class TestOutlineStylesAndState:
     """Tests for visual styles (colors/flags) and collapsed/expanded states."""
 
-    @pytest.mark.xfail(
-        reason="Pre-existing upstream failure, not a porting regression: this "
-               "fails identically against pdfarranger.exporter_outlines. "
-               "pikepdf 10.x does not round-trip the outline item colour (/C) "
-               "through open_outline(). The module is a byte-for-byte copy of "
-               "upstream's, verified with diff.",
-        strict=False,
-    )
-    def test_styles_and_closed_state_preserved(self):
-        """Color, font flags, and default closed state should survive remapping."""
-        src = make_pdf(2)
-        with src.open_outline() as ol:
-            parent = pikepdf.OutlineItem("Styled Parent", 0)
-            # Give the new item a dictionary to hold custom styles ---
-            parent.obj = pikepdf.Dictionary()
-            # Set color to red [1.0, 0.0, 0.0] and font to bold-italic (3)
-            parent.obj[pikepdf.Name.C] = pikepdf.Array([1.0, 0.0, 0.0])
-            parent.obj[pikepdf.Name.F] = 3
-            # Add a child so the parent has something to collapse
-            child = pikepdf.OutlineItem("Child", 1)
-            parent.children.append(child)
-            parent.is_closed = True
-            ol.root.append(parent)
-        src = roundtrip(src)
-        out = make_pdf(2)
-        pages = [Row(1, 1), Row(1, 2)]
-        rebuild_outlines([src], out, pages)
-        out = roundtrip(out)
-        with out.open_outline() as ol:
-            assert len(ol.root) == 1
-            parent_out = ol.root[0]
-            # Verify the color and style flags carried over
-            assert pikepdf.Name.C in parent_out.obj
-            assert list(parent_out.obj[pikepdf.Name.C]) == [1.0, 0.0, 0.0]
-            assert pikepdf.Name.F in parent_out.obj
-            assert parent_out.obj[pikepdf.Name.F] == 3
-            # Verify it is still closed
-            assert parent_out.is_closed is True
+    # Colour, bold/italic and the collapsed state are *not* tested here any
+    # more. There used to be an xfail claiming pikepdf could not round-trip the
+    # colour through open_outline(). That is true of `rebuild_outlines` -- it
+    # hands OutlineItem a copy_foreign'd dictionary, and pikepdf rebuilds the
+    # dictionary from its own fields when the tree is written, dropping /C and
+    # /F -- but the test never demonstrated it: assigning `parent.obj = ...`
+    # is discarded the same way, so its styles never reached the source
+    # document and it failed in its own setup, having exercised nothing.
+    #
+    # It is gone rather than repaired because `rebuild_outlines` is no longer on
+    # any path that saves a file. Every save and export now supplies the
+    # document's own outline (D20) and goes through `write_outline`, which
+    # preserves all three -- setting bold and italic through pikepdf's API and
+    # writing /C into the dictionary afterwards, which is the way around the
+    # limitation. That is covered end to end by TestBookmarkAppearance in
+    # tests/test_outline.py.
 
 
 # ---------------------------------------------------------------------------

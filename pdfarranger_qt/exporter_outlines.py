@@ -671,11 +671,36 @@ def read_outline(pdf_input, pages, source_names=None):
                 return None, None, action, True
             return None, None, None, False
 
+        def presentation(item):
+            """``(colour, flags, closed)`` -- how the entry is drawn.
+
+            The three attributes a PDF outline item has besides its title and
+            target, and all three were being thrown away. `/C` is an RGB triple;
+            `/F` is a bitfield where 1 is italic and 2 is bold; collapsed is the
+            *sign* of `/Count` rather than a key of its own, which is why it
+            used to survive an export by accident while the other two did not.
+            """
+            colour, flags = None, 0
+            obj = getattr(item, "obj", None)
+            if obj is not None:
+                raw = obj.get(pikepdf.Name.C)
+                if isinstance(raw, pikepdf.Array) and len(raw) == 3:
+                    try:
+                        colour = tuple(float(v) for v in raw)
+                    except (TypeError, ValueError):
+                        colour = None
+                try:
+                    flags = int(obj.get(pikepdf.Name.F, 0))
+                except (TypeError, ValueError):
+                    flags = 0
+            return colour, flags, bool(getattr(item, "is_closed", False))
+
         def convert(item):
             uid, view, external, declared = resolve(item)
+            colour, flags, closed = presentation(item)
             return Bookmark(str(item.title or ""), uid,
                             [convert(child) for child in item.children],
-                            declared, view, external)
+                            declared, view, external, colour, flags, closed)
 
         try:
             with pdf.open_outline() as outline:
@@ -717,6 +742,8 @@ def write_outline(pdf_output, outline, pages, source_names=None, prune=False):
     would otherwise arrive does not. Off for a full save, where a heading is
     kept because the user put it there.
     """
+    from . import outline as outline_module
+
     position = {}
     for index, row in enumerate(pages):
         position.setdefault(row.uid, index)
@@ -757,13 +784,41 @@ def write_outline(pdf_output, outline, pages, source_names=None, prune=False):
             except Exception:  # noqa: BLE001 - an action we cannot carry over
                 action = None
         entry = pikepdf.OutlineItem(item.title, destination=dest, action=action)
+        # Bold and italic pikepdf will write for us; the colour it will not, and
+        # is dealt with below.
+        entry.italic = bool(item.flags & outline_module.ITALIC)
+        entry.bold = bool(item.flags & outline_module.BOLD)
+        entry.is_closed = bool(item.closed)
         for child in item.children:
             if not prune or survives(child):
                 entry.children.append(build(child))
         return entry
 
+    # The tree as it will actually be written, decided once so the colours can
+    # be applied afterwards by walking the same shape.
+    def keep(items):
+        return [(item, keep(item.children))
+                for item in items if not prune or survives(item)]
+
+    written = keep(outline.roots)
+
     with pdf_output.open_outline() as new_outline:
         del new_outline.root[:]
-        for item in outline.roots:
-            if not prune or survives(item):
-                new_outline.root.append(build(item))
+        for item, _children in written:
+            new_outline.root.append(build(item))
+
+    # `/C` has no pikepdf API -- OutlineItem offers bold, italic and is_closed
+    # and nothing else -- so it goes straight into the dictionaries, walking the
+    # tree just written alongside the one it came from.
+    def paint(node, items):
+        child = node.get(pikepdf.Name.First)
+        for item, grandchildren in items:
+            if child is None:
+                return
+            if item.colour is not None:
+                child[pikepdf.Name.C] = pikepdf.Array(list(item.colour))
+            paint(child, grandchildren)
+            child = child.get(pikepdf.Name.Next)
+
+    if pikepdf.Name.Outlines in pdf_output.Root:
+        paint(pdf_output.Root.Outlines, written)
