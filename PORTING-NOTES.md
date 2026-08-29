@@ -527,27 +527,27 @@ reader's document asynchronous.
 ### Phase 7 — UI rework (beyond parity) — *deprioritised, see D12*
 
 D12 deprioritised this phase as optional, and the first three items below stay
-that way. The last two do not: owning the reader's view and editing bookmarks
-are what was actually wanted from phase 7, and are active work as of phase 6a
-above. The reader's view comes first because text selection and link following
-are built on it (D16), and bookmark authoring is much better with a selection to
-take a title and an `/XYZ` destination from.
+that way. The last two did not: owning the reader's view and editing bookmarks
+are what was actually wanted from phase 7, and **both are now done**. The
+reader's view came first because text selection and link following are built on
+it (D16), and bookmark authoring turned out to want a selection for exactly the
+predicted reason -- Add takes both its title and its `/XYZ` destination point
+from one.
+
+What remains is the three D12 items and nothing else. They are optional by
+David's own decision, not blocked.
 
 - [ ] Split view with full-page preview
 - [ ] Dual-pane merging
 - [ ] Visible undo history
-- [ ] **Own the reader's view, on the engine we already have.** The widget
-      replacement itself is done, and cost about what was predicted --
+- [x] **Own the reader's view, on the engine we already have.** Done. Cost about
+      what was predicted --
       comparable in size to phase 6. Every reader limitation met until then
       traced to `QPdfView` being a closed widget rather than to the engine
       underneath, so replacing it with a scroll area of our own delivered link
       following, text selection and copy, a cache and prefetch policy we
       control, and facing pages, none of which `QPdfView` exposed at all.
 
-      **Not complete.** One step below is open: keyboard text selection. Text
-      selection is one of this item's own deliverables, and only the mouse half
-      of it is built, so this stays unchecked until the caret and shift+arrow
-      land. Everything else here is done.
 
       Page layout, scrolling, zoom anchoring, hit-testing and keyboard
       navigation duly became ours to get right. The thing that made that
@@ -596,19 +596,20 @@ take a title and an `/XYZ` destination from.
             a selection is a function of its two ends and never of the route
             taken to them -- is section 6, *Extending a selection*, along with
             what Acrobat does instead and why it was not copied
-      - [ ] **Keyboard text selection: an insertion caret and shift+arrow.**
-            The one selection gesture Acrobat has that this does not. In
-            Acrobat you click to place a caret and then extend by character or
-            line with shift+arrow; here a click leaves an anchor but nothing
-            visible, and the arrow keys scroll and change pages.
+      - [x] **Keyboard text selection: an insertion caret and shift+arrow.**
+            A blinking bar placed by a click, extended by character, word or
+            line, across page boundaries, always exact -- the keyboard never
+            snaps to a word the way the mouse does. Design and the reasoning in
+            section 6, *Keyboard text selection*.
 
-            Three things to settle before building it. The caret has to be
-            *painted* -- an invisible one is why shift+click needed no caret
-            and this does. The arrow keys have to be shared with scrolling and
-            page navigation, which they currently own outright. And the
-            keyboard stays character-granular, unlike the mouse, so
-            `extend_to`'s word snapping is not reused: see section 6,
-            *Extending a selection*, for why the two differ
+            One of the three things this entry said had to be settled turned
+            out not to exist. "The arrow keys have to be shared with scrolling
+            and page navigation, which they currently own outright" -- they do
+            not: in Acrobat an unmodified arrow does nothing once a cursor is
+            placed, so shift+arrow was all that was needed and nothing had to be
+            given up. The keys themselves come from `QKeySequence`, which is the
+            only way to be right on three platforms and which the offscreen test
+            plugin promptly proved by disagreeing with macOS about them
       - [x] Placeholders and prefetch. The hybrid section 6 settled: the
             worker keeps the queue, the drain loop and the thread, while *what*
             a task renders moved into the task and *where its document comes
@@ -1646,6 +1647,82 @@ every link in the document to rescue a gesture nobody makes on a link. So the
 click wins, which is what every PDF reader does -- and it is why the fixture for
 these tests is `test_raster_image_text.pdf`: it is the only one with a line of
 prose that PDFium does not infer a link from.
+
+### Keyboard text selection — the design
+
+Settled with David before building, from his testing of Acrobat rather than
+from documentation. The short version: **this is Acrobat's model, and it costs
+us nothing**, which is not what the tracker entry expected.
+
+**Plain arrow keys are not involved.** The tracker warned that the arrows
+"currently own scrolling and page navigation outright and would have to be
+shared". They do not have to be. In Acrobat, with a cursor placed, an unmodified
+arrow key does *nothing* -- click to place, shift+arrow to extend, and that is
+the entire keyboard story. So the arrows go on scrolling in continuous mode and
+turning pages in single page mode, which is more than Acrobat offers, and
+shift+arrow was unbound anyway. The conflict this step was waiting on turned out
+not to exist.
+
+Worth recording what the arrows actually did, since it was mis-stated once:
+`←`/`→` scroll *horizontally*, and there is no horizontal range at fit width --
+0 at fit width, 1235 at 3x -- so they appear dead in the mode people read in.
+
+**Keys come from `QKeySequence`, not from us.** The module already does this for
+Copy and Select All, and it is the only way to be right on three platforms:
+extend-by-word is `Alt+Shift+Arrow`, which on macOS is Option+Shift, and
+start-of-line is `Ctrl+Left`, which Qt maps to Cmd. An earlier draft of this
+section proposed Ctrl+Left/Right for word-wise, which is simply wrong on macOS.
+It also settles Home/End without a judgement call: they keep meaning first and
+last *page*, which is consistent with macOS, where Home/End already mean start
+and end of document rather than of line.
+
+**Granularity is exact**, unlike the mouse. Section *Extending a selection* has
+the mouse snapping the moving end to a whole word because a click is one
+imprecise shot; a keypress is not, so shift+arrow moves by exactly one
+character, one word or one line. Same rule stated once: granularity follows the
+precision of the gesture.
+
+| decision | choice |
+| --- | --- |
+| the caret | a **blinking** vertical bar, as Acrobat draws it |
+| shift+`←`/`→` | one character |
+| Opt+shift+`←`/`→` | one word |
+| shift+`↑`/`↓` | one line, and **across page boundaries**, as a drag already runs |
+| lifetime | dies on a page turn, a mode change, or a reload -- Acrobat's behaviour |
+| Escape | clears the caret **and** the selection |
+
+Two of those were argued rather than copied.
+
+*Escape* clears both. Acrobat clears the caret and leaves the selection; ours
+already cleared the selection and had a test for it, and taking that away to
+match Acrobat would have removed working behaviour to gain nothing.
+
+*Moving a line follows the document's text order*, not the geometry of the page.
+David found that Acrobat on a multi-column page walks column 1, then column 3,
+then column 2 -- and called it weird twice, which it is. It is the *document's*
+weirdness rather than Acrobat's: the text stream is ordered that way and Acrobat
+follows it faithfully. We follow it too, for the same reason indices rather than
+geometry decide which end of a shift+click moves (see *Extending a selection*):
+geometry is what gets two-column pages wrong, and having the keyboard disagree
+with the mouse about the same text would be worse than either being odd on its
+own. Consistency with ourselves beats being locally clever.
+
+A consequence worth knowing: because lines come from the page's text with its
+newlines in it, moving up and down needs no geometry at all. The column position
+is an offset within the line, which is what a text editor does on a plain
+string. The trap in that, found by a failing test: `line_bounds` stops *before*
+the carriage return, so stepping one character past the end of a line lands on
+the `\r` or the `\n`, both of which resolve back to the line just left. Moving
+down has to jump past the break, not onto it.
+
+**The offscreen platform does not agree with macOS about what the keys are.**
+`SelectNextWord` is `Alt+Shift+Right` under cocoa and `Ctrl+Shift+Right` under
+the offscreen plugin the suite runs on. That is the whole argument for asking
+`QKeySequence` rather than naming keys -- and it applies to the *tests* as well,
+which is where it was found: a test pressing Alt+Shift+Right passed by hand and
+failed under pytest. It now asks for the platform's own binding, exactly as the
+implementation does. Same lesson as the theme tests in section 7: never assert
+against something the environment defines differently.
 
 ### Extending a selection, and why it is not Acrobat's rule
 

@@ -27,7 +27,7 @@ import unittest
 from PySide6.QtCore import (
     QEvent, QModelIndex, QPointF, QRectF, QSize, QSizeF, Qt, QUrl,
 )
-from PySide6.QtGui import QKeyEvent, QMouseEvent
+from PySide6.QtGui import QKeyEvent, QKeySequence, QMouseEvent
 from PySide6.QtPdf import QPdfLinkModel, QPdfSearchModel
 from PySide6.QtWidgets import QApplication
 
@@ -2158,3 +2158,194 @@ class TestExtendingOverALink(unittest.TestCase):
                 Qt.LeftButton, Qt.LeftButton, Qt.ShiftModifier))
         self.assertEqual(moved, [], "the shifted click followed the link")
         self.assertTrue(self.canvas.has_selection())
+
+
+class TestLineBounds(unittest.TestCase):
+    """Which characters make up a line, from the page's own text.
+
+    Lines come from the text's newlines rather than from geometry, so moving up
+    and down needs no page layout at all -- the column is an offset within the
+    line, exactly as a text editor treats a plain string.
+    """
+
+    TEXT = "first line\r\nsecond\r\nthird one"
+
+    def line(self, index):
+        start, end = PageText.line_bounds(self.TEXT, index)
+        return self.TEXT[start:end]
+
+    def test_the_first_line(self):
+        self.assertEqual(self.line(0), "first line")
+        self.assertEqual(self.line(5), "first line")
+
+    def test_a_middle_line(self):
+        self.assertEqual(self.line(12), "second")
+
+    def test_the_last_line(self):
+        self.assertEqual(self.line(len(self.TEXT) - 1), "third one")
+
+    def test_the_carriage_return_is_not_part_of_the_line(self):
+        """A CRLF break leaves the CR on the near side; it is not text."""
+        start, end = PageText.line_bounds(self.TEXT, 0)
+        self.assertEqual(self.TEXT[end], "\r")
+
+    def test_an_index_past_the_end_is_clamped(self):
+        self.assertEqual(self.line(len(self.TEXT) + 50), "third one")
+
+    def test_there_are_no_lines_on_an_empty_page(self):
+        self.assertIsNone(PageText.line_bounds("", 0))
+
+
+class TestKeyboardSelection(unittest.TestCase):
+    """The caret, and shift+arrow extending from it.
+
+    Acrobat's model, settled with David: a click places a blinking bar, shift
+    plus an arrow extends, and a *plain* arrow is not involved at all -- which
+    is why this took nothing away from scrolling or page turning. Granularity is
+    exact, unlike the mouse, because a keypress is a precise gesture.
+    """
+
+    def setUp(self):
+        self.docs = DocumentSet()
+        self.addCleanup(self.docs.cleanup)
+        pages = self.docs.add_file(LINK_PDF)      # two lines of text
+        self.memory = MemoryDocument(
+            get_in_memory_pdf(list(pages), self.docs.files_for_export()))
+        self.addCleanup(self.memory.close)
+        self.canvas = PageCanvas()
+        self.addCleanup(self.canvas.deleteLater)
+        self.addCleanup(self.canvas.shutdown)
+        self.canvas.resize(700, 900)
+        self.canvas.show()
+        settle(lambda: self.canvas.viewport().width() == 700)
+        self.canvas.set_document(self.memory.document, None)
+        self.canvas.go_to_page(0)
+        settle(timeout_ms=200)
+        self.text = PageText(self.memory.document)
+
+    def click(self, run, fraction, modifiers=Qt.NoModifier):
+        box = self.text.runs(0)[run]
+        page_point = QPointF(box.left() + box.width() * fraction, box.center().y())
+        point = self.canvas.to_viewport(self.canvas.layout.from_page(0, page_point))
+        for kind in (QEvent.MouseButtonPress, QEvent.MouseButtonRelease):
+            QApplication.sendEvent(self.canvas.viewport(), QMouseEvent(
+                kind, point, self.canvas.viewport().mapToGlobal(point.toPoint()),
+                Qt.LeftButton, Qt.LeftButton, modifiers))
+
+    def key(self, key, modifiers=Qt.NoModifier):
+        QApplication.sendEvent(self.canvas,
+                               QKeyEvent(QEvent.KeyPress, key, modifiers))
+
+    def standard_key(self, name):
+        """Press whatever *this platform* calls a standard selection move.
+
+        Not spelled out, for the same reason the code does not spell it out:
+        extend-by-word is Alt+Shift+Right on macOS and Ctrl+Shift+Right under
+        the offscreen platform this suite runs on, so a test naming either
+        passes on one and fails on the other. Ask Qt, as the implementation
+        does.
+        """
+        binding = QKeySequence.keyBindings(
+            getattr(QKeySequence.StandardKey, name))[0]
+        combination = binding[0]
+        self.key(combination.key(), combination.keyboardModifiers())
+
+    # -- placing it --------------------------------------------------------
+
+    def test_a_click_places_the_caret(self):
+        self.assertIsNone(self.canvas.caret())
+        self.click(0, 0.05)
+        self.assertIsNotNone(self.canvas.caret())
+        self.assertEqual(self.canvas.caret()[0], 0)
+
+    def test_the_caret_has_somewhere_to_be_drawn(self):
+        self.click(0, 0.05)
+        rect = self.canvas.caret_rect()
+        self.assertIsNotNone(rect)
+        self.assertGreater(rect.height(), 0)
+        self.assertGreaterEqual(rect.width(), 1)
+
+    def test_there_is_no_rectangle_without_a_caret(self):
+        self.assertIsNone(self.canvas.caret_rect())
+
+    def test_it_blinks(self):
+        """A blinking bar, as Acrobat draws it."""
+        self.click(0, 0.05)
+        was = self.canvas._caret_on
+        self.canvas._blink_caret()
+        self.assertNotEqual(self.canvas._caret_on, was)
+
+    # -- extending ---------------------------------------------------------
+
+    def test_shift_right_takes_one_character(self):
+        self.click(0, 0.02)
+        start = self.canvas.caret()[1]
+        self.key(Qt.Key_Right, Qt.ShiftModifier)
+        page_text = self.text.text(0)
+        self.assertEqual(self.canvas.selected_text(),
+                         page_text[start:start + 1])
+
+    def test_repeated_presses_keep_going(self):
+        self.click(0, 0.02)
+        start = self.canvas.caret()[1]
+        for _ in range(4):
+            self.key(Qt.Key_Right, Qt.ShiftModifier)
+        self.assertEqual(self.canvas.selected_text(),
+                         self.text.text(0)[start:start + 4])
+
+    def test_shift_left_comes_back(self):
+        self.click(0, 0.02)
+        for _ in range(4):
+            self.key(Qt.Key_Right, Qt.ShiftModifier)
+        self.key(Qt.Key_Left, Qt.ShiftModifier)
+        self.assertEqual(len(self.canvas.selected_text()), 3)
+
+    def test_word_movement_takes_a_whole_word(self):
+        """Alt+Shift on macOS, Ctrl+Shift elsewhere -- Qt knows which."""
+        self.click(0, 0.02)
+        self.standard_key("SelectNextWord")
+        selected = self.canvas.selected_text()
+        self.assertGreater(len(selected), 1)
+        self.assertTrue(self.text.text(0).startswith(selected))
+
+    def test_line_movement_crosses_to_the_next_line(self):
+        self.click(0, 0.02)
+        self.key(Qt.Key_Down, Qt.ShiftModifier)
+        selected = self.canvas.selected_text()
+        self.assertIn("\n", selected.replace("\r\n", "\n"),
+                      "shift+down did not reach the next line")
+
+    def test_extending_is_exact_and_never_snaps_to_a_word(self):
+        """The rule: granularity follows the precision of the gesture."""
+        self.click(0, 0.02)
+        self.key(Qt.Key_Right, Qt.ShiftModifier)
+        self.assertEqual(len(self.canvas.selected_text()), 1)
+
+    def test_shift_arrow_does_nothing_without_a_caret(self):
+        self.assertIsNone(self.canvas.caret())
+        self.key(Qt.Key_Right, Qt.ShiftModifier)
+        self.assertFalse(self.canvas.has_selection())
+
+    # -- lifetime ----------------------------------------------------------
+
+    def test_escape_clears_the_caret_and_the_selection(self):
+        """Both, unlike Acrobat, which leaves the selection behind."""
+        self.click(0, 0.02)
+        self.key(Qt.Key_Right, Qt.ShiftModifier)
+        self.assertTrue(self.canvas.has_selection())
+        self.key(Qt.Key_Escape)
+        self.assertIsNone(self.canvas.caret())
+        self.assertFalse(self.canvas.has_selection())
+
+    def test_a_new_document_takes_the_caret_with_it(self):
+        self.click(0, 0.05)
+        self.canvas.set_document(None, None)
+        self.assertIsNone(self.canvas.caret())
+
+    def test_a_plain_arrow_is_not_intercepted(self):
+        """The whole reason this cost nothing: plain arrows still scroll."""
+        self.click(0, 0.05)
+        before = self.canvas.verticalScrollBar().value()
+        self.key(Qt.Key_Down)
+        settle(timeout_ms=100)
+        self.assertNotEqual(self.canvas.verticalScrollBar().value(), before)

@@ -44,7 +44,9 @@ import collections
 import math
 from typing import List, Optional, Sequence, Tuple
 
-from PySide6.QtCore import QObject, QPointF, QRectF, QSize, QSizeF, Qt, QUrl, Signal
+from PySide6.QtCore import (
+    QObject, QPointF, QRectF, QSize, QSizeF, Qt, QTimer, QUrl, Signal,
+)
 from PySide6.QtGui import QColor, QImage, QKeySequence, QPainter, QPalette
 from PySide6.QtPdf import QPdfDocumentRenderOptions, QPdfLinkModel
 from PySide6.QtWidgets import QAbstractScrollArea, QApplication, QFrame, QMenu
@@ -479,6 +481,31 @@ class PageText:
         """
         return character.isalnum() or character == "_"
 
+    @staticmethod
+    def line_bounds(text: str, index: int):
+        """``(start, end)`` of the line holding ``index``, newline excluded.
+
+        Lines come from the page's own text, which arrives with its breaks in
+        it, so moving up and down needs no geometry at all -- the column is an
+        offset within the line, exactly as a text editor treats a plain string.
+
+        That also means a line is whatever the *document's* text order says it
+        is. On a multi-column page that can walk column 1, then column 3, then
+        column 2; Acrobat does the same, because the stream really is ordered
+        that way. See PORTING-NOTES.md, *Keyboard text selection*.
+        """
+        if not text:
+            return None
+        here = min(max(index, 0), len(text))
+        start = text.rfind("\n", 0, here) + 1
+        end = text.find("\n", here)
+        if end == -1:
+            end = len(text)
+        # A line ending "\r\n" leaves the carriage return on the near side.
+        if end > start and text[end - 1] == "\r":
+            end -= 1
+        return start, end
+
     @classmethod
     def word_bounds(cls, text: str, index: int):
         """``(start, end)`` of the word around ``index``, or None if there is none.
@@ -765,6 +792,17 @@ class PageCanvas(QAbstractScrollArea):
         #: True between a shifted press and its release, so the release does not
         #: also follow a link.
         self._extending = False
+        #: The insertion point, as ``(page, character index)``, or None. Placed
+        #: by a plain click on text; what shift+arrow extends *from*. Acrobat's
+        #: cursor, and like Acrobat's it does not survive a page turn, a mode
+        #: change or a reload (PORTING-NOTES, *Keyboard text selection*).
+        self._caret = None
+        #: Where the keyboard has moved the far end to, as ``(page, index)``.
+        self._caret_focus = None
+        #: Half of the blink. Qt's own flash time, so it matches the platform.
+        self._caret_on = True
+        self._caret_timer = QTimer(self)
+        self._caret_timer.timeout.connect(self._blink_caret)
         #: {page: QPdfSelection} for the pages the selection covers.
         self._selection: dict = {}
         self._selecting = False
@@ -799,6 +837,7 @@ class PageCanvas(QAbstractScrollArea):
         self._text.set_document(document)
         self._document = document
         self.clear_selection()
+        self.clear_caret()
         self._links.setDocument(document)
         self._links_page = -1
         self._current = -1
@@ -1069,6 +1108,10 @@ class PageCanvas(QAbstractScrollArea):
         page = self._page_filling_the_viewport()
         if page != self._current:
             self._current = page
+            # The caret does not follow you to another page: it belongs to the
+            # place you clicked, and Acrobat drops it the same way.
+            if self._caret is not None and self._caret[0] != page:
+                self.clear_caret()
             self.current_page_changed.emit(page)
 
     def _page_filling_the_viewport(self) -> int:
@@ -1248,13 +1291,185 @@ class PageCanvas(QAbstractScrollArea):
         # Which end of the anchor is the fixed one: extending forward keeps its
         # low end, backward its high end. For a press those are the same index,
         # and for a double-clicked word this is what leaves the word whole.
-        found = {}
         if (page, moved) >= (anchor_page, anchor_high):
-            first, low = anchor_page, anchor_low
-            last, high = page, word_end
+            return self.select_between(anchor_page, anchor_low, page, word_end)
+        return self.select_between(page, word_start, anchor_page, anchor_high)
+
+    # -- the caret ---------------------------------------------------------
+
+    def caret(self):
+        """``(page, index)`` of the insertion point, or None."""
+        return self._caret
+
+    def set_caret(self, page: int, index: int):
+        """Put the insertion point on a character and start it blinking."""
+        self._caret = (page, index)
+        self._caret_focus = (page, index)
+        self._caret_on = True
+        interval = max(200, QApplication.cursorFlashTime() // 2)
+        self._caret_timer.start(interval)
+        self.viewport().update()
+
+    def clear_caret(self):
+        self._caret_timer.stop()
+        if self._caret is not None:
+            self._caret = None
+            self._caret_focus = None
+            self.viewport().update()
+
+    def _blink_caret(self):
+        self._caret_on = not self._caret_on
+        self.viewport().update()
+
+    def caret_rect(self):
+        """Where to draw the bar, in *document* pixels, or None.
+
+        The left edge of the character it sits before, its full height. At the
+        end of the text there is no such character, so the right edge of the
+        last one is used instead.
+        """
+        if self._caret is None or self._document is None:
+            return None
+        page, index = self._caret_focus or self._caret
+        text = self._text.text(page)
+        at, edge = (index, "left") if index < len(text) else (len(text) - 1, "right")
+        if at < 0:
+            return None
+        try:
+            selection = self._document.getSelectionAtIndex(page, at, 1)
+        except Exception:  # pragma: no cover - PDFium can be unhappy
+            return None
+        bounds = selection.bounds() if selection is not None else None
+        if not bounds:
+            return None
+        box = bounds[0].boundingRect()
+        x = box.left() if edge == "left" else box.right()
+        top_left = self._layout.from_page(page, QPointF(x, box.top()))
+        bottom = self._layout.from_page(page, QPointF(x, box.bottom()))
+        return QRectF(top_left.x(), top_left.y(),
+                      max(1.0, self._layout.zoom), bottom.y() - top_left.y())
+
+    def _page_text_length(self, page: int) -> int:
+        return len(self._text.text(page))
+
+    def _step_character(self, page: int, index: int, delta: int):
+        """One character on, or back, crossing pages at the ends."""
+        index += delta
+        if index < 0:
+            if page == 0:
+                return page, 0
+            page -= 1
+            return page, max(0, self._page_text_length(page))
+        if index > self._page_text_length(page):
+            if page + 1 >= self._layout.page_count:
+                return page, self._page_text_length(page)
+            return page + 1, 0
+        return page, index
+
+    def _step_word(self, page: int, index: int, delta: int):
+        """To the start of the next word, or of the one behind."""
+        text = self._text.text(page)
+        word = self._text.word_character
+        if delta > 0:
+            at = index
+            while at < len(text) and word(text[at]):
+                at += 1
+            while at < len(text) and not word(text[at]):
+                at += 1
+            if at >= len(text) and page + 1 < self._layout.page_count:
+                return page + 1, 0
+            return page, at
+        at = index
+        while at > 0 and not word(text[at - 1]):
+            at -= 1
+        while at > 0 and word(text[at - 1]):
+            at -= 1
+        if at == 0 and index == 0 and page > 0:
+            return page - 1, self._page_text_length(page - 1)
+        return page, at
+
+    def _step_line(self, page: int, index: int, delta: int):
+        """One line on or back, keeping the column, and across pages.
+
+        The column is an offset within the line, because lines here are the
+        page text's own, split on its newlines. Which line comes next is
+        therefore the *document's* text order -- on a multi-column page that can
+        go from column one to column three. Acrobat does the same and for the
+        same reason; see PORTING-NOTES.md.
+        """
+        text = self._text.text(page)
+        bounds = self._text.line_bounds(text, index)
+        if bounds is None:
+            return page, index
+        start, end = bounds
+        column = index - start
+        if delta > 0:
+            # Past the break, not onto it: `end` stops before the carriage
+            # return, so stepping one character lands on the "\r" or the "\n"
+            # and `line_bounds` resolves those back to the line just left.
+            newline = text.find("\n", end)
+            if newline == -1:
+                if page + 1 >= self._layout.page_count:
+                    return page, len(text)
+                return self._line_on_page(page + 1, column, first=True)
+            nxt = self._text.line_bounds(text, newline + 1)
         else:
-            first, low = page, word_start
-            last, high = anchor_page, anchor_high
+            if start == 0:
+                if page == 0:
+                    return page, 0
+                return self._line_on_page(page - 1, column, first=False)
+            nxt = self._text.line_bounds(text, start - 1)
+        if nxt is None:
+            return page, index
+        low, high = nxt
+        return page, min(low + column, high)
+
+    def _line_on_page(self, page: int, column: int, first: bool):
+        """The first or last line of a neighbouring page, at the same column."""
+        text = self._text.text(page)
+        if not text:
+            return page, 0
+        bounds = self._text.line_bounds(text, 0 if first else len(text) - 1)
+        if bounds is None:
+            return page, 0
+        low, high = bounds
+        return page, min(low + column, high)
+
+    def extend_caret(self, movement: str, delta: int) -> bool:
+        """Move the far end of a keyboard selection and select up to it.
+
+        ``movement`` is "character", "word" or "line". Exact in every case: a
+        keypress is a precise gesture, so unlike the mouse it never snaps to a
+        whole word (see PORTING-NOTES.md, *Extending a selection*).
+        """
+        if self._caret is None or self._document is None:
+            return False
+        page, index = self._caret_focus or self._caret
+        step = {"character": self._step_character, "word": self._step_word,
+                "line": self._step_line}[movement]
+        self._caret_focus = step(page, index, delta)
+        anchor, focus = self._caret, self._caret_focus
+        first, last = sorted((anchor, focus))
+        self._caret_on = True
+        if first == last:
+            self._set_selection({})
+            self.viewport().update()
+            return True
+        self.select_between(first[0], first[1], last[0], last[1])
+        self.viewport().update()
+        return True
+
+    def select_between(self, first: int, low: int, last: int, high: int) -> bool:
+        """Select from character ``low`` on page ``first`` to ``high`` on ``last``.
+
+        Both ends as character indices, which is what makes this shareable: the
+        mouse arrives here having snapped its moving end to a word, the keyboard
+        having moved by exactly one character, word or line, and from here on
+        they are the same selection.
+        """
+        if self._document is None:
+            return False
+        found = {}
         for index in range(first, last + 1):
             if first == last:
                 selection = self._document.getSelectionAtIndex(
@@ -1597,6 +1812,13 @@ class PageCanvas(QAbstractScrollArea):
                     self.clear_selection()
                 self._anchor = found if found is not None else None
                 self._anchor_span = None
+                # And an insertion point, which is what shift+arrow extends
+                # from. Only where there is text to put it on.
+                self.clear_caret()
+                if found is not None:
+                    index = self.index_at(*found)
+                    if index is not None:
+                        self.set_caret(found[0], index)
         super().mousePressEvent(event)
 
     def mouseDoubleClickEvent(self, event):
@@ -1732,9 +1954,28 @@ class PageCanvas(QAbstractScrollArea):
         if event.matches(QKeySequence.SelectAll):
             self.select_all_on(max(0, self.current_page()))
             return
-        if key == Qt.Key_Escape and self._selection:
+        if key == Qt.Key_Escape and (self._selection or self._caret is not None):
+            # Both, unlike Acrobat, which leaves the selection behind. Ours
+            # already cleared it and taking that away would lose working
+            # behaviour to gain nothing.
+            self.clear_caret()
             self.clear_selection()
             return
+        if self._caret is not None:
+            for name, movement, delta in (
+                    ("SelectNextChar", "character", 1),
+                    ("SelectPreviousChar", "character", -1),
+                    ("SelectNextWord", "word", 1),
+                    ("SelectPreviousWord", "word", -1),
+                    ("SelectNextLine", "line", 1),
+                    ("SelectPreviousLine", "line", -1)):
+                # Asked of QKeySequence rather than spelled out: extend-by-word
+                # is Option+Shift on macOS and Ctrl+Shift elsewhere, and only Qt
+                # knows which platform this is.
+                if event.matches(getattr(QKeySequence.StandardKey, name)):
+                    self.extend_caret(movement, delta)
+                    event.accept()
+                    return
         if key == Qt.Key_Home:
             self.first_page()
             return
@@ -1810,5 +2051,20 @@ class PageCanvas(QAbstractScrollArea):
             # asynchronous render worth waiting for.
             self._paint_selection(painter, index, offset)
             self._paint_search(painter, index, offset)
+        self._paint_caret(painter, offset)
         painter.end()
         self._prefetch_around(visible)
+
+    def _paint_caret(self, painter, offset: QPointF):
+        """The insertion point: a blinking vertical bar, as Acrobat draws it.
+
+        Outside the per-page loop because it belongs to one page and the loop
+        runs over all the visible ones; drawing it there would put a bar on
+        every page on screen.
+        """
+        if self._caret is None or not self._caret_on:
+            return
+        rect = self.caret_rect()
+        if rect is None:
+            return
+        painter.fillRect(rect.translated(-offset), self.palette().text().color())
