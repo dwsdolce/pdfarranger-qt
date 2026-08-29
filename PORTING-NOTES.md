@@ -1648,6 +1648,77 @@ click wins, which is what every PDF reader does -- and it is why the fixture for
 these tests is `test_raster_image_text.pdf`: it is the only one with a line of
 prose that PDFium does not infer a link from.
 
+### The arrow keys — one table, no modes
+
+Settled with David after he tested Acrobat properly and found it
+indefensible. His notes, in continuous mode alone: with no caret, `↑`/`↓`
+scroll a line, `←`/`→` jump to the previous or next page top, Shift+`↑`/`↓`
+scroll a screen but Shift+`←`/`→` does what unmodified does, Cmd does page
+tops, Fn+`←`/`→` is home/end and Fn+`↑`/`↓` is a screen. *With* a caret nearly
+every one of those changes meaning, and "Cmd arrow sometimes moves the caret and
+sometimes pages". Five different ways to scroll, and a mapping that depends on
+whether you happened to click on some text earlier.
+
+So this is ours, not Acrobat's. **The modifier alone decides the verb, and
+nothing changes depending on whether a caret exists:**
+
+> nothing = scroll · Option = move the caret · Shift = extend the selection ·
+> Cmd = jump to an edge · Fn = a bigger jump
+
+| chord | continuous | single page |
+| --- | --- | --- |
+| `↑` `↓` | scroll one line | — |
+| `←` `→` | top of previous / next page | previous / next page |
+| Fn+`↑` `↓` | scroll one screen | previous / next page |
+| Fn+`←` `→` | start / end of document | same |
+| Opt+arrow | move the caret, by line or character | same |
+| Shift+arrow | extend the selection, by line or character | same |
+| Cmd+`←` `→` | caret to start / end of line | same |
+| Cmd+`↑` `↓` | caret to start / end of document | same |
+| Cmd+Opt+`←` `→` | move the caret one word | same |
+| Shift+Opt+`←` `→` | extend the selection one word | same |
+
+Adding Shift to a Cmd or Option chord extends instead of moving, and adding
+Option works by the word: Shift+Cmd+`→` extends to the end of the line,
+Shift+Opt+`→` extends one word.
+
+The word rows came later -- they fell out when the `QKeySequence` handler was
+replaced by this table, and `_step_word` sat uncalled until David noticed. They
+cost the table's one inelegance: **Option does double duty**, meaning "move the
+caret" on its own and "by the word" when added to Shift or Cmd. The alternative
+was Option meaning word outright, which is tidier and macOS's own convention but
+gives up moving the caret a character at a time. Both granularities were wanted,
+and losing a capability is the larger cost.
+
+**Option moves the caret, not the bare arrow.** The one deliberate departure
+from a text editor, and it is what buys the whole scheme: bare arrows always
+scroll, so *reading* never behaves differently because you clicked on a word ten
+minutes ago. With no caret placed, the Option, Shift and Cmd chords do nothing
+at all rather than falling through to scrolling -- which is what makes the table
+true as written, and what stops a shift+arrow quietly turning into a scroll.
+
+**Control appears nowhere.** macOS takes Ctrl+`↑`/`↓` for Mission Control and
+App Exposé, so the application never sees them; Qt's own `MoveToNextPage`
+binding of `Meta+Down` is dead on that platform. Worth knowing before wondering
+why it is unused.
+
+**The same table on every platform**, rather than each platform's own text
+conventions. On Windows and Linux Ctrl+`←` conventionally means word-left, and
+here it means start-of-line. One table everywhere is the simplicity that was
+asked for, and mapping the *same* verbs onto different chords per platform would
+undo it. This is why these are explicit modifiers rather than `QKeySequence`
+standard keys, unlike Copy and Select All -- the scheme is ours, so no platform
+has an opinion about it.
+
+**Caret lifetime, simplified with it.** Placed by a click on text; cleared by
+Escape and by a new document; and it survives everything else -- scrolling,
+paging, and clicking off the page. Clicking off the page still clears the
+*selection*, which is David's rule and Acrobat's. The earlier "dies on a page
+turn" is gone: it was the source of the bug where scrolling to look at a
+selection made the next shift+arrow scroll instead of extend, and with the table
+above there is no longer any reason for a position in the document to evaporate
+because the view moved.
+
 ### Keyboard text selection — the design
 
 Settled with David before building, from his testing of Acrobat rather than
@@ -1714,6 +1785,23 @@ string. The trap in that, found by a failing test: `line_bounds` stops *before*
 the carriage return, so stepping one character past the end of a line lands on
 the `\r` or the `\n`, both of which resolve back to the line just left. Moving
 down has to jump past the break, not onto it.
+
+**Scrolling is not turning the page, and the difference is load-bearing.**
+"The caret dies on a page turn" was first written as "dies when the current page
+changes" -- which in continuous mode is simply what scrolling does. David found
+it immediately: extend a selection onto the next page, scroll to look at it, and
+the next shift+arrow scrolled the view instead of extending, because going to
+find the selection had destroyed the caret and the key fell through to the
+scroll area. The rule now hangs off `go_to_page`, which is the funnel for every
+deliberate move -- next, previous, first, last, the page box, a bookmark -- so
+turning the page still drops the caret and scrolling does not.
+
+The same report had a second fault in it: extending did not scroll the view at
+all, so a keyboard selection walked off the bottom of the window and had to be
+chased. `ensure_caret_visible` now follows the moving end by as little as will
+do, rather than centring it, so the text being selected stays where the eye
+already is. The two faults compounded -- the first made you scroll, and the
+second punished you for it.
 
 **The offscreen platform does not agree with macOS about what the keys are.**
 `SelectNextWord` is `Alt+Shift+Right` under cocoa and `Ctrl+Shift+Right` under

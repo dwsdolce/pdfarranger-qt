@@ -2265,6 +2265,26 @@ class TestKeyboardSelection(unittest.TestCase):
         self.assertGreater(rect.height(), 0)
         self.assertGreaterEqual(rect.width(), 1)
 
+    def test_the_bar_is_the_height_of_the_line_not_the_letter(self):
+        """It was the glyph's own box, and so a different size before every
+        letter -- 7 points before a lowercase "e" against 13 for the line, and
+        3 points lower. Impossible to find on a page, which is how David put it.
+        """
+        heights, tops = set(), set()
+        for index in (0, 8, 12):
+            self.canvas.set_caret(0, index)
+            rect = self.canvas.caret_rect()
+            heights.add(round(rect.height(), 1))
+            tops.add(round(rect.top(), 1))
+        self.assertEqual(len(heights), 1,
+                         f"the bar changes height with the letter: {heights}")
+        self.assertEqual(len(tops), 1,
+                         f"the bar changes position with the letter: {tops}")
+
+    def test_the_bar_is_wide_enough_to_see(self):
+        self.canvas.set_caret(0, 0)
+        self.assertGreaterEqual(self.canvas.caret_rect().width(), 2)
+
     def test_there_is_no_rectangle_without_a_caret(self):
         self.assertIsNone(self.canvas.caret_rect())
 
@@ -2349,3 +2369,308 @@ class TestKeyboardSelection(unittest.TestCase):
         self.key(Qt.Key_Down)
         settle(timeout_ms=100)
         self.assertNotEqual(self.canvas.verticalScrollBar().value(), before)
+
+
+class TestCaretAcrossPages(unittest.TestCase):
+    """Extending past the end of a page, and what scrolling must not do.
+
+    David's report: place a caret, shift+down until the selection reaches the
+    next page, scroll to look at it, and the next shift+down scrolls the view
+    instead of extending. Two faults in one gesture -- the view did not follow
+    the selection, and going to find it destroyed the caret, because "the caret
+    dies on a page turn" had been implemented as "dies when the current page
+    changes", which in continuous mode is just what scrolling does.
+    """
+
+    def setUp(self):
+        self.docs = DocumentSet()
+        self.addCleanup(self.docs.cleanup)
+        pages = self.docs.add_file(OUTLINE_PDF)      # four pages, all with text
+        self.memory = MemoryDocument(
+            get_in_memory_pdf(list(pages), self.docs.files_for_export()))
+        self.addCleanup(self.memory.close)
+        self.canvas = PageCanvas()
+        self.addCleanup(self.canvas.deleteLater)
+        self.addCleanup(self.canvas.shutdown)
+        self.canvas.resize(700, 600)
+        self.canvas.show()
+        settle(lambda: self.canvas.viewport().width() == 700)
+        self.canvas.set_document(self.memory.document, None)
+        self.canvas.go_to_page(0)
+        settle(timeout_ms=300)
+        self.text = PageText(self.memory.document)
+        self.place_caret()
+
+    def place_caret(self):
+        box = self.text.runs(0)[0]
+        page_point = QPointF(box.left() + 2, box.center().y())
+        point = self.canvas.to_viewport(
+            self.canvas.layout.from_page(0, page_point))
+        for kind in (QEvent.MouseButtonPress, QEvent.MouseButtonRelease):
+            QApplication.sendEvent(self.canvas.viewport(), QMouseEvent(
+                kind, point, self.canvas.viewport().mapToGlobal(point.toPoint()),
+                Qt.LeftButton, Qt.LeftButton, Qt.NoModifier))
+
+    def extend(self, times=1):
+        for _ in range(times):
+            QApplication.sendEvent(self.canvas, QKeyEvent(
+                QEvent.KeyPress, Qt.Key_Down, Qt.ShiftModifier))
+            settle(timeout_ms=40)
+
+    def test_the_selection_reaches_the_next_page(self):
+        self.extend(6)
+        self.assertGreater(len(self.canvas._selection), 1,
+                           "the selection never left the first page")
+
+    def test_the_view_follows_the_selection(self):
+        """Otherwise it walks off the bottom and you have to go and find it."""
+        self.assertEqual(self.canvas.verticalScrollBar().value(), 0)
+        self.extend(6)
+        self.assertGreater(self.canvas.verticalScrollBar().value(), 0)
+
+    def test_the_caret_survives_extending_across_a_page(self):
+        self.extend(6)
+        self.assertIsNotNone(self.canvas.caret())
+
+    def test_scrolling_does_not_destroy_the_caret(self):
+        """The heart of it: scrolling is not turning the page."""
+        self.extend(6)
+        bar = self.canvas.verticalScrollBar()
+        bar.setValue(bar.value() + 400)
+        settle(timeout_ms=200)
+        self.assertIsNotNone(self.canvas.caret(),
+                             "scrolling to look at the selection lost the caret")
+
+    def test_extending_still_works_after_scrolling(self):
+        """The symptom as reported: shift+down scrolled instead of extending."""
+        self.extend(6)                       # far enough to reach the next page
+        bar = self.canvas.verticalScrollBar()
+        bar.setValue(bar.value() + 400)
+        settle(timeout_ms=200)
+        before = len(self.canvas.selected_text())
+        self.extend(1)
+        self.assertNotEqual(len(self.canvas.selected_text()), before,
+                            "shift+down scrolled the view instead of extending")
+
+    def test_turning_the_page_keeps_it(self):
+        """The rule changed with the arrow table, deliberately.
+
+        It used to die on a page turn, which is what Acrobat does -- but Acrobat
+        keeps the *selection* through paging, so it leaves you with a selection
+        you can no longer extend. Nothing here needs a position in the document
+        to evaporate because the view moved.
+        """
+        self.canvas.go_to_page(3)
+        settle(timeout_ms=200)
+        self.assertIsNotNone(self.canvas.caret())
+
+    def test_it_can_still_be_extended_after_paging(self):
+        self.canvas.go_to_page(3)
+        settle(timeout_ms=200)
+        before = len(self.canvas.selected_text())
+        self.extend(1)
+        self.assertNotEqual(len(self.canvas.selected_text()), before)
+
+
+class TestArrowKeyTable(unittest.TestCase):
+    """One table: the modifier decides the verb, and a caret changes nothing.
+
+    Acrobat's arrows were the thing that finally exhausted David's patience --
+    five ways to scroll, and most of them meaning something else once a cursor
+    existed. This scheme is ours: nothing scrolls, Option moves the caret, Shift
+    extends, Cmd jumps to an edge, Fn jumps further. What each key does must not
+    depend on whether a caret has been placed, and that is most of what is
+    asserted here.
+    """
+
+    def setUp(self):
+        self.docs = DocumentSet()
+        self.addCleanup(self.docs.cleanup)
+        pages = self.docs.add_file(OUTLINE_PDF)
+        self.memory = MemoryDocument(
+            get_in_memory_pdf(list(pages), self.docs.files_for_export()))
+        self.addCleanup(self.memory.close)
+        self.canvas = PageCanvas()
+        self.addCleanup(self.canvas.deleteLater)
+        self.addCleanup(self.canvas.shutdown)
+        self.canvas.resize(700, 600)
+        self.canvas.show()
+        settle(lambda: self.canvas.viewport().width() == 700)
+        self.canvas.set_document(self.memory.document, None)
+        self.canvas.go_to_page(0)
+        settle(timeout_ms=300)
+        self.text = PageText(self.memory.document)
+
+    def key(self, key, modifiers=Qt.NoModifier):
+        QApplication.sendEvent(self.canvas,
+                               QKeyEvent(QEvent.KeyPress, key, modifiers))
+        settle(timeout_ms=40)
+
+    def place_caret(self):
+        box = self.text.runs(0)[0]
+        page_point = QPointF(box.left() + 2, box.center().y())
+        point = self.canvas.to_viewport(
+            self.canvas.layout.from_page(0, page_point))
+        for kind in (QEvent.MouseButtonPress, QEvent.MouseButtonRelease):
+            QApplication.sendEvent(self.canvas.viewport(), QMouseEvent(
+                kind, point, self.canvas.viewport().mapToGlobal(point.toPoint()),
+                Qt.LeftButton, Qt.LeftButton, Qt.NoModifier))
+        settle(timeout_ms=60)
+
+    def scrolled_by(self, key, modifiers=Qt.NoModifier):
+        bar = self.canvas.verticalScrollBar()
+        before = bar.value()
+        self.key(key, modifiers)
+        return bar.value() - before
+
+    # -- nothing = scroll --------------------------------------------------
+
+    def test_a_bare_arrow_scrolls_a_line(self):
+        step = self.canvas.verticalScrollBar().singleStep()
+        self.assertEqual(self.scrolled_by(Qt.Key_Down), step)
+
+    def test_bare_left_and_right_go_to_a_page_top(self):
+        self.key(Qt.Key_Right)
+        self.assertEqual(self.canvas.current_page(), 1)
+        self.key(Qt.Key_Left)
+        self.assertEqual(self.canvas.current_page(), 0)
+
+    def test_a_bare_arrow_scrolls_whether_or_not_there_is_a_caret(self):
+        """The whole point of the scheme."""
+        step = self.canvas.verticalScrollBar().singleStep()
+        self.place_caret()
+        self.assertEqual(self.scrolled_by(Qt.Key_Down), step)
+
+    def test_single_page_mode_has_no_line_to_scroll(self):
+        self.canvas.set_continuous(False)
+        settle(timeout_ms=200)
+        self.assertEqual(self.scrolled_by(Qt.Key_Down), 0)
+
+    # -- Fn = a bigger jump ------------------------------------------------
+
+    def test_page_down_scrolls_a_screen(self):
+        self.assertEqual(self.scrolled_by(Qt.Key_PageDown),
+                         self.canvas.viewport().height())
+
+    def test_page_down_turns_the_page_when_showing_one(self):
+        self.canvas.set_continuous(False)
+        settle(timeout_ms=200)
+        self.key(Qt.Key_PageDown)
+        self.assertEqual(self.canvas.current_page(), 1)
+
+    def test_home_and_end_are_the_document(self):
+        self.key(Qt.Key_End)
+        self.assertEqual(self.canvas.current_page(),
+                         self.canvas.layout.page_count - 1)
+        self.key(Qt.Key_Home)
+        self.assertEqual(self.canvas.current_page(), 0)
+
+    # -- Option = move the caret -------------------------------------------
+
+    def test_option_moves_the_caret_without_selecting(self):
+        self.place_caret()
+        start = self.canvas.caret()[1]
+        self.key(Qt.Key_Right, Qt.AltModifier)
+        self.assertEqual(self.canvas.caret()[1], start + 1)
+        self.assertFalse(self.canvas.has_selection())
+
+    def test_option_does_not_scroll(self):
+        self.place_caret()
+        self.assertEqual(self.scrolled_by(Qt.Key_Down, Qt.AltModifier), 0)
+
+    # -- Shift = extend ----------------------------------------------------
+
+    def test_shift_extends_rather_than_scrolling(self):
+        self.place_caret()
+        self.assertEqual(self.scrolled_by(Qt.Key_Right, Qt.ShiftModifier), 0)
+        self.assertTrue(self.canvas.has_selection())
+
+    def test_shift_does_nothing_at_all_without_a_caret(self):
+        """It must not fall through and look like a scrolling bug."""
+        self.assertIsNone(self.canvas.caret())
+        self.assertEqual(self.scrolled_by(Qt.Key_Down, Qt.ShiftModifier), 0)
+        self.assertFalse(self.canvas.has_selection())
+
+    # -- Option added = by the word ----------------------------------------
+
+    def test_cmd_option_moves_a_word(self):
+        self.place_caret()
+        self.key(Qt.Key_Right, Qt.ControlModifier | Qt.AltModifier)
+        page, index = self.canvas.caret()
+        text = self.text.text(page)
+        self.assertGreater(index, 1, "that was a character, not a word")
+        # A word step lands *at* the start of the next word.
+        self.assertTrue(self.text.word_character(text[index]))
+        self.assertFalse(self.text.word_character(text[index - 1]))
+        self.assertFalse(self.canvas.has_selection())
+
+    def test_shift_option_extends_a_word(self):
+        self.place_caret()
+        self.key(Qt.Key_Right, Qt.ShiftModifier | Qt.AltModifier)
+        self.assertGreater(len(self.canvas.selected_text()), 1,
+                           "that was a character, not a word")
+
+    def test_option_alone_is_still_a_character(self):
+        """Option does double duty; the plain case must not have changed."""
+        self.place_caret()
+        start = self.canvas.caret()[1]
+        self.key(Qt.Key_Right, Qt.AltModifier)
+        self.assertEqual(self.canvas.caret()[1], start + 1)
+
+    def test_shift_alone_is_still_a_character(self):
+        self.place_caret()
+        self.key(Qt.Key_Right, Qt.ShiftModifier)
+        self.assertEqual(len(self.canvas.selected_text()), 1)
+
+    def test_word_chords_do_not_apply_vertically(self):
+        """There is no such thing as a word up; those stay line movements."""
+        self.place_caret()
+        self.key(Qt.Key_Down, Qt.ShiftModifier | Qt.AltModifier)
+        selected = self.canvas.selected_text().replace("\r\n", "\n")
+        self.assertIn("\n", selected)
+
+    # -- Cmd = jump to an edge ---------------------------------------------
+
+    def test_cmd_left_and_right_are_the_line(self):
+        self.place_caret()
+        self.key(Qt.Key_Right, Qt.ControlModifier)
+        page, index = self.canvas.caret()
+        start, end = self.text.line_bounds(self.text.text(page), index)
+        self.assertEqual(index, end)
+        self.key(Qt.Key_Left, Qt.ControlModifier)
+        self.assertEqual(self.canvas.caret()[1], start)
+
+    def test_cmd_up_and_down_are_the_document(self):
+        self.place_caret()
+        self.key(Qt.Key_Down, Qt.ControlModifier)
+        page, index = self.canvas.caret()
+        self.assertEqual(page, self.canvas.layout.page_count - 1)
+        self.key(Qt.Key_Up, Qt.ControlModifier)
+        self.assertEqual(self.canvas.caret(), (0, 0))
+
+    def test_shift_with_cmd_extends_to_the_edge(self):
+        """The one compound rule: Shift on a jump extends instead of moving."""
+        self.place_caret()
+        self.key(Qt.Key_Right, Qt.ControlModifier | Qt.ShiftModifier)
+        self.assertTrue(self.canvas.has_selection())
+        self.assertEqual(self.canvas.caret(), (0, 0),
+                         "the anchor moved; it should have stayed put")
+
+    def test_cmd_does_not_scroll_without_a_caret(self):
+        self.assertEqual(self.scrolled_by(Qt.Key_Down, Qt.ControlModifier), 0)
+
+    # -- lifetime ----------------------------------------------------------
+
+    def test_clicking_off_the_page_keeps_the_caret(self):
+        """David's rule, and Acrobat's: the selection goes, the caret stays."""
+        self.place_caret()
+        self.key(Qt.Key_Right, Qt.ShiftModifier)
+        self.assertTrue(self.canvas.has_selection())
+        point = QPointF(4, 4)                       # the grey beside the page
+        for kind in (QEvent.MouseButtonPress, QEvent.MouseButtonRelease):
+            QApplication.sendEvent(self.canvas.viewport(), QMouseEvent(
+                kind, point, self.canvas.viewport().mapToGlobal(point.toPoint()),
+                Qt.LeftButton, Qt.LeftButton, Qt.NoModifier))
+        settle(timeout_ms=60)
+        self.assertFalse(self.canvas.has_selection())
+        self.assertIsNotNone(self.canvas.caret())

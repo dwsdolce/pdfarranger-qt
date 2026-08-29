@@ -830,6 +830,132 @@ def help_sections():
             _("Files given on the command line are opened as one document. "
               "<code>--version</code> prints the version and exits."),
         ]),
+        (_("Reading"), [
+            _("The application opens in <b>read mode</b>: a continuous page "
+              "view for reading the document rather than rearranging it. "
+              "<b>View ▸ Arrange Mode</b> (Ctrl+E) swaps to the thumbnail grid "
+              "and back."),
+            _("Reading shows the document <i>as edited</i>: rotations, crops, "
+              "deletions and reordering are all applied, so what you read is "
+              "what you would get if you saved. Page-editing commands are "
+              "disabled while reading — bookmarks are the exception, and are "
+              "edited here and nowhere else."),
+            _("The page you are on follows you between the two modes. "
+              "Switching to read mode opens at the page selected in the grid, "
+              "the first of them if several are selected; switching back "
+              "scrolls the grid to the page you were reading, without "
+              "disturbing what you had selected. With nothing selected, "
+              "reading resumes where you left off — your place in each "
+              "document is remembered between visits."),
+            _("The toolbar shows which page you are on and how many there are; "
+              "type a number into it to jump there, or use <b>Ctrl+G</b>."),
+            _("<b>View ▸ Continuous Scroll</b> is on by default; turning it "
+              "off shows one page at a time. <b>View ▸ Facing Pages</b> puts "
+              "two pages side by side, the way a book falls open. Both "
+              "settings are remembered."),
+        ]),
+        (_("Moving around a document"), [
+            _("One rule for the arrow keys: <b>the modifier decides what "
+              "moves</b>. Nothing scrolls the view, Option (Alt) moves the "
+              "text cursor, Shift extends the selection, Command (Ctrl) jumps "
+              "to an edge, and Fn — Page Up, Page Down, Home and End — jumps "
+              "further. None of it changes according to whether a text cursor "
+              "happens to be on the page."),
+            "<table border='1' cellpadding='4' cellspacing='0' width='100%'>"
+            "<tr><th align='left'>" + _("Keys") + "</th>"
+            "<th align='left'>" + _("Continuous") + "</th>"
+            "<th align='left'>" + _("One page at a time") + "</th></tr>"
+            "<tr><td>↑ ↓</td><td>" + _("scroll one line") + "</td>"
+            "<td>—</td></tr>"
+            "<tr><td>← →</td><td>" + _("top of the previous / next page") +
+            "</td><td>" + _("previous / next page") + "</td></tr>"
+            "<tr><td>Page Up / Page Down</td><td>" + _("scroll one screen") +
+            "</td><td>" + _("previous / next page") + "</td></tr>"
+            "<tr><td>Home / End</td><td colspan='2'>" +
+            _("start / end of the document") + "</td></tr>"
+            "<tr><td>Option + arrow</td><td colspan='2'>" +
+            _("move the text cursor, by character or line") + "</td></tr>"
+            "<tr><td>Shift + arrow</td><td colspan='2'>" +
+            _("extend the selection, by character or line") + "</td></tr>"
+            "<tr><td>Command + Option + ← →</td><td colspan='2'>" +
+            _("move the text cursor one word") + "</td></tr>"
+            "<tr><td>Shift + Option + ← →</td><td colspan='2'>" +
+            _("extend the selection one word") + "</td></tr>"
+            "<tr><td>Command + ← →</td><td colspan='2'>" +
+            _("cursor to the start / end of the line") + "</td></tr>"
+            "<tr><td>Command + ↑ ↓</td><td colspan='2'>" +
+            _("cursor to the start / end of the document") + "</td></tr>"
+            "</table>",
+            _("Add Shift to a Command or Option combination to extend the "
+              "selection instead of moving — <b>Shift+Command+→</b> selects to "
+              "the end of the line. Adding Option works by the word rather "
+              "than the character. On Windows and Linux, read Command as Ctrl "
+              "and Option as Alt; the table is the same everywhere."),
+        ]),
+        (_("Selecting and copying text"), [
+            _("Drag across the page to select text, across page boundaries if "
+              "you keep going. <b>Double-click</b> selects a word. "
+              "<b>Ctrl/Cmd+C</b> copies, <b>Ctrl/Cmd+A</b> selects the text of "
+              "the page you are on, and <b>Esc</b> clears the selection. The "
+              "same commands are on the right-click menu."),
+            _("<b>Shift+click</b> extends an existing selection to where you "
+              "clicked. The end you are moving grows out to a whole word, "
+              "because a single click is an imprecise way to point at one "
+              "character; the end you started from stays exactly where you put "
+              "it. Dragging selects by character throughout, since you can "
+              "watch it and stop where you like."),
+            _("Clicking on text leaves a blinking <b>text cursor</b>. That is "
+              "what Shift+arrow extends from, and what the Option and Command "
+              "combinations above move. It stays where you put it — scrolling, "
+              "paging and clicking off the page all leave it alone — until you "
+              "press Esc or open another document."),
+        ]),
+        (_("Following links"), [
+            _("Click a link to follow it. Links to a page in the same document "
+              "jump there; links to the web open in your browser. Hovering "
+              "over one shows where it goes, which is worth reading before you "
+              "click: many links in a PDF are not written by its author at all "
+              "but inferred from the text, so what a link points at is not "
+              "always what the words appear to say."),
+            _("Only ordinary web and mail links are handed to the system — "
+              "http, https, mailto and ftp. A document is a file that arrived "
+              "from somewhere, and anything else it asks to open is refused "
+              "and reported rather than acted on."),
+            _("Right-clicking a link offers <b>Open Link</b> and <b>Copy Link "
+              "Address</b>."),
+        ]),
+        (_("Bookmarks"), [
+            _("The sidebar shows the document's bookmarks. Click one to jump "
+              "to it. Everything below is on the sidebar's right-click menu, "
+              "and every command can be undone."),
+            _("<b>Add Bookmark Here</b> makes one pointing at the page you are "
+              "reading, named after whatever text you have selected — so "
+              "select a heading, then add. With nothing selected it is named "
+              "after the page. <b>Add Child Bookmark Here</b> does the same, "
+              "nested under the entry you clicked."),
+            _("<b>Rename</b> edits the title in place. <b>Re-home to This "
+              "Page</b> points an existing bookmark at the page you are on, "
+              "keeping its title. <b>Delete</b> removes an entry and "
+              "<i>promotes</i> its children into its place; <b>Delete with "
+              "Children</b> removes the whole branch."),
+            _("Drag entries within the sidebar to re-nest or reorder them. "
+              "<b>Expand All Children</b> and <b>Collapse All Children</b> "
+              "open or shut a whole branch at once."),
+            _("<b>Style</b> sets a bookmark bold or italic, or gives it a "
+              "colour, as the tree shows."),
+            _("A bookmark whose page has been deleted is <b>greyed out</b> "
+              "rather than removed: its title may still be worth keeping, and "
+              "you can point it somewhere else with Re-home. Undoing the "
+              "deletion reconnects it. <b>Delete Dangling Bookmarks</b> clears "
+              "them all out; it leaves alone any entry that points nowhere on "
+              "purpose, which is a legitimate way to write a heading."),
+            _("Bookmark edits are part of the document and are written when "
+              "you save, along with each entry's colour and style and which "
+              "branches are left open. The one thing that cannot be saved is a "
+              "bookmark with no page: there is no way to record \u201cpoints at "
+              "a page that is gone\u201d, so it comes back as a heading with its "
+              "title intact."),
+        ]),
         (_("Arranging pages"), [
             _("Drag pages to reorder them. Hold <b>Ctrl</b> while dropping to "
               "copy instead of move."),
@@ -840,6 +966,17 @@ def help_sections():
               "original are recombined. If the second scan came off a duplex "
               "feeder it will be in reverse order; use <b>Arrange ▸ Reverse "
               "Order</b> on it first."),
+            _("To move pages a long way, use <b>Move to Start</b>, <b>Move to "
+              "End</b> or <b>Move to Page…</b> rather than dragging — in a "
+              "long document the far end is a great deal of scrolling away. "
+              "They are on the Edit menu and on the right-click menu, and "
+              "<b>Move to Page…</b> asks for the number the page should "
+              "<i>become</i>."),
+            _("Prefer these to cut and paste for moving. A pasted page is a "
+              "<i>new</i> page as far as the document is concerned, so any "
+              "bookmarks pointing at the original are left behind with nowhere "
+              "to go. Moving keeps the page itself, and its bookmarks come "
+              "with it."),
         ]),
         (_("Mouse"), [
             _("<b>Ctrl + scroll</b> — zoom"),
@@ -849,7 +986,7 @@ def help_sections():
             _("<b>Click and drag</b> on empty space — rubber-band select; keep "
               "scrolling to extend it"),
         ]),
-        (_("Moving around"), [
+        (_("Moving around the grid"), [
             _("<b>Arrow keys</b> move between pages, <b>Page Up</b> and "
               "<b>Page Down</b> move a screenful at a time, and <b>Home</b> "
               "and <b>End</b> jump to the first and last page. Hold "
@@ -875,31 +1012,6 @@ def help_sections():
             _("Every shortcut can be changed in "
               "<b>Edit ▸ Preferences ▸ Keyboard shortcuts</b>, where they are "
               "listed under the menu each one belongs to."),
-        ]),
-        (_("Read mode"), [
-            _("<b>View ▸ Read Mode</b> (Ctrl+E) swaps the thumbnail grid for a "
-              "continuous page view — for reading the document rather than "
-              "rearranging it. Press it again to go back."),
-            _("It shows the document <i>as edited</i>: rotations, crops, "
-              "deletions and reordering are all applied, so what you read is "
-              "what you would get if you saved. Editing commands are disabled "
-              "while reading, and any change you make in the grid is picked up "
-              "the next time you switch across."),
-            _("The toolbar shows which page you are on and how many there are; "
-              "type a number into it to jump there."),
-            _("<b>Page Up</b> and <b>Page Down</b> turn pages, <b>Home</b> and "
-              "<b>End</b> jump to the first and last, and <b>Ctrl+G</b> goes to "
-              "a page by number. The same commands are in the <b>View</b> menu, "
-              "where they can be given different keys."),
-            _("<b>View ▸ Continuous Scroll</b> is on by default. On a long, "
-              "densely illustrated document, scrolling quickly can outrun the "
-              "renderer and leave pages blank until it catches up; turning it "
-              "off shows one page at a time, which stays sharp as you page "
-              "through with Page Up and Page Down."),
-            _("The sidebar lists the document's bookmarks, if it has any; "
-              "click one to jump to it. Find works here too and highlights the "
-              "matches on the page rather than only selecting pages. Your "
-              "place in each document is remembered between visits."),
         ]),
         (_("Passwords"), [
             _("Opening an encrypted document asks for its password, which is "
@@ -949,9 +1061,17 @@ class HelpDialog(QDialog):
     @staticmethod
     def _html() -> str:
         parts = []
+        blocks = ("<table", "<ul", "<ol", "<pre")
         for heading, paragraphs in help_sections():
             parts.append(f"<h3>{heading}</h3>")
-            parts.extend(f"<p>{text}</p>" for text in paragraphs)
+            for text in paragraphs:
+                # A table is a block in its own right; wrapping it in <p> nests
+                # a block inside a paragraph, which renders unpredictably.
+                stripped = text.lstrip()
+                if stripped.startswith(blocks):
+                    parts.append(text)
+                else:
+                    parts.append(f"<p>{text}</p>")
         return "\n".join(parts)
 
 

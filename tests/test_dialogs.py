@@ -376,3 +376,90 @@ class TestShortcutOrdering(unittest.TestCase):
         actions = self.win._shortcut_actions()
         dialog = ShortcutsDialog(actions)
         self.assertEqual(len(dialog.edits), len(actions))
+
+
+class TestHelpCoversWhatWasBuilt(unittest.TestCase):
+    """The guide has to keep up with the application.
+
+    It had fallen a long way behind: bookmark editing, text selection, link
+    following, the caret and the arrow-key table were all shipped and none of
+    them were mentioned, while the guide still said editing commands are
+    disabled while reading -- which stopped being true when bookmarks became
+    editable there and nowhere else. These are the claims worth pinning, so the
+    next feature does not quietly go undocumented too.
+    """
+
+    def text(self):
+        from pdfarranger_qt.dialogs import help_sections
+
+        return " ".join(t for _h, body in help_sections() for t in body)
+
+    def headings(self):
+        from pdfarranger_qt.dialogs import help_sections
+
+        return [heading for heading, _body in help_sections()]
+
+    def test_reading_comes_before_arranging(self):
+        """It is the mode the application opens in."""
+        headings = self.headings()
+        self.assertLess(headings.index("Reading"),
+                        headings.index("Arranging pages"))
+
+    def test_the_two_moving_around_sections_are_distinguishable(self):
+        headings = self.headings()
+        self.assertIn("Moving around a document", headings)
+        self.assertIn("Moving around the grid", headings)
+
+    def test_bookmark_editing_is_documented(self):
+        text = self.text()
+        for command in ("Add Bookmark Here", "Add Child Bookmark Here",
+                        "Re-home to This Page", "Delete with Children",
+                        "Delete Dangling Bookmarks", "Expand All Children"):
+            self.assertIn(command, text, f"{command} is not in the guide")
+
+    def test_dangling_bookmarks_are_explained(self):
+        """Greyed-out entries need explaining or they look like a fault."""
+        text = self.text()
+        self.assertIn("greyed out", text)
+        self.assertIn("Re-home", text)
+
+    def test_text_selection_is_documented(self):
+        text = self.text()
+        for gesture in ("Double-click", "Shift+click", "text cursor"):
+            self.assertIn(gesture, text)
+
+    def test_the_arrow_key_table_is_a_table(self):
+        """It is a grid of chords and reads badly as sentences."""
+        from pdfarranger_qt.dialogs import help_sections
+
+        tables = [t for _h, body in help_sections() for t in body
+                  if t.lstrip().startswith("<table")]
+        self.assertEqual(len(tables), 1)
+        for chord in ("Option + arrow", "Shift + arrow", "Command + ← →"):
+            self.assertIn(chord, tables[0])
+
+    def test_a_table_is_not_wrapped_in_a_paragraph(self):
+        """Nesting a block inside <p> renders unpredictably."""
+        from pdfarranger_qt.dialogs import HelpDialog
+
+        dialog = HelpDialog()
+        self.addCleanup(dialog.close)
+        self.assertNotIn("<p><table", dialog._html())
+
+    def test_link_following_is_documented(self):
+        text = self.text()
+        self.assertIn("Copy Link Address", text)
+        self.assertIn("mailto", text)
+
+    def test_it_no_longer_claims_editing_is_disabled_outright(self):
+        """Bookmarks are edited in read mode and nowhere else."""
+        text = self.text()
+        self.assertIn("bookmarks are the exception", text.lower())
+
+    def test_the_move_commands_and_their_reason_are_documented(self):
+        text = self.text()
+        self.assertIn("Move to Page", text)
+        self.assertIn("bookmarks", text)
+
+    def test_read_mode_is_described_as_the_default(self):
+        self.assertIn("opens in <b>read mode</b>", self.text())

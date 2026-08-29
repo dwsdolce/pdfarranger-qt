@@ -986,7 +986,18 @@ class PageCanvas(QAbstractScrollArea):
         return self._current
 
     def go_to_page(self, index: int):
-        """Put the top of ``index`` at the top of the viewport, clamped."""
+        """Put the top of ``index`` at the top of the viewport, clamped.
+
+        The caret is left alone. It used to die here, and before that whenever
+        the current page changed -- which in continuous mode is simply what
+        scrolling does, so extending a selection onto the next page and then
+        scrolling to look at it killed the caret and the next shift+arrow
+        scrolled instead of extending. With the arrow table (PORTING-NOTES,
+        *The arrow keys*) there is no longer any reason for a position in the
+        document to evaporate because the view moved: the caret is placed by a
+        click and cleared by Escape or a new document, and survives everything
+        else.
+        """
         if not self._layout.page_count:
             return
         index = min(max(index, 0), self._layout.page_count - 1)
@@ -1108,10 +1119,6 @@ class PageCanvas(QAbstractScrollArea):
         page = self._page_filling_the_viewport()
         if page != self._current:
             self._current = page
-            # The caret does not follow you to another page: it belongs to the
-            # place you clicked, and Acrobat drops it the same way.
-            if self._caret is not None and self._caret[0] != page:
-                self.clear_caret()
             self.current_page_changed.emit(page)
 
     def _page_filling_the_viewport(self) -> int:
@@ -1324,9 +1331,16 @@ class PageCanvas(QAbstractScrollArea):
     def caret_rect(self):
         """Where to draw the bar, in *document* pixels, or None.
 
-        The left edge of the character it sits before, its full height. At the
-        end of the text there is no such character, so the right edge of the
-        last one is used instead.
+        The left edge of the character it sits before, and the height of the
+        *line* -- not of the character. A glyph's own box is whatever that
+        letter happens to occupy: 7 points before a lowercase "e" against 13 for
+        the line, starting 3 points lower, so the bar changed size and position
+        with every letter and was, in David's words, impossible to find on the
+        page. Acrobat draws it past the top and bottom of a lowercase letter for
+        exactly this reason.
+
+        At the end of the text there is no character to sit before, so the right
+        edge of the last one is used instead.
         """
         if self._caret is None or self._document is None:
             return None
@@ -1344,10 +1358,20 @@ class PageCanvas(QAbstractScrollArea):
             return None
         box = bounds[0].boundingRect()
         x = box.left() if edge == "left" else box.right()
-        top_left = self._layout.from_page(page, QPointF(x, box.top()))
-        bottom = self._layout.from_page(page, QPointF(x, box.bottom()))
+        top, bottom = box.top(), box.bottom()
+        line = self._text.line_bounds(text, at)
+        if line is not None and line[1] > line[0]:
+            try:
+                whole = self._document.getSelectionAtIndex(
+                    page, line[0], line[1] - line[0]).boundingRectangle()
+            except Exception:  # pragma: no cover - PDFium can be unhappy
+                whole = None
+            if whole is not None and whole.height() > 0:
+                top, bottom = whole.top(), whole.bottom()
+        top_left = self._layout.from_page(page, QPointF(x, top))
+        foot = self._layout.from_page(page, QPointF(x, bottom))
         return QRectF(top_left.x(), top_left.y(),
-                      max(1.0, self._layout.zoom), bottom.y() - top_left.y())
+                      max(2.0, self._layout.zoom), foot.y() - top_left.y())
 
     def _page_text_length(self, page: int) -> int:
         return len(self._text.text(page))
@@ -1447,17 +1471,83 @@ class PageCanvas(QAbstractScrollArea):
         page, index = self._caret_focus or self._caret
         step = {"character": self._step_character, "word": self._step_word,
                 "line": self._step_line}[movement]
-        self._caret_focus = step(page, index, delta)
-        anchor, focus = self._caret, self._caret_focus
-        first, last = sorted((anchor, focus))
+        return self._place_focus(step(page, index, delta), extend=True)
+
+    def move_caret(self, movement: str, delta: int) -> bool:
+        """Move the caret itself, dropping any selection. Option+arrow."""
+        if self._caret is None or self._document is None:
+            return False
+        page, index = self._caret_focus or self._caret
+        step = {"character": self._step_character, "word": self._step_word,
+                "line": self._step_line}[movement]
+        return self._place_focus(step(page, index, delta), extend=False)
+
+    def caret_to_line_edge(self, end: bool, extend: bool) -> bool:
+        """Cmd+left or right: the start or end of the caret's own line."""
+        if self._caret is None:
+            return False
+        page, index = self._caret_focus or self._caret
+        bounds = self._text.line_bounds(self._text.text(page), index)
+        if bounds is None:
+            return False
+        return self._place_focus((page, bounds[1] if end else bounds[0]), extend)
+
+    def caret_to_document_edge(self, end: bool, extend: bool) -> bool:
+        """Cmd+up or down: the very start or end of the document."""
+        if self._caret is None or not self._layout.page_count:
+            return False
+        if end:
+            page = self._layout.page_count - 1
+            return self._place_focus((page, self._page_text_length(page)), extend)
+        return self._place_focus((0, 0), extend)
+
+    def _place_focus(self, target, extend: bool) -> bool:
+        """Put the moving end at ``target``; with ``extend``, select up to it.
+
+        The single funnel for every caret movement in the table, so that "add
+        Shift to extend instead of move" is one branch rather than a rule
+        repeated in six places.
+        """
+        if self._caret is None:
+            return False
+        self._caret_focus = target
         self._caret_on = True
-        if first == last:
+        if not extend:
+            self._caret = target
             self._set_selection({})
-            self.viewport().update()
-            return True
-        self.select_between(first[0], first[1], last[0], last[1])
+        else:
+            first, last = sorted((self._caret, target))
+            if first == last:
+                self._set_selection({})
+            else:
+                self.select_between(first[0], first[1], last[0], last[1])
+        self.ensure_caret_visible()
         self.viewport().update()
         return True
+
+    def ensure_caret_visible(self):
+        """Scroll the moving end into view, by as little as will do.
+
+        Without this a keyboard selection walks off the bottom of the window and
+        you have to go and find it -- and going to find it used to cost you the
+        caret. Minimal rather than centred: the text being selected should stay
+        where the eye already is.
+        """
+        rect = self.caret_rect()
+        if rect is None:
+            return
+        bar = self.verticalScrollBar()
+        top, height = rect.top(), rect.height()
+        if top < bar.value():
+            bar.setValue(int(top))
+        elif top + height > bar.value() + self.viewport().height():
+            bar.setValue(int(top + height - self.viewport().height()))
+        across = self.horizontalScrollBar()
+        left, width = rect.left(), rect.width()
+        if left < across.value():
+            across.setValue(int(left))
+        elif left + width > across.value() + self.viewport().width():
+            across.setValue(int(left + width - self.viewport().width()))
 
     def select_between(self, first: int, low: int, last: int, high: int) -> bool:
         """Select from character ``low`` on page ``first`` to ``high`` on ``last``.
@@ -1812,9 +1902,10 @@ class PageCanvas(QAbstractScrollArea):
                     self.clear_selection()
                 self._anchor = found if found is not None else None
                 self._anchor_span = None
-                # And an insertion point, which is what shift+arrow extends
-                # from. Only where there is text to put it on.
-                self.clear_caret()
+                # And an insertion point, which is what the caret chords work
+                # from. A click off the page clears the *selection* -- above --
+                # but leaves the caret where it was, which is David's rule and
+                # Acrobat's: only Escape and a new document take it away.
                 if found is not None:
                     index = self.index_at(*found)
                     if index is not None:
@@ -1938,14 +2029,25 @@ class PageCanvas(QAbstractScrollArea):
         return any(polygon.boundingRect().contains(page_point)
                    for polygon in selection.bounds())
 
-    def keyPressEvent(self, event):
-        """Page keys navigate rather than merely scroll.
+    #: Which way each arrow points, as ``(axis, delta)``.
+    ARROWS = {
+        Qt.Key_Up: ("vertical", -1), Qt.Key_Down: ("vertical", 1),
+        Qt.Key_Left: ("horizontal", -1), Qt.Key_Right: ("horizontal", 1),
+    }
 
-        Carried over from the event filter read mode needed around `QPdfView`,
-        which is a scroll area and nothing more: PageUp and PageDown moved the
-        scrollbar, which did nothing at all when one page filled the view, and
-        Home and End were unhandled in both modes. A reader is expected to have
-        all four.
+    def keyPressEvent(self, event):
+        """The arrow keys, by one table: the modifier decides the verb.
+
+        nothing = scroll, Option = move the caret, Shift = extend the selection,
+        Cmd = jump to an edge, Fn = a bigger jump. Nothing here depends on
+        whether a caret exists, which is the point: reading must not behave
+        differently because you clicked on a word earlier. See PORTING-NOTES.md,
+        *The arrow keys*, for what Acrobat does instead and why it was not
+        copied.
+
+        Explicit modifiers rather than `QKeySequence` standard keys, unlike Copy
+        and Select All above: this scheme is ours, so no platform has an opinion
+        about it, and one table everywhere is the simplicity that was wanted.
         """
         key = event.key()
         if event.matches(QKeySequence.Copy):
@@ -1955,41 +2057,84 @@ class PageCanvas(QAbstractScrollArea):
             self.select_all_on(max(0, self.current_page()))
             return
         if key == Qt.Key_Escape and (self._selection or self._caret is not None):
-            # Both, unlike Acrobat, which leaves the selection behind. Ours
-            # already cleared it and taking that away would lose working
-            # behaviour to gain nothing.
+            # Both. Acrobat leaves the selection behind; ours already cleared it
+            # and had a test for it, and matching Acrobat there would have lost
+            # working behaviour to gain nothing.
             self.clear_caret()
             self.clear_selection()
             return
-        if self._caret is not None:
-            for name, movement, delta in (
-                    ("SelectNextChar", "character", 1),
-                    ("SelectPreviousChar", "character", -1),
-                    ("SelectNextWord", "word", 1),
-                    ("SelectPreviousWord", "word", -1),
-                    ("SelectNextLine", "line", 1),
-                    ("SelectPreviousLine", "line", -1)):
-                # Asked of QKeySequence rather than spelled out: extend-by-word
-                # is Option+Shift on macOS and Ctrl+Shift elsewhere, and only Qt
-                # knows which platform this is.
-                if event.matches(getattr(QKeySequence.StandardKey, name)):
+
+        shift = bool(event.modifiers() & Qt.ShiftModifier)
+        # Qt spells the platforms differently: ControlModifier is Cmd on macOS
+        # and Ctrl elsewhere, which is what this table wants in both cases.
+        jump = bool(event.modifiers() & Qt.ControlModifier)
+        option = bool(event.modifiers() & Qt.AltModifier)
+
+        # Fn+arrow arrives as one of these; on keyboards that have them they are
+        # keys in their own right.
+        if key in (Qt.Key_PageDown, Qt.Key_PageUp):
+            forward = key == Qt.Key_PageDown
+            if not self._continuous:
+                self.next_page() if forward else self.previous_page()
+            else:
+                self._scroll_by_screen(1 if forward else -1)
+            event.accept()
+            return
+        if key in (Qt.Key_Home, Qt.Key_End):
+            self.last_page() if key == Qt.Key_End else self.first_page()
+            event.accept()
+            return
+
+        if key in self.ARROWS:
+            axis, delta = self.ARROWS[key]
+            if option and (shift or jump) and axis == "horizontal":
+                # Option added to a caret chord works by the word. It does
+                # double duty -- alone it moves by character -- which is the one
+                # inelegance in the table, accepted because David wanted both
+                # granularities and losing one is the larger cost.
+                if shift:
+                    self.extend_caret("word", delta)
+                else:
+                    self.move_caret("word", delta)
+            elif jump:
+                if axis == "horizontal":
+                    self.caret_to_line_edge(end=delta > 0, extend=shift)
+                else:
+                    self.caret_to_document_edge(end=delta > 0, extend=shift)
+            elif option or shift:
+                movement = "character" if axis == "horizontal" else "line"
+                if shift:
                     self.extend_caret(movement, delta)
-                    event.accept()
-                    return
-        if key == Qt.Key_Home:
-            self.first_page()
+                else:
+                    self.move_caret(movement, delta)
+            elif axis == "horizontal":
+                # Bare left and right scroll to a page top rather than sideways.
+                # Horizontal scrolling has no range at all until the zoom passes
+                # the window width, so this is the useful thing to spend them on.
+                self.go_to_page(max(0, self.current_page()) + delta)
+            elif self._continuous:
+                bar = self.verticalScrollBar()
+                bar.setValue(bar.value() + delta * bar.singleStep())
+            # Single page mode has no line to scroll by, so bare up and down do
+            # nothing there -- and every chord above is swallowed either way, so
+            # that a caret-less Shift+arrow cannot fall through to the scroll
+            # area and look like a scrolling bug.
+            event.accept()
             return
-        if key == Qt.Key_End:
-            self.last_page()
-            return
+
         if not self._continuous:
-            if key in (Qt.Key_PageDown, Qt.Key_Down, Qt.Key_Right, Qt.Key_Space):
+            if key in (Qt.Key_Space,):
                 self.next_page()
                 return
-            if key in (Qt.Key_PageUp, Qt.Key_Up, Qt.Key_Left, Qt.Key_Backspace):
+            if key in (Qt.Key_Backspace,):
                 self.previous_page()
                 return
         super().keyPressEvent(event)
+
+    def _scroll_by_screen(self, delta: int):
+        """One viewport's worth, so a page part-shown at the edge leads."""
+        bar = self.verticalScrollBar()
+        bar.setValue(bar.value() + delta * self.viewport().height())
 
     def wheelEvent(self, event):
         """Ctrl+wheel zooms about the cursor, as the grid does.
