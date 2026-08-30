@@ -1648,6 +1648,56 @@ click wins, which is what every PDF reader does -- and it is why the fixture for
 these tests is `test_raster_image_text.pdf`: it is the only one with a line of
 prose that PDFium does not infer a link from.
 
+### Opening a document from the Finder
+
+The bundle declares `CFBundleDocumentTypes` for `com.adobe.pdf`, so macOS offers
+the application under *Open With* and lets it be set as the default handler.
+That part always worked. Double-clicking a PDF then did **nothing at all**,
+which is the worst shape a bug can take: the association is visibly correct, so
+nothing points at the application.
+
+macOS does not put the file on the command line. The Finder sends an Apple
+Event, which Qt delivers as a `QFileOpenEvent` to the `QApplication`, and
+nothing listened for it. The spec's own comment asserted the opposite -- that
+opening one made it "arrive as command-line arguments" -- which is how the gap
+survived being read more than once. It is corrected there now.
+
+`app.Application` handles the event. It collects paths rather than acting on
+them directly, because the event can arrive **before there is a window** to put
+a document in; `main()` drains what accumulated during start-up into the first
+window, and listens for later ones.
+
+**Where a later document lands.** An empty, untouched window takes it; anything
+else gets a window of its own. macOS will not launch a second copy of a bundled
+application -- it sends the event to the process already running -- so opening
+in place would discard whatever was on screen, unsaved work included. The empty
+case is not tidiness: at start-up the event can arrive *after* the first window
+is built, and this is what puts the document the user double-clicked into that
+window rather than into a second one beside an empty first.
+
+`MainWindow.new_window` gained a `paths` argument for it, which suits the
+NON_UNIQUE design (§8): a second document really is a second process, exactly as
+*New Window* has always been.
+
+**Windows and Linux are untouched by this**, and for a reason worth writing
+down: on both, a document opened from the desktop really *does* arrive as a
+command-line argument -- Linux through `Exec=pdfarranger-qt %U` with
+`MimeType=application/pdf` in the desktop entry, Windows through the installer's
+`"{app}\{exe}" "%1"` -- which `main()` has always handled. `QEvent.FileOpen` is
+never emitted there at all, so the new handler is inert. macOS was the odd one
+out and the only one that needed anything.
+
+One trap this opened, caught before it could bite. `new_window` gained a `paths`
+parameter, and `QAction.triggered` passes the action's *checked state* to its
+slot -- so *New Window* from the menu began calling `new_window(False)`. It is
+harmless only because the action is not checkable and `False or []` is empty;
+make it checkable one day and it is a `TypeError`. The connection is wrapped in
+a lambda now, with a test that the menu command passes no paths.
+
+Not verifiable from the suite, and worth saying so: these tests drive the event
+handler and the placement rule, but whether the Finder actually reaches them can
+only be seen in a built and installed bundle.
+
 ### The arrow keys — one table, no modes
 
 Settled with David after he tested Acrobat properly and found it

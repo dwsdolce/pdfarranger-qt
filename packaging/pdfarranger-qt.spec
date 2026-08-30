@@ -180,7 +180,11 @@ if sys.platform == "darwin":
             "NSRequiresAquaSystemAppearance": "No",
             "NSHighResolutionCapable": "True",
             # Lets the Finder offer this app under "Open With" for PDFs, and
-            # makes drops onto the Dock icon arrive as command-line arguments.
+            # be set as the default handler. Note that opening one does *not*
+            # arrive as a command-line argument, whatever this comment used to
+            # claim: macOS sends an Apple Event, which Qt delivers as
+            # QFileOpenEvent and `app.Application` listens for. Without that
+            # handler the association works and double-clicking does nothing.
             "CFBundleDocumentTypes": [{
                 "CFBundleTypeName": "PDF Document",
                 "CFBundleTypeRole": "Editor",

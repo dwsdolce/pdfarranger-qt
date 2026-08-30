@@ -165,7 +165,11 @@ class MainWindow(QMainWindow):
         st = QStyle.StandardPixmap
         self.act_new_window = QAction(_m("_New Window"), self)
         self.act_new_window.setShortcut(QKeySequence.New)
-        self.act_new_window.triggered.connect(self.new_window)
+        # Wrapped, not connected directly: `triggered` passes the action's
+        # checked state, which would arrive as `new_window(paths=False)`. That
+        # happens to be harmless today only because the action is not checkable
+        # and False is falsy.
+        self.act_new_window.triggered.connect(lambda: self.new_window())
 
         self.act_open = QAction(self._icon(st.SP_DialogOpenButton), _m("_Open"), self)
         self.act_open.setShortcut(QKeySequence.Open)
@@ -1243,20 +1247,25 @@ class MainWindow(QMainWindow):
         self.statusBar().showMessage(
             _("The document will be encrypted when it is saved."), 4000)
 
-    def new_window(self):
-        """Launch a second instance.
+    def new_window(self, paths=None):
+        """Launch a second instance, optionally opening ``paths`` in it.
 
         The application is deliberately NON_UNIQUE (§8) — every launch is its own
         process, which is what makes dragging pages between windows work. So this
         starts a new process rather than constructing another MainWindow: two
         windows in one process would share the undo stack's temp directory and
         the clipboard-owner checks that tell "our" drags from someone else's.
+
+        ``paths`` is how a document opened from the Finder while this window is
+        busy gets one of its own, since macOS sends the event here rather than
+        starting a second copy of the bundle.
         """
         if getattr(sys, "frozen", False):
             program, arguments = sys.executable, []
         else:
             # sys.executable is the interpreter; re-run the package entry point.
             program, arguments = sys.executable, ["-m", "pdfarranger_qt"]
+        arguments = arguments + [str(path) for path in (paths or [])]
         if not QProcess.startDetached(program, arguments, os.getcwd())[0]:
             QMessageBox.warning(self, APP_NAME, _("Could not open a new window."))
 
