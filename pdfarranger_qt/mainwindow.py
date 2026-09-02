@@ -891,10 +891,37 @@ class MainWindow(QMainWindow):
             ngettext("%d page selected", "%d pages selected", len(rows)) % len(rows)
             if has_sel else "")
 
+    #: Whether a window title should name the document and nothing else.
+    #: macOS puts the application's name in the menu bar, so repeating it in
+    #: every title is a Windows convention applied in the wrong place -- which
+    #: is what this used to do everywhere. Windows and Linux keep it, because
+    #: there it really is the convention.
+    DOCUMENT_ONLY_TITLE = sys.platform == "darwin"
+
+    @staticmethod
+    def title_for(name: str, document_only: bool) -> str:
+        """The window title for a document, by platform convention.
+
+        The ``[*]`` is Qt's placeholder for the modified marker, not literal
+        text: with `setWindowModified` it becomes the dot in the close button on
+        macOS -- the native signal, and what Acrobat shows -- and an asterisk on
+        Windows and Linux. It replaces a hand-rolled leading star, which drew
+        the Windows marker on every platform.
+
+        Taking the convention as an argument rather than reading the platform
+        keeps this testable on all three from any one of them.
+        """
+        return f"{name}[*]" if document_only else f"{name}[*] - {APP_NAME}"
+
     def _retitle(self):
         name = os.path.basename(self.current_path) if self.current_path else "Untitled"
-        star = "*" if self.modified else ""
-        self.setWindowTitle(f"{star}{name} - {APP_NAME}")
+        self.setWindowTitle(self.title_for(name, self.DOCUMENT_ONLY_TITLE))
+        self.setWindowModified(self.modified)
+        # The proxy icon: the little document in a macOS title bar that can be
+        # dragged out or command-clicked for the folder it sits in. Ignored on
+        # platforms that have no such thing. The title above still wins for the
+        # text, since Qt only falls back to the path when no title is set.
+        self.setWindowFilePath(self.current_path or "")
         self._update_status_path()
 
     def _mark_modified(self):

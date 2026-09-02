@@ -1648,6 +1648,28 @@ click wins, which is what every PDF reader does -- and it is why the fixture for
 these tests is `test_raster_image_text.pdf`: it is the only one with a line of
 prose that PDFium does not infer a link from.
 
+### The window title belongs to the platform
+
+It was `*name - PDF Arranger Qt` on all three platforms. That is the *Windows*
+convention: on macOS the application's name is already in the menu bar, so
+repeating it in every window title is noise, and Acrobat shows the document and
+nothing else. `DOCUMENT_ONLY_TITLE` picks the form; `title_for` takes the
+convention as an argument rather than reading the platform, so all three shapes
+are testable from any one of them -- the lesson the theme tests taught.
+
+The modified marker was a hand-rolled leading asterisk, which is again the
+Windows signal drawn everywhere. It is Qt's `[*]` placeholder now, with
+`setWindowModified`: the dot in the close button on macOS, an asterisk on
+Windows and Linux, and no string handling of our own. Note that `windowTitle()`
+still returns the placeholder -- Qt substitutes it on the way to the window
+manager -- so a test asserting on the *displayed* title would be asserting on
+something it cannot see. `isWindowModified()` is the thing to check.
+
+`setWindowFilePath` gives macOS the proxy icon: the small document in the title
+bar that can be dragged out or command-clicked for the folder holding it.
+Ignored where there is no such thing. The title still wins for the text, since
+Qt only falls back to the path when no title has been set.
+
 ### Opening a document from the Finder
 
 The bundle declares `CFBundleDocumentTypes` for `com.adobe.pdf`, so macOS offers

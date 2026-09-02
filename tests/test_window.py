@@ -767,3 +767,88 @@ class TestPhase4Parity(unittest.TestCase):
         second = view.visualRect(view.page_model.index(1, 0))
         self.assertEqual(first.left(), second.left())
         self.assertGreater(second.top(), first.top())
+
+
+class TestWindowTitle(unittest.TestCase):
+    """The title follows each platform's convention, not one of them everywhere.
+
+    It used to be "*name - PDF Arranger Qt" on all three. On macOS the
+    application's name is in the menu bar, so repeating it in every window is a
+    Windows convention applied in the wrong place -- Acrobat shows the document
+    and nothing else. The modified marker was a hand-rolled leading asterisk,
+    which is the Windows signal drawn on every platform.
+    """
+
+    def setUp(self):
+        from pdfarranger_qt.mainwindow import MainWindow
+
+        self.win = MainWindow()
+        self.addCleanup(self.win.close)
+        self.addCleanup(setattr, self.win, "modified", False)
+        self.win.show()
+
+    # -- the convention, checked from any platform -------------------------
+
+    def test_a_document_only_title(self):
+        from pdfarranger_qt.mainwindow import MainWindow
+
+        self.assertEqual(MainWindow.title_for("book.pdf", True), "book.pdf[*]")
+
+    def test_a_title_that_names_the_application(self):
+        from pdfarranger_qt.mainwindow import APP_NAME, MainWindow
+
+        self.assertEqual(MainWindow.title_for("book.pdf", False),
+                         f"book.pdf[*] - {APP_NAME}")
+
+    def test_macos_gets_the_document_only_form(self):
+        import sys
+
+        from pdfarranger_qt.mainwindow import MainWindow
+
+        self.assertEqual(MainWindow.DOCUMENT_ONLY_TITLE,
+                         sys.platform == "darwin")
+
+    def test_the_marker_is_qts_placeholder_not_a_star(self):
+        """`[*]` becomes the close-button dot on macOS and a star elsewhere."""
+        from pdfarranger_qt.mainwindow import MainWindow
+
+        for document_only in (True, False):
+            title = MainWindow.title_for("book.pdf", document_only)
+            self.assertIn("[*]", title)
+            self.assertFalse(title.startswith("*"))
+
+    # -- what the window actually does -------------------------------------
+
+    def test_an_empty_window_is_untitled(self):
+        self.assertIn("Untitled", self.win.windowTitle())
+
+    def test_opening_names_the_document(self):
+        self.win.open_paths([TEST_PDF])
+        settle(timeout_ms=300)
+        self.win.modified = False
+        self.assertIn(os.path.basename(TEST_PDF), self.win.windowTitle())
+
+    def test_editing_sets_the_modified_state(self):
+        self.win.open_paths([TEST_PDF])
+        settle(timeout_ms=300)
+        self.win.modified = False
+        self.win._refresh_state()
+        self.assertFalse(self.win.isWindowModified())
+        self.win._mark_modified()
+        self.assertTrue(self.win.isWindowModified())
+
+    def test_the_document_path_is_offered_for_the_proxy_icon(self):
+        """macOS puts a draggable document icon in the title bar from this."""
+        self.win.open_paths([TEST_PDF])
+        settle(timeout_ms=300)
+        self.win.modified = False
+        self.assertEqual(self.win.windowFilePath(), TEST_PDF)
+
+    def test_closing_the_document_takes_the_path_away(self):
+        self.win.open_paths([TEST_PDF])
+        settle(timeout_ms=300)
+        self.win.modified = False
+        self.win.close_document()
+        settle(timeout_ms=200)
+        self.assertEqual(self.win.windowFilePath(), "")
+        self.assertIn("Untitled", self.win.windowTitle())
