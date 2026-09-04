@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pdfarranger master\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-12-21 10:45+0200\n"
-"PO-Revision-Date: 2025-12-22 22:16+1000\n"
+"POT-Creation-Date: 2026-05-23 05:41+0300\n"
+"PO-Revision-Date: 2026-08-11 14:38+1000\n"
 "Last-Translator: Ser82-png <asvmail.as@gmail.com>\n"
 "Language-Team: \n"
 "Language: ru\n"
@@ -27,35 +27,33 @@ msgstr "#Столбец"
 msgid "#Row"
 msgstr "#Ряд"
 
-#: pdfarranger/pageutils.py:128 pdfarranger/pageutils.py:553
-#: pdfarranger/pageutils.py:555
+#: pdfarranger/pageutils.py:128 pdfarranger/pageutils.py:555
+#: pdfarranger/pageutils.py:557
 msgid "%"
 msgstr "%"
 
-#: pdfarranger/pageutils.py:276
-#, python-format
+#: pdfarranger/pageutils.py:278
 msgid "% of height"
 msgstr "% oт высоты"
 
-#: pdfarranger/pageutils.py:276
-#, python-format
+#: pdfarranger/pageutils.py:278
 msgid "% of width"
 msgstr "% oт ширины"
 
-#: pdfarranger/pdfarranger.py:3152
+#: pdfarranger/pdfarranger.py:3237
 #, python-format
 msgid "%s is a tool for rearranging and modifying PDF files."
 msgstr "%s - инструмент для переупорядочивания и изменения файлов PDF."
 
-#: pdfarranger/config.py:296
+#: pdfarranger/config.py:342
 msgid "(Libhandy missing)"
 msgstr "(Libhandy отсутствует)"
 
-#: pdfarranger/config.py:288
+#: pdfarranger/config.py:334
 msgid "(Requires restart)"
 msgstr "(Требуется перезагрузка)"
 
-#: pdfarranger/pdfarranger.py:1402
+#: pdfarranger/pdfarranger.py:1417
 #, python-format
 msgid "A file named \"%s\" already exists. Do you want to replace it?"
 msgstr "Файл «%s» уже существует. Заменить его?"
@@ -64,47 +62,47 @@ msgstr "Файл «%s» уже существует. Заменить его?"
 msgid "All"
 msgstr "Все"
 
-#: data/menu.ui:254 data/menu.ui:444
+#: data/menu.ui:258 data/menu.ui:454
 msgid "All From _Same File"
 msgstr "Все из _одного файла"
 
-#: pdfarranger/pdfarranger.py:721
+#: pdfarranger/pdfarranger.py:730
 msgid "All files"
 msgstr "Все файлы"
 
-#: pdfarranger/pdfarranger.py:510 pdfarranger/pdfarranger.py:589
+#: pdfarranger/pdfarranger.py:519 pdfarranger/pdfarranger.py:598
 msgid "All pages must have the same size."
 msgstr "Все страницы должны иметь одинаковый размер."
 
-#: pdfarranger/pdfarranger.py:692
+#: pdfarranger/pdfarranger.py:701
 msgid "All supported files"
 msgstr "Все поддерживаемые файлы"
 
-#: pdfarranger/exporter.py:522
+#: pdfarranger/exporter.py:526
 msgid "Auto Rotate"
 msgstr "Поворачивать автоматически"
 
-#: pdfarranger/pageutils.py:254
+#: pdfarranger/pageutils.py:256
 msgid "Bottom"
 msgstr "Снизу"
 
-#: pdfarranger/pageutils.py:486
+#: pdfarranger/pageutils.py:488
 msgid "Bottom to Top"
 msgstr "Снизу вверх"
 
-#: pdfarranger/core.py:592
+#: pdfarranger/core.py:599
 msgid "Clipboard image"
 msgstr "Изображение буфера обмена"
 
-#: pdfarranger/pageutils.py:469 pdfarranger/splitter.py:60
+#: pdfarranger/pageutils.py:471 pdfarranger/splitter.py:60
 msgid "Columns"
 msgstr "Столбцы"
 
-#: data/menu.ui:161 data/menu.ui:407
+#: data/menu.ui:161 data/menu.ui:417
 msgid "Copy _Image"
 msgstr "Копировать _изображение"
 
-#: data/menu.ui:166 data/menu.ui:412
+#: data/menu.ui:166 data/menu.ui:422
 msgid "Copy _Text"
 msgstr "Копировать _текст"
 
@@ -120,71 +118,71 @@ msgstr "Автор"
 msgid "Creator tool"
 msgstr "Создано с помощью"
 
-#: pdfarranger/pageutils.py:351
+#: pdfarranger/pageutils.py:353
 msgid "Crop & Add margins"
 msgstr "Обрезать и добавить поля"
 
-#: pdfarranger/pageutils.py:1002
+#: pdfarranger/pageutils.py:1004
 msgid "Crop Margins"
 msgstr "Обрезать поля"
 
-#: data/menu.ui:194 data/menu.ui:490
+#: data/menu.ui:194 data/menu.ui:500
 msgid "Crop White Borders"
 msgstr "Обрезать белые края"
 
-#: pdfarranger/pageutils.py:266 pdfarranger/pdfarranger.py:3118
+#: pdfarranger/pageutils.py:268 pdfarranger/pdfarranger.py:3211
 msgid ""
 "Cropping/hiding does not remove any content from the PDF file, it only hides "
 "it."
 msgstr ""
 "Обрезка/скрытие не удаляет содержимое PDF-файла, а только скрывает его."
 
-#: data/menu.ui:114 data/menu.ui:355
+#: data/menu.ui:114 data/menu.ui:365
 msgid "Cu_t"
 msgstr "Вы_резать"
 
-#: pdfarranger/pageutils.py:154
+#: pdfarranger/pageutils.py:142
 msgid "Custom"
 msgstr "Пользовательский"
 
-#: pdfarranger/pdfarranger.py:1525
+#: pdfarranger/pdfarranger.py:1542
 msgid "Despite the warnings the document(s) should have no visible issues."
 msgstr ""
 "Несмотря на предупреждения, документ(ы) не должен(ны) иметь видимых проблем."
 
-#: pdfarranger/pdfarranger.py:1236
+#: pdfarranger/pdfarranger.py:1251
 msgid "Discard changes and close?"
 msgstr "Отменить изменения и закрыть?"
 
-#: pdfarranger/pdfarranger.py:1273
+#: pdfarranger/pdfarranger.py:1288
 msgid "Discard changes and quit?"
 msgstr "Отменить изменения и выйти?"
 
-#: pdfarranger/pdfarranger.py:3125
+#: pdfarranger/pdfarranger.py:3218
 msgid "Do not show this dialog again."
 msgstr "Не показывать этот диалог снова."
 
-#: pdfarranger/pdfarranger.py:1227
+#: pdfarranger/pdfarranger.py:1242
 msgid "Do_n’t Save"
 msgstr "_Не сохранять"
 
-#: pdfarranger/pdfarranger.py:1532
+#: pdfarranger/pdfarranger.py:1549
 msgid "Don't show warnings when saving again."
 msgstr "Не показывать предупреждения при повторном сохранении."
 
-#: data/menu.ui:198 data/menu.ui:494
+#: data/menu.ui:198 data/menu.ui:504
 msgid "Dupl_icate"
 msgstr "_Дублировать"
 
-#: data/menu.ui:52 data/menu.ui:527
+#: data/menu.ui:52 data/menu.ui:541
 msgid "E_xport"
 msgstr "_Экспорт"
 
-#: data/menu.ui:55 data/menu.ui:530
+#: data/menu.ui:55 data/menu.ui:544
 msgid "E_xport Selection to a Single File…"
 msgstr "Экспорт выделенного фрагмента в _один файл…"
 
-#: data/menu.ui:319
+#: data/menu.ui:329
 msgid "Edit _Properties"
 msgstr "Редактировать _свойства"
 
@@ -200,43 +198,43 @@ msgstr "Равная ширина столбцов"
 msgid "Equal row height"
 msgstr "Равная высота рядов"
 
-#: pdfarranger/pdfarranger.py:2094
+#: pdfarranger/pdfarranger.py:2126
 msgid "Exploding into images…"
 msgstr "Изъятие встроенных изображений…"
 
-#: data/menu.ui:60 data/menu.ui:535
+#: data/menu.ui:60 data/menu.ui:549
 msgid "Export Selection to _Individual Files…"
 msgstr "Экспорт выделенных фрагментов в от_дельные файлы…"
 
-#: data/menu.ui:74 data/menu.ui:549
+#: data/menu.ui:74 data/menu.ui:563
 msgid "Export Selection to _JPG Images…"
 msgstr "Экспорт выделенных фрагментов в изображения _JPG…"
 
-#: data/menu.ui:69 data/menu.ui:544
+#: data/menu.ui:69 data/menu.ui:558
 msgid "Export Selection to _PNG Images…"
 msgstr "Экспорт выделенных фрагментов в изображения _PNG…"
 
-#: data/menu.ui:84 data/menu.ui:559
+#: data/menu.ui:84 data/menu.ui:573
 msgid "Export Selection to _Rasterized PDF (jpg)…"
 msgstr "Экспорт выделенного фрагмента в _растеризированный PDF (jpg)…"
 
-#: data/menu.ui:79 data/menu.ui:554
+#: data/menu.ui:79 data/menu.ui:568
 msgid "Export Selection to _Rasterized PDF (png)…"
 msgstr "Экспорт выделенного фрагмента в _растеризированный PDF (png)…"
 
-#: data/menu.ui:65 data/menu.ui:540
+#: data/menu.ui:65 data/menu.ui:554
 msgid "Export _All Pages to Individual Files…"
 msgstr "Экспорт _всех страниц в отдельные файлы…"
 
-#: pdfarranger/pdfarranger.py:1343
+#: pdfarranger/pdfarranger.py:1358
 msgid "Export…"
 msgstr "Экспорт…"
 
-#: pdfarranger/core.py:594 pdfarranger/pdfarranger.py:1788
+#: pdfarranger/core.py:601 pdfarranger/pdfarranger.py:1817
 msgid "File is neither pdf nor image"
 msgstr "Файл не является ни PDF, ни изображением"
 
-#: pdfarranger/pdfarranger.py:334
+#: pdfarranger/pdfarranger.py:342
 msgid "File(s) to open"
 msgstr "Файл(ы) для открытия"
 
@@ -252,55 +250,63 @@ msgstr "Следующее"
 msgid "Find Previous"
 msgstr "Предыдущее"
 
-#: data/menu.ui:312
+#: data/menu.ui:322
 msgid "Find _All"
 msgstr "Найти _все"
 
-#: data/menu.ui:308
+#: data/menu.ui:318
 msgid "Find _Next"
 msgstr "_Следующее"
 
-#: data/menu.ui:304
+#: data/menu.ui:314
 msgid "Find _Previous"
 msgstr "_Предыдущее"
 
-#: pdfarranger/pageutils.py:347
+#: data/menu.ui:296
+msgid "Fit _Multiple Pages"
+msgstr "_Несколько страниц на экран"
+
+#: data/menu.ui:291
+msgid "Fit _One Page"
+msgstr "_Одна страница на экран"
+
+#: pdfarranger/pageutils.py:349
 msgid "Fit mode"
 msgstr "Режим подгонки"
 
-#: pdfarranger/exporter.py:520
+#: pdfarranger/exporter.py:524
 msgid "Fit to Full Page"
 msgstr "По размеру страницы"
 
-#: pdfarranger/exporter.py:519
+#: pdfarranger/exporter.py:523
 msgid "Fit to Printable Area"
 msgstr "По размеру области печати"
 
-#: pdfarranger/pageutils.py:356
+#: pdfarranger/pageutils.py:358
 msgid "Fit to paper"
 msgstr "Подогнать под размер документа"
 
-#: pdfarranger/pdfarranger.py:3122
+#: pdfarranger/pdfarranger.py:3215
 msgid "For more info see"
 msgstr "Для получения дополнительной информации смотрите"
 
-#: pdfarranger/config.py:332
+#: pdfarranger/config.py:382
 msgid "For more options see:"
 msgstr "Дополнительные параметры смотрите в:"
 
-#: data/menu.ui:291
+#: data/menu.ui:301
 msgid "Full_screen"
 msgstr "_Во весь экран"
 
-#: pdfarranger/pdfarranger.py:3168
+#: pdfarranger/pdfarranger.py:3259
 msgid "GNU General Public License (GPL) Version 3."
 msgstr "GNU General Public License (GPL) версия 3."
 
-#: pdfarranger/config.py:327
+#: pdfarranger/config.py:377
 msgid "Greyscale"
 msgstr "Оттенки серого"
 
-#: pdfarranger/pageutils.py:145
+#: pdfarranger/pageutils.py:157
 msgid "Height"
 msgstr "Высота"
 
@@ -308,11 +314,11 @@ msgstr "Высота"
 msgid "Height in %"
 msgstr "Высота в %"
 
-#: pdfarranger/pageutils.py:1002
+#: pdfarranger/pageutils.py:1004
 msgid "Hide Margins"
 msgstr "Скрыть поля"
 
-#: pdfarranger/pageutils.py:481
+#: pdfarranger/pageutils.py:483
 msgid "Horizontal"
 msgstr "Горизонтальная"
 
@@ -320,27 +326,27 @@ msgstr "Горизонтальная"
 msgid "Horizontal Splits"
 msgstr "Горизонтальные разделения"
 
-#: pdfarranger/pageutils.py:552
+#: pdfarranger/pageutils.py:554
 msgid "Horizontal offset"
 msgstr "Горизонтальное смещение"
 
-#: pdfarranger/config.py:316
+#: pdfarranger/config.py:366
 msgid "Image Export"
-msgstr "Импортировать изображение"
+msgstr "Экспорт изображений"
 
-#: pdfarranger/core.py:583
+#: pdfarranger/core.py:589
 msgid "Image files are only supported with img2pdf"
 msgstr "Файлы изображений поддерживаются только с img2pdf"
 
-#: pdfarranger/core.py:589
+#: pdfarranger/core.py:596
 msgid "Image format is not supported by img2pdf"
 msgstr "Формат изображения не поддерживается img2pdf"
 
-#: pdfarranger/pdfarranger.py:2091
+#: pdfarranger/pdfarranger.py:2123
 msgid "Img2pdf missing."
 msgstr "Отсутствует Img2pdf."
 
-#: pdfarranger/pdfarranger.py:1600
+#: pdfarranger/pdfarranger.py:1621
 msgid "Img2pdf support missing."
 msgstr "Отсутствует поддержка Img2pdf."
 
@@ -348,15 +354,15 @@ msgstr "Отсутствует поддержка Img2pdf."
 msgid "Import"
 msgstr "Импортировать"
 
-#: pdfarranger/pdfarranger.py:1610
+#: pdfarranger/pdfarranger.py:1631
 msgid "Import…"
 msgstr "Импорт…"
 
-#: data/menu.ui:214 data/menu.ui:510
+#: data/menu.ui:218 data/menu.ui:524
 msgid "Insert Blan_k Page…"
 msgstr "Вставить _пустую страницу…"
 
-#: pdfarranger/pageutils.py:435
+#: pdfarranger/pageutils.py:437
 msgid "Insert Blank Page"
 msgstr "Вставить пустую страницу"
 
@@ -364,12 +370,7 @@ msgstr "Вставить пустую страницу"
 msgid "Invalid date format. Input discarded."
 msgstr "Неверный формат даты. Вход отклонен."
 
-#: pdfarranger/pdfarranger.py:3155
-#, python-format
-msgid "It uses libqpdf %s, pikepdf %s, GTK %s and Python %s."
-msgstr "Приложение использует libqpdf %s, и pikepdf %s, GTK %s и Python %s."
-
-#: pdfarranger/pdfarranger.py:712
+#: pdfarranger/pdfarranger.py:721
 msgid "JPEG images"
 msgstr "Изображения JPEG"
 
@@ -377,19 +378,19 @@ msgstr "Изображения JPEG"
 msgid "Keywords"
 msgstr "Ключевые слова"
 
-#: pdfarranger/pageutils.py:164
+#: pdfarranger/pageutils.py:166
 msgid "Landscape"
 msgstr "Ландшафтная"
 
-#: pdfarranger/config.py:286
+#: pdfarranger/config.py:332
 msgid "Language"
 msgstr "Язык"
 
-#: pdfarranger/pageutils.py:254
+#: pdfarranger/pageutils.py:256
 msgid "Left"
 msgstr "Слева"
 
-#: pdfarranger/pageutils.py:483
+#: pdfarranger/pageutils.py:485
 msgid "Left to Right"
 msgstr "Слева направо"
 
@@ -397,19 +398,19 @@ msgstr "Слева направо"
 msgid "Main Menu"
 msgstr "Главное меню"
 
-#: pdfarranger/pdfarranger.py:3163
+#: pdfarranger/pdfarranger.py:3254
 msgid "Maintainers and contributors"
 msgstr "Сопровождающие и участники проекта"
 
-#: pdfarranger/pageutils.py:467
+#: pdfarranger/pageutils.py:469
 msgid "Margin"
 msgstr "Поле"
 
-#: pdfarranger/pageutils.py:453
+#: pdfarranger/pageutils.py:455
 msgid "Merge Pages"
 msgstr "Объединение страниц"
 
-#: pdfarranger/pageutils.py:518
+#: pdfarranger/pageutils.py:520
 msgid "Merged page size:"
 msgstr "Размер объединённой страницы:"
 
@@ -417,19 +418,19 @@ msgstr "Размер объединённой страницы:"
 msgid "Modified"
 msgstr "Изменён"
 
-#: pdfarranger/pageutils.py:498
+#: pdfarranger/pageutils.py:500
 msgid "Non-uniform page size - using max size"
 msgstr "Неравномерный размер страниц — используется максимальный размер"
 
-#: pdfarranger/exporter.py:518
+#: pdfarranger/exporter.py:522
 msgid "None"
 msgstr "Ничего"
 
-#: pdfarranger/pdfarranger.py:3111
+#: pdfarranger/pdfarranger.py:3204
 msgid "Note"
 msgstr "Примечание"
 
-#: pdfarranger/pdfarranger.py:3117
+#: pdfarranger/pdfarranger.py:3210
 msgid "Note the limitations:"
 msgstr "Обратите внимание на ограничения:"
 
@@ -437,27 +438,27 @@ msgstr "Обратите внимание на ограничения:"
 msgid "Open"
 msgstr "Открыть"
 
-#: pdfarranger/pdfarranger.py:1458
+#: pdfarranger/pdfarranger.py:1473
 msgid "Open…"
 msgstr "Открыть…"
 
-#: pdfarranger/config.py:324
+#: pdfarranger/config.py:374
 msgid "Optimize"
 msgstr "Оптимизировать"
 
-#: pdfarranger/pageutils.py:162
+#: pdfarranger/pageutils.py:164
 msgid "Orientation"
 msgstr "Ориентация"
 
-#: pdfarranger/pdfarranger.py:3119
+#: pdfarranger/pdfarranger.py:3212
 msgid "Outlines and links can be preserved only in certain cases."
 msgstr "Контуры и ссылки могут быть сохранены лишь в некоторых ситуациях."
 
-#: pdfarranger/pageutils.py:1055
+#: pdfarranger/pageutils.py:1057
 msgid "Overlay"
 msgstr "Наложение"
 
-#: pdfarranger/pdfarranger.py:315
+#: pdfarranger/pdfarranger.py:323
 msgid ""
 "PDF Arranger is a small python-gtk application, which helps the user to "
 "merge or split pdf documents and rotate, crop and rearrange their pages "
@@ -469,99 +470,107 @@ msgstr ""
 "обрезать и изменять порядок страниц с помощью интерактивного и интуитивно "
 "понятного графического интерфейса. Это клиентский интерфейс для pikepdf."
 
-#: pdfarranger/pdfarranger.py:1782
+#: pdfarranger/pdfarranger.py:1811
 msgid "PDF document is damaged"
 msgstr "Документ PDF повреждён"
 
-#: pdfarranger/pdfarranger.py:696
+#: pdfarranger/pdfarranger.py:705
 msgid "PDF files"
 msgstr "Файлы PDF"
 
-#: pdfarranger/pdfarranger.py:704
+#: pdfarranger/pdfarranger.py:713
 msgid "PNG images"
 msgstr "Изображения PNG"
 
-#: pdfarranger/exporter.py:573
+#: pdfarranger/exporter.py:577
 msgid "Page Handling"
 msgstr "Управление страницами"
 
-#: pdfarranger/pageutils.py:494
+#: pdfarranger/pageutils.py:496
 msgid "Page Order"
 msgstr "Порядок страниц"
 
-#: pdfarranger/pageutils.py:343
+#: pdfarranger/pdfarranger.py:3282
+msgid "Page Size:"
+msgstr "Размер страницы:"
+
+#: pdfarranger/pageutils.py:345
 msgid "Page size"
 msgstr "Размер страницы"
 
-#: pdfarranger/pageutils.py:151
+#: pdfarranger/pageutils.py:139
 msgid "Paper size"
 msgstr "Формат бумаги"
 
-#: pdfarranger/core.py:470
+#: pdfarranger/core.py:474
 msgid "Password"
 msgstr "Пароль"
 
-#: pdfarranger/core.py:448
+#: pdfarranger/core.py:452
 msgid "Password required"
 msgstr "Требуется пароль"
 
-#: data/menu.ui:127 data/menu.ui:368
+#: data/menu.ui:127 data/menu.ui:378
 msgid "Past_e Special"
 msgstr "_Специальная вставка"
 
-#: data/menu.ui:144 data/menu.ui:386
+#: data/menu.ui:144 data/menu.ui:396
 msgid "Paste As O_verlay…"
 msgstr "Вставить как нало_жение…"
 
-#: data/menu.ui:139 data/menu.ui:381
+#: data/menu.ui:139 data/menu.ui:391
 msgid "Paste As _Even Pages"
 msgstr "Вставить как _чётные страницы"
 
-#: data/menu.ui:134 data/menu.ui:376
+#: data/menu.ui:134 data/menu.ui:386
 msgid "Paste As _Odd Pages"
 msgstr "Вставить как _нечётные страницы"
 
-#: data/menu.ui:149 data/menu.ui:391
+#: data/menu.ui:149 data/menu.ui:401
 msgid "Paste As _Underlay…"
 msgstr "Вставить как _подложку…"
 
-#: data/menu.ui:122 data/menu.ui:363
+#: data/menu.ui:122 data/menu.ui:373
 msgid "Paste _After"
 msgstr "Вставить п_осле"
 
-#: data/menu.ui:129 data/menu.ui:371
+#: data/menu.ui:129 data/menu.ui:381
 msgid "Paste _Before"
 msgstr "Вставить пе_ред"
 
-#: pdfarranger/pdfarranger.py:1938
+#: pdfarranger/pdfarranger.py:1971
 msgid "Pasted data not valid. Aborting paste."
 msgstr "Вставляемые данные недопустимы. Вставка прервана."
 
-#: pdfarranger/config.py:318
+#: pdfarranger/config.py:368
 msgid "Pixels/inch:"
 msgstr "Пиксели/дюймы:"
 
-#: pdfarranger/pageutils.py:163
+#: pdfarranger/pageutils.py:165
 msgid "Portrait"
 msgstr "Портретная"
 
-#: data/menu.ui:325
+#: data/menu.ui:335
 msgid "Pre_ferences"
 msgstr "_Параметры"
 
-#: pdfarranger/config.py:276
+#: pdfarranger/config.py:322
 msgid "Preferences"
 msgstr "Параметры"
 
-#: pdfarranger/pdfarranger.py:326
+#: pdfarranger/config.py:354
+msgid "Preserve document information from the first file opened"
+msgstr "Сохранять информацию о документе из первого открытого файла"
+
+#: pdfarranger/pdfarranger.py:334
 msgid "Print the version of PDF Arranger and exit"
 msgstr "Распечатать версию программы PDF Arranger и выйти"
 
-#: pdfarranger/config.py:301
+#: pdfarranger/config.py:347
 msgid "Printing"
 msgstr "Печать"
 
-#: pdfarranger/exporter.py:554
+#: pdfarranger/exporter.py:558
 msgid "Printing…"
 msgstr "Печать…"
 
@@ -573,39 +582,35 @@ msgstr "Программа"
 msgid "Property"
 msgstr "Свойство"
 
-#: pdfarranger/pageutils.py:1122
+#: pdfarranger/pageutils.py:1124
 msgid "Range Select"
 msgstr "Выделить диапазон"
 
-#: data/menu.ui:202 data/menu.ui:498
+#: data/menu.ui:202 data/menu.ui:508
 msgid "Re_verse Order"
 msgstr "_Обратный порядок"
 
-#: pdfarranger/pageutils.py:357
+#: pdfarranger/pageutils.py:359
 msgid "Relative"
 msgstr "Относительный"
 
-#: pdfarranger/exporter.py:591
+#: pdfarranger/exporter.py:595
 msgid "Rendering Preview…"
 msgstr "Предварительная визуализация…"
 
-#: pdfarranger/pdfarranger.py:982
+#: pdfarranger/pdfarranger.py:993
 msgid "Rendering…"
 msgstr "Визуализация…"
 
-#: pdfarranger/pdfarranger.py:1404
+#: pdfarranger/pdfarranger.py:1419
 msgid "Replace"
 msgstr "Заменить"
 
-#: pdfarranger/config.py:308
-msgid "Retain document-level information of the first opened file"
-msgstr "Сохранять информацию на уровне документа из первого открытого файла"
-
-#: pdfarranger/pageutils.py:254
+#: pdfarranger/pageutils.py:256
 msgid "Right"
 msgstr "Справа"
 
-#: pdfarranger/pageutils.py:484
+#: pdfarranger/pageutils.py:486
 msgid "Right to Left"
 msgstr "Справа налево"
 
@@ -617,20 +622,20 @@ msgstr "Повернуть влево"
 msgid "Rotate Right"
 msgstr "Повернуть вправо"
 
-#: data/menu.ui:172 data/menu.ui:468
+#: data/menu.ui:172 data/menu.ui:478
 msgid "Rotate _Left"
 msgstr "Повернуть в_лево"
 
-#: pdfarranger/pageutils.py:470 pdfarranger/splitter.py:60
+#: pdfarranger/pageutils.py:472 pdfarranger/splitter.py:60
 msgid "Rows"
 msgstr "Ряды"
 
-#: pdfarranger/pdfarranger.py:3158
+#: pdfarranger/pdfarranger.py:3249
 #, python-format
 msgid "Running on %s"
 msgstr "Работает на %s"
 
-#: data/menu.ui:259 data/menu.ui:449
+#: data/menu.ui:263 data/menu.ui:459
 msgid "Same Page _Format"
 msgstr "Страницы того же _формата"
 
@@ -642,7 +647,7 @@ msgstr "Сохранить"
 msgid "Save As"
 msgstr "Сохранить как"
 
-#: pdfarranger/pdfarranger.py:1343
+#: pdfarranger/pdfarranger.py:1358
 msgid "Save As…"
 msgstr "Сохранить как…"
 
@@ -650,39 +655,45 @@ msgstr "Сохранить как…"
 msgid "Save _As…"
 msgstr "Сохранить _как…"
 
-#: pdfarranger/pdfarranger.py:1245
+#: pdfarranger/pdfarranger.py:1260
 msgid "Save changes before closing?"
 msgstr "Сохранить изменения в перед закрытием?"
 
-#: pdfarranger/pdfarranger.py:1282
+#: pdfarranger/pdfarranger.py:1297
 msgid "Save changes before quitting?"
 msgstr "Сохранить изменения в перед выходом?"
 
-#: pdfarranger/pdfarranger.py:1242
+#: pdfarranger/pdfarranger.py:1257
+#, python-brace-format
 msgid "Save changes to “{}” before closing?"
 msgstr "Сохранить изменения в «{}» перед закрытием?"
 
-#: pdfarranger/pdfarranger.py:1279
+#: pdfarranger/pdfarranger.py:1294
+#, python-brace-format
 msgid "Save changes to “{}” before quitting?"
 msgstr "Сохранить изменения в «{}» перед выходом?"
 
-#: pdfarranger/pdfarranger.py:1524
+#: pdfarranger/pdfarranger.py:1567
+msgid "Saving failed"
+msgstr "Сохранение не удалось"
+
+#: pdfarranger/pdfarranger.py:1541
 msgid "Saving produced some warnings"
 msgstr "Сохранение выдало несколько предупреждений"
 
-#: pdfarranger/config.py:306
+#: pdfarranger/config.py:352
 msgid "Saving/exporting to single file"
 msgstr "Сохранение/экспорт в один файл"
 
-#: pdfarranger/pdfarranger.py:1563
+#: pdfarranger/pdfarranger.py:1584
 msgid "Saving…"
 msgstr "Сохранение…"
 
-#: pdfarranger/pageutils.py:349
+#: pdfarranger/pageutils.py:351
 msgid "Scale"
 msgstr "Масштабировать"
 
-#: pdfarranger/pageutils.py:350
+#: pdfarranger/pageutils.py:352
 msgid "Scale & Add margins"
 msgstr "Масштабировать и добавить поля"
 
@@ -690,37 +701,41 @@ msgstr "Масштабировать и добавить поля"
 msgid "Scale factor"
 msgstr "Масштаб"
 
-#: pdfarranger/exporter.py:516
+#: pdfarranger/exporter.py:520
 msgid "Scale mode:"
 msgstr "Режим масштабирования:"
 
-#: data/menu.ui:234 data/menu.ui:424
+#: data/menu.ui:238 data/menu.ui:434
 msgid "Select _All"
 msgstr "Выделить _всё"
 
-#: data/menu.ui:249 data/menu.ui:439
+#: data/menu.ui:253 data/menu.ui:449
 msgid "Select _Even Pages"
 msgstr "Выделить _чётные страницы"
 
-#: data/menu.ui:244 data/menu.ui:434
+#: data/menu.ui:248 data/menu.ui:444
 msgid "Select _Odd Pages"
 msgstr "Выделить _нечётные страницы"
 
-#: data/menu.ui:269 data/menu.ui:459
+#: data/menu.ui:273 data/menu.ui:469
 msgid "Select _Range"
 msgstr "Выделение _диапазона"
 
-#: pdfarranger/pageutils.py:1131
+#: pdfarranger/pageutils.py:1133
 msgid "Select range of pages: "
 msgstr "Выберите диапазон страниц: "
 
-#: pdfarranger/pdfarranger.py:3186
+#: pdfarranger/pdfarranger.py:3277
 msgid "Selected pages: "
 msgstr "Выбранные страницы: "
 
-#: pdfarranger/pageutils.py:699
+#: pdfarranger/pageutils.py:701
 msgid "Show values"
 msgstr "Показать значения"
+
+#: pdfarranger/pdfarranger.py:3240
+msgid "Software versions:"
+msgstr "Версии программного обеспечения:"
 
 #: pdfarranger/splitter.py:26
 msgid "Split Pages"
@@ -730,34 +745,39 @@ msgstr "Разделить страницы"
 msgid "Subject"
 msgstr "Тема"
 
-#: pdfarranger/pdfarranger.py:726
+#: pdfarranger/pdfarranger.py:735
 msgid "Supported image files"
 msgstr "Поддерживаемые файлы изображений"
 
-#: pdfarranger/config.py:343 pdfarranger/config.py:351
+#: data/menu.ui:206 data/menu.ui:512
+msgid "Swap Odd/Even"
+msgstr "Поменять Чётные/Нечётные"
+
+#: pdfarranger/config.py:388 pdfarranger/config.py:397
 msgid "System setting"
 msgstr "Системные настройки"
 
-#: pdfarranger/core.py:460
+#: pdfarranger/core.py:464
+#, python-brace-format
 msgid ""
 "The document “{}” is locked and requires a password before it can be opened."
 msgstr "Документ «{}» заблокирован, для его открытия требуется пароль."
 
-#: pdfarranger/pdfarranger.py:2067
+#: pdfarranger/pdfarranger.py:2099
 msgid "The page has several images. Use \"Explode into Images\" first.\""
 msgstr ""
 "На странице есть несколько изображений. Сначала используйте действие «Изъять "
 "встроенные изображения»."
 
-#: pdfarranger/pdfarranger.py:577
+#: pdfarranger/pdfarranger.py:586
 msgid "The page selection is not contiguous. Cannot unimpose."
 msgstr "Выделение страниц не является непрерывным. Разделить невозможно."
 
-#: pdfarranger/core.py:459
+#: pdfarranger/core.py:463
 msgid "The password will be remembered until you close PDF Arranger."
 msgstr "Пароль будет запомнен, пока вы не закроете PDF Arranger."
 
-#: pdfarranger/config.py:294
+#: pdfarranger/config.py:340
 msgid "Theme"
 msgstr "Тема"
 
@@ -765,23 +785,23 @@ msgstr "Тема"
 msgid "Title"
 msgstr "Заголовок"
 
-#: pdfarranger/pageutils.py:254
+#: pdfarranger/pageutils.py:256
 msgid "Top"
 msgstr "Сверху"
 
-#: pdfarranger/pageutils.py:485
+#: pdfarranger/pageutils.py:487
 msgid "Top to Bottom"
 msgstr "Сверху вниз"
 
-#: pdfarranger/pageutils.py:1055
+#: pdfarranger/pageutils.py:1057
 msgid "Underlay"
 msgstr "Подложка"
 
-#: pdfarranger/core.py:567 pdfarranger/pdfarranger.py:1778
+#: pdfarranger/core.py:573 pdfarranger/pdfarranger.py:1807
 msgid "Unknown file format"
 msgstr "Неизвестный формат файла"
 
-#: pdfarranger/pageutils.py:1138
+#: pdfarranger/pageutils.py:1140
 msgid ""
 "Use a comma to separate page numbers, a dash to select a range of pages. \n"
 "e.g. : \"1,3,5-7,9\""
@@ -790,7 +810,7 @@ msgstr ""
 "страниц - тире. \n"
 "например: «1,3,5-7,9»"
 
-#: pdfarranger/pdfarranger.py:3123
+#: pdfarranger/pdfarranger.py:3216
 msgid "User Manual"
 msgstr "Руководство пользователя"
 
@@ -798,7 +818,7 @@ msgstr "Руководство пользователя"
 msgid "Value"
 msgstr "Значение"
 
-#: pdfarranger/pageutils.py:482
+#: pdfarranger/pageutils.py:484
 msgid "Vertical"
 msgstr "Вертикальная"
 
@@ -806,11 +826,20 @@ msgstr "Вертикальная"
 msgid "Vertical Splits"
 msgstr "Вертикальные разделения"
 
-#: pdfarranger/pageutils.py:554
+#: pdfarranger/pageutils.py:556
 msgid "Vertical offset"
 msgstr "Вертикальное смещение"
 
-#: pdfarranger/pageutils.py:139
+#: pdfarranger/config.py:357
+msgid "When checked: use document properties from the first file opened."
+msgstr ""
+"Если отмечено: используются свойства документа из первого открытого файла."
+
+#: pdfarranger/config.py:358
+msgid "When unchecked: merge bookmarks from all documents."
+msgstr "Если не отмечено: будут объединены закладки из всех документов."
+
+#: pdfarranger/pageutils.py:150
 msgid "Width"
 msgstr "Ширина"
 
@@ -818,7 +847,7 @@ msgstr "Ширина"
 msgid "Width in %"
 msgstr "Ширина в %"
 
-#: pdfarranger/pdfarranger.py:1226
+#: pdfarranger/pdfarranger.py:1241
 msgid "Your changes will be lost if you don’t save them."
 msgstr "Ваши изменения будут потеряны, если их не сохранить."
 
@@ -830,54 +859,51 @@ msgstr "Увеличить"
 msgid "Zoom Out"
 msgstr "Уменьшить"
 
-#: data/menu.ui:287
-msgid "Zoom _Fit"
-msgstr "Страница _целиком"
-
-#: data/menu.ui:279
+#: data/menu.ui:283
 msgid "Zoom _In"
 msgstr "У_величить"
 
-#: data/menu.ui:283
+#: data/menu.ui:287
 msgid "Zoom _Out"
 msgstr "У_меньшить"
 
-#: data/menu.ui:331
+#: data/menu.ui:341
 msgid "_About"
 msgstr "_О приложении"
 
-#: pdfarranger/pageutils.py:1012
+#: pdfarranger/pageutils.py:1014
 msgid "_Apply"
 msgstr "_Применить"
 
-#: data/menu.ui:218 data/menu.ui:514
+#: data/menu.ui:222 data/menu.ui:528
 msgid "_Booklet"
 msgstr "_Буклет"
 
-#: pdfarranger/config.py:280 pdfarranger/metadata.py:216
-#: pdfarranger/pageutils.py:327 pdfarranger/pdfarranger.py:1218
-#: pdfarranger/pdfarranger.py:1227 pdfarranger/pdfarranger.py:1349
-#: pdfarranger/pdfarranger.py:1416
+#: pdfarranger/config.py:326 pdfarranger/core.py:456
+#: pdfarranger/metadata.py:216 pdfarranger/pageutils.py:329
+#: pdfarranger/pdfarranger.py:1233 pdfarranger/pdfarranger.py:1242
+#: pdfarranger/pdfarranger.py:1364 pdfarranger/pdfarranger.py:1431
+#: pdfarranger/splitter.py:30
 msgid "_Cancel"
 msgstr "_Отменить"
 
-#: pdfarranger/pdfarranger.py:1237 data/menu.ui:337
+#: pdfarranger/pdfarranger.py:1252 data/menu.ui:347
 msgid "_Close"
 msgstr "_Закрыть"
 
-#: data/menu.ui:118 data/menu.ui:359
+#: data/menu.ui:118 data/menu.ui:369
 msgid "_Copy"
 msgstr "_Копировать"
 
-#: data/menu.ui:186 data/menu.ui:482
+#: data/menu.ui:186 data/menu.ui:492
 msgid "_Crop Margins…"
 msgstr "О_брезать поля…"
 
-#: data/menu.ui:110 data/menu.ui:351
+#: data/menu.ui:110 data/menu.ui:361
 msgid "_Delete"
 msgstr "_Удалить"
 
-#: data/menu.ui:239 data/menu.ui:429
+#: data/menu.ui:243 data/menu.ui:439
 msgid "_Deselect All"
 msgstr "Сн_ять выделение"
 
@@ -885,27 +911,27 @@ msgstr "Сн_ять выделение"
 msgid "_Edit"
 msgstr "П_равка"
 
-#: data/menu.ui:157 data/menu.ui:403
+#: data/menu.ui:157 data/menu.ui:413
 msgid "_Explode into Images"
 msgstr "_Изъять встроенные изображения"
 
-#: data/menu.ui:155 data/menu.ui:400
+#: data/menu.ui:155 data/menu.ui:410
 msgid "_Extract"
 msgstr "И_звлечь"
 
-#: data/menu.ui:297
+#: data/menu.ui:307
 msgid "_Find"
 msgstr "_Найти"
 
-#: data/menu.ui:300
+#: data/menu.ui:310
 msgid "_Find…"
 msgstr "_Найти…"
 
-#: data/menu.ui:220 data/menu.ui:516
+#: data/menu.ui:224 data/menu.ui:530
 msgid "_Generate (imposition)"
 msgstr "_Создать (добавление)"
 
-#: data/menu.ui:190 data/menu.ui:486
+#: data/menu.ui:190 data/menu.ui:496
 msgid "_Hide Margins…"
 msgstr "Скрыть _поля…"
 
@@ -913,11 +939,11 @@ msgstr "Скрыть _поля…"
 msgid "_Import"
 msgstr "_Импорт"
 
-#: data/menu.ui:264 data/menu.ui:454
+#: data/menu.ui:268 data/menu.ui:464
 msgid "_Invert Selection"
 msgstr "Инвертировать _выделение"
 
-#: data/menu.ui:210 data/menu.ui:506
+#: data/menu.ui:214 data/menu.ui:520
 msgid "_Merge Pages…"
 msgstr "_Объединение страниц…"
 
@@ -925,16 +951,17 @@ msgstr "_Объединение страниц…"
 msgid "_New Window"
 msgstr "_Создать окно"
 
-#: pdfarranger/config.py:281 pdfarranger/metadata.py:217
-#: pdfarranger/pageutils.py:328 pdfarranger/pdfarranger.py:3114
+#: pdfarranger/config.py:327 pdfarranger/core.py:458
+#: pdfarranger/metadata.py:217 pdfarranger/pageutils.py:330
+#: pdfarranger/pdfarranger.py:3207 pdfarranger/splitter.py:32
 msgid "_OK"
 msgstr "_ОК"
 
-#: pdfarranger/pdfarranger.py:1415 data/menu.ui:24
+#: pdfarranger/pdfarranger.py:1430 data/menu.ui:24
 msgid "_Open"
 msgstr "_Открыть"
 
-#: data/menu.ui:182 data/menu.ui:478
+#: data/menu.ui:182 data/menu.ui:488
 msgid "_Page Size…"
 msgstr "_Размер страницы…"
 
@@ -942,36 +969,36 @@ msgstr "_Размер страницы…"
 msgid "_Print…"
 msgstr "_Печать…"
 
-#: pdfarranger/pdfarranger.py:1274 data/menu.ui:343
+#: pdfarranger/pdfarranger.py:1289 data/menu.ui:353
 msgid "_Quit"
-msgstr "В_ыход"
+msgstr "Вы_йти"
 
 #: data/menu.ui:102
 msgid "_Redo"
 msgstr "_Повторить"
 
-#: pdfarranger/pageutils.py:1012
+#: pdfarranger/pageutils.py:1014
 msgid "_Revert"
 msgstr "_Восстановить"
 
-#: data/menu.ui:177 data/menu.ui:473
+#: data/menu.ui:177 data/menu.ui:483
 msgid "_Rotate Right"
 msgstr "Повернуть в_право"
 
-#: pdfarranger/pdfarranger.py:1227 pdfarranger/pdfarranger.py:1348
+#: pdfarranger/pdfarranger.py:1242 pdfarranger/pdfarranger.py:1363
 #: data/menu.ui:42
 msgid "_Save"
 msgstr "_Сохранить"
 
-#: data/menu.ui:231 data/menu.ui:421
+#: data/menu.ui:235 data/menu.ui:431
 msgid "_Select"
 msgstr "В_ыделить"
 
-#: data/menu.ui:224 data/menu.ui:520
+#: data/menu.ui:228 data/menu.ui:534
 msgid "_Split (unimposition)"
 msgstr "_Разделить (разбиение)"
 
-#: data/menu.ui:206 data/menu.ui:502
+#: data/menu.ui:210 data/menu.ui:516
 msgid "_Split Pages…"
 msgstr "Раз_делить страницы…"
 
@@ -979,19 +1006,651 @@ msgstr "Раз_делить страницы…"
 msgid "_Undo"
 msgstr "О_тменить"
 
-#: data/menu.ui:276
+#: data/menu.ui:280
 msgid "_View"
 msgstr "_Вид"
 
-#: pdfarranger/pageutils.py:143 pdfarranger/pageutils.py:149
-#: pdfarranger/pageutils.py:468 pdfarranger/pageutils.py:518
+#: pdfarranger/pageutils.py:155 pdfarranger/pageutils.py:162
+#: pdfarranger/pageutils.py:470 pdfarranger/pageutils.py:520
+#: pdfarranger/pdfarranger.py:3282
 msgid "mm"
 msgstr "мм"
 
-#: pdfarranger/core.py:719
+#: pdfarranger/core.py:730
 msgid "page"
 msgstr "страница"
 
-#: pdfarranger/pdfarranger.py:1062
+#: pdfarranger/pdfarranger.py:1073
 msgid "untitled"
 msgstr "без_названия"
+
+#, python-format
+#~ msgid "It uses libqpdf %s, pikepdf %s, GTK %s and Python %s."
+#~ msgstr "Приложение использует libqpdf %s, и pikepdf %s, GTK %s и Python %s."
+
+#~ msgid "Zoom _Fit"
+#~ msgstr "Страница _целиком"
+
+# Strings added by the Qt edition (pdfarranger_qt), which has menus,
+# bookmarks, a reading mode and a user guide the GTK version does not.
+
+msgid "<b>Add Bookmark Here</b> makes one pointing at the page you are reading, named after whatever text you have selected — so select a heading, then add. With nothing selected it is named after the page. <b>Add Child Bookmark Here</b> does the same, nested under the entry you clicked."
+msgstr "<b>Добавить закладку здесь</b> создаёт закладку на ту страницу, которую вы читаете, и называет её выделенным текстом — то есть выделите заголовок, а затем добавьте закладку. Если ничего не выделено, она называется по номеру страницы. <b>Добавить дочернюю закладку здесь</b> делает то же самое, но вкладывает новую запись внутрь той, на которой вы щёлкнули."
+
+msgid "<b>Alt + scroll</b> — scroll exactly one row"
+msgstr "<b>Alt + прокрутка</b> — прокрутка ровно на один ряд"
+
+msgid "<b>Arrow keys</b> move between pages, <b>Page Up</b> and <b>Page Down</b> move a screenful at a time, and <b>Home</b> and <b>End</b> jump to the first and last page. Hold <b>Shift</b> with any of them to extend the selection."
+msgstr "<b>Клавиши со стрелками</b> перемещают между страницами, <b>Page Up</b> и <b>Page Down</b> — на экран за раз, а <b>Home</b> и <b>End</b> переходят к первой и последней странице. Удерживайте <b>Shift</b> с любой из них, чтобы расширить выделение."
+
+msgid "<b>Click and drag</b> on empty space — rubber-band select; keep scrolling to extend it"
+msgstr "<b>Нажмите и потяните</b> на пустом месте — выделение рамкой; продолжайте прокручивать, чтобы расширить его"
+
+msgid "<b>Ctrl + scroll</b> — zoom"
+msgstr "<b>Ctrl + прокрутка</b> — масштабирование"
+
+msgid "<b>Double-click</b> — fit the page to the window, and back"
+msgstr "<b>Двойной щелчок</b> — вписать страницу в окно и обратно"
+
+msgid "<b>File ▸ Password</b> encrypts the document when it is next saved. It is a switch: turn it on and you are asked for a password, turn it off and the next save is unencrypted. The password is never written to your settings, so it applies to this session only — and if you forget it, the file cannot be recovered."
+msgstr "<b>Файл ▸ Пароль</b> шифрует документ при следующем сохранении. Это переключатель: включите его — и у вас спросят пароль, выключите — и следующее сохранение будет без шифрования. Пароль никогда не записывается в настройки, поэтому действует только в текущем сеансе; а если вы его забудете, файл восстановить не удастся."
+
+msgid "<b>Find</b> selects the pages that contain the phrase and boxes each hit on the thumbnail, so you can see where on the page it is. The boxes clear as soon as you change the document, since the pages they were drawn for may have moved."
+msgstr "<b>Найти</b> выделяет страницы, содержащие фразу, и обводит каждое совпадение на миниатюре, чтобы было видно, где именно на странице оно находится. Рамки исчезают, как только вы изменяете документ, поскольку страницы, для которых они были нарисованы, могли переместиться."
+
+msgid "<b>Fit One Page</b> (F) scales so a whole page fits in the window and shows one page per row — use it to work on a single page at a time. <b>Fit Multiple Pages</b> (Shift+M) uses the same scale but lets as many pages sit side by side as the window takes. <b>Fit Width</b> (Shift+F) fills the window across instead, which shows the page wider but taller than the window. Double-clicking the grid toggles Fit One Page on and off."
+msgstr "<b>Уместить одну страницу</b> (F) подбирает масштаб так, чтобы страница целиком помещалась в окне, и показывает по одной странице в ряду — удобно, когда вы работаете с одной страницей за раз. <b>Уместить несколько страниц</b> (Shift+M) использует тот же масштаб, но размещает в ряду столько страниц, сколько вмещает окно. <b>По ширине</b> (Shift+F) заполняет окно по горизонтали: страница выглядит шире, но выше окна. Двойной щелчок по сетке включает и выключает режим «Уместить одну страницу»."
+
+msgid "<b>Paste As Odd/Even Pages</b> interleaves the clipboard with the document — this is how two single-sided scans of a double-sided original are recombined. If the second scan came off a duplex feeder it will be in reverse order; use <b>Arrange ▸ Reverse Order</b> on it first."
+msgstr "<b>Вставить как нечётные/чётные страницы</b> чередует содержимое буфера обмена со страницами документа — именно так объединяются два односторонних скана двустороннего оригинала. Если второй скан сделан на дуплексном податчике, он будет в обратном порядке; сначала примените к нему <b>Расположение ▸ Обратный порядок</b>."
+
+msgid "<b>Rename</b> edits the title in place. <b>Re-home to This Page</b> points an existing bookmark at the page you are on, keeping its title. <b>Delete</b> removes an entry and <i>promotes</i> its children into its place; <b>Delete with Children</b> removes the whole branch."
+msgstr "<b>Переименовать</b> изменяет заголовок на месте. <b>Перепривязать к этой странице</b> направляет существующую закладку на текущую страницу, сохраняя её заголовок. <b>Удалить</b> убирает запись и <i>поднимает</i> её дочерние записи на её место; <b>Удалить вместе с дочерними</b> убирает всю ветвь."
+
+msgid "<b>Shift + scroll</b> — scroll sideways"
+msgstr "<b>Shift + прокрутка</b> — прокрутка вбок"
+
+msgid "<b>Shift+click</b> extends an existing selection to where you clicked. The end you are moving grows out to a whole word, because a single click is an imprecise way to point at one character; the end you started from stays exactly where you put it. Dragging selects by character throughout, since you can watch it and stop where you like."
+msgstr "<b>Shift+щелчок</b> расширяет существующее выделение до точки щелчка. Тот край, который вы двигаете, дотягивается до целого слова, потому что одиночный щелчок — неточный способ указать на отдельный символ; тот край, с которого вы начали, остаётся ровно там, где вы его поставили. При перетаскивании выделение идёт посимвольно: вы видите его и можете остановиться где угодно."
+
+msgid "<b>Style</b> sets a bookmark bold or italic, or gives it a colour, as the tree shows."
+msgstr "<b>Стиль</b> делает закладку полужирной или курсивной либо задаёт ей цвет — так, как это показано в дереве."
+
+msgid "<b>View ▸ Continuous Scroll</b> is on by default; turning it off shows one page at a time. <b>View ▸ Facing Pages</b> puts two pages side by side, the way a book falls open. Both settings are remembered."
+msgstr "<b>Вид ▸ Непрерывная прокрутка</b> включена по умолчанию; если её выключить, показывается по одной странице. <b>Вид ▸ Разворот</b> размещает две страницы рядом, как в раскрытой книге. Обе настройки запоминаются."
+
+msgid "A bookmark whose page has been deleted is <b>greyed out</b> rather than removed: its title may still be worth keeping, and you can point it somewhere else with Re-home. Undoing the deletion reconnects it. <b>Delete Dangling Bookmarks</b> clears them all out; it leaves alone any entry that points nowhere on purpose, which is a legitimate way to write a heading."
+msgstr "Закладка, страница которой удалена, не исчезает, а становится <b>серой</b>: её заголовок может ещё пригодиться, и вы можете направить её в другое место командой «Перепривязать». Отмена удаления восстанавливает связь. <b>Удалить повисшие закладки</b> убирает их все; при этом не трогаются записи, которые намеренно никуда не ведут, — это законный способ оформить заголовок."
+
+msgid "Actual size"
+msgstr "Реальный размер"
+
+msgid "Add Bookmark"
+msgstr "Добавить закладку"
+
+msgid "Add Bookmark Here"
+msgstr "Добавить закладку здесь"
+
+msgid "Add Child Bookmark"
+msgstr "Добавить дочернюю закладку"
+
+msgid "Add Child Bookmark Here"
+msgstr "Добавить дочернюю закладку здесь"
+
+msgid "Add Shift to a Command or Option combination to extend the selection instead of moving — <b>Shift+Command+→</b> selects to the end of the line. Adding Option works by the word rather than the character. On Windows and Linux, read Command as Ctrl and Option as Alt; the table is the same everywhere."
+msgstr "Добавьте Shift к сочетанию с Command или Option, чтобы расширять выделение, а не перемещаться: <b>Shift+Command+→</b> выделяет до конца строки. Добавление Option переводит действие с символов на слова. В Windows и Linux читайте Command как Ctrl, а Option как Alt; таблица везде одинакова."
+
+msgid "Arrange"
+msgstr "Расположение"
+
+msgid "Arrange Mode"
+msgstr "Режим расположения"
+
+msgid "Arranging pages"
+msgstr "Расположение страниц"
+
+msgid "Blank page"
+msgstr "Пустая страница"
+
+msgid "Bold"
+msgstr "Полужирный"
+
+msgid "Bookmark Colour"
+msgstr "Цвет закладки"
+
+msgid "Bookmark Style"
+msgstr "Стиль закладки"
+
+msgid "Bookmark edits are part of the document and are written when you save, along with each entry's colour and style and which branches are left open. The one thing that cannot be saved is a bookmark with no page: there is no way to record “points at a page that is gone”, so it comes back as a heading with its title intact."
+msgstr "Правки закладок — часть документа и записываются при сохранении вместе с цветом и стилем каждой записи и с тем, какие ветви оставлены раскрытыми. Единственное, что сохранить невозможно, — закладка без страницы: записать «указывает на исчезнувшую страницу» негде, поэтому она возвращается как заголовок с сохранённым названием."
+
+msgid "Bookmarks"
+msgstr "Закладки"
+
+msgid "Cancel"
+msgstr "Отмена"
+
+msgid "Cannot open document"
+msgstr "Не удалось открыть документ"
+
+msgid "Centre"
+msgstr "По центру"
+
+msgid "Clear Menu"
+msgstr "Очистить меню"
+
+msgid "Click a link to follow it. Links to a page in the same document jump there; links to the web open in your browser. Hovering over one shows where it goes, which is worth reading before you click: many links in a PDF are not written by its author at all but inferred from the text, so what a link points at is not always what the words appear to say."
+msgstr "Щёлкните по ссылке, чтобы перейти по ней. Ссылки на страницу того же документа переходят туда, ссылки в интернет открываются в браузере. При наведении показывается, куда ведёт ссылка, и это стоит прочитать перед щелчком: многие ссылки в PDF написаны вовсе не автором, а выведены из текста, так что ссылка не всегда указывает туда, куда как будто говорят слова."
+
+msgid "Clicking on text leaves a blinking <b>text cursor</b>. That is what Shift+arrow extends from, and what the Option and Command combinations above move. It stays where you put it — scrolling, paging and clicking off the page all leave it alone — until you press Esc or open another document."
+msgstr "Щелчок по тексту оставляет мигающий <b>текстовый курсор</b>. Именно от него Shift+стрелка расширяет выделение и именно его перемещают описанные выше сочетания с Option и Command. Он остаётся там, где вы его поставили: прокрутка, листание и щелчки вне страницы его не трогают — пока вы не нажмёте Esc или не откроете другой документ."
+
+msgid "Collapse All Children"
+msgstr "Свернуть все дочерние"
+
+msgid "Colour…"
+msgstr "Цвет…"
+
+msgid "Command line"
+msgstr "Командная строка"
+
+msgid "Confirm password"
+msgstr "Подтвердите пароль"
+
+msgid "Continuous"
+msgstr "Непрерывно"
+
+msgid "Continuous Scroll"
+msgstr "Непрерывная прокрутка"
+
+msgid "Copied"
+msgstr "Скопировано"
+
+msgid "Copy"
+msgstr "Копировать"
+
+msgid "Copy Link Address"
+msgstr "Копировать адрес ссылки"
+
+msgid "Copy Text"
+msgstr "Копировать текст"
+
+msgid "Copy the pages you want to merge in first."
+msgstr "Сначала скопируйте страницы, которые нужно вставить."
+
+msgid "Could not open a new window."
+msgstr "Не удалось открыть новое окно."
+
+msgid "Could not save:"
+msgstr "Не удалось сохранить:"
+
+msgid "Credits"
+msgstr "Благодарности"
+
+msgid "Cut"
+msgstr "Вырезать"
+
+msgid "Data not yet available"
+msgstr "Данные пока недоступны"
+
+msgid "Default Colour"
+msgstr "Цвет по умолчанию"
+
+msgid "Delete"
+msgstr "Удалить"
+
+msgid "Delete Bookmark"
+msgstr "Удалить закладку"
+
+msgid "Delete Bookmark and Children"
+msgstr "Удалить закладку вместе с дочерними"
+
+msgid "Delete Dangling Bookmarks"
+msgstr "Удалить повисшие закладки"
+
+msgid "Delete with Children"
+msgstr "Удалить вместе с дочерними"
+
+msgid "Description"
+msgstr "Описание"
+
+msgid "Drag across the page to select text, across page boundaries if you keep going. <b>Double-click</b> selects a word. <b>Ctrl/Cmd+C</b> copies, <b>Ctrl/Cmd+A</b> selects the text of the page you are on, and <b>Esc</b> clears the selection. The same commands are on the right-click menu."
+msgstr "Проведите по странице, чтобы выделить текст, — если продолжать, выделение переходит и на соседние страницы. <b>Двойной щелчок</b> выделяет слово. <b>Ctrl/Cmd+C</b> копирует, <b>Ctrl/Cmd+A</b> выделяет текст текущей страницы, а <b>Esc</b> снимает выделение. Те же команды есть в контекстном меню."
+
+msgid "Drag entries within the sidebar to re-nest or reorder them. <b>Expand All Children</b> and <b>Collapse All Children</b> open or shut a whole branch at once."
+msgstr "Перетаскивайте записи внутри боковой панели, чтобы изменить их вложенность или порядок. <b>Развернуть все дочерние</b> и <b>Свернуть все дочерние</b> раскрывают или закрывают всю ветвь целиком."
+
+msgid "Drag pages onto another window of the application to copy them there, or use ordinary copy and paste."
+msgstr "Перетащите страницы в другое окно приложения, чтобы скопировать их туда, или воспользуйтесь обычным копированием и вставкой."
+
+msgid "Drag pages to reorder them. Hold <b>Ctrl</b> while dropping to copy instead of move."
+msgstr "Перетаскивайте страницы, чтобы изменить их порядок. Удерживайте <b>Ctrl</b> при отпускании, чтобы копировать, а не перемещать."
+
+msgid "Enter a password, or cancel to leave the document unencrypted."
+msgstr "Введите пароль или отмените, чтобы оставить документ незашифрованным."
+
+msgid "Every shortcut can be changed in <b>Edit ▸ Preferences ▸ Keyboard shortcuts</b>, where they are listed under the menu each one belongs to."
+msgstr "Любую комбинацию можно изменить в <b>Правка ▸ Параметры ▸ Комбинации клавиш</b>, где они перечислены по меню, которому принадлежат."
+
+msgid "Expand All Children"
+msgstr "Развернуть все дочерние"
+
+msgid "Explode into Images"
+msgstr "Разложить на изображения"
+
+msgid "Facing Pages"
+msgstr "Разворот"
+
+msgid "File not found"
+msgstr "Файл не найден"
+
+msgid "Files"
+msgstr "Файлы"
+
+msgid "Files given on the command line are opened as one document. <code>--version</code> prints the version and exits."
+msgstr "Файлы, указанные в командной строке, открываются как один документ. <code>--version</code> печатает версию и завершает работу."
+
+msgid "Find"
+msgstr "Найти"
+
+msgid "Finding text"
+msgstr "Поиск текста"
+
+msgid "Finishing…"
+msgstr "Завершение…"
+
+msgid "First Page"
+msgstr "Первая страница"
+
+msgid "Fit Width"
+msgstr "По ширине"
+
+msgid "Fit to page"
+msgstr "По размеру страницы"
+
+msgid "Follow Link"
+msgstr "Перейти по ссылке"
+
+msgid "Following links"
+msgstr "Переход по ссылкам"
+
+msgid "Fullscreen"
+msgstr "Полноэкранный режим"
+
+msgid "General"
+msgstr "Общие"
+
+msgid "Generate Booklet"
+msgstr "Создать буклет"
+
+msgid "Go to Page"
+msgstr "Перейти к странице"
+
+msgid "Go to Page…"
+msgstr "Перейти к странице…"
+
+msgid "Go to {}"
+msgstr "Перейти к {}"
+
+msgid "Importing…"
+msgstr "Импорт…"
+
+msgid "Insert pages from another PDF or an image"
+msgstr "Вставить страницы из другого PDF или изображения"
+
+msgid "Invalid file format"
+msgstr "Неверный формат файла"
+
+msgid "It is a front end for pikepdf. Page content is never rewritten — only page order, geometry and composition."
+msgstr "Это надстройка над pikepdf. Содержимое страниц никогда не переписывается — меняются только порядок страниц, их геометрия и компоновка."
+
+msgid "Italic"
+msgstr "Курсив"
+
+msgid "Keep aspect ratio"
+msgstr "Сохранять пропорции"
+
+msgid "Keyboard shortcuts"
+msgstr "Комбинации клавиш"
+
+msgid "Keys"
+msgstr "Клавиши"
+
+msgid "Last Page"
+msgstr "Последняя страница"
+
+msgid "Licensed under the GNU General Public License version 3 or later."
+msgstr "Распространяется по лицензии GNU General Public License версии 3 или новее."
+
+msgid "Margins"
+msgstr "Поля"
+
+msgid "Middle"
+msgstr "Посередине"
+
+msgid "Mouse"
+msgstr "Мышь"
+
+msgid "Move"
+msgstr "Переместить"
+
+msgid "Move Bookmark"
+msgstr "Переместить закладку"
+
+msgid "Move to End"
+msgstr "Переместить в конец"
+
+msgid "Move to Page"
+msgstr "Переместить на страницу"
+
+msgid "Move to Page…"
+msgstr "Переместить на страницу…"
+
+msgid "Move to Start"
+msgstr "Переместить в начало"
+
+msgid "Moving around a document"
+msgstr "Перемещение по документу"
+
+msgid "Moving around the grid"
+msgstr "Перемещение по сетке"
+
+msgid "Needs pages copied from a document"
+msgstr "Требуются страницы, скопированные из документа"
+
+msgid "Next Page"
+msgstr "Следующая страница"
+
+msgid "No document"
+msgstr "Нет документа"
+
+msgid "No recent files"
+msgstr "Нет недавних файлов"
+
+msgid "Nothing to read."
+msgstr "Нечего читать."
+
+msgid "One page at a time"
+msgstr "По одной странице"
+
+msgid "One rule for the arrow keys: <b>the modifier decides what moves</b>. Nothing scrolls the view, Option (Alt) moves the text cursor, Shift extends the selection, Command (Ctrl) jumps to an edge, and Fn — Page Up, Page Down, Home and End — jumps further. None of it changes according to whether a text cursor happens to be on the page."
+msgstr "Для клавиш со стрелками действует одно правило: <b>что именно движется, определяет модификатор</b>. Без модификатора прокручивается вид, Option (Alt) перемещает текстовый курсор, Shift расширяет выделение, Command (Ctrl) переводит к краю, а Fn — Page Up, Page Down, Home и End — переносит ещё дальше. Ничто из этого не зависит от того, стоит ли на странице текстовый курсор."
+
+msgid "Only ordinary web and mail links are handed to the system — http, https, mailto and ftp. A document is a file that arrived from somewhere, and anything else it asks to open is refused and reported rather than acted on."
+msgstr "Системе передаются только обычные веб- и почтовые ссылки — http, https, mailto и ftp. Документ — это файл, пришедший неизвестно откуда, поэтому всё остальное, что он просит открыть, не выполняется, а отклоняется с сообщением."
+
+msgid "Open Link"
+msgstr "Открыть ссылку"
+
+msgid "Open Recent"
+msgstr "Открыть недавние"
+
+msgid "Opening an encrypted document asks for its password, which is remembered until the document is closed."
+msgstr "При открытии зашифрованного документа запрашивается пароль, который запоминается до закрытия документа."
+
+msgid "Original authors: Konstantinos Poulios, Jerome Robert."
+msgstr "Первоначальные авторы: Konstantinos Poulios, Jerome Robert."
+
+msgid "Overwrite existing files?"
+msgstr "Перезаписать существующие файлы?"
+
+msgid "PDF Arranger Qt is a PySide6 port of PDF Arranger, which is itself derived from PDF-Shuffler. It is a separate project and not affiliated with either."
+msgstr "PDF Arranger Qt — это порт PDF Arranger на PySide6; сам PDF Arranger происходит от PDF-Shuffler. Это отдельный проект, не связанный ни с тем, ни с другим."
+
+msgid "PDF Arranger merges, splits, rearranges, rotates and crops PDF documents. Everything happens in memory against the pages you can see; nothing is written until you save."
+msgstr "PDF Arranger объединяет, разделяет, переупорядочивает, поворачивает и обрезает документы PDF. Всё происходит в памяти, над страницами, которые вы видите; ничего не записывается, пока вы не сохраните."
+
+msgid "Page number:"
+msgstr "Номер страницы:"
+
+msgid "Page {}"
+msgstr "Страница {}"
+
+msgid "Page {} of {}"
+msgstr "Страница {} из {}"
+
+msgid "Pages are rasterised at this resolution before being sent to the printer. Lower it if printing is slow: the printer driver has less to process."
+msgstr "Перед отправкой на принтер страницы растрируются с этим разрешением. Уменьшите его, если печать идёт медленно: драйверу принтера придётся обрабатывать меньше данных."
+
+msgid "Pass_word"
+msgstr "Пар_оль"
+
+msgid "Passwords"
+msgstr "Пароли"
+
+msgid "Paste"
+msgstr "Вставить"
+
+msgid "Position"
+msgstr "Положение"
+
+msgid "Prefer these to cut and paste for moving. A pasted page is a <i>new</i> page as far as the document is concerned, so any bookmarks pointing at the original are left behind with nowhere to go. Moving keeps the page itself, and its bookmarks come with it."
+msgstr "Для перемещения предпочтительнее они, а не вырезание со вставкой. Вставленная страница для документа — <i>новая</i> страница, поэтому закладки, указывавшие на исходную, остаются ни с чем. Перемещение сохраняет саму страницу, и закладки переезжают вместе с ней."
+
+msgid "Previous Page"
+msgstr "Предыдущая страница"
+
+msgid "Project on GitHub"
+msgstr "Проект на GitHub"
+
+msgid "Re-home Bookmark"
+msgstr "Перепривязать закладку"
+
+msgid "Re-home to This Page"
+msgstr "Перепривязать к этой странице"
+
+msgid "Read"
+msgstr "Чтение"
+
+msgid "Reading"
+msgstr "Чтение"
+
+msgid "Reading shows the document <i>as edited</i>: rotations, crops, deletions and reordering are all applied, so what you read is what you would get if you saved. Page-editing commands are disabled while reading — bookmarks are the exception, and are edited here and nowhere else."
+msgstr "В режиме чтения документ показывается <i>с учётом правок</i>: повороты, обрезка, удаления и переупорядочивание уже применены, так что вы читаете то же, что получили бы при сохранении. Команды редактирования страниц во время чтения недоступны — исключение составляют закладки, которые правятся именно здесь и больше нигде."
+
+msgid "Rename"
+msgstr "Переименовать"
+
+msgid "Rename Bookmark"
+msgstr "Переименовать закладку"
+
+msgid "Reset"
+msgstr "Сбросить"
+
+msgid "Reverse Order"
+msgstr "Обратный порядок"
+
+msgid "Right-clicking a link offers <b>Open Link</b> and <b>Copy Link Address</b>."
+msgstr "По правому щелчку на ссылке доступны <b>Открыть ссылку</b> и <b>Копировать адрес ссылки</b>."
+
+msgid "Same for all sides"
+msgstr "Одинаково со всех сторон"
+
+msgid "Save before continuing?"
+msgstr "Сохранить перед продолжением?"
+
+msgid "Saved"
+msgstr "Сохранено"
+
+msgid "Scale mode"
+msgstr "Режим масштабирования"
+
+msgid "Select All"
+msgstr "Выделить всё"
+
+msgid "Selecting and copying text"
+msgstr "Выделение и копирование текста"
+
+msgid "Settings are stored by Qt in the per-user location for this platform; on Windows that is the registry under <code>HKEY_CURRENT_USER\\Software\\pdfarranger</code>. There is no configuration file to edit by hand."
+msgstr "Настройки хранятся средствами Qt в пользовательском расположении для этой платформы; в Windows это реестр, ветвь <code>HKEY_CURRENT_USER\\Software\\pdfarranger</code>. Файла конфигурации, который нужно править вручную, нет."
+
+msgid "Split Booklet"
+msgstr "Разделить буклет"
+
+msgid "Style"
+msgstr "Стиль"
+
+msgid "The application opens in <b>read mode</b>: a continuous page view for reading the document rather than rearranging it. <b>View ▸ Arrange Mode</b> (Ctrl+E) swaps to the thumbnail grid and back."
+msgstr "Приложение открывается в <b>режиме чтения</b>: это непрерывный просмотр страниц для чтения документа, а не для его перестройки. <b>Вид ▸ Режим расположения</b> (Ctrl+E) переключает на сетку миниатюр и обратно."
+
+msgid "The document will be encrypted when it is saved."
+msgstr "При сохранении документ будет зашифрован."
+
+msgid "The document will not be encrypted."
+msgstr "Документ не будет зашифрован."
+
+msgid "The page has no image."
+msgstr "На странице нет изображения."
+
+msgid "The page has no text."
+msgstr "На странице нет текста."
+
+msgid "The page you are on follows you between the two modes. Switching to read mode opens at the page selected in the grid, the first of them if several are selected; switching back scrolls the grid to the page you were reading, without disturbing what you had selected. With nothing selected, reading resumes where you left off — your place in each document is remembered between visits."
+msgstr "Текущая страница следует за вами при переключении режимов. Переход в режим чтения открывает страницу, выделенную в сетке, — первую из них, если выделено несколько; обратное переключение прокручивает сетку к странице, которую вы читали, не трогая выделение. Если ничего не выделено, чтение продолжается с того места, где вы остановились: место в каждом документе запоминается между сеансами."
+
+msgid "The passwords do not match."
+msgstr "Пароли не совпадают."
+
+msgid "The printer driver is processing the job."
+msgstr "Драйвер принтера обрабатывает задание."
+
+msgid "The sidebar shows the document's bookmarks. Click one to jump to it. Everything below is on the sidebar's right-click menu, and every command can be undone."
+msgstr "На боковой панели показаны закладки документа. Щёлкните по закладке, чтобы перейти к ней. Всё, что описано ниже, есть в контекстном меню панели, и любую команду можно отменить."
+
+msgid "The toolbar shows which page you are on and how many there are; type a number into it to jump there, or use <b>Ctrl+G</b>."
+msgstr "На панели инструментов видно, на какой вы странице и сколько их всего; введите туда номер, чтобы перейти к нужной странице, или нажмите <b>Ctrl+G</b>."
+
+msgid "There is nothing to save."
+msgstr "Нечего сохранять."
+
+msgid "This bookmark does not point at a page"
+msgstr "Эта закладка не указывает на страницу"
+
+msgid "This bookmark's page is no longer in the document"
+msgstr "Страницы этой закладки больше нет в документе"
+
+msgid "This document cannot be read."
+msgstr "Этот документ невозможно прочитать."
+
+msgid "This document has unsaved changes."
+msgstr "В документе есть несохранённые изменения."
+
+msgid "This file is no longer there:"
+msgstr "Этого файла больше нет:"
+
+msgid "To move pages a long way, use <b>Move to Start</b>, <b>Move to End</b> or <b>Move to Page…</b> rather than dragging — in a long document the far end is a great deal of scrolling away. They are on the Edit menu and on the right-click menu, and <b>Move to Page…</b> asks for the number the page should <i>become</i>."
+msgstr "Чтобы переместить страницы далеко, используйте <b>Переместить в начало</b>, <b>Переместить в конец</b> или <b>Переместить на страницу…</b>, а не перетаскивание: в длинном документе до другого конца очень далеко прокручивать. Они есть в меню «Правка» и в контекстном меню, а <b>Переместить на страницу…</b> спрашивает номер, которым страница должна <i>стать</i>."
+
+msgid "Unsupported security scheme"
+msgstr "Неподдерживаемая схема безопасности"
+
+msgid "User Guide"
+msgstr "Руководство пользователя"
+
+msgid "With pages selected, all three fit the selection rather than the whole document."
+msgstr "Если страницы выделены, все три команды подгоняют выделение, а не весь документ."
+
+msgid "_Duplicate"
+msgstr "_Дублировать"
+
+msgid "_File"
+msgstr "_Файл"
+
+msgid "_Help"
+msgstr "_Справка"
+
+msgid "_Page"
+msgstr "С_траница"
+
+msgid "_Reset Zoom"
+msgstr "С_бросить масштаб"
+
+msgid "cursor to the start / end of the document"
+msgstr "курсор в начало / конец документа"
+
+msgid "cursor to the start / end of the line"
+msgstr "курсор в начало / конец строки"
+
+msgid "extend the selection one word"
+msgstr "расширить выделение на слово"
+
+msgid "extend the selection, by character or line"
+msgstr "расширить выделение по символам или строкам"
+
+msgid "move the text cursor one word"
+msgstr "переместить текстовый курсор на слово"
+
+msgid "move the text cursor, by character or line"
+msgstr "переместить текстовый курсор по символам или строкам"
+
+msgid "of {}"
+msgstr "из {}"
+
+msgid "previous / next page"
+msgstr "предыдущая / следующая страница"
+
+msgid "scroll one line"
+msgstr "прокрутка на строку"
+
+msgid "scroll one screen"
+msgstr "прокрутка на экран"
+
+msgid "start / end of the document"
+msgstr "начало / конец документа"
+
+msgid "top of the previous / next page"
+msgstr "к началу предыдущей / следующей страницы"
+
+msgid "%d image written"
+msgid_plural "%d images written"
+msgstr[0] "%d изображение записано"
+msgstr[1] "%d изображения записано"
+msgstr[2] "%d изображений записано"
+
+msgid "%d page"
+msgid_plural "%d pages"
+msgstr[0] "%d страница"
+msgstr[1] "%d страницы"
+msgstr[2] "%d страниц"
+
+msgid "%d page matches"
+msgid_plural "%d pages match"
+msgstr[0] "%d страница совпадает"
+msgstr[1] "%d страницы совпадают"
+msgstr[2] "%d страниц совпадают"
+
+msgid "%d page printed"
+msgid_plural "%d pages printed"
+msgstr[0] "%d страница напечатана"
+msgstr[1] "%d страницы напечатано"
+msgstr[2] "%d страниц напечатано"
+
+msgid "%d page selected"
+msgid_plural "%d pages selected"
+msgstr[0] "%d страница выделена"
+msgstr[1] "%d страницы выделено"
+msgstr[2] "%d страниц выделено"
+
+msgid "_Undo %s"
+msgstr "О_тменить: %s"
+
+msgid "_Redo %s"
+msgstr "_Повторить: %s"
+
+msgid "Untitled"
+msgstr "Без названия"
+
+msgid "Duplicate"
+msgstr "Дублировать"
+
+msgid "Rotate"
+msgstr "Повернуть"
+
+msgid "System"
+msgstr "Системная"
+
+msgid "Light"
+msgstr "Светлая"
+
+msgid "Dark"
+msgstr "Тёмная"
