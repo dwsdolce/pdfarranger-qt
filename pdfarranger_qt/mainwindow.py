@@ -486,8 +486,12 @@ class MainWindow(QMainWindow):
         self.act_fullscreen.setCheckable(True)
         self.act_fullscreen.triggered.connect(self.toggle_fullscreen)
 
-    def _menu(self, parent, title):
+    def _menu(self, parent, title, role=None):
         """Create a menu owned by the window, and add it to ``parent``.
+
+        ``role`` is the menu's untranslated name, kept as its object name so
+        anything deciding by *which* menu this is -- read mode's editing gate --
+        asks that rather than matching the title, which is translated.
 
         Never `parent.addMenu(title)`. That returns a QMenu which PySide hands
         to Python, so anything that later calls `action.menu()` -- the shortcut
@@ -500,6 +504,9 @@ class MainWindow(QMainWindow):
         where it belongs, and self._menus keeps a Python reference besides.
         """
         menu = QMenu(title, self)
+        if role:
+            menu.setObjectName(role)
+            self._menu_titles[role] = title.replace("&", "")
         self._menus.append(menu)
         parent.addMenu(menu)
         return menu
@@ -507,8 +514,11 @@ class MainWindow(QMainWindow):
     def _build_menus(self):
         # Strong references to every menu; see _menu().
         self._menus = []
+        #: Untranslated menu name -> the label the user sees, for the shortcut
+        #: editor's headings.
+        self._menu_titles = {}
         bar = self.menuBar()
-        m = self._menu(bar, _m("_File"))
+        m = self._menu(bar, _m("_File"), role="File")
         m.addAction(self.act_new_window)
         m.addAction(self.act_open)
         self.recent_menu = self._menu(m, _("Open Recent"))
@@ -546,7 +556,7 @@ class MainWindow(QMainWindow):
             act.setStatusTip(needs_pages)
             act.setToolTip(needs_pages)
 
-        m = self._menu(bar, _m("_Edit"))
+        m = self._menu(bar, _m("_Edit"), role="Edit")
         m.addAction(self.act_undo)
         m.addAction(self.act_redo)
         m.addSeparator()
@@ -574,7 +584,7 @@ class MainWindow(QMainWindow):
         m.addSeparator()
         m.addAction(self.act_preferences)
 
-        m = self._menu(bar, _m("_Page"))
+        m = self._menu(bar, _m("_Page"), role="Page")
         m.addAction(self.act_rotate_left)
         m.addAction(self.act_rotate_right)
         m.addSeparator()
@@ -592,7 +602,7 @@ class MainWindow(QMainWindow):
         extract_menu.addAction(self.act_copy_image)
         m.addAction(self.act_explode)
 
-        m = self._menu(bar, _("Arrange"))
+        m = self._menu(bar, _("Arrange"), role="Arrange")
         select_menu = self._menu(m, _m("_Select"))
         select_menu.addAction(self.act_select_all)
         select_menu.addAction(self.act_deselect)
@@ -619,7 +629,7 @@ class MainWindow(QMainWindow):
         booklet_menu.addAction(self.act_gen_booklet)
         booklet_menu.addAction(self.act_split_booklet)
 
-        m = self._menu(bar, _m("_View"))
+        m = self._menu(bar, _m("_View"), role="View")
         m.addAction(self.act_arrange_mode)
         m.addAction(self.act_continuous)
         m.addAction(self.act_facing)
@@ -638,7 +648,7 @@ class MainWindow(QMainWindow):
         m.addSeparator()
         m.addAction(self.act_fullscreen)
 
-        m = self._menu(bar, _m("_Help"))
+        m = self._menu(bar, _m("_Help"), role="Help")
         m.addAction(self.act_help)
         m.addSeparator()
         m.addAction(self.act_project)
@@ -748,8 +758,12 @@ class MainWindow(QMainWindow):
         command added to Page or Arrange is disabled in read mode automatically,
         where a hand-kept list would quietly miss it. View and Help never edit,
         and File is filtered to the commands that write.
+
+        Menus are matched by their role, not their title: against the title this
+        matched nothing once the user picked a language, and read mode then
+        greyed out the whole File menu -- Open included.
         """
-        never_edits = {"File", "View", "Help"}
+        never_edits = {"File", "View", "Help"}  # menu roles, never titles
         writes_in_file = {self.act_import, self.act_password}
         out = []
         for title, actions in self._shortcut_groups():
@@ -792,9 +806,11 @@ class MainWindow(QMainWindow):
         self.act_undo.setEnabled(self.model.undo.can_undo)
         self.act_redo.setEnabled(self.model.undo.can_redo)
         undo_label = self.model.undo.undo_label()
-        self.act_undo.setText(f"&Undo {undo_label}" if undo_label else _m("_Undo"))
+        self.act_undo.setText(_m("_Undo %s") % undo_label if undo_label
+                              else _m("_Undo"))
         redo_label = self.model.undo.redo_label()
-        self.act_redo.setText(f"&Redo {redo_label}" if redo_label else _m("_Redo"))
+        self.act_redo.setText(_m("_Redo %s") % redo_label if redo_label
+                              else _m("_Redo"))
         self._on_selection_changed(self.view.selected_rows())
         if self.read_mode:
             # Last, so it overrides everything the calls above just enabled.
@@ -914,7 +930,8 @@ class MainWindow(QMainWindow):
         return f"{name}[*]" if document_only else f"{name}[*] - {APP_NAME}"
 
     def _retitle(self):
-        name = os.path.basename(self.current_path) if self.current_path else "Untitled"
+        name = (os.path.basename(self.current_path) if self.current_path
+                else _("Untitled"))
         self.setWindowTitle(self.title_for(name, self.DOCUMENT_ONLY_TITLE))
         self.setWindowModified(self.modified)
         # The proxy icon: the little document in a macOS title bar that can be
@@ -968,7 +985,7 @@ class MainWindow(QMainWindow):
                 progress.setValue(len(paths))
         if not added:
             return 0
-        self.model.undo.commit("Import")
+        self.model.undo.commit(_("Import"))
         # Inserting selects what arrived, so you can see where it landed in a
         # long document and act on it -- which is the point when importing or
         # pasting, and pointless when *opening*: every page is new, so selecting
@@ -1457,7 +1474,7 @@ class MainWindow(QMainWindow):
         rows = self.view.selected_rows()
         if not rows:
             return
-        self.model.undo.commit("Delete")
+        self.model.undo.commit(_("Delete"))
         self.model.remove_rows(rows)
         self._mark_modified()
 
@@ -2173,7 +2190,8 @@ class MainWindow(QMainWindow):
             actions = []
             collect(menu, actions)
             if actions:
-                groups.append((top.text().replace("&", ""), actions))
+                groups.append((menu.objectName() or top.text().replace("&", ""),
+                               actions))
         return groups
 
     def _shortcut_actions(self):
@@ -2182,8 +2200,9 @@ class MainWindow(QMainWindow):
 
     def edit_preferences(self):
         current = {key: self._preference(key) for key in dialogs.PREFERENCES}
-        result = dialogs.PreferencesDialog(
-            current, self._shortcut_groups(), self).get_value()
+        groups = [(self._menu_titles.get(role, role), actions)
+                  for role, actions in self._shortcut_groups()]
+        result = dialogs.PreferencesDialog(current, groups, self).get_value()
         if result is None:
             return
         shortcuts = result.pop("shortcuts", {})
@@ -2251,7 +2270,7 @@ class MainWindow(QMainWindow):
         rows = self.view.selected_rows()
         if not rows:
             return
-        self.model.undo.commit("Duplicate")
+        self.model.undo.commit(_("Duplicate"))
         self.model.duplicate(rows)
         self._mark_modified()
 
@@ -2259,7 +2278,7 @@ class MainWindow(QMainWindow):
         rows = self.view.selected_rows()
         if not rows:
             return
-        self.model.undo.commit("Rotate")
+        self.model.undo.commit(_("Rotate"))
         if self.model.rotate(rows, angle):
             self._mark_modified()
         else:
