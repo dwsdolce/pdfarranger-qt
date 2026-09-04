@@ -39,7 +39,10 @@ _translation = gettext.NullTranslations()
 def locale_dirs() -> List[str]:
     """Candidate locations for compiled catalogues, most specific first."""
     if getattr(sys, "frozen", False):
-        base = os.path.dirname(sys.executable)
+        # PyInstaller unpacks datas under sys._MEIPASS -- the `_internal`
+        # directory beside the exe in a onedir build, a temporary directory in a
+        # onefile one. The exe's own directory holds no catalogues.
+        base = getattr(sys, "_MEIPASS", os.path.dirname(sys.executable))
     else:
         base = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     return [

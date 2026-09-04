@@ -266,6 +266,23 @@ class TestReadModeSwitch(unittest.TestCase):
         self.win.set_read_mode(False)
         self.assertTrue(self.win.act_rotate_left.isEnabled())
 
+    def test_a_translated_menu_bar_still_spares_the_file_menu(self):
+        """Regression: in Russian, read mode greyed out Open, Save and Quit.
+
+        The menus read mode leaves alone were matched by their English titles,
+        and a title is exactly what translation changes. Retitling stands in for
+        a catalogue here, so the test does not depend on one being installed.
+        """
+        for action in self.win.menuBar().actions():
+            menu = action.menu()
+            if menu is not None:
+                menu.setTitle("—" + menu.title())
+        self.win.set_read_mode(True)
+        self.assertTrue(self.win.act_open.isEnabled())
+        self.assertTrue(self.win.act_quit.isEnabled())
+        self.assertTrue(self.win.act_fullscreen.isEnabled())
+        self.assertFalse(self.win.act_rotate_left.isEnabled())
+
     def test_harmless_actions_stay_enabled(self):
         """Find and Preferences change nothing, so reading should not stop them."""
         self.win.set_read_mode(True)

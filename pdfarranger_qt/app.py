@@ -20,7 +20,7 @@ import argparse
 import os
 import sys
 
-from PySide6.QtCore import QEvent, Signal
+from PySide6.QtCore import QEvent, QLibraryInfo, QLocale, QTranslator, Signal
 from PySide6.QtWidgets import QApplication
 
 from . import APP_NAME, __version__, __version_string__
@@ -61,6 +61,30 @@ class Application(QApplication):
         return super().event(event)
 
 
+def install_qt_translations(app, language: str = "") -> bool:
+    """Translate the strings Qt itself supplies: OK, Cancel, Save, Discard.
+
+    The buttons in every dialog come from Qt, not from this application, so the
+    gettext catalogue never sees them and they stayed English in an otherwise
+    translated window. Qt ships its own catalogues; they just have to be asked
+    for.
+    """
+    translator = QTranslator(app)
+    locale = QLocale(language) if language else QLocale.system()
+    directories = [QLibraryInfo.path(QLibraryInfo.LibraryPath.TranslationsPath)]
+    if getattr(sys, "frozen", False):
+        # PyInstaller keeps them beside the PySide6 package it bundled.
+        directories.append(os.path.join(sys._MEIPASS, "PySide6", "translations"))
+    for directory in directories:
+        if translator.load(locale, "qtbase", "_", directory):
+            app.installTranslator(translator)
+            # Held by the application: a translator that is garbage collected
+            # takes its translations with it.
+            app._qt_translator = translator
+            return True
+    return False
+
+
 def main(argv=None):
     parser = argparse.ArgumentParser(prog="pdfarranger-qt", description=APP_NAME)
     parser.add_argument("files", nargs="*", help="PDF or image files to open")
@@ -79,7 +103,8 @@ def main(argv=None):
     from .settings import app_settings
 
     settings = app_settings()
-    i18n.setup(settings.value("language", "") or None)
+    language = i18n.setup(settings.value("language", "") or None)
+    install_qt_translations(app, language)
 
     # Imported after QApplication exists so QtPdf initialises against a live
     # GUI application object, and after i18n.setup() so its strings are translated.
