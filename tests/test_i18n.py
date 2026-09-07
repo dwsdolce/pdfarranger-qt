@@ -322,3 +322,99 @@ class TestExtractable(unittest.TestCase):
         for message in ("Untitled", "Rotate", "Duplicate", "Import", "Delete"):
             with self.subTest(message=message):
                 self.assertIn(message, found)
+
+
+class TestQtsOwnTranslations(unittest.TestCase):
+    """OK and Cancel come from Qt, and have to follow a language change too."""
+
+    def setUp(self):
+        from PySide6.QtWidgets import QApplication
+
+        from pdfarranger_qt.app import install_qt_translations
+
+        self.app = QApplication.instance()
+        self.install = install_qt_translations
+        if not install_qt_translations(self.app, "ru"):
+            self.skipTest("Qt's own catalogues are not installed")
+        self.addCleanup(install_qt_translations, self.app, "")
+
+    def cancel(self):
+        return self.app.translate("QPlatformTheme", "Cancel")
+
+    def test_a_language_reaches_qts_own_buttons(self):
+        self.assertEqual(self.cancel(), "Отмена")
+
+    def test_switching_back_to_english_does_not_leave_the_old_one(self):
+        """Regression: Cancel stayed "Отмена" after switching to English.
+
+        Qt consults its translators newest-first and installing another does
+        not retire the one underneath. English is the case that shows it,
+        because Qt's own strings *are* English -- its catalogue for them
+        changes nothing, so there was nothing to paint over the Russian.
+        """
+        self.install(self.app, "en")
+        self.assertEqual(self.cancel(), "Cancel")
+
+    def test_switching_between_two_languages(self):
+        self.install(self.app, "de")
+        self.assertEqual(self.cancel(), "Abbrechen")
+        self.install(self.app, "fr")
+        self.assertEqual(self.cancel(), "Annuler")
+
+    def test_only_one_translator_is_ever_installed(self):
+        for language in ("ru", "de", "en", "fr", "ru"):
+            self.install(self.app, language)
+        self.install(self.app, "en")
+        self.assertEqual(self.cancel(), "Cancel")
+
+
+class TestApplicationIcon(unittest.TestCase):
+    """The window and taskbar icon, which nothing used to set.
+
+    Without `install_icon` the window inherited whatever the *executable*
+    carried: the interpreter's icon when running from source, and a PE resource
+    plus Windows' icon cache when frozen. The artwork was bundled by the
+    PyInstaller spec all along and never asked for at runtime.
+    """
+
+    def test_the_artwork_is_found(self):
+        from pdfarranger_qt.app import icon_path
+
+        path = icon_path()
+        self.assertIsNotNone(path, "the icon is missing from the source tree")
+        self.assertTrue(os.path.isfile(path))
+
+    def test_it_loads_and_is_not_empty(self):
+        from PySide6.QtGui import QIcon
+
+        from pdfarranger_qt.app import icon_path
+
+        icon = QIcon(icon_path())
+        self.assertFalse(icon.isNull())
+        self.assertTrue(icon.availableSizes(), "the .ico carries no images")
+
+    def test_a_window_gets_it(self):
+        from PySide6.QtWidgets import QApplication
+
+        from pdfarranger_qt.app import install_icon
+        from pdfarranger_qt.mainwindow import MainWindow
+
+        app = QApplication.instance()
+        before = app.windowIcon()
+        self.addCleanup(app.setWindowIcon, before)
+        self.assertTrue(install_icon(app))
+        win = MainWindow()
+        self.addCleanup(win.close)
+        self.assertFalse(win.windowIcon().isNull(),
+                         "the window inherited no icon")
+
+    def test_the_frozen_build_looks_where_pyinstaller_puts_it(self):
+        import sys
+        import unittest.mock
+
+        from pdfarranger_qt.app import icon_path
+
+        with unittest.mock.patch.object(sys, "frozen", True, create=True), \
+             unittest.mock.patch.object(sys, "_MEIPASS", "X", create=True):
+            # Missing there, so None -- but the point is *where* it looked.
+            self.assertIsNone(icon_path())

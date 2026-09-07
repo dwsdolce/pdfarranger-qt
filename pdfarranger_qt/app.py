@@ -20,8 +20,10 @@ import argparse
 import logging
 import os
 import sys
+from typing import Optional
 
 from PySide6.QtCore import QEvent, QLibraryInfo, QLocale, QTranslator, Signal
+from PySide6.QtGui import QIcon
 from PySide6.QtWidgets import QApplication
 
 from . import APP_NAME, __version__, __version_string__
@@ -98,7 +100,19 @@ def install_qt_translations(app, language: str = "") -> bool:
     gettext catalogue never sees them and they stayed English in an otherwise
     translated window. Qt ships catalogues of its own; they only have to be
     asked for.
+
+    The one installed last time is removed first. Without that, switching from
+    Russian back to English left "Отмена" on every Cancel button: Qt consults
+    its translators newest-first, and installing another one does not retire
+    the one underneath. English is the case that shows it, because Qt's own
+    strings *are* English and its catalogue for them changes nothing -- so
+    there was nothing to paint over the Russian.
     """
+    previous = getattr(app, "_qt_translator", None)
+    if previous is not None:
+        app.removeTranslator(previous)
+        app._qt_translator = None
+
     translator = QTranslator(app)
     locale = QLocale(language) if language else QLocale.system()
     directories = [QLibraryInfo.path(QLibraryInfo.LibraryPath.TranslationsPath)]
@@ -115,6 +129,43 @@ def install_qt_translations(app, language: str = "") -> bool:
     return False
 
 
+def icon_path() -> Optional[str]:
+    """Where the application's artwork is, or None if it is not there.
+
+    Beside the package when running from source or a wheel, and under
+    ``sys._MEIPASS`` in a bundle -- the same two cases `i18n.locale_dirs`
+    distinguishes, and for the same reason.
+    """
+    if getattr(sys, "frozen", False):
+        candidates = [os.path.join(sys._MEIPASS, "pdfarranger.ico")]
+    else:
+        root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        candidates = [os.path.join(root, "data", "pdfarranger.ico")]
+    for path in candidates:
+        if os.path.isfile(path):
+            return path
+    return None
+
+
+def install_icon(app) -> bool:
+    """Give the application its own icon, rather than inheriting one.
+
+    Nothing ever called ``setWindowIcon``: on Windows the title bar and taskbar
+    fell back to whatever icon the *executable* carried, which is the
+    interpreter's when running from source and depends on a PE resource plus
+    Windows' icon cache when frozen. The artwork was already being bundled by
+    the PyInstaller spec and simply never asked for at runtime.
+    """
+    path = icon_path()
+    if path is None:
+        return False
+    icon = QIcon(path)
+    if icon.isNull():
+        return False
+    app.setWindowIcon(icon)
+    return True
+
+
 def main(argv=None):
     parser = argparse.ArgumentParser(prog="pdfarranger-qt", description=APP_NAME)
     parser.add_argument("files", nargs="*", help="PDF or image files to open")
@@ -125,6 +176,7 @@ def main(argv=None):
     app.setApplicationName(APP_NAME)
     app.setApplicationVersion(__version__)
     app.setOrganizationName("pdfarranger")
+    install_icon(app)
 
     # Translations must be installed before any widget is built: menu labels and
     # dialog text are translated once, at construction. Hence also why changing
