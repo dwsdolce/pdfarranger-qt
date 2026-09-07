@@ -122,11 +122,15 @@ class TestWhereADesktopDocumentLands(unittest.TestCase):
         self.assertEqual(self.spawned, [], "it opened a second window instead")
 
     def test_a_window_with_a_document_gets_a_new_one(self):
+        """A *different* document. Asking for the one already open is ignored,
+        which is what stops the process launched to open it opening it again --
+        see TestTheRunawayCannotHappenAgain."""
+        other = os.path.join(HERE, "test.pdf")
         self.win.open_paths([PDF])
         settle(timeout_ms=400)
         self.win.modified = False
-        self.open()
-        self.assertEqual(self.spawned, [[PDF]])
+        self.open(other)
+        self.assertEqual(self.spawned, [[other]])
         self.assertEqual(self.win.model.rowCount(), 4,
                          "the open document was replaced")
 
@@ -180,3 +184,122 @@ class TestNewWindowCarriesPaths(unittest.TestCase):
         self.assertIn("paths", signature.parameters)
         source = inspect.getsource(MainWindow.new_window)
         self.assertIn("arguments = arguments + ", source)
+
+
+class TestTheRunawayCannotHappenAgain(unittest.TestCase):
+    """The loop that cost David a forced reboot, pinned down.
+
+    A process launched to open a document fills its window from the command
+    line, so by the time the open-event arrives the window is *not empty* --
+    which was the only thing the first version asked. It took the
+    open-another-window branch every time, and each new process did the same.
+
+    Recognising the document is what stops it; `may_spawn` is the backstop
+    behind that, because recognising compares paths and this is a code path that
+    creates processes.
+    """
+
+    def setUp(self):
+        from pdfarranger_qt.mainwindow import MainWindow
+
+        self.win = MainWindow()
+        self.addCleanup(self.win.close)
+        self.addCleanup(setattr, self.win, "modified", False)
+        self.spawned = []
+        self.win.new_window = lambda paths=None: self.spawned.append(list(paths or []))
+
+    def open(self, path=PDF, app=None):
+        from pdfarranger_qt.app import open_from_desktop
+
+        open_from_desktop(self.win, path, app)
+        settle(timeout_ms=300)
+
+    # -- the loop itself ---------------------------------------------------
+
+    def test_a_document_already_open_is_not_opened_again(self):
+        """Exactly the child's situation, and exactly what recursed."""
+        self.win.open_paths([PDF])
+        settle(timeout_ms=400)
+        self.win.modified = False
+        self.assertNotEqual(self.win.model.rowCount(), 0,
+                            "the window must be non-empty for this to mean anything")
+        self.open()
+        self.assertEqual(self.spawned, [],
+                         "it opened another window for a document it already had")
+
+    def test_a_symlinked_path_is_still_recognised(self):
+        """/tmp is a symlink on macOS, so comparing the given path is not enough."""
+        import shutil
+        import tempfile
+
+        directory = tempfile.mkdtemp()
+        self.addCleanup(shutil.rmtree, directory, ignore_errors=True)
+        real = os.path.join(directory, "book.pdf")
+        shutil.copy(PDF, real)
+        self.win.open_paths([os.path.realpath(real)])
+        settle(timeout_ms=400)
+        self.win.modified = False
+
+        crooked = os.path.join(directory, ".", "book.pdf")
+        self.open(crooked)
+        self.assertEqual(self.spawned, [])
+
+    def test_a_different_document_still_gets_a_window(self):
+        """The behaviour David asked for: two documents open at once."""
+        self.win.open_paths([PDF])
+        settle(timeout_ms=400)
+        self.win.modified = False
+        other = os.path.join(HERE, "test.pdf")
+        self.open(other)
+        self.assertEqual(self.spawned, [[other]])
+
+    # -- the backstop ------------------------------------------------------
+
+    def test_the_spawn_limit_stops_a_runaway(self):
+        from pdfarranger_qt.app import Application
+
+        app = _Throttle()
+        for _ in range(Application.SPAWN_LIMIT):
+            self.assertTrue(Application.may_spawn(app, now=0.0))
+        self.assertFalse(Application.may_spawn(app, now=0.0),
+                         "an unbounded number of windows can still be opened")
+
+    def test_the_limit_lifts_once_the_window_passes(self):
+        from pdfarranger_qt.app import Application
+
+        app = _Throttle()
+        for _ in range(Application.SPAWN_LIMIT):
+            Application.may_spawn(app, now=0.0)
+        self.assertFalse(Application.may_spawn(app, now=0.0))
+        self.assertTrue(
+            Application.may_spawn(app, now=Application.SPAWN_WINDOW + 1))
+
+    def test_the_limit_is_generous_for_a_person(self):
+        """Nobody opens four documents from the Finder in ten seconds."""
+        from pdfarranger_qt.app import Application
+
+        self.assertGreaterEqual(Application.SPAWN_LIMIT, 3)
+        self.assertLessEqual(Application.SPAWN_WINDOW, 30)
+
+    def test_a_throttled_event_opens_nothing(self):
+        self.win.open_paths([PDF])
+        settle(timeout_ms=400)
+        self.win.modified = False
+        self.open(os.path.join(HERE, "test.pdf"), app=_Exhausted())
+        self.assertEqual(self.spawned, [])
+
+
+class _Throttle:
+    """Just the state `may_spawn` keeps, without a second QApplication."""
+
+    def __init__(self):
+        from pdfarranger_qt.app import Application
+
+        self._spawns = []
+        self.SPAWN_LIMIT = Application.SPAWN_LIMIT
+        self.SPAWN_WINDOW = Application.SPAWN_WINDOW
+
+
+class _Exhausted:
+    def may_spawn(self):
+        return False

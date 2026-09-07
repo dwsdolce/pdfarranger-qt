@@ -17,6 +17,7 @@
 """Application entry point."""
 
 import argparse
+import logging
 import os
 import sys
 
@@ -46,10 +47,39 @@ class Application(QApplication):
     #: A document the desktop asked for after start-up.
     file_opened = Signal(str)
 
+    #: The most windows one process will open from desktop events, and the
+    #: seconds that allowance covers.
+    SPAWN_LIMIT = 4
+    SPAWN_WINDOW = 10.0
+
     def __init__(self, argv):
         super().__init__(argv)
         #: Paths that arrived before anyone was listening.
         self.pending = []
+        #: When this process last opened a window for a desktop document.
+        self._spawns = []
+
+    def may_spawn(self, now=None) -> bool:
+        """Whether another window may be opened for a desktop document.
+
+        A backstop, not the mechanism -- `MainWindow.holds` is what actually
+        stops a document being reopened by the process launched to open it.
+        This exists because that guard compares paths, and a guard that can be
+        fooled sits on a path that creates processes.
+
+        The first version of this had no such limit. A stale open-event reaching
+        each newly launched process made every one of them launch another, and
+        it took a forced reboot to stop. Four windows in ten seconds is far more
+        than anyone opens by hand and stops a runaway in well under a second.
+        """
+        import time
+
+        now = time.monotonic() if now is None else now
+        self._spawns = [t for t in self._spawns if now - t < self.SPAWN_WINDOW]
+        if len(self._spawns) >= self.SPAWN_LIMIT:
+            return False
+        self._spawns.append(now)
+        return True
 
     def event(self, event):
         if event.type() == QEvent.Type.FileOpen:
@@ -95,29 +125,42 @@ def main(argv=None):
     if paths:
         window.open_paths(paths)
 
-    app.file_opened.connect(lambda path: open_from_desktop(window, path))
+    app.file_opened.connect(
+        lambda path: open_from_desktop(window, path, app))
     return app.exec()
 
 
-def open_from_desktop(window, path: str):
+def open_from_desktop(window, path: str, app=None):
     """Put a document the Finder handed over somewhere sensible.
 
-    An empty, untouched window takes it; anything else gets a window of its own.
-    macOS will not launch a second copy of a bundled application -- it sends the
-    event to the one already running -- so opening in place would discard
-    whatever was on screen, unsaved work included.
+    An empty, untouched window takes it; anything else gets a window of its own,
+    so that two documents can be read side by side -- which is the whole point
+    of opening a second one. macOS will not launch a second copy of a bundled
+    application; it sends the event to the process already running.
 
-    The empty case is not merely tidiness: at start-up the event can arrive
-    after the first window has been built, and this is what puts the document
-    the user actually double-clicked into it rather than into a second window
-    beside an empty one.
+    **A document this window already holds is ignored**, and that is not a
+    nicety. The first version asked only whether the window was empty, and a
+    process launched to open a document fills its window from the command line
+    before the event arrives -- so the answer was always "not empty", and every
+    new process launched another. Hundreds of them, ended by a forced reboot.
+    The window has to recognise the document, not merely notice it has one.
+
+    `Application.may_spawn` is the backstop behind that, because this guard
+    compares paths and a fallible guard on a path that creates processes wants
+    something absolute behind it.
     """
     if not os.path.isfile(path):
         return
+    if window.holds(path):
+        return
     if window.model.rowCount() == 0 and not window.modified:
         window.open_paths([path])
-    else:
-        window.new_window([path])
+        return
+    if app is not None and not app.may_spawn():
+        logging.getLogger(__name__).warning(
+            "refusing to open more windows for desktop documents: %s", path)
+        return
+    window.new_window([path])
 
 
 if __name__ == "__main__":

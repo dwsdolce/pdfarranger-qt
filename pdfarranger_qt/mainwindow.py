@@ -109,6 +109,8 @@ class MainWindow(QMainWindow):
 
         self.current_path: Optional[str] = None
         self.modified = False
+        #: The files this window was opened from, resolved. See `holds`.
+        self.opened_paths: set = set()
         #: Document properties, merged with the sources' own metadata on export.
         self.metadata: dict = {}
         #: Text search; rebuilt lazily whenever the document changes.
@@ -1066,6 +1068,11 @@ class MainWindow(QMainWindow):
         self._reset_document()
         if not self._load_paths(paths):
             return False
+        # Remembered resolved, so "is this already open here?" cannot be fooled
+        # by a symlink -- /tmp is one on macOS. That question is what stops a
+        # document opened from the desktop being opened again by the very
+        # process that was launched to open it.
+        self.opened_paths = {os.path.realpath(os.path.abspath(p)) for p in paths}
         self.current_path = paths[0] if paths[0].lower().endswith(".pdf") else None
         self.modified = len(paths) > 1
         self.model.undo.clear()
@@ -1274,6 +1281,18 @@ class MainWindow(QMainWindow):
         self.statusBar().showMessage(
             _("The document will be encrypted when it is saved."), 4000)
 
+    def holds(self, path: str) -> bool:
+        """Whether this window is already showing that file.
+
+        The loop-breaker for documents opened from the desktop. A process
+        launched to open one fills its window from the command line, so when the
+        open-event arrives a moment later the window is merely *non-empty* --
+        which was the condition for opening yet another window, in a process
+        that then repeated the trick. Recognising the document as one we already
+        hold is what stops it.
+        """
+        return os.path.realpath(os.path.abspath(path)) in self.opened_paths
+
     def new_window(self, paths=None):
         """Launch a second instance, optionally opening ``paths`` in it.
 
@@ -1413,6 +1432,7 @@ class MainWindow(QMainWindow):
         self.current_path = None
         self.modified = False
         self.metadata = {}
+        self.opened_paths = set()
         self.search.invalidate()
         # The outline goes with the document it came from. It is not derived
         # from the page list any more (D20), so emptying the pages does not

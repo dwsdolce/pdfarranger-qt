@@ -1689,13 +1689,39 @@ them directly, because the event can arrive **before there is a window** to put
 a document in; `main()` drains what accumulated during start-up into the first
 window, and listens for later ones.
 
-**Where a later document lands.** An empty, untouched window takes it; anything
-else gets a window of its own. macOS will not launch a second copy of a bundled
-application -- it sends the event to the process already running -- so opening
-in place would discard whatever was on screen, unsaved work included. The empty
-case is not tidiness: at start-up the event can arrive *after* the first window
-is built, and this is what puts the document the user double-clicked into that
-window rather than into a second one beside an empty first.
+**Where a later document lands.** A document this window already holds is
+ignored. Otherwise an empty, untouched window takes it, and anything else gets a
+window of its own -- two documents open at once is the point, since that is how
+you compare them. macOS will not launch a second copy of a bundled application;
+it sends the event to the process already running.
+
+**The first version of this had to be stopped with a forced reboot**, and the
+reason is worth keeping. It asked only whether the window was empty:
+
+    if window.model.rowCount() == 0 and not window.modified:
+        window.open_paths([path])
+    else:
+        window.new_window([path])          # launches a process
+
+A process launched to open a document fills its window from the command line
+*before* the open-event reaches it. So in every launched process the answer was
+"not empty" and the branch taken was the one that launches another process --
+which did the same. The guard was not merely weak, it was **inverted for exactly
+the case that recurses**: false by construction in every child. Hundreds of
+processes, and no way to stop them from inside the application.
+
+`MainWindow.holds` is the fix: the window has to *recognise* the document, not
+merely notice that it has one. Paths are resolved with `realpath` before
+comparing, because `/tmp` is a symlink on macOS and a guard that compares the
+path as given can be walked around by the same file under another name.
+
+`Application.may_spawn` sits behind that as an absolute backstop -- at most four
+windows for desktop documents in ten seconds. It is not the mechanism and is not
+expected to fire: it exists because `holds` compares paths, a comparison can be
+fooled, and this is a code path that *creates processes*. Anything fallible
+guarding process creation wants something inarguable behind it. Four in ten
+seconds is far beyond what anyone does by hand and stops a runaway in under a
+second.
 
 `MainWindow.new_window` gained a `paths` argument for it, which suits the
 NON_UNIQUE design (§8): a second document really is a second process, exactly as
