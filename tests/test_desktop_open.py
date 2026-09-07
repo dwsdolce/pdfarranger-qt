@@ -55,8 +55,14 @@ class TestTheApplicationHearsTheDesktop(unittest.TestCase):
         held = []
         Application.event(
             _Recorder(held, seen), QFileOpenEvent(QUrl.fromLocalFile(PDF)))
-        self.assertEqual(held, [PDF])
-        self.assertEqual(seen, [PDF])
+        # Compared as paths, not as strings. QFileOpenEvent built from a QUrl
+        # hands the path back with forward slashes, so on Windows the two spell
+        # the same file differently. The real event carries a macOS path, where
+        # the question does not arise.
+        self.assertEqual([os.path.normcase(os.path.abspath(p)) for p in held],
+                         [os.path.normcase(os.path.abspath(PDF))])
+        self.assertEqual([os.path.normcase(os.path.abspath(p)) for p in seen],
+                         [os.path.normcase(os.path.abspath(PDF))])
 
     def test_an_empty_path_is_ignored(self):
         from pdfarranger_qt.app import Application

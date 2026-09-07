@@ -43,7 +43,9 @@ credit the original project.
   *reading* it, not only rearranging it. See D14–D17.
 
 Everything still unported is Tier 1 or Tier 3. Nothing remaining requires content
-editing.
+editing. Phase 8 scores this boundary against PDF24's own tool list, since that
+application is the reason given below for starting; D21 records what of it is in
+and what is out.
 
 ### Beyond parity — the reason for the port
 
@@ -86,6 +88,8 @@ not here is still open.
 | D18 | PDF engine for the reader | **QtPdf — stay on it** | Settled when phase 7 was picked up. Neither library provides a view widget, so that work is identical either way and the choice only decides what backs it. Measured: PyMuPDF renders 9–17% faster, but links come out *equivalent* — both give rect and target page, and both return (0,0) for a `/FitR` position — so the feature that raised the question is a wash. PyMuPDF's two real advantages, `set_toc()` and per-word text geometry, are precisely the ones bookmark editing and text selection would use, which is why this was left open until those items began. `set_toc()` round-trips an ordinary outline intact (807 of 807, nesting preserved) but **raises** on the Handbook's `/GoToR` bookmarks — a PyMuPDF bug — and bookmarks are written by `exporter_outlines.py` at export in any case, which handles `/GoToR`, named destinations and cross-file repair correctly. That leaves word-level geometry as the only surviving advantage, a refinement on `QPdfDocument.getSelection()`, bought for 55.5 MB against QtPdf's 5.7 MB already shipped, a third engine beside pikepdf and PDFium, and AGPL — permitted with GPL-3 (§13) but it would stop that code going back upstream. A judgement about *this* codebase and these documents, not a claim that QtPdf is the better library; on the merits PyMuPDF is. Re-test the `/GoToR` bug if bookmark editing ever stalls on outline writing. See §6. |
 | D19 | Read mode's document when nothing has been edited | **Open the source file directly, skipping the export** | D15 has read mode show an in-memory export of the edited page list, which is right when there are edits and pure cost when there are not: entering read mode on a 1590 page book took 3.6 s and peaked at 1.7 GB to reproduce a file already on disk. `DocumentSet.source_if_unmodified()` returns the source when the list is one document, whole, in order and unmodified, and None otherwise, so the export stays the default and the fast path is the exception. Measured end to end: 639 ms and 746 MB against 4190 ms and 2226 MB. Verified equivalent before building, not after: same page count, same page sizes, an 807-entry outline with identical titles and nesting, and a search giving 156 hits at identical coordinates on both documents. The *working copy* rather than the original, because `PDFDoc` never touches the copy again and that is what makes saving over the opened file safe. Does not weaken D15 -- the export remains what read mode does whenever a page has been touched. |
 | D20 | What a bookmark points at, and how it survives editing | **A stable page id, assigned once and copied by `Page.duplicate()`; the outline lives in the undo state beside the page list** | The outline has to survive operations that move, delete and duplicate the pages it targets, so the question is what a bookmark holds. *Object identity* is out: `UndoManager.snapshot` rebuilds every page with `duplicate()`, so one undo would leave every bookmark pointing at an orphan. *Page indices* are out too — every reorder, delete and insert would have to remap them, which is `OutlineRemapper`'s export-time work happening continuously and getting it wrong once is silent corruption. A **uid on the page**, preserved by `duplicate()` and therefore by undo, costs one field and makes reordering free: nothing to remap, because nothing refers to position. Deleting a page leaves its bookmarks *dangling* rather than deleting them — they are skipped on export and reconnect on undo, which is what makes the pair undoable together. The user-facing Duplicate command assigns fresh uids to its copies, so bookmarks stay with the original page rather than following both. And the outline is snapshotted with the pages, so there is one history rather than two that can disagree: undoing a rename and undoing a rotation come off the same stack. |
+
+| D21 | Which of PDF24's tools belong here | **In: page-level composition. Out: authoring, converting, annotating, signing, comparing, OCR, redaction** | PDF24 Toolbox is named in section 1 as the reason this project exists, so its list is the yardstick — and most of what it does is not what this is. Converting to and from PDF needs LibreOffice or Word, which is exactly the native dependency the port shed (README: "no system package to install on any platform"). Invoices, job applications and fillable forms are document *authoring* — Tier 2 under another name. Annotating and editing text are D17 and Tier 2. Signing needs certificate handling pikepdf does not do. Comparing is a different application. OCR needs tesseract or ocrmypdf. Redaction is refused on safety grounds, not effort: see phase 8. What is left — N-up, page numbers, watermarks, linearising, metadata, viewer preferences — is all page-level, which is Tier 1 and in scope. |
 
 ### Still open
 
@@ -693,6 +697,61 @@ David's own decision, not blocked.
             own encoding is a row and a column and a tree position is neither.
             One drag, one undo entry; refused into an entry's own subtree, and
             a no-op when dropped where it already was
+
+
+### Phase 8 — the PDF24 comparison — *backlog, nothing started*
+
+Section 1 names dissatisfaction with **PDF24 Toolbox** as the reason this project
+exists, so its tool list is the fairest external yardstick there is. Scored
+against the live menus on 2026-09-07: **17 of its 37 tools are already here**,
+four more are cheap, three are real work worth doing, and thirteen are things a
+page arranger should not be.
+
+**Already covered.** Organize · Merge · Split · Extract pages · Remove pages ·
+Rotate · Sort · Crop · Change page size · Images to PDF · PDF to images ·
+Extract images · Overlay · Protect · Edit metadata · Edit bookmarks — and
+**Unlock**, which is a side effect rather than a command: open with the password,
+save without one, and `export_doc` writes `encryption = False`. Worth a menu
+entry if it should be discoverable. *Flatten* is half done — Export ▸ Rasterized
+PDF is the sledgehammer version; flattening form fields into static content is a
+different job.
+
+**Cheap, and in character** — each is pikepdf against machinery already here:
+
+- [ ] **Web optimize** — `pdf.save(linearize=True)`, one save option
+- [ ] **Remove all metadata** — `metadata.py` exists; this is the "clear it" case
+- [ ] **Edit viewer preferences** — `/ViewerPreferences`, `/PageLayout`,
+      `/PageMode`. Pairs with D20: having authored an outline, "open with the
+      bookmarks pane showing" is its natural companion
+- [ ] **Repair** — pikepdf already recovers on open; this is "save the recovery"
+
+**Real work, but the right kind:**
+
+- [ ] **Pages per sheet (N-up).** The one worth arguing for. Tier 1 page
+      composition, built from blank pages and `paste_as_layer` — the booklet
+      imposition machinery pointed at a different arrangement — and upstream does
+      not have it
+- [ ] **Add page numbers** and **Add watermark** share one missing primitive:
+      drawing text onto a page. Build it once and both follow; build it for
+      neither and neither is possible. A *PDF* watermark is already Paste As
+      Overlay; it is the text case that is missing
+- [ ] **Compress.** Two features wearing one name. `compress_streams` plus object
+      streams is trivial and gains little; image downsampling is what people mean
+      by it, and the raster machinery is already here. Middling value, real effort
+
+**Out of scope (D21).** Convert to/from PDF · Create invoice · Create job
+application · Create fillable form · Annotate · Edit PDF · Sign · Compare · OCR ·
+Blacken.
+
+> **Blacken (redaction) deserves more than a shrug.** The naive implementation
+> draws black rectangles, and the text underneath stays fully extractable — that
+> has leaked real secrets from real documents. Correct redaction *removes* the
+> content. The only version safe to build on this machinery is
+> rasterise-then-black, which is lossy and slow. If it is ever wanted, ship it
+> named **"Redact (rasterises the page)"** so the trade is in the label.
+
+The screenshot scored from has a scrollbar, so there may be tiles below the fold
+that were never seen.
 
 ---
 

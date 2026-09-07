@@ -21,6 +21,7 @@ theme, rebound Duplicate to Ctrl+Shift+K, and refilled the recent files list
 after the user had cleared it. These are the guards.
 """
 
+import os
 import unittest
 
 from PySide6.QtCore import QSettings
@@ -47,6 +48,17 @@ def scope_file(organisation: str) -> str:
     return QSettings(organisation, APPLICATION).fileName()
 
 
+def same_file(a: str, b: str) -> bool:
+    """Do two path strings name the same file?
+
+    Not a string comparison: `QSettings.fileName()` hands back forward slashes
+    on Windows while `scratch_path()` builds a native path with `os.path.join`,
+    so the two spell the same file differently and `assertEqual` fails on
+    Windows alone.
+    """
+    return os.path.normcase(os.path.abspath(a)) == os.path.normcase(os.path.abspath(b))
+
+
 class TestSettingsScope(unittest.TestCase):
 
     def test_pytest_is_detected(self):
@@ -54,7 +66,8 @@ class TestSettingsScope(unittest.TestCase):
 
     def test_settings_are_redirected(self):
         store = app_settings()
-        self.assertEqual(store.fileName(), scratch_path())
+        self.assertTrue(same_file(store.fileName(), scratch_path()),
+                        f"{store.fileName()} is not {scratch_path()}")
 
     def test_the_real_store_is_untouched(self):
         """Write through the accessor, then read the real scope directly."""
@@ -77,7 +90,8 @@ class TestSettingsScope(unittest.TestCase):
 
         window = MainWindow()
         self.addCleanup(window.close)
-        self.assertEqual(window.settings.fileName(), scratch_path())
+        self.assertTrue(same_file(window.settings.fileName(), scratch_path()),
+                        f"{window.settings.fileName()} is not {scratch_path()}")
 
     def test_the_scope_is_private_to_this_process(self):
         """Two runs at once must not share a store.
