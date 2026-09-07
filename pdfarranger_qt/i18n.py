@@ -39,7 +39,12 @@ _translation = gettext.NullTranslations()
 def locale_dirs() -> List[str]:
     """Candidate locations for compiled catalogues, most specific first."""
     if getattr(sys, "frozen", False):
-        base = os.path.dirname(sys.executable)
+        # PyInstaller unpacks datas under sys._MEIPASS -- the `_internal`
+        # directory beside the exe in a onedir build, a temporary directory in
+        # a onefile one. The exe's own directory holds no catalogues, so this
+        # used to search a path that could never contain one and every language
+        # silently did nothing in the bundle while working fine from source.
+        base = getattr(sys, "_MEIPASS", os.path.dirname(sys.executable))
     else:
         base = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     return [
@@ -80,6 +85,20 @@ def gettext_(message: str) -> str:
 def ngettext(singular: str, plural: str, n: int) -> str:
     """Plural-aware translation. Needed for the page counts in the status bar."""
     return _translation.ngettext(singular, plural, n)
+
+
+def N_(message: str) -> str:
+    """Mark a string for extraction without translating it here.
+
+    For strings defined far from where they are shown -- a table of theme names
+    at module level, translated with ``_(label)`` when the combo box is filled.
+    That call translates correctly at runtime but the *extractor* never sees a
+    literal inside ``_()``, so the msgid never reaches the template and no
+    catalogue can ever contain it: the string is translatable in principle and
+    untranslated in practice. Marking it here puts it in the template; the
+    ``_()`` at the point of use still does the translating.
+    """
+    return message
 
 
 def menu_label(message: str) -> str:

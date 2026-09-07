@@ -91,10 +91,13 @@ not here is still open.
 
 | D21 | Which of PDF24's tools belong here | **In: page-level composition. Out: authoring, converting, annotating, signing, comparing, OCR, redaction** | PDF24 Toolbox is named in section 1 as the reason this project exists, so its list is the yardstick — and most of what it does is not what this is. Converting to and from PDF needs LibreOffice or Word, which is exactly the native dependency the port shed (README: "no system package to install on any platform"). Invoices, job applications and fillable forms are document *authoring* — Tier 2 under another name. Annotating and editing text are D17 and Tier 2. Signing needs certificate handling pikepdf does not do. Comparing is a different application. OCR needs tesseract or ocrmypdf. Redaction is refused on safety grounds, not effort: see phase 8. What is left — N-up, page numbers, watermarks, linearising, metadata, viewer preferences — is all page-level, which is Tier 1 and in scope. |
 
+| D22 | Filling 33 catalogues | **Machine translation, marked as such, never over a human's work** | 10,387 missing strings is not hand-writable, and an untranslated interface is worse for a Catalan speaker than an imperfect Catalan one — that is the whole of the argument for it. What the decision buys is honesty about the result: every generated entry carries a comment saying it was generated, so a reviewer can find all of them; `Last-Translator` keeps the name of the person who last did the work by hand, because putting a translator's name on machine output is a misattribution; and a language is filled in *around* its existing human translations rather than over them, which is also why `#2`'s Russian is taken before any of this runs. The two failure modes that matter are mechanical rather than linguistic — a `%d` that comes back as `%s` crashes at runtime in a language the developer cannot read, and a dropped `_` mnemonic silently removes keyboard access — so both get a test rather than a reviewer. |
+
 ### Still open
 
-Nothing is open. D18, the reader's PDF engine, was the last one and is settled
-above: QtPdf, decided when phase 7 was picked up.
+Nothing is open. D18, the reader's PDF engine, was the last one before D22 and
+is settled above: QtPdf, decided when phase 7 was picked up. D22 is a decision
+taken, not a question — what remains under it is work, tracked in phase 9.
 
 The repository housekeeping that used to sit here is done: `origin` is
 `dwsdolce/pdfarranger-qt`, and `pyproject.toml` carries the real `Homepage`.
@@ -775,6 +778,127 @@ Blacken.
 
 The screenshot scored from has a scrollbar, so there may be tiles below the fold
 that were never seen.
+
+---
+
+### Phase 9 — internationalisation, for real — *tooling done, translation open*
+
+The port has been shipping a translated interface that was not one. Three
+separate causes, all measured rather than guessed:
+
+**The catalogues could not be found in a bundle.** `locale_dirs()` looked beside
+the executable in a frozen build; PyInstaller unpacks datas under
+`sys._MEIPASS`, one directory along. So picking a language in Preferences did
+nothing at all in the Windows installer, in every language, while working
+perfectly from source — which is exactly why it went unnoticed.
+
+**Choosing a language broke the window.** `_editing_actions()` decided which
+menus never edit by matching their titles against `{"File", "View", "Help"}`,
+and a title is the one thing a translation changes. In any language but English
+nothing matched, every File action counted as an edit, and read mode greyed out
+Open, Save and Quit on a window that had not opened anything. Reproduced by
+retitling the menus, which is what the regression test does — it needs no
+catalogue installed and fails on any machine. Menus now carry an untranslated
+`role` as their object name and the gate asks for that; the shortcut editor
+still shows translated headings, from `_menu_titles`.
+
+**Some of the interface was English by construction.** Four undo labels were
+committed as literals; the menu text was built as `f"&Undo {label}"`, so the
+verb could not be translated in any language — it is `_Undo %s` now. The window
+title said "Untitled". And the dialog buttons — OK, Cancel, Save, Close — come
+from Qt rather than from this application: `qtbase_<lang>.qm` ships in the
+bundle already and was simply never asked for. `install_qt_translations()` asks.
+
+A fourth cause is subtler and had no symptom to notice. `_(label)` on a
+*variable* — the theme names, defined at module level and translated where the
+combo box is filled — translates correctly at runtime and is invisible to the
+extractor, so the msgid never reaches the template and no catalogue can ever
+carry it. `i18n.N_` marks those; `tests/test_i18n.py::TestExtractable` is the
+guard that they stay marked.
+
+**The template described a program that no longer exists.** `po/pdfarranger.pot`
+was upstream's: 243 msgids, every reference pointing into `pdfarranger/`, the
+package phase 5 deleted. `po/POTFILES.in` listed the GTK sources. So no string
+this port added had ever been offered to a translator, which is the mechanical
+half of the coverage problem below. `tools/update_pot.py` regenerates the
+template by walking the package with Babel — the same reason `build_mo.py` uses
+Babel, that GNU gettext tools are not present on Windows.
+
+#### Where the catalogues actually stand
+
+Measured against the regenerated template: **427 messages, 33 catalogues,
+10,387 missing translations.**
+
+| Coverage | Catalogues |
+|---|---|
+| 30–39% | de es it ka ko oc pt_BR ru sv tr uk zh_CN |
+| 20–29% | ar cs da el eu fi fr he hr hu id is nl pt_PT sl vi zh_TW |
+| 10–19% | ca ca@valencia ja pl_PL |
+
+Not one language covers even 40%. The catalogues are upstream's GTK strings;
+everything this port added — the menu bar, the bookmark sidebar, read mode, the
+whole user guide, all of phase 8 — is untranslated everywhere. `_File`, `_Page`,
+`_Help` and `Arrange` are this port's own msgids, so German renders four of its
+six menu titles in English today.
+
+- [x] Find the catalogues in a frozen build
+- [x] Stop matching menus by their translated titles
+- [x] Translate the strings that were English by construction, Qt's own buttons
+      included
+- [x] `i18n.N_`, so a deferred translation still reaches the template
+- [x] `tools/update_pot.py`, and a template that describes this application
+- [ ] Fill the 10,387 gaps
+- [ ] Keep them filled
+
+#### Filling them (D22)
+
+Machine translation, reviewed where a reviewer exists. 10,387 strings across 33
+languages is not something to hand-write, and an untranslated interface is
+worse for a Catalan speaker than an imperfect Catalan one. What matters is not
+pretending otherwise:
+
+- Each machine-translated entry carries a translator comment saying so, so a
+  human arriving later can find every one of them and a reviewed string is
+  never confused with a generated one.
+- `Last-Translator` is **not** overwritten. Sergej A. translated Russian; his
+  name does not go on output he did not write. The header gains a note instead.
+- Human translations always win. A language is filled in *around* what is
+  already there, never over it.
+- Per language, not per string: a translator working in one language at a time
+  keeps terminology consistent, which is the thing machine translation is worst
+  at across a scattered file.
+
+Two mechanical hazards, both of which a test can catch and neither of which a
+human reviewer reliably will:
+
+- **Format specifiers.** `%d page selected` must not come back as `%s`, and
+  `_Undo %s` must keep its placeholder. A mismatch is a crash at runtime, in a
+  language the developer does not read.
+- **Mnemonics.** `_m()` msgids carry a GTK-style `_` before the accelerator
+  key. A translation that drops it leaves a menu entry with no keyboard access;
+  one that collides with another entry in the same menu is worse, because it
+  silently steals the key.
+
+- [ ] A check that every translation's `%` specifiers match its msgid
+- [ ] A check that every `_m()` translation keeps a mnemonic, and that no two
+      entries in one menu claim the same key
+- [ ] A coverage report, so "the catalogues have rotted again" is a number
+      rather than a feeling
+
+#### The two pull requests
+
+`dwsdolce/pdfarranger-qt#1` (Lumenman) found the first three faults above. Its
+substance is on main, adapted — it was raised against 2026-09-04 and phase 8
+has rewritten much of `mainwindow.py` since, so it no longer applied. Two things
+were changed on the way in: four test methods were duplicated verbatim in the
+patch, and the read-mode regression test was rewritten to cover this port's
+newer File actions as well.
+
+`#2` (Lumenman) rebuilds `po/ru.po` on upstream's August refresh and adds this
+port's Russian. It touches one file nothing else touches. **Take it before any
+machine translation runs**: it is human Russian, it should be the base that
+generated strings fill in around, and merging it afterwards would mean
+overwriting a person's work with a machine's.
 
 ---
 

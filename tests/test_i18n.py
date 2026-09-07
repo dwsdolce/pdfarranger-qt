@@ -65,6 +65,10 @@ class TestI18n(unittest.TestCase):
         "Remove All _Metadata",
         "_Repair Document…",
         "Pages per S_heet…",
+        # Upstream builds these two labels as f-strings, so there is no msgid
+        # to inherit -- which was the bug: the verb could not be translated.
+        "_Undo %s",
+        "_Redo %s",
         "Add Page N_umbers…",
         "Add _Watermark…",
     }
@@ -169,3 +173,138 @@ class TestDoctests(unittest.TestCase):
         result = doctest.testmod(i18n, verbose=False)
         self.assertEqual(result.failed, 0)
         self.assertGreater(result.attempted, 0, "no doctests found in i18n")
+
+
+class TestTranslatedInterface(unittest.TestCase):
+    """The parts of the interface a catalogue alone does not reach.
+
+    Reported by Lumenman in dwsdolce/pdfarranger-qt#1, which is where these
+    three faults were found. Each one made the application *less* usable in a
+    language than in English, so each is worth a test that fails without it.
+    """
+
+    def tearDown(self):
+        from pdfarranger_qt import i18n
+
+        i18n.setup(None)
+
+    def test_a_frozen_build_looks_where_pyinstaller_unpacks(self):
+        """Regression: the Windows bundle found no catalogue at all.
+
+        PyInstaller puts datas under sys._MEIPASS -- `_internal/` beside the
+        exe -- never in the exe's own directory, so picking any language in
+        Preferences silently did nothing in the bundle while working from
+        source, which is why nothing caught it.
+        """
+        import sys
+        import unittest.mock
+
+        from pdfarranger_qt import i18n
+
+        meipass = os.path.join("X", "_internal")
+        with unittest.mock.patch.object(sys, "frozen", True, create=True), \
+             unittest.mock.patch.object(sys, "_MEIPASS", meipass, create=True):
+            self.assertEqual(i18n.locale_dirs()[0],
+                             os.path.join(meipass, "share", "locale"))
+
+    def test_read_mode_leaves_the_file_menu_alone_when_retitled(self):
+        """Regression: a translated window greyed out Open, Save and Quit.
+
+        Retitling the menus stands in for a catalogue, so this needs none
+        installed and fails on any machine if the gate goes back to matching
+        titles.
+        """
+        from support import TEST_PDF, settle
+
+        from pdfarranger_qt.mainwindow import MainWindow
+
+        win = MainWindow()
+        self.addCleanup(win.close)
+        win.open_paths([TEST_PDF])
+        settle(timeout_ms=300)
+        for action in win.menuBar().actions():
+            if action.menu() is not None:
+                action.setText(action.text() + " (nicht Englisch)")
+        win.set_read_mode(True)
+        win._refresh_state()
+        for action in (win.act_open, win.act_save, win.act_quit, win.act_repair):
+            with self.subTest(action=action.objectName() or action.text()):
+                self.assertTrue(action.isEnabled(),
+                                "a translated title disabled a File command")
+        win.modified = False
+
+    def test_the_menu_roles_are_untranslated(self):
+        from pdfarranger_qt.mainwindow import MainWindow
+
+        win = MainWindow()
+        self.addCleanup(win.close)
+        self.assertEqual([role for role, _actions in win._shortcut_groups()],
+                         ["File", "Edit", "Page", "Arrange", "View", "Help"])
+
+    def test_the_shortcut_editor_still_shows_translated_headings(self):
+        """The role is for deciding; the title is for reading."""
+        from pdfarranger_qt import i18n
+        from pdfarranger_qt.mainwindow import MainWindow
+
+        root = os.path.dirname(HERE)
+        if not os.path.isdir(os.path.join(root, "build", "mo", "de")):
+            self.skipTest("catalogues not compiled (run tools/build_mo.py)")
+        i18n.setup("de")
+        win = MainWindow()
+        self.addCleanup(win.close)
+        # Edit rather than File: "_File" is one of this port's own msgids and
+        # no catalogue has it yet, so German still renders it as "File" -- a
+        # small illustration of why phase 9 exists. "_Edit" upstream has.
+        self.assertEqual(win._menu_titles["Edit"], "Bearbeiten")
+
+    def test_qt_supplies_its_own_buttons_translated(self):
+        """OK and Cancel come from Qt, not from the catalogue here."""
+        from PySide6.QtWidgets import QApplication
+
+        from pdfarranger_qt.app import install_qt_translations
+
+        app = QApplication.instance()
+        if not install_qt_translations(app, "ru"):
+            self.skipTest("Qt's own catalogues are not installed")
+        self.addCleanup(app.removeTranslator, app._qt_translator)
+        self.assertEqual(app.translate("QPlatformTheme", "Cancel"), "Отмена")
+
+
+class TestExtractable(unittest.TestCase):
+    """A string can be translated at runtime and still never be translatable.
+
+    ``_(label)`` on a variable works perfectly and is invisible to the
+    extractor, so the msgid never reaches the template and no catalogue can
+    ever carry it. `i18n.N_` marks those; this is the guard that they stay
+    marked.
+    """
+
+    def msgids(self):
+        try:
+            from babel.messages.extract import extract_from_dir
+        except ImportError:
+            self.skipTest("babel is not installed")
+        root = os.path.join(os.path.dirname(HERE), "pdfarranger_qt")
+        keywords = {"_": None, "_m": None, "N_": None, "gettext_": None,
+                    "menu_label": None, "ngettext": (1, 2)}
+        found = set()
+        for _f, _l, message, _c, _x in extract_from_dir(
+                root, keywords=keywords, method_map=[("**.py", "python")]):
+            for one in (message if isinstance(message, tuple) else (message,)):
+                if one:
+                    found.add(one)
+        return found
+
+    def test_the_theme_names_reach_the_template(self):
+        from pdfarranger_qt.dialogs import THEMES
+
+        found = self.msgids()
+        for _value, label in THEMES:
+            with self.subTest(theme=label):
+                self.assertIn(label, found)
+
+    def test_the_strings_that_were_bare_english_are_marked_now(self):
+        found = self.msgids()
+        for message in ("Untitled", "Rotate", "Duplicate", "Import", "Delete"):
+            with self.subTest(message=message):
+                self.assertIn(message, found)

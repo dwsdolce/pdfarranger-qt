@@ -56,6 +56,7 @@ from PySide6.QtWidgets import (
 
 from . import nup, stamp, viewer
 from .core import Dims, Sides
+from .i18n import N_
 from .i18n import gettext_ as _
 
 MM_PER_POINT = 25.4 / 72
@@ -826,7 +827,9 @@ PREFERENCES = {
     "image/greyscale": False,
 }
 
-THEMES = [("system", "System"), ("light", "Light"), ("dark", "Dark")]
+#: Marked with N_ so the names reach the template; the combo box below
+#: translates them with _() when it is filled.
+THEMES = [("system", N_("System")), ("light", N_("Light")), ("dark", N_("Dark"))]
 
 
 class PreferencesDialog(BaseDialog):

@@ -1,5 +1,13 @@
-pdfarranger/pdfarranger.py
-pdfarranger/metadata.py
-pdfarranger/pageutils.py
-data/pdfarranger.ui
-data/menu.ui
+# Kept as a tombstone, not as a list.
+#
+# This file used to name the sources xgettext should scan. Every entry was a
+# GTK file -- pdfarranger/pdfarranger.py, data/menu.ui -- and phase 5 deleted
+# all of them, so the list described a program that no longer exists.
+#
+# The template is generated instead, by walking the package:
+#
+#     python tools/update_pot.py
+#
+# Nothing reads this file. It stays so that a translator arriving from
+# upstream, where POTFILES.in is the convention, is told where to look rather
+# than left wondering why the list is empty.
