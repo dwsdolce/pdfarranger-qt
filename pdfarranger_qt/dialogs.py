@@ -857,7 +857,7 @@ class PreferencesDialog(BaseDialog):
         self._select(self.theme, current["theme"])
 
         general = QFormLayout()
-        general.addRow(_("Language") + " " + _("(Requires restart)"), self.language)
+        general.addRow(_("Language"), self.language)
         general.addRow(_("Theme"), self.theme)
         box = QGroupBox(_("General"))
         box.setLayout(general)

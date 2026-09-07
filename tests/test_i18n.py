@@ -96,8 +96,21 @@ class TestI18n(unittest.TestCase):
 
         source = os.path.join(os.path.dirname(HERE), "pdfarranger_qt", "mainwindow.py")
         with open(source, encoding="utf-8") as fh:
-            used = re.findall(r'_m\("([^"]+)"\)', fh.read())
-        self.assertTrue(used, "no menu labels found to check")
+            text = fh.read()
+        # Three shapes, because the window builds its labels three ways: a
+        # bare `_m()`, and the `_action`/`_menu` helpers that take the msgid so
+        # `retranslate` can produce it again. Watching only `_m()` after that
+        # change left this guard checking four labels out of ninety-seven,
+        # which is the sort of thing a guard is supposed to prevent, not do.
+        used = (re.findall(r'_m\("([^"]+)"\)', text)
+                + re.findall(r'_action\("([^"]+)"(?![^)]*mnemonic=False)', text)
+                + re.findall(r'_menu\((?:bar|m), "([^"]+)"(?![^)]*mnemonic=False)',
+                             text))
+        # A floor, not a count: 75 today. It exists so that a refactor which
+        # moves the labels somewhere this does not look fails here rather than
+        # passing quietly on whatever handful is left.
+        self.assertGreater(len(used), 70,
+                           f"the label guard found only {len(used)} labels")
         unknown = [u for u in used if u not in msgids and u not in self.NEW_MSGIDS]
         self.assertEqual(
             unknown, [],
@@ -286,7 +299,8 @@ class TestExtractable(unittest.TestCase):
             self.skipTest("babel is not installed")
         root = os.path.join(os.path.dirname(HERE), "pdfarranger_qt")
         keywords = {"_": None, "_m": None, "N_": None, "gettext_": None,
-                    "menu_label": None, "ngettext": (1, 2)}
+                    "menu_label": None, "ngettext": (1, 2),
+                    "_action": None, "_menu": (2,)}
         found = set()
         for _f, _l, message, _c, _x in extract_from_dir(
                 root, keywords=keywords, method_map=[("**.py", "python")]):

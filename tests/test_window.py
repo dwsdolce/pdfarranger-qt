@@ -444,6 +444,12 @@ class TestPhase3WindowActions(unittest.TestCase):
         self.assertEqual(MESSAGE_BOXES[-1][0], "information")
 
     def test_preferences_round_trip_through_settings(self):
+        # Choosing a language now applies it, process-wide, rather than only
+        # writing the setting -- so this has to put it back, or every test
+        # that runs later in this process sees a German window.
+        from pdfarranger_qt import i18n
+
+        self.addCleanup(i18n.setup, None)
         self.stub_preferences({
             "language": "de", "theme": "dark", "print/scale-mode": "actual",
             "print/auto-rotate": False, "export/preserve-first-document": True,
@@ -454,6 +460,17 @@ class TestPhase3WindowActions(unittest.TestCase):
         self.assertIs(self.win._preference("image/greyscale"), True)
         self.assertIs(self.win._preference("print/auto-rotate"), False)
         self.assertEqual(self.win._preference("theme"), "dark")
+
+    def test_choosing_a_language_applies_it_without_a_restart(self):
+        """What Preferences promises, driven the way the user drives it."""
+        from pdfarranger_qt import i18n
+
+        self.addCleanup(i18n.setup, None)
+        self.assertEqual(self.win.act_save.text(), "&Save")
+        self.stub_preferences({**dialogs_defaults(), "language": "de",
+                               "shortcuts": {}})
+        self.win.edit_preferences()
+        self.assertEqual(self.win.act_save.text(), "&Speichern")
 
     def test_preferences_can_rebind_a_shortcut(self):
         name = self.win.act_duplicate.objectName() or self.win.act_duplicate.text()

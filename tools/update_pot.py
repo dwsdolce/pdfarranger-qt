@@ -66,6 +66,12 @@ KEYWORDS = {
     "gettext_": None,
     "menu_label": None,
     "ngettext": (1, 2),
+    # The window builds its actions and menus through these, which take the
+    # msgid rather than a translated string so that `retranslate` can produce
+    # it again in another language. Without them here every menu label would
+    # silently drop out of the template.
+    "_action": None,
+    "_menu": (2,),
 }
 
 

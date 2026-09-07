@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pdfarranger-qt VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/dwsdolce/pdfarranger-qt/issues\n"
-"POT-Creation-Date: 2026-09-07 18:32+0000\n"
+"POT-Creation-Date: 2026-09-07 19:17+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -385,10 +385,6 @@ msgstr ""
 
 #: pdfarranger_qt/dialogs.py
 msgid "Language"
-msgstr ""
-
-#: pdfarranger_qt/dialogs.py
-msgid "(Requires restart)"
 msgstr ""
 
 #: pdfarranger_qt/dialogs.py
@@ -1012,6 +1008,14 @@ msgid "User Guide"
 msgstr ""
 
 #: pdfarranger_qt/mainwindow.py
+msgid "Insert pages from another PDF or an image"
+msgstr ""
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Needs pages copied from a document"
+msgstr ""
+
+#: pdfarranger_qt/mainwindow.py
 msgid "_New Window"
 msgstr ""
 
@@ -1021,10 +1025,6 @@ msgstr ""
 
 #: pdfarranger_qt/mainwindow.py
 msgid "_Import"
-msgstr ""
-
-#: pdfarranger_qt/mainwindow.py
-msgid "Insert pages from another PDF or an image"
 msgstr ""
 
 #: pdfarranger_qt/mainwindow.py
@@ -1357,10 +1357,6 @@ msgstr ""
 
 #: pdfarranger_qt/mainwindow.py
 msgid "E_xport"
-msgstr ""
-
-#: pdfarranger_qt/mainwindow.py
-msgid "Needs pages copied from a document"
 msgstr ""
 
 #: pdfarranger_qt/mainwindow.py

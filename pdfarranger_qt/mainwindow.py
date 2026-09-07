@@ -43,6 +43,7 @@ from PySide6.QtWidgets import (
     QMessageBox,
     QProgressDialog,
     QStyle,
+    QToolBar,
 )
 
 from . import APP_NAME, PROJECT_URL, UPSTREAM_URL, __version_string__
@@ -168,9 +169,89 @@ class MainWindow(QMainWindow):
     def _icon(self, standard):
         return self.style().standardIcon(standard)
 
+    #: Qt dynamic properties recording where a label came from, so it can be
+    #: produced again in another language. See `retranslate`.
+    MSGID = "pdfarranger_msgid"
+    MNEMONIC = "pdfarranger_mnemonic"
+
+    def _action(self, msgid, icon=None, mnemonic=True):
+        """A QAction that remembers the msgid its label was made from.
+
+        Recording the msgid rather than translating back from the label,
+        because translating back is ambiguous: 22 of the 33 catalogues have at
+        least one string that two different msgids share. Spanish renders both
+        `Rotate Left` and `Rotate _Left` as "Rotar a la izquierda", so a
+        reverse lookup would have to guess, and guessing wrong loses the
+        keyboard accelerator without saying so.
+
+        ``mnemonic`` picks the translator: menu labels carry a GTK-style
+        underscore that `_m` converts for Qt; a tooltip or a toolbar label does
+        not.
+        """
+        text = _m(msgid) if mnemonic else _(msgid)
+        action = QAction(text, self) if icon is None else QAction(icon, text, self)
+        action.setProperty(self.MSGID, msgid)
+        action.setProperty(self.MNEMONIC, mnemonic)
+        return action
+
+    def retranslate(self):
+        """Redo every label in the current language, in place.
+
+        Called when the language changes. The actions themselves are kept --
+        rebuilding them would drop every connection made to them and reset the
+        checked state of every toggle -- so this only re-derives their text.
+
+        Dialogs are built on demand and need nothing here; they come up in
+        whatever language is current. What is stuck without this is the
+        window's own chrome, which is built once and outlives the setting.
+        """
+        for action in self.findChildren(QAction):
+            msgid = action.property(self.MSGID)
+            if msgid:
+                action.setText(_m(msgid) if action.property(self.MNEMONIC)
+                               else _(msgid))
+        self._menu_titles = {}
+        for menu in self._menus:
+            msgid = menu.property(self.MSGID)
+            if msgid:
+                title = _m(msgid) if menu.property(self.MNEMONIC) else _(msgid)
+                menu.setTitle(title)
+                if menu.objectName():
+                    self._menu_titles[menu.objectName()] = title.replace("&", "")
+        for bar in self.findChildren(QToolBar):
+            msgid = bar.property(self.MSGID)
+            if msgid:
+                # setWindowTitle, because that is what a toolbar's own toggle
+                # action shows; setting the action's text directly would be
+                # overwritten the next time Qt rebuilt it.
+                bar.setWindowTitle(_(msgid))
+        self._apply_static_tips()
+        # Everything derived rather than fixed -- the undo verb, the page
+        # counts, the mode label -- is recomputed rather than translated.
+        self._refresh_state()
+        self._retitle()
+
+    def _apply_static_tips(self):
+        """Tips that are fixed text rather than derived from the document.
+
+        Kept out of the menu builder so `retranslate` can run it again: an
+        action's label is not the only thing a language change has to reach.
+        """
+        self.act_import.setStatusTip(
+            _("Insert pages from another PDF or an image"))
+        # Five permanently-greyed entries with no explanation is the most
+        # confusing thing in that menu: they need *pages* on the clipboard, not
+        # text, and nothing on screen says so until one is there to hover.
+        needs_pages = _("Needs pages copied from a document")
+        for act in (self.act_paste, self.act_paste_before, self.act_paste_odd,
+                    self.act_paste_even, self.act_paste_overlay,
+                    self.act_paste_underlay):
+            act.setStatusTip(needs_pages)
+            act.setToolTip(needs_pages)
+
     def _build_actions(self):
         st = QStyle.StandardPixmap
-        self.act_new_window = QAction(_m("_New Window"), self)
+        self.act_new_window = self._action("_New Window")
         self.act_new_window.setShortcut(QKeySequence.New)
         # Wrapped, not connected directly: `triggered` passes the action's
         # checked state, which would arrive as `new_window(paths=False)`. That
@@ -178,126 +259,125 @@ class MainWindow(QMainWindow):
         # and False is falsy.
         self.act_new_window.triggered.connect(lambda: self.new_window())
 
-        self.act_open = QAction(self._icon(st.SP_DialogOpenButton), _m("_Open"), self)
+        self.act_open = self._action("_Open", icon=self._icon(st.SP_DialogOpenButton))
         self.act_open.setShortcut(QKeySequence.Open)
         self.act_open.triggered.connect(self.open_file)
 
-        self.act_import = QAction(_m("_Import"), self)
+        self.act_import = self._action("_Import")
         self.act_import.setShortcut(QKeySequence("Ctrl+I"))
-        self.act_import.setStatusTip(_("Insert pages from another PDF or an image"))
         self.act_import.triggered.connect(self.import_files)
 
-        self.act_save = QAction(self._icon(st.SP_DialogSaveButton), _m("_Save"), self)
+        self.act_save = self._action("_Save", icon=self._icon(st.SP_DialogSaveButton))
         self.act_save.setShortcut(QKeySequence.Save)
         self.act_save.triggered.connect(self.save)
 
-        self.act_save_as = QAction(_m("Save _As…"), self)
+        self.act_save_as = self._action("Save _As…")
         self.act_save_as.setShortcut(QKeySequence.SaveAs)
         self.act_save_as.triggered.connect(self.save_as)
 
-        self.act_export_sel = QAction(_m("E_xport Selection to a Single File…"), self)
+        self.act_export_sel = self._action("E_xport Selection to a Single File…")
         self.act_export_sel.triggered.connect(self.export_selection)
 
-        self.act_close = QAction(_m("_Close"), self)
+        self.act_close = self._action("_Close")
         self.act_close.setShortcut(QKeySequence("Ctrl+W"))
         self.act_close.triggered.connect(self.close_document)
 
-        self.act_quit = QAction(_m("_Quit"), self)
+        self.act_quit = self._action("_Quit")
         self.act_quit.setShortcut(QKeySequence.Quit)
         self.act_quit.triggered.connect(self.close)
 
-        self.act_undo = QAction(self._icon(st.SP_ArrowBack), _m("_Undo"), self)
+        self.act_undo = self._action("_Undo", icon=self._icon(st.SP_ArrowBack))
         self.act_undo.setShortcut(QKeySequence.Undo)
         self.act_undo.triggered.connect(self.undo)
 
-        self.act_redo = QAction(self._icon(st.SP_ArrowForward), _m("_Redo"), self)
+        self.act_redo = self._action("_Redo", icon=self._icon(st.SP_ArrowForward))
         self.act_redo.setShortcuts([QKeySequence.Redo, QKeySequence("Ctrl+Y")])
         self.act_redo.triggered.connect(self.redo)
 
-        self.act_select_all = QAction(_m("Select _All"), self)
+        self.act_select_all = self._action("Select _All")
         self.act_select_all.setShortcut(QKeySequence.SelectAll)
         self.act_select_all.triggered.connect(self.select_all)
 
-        self.act_invert = QAction(_m("_Invert Selection"), self)
+        self.act_invert = self._action("_Invert Selection")
         self.act_invert.setShortcut(QKeySequence("Ctrl+Shift+A"))
         self.act_invert.triggered.connect(self.invert_selection)
 
-        self.act_delete = QAction(self._icon(st.SP_TrashIcon), _m("_Delete"), self)
+        self.act_delete = self._action("_Delete", icon=self._icon(st.SP_TrashIcon))
         self.act_delete.setShortcut(QKeySequence.Delete)
         self.act_delete.triggered.connect(self.delete_selected)
 
-        self.act_duplicate = QAction(_m("_Duplicate"), self)
+        self.act_duplicate = self._action("_Duplicate")
         self.act_duplicate.setShortcut(QKeySequence("Ctrl+D"))
         self.act_duplicate.triggered.connect(self.duplicate_selected)
 
-        self.act_rotate_left = QAction(_m("Rotate _Left"), self)
+        self.act_rotate_left = self._action("Rotate _Left")
         self.act_rotate_left.setShortcut(QKeySequence("Ctrl+L"))
         self.act_rotate_left.triggered.connect(lambda: self.rotate(-90))
 
-        self.act_rotate_right = QAction(_m("_Rotate Right"), self)
+        self.act_rotate_right = self._action("_Rotate Right")
         self.act_rotate_right.setShortcut(QKeySequence("Ctrl+R"))
         self.act_rotate_right.triggered.connect(lambda: self.rotate(90))
 
-        self.act_zoom_in = QAction(_m("Zoom _In"), self)
+        self.act_zoom_in = self._action("Zoom _In")
         self.act_zoom_in.setShortcut(QKeySequence.ZoomIn)
         self.act_zoom_in.triggered.connect(lambda: self._zoom_by(1.25))
 
-        self.act_zoom_out = QAction(_m("Zoom _Out"), self)
+        self.act_zoom_out = self._action("Zoom _Out")
         self.act_zoom_out.setShortcut(QKeySequence.ZoomOut)
         self.act_zoom_out.triggered.connect(lambda: self._zoom_by(0.8))
 
-        self.act_zoom_reset = QAction(_m("_Reset Zoom"), self)
+        self.act_zoom_reset = self._action("_Reset Zoom")
         self.act_zoom_reset.setShortcut(QKeySequence("Ctrl+0"))
         self.act_zoom_reset.triggered.connect(self.reset_zoom)
 
-        self.act_help = QAction(_("User Guide"), self)
+        self.act_help = self._action("User Guide", mnemonic=False)
         self.act_help.setShortcut(QKeySequence.HelpContents)
         self.act_help.triggered.connect(self.show_help)
 
-        self.act_project = QAction(_("Project on GitHub"), self)
+        self.act_project = self._action("Project on GitHub", mnemonic=False)
         self.act_project.triggered.connect(self.open_project_page)
 
-        self.act_about = QAction(_m("_About"), self)
+        self.act_about = self._action("_About")
         self.act_about.triggered.connect(self.about)
 
         # -- clipboard ----------------------------------------------------
-        self.act_cut = QAction(_m("Cu_t"), self)
+        self.act_cut = self._action("Cu_t")
         self.act_cut.setShortcut(QKeySequence.Cut)
         self.act_cut.triggered.connect(self.cut_selected)
 
-        self.act_copy = QAction(_m("_Copy"), self)
+        self.act_copy = self._action("_Copy")
         self.act_copy.setShortcut(QKeySequence.Copy)
         self.act_copy.triggered.connect(self.copy_selected)
 
-        self.act_paste = QAction(_m("Paste _After"), self)
+        self.act_paste = self._action("Paste _After")
         self.act_paste.setShortcut(QKeySequence.Paste)
         self.act_paste.triggered.connect(lambda: self.paste("AFTER"))
 
-        self.act_paste_before = QAction(_m("Paste _Before"), self)
+        self.act_paste_before = self._action("Paste _Before")
         self.act_paste_before.setShortcut(QKeySequence("Ctrl+Shift+V"))
         self.act_paste_before.triggered.connect(lambda: self.paste("BEFORE"))
 
-        self.act_paste_odd = QAction(_m("Paste As _Odd Pages"), self)
+        self.act_paste_odd = self._action("Paste As _Odd Pages")
         self.act_paste_odd.triggered.connect(lambda: self.paste("ODD"))
 
-        self.act_paste_even = QAction(_m("Paste As _Even Pages"), self)
+        self.act_paste_even = self._action("Paste As _Even Pages")
         self.act_paste_even.triggered.connect(lambda: self.paste("EVEN"))
 
         # -- selection ----------------------------------------------------
-        self.act_deselect = QAction(_m("_Deselect All"), self)
+        self.act_deselect = self._action("_Deselect All")
         self.act_deselect.triggered.connect(self.deselect)
 
-        self.act_select_odd = QAction(_m("Select _Odd Pages"), self)
+        self.act_select_odd = self._action("Select _Odd Pages")
         self.act_select_odd.triggered.connect(lambda: self.select_parity(1))
 
-        self.act_select_even = QAction(_m("Select _Even Pages"), self)
+        self.act_select_even = self._action("Select _Even Pages")
         self.act_select_even.triggered.connect(lambda: self.select_parity(0))
 
-        self.act_select_same_file = QAction(_m("All From _Same File"), self)
+        self.act_select_same_file = self._action("All From _Same File")
         self.act_select_same_file.triggered.connect(
             lambda: self.select_matching("copyname"))
 
-        self.act_select_same_format = QAction(_m("Same Page _Format"), self)
+        self.act_select_same_format = self._action("Same Page _Format")
         self.act_select_same_format.triggered.connect(
             lambda: self.select_matching("size_in_points"))
 
@@ -305,167 +385,167 @@ class MainWindow(QMainWindow):
         # Moving a page a long way. Cut and paste can do it, but a pasted page
         # is a *new* page with a new uid (D20), so its bookmarks stay behind
         # dangling -- these keep the page itself and carry them along.
-        self.act_move_to_start = QAction(_("Move to Start"), self)
+        self.act_move_to_start = self._action("Move to Start", mnemonic=False)
         self.act_move_to_start.setShortcut(QKeySequence("Ctrl+Shift+Home"))
         self.act_move_to_start.triggered.connect(self.move_to_start)
 
-        self.act_move_to_end = QAction(_("Move to End"), self)
+        self.act_move_to_end = self._action("Move to End", mnemonic=False)
         self.act_move_to_end.setShortcut(QKeySequence("Ctrl+Shift+End"))
         self.act_move_to_end.triggered.connect(self.move_to_end)
 
-        self.act_move_to_page = QAction(_("Move to Page…"), self)
+        self.act_move_to_page = self._action("Move to Page…", mnemonic=False)
         self.act_move_to_page.setShortcut(QKeySequence("Ctrl+Shift+G"))
         self.act_move_to_page.triggered.connect(self.move_to_page)
 
-        self.act_reverse = QAction(_("Reverse Order"), self)
+        self.act_reverse = self._action("Reverse Order", mnemonic=False)
         self.act_reverse.triggered.connect(self.reverse_order)
 
-        self.act_swap = QAction(_m("Swap Odd/Even"), self)
+        self.act_swap = self._action("Swap Odd/Even")
         self.act_swap.triggered.connect(self.swap_odd_even)
 
-        self.act_split_booklet = QAction(_m("_Split (unimposition)"), self)
+        self.act_split_booklet = self._action("_Split (unimposition)")
         self.act_split_booklet.triggered.connect(self.split_booklet)
 
         # -- export -------------------------------------------------------
-        self.act_export_all_multi = QAction(
-            _m("Export _All Pages to Individual Files…"), self)
+        self.act_export_all_multi = self._action(
+            "Export _All Pages to Individual Files…")
         self.act_export_all_multi.triggered.connect(
             lambda: self.export_multiple(all_pages=True))
 
-        self.act_export_sel_multi = QAction(
-            _m("Export Selection to _Individual Files…"), self)
+        self.act_export_sel_multi = self._action(
+            "Export Selection to _Individual Files…")
         self.act_export_sel_multi.triggered.connect(
             lambda: self.export_multiple(all_pages=False))
 
         # -- page editing (phase 2 dialogs) --------------------------------
-        self.act_crop = QAction(_m("_Crop Margins…"), self)
+        self.act_crop = self._action("_Crop Margins…")
         self.act_crop.setShortcut(QKeySequence("C"))
         self.act_crop.triggered.connect(lambda: self.edit_margins(hide=False))
 
-        self.act_hide = QAction(_m("_Hide Margins…"), self)
+        self.act_hide = self._action("_Hide Margins…")
         self.act_hide.setShortcut(QKeySequence("H"))
         self.act_hide.triggered.connect(lambda: self.edit_margins(hide=True))
 
-        self.act_page_size = QAction(_m("_Page Size…"), self)
+        self.act_page_size = self._action("_Page Size…")
         self.act_page_size.setShortcut(QKeySequence("S"))
         self.act_page_size.triggered.connect(self.page_size)
 
-        self.act_insert_blank = QAction(_m("Insert Blan_k Page…"), self)
+        self.act_insert_blank = self._action("Insert Blan_k Page…")
         self.act_insert_blank.triggered.connect(self.insert_blank_page)
 
-        self.act_split_pages = QAction(_m("_Split Pages…"), self)
+        self.act_split_pages = self._action("_Split Pages…")
         self.act_split_pages.triggered.connect(self.split_pages)
 
-        self.act_merge_pages = QAction(_m("_Merge Pages…"), self)
+        self.act_merge_pages = self._action("_Merge Pages…")
         self.act_merge_pages.triggered.connect(self.merge_pages)
 
-        self.act_gen_booklet = QAction(_m("_Generate (imposition)"), self)
+        self.act_gen_booklet = self._action("_Generate (imposition)")
         self.act_gen_booklet.triggered.connect(self.generate_booklet)
 
-        self.act_nup = QAction(_m("Pages per S_heet…"), self)
+        self.act_nup = self._action("Pages per S_heet…")
         self.act_nup.triggered.connect(self.pages_per_sheet)
 
-        self.act_page_numbers = QAction(_m("Add Page N_umbers…"), self)
+        self.act_page_numbers = self._action("Add Page N_umbers…")
         self.act_page_numbers.triggered.connect(self.add_page_numbers)
 
-        self.act_watermark = QAction(_m("Add _Watermark…"), self)
+        self.act_watermark = self._action("Add _Watermark…")
         self.act_watermark.triggered.connect(self.add_watermark)
 
-        self.act_password = QAction(_m("Pass_word"), self)
+        self.act_password = self._action("Pass_word")
         self.act_password.setCheckable(True)
         self.act_password.triggered.connect(self.set_password)
 
-        self.act_properties = QAction(_m("Edit _Properties"), self)
+        self.act_properties = self._action("Edit _Properties")
         self.act_properties.setShortcut(QKeySequence("Alt+Return"))
         self.act_properties.triggered.connect(self.edit_properties)
 
-        self.act_viewer_prefs = QAction(_m("_Viewer Preferences…"), self)
+        self.act_viewer_prefs = self._action("_Viewer Preferences…")
         self.act_viewer_prefs.triggered.connect(self.edit_viewer_preferences)
 
-        self.act_strip_metadata = QAction(_m("Remove All _Metadata"), self)
+        self.act_strip_metadata = self._action("Remove All _Metadata")
         self.act_strip_metadata.setCheckable(True)
         self.act_strip_metadata.triggered.connect(self.set_strip_metadata)
 
-        self.act_repair = QAction(_m("_Repair Document…"), self)
+        self.act_repair = self._action("_Repair Document…")
         self.act_repair.triggered.connect(self.repair_document)
 
         # -- phase 3: raster, search, print, preferences --------------------
-        self.act_crop_white = QAction(_m("Crop White Borders"), self)
+        self.act_crop_white = self._action("Crop White Borders")
         self.act_crop_white.triggered.connect(self.crop_white_borders)
 
-        self.act_export_png = QAction(_m("Export Selection to _PNG Images…"), self)
+        self.act_export_png = self._action("Export Selection to _PNG Images…")
         self.act_export_png.triggered.connect(lambda: self.export_images("png"))
 
-        self.act_export_jpg = QAction(_m("Export Selection to _JPG Images…"), self)
+        self.act_export_jpg = self._action("Export Selection to _JPG Images…")
         self.act_export_jpg.triggered.connect(lambda: self.export_images("jpg"))
 
-        self.act_export_raster_pdf = QAction(
-            _m("Export Selection to _Rasterized PDF (png)…"), self)
+        self.act_export_raster_pdf = self._action(
+            "Export Selection to _Rasterized PDF (png)…")
         self.act_export_raster_pdf.triggered.connect(
             lambda: self.export_rasterised("png"))
 
-        self.act_export_raster_pdf_jpg = QAction(
-            _m("Export Selection to _Rasterized PDF (jpg)…"), self)
+        self.act_export_raster_pdf_jpg = self._action(
+            "Export Selection to _Rasterized PDF (jpg)…")
         self.act_export_raster_pdf_jpg.triggered.connect(
             lambda: self.export_rasterised("jpg"))
 
-        self.act_copy_text = QAction(_("Copy Text"), self)
+        self.act_copy_text = self._action("Copy Text", mnemonic=False)
         self.act_copy_text.triggered.connect(self.copy_page_text)
 
-        self.act_copy_image = QAction(_m("Copy _Image"), self)
+        self.act_copy_image = self._action("Copy _Image")
         self.act_copy_image.triggered.connect(self.copy_page_image)
 
-        self.act_explode = QAction(_m("_Explode into Images"), self)
+        self.act_explode = self._action("_Explode into Images")
         self.act_explode.triggered.connect(self.explode_into_images)
 
-        self.act_print = QAction(_m("_Print…"), self)
+        self.act_print = self._action("_Print…")
         self.act_print.setShortcut(QKeySequence.Print)
         self.act_print.triggered.connect(self.print_document)
 
-        self.act_find = QAction(_m("_Find…"), self)
+        self.act_find = self._action("_Find…")
         self.act_find.setShortcut(QKeySequence.Find)
         self.act_find.triggered.connect(self.find_text)
 
-        self.act_find_next = QAction(_("Find Next"), self)
+        self.act_find_next = self._action("Find Next", mnemonic=False)
         self.act_find_next.setShortcut(QKeySequence("F3"))
         self.act_find_next.triggered.connect(lambda: self.find_step(forward=True))
 
-        self.act_find_prev = QAction(_("Find Previous"), self)
+        self.act_find_prev = self._action("Find Previous", mnemonic=False)
         self.act_find_prev.setShortcut(QKeySequence("Shift+F3"))
         self.act_find_prev.triggered.connect(lambda: self.find_step(forward=False))
 
-        self.act_find_all = QAction(_("Find All"), self)
+        self.act_find_all = self._action("Find All", mnemonic=False)
         self.act_find_all.triggered.connect(self.find_all)
 
-        self.act_preferences = QAction(_m("Preferences"), self)
+        self.act_preferences = self._action("Preferences")
         self.act_preferences.triggered.connect(self.edit_preferences)
 
-        self.act_select_range = QAction(_m("Select _Range"), self)
+        self.act_select_range = self._action("Select _Range")
         self.act_select_range.triggered.connect(self.select_range)
 
-        self.act_paste_overlay = QAction(_m("Paste As O_verlay…"), self)
+        self.act_paste_overlay = self._action("Paste As O_verlay…")
         self.act_paste_overlay.triggered.connect(lambda: self.paste_layer("OVERLAY"))
 
-        self.act_paste_underlay = QAction(_m("Paste As _Underlay…"), self)
+        self.act_paste_underlay = self._action("Paste As _Underlay…")
         self.act_paste_underlay.triggered.connect(lambda: self.paste_layer("UNDERLAY"))
 
         # -- view ---------------------------------------------------------
-        self.act_zoom_fit = QAction(_m("Fit _One Page"), self)
+        self.act_zoom_fit = self._action("Fit _One Page")
         self.act_zoom_fit.setShortcut(QKeySequence("F"))
         self.act_zoom_fit.triggered.connect(self.zoom_fit)
 
-        self.act_zoom_fit_multi = QAction(_m("Fit _Multiple Pages"), self)
+        self.act_zoom_fit_multi = self._action("Fit _Multiple Pages")
         self.act_zoom_fit_multi.setShortcut(QKeySequence("Shift+M"))
         self.act_zoom_fit_multi.triggered.connect(self.zoom_fit_multiple)
 
-        self.act_zoom_fit_width = QAction(_("Fit Width"), self)
+        self.act_zoom_fit_width = self._action("Fit Width", mnemonic=False)
         self.act_zoom_fit_width.setShortcut(QKeySequence("Shift+F"))
         self.act_zoom_fit_width.triggered.connect(self.zoom_fit_width)
 
         # Labelled for what it switches *to*, and checked while arranging:
         # reading is the default state now, so the command a reader wants is
         # "let me rearrange this", not "let me read it".
-        self.act_arrange_mode = QAction(_("Arrange Mode"), self)
+        self.act_arrange_mode = self._action("Arrange Mode", mnemonic=False)
         self.act_arrange_mode.setCheckable(True)
         # Unchecked from the start: an empty window is a reader waiting for a
         # document. Keeps "checked means the grid is showing" true everywhere.
@@ -473,13 +553,13 @@ class MainWindow(QMainWindow):
         self.act_arrange_mode.setShortcut(QKeySequence("Ctrl+E"))
         self.act_arrange_mode.triggered.connect(self.set_arrange_mode)
 
-        self.act_facing = QAction(_("Facing Pages"), self)
+        self.act_facing = self._action("Facing Pages", mnemonic=False)
         self.act_facing.setCheckable(True)
         self.act_facing.setChecked(
             self.settings.value("reader/facing", False, type=bool))
         self.act_facing.triggered.connect(self.set_facing_pages)
 
-        self.act_continuous = QAction(_("Continuous Scroll"), self)
+        self.act_continuous = self._action("Continuous Scroll", mnemonic=False)
         self.act_continuous.setCheckable(True)
         self.act_continuous.setChecked(
             self.settings.value("reader/continuous", True, type=bool))
@@ -489,31 +569,34 @@ class MainWindow(QMainWindow):
         # view has focus -- the grid moves the selection with them, and the
         # reader handles them itself -- and a window-wide shortcut would take
         # them away from both.
-        self.act_next_page = QAction(_("Next Page"), self)
+        self.act_next_page = self._action("Next Page", mnemonic=False)
         self.act_next_page.setShortcut(QKeySequence("Ctrl+PgDown"))
         self.act_next_page.triggered.connect(lambda: self.reader.next_page())
 
-        self.act_prev_page = QAction(_("Previous Page"), self)
+        self.act_prev_page = self._action("Previous Page", mnemonic=False)
         self.act_prev_page.setShortcut(QKeySequence("Ctrl+PgUp"))
         self.act_prev_page.triggered.connect(lambda: self.reader.previous_page())
 
-        self.act_first_page = QAction(_("First Page"), self)
+        self.act_first_page = self._action("First Page", mnemonic=False)
         self.act_first_page.triggered.connect(lambda: self.reader.first_page())
 
-        self.act_last_page = QAction(_("Last Page"), self)
+        self.act_last_page = self._action("Last Page", mnemonic=False)
         self.act_last_page.triggered.connect(lambda: self.reader.last_page())
 
-        self.act_go_to_page = QAction(_("Go to Page…"), self)
+        self.act_go_to_page = self._action("Go to Page…", mnemonic=False)
         self.act_go_to_page.setShortcut(QKeySequence("Ctrl+G"))
         self.act_go_to_page.triggered.connect(self.go_to_page)
 
-        self.act_fullscreen = QAction(_("Fullscreen"), self)
+        self.act_fullscreen = self._action("Fullscreen", mnemonic=False)
         self.act_fullscreen.setShortcut(QKeySequence("F11"))
         self.act_fullscreen.setCheckable(True)
         self.act_fullscreen.triggered.connect(self.toggle_fullscreen)
 
-    def _menu(self, parent, title, role=None):
+    def _menu(self, parent, msgid, role=None, mnemonic=True):
         """Create a menu owned by the window, and add it to ``parent``.
+
+        Takes the msgid rather than the translated title, for the same reason
+        `_action` does: so `retranslate` can produce it again.
 
         ``role`` is the menu's untranslated name, kept as its object name, so
         that anything deciding *which* menu this is -- read mode's editing gate
@@ -530,7 +613,10 @@ class MainWindow(QMainWindow):
         Constructing it with the window as parent leaves ownership in C++,
         where it belongs, and self._menus keeps a Python reference besides.
         """
+        title = _m(msgid) if mnemonic else _(msgid)
         menu = QMenu(title, self)
+        menu.setProperty(self.MSGID, msgid)
+        menu.setProperty(self.MNEMONIC, mnemonic)
         if role:
             menu.setObjectName(role)
             self._menu_titles[role] = title.replace("&", "")
@@ -545,16 +631,16 @@ class MainWindow(QMainWindow):
         #: editor's headings.
         self._menu_titles = {}
         bar = self.menuBar()
-        m = self._menu(bar, _m("_File"), role="File")
+        m = self._menu(bar, "_File", role="File")
         m.addAction(self.act_new_window)
         m.addAction(self.act_open)
-        self.recent_menu = self._menu(m, _("Open Recent"))
+        self.recent_menu = self._menu(m, "Open Recent", mnemonic=False)
         self.recent_menu.aboutToShow.connect(self._rebuild_recent_menu)
         m.addAction(self.act_import)
         m.addSeparator()
         m.addAction(self.act_save)
         m.addAction(self.act_save_as)
-        export_menu = self._menu(m, _m("E_xport"))
+        export_menu = self._menu(m, "E_xport")
         export_menu.addAction(self.act_export_sel)
         export_menu.addAction(self.act_export_sel_multi)
         export_menu.addAction(self.act_export_all_multi)
@@ -577,24 +663,16 @@ class MainWindow(QMainWindow):
         m.addAction(self.act_close)
         m.addAction(self.act_quit)
 
-        # Five permanently-greyed entries with no explanation is the most
-        # confusing thing in this menu: they need *pages* on the clipboard, not
-        # text, and nothing on screen says so until one is there to hover.
-        needs_pages = _("Needs pages copied from a document")
-        for act in (self.act_paste, self.act_paste_before, self.act_paste_odd,
-                    self.act_paste_even, self.act_paste_overlay,
-                    self.act_paste_underlay):
-            act.setStatusTip(needs_pages)
-            act.setToolTip(needs_pages)
+        self._apply_static_tips()
 
-        m = self._menu(bar, _m("_Edit"), role="Edit")
+        m = self._menu(bar, "_Edit", role="Edit")
         m.addAction(self.act_undo)
         m.addAction(self.act_redo)
         m.addSeparator()
         m.addAction(self.act_cut)
         m.addAction(self.act_copy)
         m.addAction(self.act_paste)
-        paste_menu = self._menu(m, _m("Past_e Special"))
+        paste_menu = self._menu(m, "Past_e Special")
         paste_menu.addAction(self.act_paste_before)
         paste_menu.addAction(self.act_paste_odd)
         paste_menu.addAction(self.act_paste_even)
@@ -615,7 +693,7 @@ class MainWindow(QMainWindow):
         m.addSeparator()
         m.addAction(self.act_preferences)
 
-        m = self._menu(bar, _m("_Page"), role="Page")
+        m = self._menu(bar, "_Page", role="Page")
         m.addAction(self.act_rotate_left)
         m.addAction(self.act_rotate_right)
         m.addSeparator()
@@ -628,7 +706,7 @@ class MainWindow(QMainWindow):
         m.addAction(self.act_delete)
         m.addAction(self.act_insert_blank)
         m.addSeparator()
-        extract_menu = self._menu(m, _m("_Extract"))
+        extract_menu = self._menu(m, "_Extract")
         extract_menu.addAction(self.act_copy_text)
         extract_menu.addAction(self.act_copy_image)
         m.addAction(self.act_explode)
@@ -636,8 +714,8 @@ class MainWindow(QMainWindow):
         m.addAction(self.act_page_numbers)
         m.addAction(self.act_watermark)
 
-        m = self._menu(bar, _("Arrange"), role="Arrange")
-        select_menu = self._menu(m, _m("_Select"))
+        m = self._menu(bar, "Arrange", mnemonic=False, role="Arrange")
+        select_menu = self._menu(m, "_Select")
         select_menu.addAction(self.act_select_all)
         select_menu.addAction(self.act_deselect)
         select_menu.addAction(self.act_invert)
@@ -660,11 +738,11 @@ class MainWindow(QMainWindow):
         m.addAction(self.act_merge_pages)
         m.addAction(self.act_nup)
         m.addSeparator()
-        booklet_menu = self._menu(m, _m("_Booklet"))
+        booklet_menu = self._menu(m, "_Booklet")
         booklet_menu.addAction(self.act_gen_booklet)
         booklet_menu.addAction(self.act_split_booklet)
 
-        m = self._menu(bar, _m("_View"), role="View")
+        m = self._menu(bar, "_View", role="View")
         m.addAction(self.act_arrange_mode)
         m.addAction(self.act_continuous)
         m.addAction(self.act_facing)
@@ -683,7 +761,7 @@ class MainWindow(QMainWindow):
         m.addSeparator()
         m.addAction(self.act_fullscreen)
 
-        m = self._menu(bar, _m("_Help"), role="Help")
+        m = self._menu(bar, "_Help", role="Help")
         m.addAction(self.act_help)
         m.addSeparator()
         m.addAction(self.act_project)
@@ -712,10 +790,15 @@ class MainWindow(QMainWindow):
         # Menus still grey rather than hide: they are the inventory of what the
         # application can do, and a vanishing entry teaches nothing. A toolbar
         # is the opposite -- what is useful right now.
+        # A toolbar's title is its window title, and it is what the
+        # right-click "show this bar" entry is called -- so it is a visible
+        # string like any other, and recorded the same way.
         self.toolbar = self.addToolBar(_("Arrange"))
         self.toolbar.setObjectName("main-toolbar")
+        self.toolbar.setProperty(self.MSGID, "Arrange")
         self.reader_toolbar = self.addToolBar(_("Read"))
         self.reader_toolbar.setObjectName("reader-toolbar")
+        self.reader_toolbar.setProperty(self.MSGID, "Read")
         for bar in (self.toolbar, self.reader_toolbar):
             bar.setIconSize(QSize(20, 20))
             bar.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
@@ -2442,8 +2525,18 @@ class MainWindow(QMainWindow):
         shortcuts = result.pop("shortcuts", {})
         for key, value in result.items():
             self.settings.setValue(key, value)
-        # Applied immediately; unlike Language, this needs no restart.
         theme.apply(result.get("theme", theme.SYSTEM))
+        # Applied immediately, like the theme beside it. Dialogs are built on
+        # demand and come up in the new language by themselves; the window's
+        # own chrome is what has to be told.
+        if result.get("language", "") != current.get("language", ""):
+            # Imported here, not at module scope: app imports this module.
+            from . import i18n
+            from .app import install_qt_translations
+
+            language = i18n.setup(result.get("language") or None)
+            install_qt_translations(QApplication.instance(), language)
+            self.retranslate()
         for action in self._shortcut_actions():
             name = action.objectName() or action.text()
             if name in shortcuts:

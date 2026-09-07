@@ -827,19 +827,21 @@ Babel, that GNU gettext tools are not present on Windows.
 #### Where the catalogues actually stand
 
 Measured against the regenerated template: **427 messages, 33 catalogues,
-10,387 missing translations.**
+10,387 missing translations** — 10,179 after `#2` was merged.
 
 | Coverage | Catalogues |
 |---|---|
-| 30–39% | de es it ka ko oc pt_BR ru sv tr uk zh_CN |
+| 80% | ru, once `#2` was merged — the only one above 40% |
+| 30–39% | de es it ka ko oc pt_BR sv tr uk zh_CN |
 | 20–29% | ar cs da el eu fi fr he hr hu id is nl pt_PT sl vi zh_TW |
 | 10–19% | ca ca@valencia ja pl_PL |
 
-Not one language covers even 40%. The catalogues are upstream's GTK strings;
-everything this port added — the menu bar, the bookmark sidebar, read mode, the
-whole user guide, all of phase 8 — is untranslated everywhere. `_File`, `_Page`,
-`_Help` and `Arrange` are this port's own msgids, so German renders four of its
-six menu titles in English today.
+Only Russian covers more than 40%, and only since `#2`. The catalogues are
+upstream's GTK strings; everything this port added — the menu bar, the bookmark
+sidebar, read mode, the whole user guide, all of phase 8 — is untranslated
+almost everywhere. `_File`, `_Page`, `_Help` and `Arrange` are this port's own
+msgids, so German still renders four of its six menu titles in English, while
+Russian now renders all six.
 
 - [x] Find the catalogues in a frozen build
 - [x] Stop matching menus by their translated titles
@@ -847,8 +849,15 @@ six menu titles in English today.
       included
 - [x] `i18n.N_`, so a deferred translation still reaches the template
 - [x] `tools/update_pot.py`, and a template that describes this application
-- [ ] Fill the 10,387 gaps
-- [ ] Keep them filled
+- [x] Take `#2`'s Russian — the one human-translated catalogue, and the base the
+      generated strings fill in around
+- [ ] Stage 0: the guard tests, run against the existing catalogues first
+- [ ] Stage 1: `tools/merge_translations.py`, proved end to end on German
+- [ ] Stage 2a: the 390 interface messages, 32 languages
+- [ ] Stage 2b: the 37 user-guide messages
+- [ ] Stage 3: coverage report, and the guards in CI
+- [x] A pseudolocale, and a test that every visible string starts with its marker
+- [x] Apply a language change at once, with no restart
 
 #### Filling them (D22)
 
@@ -885,6 +894,145 @@ human reviewer reliably will:
 - [ ] A coverage report, so "the catalogues have rotted again" is a number
       rather than a feeling
 
+#### What the 427 messages actually are
+
+Measured before planning, because the shape of the corpus decides the shape of
+the work:
+
+| | messages | words | |
+|---|---:|---:|---|
+| interface labels, ≤30 chars | 327 | 711 | menu items, buttons, combo entries |
+| tooltips and messages, 31–120 | 63 | 586 | |
+| user-guide prose, >120 | 37 | **1,656** | HTML markup, no mnemonics |
+| **total** | **427** | **2,953** | |
+
+Risk and volume are in different places. The guide is **56% of the words in 9%
+of the messages**, and mechanically it is the safe part: no mnemonics, no
+plurals, one `%` specifier. The interface is where a mistake breaks something —
+75 messages carry a `_` mnemonic, 8 carry a `%` specifier, 5 are plurals.
+
+So they are two waves, not one. Doing the interface first buys nearly all the
+user-visible benefit for 45% of the words, and the guide can slip a release
+without hurting anything.
+
+#### How to attack it
+
+**Stage 0 — the net, before generating a single string.**
+`tests/test_catalogues.py`, over all 33 catalogues, in CI:
+
+- every translation's `%` specifiers match its msgid
+- plural entries have the form count the locale's `Plural-Forms` declares
+- a msgid carrying a `_` mnemonic keeps one
+- **mnemonics are unique within each menu** — the one that needs the GUI, checked
+  by building `MainWindow` under each language
+- every catalogue compiles
+
+Run against today's catalogues *first*. It will find defects that are already
+there, and that is the point: a guard nobody has watched fail is not a guard.
+
+**Stage 1 — the pipeline, proved on one language.** Not hand-written `.po`
+files: escaping and plural arrays are exactly where this goes quietly wrong.
+`tools/merge_translations.py` takes a plain `{msgid: translation}` JSON per
+language and merges it — never over a non-empty existing string, marking each
+generated entry with a translator comment, setting `X-Generator` and leaving
+`Last-Translator` alone (D22). German end to end, guards green, then look at the
+actual menus. One language proves the machinery; the other 32 are repetition.
+
+**Stage 2 — generate in waves, interface first.** Wave A is the 390 interface
+messages; wave B is the 37 guide messages. Three or four languages per commit,
+so a bad wave is one `git revert` rather than an excavation. Start with de, fr
+and es, where the output is strongest and a mistake is most likely to be spotted
+and reported.
+
+**Stage 3 — keep it filled.** `update_pot.py --check` and the guard tests in CI,
+and a coverage report so "the catalogues have rotted again" is a number rather
+than a feeling. The D22 marker comments are what make a native-speaker review
+pass tractable later: *show me every unreviewed Russian string* becomes a grep.
+
+Two things to be straight about. **Quality will not be uniform.** German,
+French, Spanish, Italian, Portuguese, Dutch and Russian will be decent;
+Georgian, Occitan, Valencian Catalan, Icelandic and Basque will be materially
+weaker, and there is no way to tell *which* strings are the weak ones from
+inside. The markers and an invitation to native speakers are the mitigation;
+there is not a better one. **And mnemonics have no clean answer**: a generated
+translation picks an accelerator without knowing what else is in its menu. Pick
+one, let the uniqueness test find the collisions, and where two entries fight,
+*drop* the mnemonic — an item with no accelerator beats two claiming one key.
+
+#### Changing the language used to need a restart — **done**
+
+Noticed in use. It was deliberate rather than broken: Preferences labelled the
+row "(Requires restart)", and the theme control beside it applied immediately.
+That asymmetry was the whole of why it felt wrong, and the restart prompt this
+section first proposed would only have explained the surprise rather than
+removed it. So the language now applies at once, like the theme.
+
+The cause is that `_()` runs when a widget is *built*. The returned string is
+baked into the QAction, and swapping the catalogue afterwards does not revisit
+it. Dialogs are constructed on demand, so they would come up in a new language
+for nothing; it is the window's own chrome that is stuck — **76 actions, 12 menu
+titles and 6 other persistent texts, 94 in all**.
+
+- [x] **A pseudolocale, and the test it makes possible** — `tests/pseudo.py`
+- [x] **Retranslate live** — `MainWindow.retranslate()`, called from Preferences
+
+The difficulty was never the 94 edits; it was the 95th, because a call site
+that forgets to record its msgid leaves one stale string and nothing catches it
+but a person switching languages and looking. Which is exactly what happened:
+the test found `Arrange` and `Read`, the two toolbar titles, whose text lives on
+the toolbar's window title rather than on any action. Nothing else would have
+found them.
+
+**Labels record their msgid; they are not translated back.** `_action()` and
+`_menu()` take the msgid and keep it as a Qt property, because reversing a
+translation is ambiguous — measured, **22 of the 33 catalogues** have at least
+one string that two msgids share. Spanish renders both `Rotate Left` and
+`Rotate _Left` as "Rotar a la izquierda", so a reverse lookup has to guess, and
+guessing wrong drops a keyboard accelerator silently. That measurement is the
+whole reason for the 97-call-site refactor rather than a 40-line lookup.
+
+The actions are kept and only their text is re-derived. Rebuilding them would
+drop every connection made to them and reset every toggle, so there are tests
+that a checked action stays checked, a shortcut survives, and `win.act_save` is
+the same object afterwards.
+
+One thing the refactor broke quietly and the suite caught: the guard that
+checks menu labels against upstream's msgids was grepping for `_m("…")`, and
+after the move it was watching **four labels out of ninety-seven**. It looks for
+all three shapes now, with a floor so that the next such move fails instead of
+passing on whatever handful is left.
+
+This was first written down as *do the translations first, because live
+retranslation only becomes testable once some language covers every message* —
+and then as *offer a restart prompt instead*. Both were wrong, and it is worth
+recording why, because the first mistake is easy to make again: the test does
+not need a real catalogue. It needs a **complete** one, and a complete one can
+be generated.
+
+A **pseudolocale** — build the POT into a `zz` catalogue where every msgid maps
+to itself behind a marker, `»_Open` — has 100% coverage by construction and owes
+nothing to translators. Measured: under `zz`, all 6 menu titles and all 99
+actions carrying text come through marked. So "switch language, assert every
+visible string is marked" is available today, and it is *stronger* than the same
+test against a finished catalogue, where a translation that happens to match the
+English cannot be told from a missed call site.
+
+The naive form of that assertion is too weak, which only showed up by breaking
+the code on purpose. Restoring the old `f"&Undo {label}"` and looking for the
+marker *anywhere* in the string **passes** — the text comes out `&Undo »Rotate`,
+because the label is translated even though the verb welded in front of it is
+not. The assertion has to be that the string **starts** with the marker. With
+the msgid version it does: `»&Undo »Rotate`.
+
+Two consequences. Live retranslation is not gated on the catalogues at all —
+that is a priority call, not a dependency. And a pseudolocale test would have
+caught the third fault in `#1` on its own, along with any future one of the same
+kind, which makes it worth building whether or not live switching is ever done.
+
+Window titles need an exemption: `test.pdf[*] - PDF Arranger Qt` carries no
+marker and should not, being a filename and a proper noun. An allowlist is
+normal for this and is the one piece of hand-maintenance the technique costs.
+
 #### The two pull requests
 
 `dwsdolce/pdfarranger-qt#1` (Lumenman) found the first three faults above. Its
@@ -894,11 +1042,22 @@ were changed on the way in: four test methods were duplicated verbatim in the
 patch, and the read-mode regression test was rewritten to cover this port's
 newer File actions as well.
 
-`#2` (Lumenman) rebuilds `po/ru.po` on upstream's August refresh and adds this
-port's Russian. It touches one file nothing else touches. **Take it before any
-machine translation runs**: it is human Russian, it should be the base that
-generated strings fill in around, and merging it afterwards would mean
-overwriting a person's work with a machine's.
+`#2` (Lumenman) rebuilt `po/ru.po` on upstream's August refresh and added this
+port's Russian. **Merged** as 62e1ceb, deliberately as a merge commit rather
+than a squash: it was one clean commit, so there was nothing to collapse, and a
+merge commit is the only option that keeps the contributor's commit object
+intact — the same argument D13 makes about upstream's history, one level down.
+
+Verified mechanically before merging, which is all that can honestly be checked
+from here: 0 format-specifier mismatches, correct Russian plural forms, no
+mnemonics dropped, `Last-Translator` preserved. Two existing translations were
+altered, both defensibly — "Image Export" had been "Импортировать изображение",
+which is *import* an image, on the export settings.
+
+It took Russian from 31% to **80%** of the template, and it is the reason D22
+says human work is never written over: it is the base the generated strings
+fill in around. The 85 still missing there are phase 8's own commands and the
+user guide, written after the PR was raised.
 
 ---
 
