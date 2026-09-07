@@ -393,7 +393,7 @@ class PageListModel(QAbstractListModel):
                 lp.scale = lp.scale * f / page.scale
             page.scale = f
         if changed:
-            self._touch(rows)
+            self.touch(rows)
         return changed
 
     def set_margins(self, rows: List[int], sides: Sides, hide: bool) -> bool:
@@ -412,7 +412,7 @@ class PageListModel(QAbstractListModel):
                 page.crop = sides
             changed = True
         if changed:
-            self._touch(rows)
+            self.touch(rows)
         return changed
 
     def split_pages(self, rows: List[int], columns: int, row_count: int) -> int:
@@ -454,8 +454,13 @@ class PageListModel(QAbstractListModel):
             self.outline_changed.emit()
         return lost
 
-    def _touch(self, rows):
-        """Signal that these rows changed appearance and possibly geometry."""
+    def touch(self, rows):
+        """Signal that these rows changed appearance and possibly geometry.
+
+        Public because a caller can change what a page *looks like* without
+        changing the list: compositing a stamp onto a page leaves the model
+        with nothing to notice unless it is told.
+        """
         for first, last in contiguous_blocks(sorted(set(rows))):
             self.dataChanged.emit(self.index(first, 0), self.index(last, 0))
         self.contents_changed.emit()

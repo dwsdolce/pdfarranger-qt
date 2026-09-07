@@ -24,6 +24,7 @@ during the port.  What was dropped is the GTK plumbing: the warning dialogs, the
 print operation, and the multiprocessing wrapper.
 """
 
+import dataclasses
 import io
 import locale
 import os
@@ -105,6 +106,62 @@ def _mediabox(page, crop=Sides()):
     y1_new = y1 + (y2 - y1) * crop.bottom
     y2_new = y2 - (y2 - y1) * crop.top
     return [x1_new, y1_new, x2_new, y2_new]
+
+
+@dataclasses.dataclass
+class SaveOptions:
+    """Document-wide choices that only apply when writing a real file.
+
+    Gathered into one object rather than four more keyword arguments: `export`
+    already takes nine, and these four belong together -- they are all things
+    the *document* is, rather than things the pages are.
+
+    None of them mean anything for an in-memory export (a preview, a search
+    index, the reader's snapshot), which is why `to_file` still gates them.
+    """
+
+    #: Rewrite for byte-serving, so a viewer can show page one before the whole
+    #: file has arrived. PDF24 calls this "web optimize".
+    linearize: bool = False
+    #: Write no author, title, producer or XMP at all.
+    strip_metadata: bool = False
+    #: Recompress streams and pack objects. Modest on its own; see the note in
+    #: section 6 about what "compress" usually means to people.
+    compress: bool = False
+    #: How a viewer should open the document: `viewer.Preferences`, or None to
+    #: say nothing and let the viewer decide.
+    viewer: Optional[Any] = None
+
+    def save_kwargs(self) -> Dict[str, Any]:
+        """The pikepdf `save` arguments these options imply."""
+        kwargs: Dict[str, Any] = {}
+        if self.linearize:
+            kwargs["linearize"] = True
+        if self.compress:
+            kwargs["compress_streams"] = True
+            kwargs["recompress_flate"] = True
+            kwargs["object_stream_mode"] = pikepdf.ObjectStreamMode.generate
+        return kwargs
+
+
+#: Used when a caller says nothing, so every path can read `options.` safely.
+DEFAULT_SAVE_OPTIONS = SaveOptions()
+
+
+def _strip_metadata(pdf_output):
+    """Leave no author, title, producer or XMP behind.
+
+    pikepdf writes a Producer of its own unless told not to, and the fresh
+    output document inherits nothing else, so this is mostly about *not*
+    calling `_set_meta` -- plus removing what pikepdf would otherwise add.
+    """
+    with pdf_output.open_metadata(set_pikepdf_as_editor=False) as meta:
+        for key in list(meta.keys()):
+            del meta[key]
+    if pikepdf.Name.Metadata in pdf_output.Root:
+        del pdf_output.Root[pikepdf.Name.Metadata]
+    if pikepdf.Name.Info in pdf_output.trailer:
+        del pdf_output.trailer[pikepdf.Name.Info]
 
 
 def _set_meta(mdata, pdf_input, pdf_output):
@@ -255,7 +312,8 @@ def get_max_pdf_version(pdf_list: List[pikepdf.Pdf]) -> str:
 
 def export_doc(pdf_input, pages, mdata, files_out, quit_flag=None,
                test_mode=False, output_password=None, with_outlines=False,
-               source_names=None, outline=None, prune_outline=False):
+               options: "SaveOptions" = None, source_names=None, outline=None,
+               prune_outline=False):
     """Same as export() but taking already-opened pikepdf.Pdf objects.
 
     ``outline`` is the document's own bookmark tree (D20). When given it is
@@ -295,9 +353,13 @@ def export_doc(pdf_input, pages, mdata, files_out, quit_flag=None,
 
     _links.remap_link_annotations(pdf_input, pdf_output, pages, source_names)
 
+    options = options or DEFAULT_SAVE_OPTIONS
     if to_file:
-        mdata = metadata.merge_doc(mdata, pdf_input)
+        if not options.strip_metadata:
+            mdata = metadata.merge_doc(mdata, pdf_input)
         password = output_password
+        if options.viewer is not None:
+            options.viewer.write(pdf_output)
     if password:
         encryption = pikepdf.Encryption(user=password, owner=password, R=6)
     else:
@@ -312,11 +374,16 @@ def export_doc(pdf_input, pages, mdata, files_out, quit_flag=None,
             # works without make_indirect as already applied to this page
             outpdf.pages.append(page)
             _remove_unreferenced_resources(outpdf)
-            outpdf.save(files_out[n], min_version=max_version, encryption=encryption)
+            if options.strip_metadata:
+                _strip_metadata(outpdf)
+            outpdf.save(files_out[n], min_version=max_version,
+                        encryption=encryption, **options.save_kwargs())
         return
 
     if to_file:
-        if not test_mode:
+        if options.strip_metadata:
+            _strip_metadata(pdf_output)
+        elif not test_mode:
             _set_meta(mdata, pdf_input, pdf_output)
         _remove_unreferenced_resources(pdf_output)
     if test_mode:
@@ -330,7 +397,8 @@ def export_doc(pdf_input, pages, mdata, files_out, quit_flag=None,
             encryption=encryption,
         )
     else:
-        pdf_output.save(files_out[0], min_version=max_version, encryption=encryption)
+        pdf_output.save(files_out[0], min_version=max_version,
+                        encryption=encryption, **options.save_kwargs())
 
 
 def _open_inputs(files, pages) -> List[Optional[pikepdf.Pdf]]:
@@ -372,7 +440,8 @@ def get_in_memory_pdf(pages: List[Page], files: List[Tuple[str, str]],
 
 
 def _create_job(files: List[List[str]], pages: List[Page], files_out: List[str],
-                quit_flag=None, test_mode: bool = False, output_password=None):
+                quit_flag=None, test_mode: bool = False, output_password=None,
+                options: "SaveOptions" = None):
     """Build the pikepdf Job that copies pages. Requires pikepdf >= 8.
 
     The Job interface copies pages and their annotations for us, so unlike
@@ -380,6 +449,13 @@ def _create_job(files: List[List[str]], pages: List[Page], files_out: List[str],
     left until the transformation stage.
     """
     json = dict(outputFile=files_out[0], pages=[], removeUnreferencedResources="yes")
+    options = options or DEFAULT_SAVE_OPTIONS
+    # qpdf's job JSON spells a bare flag as an empty string.
+    if options.linearize and not test_mode:
+        json["linearize"] = ""
+    if options.compress and not test_mode:
+        json["compressStreams"] = "y"
+        json["objectStreams"] = "generate"
     if test_mode:
         json.update(qdf="", staticId="", compressStreams="n", decodeLevel="all")
     if len(files) > 0 and len(files[0][0]) > 0:
@@ -473,8 +549,27 @@ def _transform_job(pdf_output: pikepdf.Pdf, pages: List[Page], quit_flag=None) -
             del pdf_output.pages[i + 1]
 
 
+def _ensure_trailer_size(pdf_output: pikepdf.Pdf) -> None:
+    """Put /Size back in a trailer that arrived without one.
+
+    This path preserves the first document, and it preserves its faults too: a
+    file whose trailer is missing /Size -- which qpdf reconstructs on the way in
+    and warns about -- produces an output trailer missing it as well. With a
+    plain cross-reference table that stays merely untidy, because every reader
+    reconstructs. With a cross-reference *stream*, which compressing forces,
+    there is nothing left to reconstruct from and the file will not open at all.
+
+    So a damaged input plus Compress used to mean an unreadable output. qpdf
+    renumbers objects contiguously from 1 as it writes, which is what makes the
+    count the right answer here.
+    """
+    if pikepdf.Name.Size not in pdf_output.trailer:
+        pdf_output.trailer[pikepdf.Name.Size] = len(pdf_output.objects) + 1
+
+
 def export_doc_job(pdf_input, files, pages, mdata, files_out, quit_flag=None,
-                   test_mode: bool = False, output_password=None) -> None:
+                   test_mode: bool = False, output_password=None,
+                   options: "SaveOptions" = None) -> None:
     """Same as export_doc() but via the pikepdf Job interface.
 
     This is the "preserve document information from the first file opened"
@@ -484,21 +579,25 @@ def export_doc_job(pdf_input, files, pages, mdata, files_out, quit_flag=None,
     if not isinstance(files_out[0], str):
         # Do not encrypt when printing
         output_password = None
+    options = options or DEFAULT_SAVE_OPTIONS
     job = _create_job(files, pages, files_out, quit_flag, test_mode,
-                      output_password=output_password)
+                      output_password=output_password, options=options)
     if job is None:
         return
 
     pdf_output = job.create_pdf()
+    _ensure_trailer_size(pdf_output)
     max_version = get_max_pdf_version([pdf_output, *pdf_input])
 
     _transform_job(pdf_output, pages, quit_flag)
     if quit_flag is not None and quit_flag.is_set():
         return
 
-    if isinstance(files_out[0], str):
+    if isinstance(files_out[0], str) and not options.strip_metadata:
         # Only needed when saving to file, not when printing
         mdata = metadata.merge_doc(mdata, pdf_input)
+    if isinstance(files_out[0], str) and options.viewer is not None:
+        options.viewer.write(pdf_output)
     if len(files_out) > 1:
         if output_password:
             encryption = pikepdf.Encryption(user=output_password,
@@ -515,7 +614,9 @@ def export_doc_job(pdf_input, files, pages, mdata, files_out, quit_flag=None,
             outpdf.save(files_out[n], min_version=max_version, encryption=encryption)
         return
 
-    if isinstance(files_out[0], str) and not test_mode:
+    if isinstance(files_out[0], str) and options.strip_metadata:
+        _strip_metadata(pdf_output)
+    elif isinstance(files_out[0], str) and not test_mode:
         _set_meta(mdata, [pdf_output], pdf_output)
     job.write_pdf(pdf_output)
 
@@ -525,7 +626,8 @@ def export(files: List[Tuple[str, str]], pages: List[Page], mdata: dict,
            output_password: Optional[str] = None,
            preserve_first_document: bool = False,
            source_names: Optional[List[str]] = None,
-           outline=None, prune_outline: bool = False) -> str:
+           outline=None, prune_outline: bool = False,
+           options: Optional["SaveOptions"] = None) -> str:
     """Write ``pages`` to ``files_out``.
 
     ``files`` is the ``(copyname, password)`` list from ``DocumentSet``; a page's
@@ -556,10 +658,11 @@ def export(files: List[Tuple[str, str]], pages: List[Page], mdata: dict,
     try:
         if preserve_first_document and HAS_PIKEPDF8:
             export_doc_job(pdf_input, files, pages, mdata, files_out, quit_flag,
-                           test_mode, output_password=output_password)
+                           test_mode, output_password=output_password,
+                           options=options)
         else:
             export_doc(pdf_input, pages, mdata, files_out, quit_flag, test_mode,
-                       output_password=output_password,
+                       output_password=output_password, options=options,
                        source_names=source_names, outline=outline,
                        prune_outline=prune_outline)
     finally:

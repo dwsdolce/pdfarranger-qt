@@ -60,6 +60,13 @@ class TestI18n(unittest.TestCase):
         # In upstream's menu.ui but in none of the 33 catalogues:
         # untranslated there too, so nothing is being orphaned.
         "Pass_word",
+        # Phase 8: upstream has no equivalent command at all.
+        "_Viewer Preferences…",
+        "Remove All _Metadata",
+        "_Repair Document…",
+        "Pages per S_heet…",
+        "Add Page N_umbers…",
+        "Add _Watermark…",
     }
 
     def test_menu_labels_come_from_upstream_msgids(self):

@@ -28,7 +28,7 @@ import re
 from typing import List, Optional, Tuple
 
 from PySide6.QtCore import Qt
-from PySide6.QtGui import QKeySequence
+from PySide6.QtGui import QColor, QFont, QKeySequence
 from PySide6.QtWidgets import (
     QKeySequenceEdit,
     QPushButton,
@@ -36,10 +36,12 @@ from PySide6.QtWidgets import (
     QWidget,
     QButtonGroup,
     QCheckBox,
+    QColorDialog,
     QComboBox,
     QDialog,
     QDialogButtonBox,
     QDoubleSpinBox,
+    QFontComboBox,
     QFormLayout,
     QGridLayout,
     QGroupBox,
@@ -52,6 +54,7 @@ from PySide6.QtWidgets import (
     QVBoxLayout,
 )
 
+from . import nup, stamp, viewer
 from .core import Dims, Sides
 from .i18n import gettext_ as _
 
@@ -460,6 +463,259 @@ class SplitDialog(BaseDialog):
         return self.columns.value(), self.rows.value()
 
 
+class NUpDialog(BaseDialog):
+    """Tile several pages onto one sheet.
+
+    The presets are the whole point for most people, so they come first and
+    drive the two spin boxes; the spin boxes stay editable for the layouts no
+    preset covers.
+    """
+
+    #: Percent of each cell left empty around its page.
+    DEFAULT_GAP = 0
+
+    def __init__(self, parent=None):
+        super().__init__(_("Pages per Sheet"), parent)
+
+        # The combo is built first: the spin boxes drive it, so it has to
+        # exist before their first setValue fires the handler.
+        self.preset = QComboBox()
+        self.preset.addItem(_("Custom"), "")
+        for columns, rows, label in nup.PRESETS:
+            # A string, not a tuple: Qt round-trips item data through QVariant,
+            # so findData on a tuple never matches what addItem stored.
+            self.preset.addItem(label(), self._key(columns, rows))
+
+        self.columns = QSpinBox()
+        self.rows = QSpinBox()
+        for spin in (self.columns, self.rows):
+            spin.setRange(1, 20)
+        self.columns.setValue(2)
+        self.rows.setValue(1)
+        for spin in (self.columns, self.rows):
+            spin.valueChanged.connect(self._match_preset)
+        self.preset.currentIndexChanged.connect(self._apply_preset)
+
+        self.orientation = QComboBox()
+        for value, label in ((nup.AUTO, _("Automatic")),
+                             (nup.PORTRAIT, _("Portrait")),
+                             (nup.LANDSCAPE, _("Landscape"))):
+            self.orientation.addItem(label, value)
+        self.orientation.setToolTip(
+            _("Automatic turns the sheet sideways when that lets the pages "
+              "come out larger."))
+
+        self.gap = QSpinBox()
+        self.gap.setRange(0, 45)
+        self.gap.setSuffix(" %")
+        self.gap.setValue(self.DEFAULT_GAP)
+        self.gap.setToolTip(_("Empty space left around each page."))
+
+        form = QFormLayout()
+        form.addRow(_("Layout"), self.preset)
+        form.addRow(_("Columns"), self.columns)
+        form.addRow(_("Rows"), self.rows)
+        form.addRow(_("Sheet"), self.orientation)
+        form.addRow(_("Gap"), self.gap)
+        box = QGroupBox()
+        box.setLayout(form)
+        self.add(box)
+
+        self._match_preset()
+        self.finish()
+
+    @staticmethod
+    def _key(columns: int, rows: int) -> str:
+        return f"{columns}x{rows}"
+
+    def _apply_preset(self):
+        chosen = self.preset.currentData()
+        if not chosen:
+            return
+        columns, rows = (int(part) for part in chosen.split("x"))
+        # Blocked so setting the boxes does not immediately reset the combo to
+        # Custom on the way past the first one.
+        for spin, value in ((self.columns, columns), (self.rows, rows)):
+            was = spin.blockSignals(True)
+            spin.setValue(value)
+            spin.blockSignals(was)
+
+    def _match_preset(self):
+        index = self.preset.findData(self._key(self.columns.value(),
+                                               self.rows.value()))
+        was = self.preset.blockSignals(True)
+        self.preset.setCurrentIndex(index if index >= 0 else 0)
+        self.preset.blockSignals(was)
+
+    def value(self) -> dict:
+        return {
+            "columns": self.columns.value(),
+            "rows": self.rows.value(),
+            "orientation": self.orientation.currentData(),
+            "margin": self.gap.value() / 100.0,
+        }
+
+
+class _StampStyleWidget(QGroupBox):
+    """The half of a stamp dialog that is the same for both features.
+
+    Font, size, colour, weight and opacity say nothing about *what* is being
+    stamped, so page numbers and watermarks share them; only the position
+    defaults and the text field differ.
+    """
+
+    def __init__(self, style: "stamp.Style", positions=True, rotation=False):
+        super().__init__(_("Appearance"))
+        self._colour = QColor(style.colour)
+
+        self.font = QFontComboBox()
+        self.font.setCurrentFont(QFont(style.font))
+
+        self.size = QDoubleSpinBox()
+        self.size.setRange(1.0, 400.0)
+        self.size.setSuffix(" pt")
+        self.size.setValue(style.size)
+
+        self.bold = QCheckBox(_("Bold"))
+        self.bold.setChecked(style.bold)
+        self.italic = QCheckBox(_("Italic"))
+        self.italic.setChecked(style.italic)
+        weights = QHBoxLayout()
+        weights.addWidget(self.bold)
+        weights.addWidget(self.italic)
+        weights.addStretch(1)
+
+        self.colour = QPushButton()
+        self.colour.clicked.connect(self._pick_colour)
+        self._show_colour()
+
+        self.opacity = QSpinBox()
+        self.opacity.setRange(1, 100)
+        self.opacity.setSuffix(" %")
+        self.opacity.setValue(round(style.opacity * 100))
+
+        form = QFormLayout()
+        form.addRow(_("Font"), self.font)
+        form.addRow(_("Size"), self.size)
+        form.addRow("", weights)
+        form.addRow(_("Colour"), self.colour)
+        form.addRow(_("Opacity"), self.opacity)
+
+        self.position = None
+        if positions:
+            self.position = QComboBox()
+            for key, label, _flags in stamp.POSITIONS:
+                self.position.addItem(label(), key)
+            index = self.position.findData(style.position)
+            self.position.setCurrentIndex(max(index, 0))
+            form.addRow(_("Position"), self.position)
+
+        self.rotation = None
+        if rotation:
+            self.rotation = QSpinBox()
+            self.rotation.setRange(-180, 180)
+            self.rotation.setSuffix(" °")
+            self.rotation.setValue(round(style.rotation))
+            form.addRow(_("Angle"), self.rotation)
+
+        self.setLayout(form)
+
+    def _pick_colour(self):
+        chosen = QColorDialog.getColor(self._colour, self, _("Colour"))
+        if chosen.isValid():
+            self._colour = chosen
+            self._show_colour()
+
+    def _show_colour(self):
+        self.colour.setText(self._colour.name())
+        # A swatch rather than a bare hex code: nobody reads #808080 as grey.
+        self.colour.setStyleSheet(
+            f"background-color: {self._colour.name()};"
+            f" color: {'#000000' if self._colour.lightness() > 127 else '#ffffff'};")
+
+    def value(self) -> "stamp.Style":
+        return stamp.Style(
+            font=self.font.currentFont().family(),
+            size=self.size.value(),
+            colour=self._colour.name(),
+            opacity=self.opacity.value() / 100.0,
+            bold=self.bold.isChecked(),
+            italic=self.italic.isChecked(),
+            position=(self.position.currentData() if self.position
+                      else stamp.Style.position),
+            rotation=(float(self.rotation.value()) if self.rotation else 0.0),
+        )
+
+
+class PageNumbersDialog(BaseDialog):
+    """Stamp a number onto each selected page."""
+
+    def __init__(self, parent=None):
+        super().__init__(_("Add Page Numbers"), parent)
+
+        self.template = QLineEdit(stamp.PAGE_TOKEN)
+        self.template.setToolTip(
+            _("%s is replaced by the page number, %s by the number of pages.")
+            % (stamp.PAGE_TOKEN, stamp.TOTAL_TOKEN))
+
+        self.start = QSpinBox()
+        self.start.setRange(-9999, 99999)
+        self.start.setValue(1)
+
+        self.skip_first = QCheckBox(_("Leave the first page unnumbered"))
+        self.skip_first.setToolTip(_("It is still counted; a title page just "
+                                     "does not carry a number."))
+
+        form = QFormLayout()
+        form.addRow(_("Format"), self.template)
+        form.addRow(_("Start at"), self.start)
+        form.addRow("", self.skip_first)
+        box = QGroupBox(_("Numbering"))
+        box.setLayout(form)
+        self.add(box)
+
+        self.style = _StampStyleWidget(stamp.NUMBER_STYLE)
+        self.add(self.style)
+        self.finish()
+
+    def value(self) -> dict:
+        return {
+            "template": self.template.text() or stamp.PAGE_TOKEN,
+            "start": self.start.value(),
+            "skip_first": self.skip_first.isChecked(),
+            "style": self.style.value(),
+        }
+
+
+class WatermarkDialog(BaseDialog):
+    """Stamp the same text across each selected page."""
+
+    def __init__(self, parent=None):
+        super().__init__(_("Add Watermark"), parent)
+
+        self.text = QLineEdit()
+        self.text.setPlaceholderText(_("DRAFT"))
+        form = QFormLayout()
+        form.addRow(_("Text"), self.text)
+        box = QGroupBox(_("Watermark"))
+        box.setLayout(form)
+        self.add(box)
+
+        self.style = _StampStyleWidget(stamp.WATERMARK_STYLE, rotation=True)
+        self.add(self.style)
+
+        # A watermark that says nothing is not a watermark, and an empty one
+        # would raise out of stamp.add_watermark.
+        self.ok = self.buttons.button(QDialogButtonBox.Ok)
+        self.text.textChanged.connect(
+            lambda value: self.ok.setEnabled(bool(value.strip())))
+        self.ok.setEnabled(False)
+        self.finish()
+
+    def value(self) -> dict:
+        return {"text": self.text.text(), "style": self.style.value()}
+
+
 # --------------------------------------------------------------------------
 # Merge / paste as layer
 
@@ -564,6 +820,8 @@ PREFERENCES = {
     "print/auto-rotate": True,
     "print/dpi": 200,
     "export/preserve-first-document": False,
+    "export/linearize": False,
+    "export/compress": False,
     "image/ppi": 300,
     "image/greyscale": False,
 }
@@ -631,8 +889,24 @@ class PreferencesDialog(BaseDialog):
             _("When checked: use document properties from the first file opened.")
             + "\n"
             + _("When unchecked: merge bookmarks from all documents."))
+        self.linearize = QCheckBox(_("Optimize for the web (linearize)"))
+        self.linearize.setChecked(bool(current["export/linearize"]))
+        self.linearize.setToolTip(
+            _("Lay the file out so a browser can show page one "
+              "before the rest has downloaded."))
+
+        self.compress = QCheckBox(_("Compress"))
+        self.compress.setChecked(bool(current["export/compress"]))
+        self.compress.setToolTip(
+            _("Recompress the file's streams and pack its objects together.")
+            + "\n"
+            + _("How much this saves depends on the file: one full of "
+                "already-compressed images will barely shrink."))
+
         saving = QVBoxLayout()
         saving.addWidget(self.preserve_first)
+        saving.addWidget(self.linearize)
+        saving.addWidget(self.compress)
         box = QGroupBox(_("Saving/exporting to single file"))
         box.setLayout(saving)
         self.add(box)
@@ -684,10 +958,71 @@ class PreferencesDialog(BaseDialog):
             "print/auto-rotate": self.auto_rotate.isChecked(),
             "print/dpi": self.print_dpi.value(),
             "export/preserve-first-document": self.preserve_first.isChecked(),
+            "export/linearize": self.linearize.isChecked(),
+            "export/compress": self.compress.isChecked(),
             "image/ppi": self.ppi.value(),
             "image/greyscale": self.greyscale.isChecked(),
             "shortcuts": dict(self._shortcuts),
         }
+
+
+class ViewerPreferencesDialog(BaseDialog):
+    """How a viewer should open the saved document.
+
+    Separate from Preferences: these are properties *of the document*, saved
+    into the file, not settings of this application. They sit with Properties
+    and Encrypt for that reason.
+    """
+
+    def __init__(self, prefs, parent=None):
+        super().__init__(_("Viewer Preferences"), parent)
+
+        self.page_mode = QComboBox()
+        for value, label in viewer.PAGE_MODES:
+            self.page_mode.addItem(label(), value)
+        self._select(self.page_mode, prefs.page_mode)
+
+        self.page_layout = QComboBox()
+        for value, label in viewer.PAGE_LAYOUTS:
+            self.page_layout.addItem(label(), value)
+        self._select(self.page_layout, prefs.page_layout)
+
+        form = QFormLayout()
+        form.addRow(_("Open showing:"), self.page_mode)
+        form.addRow(_("Page layout:"), self.page_layout)
+        box = QGroupBox(_("On opening"))
+        box.setLayout(form)
+        self.add(box)
+
+        self.flags = {}
+        flags = QVBoxLayout()
+        for name, label in viewer.FLAGS:
+            check = QCheckBox(label())
+            check.setChecked(name in prefs.flags)
+            self.flags[name] = check
+            flags.addWidget(check)
+        box = QGroupBox(_("Window"))
+        box.setLayout(flags)
+        self.add(box)
+
+        note = QLabel(_("Readers are free to ignore all of this."))
+        note.setWordWrap(True)
+        self.add(note)
+
+        self.finish()
+
+    @staticmethod
+    def _select(combo, data):
+        index = combo.findData(data)
+        combo.setCurrentIndex(index if index >= 0 else 0)
+
+    def value(self) -> "viewer.Preferences":
+        return viewer.Preferences(
+            page_mode=self.page_mode.currentData(),
+            page_layout=self.page_layout.currentData(),
+            flags=frozenset(name for name, check in self.flags.items()
+                            if check.isChecked()),
+        )
 
 
 class EncryptionPasswordDialog(BaseDialog):
@@ -977,6 +1312,43 @@ def help_sections():
               "bookmarks pointing at the original are left behind with nowhere "
               "to go. Moving keeps the page itself, and its bookmarks come "
               "with it."),
+        ]),
+        (_("Stamping and tiling"), [
+            _("<b>Page ▸ Add Page Numbers…</b> and <b>Page ▸ Add Watermark…</b> "
+              "draw text onto the selected pages. Both add a <i>layer</i> "
+              "rather than rewriting the page, so both can be undone and "
+              "neither touches the file you opened."),
+            _("Page numbers follow the arrangement, not the source document: "
+              "they are numbered in the order the pages are in now. "
+              "<code>{n}</code> in the format is the page number and "
+              "<code>{total}</code> the number of pages, so "
+              "<code>Page {n} of {total}</code> does what it looks like."),
+            _("<b>Arrange ▸ Pages per Sheet…</b> tiles several pages onto one, "
+              "in reading order — the printer's <i>N-up</i>. The sheet turns "
+              "sideways when that lets the pages come out larger, which is why "
+              "two-up gives a landscape sheet and four-up does not."),
+        ]),
+        (_("Saving a document"), [
+            _("<b>Optimize for the web</b> in Preferences lays the saved file "
+              "out so a browser can show the first page before the rest has "
+              "arrived. <b>Compress</b> repacks its streams and objects; how "
+              "much that saves depends entirely on the file, and one full of "
+              "photographs will barely move."),
+            _("<b>File ▸ Remove All Metadata</b> is a switch, like Password: "
+              "turn it on and the next save writes a document with no title, "
+              "no author and no record of what produced it. Edit Properties "
+              "greys out while it is on, because there would be nothing to "
+              "edit."),
+            _("<b>File ▸ Viewer Preferences…</b> is how the saved document asks "
+              "a reader to open it — with the bookmarks showing, two pages at "
+              "a time, and so on. Readers are free to ignore all of it. The "
+              "settings are read from the file you opened, so a document that "
+              "already had them keeps them."),
+            _("<b>File ▸ Repair Document…</b> rebuilds a damaged PDF. It works "
+              "on a file you pick rather than the one on screen, because the "
+              "file worth repairing is usually one this application cannot "
+              "open properly either. It reports what it found before writing "
+              "anything."),
         ]),
         (_("Mouse"), [
             _("<b>Ctrl + scroll</b> — zoom"),

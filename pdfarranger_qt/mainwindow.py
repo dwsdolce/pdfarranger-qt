@@ -47,13 +47,13 @@ from PySide6.QtWidgets import (
 
 from . import APP_NAME, PROJECT_URL, UPSTREAM_URL, __version_string__
 from .settings import app_settings
-from . import (booklet, clipboard, dialogs, layers, printing, raster,
-               reader, theme)
+from . import (booklet, clipboard, dialogs, layers, nup, printing, raster,
+               reader, repair, stamp, theme, viewer)
 from .core import DocumentSet, PDFDocError, Page
 from .i18n import gettext_ as _
 from .i18n import menu_label as _m
 from .i18n import ngettext
-from .export import export
+from .export import SaveOptions, export
 from .model import PageListModel
 from .outline import Outline
 from .recent import RecentFiles
@@ -121,6 +121,10 @@ class MainWindow(QMainWindow):
         #: document, and writing it to QSettings would put a password
         #: in the registry in clear text.
         self.output_password = None
+        #: What the saved document asks a viewer to do when it is opened.
+        #: Read from the file when one is opened, so a plain round trip keeps
+        #: what it already said; see `viewer`.
+        self.viewer_prefs = viewer.Preferences()
         #: True while the reader is showing. The grid is always index 0.
         #: Reading is the default; an empty window is a reader with no document.
         self.read_mode = True
@@ -357,6 +361,15 @@ class MainWindow(QMainWindow):
         self.act_gen_booklet = QAction(_m("_Generate (imposition)"), self)
         self.act_gen_booklet.triggered.connect(self.generate_booklet)
 
+        self.act_nup = QAction(_m("Pages per S_heet…"), self)
+        self.act_nup.triggered.connect(self.pages_per_sheet)
+
+        self.act_page_numbers = QAction(_m("Add Page N_umbers…"), self)
+        self.act_page_numbers.triggered.connect(self.add_page_numbers)
+
+        self.act_watermark = QAction(_m("Add _Watermark…"), self)
+        self.act_watermark.triggered.connect(self.add_watermark)
+
         self.act_password = QAction(_m("Pass_word"), self)
         self.act_password.setCheckable(True)
         self.act_password.triggered.connect(self.set_password)
@@ -364,6 +377,16 @@ class MainWindow(QMainWindow):
         self.act_properties = QAction(_m("Edit _Properties"), self)
         self.act_properties.setShortcut(QKeySequence("Alt+Return"))
         self.act_properties.triggered.connect(self.edit_properties)
+
+        self.act_viewer_prefs = QAction(_m("_Viewer Preferences…"), self)
+        self.act_viewer_prefs.triggered.connect(self.edit_viewer_preferences)
+
+        self.act_strip_metadata = QAction(_m("Remove All _Metadata"), self)
+        self.act_strip_metadata.setCheckable(True)
+        self.act_strip_metadata.triggered.connect(self.set_strip_metadata)
+
+        self.act_repair = QAction(_m("_Repair Document…"), self)
+        self.act_repair.triggered.connect(self.repair_document)
 
         # -- phase 3: raster, search, print, preferences --------------------
         self.act_crop_white = QAction(_m("Crop White Borders"), self)
@@ -533,7 +556,11 @@ class MainWindow(QMainWindow):
         m.addAction(self.act_print)
         m.addSeparator()
         m.addAction(self.act_properties)
+        m.addAction(self.act_viewer_prefs)
+        m.addAction(self.act_strip_metadata)
         m.addAction(self.act_password)
+        m.addSeparator()
+        m.addAction(self.act_repair)
         m.addSeparator()
         m.addAction(self.act_close)
         m.addAction(self.act_quit)
@@ -593,6 +620,9 @@ class MainWindow(QMainWindow):
         extract_menu.addAction(self.act_copy_text)
         extract_menu.addAction(self.act_copy_image)
         m.addAction(self.act_explode)
+        m.addSeparator()
+        m.addAction(self.act_page_numbers)
+        m.addAction(self.act_watermark)
 
         m = self._menu(bar, _("Arrange"))
         select_menu = self._menu(m, _m("_Select"))
@@ -616,6 +646,7 @@ class MainWindow(QMainWindow):
         m.addSeparator()
         m.addAction(self.act_split_pages)
         m.addAction(self.act_merge_pages)
+        m.addAction(self.act_nup)
         m.addSeparator()
         booklet_menu = self._menu(m, _m("_Booklet"))
         booklet_menu.addAction(self.act_gen_booklet)
@@ -752,7 +783,8 @@ class MainWindow(QMainWindow):
         and File is filtered to the commands that write.
         """
         never_edits = {"File", "View", "Help"}
-        writes_in_file = {self.act_import, self.act_password}
+        writes_in_file = {self.act_import, self.act_password,
+                          self.act_viewer_prefs, self.act_strip_metadata}
         out = []
         for title, actions in self._shortcut_groups():
             if title in never_edits:
@@ -784,13 +816,18 @@ class MainWindow(QMainWindow):
                     self.act_zoom_fit_width,
                     self.act_export_all_multi,
                     self.act_insert_blank, self.act_select_range,
-                    self.act_properties, self.act_print, self.act_find,
+                    self.act_viewer_prefs, self.act_strip_metadata,
+                    self.act_print, self.act_find,
                     self.act_find_next, self.act_find_prev, self.act_find_all):
             act.setEnabled(has_pages)
         for act in (self.act_paste, self.act_paste_before,
                     self.act_paste_odd, self.act_paste_even,
                     self.act_paste_overlay, self.act_paste_underlay):
             act.setEnabled(clipboard.is_page_data(QApplication.clipboard().text()))
+        # Editing the properties of a document that is about to have all of
+        # them thrown away is a contradiction; the checkbox says which wins.
+        self.act_properties.setEnabled(
+            has_pages and not self.act_strip_metadata.isChecked())
         self.act_undo.setEnabled(self.model.undo.can_undo)
         self.act_redo.setEnabled(self.model.undo.can_redo)
         undo_label = self.model.undo.undo_label()
@@ -882,12 +919,13 @@ class MainWindow(QMainWindow):
                     self.act_crop_white, self.act_export_png, self.act_export_jpg,
                     self.act_export_raster_pdf,
                     self.act_export_raster_pdf_jpg, self.act_copy_text,
-                    self.act_copy_image, self.act_explode):
+                    self.act_copy_image, self.act_explode,
+                    self.act_page_numbers, self.act_watermark):
             act.setEnabled(has_sel)
-        # Reversing, swapping and unimposing all need a contiguous run.
+        # Reversing, swapping, unimposing and tiling all need a contiguous run.
         contiguous = self._is_contiguous(rows)
         for act in (self.act_reverse, self.act_swap, self.act_split_booklet,
-                    self.act_gen_booklet):
+                    self.act_gen_booklet, self.act_nup):
             act.setEnabled(contiguous)
         self.status_selection.setText(
             ngettext("%d page selected", "%d pages selected", len(rows)) % len(rows)
@@ -981,7 +1019,30 @@ class MainWindow(QMainWindow):
         self.model.insert_pages(len(self.model.pages) if at is None else at,
                                 added, select=not whole_document)
         self._load_outline()
+        if whole_document:
+            self._load_viewer_prefs()
         return len(added)
+
+    def _load_viewer_prefs(self):
+        """Take the opened document's viewer preferences as this window's.
+
+        Only when *opening*, not when importing: a file added to an existing
+        document has no business rewriting how the whole thing opens.
+
+        Saving builds a new PDF rather than editing the original, so these keys
+        would otherwise be dropped by every round trip. Reading them here is
+        what makes them survive one.
+        """
+        import pikepdf
+
+        if not self.docs.docs:
+            return
+        try:
+            with pikepdf.open(self.docs.docs[0].copyname,
+                              password=self.docs.docs[0].password) as pdf:
+                self.viewer_prefs = viewer.Preferences.read(pdf)
+        except Exception:  # noqa: BLE001 - a file we cannot reopen keeps the default
+            self.viewer_prefs = viewer.Preferences()
 
     def _load_outline(self):
         """Read the bookmarks out of the loaded files (D20).
@@ -1400,6 +1461,12 @@ class MainWindow(QMainWindow):
                 # have somewhere to point; a whole document keeps everything,
                 # including the headings the user put there deliberately.
                 prune_outline=len(pages) != len(self.model.pages),
+                options=SaveOptions(
+                    linearize=self._preference("export/linearize"),
+                    compress=self._preference("export/compress"),
+                    strip_metadata=self.act_strip_metadata.isChecked(),
+                    viewer=self.viewer_prefs,
+                ),
             )
         except Exception as e:  # noqa: BLE001 - surfaced to the user
             QApplication.restoreOverrideCursor()
@@ -1432,6 +1499,8 @@ class MainWindow(QMainWindow):
         self.current_path = None
         self.modified = False
         self.metadata = {}
+        self.viewer_prefs = viewer.Preferences()
+        self.act_strip_metadata.setChecked(False)
         self.opened_paths = set()
         self.search.invalidate()
         # The outline goes with the document it came from. It is not derived
@@ -1895,6 +1964,75 @@ class MainWindow(QMainWindow):
         self.model.replace_rows(rows, booklet.generate(pages, self.docs))
         self._mark_modified()
 
+    def pages_per_sheet(self):
+        """Tile the selected pages onto sheets (N-up).
+
+        The mirror image of Split Pages, and the same rule about sizes as
+        booklet imposition: equal cells mean the pages have to be equal too.
+        """
+        pages = self._selected_pages()
+        rows = self.view.selected_rows()
+        if not nup.can_generate(pages):
+            QMessageBox.warning(self, APP_NAME, _("All pages must have the same size."))
+            return
+        if not self._is_contiguous(rows):
+            QMessageBox.warning(
+                self, APP_NAME,
+                _("The page selection is not contiguous."))
+            return
+        result = dialogs.NUpDialog(self).get_value()
+        if result is None:
+            return
+        if result["columns"] * result["rows"] == 1:
+            return  # one page per sheet is what it already is
+        self.model.undo.commit(_("Pages per Sheet"))
+        self.model.replace_rows(rows, nup.generate(
+            pages, result["columns"], result["rows"], self.docs,
+            orientation=result["orientation"], margin=result["margin"]))
+        self._mark_modified()
+
+    def add_page_numbers(self):
+        """Stamp a number onto each selected page.
+
+        Numbered in the order they are selected in, which is the order they
+        are in: the number follows the arrangement, not the source document.
+        """
+        pages = self._selected_pages()
+        if not pages:
+            return
+        result = dialogs.PageNumbersDialog(self).get_value()
+        if result is None:
+            return
+        self.model.undo.commit(_("Add Page Numbers"))
+        stamp.add_page_numbers(pages, self.docs, template=result["template"],
+                               start=result["start"],
+                               skip_first=result["skip_first"],
+                               style=result["style"])
+        self._stamped(pages)
+
+    def add_watermark(self):
+        """Stamp the same text across each selected page."""
+        pages = self._selected_pages()
+        if not pages:
+            return
+        result = dialogs.WatermarkDialog(self).get_value()
+        if result is None or not result["text"].strip():
+            return
+        self.model.undo.commit(_("Add Watermark"))
+        stamp.add_watermark(pages, self.docs, result["text"],
+                            style=result["style"])
+        self._stamped(pages)
+
+    def _stamped(self, pages):
+        """Redraw the pages a stamp was just composited onto.
+
+        The stamp is a layer on the existing Page objects rather than a new
+        page, so nothing about the list changed and the model has no reason to
+        know a repaint is due unless it is told.
+        """
+        self.model.touch([self.model.pages.index(page) for page in pages])
+        self._mark_modified()
+
     def edit_properties(self):
         result = dialogs.PropertiesDialog(self.metadata, self).get_value()
         if result is None:
@@ -1902,6 +2040,75 @@ class MainWindow(QMainWindow):
         if result != self.metadata:
             self.metadata = result
             self._mark_modified()
+
+    def edit_viewer_preferences(self):
+        """How the saved document asks a reader to open it."""
+        result = dialogs.ViewerPreferencesDialog(self.viewer_prefs, self).get_value()
+        if result is None:
+            return
+        if result != self.viewer_prefs:
+            self.viewer_prefs = result
+            self._mark_modified()
+
+    def set_strip_metadata(self, checked: bool):
+        """Throw away every scrap of document information on the next save.
+
+        A toggle rather than a command, like the password, because it is not
+        something that happens now: it is a decision about what gets written.
+        Both the XMP packet and the older Info dictionary go, along with the
+        properties edited here -- the point is a file that says nothing about
+        who made it or with what.
+        """
+        self._refresh_state()
+        self._mark_modified()
+        self.statusBar().showMessage(
+            _("All metadata will be removed when the document is saved.")
+            if checked else
+            _("Metadata will be kept."), 4000)
+
+    def repair_document(self):
+        """Rebuild a damaged PDF, without having to arrange it first.
+
+        Works on a file chosen here rather than on the loaded document,
+        because the file worth repairing is usually one this application
+        cannot open properly either.
+        """
+        path, _f = QFileDialog.getOpenFileName(
+            self, _("Repair Document…"), self.import_dir, PDF_FILTER)
+        if not path:
+            return
+        QApplication.setOverrideCursor(Qt.WaitCursor)
+        try:
+            found = repair.diagnose(path)
+        finally:
+            QApplication.restoreOverrideCursor()
+        if not found.readable:
+            QMessageBox.critical(
+                self, APP_NAME, found.summary() + f"\n{found.detail}")
+            return
+        text = found.summary()
+        text += "\n" + ngettext("%d page", "%d pages", found.pages) % found.pages
+        if found.detail:
+            text += "\n\n" + found.detail
+        text += "\n\n" + _("Write a rebuilt copy?")
+        if QMessageBox.question(self, APP_NAME, text) != QMessageBox.Yes:
+            return
+        stem = os.path.splitext(os.path.basename(path))[0]
+        start = os.path.join(os.path.dirname(path), stem + "-repaired.pdf")
+        out, _f = QFileDialog.getSaveFileName(
+            self, _("Save Repaired Document"), start, PDF_FILTER)
+        if not out:
+            return
+        QApplication.setOverrideCursor(Qt.WaitCursor)
+        try:
+            repair.repair(path, out,
+                          linearize=self._preference("export/linearize"))
+        except Exception as e:  # noqa: BLE001 - surfaced to the user
+            QMessageBox.critical(self, APP_NAME, _("Could not save:") + f"\n{e}")
+            return
+        finally:
+            QApplication.restoreOverrideCursor()
+        self.statusBar().showMessage(_("Saved") + f" {out}", 4000)
 
     # -- phase 3 handlers --------------------------------------------------
 

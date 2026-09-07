@@ -179,11 +179,10 @@ operations *on a page* (Page) from operations *on document order and composition
 Legend: `[x]` done and tested · `[~]` partially done · `[ ]` not started
 
 Ordered by dependency, not by date, so the numbers do not run in the order the
-work happened: **phase 4 is outstanding while phase 5 is complete**, and that is
-the point. Phase 5 retired GTK and shipped installers — that is done. Finishing
-the *feature* port is phase 4, and until those boxes are ticked this is not yet a
-drop-in replacement for upstream. Phases 6 and 7 are additions on top, so they
-follow.
+work happened — phase 5 retired GTK and shipped installers before phase 4 had
+finished closing the parity gaps, and that was the point. Everything through
+phase 6a is complete, and so is phase 8. What is left is the three items D12
+deprioritised in phase 7.
 
 ### Phase 0 — shared plumbing — **complete**
 
@@ -699,13 +698,18 @@ David's own decision, not blocked.
             a no-op when dropped where it already was
 
 
-### Phase 8 — the PDF24 comparison — *backlog, nothing started*
+### Phase 8 — the PDF24 comparison — **complete**
 
 Section 1 names dissatisfaction with **PDF24 Toolbox** as the reason this project
 exists, so its tool list is the fairest external yardstick there is. Scored
 against the live menus on 2026-09-07: **17 of its 37 tools are already here**,
 four more are cheap, three are real work worth doing, and thirteen are things a
 page arranger should not be.
+
+All seven boxes below are now ticked, so everything from that list judged worth
+having is here. One thing under a ticked box is still open: **Compress** is two
+features wearing one name, and only the cheap half is built — see its entry for
+why the other half is where the effort is.
 
 **Already covered.** Organize · Merge · Split · Extract pages · Remove pages ·
 Rotate · Sort · Crop · Change page size · Images to PDF · PDF to images ·
@@ -718,26 +722,45 @@ different job.
 
 **Cheap, and in character** — each is pikepdf against machinery already here:
 
-- [ ] **Web optimize** — `pdf.save(linearize=True)`, one save option
-- [ ] **Remove all metadata** — `metadata.py` exists; this is the "clear it" case
-- [ ] **Edit viewer preferences** — `/ViewerPreferences`, `/PageLayout`,
-      `/PageMode`. Pairs with D20: having authored an outline, "open with the
-      bookmarks pane showing" is its natural companion
-- [ ] **Repair** — pikepdf already recovers on open; this is "save the recovery"
+- [x] **Web optimize** — `pdf.save(linearize=True)`, one save option.
+      A Preferences checkbox, applied to every save: `export.SaveOptions`
+- [x] **Remove all metadata** — File ▸ Remove All Metadata, a toggle like the
+      password, because it is a decision about what gets written rather than
+      something that happens now. Both the XMP packet and the older Info
+      dictionary go; Edit Properties greys out while it is on
+- [x] **Edit viewer preferences** — `/ViewerPreferences`, `/PageLayout`,
+      `/PageMode`, in `viewer.py`. Pairs with D20: having authored an outline,
+      "open with the bookmarks pane showing" is its natural companion. Read from
+      the file when one is *opened* — saving builds a brand new PDF, so without
+      that every round trip would drop them
+- [x] **Repair** — pikepdf already recovers on open; this is "save the recovery".
+      `repair.py`. The damage is found by opening *twice*: pikepdf recovers
+      silently by default, so `attempt_recovery=False` is the only thing that
+      makes it admit the problem (measured; there is no `Pdf.check()` in
+      pikepdf 10)
 
 **Real work, but the right kind:**
 
-- [ ] **Pages per sheet (N-up).** The one worth arguing for. Tier 1 page
+- [x] **Pages per sheet (N-up).** The one worth arguing for. Tier 1 page
       composition, built from blank pages and `paste_as_layer` — the booklet
       imposition machinery pointed at a different arrangement — and upstream does
-      not have it
-- [ ] **Add page numbers** and **Add watermark** share one missing primitive:
+      not have it. `nup.py`, Arrange ▸ Pages per Sheet…, beside Split and Merge
+      because it is the same kind of thing. Sheet orientation is chosen to waste
+      the least: two portrait pages side by side want a landscape sheet, and a
+      2x2 grid wants the orientation it already had
+- [x] **Add page numbers** and **Add watermark** share one missing primitive:
       drawing text onto a page. Build it once and both follow; build it for
       neither and neither is possible. A *PDF* watermark is already Paste As
-      Overlay; it is the text case that is missing
-- [ ] **Compress.** Two features wearing one name. `compress_streams` plus object
-      streams is trivial and gains little; image downsampling is what people mean
-      by it, and the raster machinery is already here. Middling value, real effort
+      Overlay; it is the text case that is missing. `stamp.py` builds it with
+      **QPdfWriter** rather than by hand-writing a content stream — see §6 — and
+      both commands are one `Style` apart. A stamp is a generated one-page PDF
+      composited as an overlay, so it is undoable and the source file is never
+      touched
+- [x] **Compress**, the trivial half. `compress_streams` plus object streams,
+      a Preferences checkbox beside Web optimize. Gains little on a file full of
+      already-compressed images, which is why the label promises nothing.
+      Image **downsampling** — what people usually mean by the word — is still
+      open, and is where the effort is; the raster machinery is already here
 
 **Out of scope (D21).** Convert to/from PDF · Create invoice · Create job
 application · Create fillable form · Annotate · Edit PDF · Sign · Compare · OCR ·
@@ -1028,6 +1051,11 @@ One file per package module, so a failure names the layer it is in:
 | `test_window.py` | `MainWindow` actions, driven through the actions themselves |
 | `test_packaging.py` | project metadata, and a guard against GTK creeping back |
 | `test_exporter_outlines.py` | salvaged from upstream, unchanged |
+| `test_nup.py` | pages per sheet: grid order, orientation, gaps |
+| `test_stamp.py` | page numbers and watermarks, and the text primitive |
+| `test_save_options.py` | linearize, strip metadata, compress, viewer prefs |
+| `test_viewer_prefs.py` · `test_repair.py` | as named |
+| `test_phase8_ui.py` | the window's end of all of phase 8 |
 
 `tests/conftest.py` holds what must happen once per process and before any Qt
 import — the offscreen platform, the single `QApplication`, the message-box
@@ -2666,6 +2694,75 @@ What that means concretely:
 Given the recommendation above is to keep QtPdf and own the view, this decision
 should not need making at all.
 
+
+### Drawing text onto a page, and why not by hand
+
+`stamp.py` needs one thing PDF Arranger has never needed: text that is not
+already in a document. Page numbers and watermarks are the same operation with
+a different `Style`, so the question was only how to draw a string.
+
+The obvious answer is to write the content stream directly — `BT /F1 12 Tf ...
+Tj ET` against one of the base-14 fonts, which need no embedding. It looks like
+the smaller dependency right up until the text has to be *placed*: centring a
+string needs its width, which needs font metrics, which means shipping an AFM
+widths table and maintaining it. And the base-14 encodings are Latin-1, so a
+document numbered in Greek or Japanese comes out as mojibake — from an
+application whose 33 translation catalogues are the reason D2 exists.
+
+**QPdfWriter** has the metrics and the font already, embeds a subset of whatever
+it used, and takes Unicode. Resolution is pinned to 72 dpi so one Qt logical
+unit is one PDF point and nothing anywhere converts units. Verified: the output
+carries a real `/Type0` font and `QPdfDocument.getAllText()` reads
+"Page 1 of 2" back out — the numbers are selectable and searchable text, not
+outlines and not an image.
+
+Two things found while building it, both worth knowing:
+
+- `QFont("Helvetica")` **is not Helvetica on Windows** — Qt resolves it to
+  Tahoma. `Style.qfont()` sets a family *list* instead, so the classic name is
+  tried first and each platform's real sans follows.
+- The **offscreen platform has no fonts at all**: `QFontDatabase.families()` is
+  empty, and every string draws as the box a missing glyph produces. That is
+  the whole test suite's platform. The boxes land where the glyphs would, so
+  position is still measurable, but "is this real text" is not — so
+  `stamp.has_fonts()` gates the two tests that ask, and they run on any machine
+  with fonts. A suite that silently proved less than it looked like it proved
+  would have been the worse outcome.
+
+One more trap, caught by a test rather than by reading: `QComboBox.addItem`
+round-trips its item data through `QVariant`, so a tuple stored with `addItem`
+does not come back equal to a tuple passed to `findData`. The N-up preset combo
+stores `"2x2"` strings for that reason.
+
+### Compressing turned a damaged file into an unreadable one
+
+Found while testing the phase 8 save options, on the project's own `test.pdf`.
+
+The "preserve first document" save (`export_doc_job`) preserves the first
+document's *faults* along with everything else. `tests/test.pdf` is hand-written
+and ends `xref
+trailer << /Root 1 0 R >>
+startxref
+0` — no `/Size`, and a
+stub cross-reference table. qpdf reconstructs on the way in, warns, and carries
+the trailer out as it found it.
+
+With a plain cross-reference table that only made the output untidy: every
+reader reconstructs, which is why nothing had ever noticed. Turning on
+**Compress** switches the output to a cross-reference *stream*, and a stream
+whose `/Size` is missing cannot be reconstructed from at all — pikepdf's own
+message is `unable to find /Root dictionary`. A damaged input plus one checkbox
+produced a file nothing would open.
+
+`_ensure_trailer_size()` puts the key back before the write. qpdf renumbers
+objects contiguously from 1 as it writes, which is what makes the object count
+the right answer. It runs on every job-path save, not only when compressing:
+the trailer was wrong either way.
+
+Worth stating plainly because the obvious reading is that Compress broke it. It
+did not — it removed the slack that had been hiding a pre-existing bug. Measured
+before and after with `pikepdf.open(..., attempt_recovery=False)`, which is the
+same trick `repair.py` is built on.
 
 ### A note on content streams
 
