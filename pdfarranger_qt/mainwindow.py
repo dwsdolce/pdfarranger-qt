@@ -75,6 +75,7 @@ class MainWindow(QMainWindow):
         self.renderer = Renderer(self)
         self.model = PageListModel(self.renderer, self)
         self.model.doc_password = self._password_for
+        self.model.doc_files = self.docs.files_for_export
         self.view = PageView(self.model, self)
         self.reader = reader.ReaderView(self)
         # One stack, two modes. The reader is what a window shows, opened or

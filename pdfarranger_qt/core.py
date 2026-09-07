@@ -381,8 +381,16 @@ class Page(BasePage):
         )
 
     def render_key(self, width: int) -> tuple:
-        """Cache key identifying a rendered bitmap of this page."""
-        return (self.copyname, self.npage, self.angle, self.crop, self.hide, width)
+        """Cache key identifying a rendered bitmap of this page.
+
+        The layer stack is part of the key. A page whose content is composited
+        -- an N-up sheet, a booklet sheet, a page with a watermark -- looks
+        entirely different from its bare source, and without this the cache
+        would keep answering with the bitmap it had before the layer arrived.
+        """
+        return (self.copyname, self.npage, self.angle, self.crop, self.hide, width,
+                tuple((lp.copyname, lp.npage, lp.angle, lp.scale, lp.laypos,
+                       lp.crop, lp.offset) for lp in self.layerpages))
 
     def serialize(self) -> str:
         """Convert to string for copy/paste operations."""

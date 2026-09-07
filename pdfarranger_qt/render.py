@@ -123,9 +123,11 @@ class RenderTask:
     thread stays free to mutate or delete pages while a render is in flight.
     """
 
-    __slots__ = ("key", "copyname", "password", "npage", "angle", "crop", "hide", "width")
+    __slots__ = ("key", "copyname", "password", "npage", "angle", "crop", "hide",
+                 "width", "page", "files")
 
-    def __init__(self, key, copyname, password, npage, angle, crop, hide, width):
+    def __init__(self, key, copyname, password, npage, angle, crop, hide, width,
+                 page=None, files=()):
         self.key = key
         self.copyname = copyname
         self.password = password
@@ -134,6 +136,13 @@ class RenderTask:
         self.crop = crop
         self.hide = hide
         self.width = width
+        #: A *duplicate* of the Page, given only when it carries layers. The
+        #: plain fields above cannot describe a composited page, and a copy is
+        #: what keeps the UI thread free to edit the original meanwhile.
+        self.page = page
+        #: ``(copyname, password)`` per source file, for the same case: a layer
+        #: can come from a different document than the page it sits on.
+        self.files = files
 
     def render(self, documents) -> Optional[QImage]:
         """Render this page, with its edits applied, from ``documents``.
@@ -142,6 +151,8 @@ class RenderTask:
         the grid needs the page's angle, crop and hide applied here, and the
         reader needs none of that. See PORTING-NOTES.md section 6.
         """
+        if self.page is not None and self.page.layerpages:
+            return self._render_composited()
         doc = documents.get(self.copyname, self.password)
         if doc is None or not 0 < self.npage <= doc.pageCount():
             return None
@@ -185,6 +196,48 @@ class RenderTask:
             )
             image = image.copy(clip.intersected(image.rect()))
 
+        self._paint_hidden(image, self.hide)
+        return image
+
+    def _render_composited(self) -> Optional[QImage]:
+        """Render a page whose content is composited from layers.
+
+        Done by exporting the one page to memory and rendering *that*, rather
+        than by painting the layers here. A layer stack carries offsets, crops
+        and a rescaling for every nested layer, and all of that arithmetic is
+        already written once, in the exporter -- which is why read mode has
+        been drawing these pages correctly all along. A second implementation
+        in the renderer would only be a second thing to get wrong.
+
+        It costs a pikepdf export per bitmap, which is why only pages that
+        actually have layers take this path. The result is cached like any
+        other, so it is paid once per page per zoom level.
+        """
+        from .export import get_in_memory_pdf
+
+        try:
+            data = get_in_memory_pdf([self.page], list(self.files))
+        except Exception:  # noqa: BLE001 - a page we cannot export has no thumbnail
+            return None
+        with MemoryDocument(data) as doc:
+            if not doc.ok or doc.page_count() < 1:
+                return None
+            size = doc.document.pagePointSize(0)
+            width, height = size.width(), size.height()
+            if width <= 0 or height <= 0:
+                return None
+            # The export baked in the rotation, the crop and the scale, so the
+            # page that comes back is already the one the grid should show.
+            scale = self.width / width
+            full = QSize(max(1, round(width * scale)), max(1, round(height * scale)))
+            options = QPdfDocumentRenderOptions()
+            options.setScaledSize(full)
+            try:
+                image = doc.document.render(0, full, options)
+            except Exception:  # noqa: BLE001 - PDFium can be unhappy
+                return None
+        if image.isNull():
+            return None
         self._paint_hidden(image, self.hide)
         return image
 

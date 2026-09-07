@@ -2734,6 +2734,44 @@ round-trips its item data through `QVariant`, so a tuple stored with `addItem`
 does not come back equal to a tuple passed to `findData`. The N-up preset combo
 stores `"2x2"` strings for that reason.
 
+### A composited page drew as an empty page in the grid
+
+Reported against Pages per Sheet: the sheets it produced were blank in the
+thumbnail grid and correct in read mode.
+
+The render task carried plain values copied off the `Page` -- source file, page
+number, angle, crop, hide, width -- and nothing about `layerpages`. For most
+pages that is invisible, because the base page holds the content and only an
+overlay would be missing. For a page whose base is a *generated blank sheet*
+the content is entirely in the layers, so there was nothing left to draw. Read
+mode was right because it goes through the exporter (D15), which composites.
+
+Pre-existing, and older than the feature that exposed it: booklet imposition
+has produced layer-only sheets since phase 2, and Page Size ▸ Scale & Add
+Margins does too. Pages per Sheet only made it unmissable, because *every*
+sheet it produces is blank-based.
+
+The fix does not paint the layers in the renderer. A layer stack carries an
+offset, a crop and a rescaling for every nested layer, and that arithmetic is
+already written once in `layers.py` and `export.py` -- writing it a second time
+in the render worker would be a second thing to get wrong, and the two could
+then disagree about what the page looks like. Instead a page *with* layers is
+exported to memory as a single page and that is rendered, which is exactly what
+read mode does. Pages without layers keep the direct path untouched, so the
+common case pays nothing.
+
+Two things had to move with it:
+
+- `Page.render_key` now includes the layer stack. Without that the cache
+  answers a stamped page with the bitmap it had before the stamp -- the same
+  class of bug, one layer further along. The signature is built from plain
+  hashable fields rather than `LayerPage.serialize()`, because the key is
+  rebuilt on every paint of every visible cell: measured at 0.83 µs for a
+  four-layer page, against 0.3 µs for a page with none.
+- The model needed the `(copyname, password)` list to hand the exporter, so it
+  gained a `doc_files` hook beside `doc_password`. It is asked for once per
+  batch, and only when a page in that batch actually has layers.
+
 ### Compressing turned a damaged file into an unreadable one
 
 Found while testing the phase 8 save options, on the project's own `test.pdf`.

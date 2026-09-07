@@ -23,7 +23,7 @@ PDF, so undo depth costs almost nothing.
 """
 
 from dataclasses import dataclass, field
-from typing import List, Optional
+from typing import List, Optional, Tuple
 
 from PySide6.QtCore import QAbstractListModel, QModelIndex, Qt, Signal
 
@@ -508,6 +508,7 @@ class PageListModel(QAbstractListModel):
         if last < first:
             return
         tasks = []
+        files = None
         for row in range(first, last + 1):
             page = self.pages[row]
             width = self.thumb_width(page)
@@ -515,6 +516,11 @@ class PageListModel(QAbstractListModel):
             self._key_rows.setdefault(key, set()).add(row)
             if self.renderer.get(key) is not None:
                 continue
+            layered = bool(page.layerpages)
+            if layered and files is None:
+                # Asked for once per batch, and only when something needs it:
+                # a composited page can draw layers from any open document.
+                files = self.doc_files()
             tasks.append(
                 RenderTask(
                     key,
@@ -525,6 +531,10 @@ class PageListModel(QAbstractListModel):
                     page.crop,
                     page.hide,
                     width,
+                    # A copy, because the render happens on another thread and
+                    # the user is free to keep editing this page meanwhile.
+                    page=page.duplicate() if layered else None,
+                    files=tuple(files) if layered else (),
                 )
             )
         if tasks:
@@ -533,6 +543,11 @@ class PageListModel(QAbstractListModel):
     #: Overridden by the window once a DocumentSet exists.
     def doc_password(self, page: Page) -> str:
         return ""
+
+    #: Overridden by the window once a DocumentSet exists. Only a page with
+    #: layers needs it, so an unset hook is harmless for an ordinary document.
+    def doc_files(self) -> List[Tuple[str, str]]:
+        return []
 
     def _on_thumbnail_ready(self, key):
         rows = self._key_rows.get(key)
