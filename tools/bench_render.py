@@ -3,8 +3,8 @@
     tools/bench_render.py <file.pdf> [width]
 
 Written to answer whether the reader can render on the GUI thread; kept because
-the answer has to be re-checked whenever the reader's render path changes. See
-PORTING-NOTES.md section 6, "Owning the reader's view".
+the answer has to be re-checked whenever the reader's render path changes.
+
 
 Report the distribution, never the mean: the cost is bimodal, so the mean
 describes no actual page. The median says whether it feels smooth and the tail

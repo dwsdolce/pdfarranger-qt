@@ -69,7 +69,7 @@ IMPORT_FILTER = "PDF and images (*.pdf *.png *.jpg *.jpeg *.tif *.tiff *.bmp *.g
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
-        # Locked by decision D1 in PORTING-NOTES.md: this scope must not change,
+        # Locked by decision D1: this scope must not change,
         # or saved geometry and zoom are silently orphaned.
         self.settings = app_settings()
         self.docs = DocumentSet()
@@ -1462,7 +1462,7 @@ class MainWindow(QMainWindow):
     def new_window(self, paths=None):
         """Launch a second instance, optionally opening ``paths`` in it.
 
-        The application is deliberately NON_UNIQUE (§8) — every launch is its own
+        The application is deliberately NON_UNIQUE — every launch is its own
         process, which is what makes dragging pages between windows work. So this
         starts a new process rather than constructing another MainWindow: two
         windows in one process would share the undo stack's temp directory and

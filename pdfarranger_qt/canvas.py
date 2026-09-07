@@ -492,7 +492,7 @@ class PageText:
         That also means a line is whatever the *document's* text order says it
         is. On a multi-column page that can walk column 1, then column 3, then
         column 2; Acrobat does the same, because the stream really is ordered
-        that way. See PORTING-NOTES.md, *Keyboard text selection*.
+        that way.
         """
         if not text:
             return None
@@ -569,8 +569,7 @@ class PageRenderTask:
 class AsynchronousPages(QObject):
     """The reader's bitmaps, rendered off the GUI thread, with placeholders.
 
-    Replaces the synchronous source step 1 left as a seam. Section 6 measured
-    why: a quarter of the Handbook's pages miss a 60 Hz frame at 2000 px and the
+    Replaces the synchronous source step 1 left as a seam. A quarter of the Handbook's pages miss a 60 Hz frame at 2000 px and the
     worst takes 247 ms, so rendering where the painting happens stutters
     visibly. `page_image` therefore never blocks -- it answers with what it has
     and asks for what it does not.
@@ -795,7 +794,7 @@ class PageCanvas(QAbstractScrollArea):
         #: The insertion point, as ``(page, character index)``, or None. Placed
         #: by a plain click on text; what shift+arrow extends *from*. Acrobat's
         #: cursor, and like Acrobat's it does not survive a page turn, a mode
-        #: change or a reload (PORTING-NOTES, *Keyboard text selection*).
+        #: change or a reload.
         self._caret = None
         #: Where the keyboard has moved the far end to, as ``(page, index)``.
         self._caret_focus = None
@@ -992,8 +991,7 @@ class PageCanvas(QAbstractScrollArea):
         the current page changed -- which in continuous mode is simply what
         scrolling does, so extending a selection onto the next page and then
         scrolling to look at it killed the caret and the next shift+arrow
-        scrolled instead of extending. With the arrow table (PORTING-NOTES,
-        *The arrow keys*) there is no longer any reason for a position in the
+        scrolled instead of extending. With the arrow table there is no longer any reason for a position in the
         document to evaporate because the view moved: the caret is placed by a
         click and cleared by Escape or a new document, and survives everything
         else.
@@ -1272,8 +1270,7 @@ class PageCanvas(QAbstractScrollArea):
         Deliberately *not* Acrobat, which is the other way round -- it snaps a
         drag and does so with hysteresis, so the same two endpoints give
         different selections depending on the path the mouse took to reach them.
-        Here the selection is a function of its two ends and nothing else. See
-        PORTING-NOTES.md section 6.
+        Here the selection is a function of its two ends and nothing else.
 
         Indices rather than points, unlike the drag, because deciding which end
         moves means asking which comes first in *reading* order. Comparing
@@ -1419,7 +1416,7 @@ class PageCanvas(QAbstractScrollArea):
         page text's own, split on its newlines. Which line comes next is
         therefore the *document's* text order -- on a multi-column page that can
         go from column one to column three. Acrobat does the same and for the
-        same reason; see PORTING-NOTES.md.
+        same reason.
         """
         text = self._text.text(page)
         bounds = self._text.line_bounds(text, index)
@@ -1464,7 +1461,7 @@ class PageCanvas(QAbstractScrollArea):
 
         ``movement`` is "character", "word" or "line". Exact in every case: a
         keypress is a precise gesture, so unlike the mouse it never snaps to a
-        whole word (see PORTING-NOTES.md, *Extending a selection*).
+        whole word.
         """
         if self._caret is None or self._document is None:
             return False
@@ -1734,7 +1731,7 @@ class PageCanvas(QAbstractScrollArea):
         if page < 0 or page >= self._layout.page_count:
             return False
         # `location` is (0, 0) for every destination type but /XYZ -- QtPdf
-        # understands no other, verified across all six (section 6). So a
+        # understands no other, verified across all six. So a
         # /FitR or /FitH link lands at the top of the right page rather than at
         # the right spot on it, which is the document's fault and not ours, and
         # is still better than not moving at all.
@@ -1830,7 +1827,7 @@ class PageCanvas(QAbstractScrollArea):
 
         The tooltip is worth more here than in most readers. Most of this
         document's links are not the document's at all -- PDFium infers them
-        from the text (see PORTING-NOTES.md section 6) -- so what a link points
+        from the text -- so what a link points
         at is not always what the words under the cursor appear to say, and a
         truncated or rejoined URL is invisible until you have already followed
         it.
@@ -2041,8 +2038,8 @@ class PageCanvas(QAbstractScrollArea):
         nothing = scroll, Option = move the caret, Shift = extend the selection,
         Cmd = jump to an edge, Fn = a bigger jump. Nothing here depends on
         whether a caret exists, which is the point: reading must not behave
-        differently because you clicked on a word earlier. See PORTING-NOTES.md,
-        *The arrow keys*, for what Acrobat does instead and why it was not
+        differently because you clicked on a word earlier. Acrobat behaves
+        otherwise, and that was considered and not
         copied.
 
         Explicit modifiers rather than `QKeySequence` standard keys, unlike Copy

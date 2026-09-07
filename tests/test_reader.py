@@ -879,7 +879,7 @@ class TestReaderFastPath(unittest.TestCase):
     """Phase 6a: an unmodified page list opens the source, not an export.
 
     The export costs 3.6 s and peaks at 1.7 GB on a 1590 page book to reproduce
-    a file that is already on disk -- see PORTING-NOTES.md section 6. These
+    a file that is already on disk. These
     assert the two paths are interchangeable, and that the fast one is given up
     the moment anything is edited.
     """

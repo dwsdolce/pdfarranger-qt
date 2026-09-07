@@ -170,7 +170,7 @@ class TestDragReorder(unittest.TestCase):
         self.assertEqual(self.order(), ["0", "1", "2", "3"])
 
 class TestRubberBandScroll(unittest.TestCase):
-    """Scrolling with the button held keeps extending the rubber band (§8)."""
+    """Scrolling with the button held keeps extending the rubber band."""
 
     def setUp(self):
         from pdfarranger_qt.mainwindow import MainWindow

@@ -169,7 +169,7 @@ class ReaderView(QWidget):
         given, that file is opened directly and the export is skipped: on a
         1590 page book the export costs 3.6 s and peaks at 1.7 GB against a
         63 ms parse, for a document that is byte-for-byte what is already on
-        disk. See PORTING-NOTES.md section 6.
+        disk.
         """
         if source is not None and self._load_source(*source):
             return True
@@ -312,7 +312,7 @@ class ReaderView(QWidget):
     def _note_expansion(self, index, closed: bool):
         """Record what the user opened or shut, without calling it an edit.
 
-        Acrobat's behaviour, chosen deliberately (see PORTING-NOTES section 6):
+        Acrobat's behaviour, chosen deliberately:
         the panel's shape is written when the document is saved, but toggling it
         is not itself a modification. So reading a document and opening a
         chapter to look inside costs nothing -- no dirty flag, no undo entry --

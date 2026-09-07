@@ -24,7 +24,7 @@ both are `apply()` with a different `Style`.
 one page per stamped page and exactly its size, composited as an overlay by
 `layers.paste_as_layer` -- the same route Merge Pages and booklet imposition
 take. That is what makes stamping undoable, removable and safe on a file this
-application never modifies in place (see §5). It also means a stamp behaves
+application never modifies in place. It also means a stamp behaves
 like any other layer: rotate the page afterwards and the number rotates with
 it.
 

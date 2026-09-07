@@ -738,7 +738,7 @@ class PageView(QListView):
         super().dropEvent(event)
 
     def wheelEvent(self, event):
-        """Modifier-driven scrolling, matching the GTK version (see §8 of the notes)."""
+        """Modifier-driven scrolling, matching the GTK version."""
         modifiers = event.modifiers()
         delta = event.angleDelta().y()
         if modifiers & Qt.ControlModifier:

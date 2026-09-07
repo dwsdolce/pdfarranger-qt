@@ -149,7 +149,7 @@ class RenderTask:
 
         Moved off the worker so the worker knows nothing about what it renders:
         the grid needs the page's angle, crop and hide applied here, and the
-        reader needs none of that. See PORTING-NOTES.md section 6.
+        reader needs none of that.
         """
         if self.page is not None and self.page.layerpages:
             return self._render_composited()
@@ -342,7 +342,7 @@ class _RenderWorker(QObject):
     Nothing here knows what a task renders or where its document comes from --
     the task does the first and the provider the second. That is what lets the
     grid and the reader share one thread and one queue while keeping separate
-    documents and separate caches (see PORTING-NOTES.md section 6).
+    documents and separate caches.
     """
 
     rendered = Signal(object, QImage)  # key, image
@@ -462,7 +462,7 @@ class Renderer(QObject):
     document provider and their own budget, because their bitmaps differ by two
     orders of magnitude: a reader page at 2000 px is 21.2 MB against a 44 KB
     thumbnail, so a shared cache would hold four reader pages and evict all ~575
-    thumbnails. See PORTING-NOTES.md section 6.
+    thumbnails.
     """
 
     #: Emitted once a requested key has a bitmap available in the cache.

@@ -799,8 +799,7 @@ class DocumentSet:
         """``(copyname, password)`` if ``pages`` is a 1:1 view of one source.
 
         Read mode shows an in-memory export of the edited page list (D15), which
-        on a large document costs seconds and gigabytes -- see PORTING-NOTES.md
-        section 6, *Entering read mode costs more than reading does*. When
+        on a large document costs seconds and gigabytes. When
         nothing has been edited that export reproduces a file that already
         exists, so the reader can open it instead. Returns None when it cannot,
         and the caller exports as before.

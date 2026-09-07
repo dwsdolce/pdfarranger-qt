@@ -188,9 +188,12 @@ Windows builds are unsigned.
 **Help ▸ User Guide** inside the application covers the page operations, the mouse
 gestures and where settings are kept.
 
-[PORTING-NOTES.md](PORTING-NOTES.md) is the project document for the port: the decisions
-and why they were made, the menu design, a phase-by-phase tracker, and the implementation
-traps worth knowing about.
+[docs/](docs/) holds the project documentation — start at
+[docs/README.md](docs/README.md). The port itself is
+[docs/PORTING-NOTES.md](docs/PORTING-NOTES.md); the numbered decisions are in
+[docs/DECISIONS.md](docs/DECISIONS.md), the measured library behaviour in
+[docs/FINDINGS.md](docs/FINDINGS.md), and the reasoning behind the interface in
+[docs/DESIGN.md](docs/DESIGN.md).
 
 ## Configuration
 

@@ -1282,7 +1282,7 @@ class TestContextMenu(unittest.TestCase):
 class TestAsynchronousPages(unittest.TestCase):
     """Rendering off the GUI thread, with placeholders (phase 7 step 5).
 
-    Section 6 measured why this is not optional: a quarter of the Handbook's
+    Rendering and painting cannot share a thread: a quarter of the Handbook's
     pages miss a 60 Hz frame at 2000 px and the worst takes 247 ms, so painting
     and rendering cannot share a thread. The interface is unchanged from the
     synchronous source step 1 left as a seam -- page_image() answers with what
@@ -1341,7 +1341,7 @@ class TestAsynchronousPages(unittest.TestCase):
     def test_another_size_of_the_same_page_stands_in(self):
         """The only placeholder available: rendering a quick small one is not.
 
-        Section 6: the Handbook's worst page costs 248 ms at 1000 px and 247 ms
+        The Handbook's worst page costs 248 ms at 1000 px and 247 ms
         at 2000 px, because the cost is parsing and image decode rather than
         rasterising. So a cheap low-resolution pass does not exist.
         """

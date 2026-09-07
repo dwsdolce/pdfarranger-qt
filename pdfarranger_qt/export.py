@@ -125,8 +125,8 @@ class SaveOptions:
     linearize: bool = False
     #: Write no author, title, producer or XMP at all.
     strip_metadata: bool = False
-    #: Recompress streams and pack objects. Modest on its own; see the note in
-    #: section 6 about what "compress" usually means to people.
+    #: Recompress streams and pack objects. Modest on its own: what people
+    #: usually mean by "compress" is image downsampling, which this is not.
     compress: bool = False
     #: How a viewer should open the document: `viewer.Preferences`, or None to
     #: say nothing and let the viewer decide.

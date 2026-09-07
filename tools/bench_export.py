@@ -8,8 +8,7 @@ a whole document before it draws a page. tools/bench_render.py measures the
 drawing; this measures getting the document.
 
 Reports peak RSS as well as wall time: on a large file the memory is the worse
-half. See PORTING-NOTES.md section 6, "Entering read mode costs more than
-reading does".
+half.
 """
 import os
 import resource
