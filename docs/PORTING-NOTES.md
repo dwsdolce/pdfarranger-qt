@@ -453,9 +453,12 @@ from one.
 What remains is the three D12 items and nothing else. They are optional by
 David's own decision, not blocked.
 
-- [ ] Split view with full-page preview
-- [ ] Dual-pane merging
-- [ ] Visible undo history
+They stay **open** rather than closed, as issues, because a decision not to do
+something can change and closing it is how the item would be lost:
+
+- [#10](https://github.com/dwsdolce/pdfarranger-qt/issues/10) — split view with full-page preview
+- [#11](https://github.com/dwsdolce/pdfarranger-qt/issues/11) — dual-pane merging
+- [#12](https://github.com/dwsdolce/pdfarranger-qt/issues/12) — visible undo history
 - [x] **Own the reader's view, on the engine we already have.** Done. Cost about
       what was predicted --
       comparable in size to phase 6. Every reader limitation met until then

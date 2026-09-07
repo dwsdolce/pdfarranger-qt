@@ -1,23 +1,20 @@
 # PDF24 comparison — phase 8
 
-[The port's goal](PORTING-NOTES.md) names dissatisfaction with PDF24 Toolbox as the reason this project exists, so its tool list is the fairest
-external yardstick there is. This is the score against it, and the work that
-came out of it.
+[The port's goal](PORTING-NOTES.md) names dissatisfaction with **PDF24 Toolbox**
+as the reason this project exists, so its tool list is the fairest external
+yardstick there is. This is the score against it, and the work that came out of
+it. The scope reasoning itself is [D21](DECISIONS.md).
 
-**Complete.** Kept as the record of what was judged in scope and what was not;
-the scope reasoning itself is [D21](DECISIONS.md).
+**Complete apart from [#8](https://github.com/dwsdolce/pdfarranger-qt/issues/8).**
 
-
-The port's goal names dissatisfaction with **PDF24 Toolbox** as the reason this project
-exists, so its tool list is the fairest external yardstick there is. Scored
-against the live menus on 2026-09-07: **17 of its 37 tools are already here**,
+Scored against the live menus on 2026-09-07: **17 of its 37 tools are already here**,
 four more are cheap, three are real work worth doing, and thirteen are things a
 page arranger should not be.
 
-All seven boxes below are now ticked, so everything from that list judged worth
-having is here. One thing under a ticked box is still open: **Compress** is two
-features wearing one name, and only the cheap half is built — see its entry for
-why the other half is where the effort is.
+Everything from that list judged worth having is built, with one exception that
+is marked `[~]` rather than `[x]`: **Compress** is two features wearing one
+name, and only the cheap half exists. Image downsampling — what people usually
+mean by the word — is [#8](https://github.com/dwsdolce/pdfarranger-qt/issues/8).
 
 **Already covered.** Organize · Merge · Split · Extract pages · Remove pages ·
 Rotate · Sort · Crop · Change page size · Images to PDF · PDF to images ·
@@ -65,7 +62,13 @@ different job.
       both commands are one `Style` apart. A stamp is a generated one-page PDF
       composited as an overlay, so it is undoable and the source file is never
       touched
-- [x] **Compress**, the trivial half. `compress_streams` plus object streams,
+- [~] **Compress** — *partly*, and the box says so.
+      Written as `[x]` at first with the caveat below it, which is precisely how
+      it came to be believed finished: a checkbox holds one bit and "half done"
+      does not fit in it. The rest is
+      [#8](https://github.com/dwsdolce/pdfarranger-qt/issues/8).
+
+      The trivial half is done. `compress_streams` plus object streams,
       a Preferences checkbox beside Web optimize. Gains little on a file full of
       already-compressed images, which is why the label promises nothing.
       Image **downsampling** — what people usually mean by the word — is still

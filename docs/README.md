@@ -49,6 +49,17 @@ These files are the long form: the argument behind a decision, the measurements
 in full, the things that would bloat a docstring. Read them, and write them; do
 not depend on them.
 
-**Open work belongs in Issues, not here.** A checkbox in a document is a to-do
-list nobody is assigned to and nothing closes. What these files are for is what
-was decided and what was measured — the things that stay true.
+**Open work belongs in [Issues](https://github.com/dwsdolce/pdfarranger-qt/issues),
+not here.** A checkbox in a document is a to-do list nobody is assigned to and
+nothing closes. What these files are for is what was decided and what was
+measured — the things that stay true.
+
+Two consequences worth stating, because they are what makes the list trustworthy:
+
+- **A deferred item stays open, with the `deferred` label.** Closing it is how
+  it gets lost. A decision not to do something now is not a decision never to
+  do it, and the three phase-7 items are open for exactly that reason — two of
+  the original five were deprioritised and then built anyway.
+- **A body of work too large to close gets a tracking issue**, whose body
+  carries the plan and whose sub-issues are created per wave as waves start.
+  Re-scoping then edits the body instead of losing the item.
