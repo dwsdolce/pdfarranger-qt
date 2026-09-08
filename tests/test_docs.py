@@ -114,7 +114,21 @@ class TestTheDocumentsHangTogether(unittest.TestCase):
     """The documents may be ephemeral, but while they exist they should work."""
 
     def documents(self):
-        return sorted(name for name in os.listdir(DOCS) if name.endswith(".md"))
+        """Every document, `completed/` included.
+
+        Finished work moves to `docs/completed/` and stays under the same
+        checks. The first version of this walked one directory, so moving a
+        file there would have quietly removed it from every guard in this
+        file -- and its links, which now have to climb a level to reach
+        `DECISIONS.md`, are exactly the thing most likely to break in the
+        move.
+        """
+        names = [n for n in os.listdir(DOCS) if n.endswith(".md")]
+        done = os.path.join(DOCS, "completed")
+        if os.path.isdir(done):
+            names += [os.path.join("completed", n)
+                      for n in os.listdir(done) if n.endswith(".md")]
+        return sorted(names)
 
     def test_the_index_lists_every_document(self):
         """A document nothing links to is a document nobody finds."""
@@ -123,8 +137,9 @@ class TestTheDocumentsHangTogether(unittest.TestCase):
             if name == "README.md":
                 continue
             with self.subTest(document=name):
-                self.assertIn(f"({name})", index,
-                              f"docs/README.md does not link to {name}")
+                link = name.replace(os.sep, "/")
+                self.assertIn(f"({link})", index,
+                              f"docs/README.md does not link to {link}")
 
     def test_every_relative_link_resolves(self):
         for name in self.documents():
@@ -133,8 +148,9 @@ class TestTheDocumentsHangTogether(unittest.TestCase):
                 if target.startswith(("http", "#", "mailto:")):
                     continue
                 with self.subTest(f"{name} -> {target}"):
+                    here = os.path.dirname(os.path.join(DOCS, name))
                     self.assertTrue(
-                        os.path.exists(os.path.join(DOCS, target.split("#")[0])),
+                        os.path.exists(os.path.join(here, target.split("#")[0])),
                         f"docs/{name} links to {target}, which is not there")
 
     def test_each_document_starts_with_a_title(self):
@@ -210,7 +226,7 @@ class TestHowThingsAreMarkedDone(unittest.TestCase):
     """
 
     def documents(self):
-        return sorted(name for name in os.listdir(DOCS) if name.endswith(".md"))
+        return TestTheDocumentsHangTogether.documents(self)
 
     def test_no_document_holds_an_unticked_box(self):
         """`- [ ]` is a to-do nobody is assigned to and nothing closes."""

@@ -23,7 +23,7 @@ belongs when you come to add to it.
 | File | State |
 |---|---|
 | [PDF24-COMPARISON.md](PDF24-COMPARISON.md) | **Complete but for image downsampling** ([Issue #8](https://github.com/dwsdolce/pdfarranger-qt/issues/8)). Scored against PDF24 Toolbox's tool list; seven features built. |
-| [I18N.md](I18N.md) | **Active** — the [Internationalisation milestone](https://github.com/dwsdolce/pdfarranger-qt/milestone/1). The translated interface that was not one, and what filling 33 catalogues takes. |
+| [completed/I18N.md](completed/I18N.md) | **Complete** — the [Internationalisation milestone](https://github.com/dwsdolce/pdfarranger-qt/milestone/1) is closed. The translated interface that was not one, and what filling 33 catalogues took. |
 
 ## Where to put a new thing
 
@@ -32,7 +32,8 @@ belongs when you come to add to it.
   numbered, in which case **DECISIONS.md**
 - *"Here is how you build/test/lay out…"* → **CONVENTIONS.md**
 - A body of work with a beginning and an end → **its own file**, moved to
-  `completed/` when it is done
+  `completed/` when it is done — the guards in `tests/test_docs.py` follow it
+  there, so a finished document still has to have its links resolve
 
 Two rules learned by getting them wrong:
 
