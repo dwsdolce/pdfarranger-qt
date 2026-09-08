@@ -599,3 +599,115 @@ class TestNoWordMixesTwoScripts(CatalogueTestCase):
                                 f"{language}: {found} in {form!r} -- one word "
                                 f"drawn from two alphabets that share "
                                 f"letterforms, which is a homoglyph typo")
+
+
+class TestCompilingKeepsThePluralForms(CatalogueTestCase):
+    """What ships must agree with what is tested.
+
+    Hungarian had no `Plural-Forms` header -- the only one of the 33, and that
+    way since upstream. Babel falls back to the locale's CLDR rule when the
+    header is absent, decided Hungarian has one plural form, **discarded the
+    second form of every plural message** and wrote `nplurals=1` into the
+    compiled catalogue.
+
+    Nothing noticed, because the two halves disagreed about what they were
+    looking at: these tests read the `.po` without a locale and saw the two
+    forms they expected, while `build_mo.py` reads it *with* one and shipped
+    a `.mo` holding one. The output stayed correct only because Hungarian does
+    not inflect a noun after a numeral, so both forms were written identically.
+    The next translator to write two different ones would have lost one.
+    """
+
+    def test_every_catalogue_declares_its_plural_forms(self):
+        """The header is what stops Babel guessing from CLDR instead.
+
+        This one check is the whole guard, and the obvious second one --
+        reading the file both ways and comparing how many forms survive --
+        was written, run, and deleted because it *cannot fail*. With the
+        header absent both reads fall back to CLDR and agree at one form;
+        with it present Babel never guesses. A test that passes in the broken
+        state is worse than no test, so this is the only one here.
+        """
+        missing = []
+        for language in self.languages:
+            with open(os.path.join(PO, f"{language}.po"), encoding="utf-8") as handle:
+                head = handle.read(4000)
+            if "Plural-Forms:" not in head:
+                missing.append(language)
+        self.assertEqual(missing, [],
+                         "these declare no Plural-Forms, so compiling will "
+                         "guess from CLDR: " + ", ".join(missing))
+
+
+class TestTheGuideReadsTheRightWay(CatalogueTestCase):
+    """Arabic and Hebrew lay out rightwards, including the key table.
+
+    The window itself was always correct: `install_qt_translations` loads
+    `qtbase_<lang>.qm`, and Qt takes the layout direction from the translation
+    rather than from gettext. What was wrong was inside the guide.
+
+    Two causes, both invisible unless you read one of these two languages.
+    The table headers carried `align='left'`, which pinned them in *every*
+    language and only showed where the rest of the row ran the other way. And
+    the first column is "↑ ↓", "← →", "—" -- symbols with no strong character,
+    so Unicode has nothing to resolve the cell from and falls back to the
+    document, which never said which way it ran.
+
+    Only `ar` and `he` of the 33 are right-to-left; Qt is asked rather than
+    told, so a future right-to-left catalogue is covered without editing this.
+    """
+
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        import support  # noqa: F401 - imports conftest, which makes the app
+
+    def rtl_languages(self):
+        from PySide6.QtCore import QLocale, Qt
+        from PySide6.QtWidgets import QApplication  # noqa: F401
+        return [lang for lang in self.languages
+                if QLocale(lang.split("@")[0]).textDirection() == Qt.RightToLeft]
+
+    def test_at_least_one_language_is_right_to_left(self):
+        """Otherwise everything below would pass by having nothing to check."""
+        self.assertGreaterEqual(len(self.rtl_languages()), 1)
+
+    def test_the_guide_declares_the_direction_it_runs(self):
+        from PySide6.QtCore import Qt
+        from PySide6.QtWidgets import QApplication
+
+        from pdfarranger_qt import app as appmod
+        from pdfarranger_qt import dialogs, i18n
+
+        application = QApplication.instance()
+        rtl = set(self.rtl_languages())
+        try:
+            for language in ["de", *sorted(rtl)]:
+                with self.subTest(language=language):
+                    i18n.setup(language)
+                    appmod.install_qt_translations(application, language)
+                    want = Qt.RightToLeft if language in rtl else Qt.LeftToRight
+                    self.assertEqual(
+                        application.layoutDirection(), want,
+                        f"{language}: Qt did not pick the direction up from "
+                        f"qtbase_{language}.qm")
+                    marker = "dir='rtl'" if language in rtl else "dir='ltr'"
+                    self.assertIn(marker, dialogs.HelpDialog._html(),
+                                  f"{language}: the guide does not say which "
+                                  f"way it runs, so neutral cells guess")
+        finally:
+            i18n.setup(None)
+            appmod.install_qt_translations(application, "")
+
+    def test_no_cell_in_the_guide_pins_its_own_alignment(self):
+        """`align=` in the markup overrides whatever the document decided.
+
+        Checked against the rendered HTML rather than the source text, because
+        the first version of this read the source and failed on the *comment*
+        explaining why the attribute had been removed.
+        """
+        from pdfarranger_qt import dialogs
+
+        self.assertNotIn("align=", dialogs.HelpDialog._html(),
+                         "a hardcoded alignment in the guide will read wrong "
+                         "in Arabic and Hebrew")

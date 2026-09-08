@@ -30,6 +30,7 @@ from typing import List, Tuple
 from PySide6.QtCore import QLocale, Qt
 from PySide6.QtGui import QColor, QFont, QKeySequence
 from PySide6.QtWidgets import (
+    QApplication,
     QButtonGroup,
     QCheckBox,
     QColorDialog,
@@ -1199,10 +1200,15 @@ def help_sections():
               "to an edge, and Fn — Page Up, Page Down, Home and End — jumps "
               "further. None of it changes according to whether a text cursor "
               "happens to be on the page."),
+            # No align= on the headers. It used to say align='left', which
+            # pinned them in every language and was simply invisible in the
+            # ones that read leftwards -- in Arabic and Hebrew the header row
+            # anchored left while the table around it ran right. Alignment is
+            # the document's business, and the document knows its direction.
             "<table border='1' cellpadding='4' cellspacing='0' width='100%'>"
-            "<tr><th align='left'>" + _("Keys") + "</th>"
-            "<th align='left'>" + _("Continuous") + "</th>"
-            "<th align='left'>" + _("One page at a time") + "</th></tr>"
+            "<tr><th>" + _("Keys") + "</th>"
+            "<th>" + _("Continuous") + "</th>"
+            "<th>" + _("One page at a time") + "</th></tr>"
             "<tr><td>↑ ↓</td><td>" + _("scroll one line") + "</td>"
             "<td>—</td></tr>"
             "<tr><td>← →</td><td>" + _("top of the previous / next page") +
@@ -1435,7 +1441,16 @@ class HelpDialog(QDialog):
 
     @staticmethod
     def _html() -> str:
-        parts = []
+        # The document is told which way it runs rather than left to work it
+        # out per paragraph. Unicode resolves a paragraph from its first
+        # strong character, and the first column of the key table is "↑ ↓",
+        # "← →", "—" -- symbols, with no strong character anywhere in the
+        # cell. Those have nothing to resolve from and fall back to the
+        # document default, so in Arabic and Hebrew the column came out
+        # backwards while the prose around it was correct.
+        app = QApplication.instance()
+        rtl = app is not None and app.layoutDirection() == Qt.RightToLeft
+        parts = [f"<body dir='{'rtl' if rtl else 'ltr'}'>"]
         blocks = ("<table", "<ul", "<ol", "<pre")
         for heading, paragraphs in help_sections():
             parts.append(f"<h3>{heading}</h3>")
@@ -1447,6 +1462,7 @@ class HelpDialog(QDialog):
                     parts.append(text)
                 else:
                     parts.append(f"<p>{text}</p>")
+        parts.append("</body>")
         return "\n".join(parts)
 
 
