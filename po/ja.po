@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-08 19:53+0000\n"
+"POT-Creation-Date: 2026-09-08 20:38+0000\n"
 "PO-Revision-Date: 2022-09-01 00:40+0900\n"
 "Last-Translator: sicklylife <translation@sicklylife.jp>\n"
 "Language: ja\n"
@@ -2081,6 +2081,31 @@ msgstr "再エンコードする価値のあるものはありませんでした
 msgid "%d image was left as it was"
 msgid_plural "%d images were left as they were"
 msgstr[0] "%d 個の画像はそのままにしました"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "images"
+msgstr "画像"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "drawings and text"
+msgstr "図と文字"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "fonts"
+msgstr "フォント"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "everything else"
+msgstr "その他すべて"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Where the bytes are now:"
+msgstr "バイトの内訳:"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py

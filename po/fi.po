@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  pdfarranger\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-08 19:53+0000\n"
+"POT-Creation-Date: 2026-09-08 20:38+0000\n"
 "PO-Revision-Date: 2024-03-24 19:16+0200\n"
 "Last-Translator: \n"
 "Language: fi\n"
@@ -2180,6 +2180,31 @@ msgid "%d image was left as it was"
 msgid_plural "%d images were left as they were"
 msgstr[0] "%d kuva jätettiin ennalleen"
 msgstr[1] "%d kuvaa jätettiin ennalleen"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "images"
+msgstr "kuvat"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "drawings and text"
+msgstr "piirrokset ja teksti"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "fonts"
+msgstr "fontit"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "everything else"
+msgstr "kaikki muu"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Where the bytes are now:"
+msgstr "Missä tavut nyt ovat:"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py

@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  pdfarranger\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-08 19:53+0000\n"
+"POT-Creation-Date: 2026-09-08 20:38+0000\n"
 "PO-Revision-Date: 2026-05-23 07:56-0300\n"
 "Last-Translator: Rondnelly Assis <rond.nunes@gmail.com>\n"
 "Language: pt_BR\n"
@@ -2148,6 +2148,31 @@ msgid "%d image was left as it was"
 msgid_plural "%d images were left as they were"
 msgstr[0] "%d imagem foi deixada como estava"
 msgstr[1] "%d imagens foram deixadas como estavam"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "images"
+msgstr "imagens"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "drawings and text"
+msgstr "desenhos e texto"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "fonts"
+msgstr "fontes"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "everything else"
+msgstr "todo o resto"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Where the bytes are now:"
+msgstr "Onde estão os bytes agora:"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py

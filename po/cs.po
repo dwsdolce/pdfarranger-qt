@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  pdfarranger\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-08 19:53+0000\n"
+"POT-Creation-Date: 2026-09-08 20:38+0000\n"
 "PO-Revision-Date: 2023-07-10 15:37+0000\n"
 "Last-Translator: PavelZ\n"
 "Language: cs_CZ\n"
@@ -2173,6 +2173,31 @@ msgid_plural "%d images were left as they were"
 msgstr[0] "%d obrázek zůstal beze změny"
 msgstr[1] "%d obrázky zůstaly beze změny"
 msgstr[2] "%d obrázků zůstalo beze změny"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "images"
+msgstr "obrázky"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "drawings and text"
+msgstr "kresby a text"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "fonts"
+msgstr "písma"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "everything else"
+msgstr "všechno ostatní"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Where the bytes are now:"
+msgstr "Kde jsou bajty nyní:"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py

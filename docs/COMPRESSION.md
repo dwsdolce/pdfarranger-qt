@@ -214,10 +214,22 @@ resolution. Nobody should have to know to ask for the biggest win in the
 feature.
 
 **A report**, before and after: how many images, what they cost now, what they
-will cost. This is Acrobat's *Audit Space Usage* reduced to the one line that
-matters, and it is the cheapest thing in this document. Half of why the
-current checkbox reads as broken is that a user has no way to learn that their
-8 MB is 7.9 MB of JPEG.
+will cost. Half of why the current checkbox reads as broken is that a user has
+no way to learn that their 8 MB is 7.9 MB of JPEG.
+
+**And the audit under it** — the document's bytes as images, drawings and
+text, fonts, and everything else. This is Acrobat's *Audit Space Usage*, cut
+to four buckets because the question being answered is only "is it worth
+running this again": the difference between an object stream and a
+cross-reference stream is noise at that scale. It costs a walk over the
+object numbers rather than a read — 2.7 seconds on the 1,590-page book — and
+it is done while the progress dialog is still up, so it does not become
+another small silence.
+
+It earns its place most where there is nothing to do. *"The selected pages
+contain no images to compress"* on its own sounds like a refusal; followed by
+*drawings and text 81 MB (57%)* it is an answer, and the answer is that this
+command cannot help with that document.
 
 ## The trade-offs, one at a time
 

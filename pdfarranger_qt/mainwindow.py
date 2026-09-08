@@ -2200,9 +2200,17 @@ class MainWindow(QMainWindow):
             return
         images, size = compress.survey_pages(pages, self.docs)
         if not images:
+            # The audit earns its place most here: "no images" on its own
+            # sounds like a refusal, and the breakdown turns it into an
+            # answer -- the file is drawings, and this command cannot help.
+            QApplication.setOverrideCursor(Qt.WaitCursor)
+            try:
+                where = compress.audit_pages(pages, self.docs)
+            finally:
+                QApplication.restoreOverrideCursor()
+            told = [_("The selected pages contain no images to compress.")]
             QMessageBox.information(
-                self, APP_NAME,
-                _("The selected pages contain no images to compress."))
+                self, APP_NAME, "\n".join(told + self._audit_lines(where)))
             return
         settings = dialogs.CompressDialog(images, size, self).get_value()
         if settings is None:
@@ -2249,6 +2257,11 @@ class MainWindow(QMainWindow):
         self.model.undo.commit(_("Compress Images"))
         try:
             result = compress.apply(pages, self.docs, settings, progress=tick)
+            # While the dialog is still up: walking a 1,590-page document to
+            # add up its streams is a couple of seconds, and a couple of
+            # seconds after the dialog closes is another small silence.
+            where = None if result.stopped else compress.audit_pages(
+                pages, self.docs)
         finally:
             progress.close()
         if result.stopped or not result.changed:
@@ -2257,15 +2270,20 @@ class MainWindow(QMainWindow):
             return
 
         self._stamped(pages)
-        self._report_compression(result)
+        self._report_compression(result, where)
 
-    def _report_compression(self, result):
-        """Say what happened, in the two terms that mean anything.
+    def _report_compression(self, result, where=None):
+        """Say what happened, in the terms that mean anything.
 
         Images that could not be re-encoded are counted rather than listed:
-        the reasons are technical -- JPEG 2000, ink channels, an indexed
-        palette -- and what a user needs to know is that those pages were left
-        exactly as they were.
+        the reasons are technical -- JPEG 2000, ink channels, a soft mask --
+        and what a user needs to know is that those pages were left exactly as
+        they were.
+
+        Then where the bytes are now, which is the half that says what to do
+        next. A file that is still mostly images can be run again at a lower
+        setting; one that has become mostly drawings cannot be helped by this
+        command at all, and saying so is worth more than another percentage.
         """
         untouched = result.images - result.changed
         lines = []
@@ -2285,7 +2303,30 @@ class MainWindow(QMainWindow):
                 ngettext("%d image was left as it was",
                          "%d images were left as they were",
                          untouched) % untouched)
+        lines += self._audit_lines(where)
         QMessageBox.information(self, APP_NAME, "\n".join(lines))
+
+    @staticmethod
+    def _audit_lines(where):
+        """The document's bytes by kind, largest first, nothing empty."""
+        if not where or not sum(where.values()):
+            return []
+        names = {
+            compress.AUDIT_IMAGES: _("images"),
+            compress.AUDIT_CONTENT: _("drawings and text"),
+            compress.AUDIT_FONTS: _("fonts"),
+            compress.AUDIT_OTHER: _("everything else"),
+        }
+        total = sum(where.values())
+        lines = ["", _("Where the bytes are now:")]
+        for kind, size in sorted(where.items(), key=lambda row: -row[1]):
+            if size:
+                # No msgid for the row: a name, a size and a percentage need
+                # no grammar, and three more strings to translate would say
+                # nothing that the layout does not.
+                lines.append(f"    {names[kind]}  {compress.human_size(size)}"
+                             f"  ({round(100 * size / total)}%)")
+        return lines
 
     def _stamped(self, pages):
         """Redraw the pages a stamp was just composited onto.

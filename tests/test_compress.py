@@ -675,6 +675,61 @@ class TestCMYK(unittest.TestCase):
         self.assertEqual(pikepdf.PdfImage(stream).as_pil_image().mode, "L")
 
 
+class TestTheAudit(unittest.TestCase):
+    """Where the bytes are, which is the half that says what to do next.
+
+    On the book these numbers came from, compressing moved the answer from
+    "59% images" to "57% drawings" -- and a document that has become mostly
+    drawings cannot be helped by this command at all, which is worth more to
+    a user than another percentage.
+    """
+
+    def test_it_sorts_a_document_into_four_buckets(self):
+        pdf = pikepdf.Pdf.new()
+        full_page_scan(pdf, pages=2)
+        totals = compress.audit(pdf)
+        self.assertEqual(set(totals), {compress.AUDIT_IMAGES,
+                                       compress.AUDIT_CONTENT,
+                                       compress.AUDIT_FONTS,
+                                       compress.AUDIT_OTHER})
+        self.assertGreater(totals[compress.AUDIT_IMAGES], 1_000_000)
+        self.assertGreater(totals[compress.AUDIT_CONTENT], 0)
+
+    def test_a_page_of_drawing_is_content_not_images(self):
+        """The finding that made this worth building."""
+        pdf = pikepdf.Pdf.new()
+        page_with(pdf, [])
+        pdf.pages[0].Contents = pikepdf.Stream(
+            pdf, b"0 0 1 RG " + b"0 0 m 600 700 l S " * 4000)
+        totals = compress.audit(pdf)
+        self.assertEqual(totals[compress.AUDIT_IMAGES], 0)
+        self.assertGreater(totals[compress.AUDIT_CONTENT], 10_000)
+
+    def test_a_font_programme_counts_as_a_font(self):
+        pdf = pikepdf.Pdf.new()
+        page_with(pdf, [])
+        programme = pikepdf.Stream(pdf, bytes(5000))
+        programme.Length1 = 5000          # what marks a Type 1 font file
+        pdf.pages[0].Resources.Font = pikepdf.Dictionary(
+            F1=pikepdf.Dictionary(Type=pikepdf.Name.Font,
+                                  FontDescriptor=pikepdf.Dictionary(
+                                      FontFile=pdf.make_indirect(programme))))
+        self.assertGreaterEqual(
+            compress.audit(pdf)[compress.AUDIT_FONTS], 5000)
+
+    def test_an_image_is_counted_once_however_many_pages_use_it(self):
+        pdf = pikepdf.Pdf.new()
+        image = text_page(300)
+        stream = embed(pdf, jpeg(image), image, filter_=pikepdf.Name.DCTDecode)
+        for _ in range(8):
+            page_with(pdf, [(stream, 0, 0, LETTER[0], LETTER[1])])
+        self.assertLess(compress.audit(pdf)[compress.AUDIT_IMAGES],
+                        2 * len(stream.read_raw_bytes()))
+
+    def test_an_empty_document_audits_to_nothing(self):
+        self.assertEqual(sum(compress.audit(pikepdf.Pdf.new()).values()), 0)
+
+
 class TestSharedImages(unittest.TestCase):
     def test_an_image_on_eight_pages_is_re_encoded_once(self):
         """Eight visits, one object: doing it per page costs 23/255 of loss."""

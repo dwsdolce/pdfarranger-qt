@@ -969,6 +969,35 @@ class TestCompressCommand(unittest.TestCase):
         self.assertIn("smaller", text)
         self.assertIn("MB", text)
 
+    def test_the_report_says_where_the_bytes_are_now(self):
+        """The half that says what to do next, not just what was done."""
+        from pdfarranger_qt import compress
+
+        self.choose(compress.PRESETS[compress.BALANCED])
+        self.win.compress_images()
+        text = MESSAGE_BOXES[-1][2]
+        self.assertIn("Where the bytes are now", text)
+        self.assertIn("images", text)
+        self.assertIn("drawings and text", text)
+
+    def test_a_document_with_no_images_is_told_what_it_is_made_of(self):
+        """"No images" on its own sounds like a refusal."""
+        from pdfarranger_qt.mainwindow import MainWindow
+
+        vector = MainWindow()
+        self.addCleanup(vector.close)
+        vector.show()
+        vector.open_paths([TEST_PDF])
+        vector.modified = False
+        settle(timeout_ms=300)
+        vector.set_read_mode(False)
+        vector.act_select_all.trigger()
+        MESSAGE_BOXES.clear()
+        vector.compress_images()
+        text = MESSAGE_BOXES[-1][2]
+        self.assertIn("no images", text)
+        self.assertIn("drawings and text", text)
+
     def test_cancelling_the_dialog_does_nothing_at_all(self):
         before = self.win.model.pages[0].copyname
         self.choose(None)
