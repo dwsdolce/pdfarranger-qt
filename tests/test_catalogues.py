@@ -398,24 +398,35 @@ class TestTheCompiledTreeIsCurrent(CatalogueTestCase):
 class TestThePreferenceOffersWhatExists(CatalogueTestCase):
     """The Language menu in Preferences, against the catalogues on disk.
 
-    The list is hand-written, so that each language is named the way its own
-    speakers write it rather than the way CLDR does. Hand-written means it
-    drifts, and it had: seven translated languages could not be chosen at all,
-    and three entries pointed at nothing. The worst of them was Polish, which
-    was offered as `pl` while the catalogue is `pl_PL` -- picking it loaded no
-    catalogue and silently left the application in English, with no other way
-    to reach the Polish translation.
+    The menu used to be a hand-written table of thirty, and it drifted from the
+    thirty-three catalogues beside it: seven translated languages could not be
+    selected at all, and three entries pointed at nothing. The worst of them
+    was Polish, offered as `pl` while the catalogue is `pl_PL` -- choosing it
+    loaded no catalogue and silently left the application in English, with no
+    other way to reach the Polish translation.
 
-    `en` is the exception and is meant to be here: English is the msgid, so
+    The list is read off the disk now, so most of that cannot recur. What can
+    still rot is the handful of names where Qt's CLDR answer is not the one to
+    show, so those are checked one by one against what Qt says today.
+
+    `en` is the exception that is meant to be here: English is the msgid, so
     selecting it loads nothing and shows the source strings.
     """
 
     def offered(self):
-        from pdfarranger_qt.dialogs import _LANGUAGES
+        from pdfarranger_qt.dialogs import languages
 
-        return _LANGUAGES
+        return languages()
+
+    def test_the_check_can_see_a_catalogue(self):
+        """An empty list would pass every comparison below."""
+        if not os.path.isdir(os.path.join(ROOT, "build", "mo")):
+            self.skipTest("catalogues not compiled (run tools/build_mo.py)")
+        self.assertGreater(len(self.offered()), 30)
 
     def test_every_catalogue_can_be_chosen(self):
+        if not os.path.isdir(os.path.join(ROOT, "build", "mo")):
+            self.skipTest("catalogues not compiled (run tools/build_mo.py)")
         codes = {code for code, _name in self.offered()}
         missing = sorted(set(self.languages) - codes)
         self.assertEqual(missing, [],
@@ -431,16 +442,47 @@ class TestThePreferenceOffersWhatExists(CatalogueTestCase):
                          + ", ".join(dead))
 
     def test_no_code_or_name_appears_twice(self):
+        """Two rows reading the same is a menu you cannot choose from.
+
+        This is what `ca` and `ca@valencia` do without their override: Qt drops
+        the modifier and answers "catala" to both.
+        """
         codes = [code for code, _name in self.offered()]
         names = [name for _code, name in self.offered()]
         self.assertEqual(sorted(codes), sorted(set(codes)), "duplicate code")
-        self.assertEqual(sorted(names), sorted(set(names)), "duplicate name")
+        self.assertEqual(sorted(names), sorted(set(names)),
+                         "two languages are shown under one name")
+
+    def test_every_name_says_something(self):
+        """Falling back to the code means Qt did not recognise it."""
+        nameless = sorted(code for code, name in self.offered()
+                          if not name or name == code)
+        self.assertEqual(nameless, [],
+                         "Qt has no name for these, so the menu shows the "
+                         "bare code: " + ", ".join(nameless))
+
+    def test_every_override_is_still_needed(self):
+        """The one hand-written thing left, kept from rotting.
+
+        An override that now agrees with Qt is a line to delete: it looks like
+        a decision and is really just a stale copy.
+        """
+        from PySide6.QtCore import QLocale
+
+        from pdfarranger_qt.dialogs import _NAME_OVERRIDES
+
+        pointless = {}
+        for code, name in _NAME_OVERRIDES.items():
+            if QLocale(code.split("@")[0]).nativeLanguageName() == name:
+                pointless[code] = name
+        self.assertEqual(pointless, {},
+                         "Qt now says this itself -- drop the override")
 
     def test_choosing_each_one_actually_loads_it(self):
         """The check `pl` would have failed: a code that resolves to nothing.
 
-        Comparing the two lists is not enough on its own -- it says the strings
-        match, not that gettext can find a catalogue under that name.
+        Comparing lists is not enough on its own -- it says the strings match,
+        not that gettext can find a catalogue under that name.
         """
         if not os.path.isdir(os.path.join(ROOT, "build", "mo")):
             self.skipTest("catalogues not compiled (run tools/build_mo.py)")

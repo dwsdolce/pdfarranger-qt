@@ -53,6 +53,29 @@ def locale_dirs() -> List[str]:
     ]
 
 
+def available() -> List[str]:
+    """Language codes with a catalogue installed, in no particular order.
+
+    What the Language preference offers, read off the disk rather than written
+    down beside it. The written-down version drifted: it offered a `pl` that no
+    catalogue answers to -- the catalogue is `pl_PL` -- while seven translated
+    languages could not be selected at all.
+
+    This finds nothing in a source tree where `tools/build_mo.py` has not run,
+    which is correct rather than unfortunate: those languages cannot be loaded
+    either, and offering one that does nothing is the bug this replaces.
+    """
+    found = set()
+    for directory in locale_dirs():
+        if not os.path.isdir(directory):
+            continue
+        for name in os.listdir(directory):
+            catalogue = os.path.join(directory, name, "LC_MESSAGES", DOMAIN + ".mo")
+            if os.path.isfile(catalogue):
+                found.add(name)
+    return sorted(found)
+
+
 def setup(language: Optional[str] = None) -> str:
     """Install the translation. Returns the language actually used.
 

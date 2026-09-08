@@ -27,7 +27,7 @@ showing them.
 import re
 from typing import List, Tuple
 
-from PySide6.QtCore import Qt
+from PySide6.QtCore import QLocale, Qt
 from PySide6.QtGui import QColor, QFont, QKeySequence
 from PySide6.QtWidgets import (
     QButtonGroup,
@@ -54,7 +54,7 @@ from PySide6.QtWidgets import (
     QWidget,
 )
 
-from . import nup, stamp, viewer
+from . import i18n, nup, stamp, viewer
 from .core import Dims, Sides
 from .i18n import N_
 from .i18n import gettext_ as _
@@ -847,7 +847,7 @@ class PreferencesDialog(BaseDialog):
 
         self.language = QComboBox()
         self.language.addItem(_("System setting"), "")
-        for code, name in _LANGUAGES:
+        for code, name in languages():
             self.language.addItem(f"{name} [{code}]", code)
         self._select(self.language, current["language"])
 
@@ -1450,32 +1450,49 @@ class HelpDialog(QDialog):
         return "\n".join(parts)
 
 
-#: The Language preference, one entry per catalogue in ``po/`` plus English.
-#:
-#: Written out rather than derived, because a name belongs to the people who
-#: use it: CLDR calls pt_BR "português (Brasil)" and this project calls it
-#: "Português do Brasil". The cost of choosing them is that the list drifts --
-#: it once offered a Polish that loaded nothing, because the code here was
-#: ``pl`` and the catalogue is ``pl_PL``, and it omitted seven languages that
-#: had been translated. ``TestThePreferenceOffersWhatExists`` is what keeps it
-#: honest; there is no need to read the directory to know what is in it.
-#:
-#: English has no catalogue and needs none -- it is the msgid, and selecting it
-#: loads nothing and shows the source strings.
-_LANGUAGES = [
-    ("ar", "العربية"), ("ca", "Català"),
-    ("ca@valencia", "Català (valencià)"), ("cs", "Čeština"),
-    ("da", "Dansk"), ("de", "Deutsch"), ("el", "Ελληνικά"),
-    ("en", "English"), ("es", "Español"), ("eu", "Euskara"),
-    ("fi", "Suomi"), ("fr", "Français"), ("he", "עברית"),
-    ("hr", "Hrvatski"), ("hu", "Magyar"), ("id", "Indonesia"),
-    ("is", "Íslenska"), ("it", "Italiano"), ("ja", "日本語"),
-    ("ka", "ქართული"), ("ko", "한국어"),
-    ("nl", "Nederlands"), ("oc", "Occitan"), ("pl_PL", "Polski"),
-    ("pt_BR", "Português do Brasil"), ("pt_PT", "Português"),
-    ("ru", "Русский"), ("sl", "Slovenščina"),
-    ("sv", "Svenska"), ("tr", "Türkçe"),
-    ("uk", "Українська"),
-    ("vi", "Tiếng Việt"), ("zh_CN", "简体中文"),
-    ("zh_TW", "繁體中文"),
-]
+#: Where Qt's name for a language is not the one to show. Every entry states a
+#: fact about CLDR rather than a preference, and the guard in the catalogue
+#: tests deletes any that stops being true.
+_NAME_OVERRIDES = {
+    # QLocale("en") resolves to en_US, whose native name is "American English".
+    "en": "English",
+    # The @modifier is a gettext convention, not a tag Qt parses, so `ca` and
+    # `ca@valencia` both come back "català" -- two entries, one name.
+    "ca@valencia": "català (valencià)",
+    # QLocale fills in a region for a bare code, and for `es` it picks Spain:
+    # "español de España". The catalogue declares plain `es`, so the menu
+    # would be claiming a regional variant that does not exist. `pt_BR` gets
+    # the same treatment and keeps it, because there the region is real.
+    "es": "español",
+}
+
+
+def _language_name(code: str) -> str:
+    """What to call a language, written in that language.
+
+    Qt ships CLDR, so this needs neither a table to maintain nor a msgid for
+    translators to fill in: the names arrive with the toolkit. They are CLDR's
+    names, which means lower case wherever the language writes its own name
+    that way -- "français", not "Français". That is the orthography, not a
+    defect to patch around.
+    """
+    if code in _NAME_OVERRIDES:
+        return _NAME_OVERRIDES[code]
+    return QLocale(code.split("@")[0]).nativeLanguageName() or code
+
+
+def languages() -> List[Tuple[str, str]]:
+    """`(code, name)` for English and every catalogue that is installed.
+
+    Derived rather than written down. The written-down version drifted from
+    the catalogues it claimed to list: seven translated languages could not be
+    chosen at all, and three entries pointed at nothing. The worst was Polish,
+    offered as `pl` while the catalogue is `pl_PL`, so choosing it loaded
+    nothing and left the application in English with no other way to reach the
+    translation.
+
+    English is always offered and has no catalogue -- it is the msgid, and
+    choosing it loads nothing and shows the source strings.
+    """
+    return [(code, _language_name(code))
+            for code in sorted({"en", *i18n.available()})]
