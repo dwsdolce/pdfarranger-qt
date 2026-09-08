@@ -278,3 +278,41 @@ class TestTheRealGermanCatalogue(unittest.TestCase):
         for message in self.catalog:
             if message.id == "_Open":
                 self.assertNotIn(merge.MARK, message.user_comments)
+
+
+class TestMarkupIsChecked(MergeTestCase):
+    """38 messages carry tags, 29 of them in the user guide.
+
+    A dropped `</b>` is invisible to everything except a person reading Help in
+    that language, which is the one review that will not happen for 32 of them.
+    """
+
+    def setUp(self):
+        super().setUp()
+        self.catalog = catalogue(HEADER + '\nmsgid "<b>Fit</b> scales the page"\nmsgstr ""\n')
+
+    def test_matching_tags_are_accepted(self):
+        written, refused, _o, _u = self.fill(
+            {"<b>Fit</b> scales the page": "<b>Passt</b> die Seite an"})
+        self.assertEqual((written, refused), (1, []))
+
+    def test_a_lost_closing_tag_is_refused(self):
+        _w, refused, _o, _u = self.fill(
+            {"<b>Fit</b> scales the page": "<b>Passt die Seite an"})
+        self.assertEqual(len(refused), 1)
+        self.assertIn("markup changed", refused[0][1])
+        self.assertIn("</b>", refused[0][1])
+
+    def test_a_translated_tag_name_is_refused(self):
+        """Cyrillic В is not b, however much it looks like it."""
+        _w, refused, _o, _u = self.fill(
+            {"<b>Fit</b> scales the page": "<\u0412>Passt</\u0412>"})
+        self.assertEqual(len(refused), 1)
+        self.assertIn("markup changed", refused[0][1])
+
+    def test_reordered_emphasis_is_allowed(self):
+        """The reason tags are counted rather than matched in sequence."""
+        catalog = catalogue(HEADER + '\nmsgid "<b>A</b> and <i>B</i>"\nmsgstr ""\n')
+        written, refused, _o, _u = merge.fill(
+            catalog, {"<b>A</b> and <i>B</i>": "<i>B</i> und <b>A</b>"})
+        self.assertEqual((written, refused), (1, []))

@@ -27,6 +27,7 @@ one was decided. Two came out clean and stay hard failures; two did not, and
 became ratchets instead:
 
 - **format specifiers** — 107 entries carry one, 0 disagree. Hard failure.
+- **markup** — 31 translated entries carry a tag, 0 disagree. Hard failure.
 - **plural forms** — every plural entry already has the count its locale
   declares. Hard failure.
 - **mnemonics kept** — 106 of 2036 are dropped, in 16 of the 33 languages;
@@ -61,10 +62,15 @@ SPEC = re.compile(r"%(?:\([^)]+\))?[-#0+]*[0-9*]*(?:\.[0-9*]+)?[hlL]?[diouxXeEfF
 #: A GTK-style accelerator: the underscore before the key.
 MNEMONIC = re.compile(r"_[A-Za-z]")
 
+#: Markup, in the user guide and nine shorter strings besides. Counted rather
+#: than compared in order: a translation may reorder what it emphasises, but it
+#: may not lose a closing tag or translate a tag name.
+TAG = re.compile(r"<[a-zA-Z/][^>]*>")
+
 #: Dropped accelerators per language, as of 2026-09-08. May fall, must not rise.
 MNEMONICS_LOST = {
     "ar": 3, "ca": 38, "ca@valencia": 21, "da": 3, "de": 2,
-    "es": 15, "eu": 5, "he": 1, "hu": 1, "ka": 3,
+    "es": 13, "eu": 5, "he": 1, "hu": 1, "ka": 3,
     "nl": 2, "pl_PL": 7, "pt_PT": 1, "sl": 2, "uk": 1,
     "zh_TW": 1,
 }
@@ -154,6 +160,47 @@ class TestFormatSpecifiers(CatalogueTestCase):
                     with self.subTest(language=language, msgid=ids[0]):
                         self.assertEqual(set(SPEC.findall(one)), want)
         self.assertGreater(checked, 90, "the check stopped finding placeholders")
+
+
+class TestMarkup(CatalogueTestCase):
+    """A lost `</b>` renders the rest of a help paragraph in bold, or as text.
+
+    Only a person opening Help in that language would ever see it, which is
+    the whole reason this is mechanical. 38 messages carry markup and 29 of
+    them are the user guide, so this matters most exactly where review is
+    least likely.
+    """
+
+    def test_every_translation_keeps_its_tags(self):
+        checked = 0
+        for language in self.languages:
+            for message in catalogue(language):
+                if not message.id:
+                    continue
+                ids, got = translated(message)
+                if not got:
+                    continue
+                want = collections.Counter(TAG.findall(" ".join(ids)))
+                if not want:
+                    continue
+                checked += 1
+                for one in got:
+                    if not one:
+                        continue
+                    with self.subTest(language=language, msgid=ids[0][:40]):
+                        self.assertEqual(collections.Counter(TAG.findall(one)), want)
+        self.assertGreater(checked, 25, "the check stopped finding markup")
+
+    def test_reordering_is_allowed(self):
+        """A translation may emphasise the same things in a different order."""
+        a = collections.Counter(TAG.findall("<b>A</b> and <i>B</i>"))
+        b = collections.Counter(TAG.findall("<i>B</i> und <b>A</b>"))
+        self.assertEqual(a, b)
+
+    def test_a_lost_closing_tag_is_not(self):
+        a = collections.Counter(TAG.findall("<b>A</b>"))
+        b = collections.Counter(TAG.findall("<b>A"))
+        self.assertNotEqual(a, b)
 
 
 class TestPluralForms(CatalogueTestCase):

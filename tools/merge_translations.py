@@ -52,12 +52,14 @@ The input is ``{msgid: translation}``, with a list for a plural::
     {"_Open": "Öffnen", "%d page selected": ["...", "...", "..."]}
 
 Candidates are checked before they are written -- placeholders must survive, a
-plural must have the number of forms the locale declares, and an accelerator in
-the msgid must still be there. A translation that fails is reported and
+plural must have the number of forms the locale declares, an accelerator in the
+msgid must still be there, and the markup must come back with the same tags it
+went in with. A translation that fails is reported and
 dropped, not written and left for the guards to find later.
 """
 
 import argparse
+import collections
 import json
 import os
 import re
@@ -80,6 +82,13 @@ GENERATOR = "pdfarranger-qt tools/merge_translations.py"
 SPEC = re.compile(r"%(?:\([^)]+\))?[-#0+]*[0-9*]*(?:\.[0-9*]+)?[hlL]?[diouxXeEfFgGcrsa%]")
 
 MNEMONIC = re.compile(r"_[A-Za-z]")
+
+#: Markup in the user guide, and in nine shorter strings besides. Counted
+#: rather than matched in order, because a translation is entitled to reorder
+#: what it emphasises -- "<b>A</b> and <i>B</i>" may well become
+#: "<i>B</i> und <b>A</b>". What it is not entitled to do is lose a closing tag
+#: or translate a tag name, and comparing the counts catches both.
+TAG = re.compile(r"<[a-zA-Z/][^>]*>")
 
 
 def load(path):
@@ -171,6 +180,18 @@ def problems(message, translation, nplurals):
 
     if MNEMONIC.search(ids[0]) and isinstance(forms[0], str) and "_" not in forms[0]:
         out.append("the accelerator was dropped")
+
+    markup = collections.Counter(TAG.findall(" ".join(ids)))
+    for form in forms:
+        if isinstance(form, str):
+            got = collections.Counter(TAG.findall(form))
+            if got != markup:
+                lost = sorted((markup - got).elements())
+                gained = sorted((got - markup).elements())
+                out.append("markup changed"
+                           + (f", lost {lost}" if lost else "")
+                           + (f", gained {gained}" if gained else ""))
+                break
     return out
 
 

@@ -164,8 +164,17 @@ class TestTranslations(unittest.TestCase):
         self.assertEqual(self.i18n.gettext_("_Open"), "_Open")
 
     def test_untranslated_string_returns_its_msgid(self):
+        """Per-string fallback: a gap shows English, not a blank.
+
+        The msgid is invented rather than borrowed from the interface. This
+        test used to assert that "Arrange" was untranslated in German, which
+        was true until German reached 100% -- and every real string picked
+        instead would fail the same way as the catalogues fill. A string no
+        catalogue will ever contain cannot go stale.
+        """
         self.i18n.setup("de")
-        self.assertEqual(self.i18n.gettext_("Arrange"), "Arrange")
+        self.assertEqual(self.i18n.gettext_("Nothing Translates This"),
+                         "Nothing Translates This")
 
     def test_window_builds_translated(self):
         from pdfarranger_qt.mainwindow import MainWindow
@@ -264,10 +273,11 @@ class TestTranslatedInterface(unittest.TestCase):
         i18n.setup("de")
         win = MainWindow()
         self.addCleanup(win.close)
-        # Edit rather than File: "_File" is one of this port's own msgids and
-        # no catalogue has it yet, so German still renders it as "File" -- a
-        # small illustration of why phase 9 exists. "_Edit" upstream has.
+        # Both are translated in German now. When this was written "_File" was
+        # not -- it is one of this port's own msgids and no catalogue had it --
+        # which is the gap the internationalisation work exists to close.
         self.assertEqual(win._menu_titles["Edit"], "Bearbeiten")
+        self.assertEqual(win._menu_titles["File"], "Datei")
 
     def test_qt_supplies_its_own_buttons_translated(self):
         """OK and Cancel come from Qt, not from the catalogue here."""
