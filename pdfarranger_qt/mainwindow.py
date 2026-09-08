@@ -889,8 +889,18 @@ class MainWindow(QMainWindow):
     # -- state -------------------------------------------------------------
 
     def _password_for(self, page) -> str:
-        doc = self.docs.docs[page.nfile - 1]
-        return doc.password
+        """The password for the document a page came from, or none.
+
+        Tolerant of a page whose document is gone, because a lookup arriving
+        after teardown has no correct answer and should not be an exception:
+        it is reached from a queued render, so raising here prints a traceback
+        from inside a Qt slot and is swallowed. `closeEvent` empties the page
+        list before the documents to stop that state arising at all; this is
+        the second lock on the same door.
+        """
+        if not 0 < page.nfile <= len(self.docs.docs):
+            return ""
+        return self.docs.docs[page.nfile - 1].password
 
     def _editing_actions(self):
         """Every action that changes the document.
@@ -2899,5 +2909,11 @@ class MainWindow(QMainWindow):
         self.reader.clear()
         self.reader.shutdown()
         self.renderer.shutdown()
+        # The pages go before the documents they point into, the same order
+        # and for the same reason as `_reset_document`. Dropping the documents
+        # first leaves every Page naming an `nfile` with nothing behind it,
+        # and any thumbnail request that then arrives -- a queued relayout, a
+        # scroll callback -- looks it up and raises.
+        self.model.set_pages([])
         self.docs.cleanup()
         super().closeEvent(event)

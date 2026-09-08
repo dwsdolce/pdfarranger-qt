@@ -1043,3 +1043,60 @@ def _write_scan(path, pages=2, ppi=300):
     with pikepdf.Pdf.new() as pdf:
         full_page_scan(pdf, ppi=ppi, pages=pages)
         pdf.save(path)
+
+
+class TestClosingAWindowLeavesNothingDangling(unittest.TestCase):
+    """A closed window's pages must not outlive the documents they point into.
+
+    `closeEvent` used to drop the documents and leave the page list as it was,
+    so every Page named an `nfile` with nothing behind it. Any thumbnail
+    request arriving afterwards -- a queued relayout, a scroll callback --
+    looked the password up and raised `IndexError` from inside a Qt slot,
+    where it was printed and swallowed. Nothing visible ever happened, which
+    is why it went unnoticed until a stray traceback turned up against an
+    unrelated test.
+    """
+
+    def window(self):
+        from pdfarranger_qt.mainwindow import MainWindow
+
+        win = MainWindow()
+        self.addCleanup(setattr, win, "modified", False)
+        win.show()
+        win.open_paths([TEST_PDF])
+        win.modified = False
+        settle(timeout_ms=300)
+        win.set_read_mode(False)
+        return win
+
+    def test_the_pages_go_before_the_documents(self):
+        win = self.window()
+        self.assertTrue(win.model.pages)
+        win.close()
+        self.assertEqual(win.model.pages, [],
+                         "pages outlived the documents they point into")
+        self.assertEqual(win.docs.docs, [])
+
+    def test_a_render_after_teardown_does_not_raise(self):
+        """The reproduction from the issue, made deterministic.
+
+        A cached thumbnail short-circuits before the password is asked for, so
+        the cache has to miss -- which a zoom, an invalidate, or a page that
+        was never rendered all provide.
+        """
+        win = self.window()
+        pages = list(win.model.pages)
+        win.close()
+
+        # Put the pages back to recreate the state teardown used to leave,
+        # then force the lookup that used to raise.
+        win.model.set_pages(pages)
+        win.renderer.invalidate()
+        win.model.ensure_rendered(0, len(pages) - 1)
+
+    def test_a_password_lookup_for_a_missing_document_is_empty(self):
+        """The second lock: a lookup after teardown has no correct answer."""
+        win = self.window()
+        page = win.model.pages[0]
+        win.close()
+        self.assertEqual(win._password_for(page), "")
