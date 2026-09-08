@@ -2,712 +2,148 @@
 # Copyright (C) 2021 PDF Arranger
 # This file is distributed under the same license as the pdfarranger package.
 #
-# SPDX-FileCopyrightText: 2021, 2022, 2023, 2025 Sveinn í Felli <sv1@fellsnet.is>
+# SPDX-FileCopyrightText: 2021, 2022, 2023, 2025 Sveinn í Felli
+# <sv1@fellsnet.is>
 msgid ""
 msgstr ""
-"Project-Id-Version: \n"
+"Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-12-13 13:50+0100\n"
+"POT-Creation-Date: 2026-09-07 19:17+0000\n"
 "PO-Revision-Date: 2025-09-28 16:51+0000\n"
 "Last-Translator: Sveinn í Felli <sv1@fellsnet.is>\n"
-"Language-Team: Icelandic\n"
 "Language: is\n"
-"MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=UTF-8\n"
-"Content-Transfer-Encoding: 8bit\n"
+"Language-Team: Icelandic\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Lokalize 23.08.5\n"
-
-#: pdfarranger/splitter.py:87
-msgid "#Col"
-msgstr "#Dál"
-
-#: pdfarranger/splitter.py:87
-msgid "#Row"
-msgstr "#Röð"
-
-#: pdfarranger/pageutils.py:127 pdfarranger/pageutils.py:549
-#: pdfarranger/pageutils.py:551
-msgid "%"
-msgstr "%"
-
-#: pdfarranger/pageutils.py:275
-#, python-format
-msgid "% of height"
-msgstr "% af hæð"
-
-#: pdfarranger/pageutils.py:275
-#, python-format
-msgid "% of width"
-msgstr "% af breidd"
-
-#: pdfarranger/pdfarranger.py:3064
-#, python-format
-msgid "%s is a tool for rearranging and modifying PDF files."
-msgstr "%s er verkfæri til að endurraða og breyta PDF-skrám."
-
-#: pdfarranger/config.py:255
-msgid "(Libhandy missing)"
-msgstr "(Libhandy vantar)"
-
-#: pdfarranger/config.py:247
-msgid "(Requires restart)"
-msgstr "(krefst endurræsingar)"
-
-#: pdfarranger/pdfarranger.py:1353
-#, python-format
-msgid "A file named \"%s\" already exists. Do you want to replace it?"
-msgstr "Það er þegar til skrá sem heitir \"%s\". Viltu skipta henni út?"
-
-#: data/menu.ui:234 data/menu.ui:403
-msgid "All From _Same File"
-msgstr "Allt úr _sömu skrá"
-
-#: pdfarranger/pdfarranger.py:699
-msgid "All files"
-msgstr "Allar skrár"
-
-#: pdfarranger/pdfarranger.py:500 pdfarranger/pdfarranger.py:571
-msgid "All pages must have the same size."
-msgstr "Allar síður verða að hafa sömu stærð."
-
-#: pdfarranger/pdfarranger.py:687
-msgid "All supported files"
-msgstr "Allar studdar skrár"
-
-#: pdfarranger/exporter.py:578
-msgid "Auto Rotate"
-msgstr "Sjálfvirkur snúningur"
-
-#: pdfarranger/pageutils.py:253
-msgid "Bottom"
-msgstr "Neðst"
-
-#: pdfarranger/pageutils.py:482
-msgid "Bottom to Top"
-msgstr "Neðan og upp"
-
-#: pdfarranger/core.py:568
-msgid "Clipboard image"
-msgstr "Mynd á klippispjaldi"
-
-#: pdfarranger/pageutils.py:465 pdfarranger/splitter.py:60
-msgid "Columns"
-msgstr "Dálkar"
-
-#: data/menu.ui:141 data/menu.ui:366
-msgid "Copy _Image"
-msgstr "Afrita _mynd"
-
-#: data/menu.ui:146 data/menu.ui:371
-msgid "Copy _Text"
-msgstr "Afrita _texta"
-
-#: pdfarranger/metadata.py:49
-msgid "Created"
-msgstr "Búið til"
-
-#: pdfarranger/metadata.py:47
-msgid "Creator"
-msgstr "Höfundur"
-
-#: pdfarranger/metadata.py:48
-msgid "Creator tool"
-msgstr "Verkfæri fyrir hönnuði"
-
-#: pdfarranger/pageutils.py:350
-msgid "Crop & Add margins"
-msgstr "Utansníða og bæta við spássíum"
-
-#: pdfarranger/pageutils.py:942
-msgid "Crop Margins"
-msgstr "Skera utan af spássíum"
-
-#: data/menu.ui:174 data/menu.ui:449
-msgid "Crop White Borders"
-msgstr "Skera af hvíta jaðra"
-
-#: pdfarranger/pageutils.py:265 pdfarranger/pdfarranger.py:3030
-msgid ""
-"Cropping/hiding does not remove any content from the PDF file, it only hides "
-"it."
-msgstr ""
-"Utanskurður eða felun fjarlægir ekki neitt efni úr PDF-skránni, það er"
-" einungis falið."
-
-#: data/menu.ui:94 data/menu.ui:314
-msgid "Cu_t"
-msgstr "_Klippa"
-
-#: pdfarranger/pageutils.py:153
-msgid "Custom"
-msgstr "Sérsniðið"
-
-#: pdfarranger/pdfarranger.py:1467
-msgid "Despite the warnings the document(s) should have no visible issues."
-msgstr ""
-"Þrátt fyrir aðvaranirnar er skjalið/skölin ekki með nein sýnileg vandamál."
-
-#: pdfarranger/pdfarranger.py:1203
-msgid "Discard changes and close?"
-msgstr "Henda breytingum og loka?"
-
-#: pdfarranger/pdfarranger.py:1240
-msgid "Discard changes and quit?"
-msgstr "Henda breytingum og hætta?"
-
-#: pdfarranger/pdfarranger.py:3037
-msgid "Do not show this dialog again."
-msgstr "Ekki sýna þennan glugga aftur."
-
-#: pdfarranger/pdfarranger.py:1194
-msgid "Do_n’t Save"
-msgstr "E_kki vista"
-
-#: pdfarranger/pdfarranger.py:1474
-msgid "Don't show warnings when saving again."
-msgstr "Ekki birta neinar aðvaranir aftur við vistun."
-
-#: data/menu.ui:178 data/menu.ui:453
-msgid "Dupl_icate"
-msgstr "Tvíta_ka"
-
-#: data/menu.ui:52 data/menu.ui:486
-msgid "E_xport"
-msgstr "Fl_ytja út"
-
-#: data/menu.ui:55 data/menu.ui:489
-msgid "E_xport Selection to a Single File…"
-msgstr "Fl_ytja út valið í eina skrá…"
-
-#: data/menu.ui:278
-msgid "Edit _Properties"
-msgstr "_Breyta eiginleikum"
-
-#: pdfarranger/metadata.py:202
-msgid "Edit properties"
-msgstr "Breyta eiginleikum"
-
-#: pdfarranger/splitter.py:62
-msgid "Equal column width"
-msgstr "Jöfn breidd dálka"
-
-#: pdfarranger/splitter.py:62
-msgid "Equal row height"
-msgstr "Jöfn hæð raða"
-
-#: pdfarranger/pdfarranger.py:2003
-msgid "Exploding into images…"
-msgstr "Sprengi í myndir…"
-
-#: data/menu.ui:60 data/menu.ui:494
-msgid "Export Selection to _Individual Files…"
-msgstr "Flyt_ja út valið í stakar skrár…"
-
-#: data/menu.ui:65 data/menu.ui:499
-msgid "Export _All Pages to Individual Files…"
-msgstr "Flytja út _allar síður í stakar skrár…"
-
-#: pdfarranger/pdfarranger.py:1311
-msgid "Export…"
-msgstr "Flytja út…"
-
-#: pdfarranger/core.py:570 pdfarranger/pdfarranger.py:1721
-msgid "File is neither pdf nor image"
-msgstr "Skráin er hvorki PDF-skrá né mynd"
-
-#: pdfarranger/pdfarranger.py:329
-msgid "File(s) to open"
-msgstr "Skrá(r) til að opna"
-
-#: pdfarranger/pageutils.py:346
-msgid "Fit mode"
-msgstr "Aðlögun"
-
-#: pdfarranger/exporter.py:576
-msgid "Fit to Full Page"
-msgstr "Aðlaga að allri síðunni"
-
-#: pdfarranger/exporter.py:575
-msgid "Fit to Printable Area"
-msgstr "Aðlaga að prentanlegu svæði"
-
-#: pdfarranger/pageutils.py:355
-msgid "Fit to paper"
-msgstr "Aðlaga að pappír"
-
-#: pdfarranger/pdfarranger.py:3034
-msgid "For more info see"
-msgstr "Til að fá nánari upplýsingar geturðu skoðað"
-
-#: pdfarranger/config.py:264
-msgid "For more options see:"
-msgstr "Fyrir fleiri valkosti skaltu skoða:"
-
-#: data/menu.ui:271
-msgid "Full_screen"
-msgstr "_Skjáfylli"
-
-#: pdfarranger/pdfarranger.py:3080
-msgid "GNU General Public License (GPL) Version 3."
-msgstr "GNU General Public notkunarleyfið útgáfa 3."
-
-#: data/menu.ui:200 data/menu.ui:475
-msgid "Generate (imposition)"
-msgstr "Framkalla (uppsetning)"
-
-#: pdfarranger/pageutils.py:144
-msgid "Height"
-msgstr "Hæð"
-
-#: pdfarranger/splitter.py:88
-msgid "Height in %"
-msgstr "Hæð í %"
-
-#: pdfarranger/pageutils.py:942
-msgid "Hide Margins"
-msgstr "Fela spássíur"
-
-#: pdfarranger/pageutils.py:477
-msgid "Horizontal"
-msgstr "Lárétt"
-
-#: pdfarranger/splitter.py:61
-msgid "Horizontal Splits"
-msgstr "Klofið lárétt"
-
-#: pdfarranger/pageutils.py:548
-msgid "Horizontal offset"
-msgstr "Lárétt hliðrun"
-
-#: pdfarranger/core.py:559
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: pdfarranger-qt tools/merge_translations.py\n"
+"Generated-By: Babel 2.18.0\n"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py pdfarranger_qt/reader.py
+#, python-brace-format
+msgid "Page {}"
+msgstr "Síða {}"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Open Link"
+msgstr "Opna tengil"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Copy Link Address"
+msgstr "Afrita vistfang tengils"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+#, python-brace-format
+msgid "Go to {}"
+msgstr "Fara í {}"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Follow Link"
+msgstr "Fylgja tengli"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py pdfarranger_qt/mainwindow.py
+msgid "Copy"
+msgstr "Afrita"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Select All"
+msgstr "Velja allt"
+
+#: pdfarranger_qt/core.py pdfarranger_qt/mainwindow.py
 msgid "Image files are only supported with img2pdf"
 msgstr "Myndskrár eru einungis studdar í gegnum img2pdf"
 
-#: pdfarranger/core.py:565
-msgid "Image format is not supported by img2pdf"
-msgstr "Myndskrársnið er ekki stutt af img2pdf"
-
-#: pdfarranger/pdfarranger.py:2000
-msgid "Img2pdf missing."
-msgstr "Img2pdf vantar."
-
-#: data/pdfarranger.ui:58
-msgid "Import"
-msgstr "Flytja inn"
-
-#: pdfarranger/pdfarranger.py:1544
-msgid "Import…"
-msgstr "Flytja inn…"
-
-#: data/menu.ui:194 data/menu.ui:469
-msgid "Insert Blan_k Page…"
-msgstr "Set_ja inn auða síðu…"
-
-#: pdfarranger/pageutils.py:431
-msgid "Insert Blank Page"
-msgstr "Setja inn auða síðu"
-
-#: pdfarranger/metadata.py:173
-msgid "Invalid date format. Input discarded."
-msgstr "Ógilt dagsetningasnið. Inntaki hent."
-
-#: pdfarranger/pdfarranger.py:3067
-#, python-format
-msgid "It uses libqpdf %s, pikepdf %s, GTK %s and Python %s."
-msgstr "Notar libqpdf %s, pikepdf %s, GTK %s og Python %s."
-
-#: pdfarranger/metadata.py:45
-msgid "Keywords"
-msgstr "Stikkorð"
-
-#: pdfarranger/pageutils.py:163
-msgid "Landscape"
-msgstr "Langsnið"
-
-#: pdfarranger/config.py:245
-msgid "Language"
-msgstr "Tungumál"
-
-#: pdfarranger/pageutils.py:253
-msgid "Left"
-msgstr "Vinstri"
-
-#: pdfarranger/pageutils.py:479
-msgid "Left to Right"
-msgstr "Vinstri til hægri"
-
-#: data/pdfarranger.ui:122
-msgid "Main Menu"
-msgstr "Aðalvalmynd"
-
-#: pdfarranger/pdfarranger.py:3075
-msgid "Maintainers and contributors"
-msgstr "Höfundar og önnur framlög"
-
-#: pdfarranger/pageutils.py:463
-msgid "Margin"
-msgstr "Spássía"
-
-#: pdfarranger/pageutils.py:449
-msgid "Merge Pages"
-msgstr "Sameina síður"
-
-#: pdfarranger/pageutils.py:514
-msgid "Merged page size:"
-msgstr "Stærð á sameinaðri síðu:"
-
-#: pdfarranger/metadata.py:50
-msgid "Modified"
-msgstr "Breytt"
-
-#: pdfarranger/pageutils.py:494
-msgid "Non-uniform page size - using max size"
-msgstr "Ekki-einsleit blaðastærð - nota hámarksstærð"
-
-#: pdfarranger/exporter.py:574
-msgid "None"
-msgstr "Ekkert"
-
-#: pdfarranger/pdfarranger.py:3023
-msgid "Note"
-msgstr "Minnispunktur"
-
-#: pdfarranger/pdfarranger.py:3029
-msgid "Note the limitations:"
-msgstr "Athugaðu takmarkanirnar:"
-
-#: data/pdfarranger.ui:37
-msgid "Open"
-msgstr "Opna"
-
-#: pdfarranger/pdfarranger.py:1409
-msgid "Open…"
-msgstr "Opna..."
-
-#: pdfarranger/pageutils.py:161
-msgid "Orientation"
-msgstr "Stefna"
-
-#: pdfarranger/pdfarranger.py:3031
-msgid "Outlines and links can be preserved only in certain cases."
-msgstr "Aðeins er hægt að varðveita stigskipan og tengla í ákveðnum tilfellum."
-
-#: pdfarranger/pageutils.py:995
-msgid "Overlay"
-msgstr "Yfirlag"
-
-#: pdfarranger/pdfarranger.py:310
-msgid ""
-"PDF Arranger is a small python-gtk application, which helps the user to "
-"merge or split pdf documents and rotate, crop and rearrange their pages "
-"using an interactive and intuitive graphical interface. It is a frontend for "
-"pikepdf."
-msgstr ""
-"PDF Arranger er lítið python-gtk forrit, sem hjálpar notandanum að sameina "
-"eða skipta upp PDF-skjölum, snúa síðum eða skera utan af þeim, allt í "
-"gagnvirku og auðveldu myndrænu viðmóti. Það er í grunninn aðgangsviðmót "
-"fyrir pikepdf."
-
-#: pdfarranger/pdfarranger.py:1715
-msgid "PDF document is damaged"
-msgstr "PDF-skjal er skemmt"
-
-#: pdfarranger/pdfarranger.py:691
-msgid "PDF files"
-msgstr "PDF-skrár"
-
-#: pdfarranger/exporter.py:614
-msgid "Page Handling"
-msgstr "Meðhöndlun síðna"
-
-#: pdfarranger/pageutils.py:490
-msgid "Page Order"
-msgstr "Síðuröð"
-
-#: pdfarranger/pageutils.py:342
-msgid "Page size"
-msgstr "Blaðsíðustærð"
-
-#: pdfarranger/pageutils.py:150
-msgid "Paper size"
-msgstr "Pappírsstærð"
-
-#: pdfarranger/core.py:456
-msgid "Password"
-msgstr "Lykilorð"
-
-#: pdfarranger/core.py:434
-msgid "Password required"
-msgstr "Lykilorð nauðsynlegt"
-
-#: data/menu.ui:107 data/menu.ui:327
-msgid "Past_e Special"
-msgstr "Sérstök _líming"
-
-#: data/menu.ui:124 data/menu.ui:345
-msgid "Paste As O_verlay…"
-msgstr "Líma sem _yfirlag…"
-
-#: data/menu.ui:119 data/menu.ui:340
-msgid "Paste As _Even Pages"
-msgstr "Líma s_em jafntölusíður"
-
-#: data/menu.ui:114 data/menu.ui:335
-msgid "Paste As _Odd Pages"
-msgstr "Líma sem _oddatölusíður"
-
-#: data/menu.ui:129 data/menu.ui:350
-msgid "Paste As _Underlay…"
-msgstr "Líma sem _undirlag…"
-
-#: data/menu.ui:102 data/menu.ui:322
-msgid "Paste _After"
-msgstr "Lím_a á eftir"
-
-#: data/menu.ui:109 data/menu.ui:330
-msgid "Paste _Before"
-msgstr "Lí_ma á undan"
-
-#: pdfarranger/pdfarranger.py:1847
-msgid "Pasted data not valid. Aborting paste."
-msgstr "Límd gögn ekki gild. Hætti við límingu."
-
-#: pdfarranger/pageutils.py:162
-msgid "Portrait"
-msgstr "Skammsnið"
-
-#: data/menu.ui:284
-msgid "Pre_ferences"
-msgstr "K_jörstillingar"
-
-#: pdfarranger/config.py:235
-msgid "Preferences"
-msgstr "Kjörstillingar"
-
-#: pdfarranger/pdfarranger.py:321
-msgid "Print the version of PDF Arranger and exit"
-msgstr "Birta upplýsingar um PDF Arranger og hætta"
-
-#: pdfarranger/config.py:260
-msgid "Printing"
-msgstr "Prentun"
-
-#: pdfarranger/exporter.py:594
-msgid "Printing…"
-msgstr "Prenta..."
-
-#: pdfarranger/metadata.py:46
-msgid "Producer"
-msgstr "Framleiðandi"
-
-#: pdfarranger/metadata.py:216
-msgid "Property"
-msgstr "Eiginleiki"
-
-#: pdfarranger/pageutils.py:1060
-msgid "Range Select"
-msgstr "Velja umfang"
-
-#: data/menu.ui:182 data/menu.ui:457
-msgid "Re_verse Order"
-msgstr "Öfu_g röð"
-
-#: pdfarranger/pageutils.py:356
-msgid "Relative"
-msgstr "Hlutfallslegt"
-
-#: pdfarranger/exporter.py:632
-msgid "Rendering Preview…"
-msgstr "Myndgeri forskoðun…"
-
-#: pdfarranger/pdfarranger.py:955
-msgid "Rendering…"
-msgstr "Myndgeri…"
-
-#: pdfarranger/pdfarranger.py:1355
-msgid "Replace"
-msgstr "Skipta út"
-
-#: pdfarranger/pageutils.py:253
-msgid "Right"
-msgstr "Hægri"
-
-#: pdfarranger/pageutils.py:480
-msgid "Right to Left"
-msgstr "Hægri til vinstri"
-
-#: data/pdfarranger.ui:203
-msgid "Rotate Left"
-msgstr "Snúa til vinstri"
-
-#: data/pdfarranger.ui:227
-msgid "Rotate Right"
-msgstr "Snúa til hægri"
-
-#: data/menu.ui:152 data/menu.ui:427
-msgid "Rotate _Left"
-msgstr "Snúa til _vinstri"
-
-#: pdfarranger/pageutils.py:466 pdfarranger/splitter.py:60
-msgid "Rows"
-msgstr "Raðir"
-
-#: pdfarranger/pdfarranger.py:3070
-#, python-format
-msgid "Running on %s"
-msgstr "Keyrir á %s"
-
-#: data/menu.ui:239 data/menu.ui:408
-msgid "Same Page _Format"
-msgstr "Sama _blaðsíðusnið"
-
-#: data/pdfarranger.ui:78
-msgid "Save"
-msgstr "Vista"
-
-#: data/pdfarranger.ui:97
-msgid "Save As"
-msgstr "Vista sem"
-
-#: pdfarranger/pdfarranger.py:1311
-msgid "Save As…"
-msgstr "Vista sem…"
-
-#: data/menu.ui:47
-msgid "Save _As…"
-msgstr "Vist_a sem..."
-
-#: pdfarranger/pdfarranger.py:1212
-msgid "Save changes before closing?"
-msgstr "Vista breytingar áður en lokað er?"
-
-#: pdfarranger/pdfarranger.py:1249
-msgid "Save changes before quitting?"
-msgstr "Vista breytingar áður en þú hættir?"
-
-#: pdfarranger/pdfarranger.py:1209
-msgid "Save changes to “{}” before closing?"
-msgstr "Vista breytingar á '{}' áður en lokað er?"
-
-#: pdfarranger/pdfarranger.py:1246
-msgid "Save changes to “{}” before quitting?"
-msgstr "Vista breytingar á '{}' áður en þú hættir?"
-
-#: pdfarranger/pdfarranger.py:1466
-msgid "Saving produced some warnings"
-msgstr "Vistun gaf einhverjar aðvaranir"
-
-#: pdfarranger/pdfarranger.py:1505
-msgid "Saving…"
-msgstr "Vista…"
-
-#: pdfarranger/pageutils.py:348
-msgid "Scale"
-msgstr "Kvörðun"
-
-#: pdfarranger/pageutils.py:349
-msgid "Scale & Add margins"
-msgstr "Kvarða og bæta við spássíum"
-
-#: pdfarranger/pageutils.py:121
-msgid "Scale factor"
-msgstr "Kvörðunargildi"
-
-#: pdfarranger/exporter.py:572
-msgid "Scale mode:"
-msgstr "Kvörðunarhamur:"
-
-#: data/menu.ui:214 data/menu.ui:383
-msgid "Select _All"
-msgstr "Velja _allt"
-
-#: data/menu.ui:229 data/menu.ui:398
-msgid "Select _Even Pages"
-msgstr "V_elja jafntölusíður"
-
-#: data/menu.ui:224 data/menu.ui:393
-msgid "Select _Odd Pages"
-msgstr "Velja _oddatölusíður"
-
-#: data/menu.ui:249 data/menu.ui:418
-msgid "Select _Range"
-msgstr "Velja _umfang"
-
-#: pdfarranger/pageutils.py:1069
-msgid "Select range of pages: "
-msgstr "Veldu röð af síðum: "
-
-#: pdfarranger/pdfarranger.py:3098
-msgid "Selected pages: "
-msgstr "Valdar síður:"
-
-#: pdfarranger/pageutils.py:644
-msgid "Show values"
-msgstr "Sýna gildi"
-
-#: data/menu.ui:204 data/menu.ui:479
-msgid "Split (unimposition)"
-msgstr "Skipta upp (fjarlægja uppsetningu)"
-
-#: pdfarranger/splitter.py:26
-msgid "Split Pages"
-msgstr "Kljúfa síður"
-
-#: pdfarranger/metadata.py:44
-msgid "Subject"
-msgstr "Viðfangsefni"
-
-#: pdfarranger/pdfarranger.py:704
-msgid "Supported image files"
-msgstr "Studdar myndskrár"
-
-#: pdfarranger/config.py:275 pdfarranger/config.py:283
-msgid "System setting"
-msgstr "Kerfisstilling"
-
-#: pdfarranger/core.py:446
-msgid ""
-"The document “{}” is locked and requires a password before it can be opened."
-msgstr "Skjalið “{}” er læst, til að opna það þarf lykilorð."
-
-#: pdfarranger/pdfarranger.py:1976
-msgid "The page has several images. Use \"Explode into Images\" first.\""
-msgstr "Síðan er með nokkrar myndir. Notaðu fyrst \"Sprengja í stakar myndir\""
-
-#: pdfarranger/pdfarranger.py:558
-msgid "The page selection is not contiguous. Cannot unimpose."
-msgstr "Valdar síður eru ekki samfelldar. Get ekki fjarlægt uppsetningu."
-
-#: pdfarranger/core.py:445
-msgid "The password will be remembered until you close PDF Arranger."
-msgstr "Lykilorðið er geymt þar til þú lokar PDF Arranger."
-
-#: pdfarranger/config.py:253
-msgid "Theme"
-msgstr "Þema"
-
-#: pdfarranger/metadata.py:43
-msgid "Title"
-msgstr "Titill"
-
-#: pdfarranger/pageutils.py:253
-msgid "Top"
-msgstr "Efst"
-
-#: pdfarranger/pageutils.py:481
-msgid "Top to Bottom"
-msgstr "Ofan og niður"
-
-#: pdfarranger/pageutils.py:995
-msgid "Underlay"
-msgstr "Undirlag"
-
-#: pdfarranger/core.py:543 pdfarranger/pdfarranger.py:1711
+# machine translation, unreviewed
+#: pdfarranger_qt/core.py
+msgid "File not found"
+msgstr "Skráin fannst ekki"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/core.py
+msgid "Invalid file format"
+msgstr "Ógilt skráarsnið"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/core.py
+msgid "Data not yet available"
+msgstr "Gögn ekki tiltæk ennþá"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/core.py
+msgid "Unsupported security scheme"
+msgstr "Óstudd öryggisaðferð"
+
+#: pdfarranger_qt/core.py
 msgid "Unknown file format"
 msgstr "Óþekkt skráarsnið"
 
-#: pdfarranger/pageutils.py:1076
+#: pdfarranger_qt/core.py
+msgid "Image format is not supported by img2pdf"
+msgstr "Myndskrársnið er ekki stutt af img2pdf"
+
+#: pdfarranger_qt/core.py
+msgid "File is neither pdf nor image"
+msgstr "Skráin er hvorki PDF-skrá né mynd"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/core.py
+msgid "Cannot open document"
+msgstr "Get ekki opnað skjalið"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Paper size"
+msgstr "Pappírsstærð"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Custom"
+msgstr "Sérsniðið"
+
+#: pdfarranger_qt/dialogs.py
+msgid "mm"
+msgstr "mm"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Width"
+msgstr "Breidd"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Height"
+msgstr "Hæð"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Keep aspect ratio"
+msgstr "Halda hlutföllum"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Portrait"
+msgstr "Skammsnið"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Landscape"
+msgstr "Langsnið"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Orientation"
+msgstr "Stefna"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Range Select"
+msgstr "Velja umfang"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Select range of pages: "
+msgstr "Veldu röð af síðum: "
+
+#: pdfarranger_qt/dialogs.py
 msgid ""
 "Use a comma to separate page numbers, a dash to select a range of pages. \n"
 "e.g. : \"1,3,5-7,9\""
@@ -716,198 +152,2555 @@ msgstr ""
 " síðum.\n"
 "Dæmi: \"1,3,5-7,9\""
 
-#: pdfarranger/pdfarranger.py:3035
-msgid "User Manual"
-msgstr "Notendahandbók"
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+msgid "Insert Blank Page"
+msgstr "Setja inn auða síðu"
 
-#: pdfarranger/metadata.py:216
-msgid "Value"
-msgstr "Gildi"
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+msgid "Page size"
+msgstr "Blaðsíðustærð"
 
-#: pdfarranger/pageutils.py:478
-msgid "Vertical"
-msgstr "Lóðrétt"
+#: pdfarranger_qt/dialogs.py
+msgid "Fit to paper"
+msgstr "Aðlaga að pappír"
 
-#: pdfarranger/splitter.py:61
+#: pdfarranger_qt/dialogs.py
+msgid "Relative"
+msgstr "Hlutfallslegt"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Scale"
+msgstr "Kvörðun"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Scale & Add margins"
+msgstr "Kvarða og bæta við spássíum"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Crop & Add margins"
+msgstr "Utansníða og bæta við spássíum"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Fit mode"
+msgstr "Aðlögun"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Scale factor"
+msgstr "Kvörðunargildi"
+
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+msgid "Hide Margins"
+msgstr "Fela spássíur"
+
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+msgid "Crop Margins"
+msgstr "Skera utan af spássíum"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Left"
+msgstr "Vinstri"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Right"
+msgstr "Hægri"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Top"
+msgstr "Efst"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Bottom"
+msgstr "Neðst"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Margins"
+msgstr "Spássíur"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Same for all sides"
+msgstr "Eins á öllum hliðum"
+
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+msgid "Split Pages"
+msgstr "Kljúfa síður"
+
+#: pdfarranger_qt/dialogs.py
 msgid "Vertical Splits"
 msgstr "Klofið lóðrétt"
 
-#: pdfarranger/pageutils.py:550
-msgid "Vertical offset"
-msgstr "Lóðrétt hliðrun"
+#: pdfarranger_qt/dialogs.py
+msgid "Horizontal Splits"
+msgstr "Klofið lárétt"
 
-#: pdfarranger/pageutils.py:138
-msgid "Width"
-msgstr "Breidd"
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+msgid "Pages per Sheet"
+msgstr "Síður á blað"
 
-#: pdfarranger/splitter.py:88
-msgid "Width in %"
-msgstr "Breidd í %"
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Automatic"
+msgstr "Sjálfvirkt"
 
-#: pdfarranger/pdfarranger.py:1193
-msgid "Your changes will be lost if you don’t save them."
-msgstr "Breytingarnar þínar tapast ef þú vistar þær ekki."
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Automatic turns the sheet sideways when that lets the pages come out larger."
+msgstr "Sjálfvirkt snýr blaðinu á hliðina þegar síðurnar verða þannig stærri."
 
-#: data/pdfarranger.ui:144
-msgid "Zoom In"
-msgstr "Renna að"
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Empty space left around each page."
+msgstr "Autt svæði umhverfis hverja síðu."
 
-#: data/pdfarranger.ui:167
-msgid "Zoom Out"
-msgstr "Renna frá"
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Layout"
+msgstr "Framsetning"
 
-#: data/menu.ui:267
-msgid "Zoom _Fit"
-msgstr "Aðdráttur svo _passi"
+#: pdfarranger_qt/dialogs.py
+msgid "Columns"
+msgstr "Dálkar"
 
-#: data/menu.ui:259
-msgid "Zoom _In"
-msgstr "Renna _að"
+#: pdfarranger_qt/dialogs.py
+msgid "Rows"
+msgstr "Raðir"
 
-#: data/menu.ui:263
-msgid "Zoom _Out"
-msgstr "Renna _frá"
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Sheet"
+msgstr "Blað"
 
-#: data/menu.ui:290
-msgid "_About"
-msgstr "_Um hugbúnaðinn"
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Gap"
+msgstr "Bil"
 
-#: pdfarranger/pageutils.py:952
-msgid "_Apply"
-msgstr "Virkj_a"
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Appearance"
+msgstr "Útlit"
 
-#: data/menu.ui:198 data/menu.ui:473
-msgid "_Booklet"
-msgstr "_Bæklingur"
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/reader.py
+msgid "Bold"
+msgstr "Feitletrað"
 
-#: pdfarranger/config.py:239 pdfarranger/metadata.py:205
-#: pdfarranger/pageutils.py:326 pdfarranger/pdfarranger.py:1185
-#: pdfarranger/pdfarranger.py:1194 pdfarranger/pdfarranger.py:1317
-#: pdfarranger/pdfarranger.py:1367
-msgid "_Cancel"
-msgstr "_Hætta við"
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/reader.py
+msgid "Italic"
+msgstr "Skáletrað"
 
-#: pdfarranger/pdfarranger.py:1204 data/menu.ui:296
-msgid "_Close"
-msgstr "_Loka"
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Font"
+msgstr "Letur"
 
-#: data/menu.ui:98 data/menu.ui:318
-msgid "_Copy"
-msgstr "A_frita"
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Size"
+msgstr "Stærð"
 
-#: data/menu.ui:166 data/menu.ui:441
-msgid "_Crop Margins…"
-msgstr "_Utansníða spássíur"
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Colour"
+msgstr "Litur"
 
-#: data/menu.ui:90 data/menu.ui:310
-msgid "_Delete"
-msgstr "_Eyða"
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Opacity"
+msgstr "Ógegnsæi"
 
-#: data/menu.ui:219 data/menu.ui:388
-msgid "_Deselect All"
-msgstr "A_fvelja allt"
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Position"
+msgstr "Staðsetning"
 
-#: data/menu.ui:87
-msgid "_Edit"
-msgstr "Br_eyta"
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Angle"
+msgstr "Horn"
 
-#: data/menu.ui:137 data/menu.ui:362
-msgid "_Explode into Images"
-msgstr "Spr_engja í stakar myndir"
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+msgid "Add Page Numbers"
+msgstr "Bæta við blaðsíðutölum"
 
-#: data/menu.ui:135 data/menu.ui:359
-msgid "_Extract"
-msgstr "Sæ_kja"
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+#, python-format
+msgid "%s is replaced by the page number, %s by the number of pages."
+msgstr "%s kemur í stað blaðsíðutölunnar, %s í stað fjölda síðna."
 
-#: data/menu.ui:170 data/menu.ui:445
-msgid "_Hide Margins…"
-msgstr "_Fela spássíur…"
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Leave the first page unnumbered"
+msgstr "Hafa fyrstu síðuna ónúmeraða"
 
-#: data/menu.ui:30
-msgid "_Import"
-msgstr "Flytja _inn"
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "It is still counted; a title page just does not carry a number."
+msgstr "Hún telst samt með; titilsíða ber einfaldlega ekki númer."
 
-#: data/menu.ui:244 data/menu.ui:413
-msgid "_Invert Selection"
-msgstr "Snúa vali v_ið"
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Format"
+msgstr "Snið"
 
-#: data/menu.ui:190 data/menu.ui:465
-msgid "_Merge Pages…"
-msgstr "Sa_meina síður…"
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Start at"
+msgstr "Byrja á"
 
-#: data/menu.ui:36
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Numbering"
+msgstr "Tölusetning"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+msgid "Add Watermark"
+msgstr "Bæta við vatnsmerki"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "DRAFT"
+msgstr "DRÖG"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Text"
+msgstr "Texti"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Watermark"
+msgstr "Vatnsmerki"
+
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+msgid "Merge Pages"
+msgstr "Sameina síður"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Overlay"
+msgstr "Yfirlag"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Underlay"
+msgstr "Undirlag"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/stamp.py
+msgid "Centre"
+msgstr "Miðjað"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Middle"
+msgstr "Miðja"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Horizontal"
+msgstr "Lárétt"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Vertical"
+msgstr "Lóðrétt"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Edit properties"
+msgstr "Breyta eiginleikum"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "System"
+msgstr "Kerfi"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Light"
+msgstr "Ljóst"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Dark"
+msgstr "Dökkt"
+
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+msgid "Preferences"
+msgstr "Kjörstillingar"
+
+#: pdfarranger_qt/dialogs.py
+msgid "System setting"
+msgstr "Kerfisstilling"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Language"
+msgstr "Tungumál"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Theme"
+msgstr "Þema"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "General"
+msgstr "Almennt"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Fit to page"
+msgstr "Laga að síðu"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Actual size"
+msgstr "Raunstærð"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Auto Rotate"
+msgstr "Sjálfvirkur snúningur"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Pages are rasterised at this resolution before being sent to the printer. "
+"Lower it if printing is slow: the printer driver has less to process."
+msgstr ""
+"Síðurnar eru rastaðar í þessari upplausn áður en þær eru sendar á "
+"prentarann. Lækkaðu hana ef prentun er hæg: prentrekillinn hefur þá minna að"
+" vinna úr."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Scale mode"
+msgstr "Kvörðunarhamur"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Pixels/inch:"
+msgstr "Mynddílar/tomma:"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Printing"
+msgstr "Prentun"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Preserve document information from the first file opened"
+msgstr "Varðveita skjalsupplýsingar úr fyrstu skránni sem var opnuð"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "When checked: use document properties from the first file opened."
+msgstr "Ef hakað: nota eiginleika skjalsins úr fyrstu skránni sem var opnuð."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "When unchecked: merge bookmarks from all documents."
+msgstr "Ef ekki hakað: sameina bókamerki úr öllum skjölum."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Optimize for the web (linearize)"
+msgstr "Fínstilla fyrir vefinn (línulaga)"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Lay the file out so a browser can show page one before the rest has "
+"downloaded."
+msgstr ""
+"Raða skránni þannig að vafri geti sýnt fyrstu síðuna áður en afgangurinn "
+"hefur hlaðist niður."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Compress"
+msgstr "Þjappa"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Recompress the file's streams and pack its objects together."
+msgstr "Endurþjappa gagnastrauma skrárinnar og pakka hlutum hennar saman."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"How much this saves depends on the file: one full of already-compressed "
+"images will barely shrink."
+msgstr ""
+"Hversu miklu þetta skilar fer eftir skránni: skrá full af þegar þjöppuðum "
+"myndum minnkar varla neitt."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Saving/exporting to single file"
+msgstr "Vistun/útflutningur í eina skrá"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Greyscale"
+msgstr "Grátóna"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Image Export"
+msgstr "Útflutningur mynda"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Keyboard shortcuts"
+msgstr "Flýtilyklar"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Viewer Preferences"
+msgstr "Kjörstillingar skoðara"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Open showing:"
+msgstr "Opna og sýna:"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Page layout:"
+msgstr "Framsetning síðu:"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "On opening"
+msgstr "Við opnun"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Window"
+msgstr "Gluggi"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Readers are free to ignore all of this."
+msgstr "Lesendum er frjálst að hunsa allt þetta."
+
+#: pdfarranger_qt/dialogs.py
+msgid "Password"
+msgstr "Lykilorð"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Confirm password"
+msgstr "Staðfesta lykilorð"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Enter a password, or cancel to leave the document unencrypted."
+msgstr "Sláðu inn lykilorð, eða hættu við til að skilja skjalið eftir ódulritað."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "The passwords do not match."
+msgstr "Lykilorðin stemma ekki."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Reset"
+msgstr "Endurstilla"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Description"
+msgstr "Lýsing"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"PDF Arranger merges, splits, rearranges, rotates and crops PDF documents. "
+"Everything happens in memory against the pages you can see; nothing is "
+"written until you save."
+msgstr ""
+"PDF Arranger sameinar, skiptir, endurraðar, snýr og sníður PDF-skjöl. Allt "
+"gerist í minni á þeim síðum sem þú sérð; ekkert er skrifað fyrr en þú "
+"vistar."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"It is a front end for pikepdf. Page content is never rewritten — only page "
+"order, geometry and composition."
+msgstr ""
+"Þetta er viðmót ofan á pikepdf. Efni síðnanna er aldrei endurskrifað — "
+"aðeins röð síðna, rúmfræði og samsetning."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Command line"
+msgstr "Skipanalína"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Files given on the command line are opened as one document. "
+"<code>--version</code> prints the version and exits."
+msgstr ""
+"Skrár sem gefnar eru upp á skipanalínunni eru opnaðar sem eitt skjal. "
+"<code>--version</code> sýnir útgáfuna og hættir."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+msgid "Reading"
+msgstr "Lestur"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"The application opens in <b>read mode</b>: a continuous page view for "
+"reading the document rather than rearranging it. <b>View ▸ Arrange Mode</b> "
+"(Ctrl+E) swaps to the thumbnail grid and back."
+msgstr ""
+"Forritið opnast í <b>lestrarham</b>: samfelldri síðusýn til að lesa skjalið "
+"frekar en að endurraða því. <b>Skoða ▸ Röðunarhamur</b> (Ctrl+E) skiptir "
+"yfir í smámyndanetið og til baka."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Reading shows the document <i>as edited</i>: rotations, crops, deletions and"
+" reordering are all applied, so what you read is what you would get if you "
+"saved. Page-editing commands are disabled while reading — bookmarks are the "
+"exception, and are edited here and nowhere else."
+msgstr ""
+"Lestur sýnir skjalið <i>eins og það hefur verið breytt</i>: snúningar, "
+"sniðningar, eyðingar og endurröðun eru allt virkt, þannig að það sem þú lest"
+" er það sem þú fengir ef þú vistaðir. Skipanir til að breyta síðum eru "
+"óvirkar meðan lesið er — bókamerki eru undantekningin og þeim er breytt hér "
+"og hvergi annars staðar."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"The page you are on follows you between the two modes. Switching to read "
+"mode opens at the page selected in the grid, the first of them if several "
+"are selected; switching back scrolls the grid to the page you were reading, "
+"without disturbing what you had selected. With nothing selected, reading "
+"resumes where you left off — your place in each document is remembered "
+"between visits."
+msgstr ""
+"Síðan sem þú ert á fylgir þér milli hamanna tveggja. Að skipta yfir í "
+"lestrarham opnar á þeirri síðu sem valin er í netinu, þeirri fyrstu ef "
+"margar eru valdar; að skipta til baka skrunar netinu að þeirri síðu sem þú "
+"varst að lesa, án þess að raska því sem þú hafðir valið. Sé ekkert valið "
+"heldur lesturinn áfram þar sem frá var horfið — staður þinn í hverju skjali "
+"er munaður milli heimsókna."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"The toolbar shows which page you are on and how many there are; type a "
+"number into it to jump there, or use <b>Ctrl+G</b>."
+msgstr ""
+"Verkfærastikan sýnir á hvaða síðu þú ert og hversu margar þær eru; sláðu inn"
+" tölu í hana til að stökkva þangað, eða notaðu <b>Ctrl+G</b>."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>View ▸ Continuous Scroll</b> is on by default; turning it off shows one "
+"page at a time. <b>View ▸ Facing Pages</b> puts two pages side by side, the "
+"way a book falls open. Both settings are remembered."
+msgstr ""
+"<b>Skoða ▸ Samfellt skrun</b> er sjálfgefið kveikt; sé slökkt á því sést ein"
+" síða í einu. <b>Skoða ▸ Síður hlið við hlið</b> setur tvær síður hlið við "
+"hlið, eins og bók opnast. Báðar stillingar eru munaðar."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Moving around a document"
+msgstr "Að ferðast um skjal"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"One rule for the arrow keys: <b>the modifier decides what moves</b>. Nothing"
+" scrolls the view, Option (Alt) moves the text cursor, Shift extends the "
+"selection, Command (Ctrl) jumps to an edge, and Fn — Page Up, Page Down, "
+"Home and End — jumps further. None of it changes according to whether a text"
+" cursor happens to be on the page."
+msgstr ""
+"Ein regla fyrir örvatakkana: <b>breytilykillinn ræður hvað hreyfist</b>. "
+"Enginn skrunar sýninni, Option (Alt) færir textabendilinn, Shift víkkar "
+"valið, Command (Ctrl) stekkur að jaðri, og Fn — Page Up, Page Down, Home og "
+"End — stekkur lengra. Ekkert af þessu breytist eftir því hvort textabendill "
+"er staddur á síðunni."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Keys"
+msgstr "Lyklar"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Continuous"
+msgstr "Samfellt"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/viewer.py
+msgid "One page at a time"
+msgstr "Ein síða í einu"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "scroll one line"
+msgstr "skruna um eina línu"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "top of the previous / next page"
+msgstr "efst á fyrri / næstu síðu"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "previous / next page"
+msgstr "fyrri / næsta síða"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "scroll one screen"
+msgstr "skruna um einn skjá"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "start / end of the document"
+msgstr "upphaf / endir skjalsins"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "move the text cursor, by character or line"
+msgstr "færa textabendil, um staf eða línu"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "extend the selection, by character or line"
+msgstr "víkka valið, um staf eða línu"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "move the text cursor one word"
+msgstr "færa textabendil um eitt orð"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "extend the selection one word"
+msgstr "víkka valið um eitt orð"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "cursor to the start / end of the line"
+msgstr "bendill í upphaf / enda línunnar"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "cursor to the start / end of the document"
+msgstr "bendill í upphaf / enda skjalsins"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Add Shift to a Command or Option combination to extend the selection instead"
+" of moving — <b>Shift+Command+→</b> selects to the end of the line. Adding "
+"Option works by the word rather than the character. On Windows and Linux, "
+"read Command as Ctrl and Option as Alt; the table is the same everywhere."
+msgstr ""
+"Bættu Shift við Command- eða Option-samsetningu til að víkka valið í stað "
+"þess að færa — <b>Shift+Command+→</b> velur að enda línunnar. Að bæta Option"
+" við vinnur eftir orðum í stað stafa. Á Windows og Linux les þú Command sem "
+"Ctrl og Option sem Alt; taflan er sú sama alls staðar."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Selecting and copying text"
+msgstr "Að velja og afrita texta"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Drag across the page to select text, across page boundaries if you keep "
+"going. <b>Double-click</b> selects a word. <b>Ctrl/Cmd+C</b> copies, "
+"<b>Ctrl/Cmd+A</b> selects the text of the page you are on, and <b>Esc</b> "
+"clears the selection. The same commands are on the right-click menu."
+msgstr ""
+"Dragðu yfir síðuna til að velja texta, yfir síðumót ef þú heldur áfram. "
+"<b>Tvísmellur</b> velur orð. <b>Ctrl/Cmd+C</b> afritar, <b>Ctrl/Cmd+A</b> "
+"velur textann á þeirri síðu sem þú ert á, og <b>Esc</b> hreinsar valið. Sömu"
+" skipanir eru í hægrismellsvalmyndinni."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>Shift+click</b> extends an existing selection to where you clicked. The "
+"end you are moving grows out to a whole word, because a single click is an "
+"imprecise way to point at one character; the end you started from stays "
+"exactly where you put it. Dragging selects by character throughout, since "
+"you can watch it and stop where you like."
+msgstr ""
+"<b>Shift+smellur</b> víkkar fyrirliggjandi val að þeim stað sem þú smelltir "
+"á. Sá endi sem þú færir vex út í heilt orð, því einn smellur er ónákvæm leið"
+" til að benda á einn staf; sá endi sem þú byrjaðir á situr nákvæmlega þar "
+"sem þú settir hann. Að draga velur eftir stöfum alla leið, því þú getur "
+"fylgst með og stöðvað þar sem þú vilt."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Clicking on text leaves a blinking <b>text cursor</b>. That is what "
+"Shift+arrow extends from, and what the Option and Command combinations above"
+" move. It stays where you put it — scrolling, paging and clicking off the "
+"page all leave it alone — until you press Esc or open another document."
+msgstr ""
+"Að smella á texta skilur eftir blikkandi <b>textabendil</b>. Það er hann sem"
+" Shift+ör víkkar út frá, og hann sem Option- og Command-samsetningarnar að "
+"ofan færa. Hann situr þar sem þú settir hann — skrun, síðuflett og smellur "
+"utan síðunnar láta hann í friði — þar til þú ýtir á Esc eða opnar annað "
+"skjal."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Following links"
+msgstr "Að fylgja tenglum"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Click a link to follow it. Links to a page in the same document jump there; "
+"links to the web open in your browser. Hovering over one shows where it "
+"goes, which is worth reading before you click: many links in a PDF are not "
+"written by its author at all but inferred from the text, so what a link "
+"points at is not always what the words appear to say."
+msgstr ""
+"Smelltu á tengil til að fylgja honum. Tenglar á síðu í sama skjali stökkva "
+"þangað; tenglar á vefinn opnast í vafranum þínum. Að sveima yfir einum sýnir"
+" hvert hann liggur, og það er þess virði að lesa áður en þú smellir: margir "
+"tenglar í PDF-skjali eru alls ekki skrifaðir af höfundinum heldur leiddir af"
+" textanum, svo það sem tengill vísar á er ekki alltaf það sem orðin virðast "
+"segja."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Only ordinary web and mail links are handed to the system — http, https, "
+"mailto and ftp. A document is a file that arrived from somewhere, and "
+"anything else it asks to open is refused and reported rather than acted on."
+msgstr ""
+"Aðeins venjulegir vef- og pósttenglar eru afhentir kerfinu — http, https, "
+"mailto og ftp. Skjal er skrá sem kom einhvers staðar frá, og öllu öðru sem "
+"það biður um að opna er hafnað og það tilkynnt frekar en framkvæmt."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Right-clicking a link offers <b>Open Link</b> and <b>Copy Link Address</b>."
+msgstr ""
+"Hægrismellur á tengil býður upp á <b>Opna tengil</b> og <b>Afrita vistfang "
+"tengils</b>."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Bookmarks"
+msgstr "Bókamerki"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"The sidebar shows the document's bookmarks. Click one to jump to it. "
+"Everything below is on the sidebar's right-click menu, and every command can"
+" be undone."
+msgstr ""
+"Hliðarstikan sýnir bókamerki skjalsins. Smelltu á eitt til að stökkva "
+"þangað. Allt hér að neðan er í hægrismellsvalmynd hliðarstikunnar, og allar "
+"skipanir má afturkalla."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>Add Bookmark Here</b> makes one pointing at the page you are reading, "
+"named after whatever text you have selected — so select a heading, then add."
+" With nothing selected it is named after the page. <b>Add Child Bookmark "
+"Here</b> does the same, nested under the entry you clicked."
+msgstr ""
+"<b>Bæta við bókamerki hér</b> býr til eitt sem vísar á þá síðu sem þú ert að"
+" lesa, nefnt eftir þeim texta sem þú hefur valið — veldu því fyrirsögn og "
+"bættu svo við. Sé ekkert valið er það nefnt eftir síðunni. <b>Bæta við "
+"undirbókamerki hér</b> gerir hið sama, hreiðrað undir þeirri færslu sem þú "
+"smelltir á."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>Rename</b> edits the title in place. <b>Re-home to This Page</b> points "
+"an existing bookmark at the page you are on, keeping its title. "
+"<b>Delete</b> removes an entry and <i>promotes</i> its children into its "
+"place; <b>Delete with Children</b> removes the whole branch."
+msgstr ""
+"<b>Endurnefna</b> breytir titlinum á staðnum. <b>Beina á þessa síðu</b> "
+"lætur fyrirliggjandi bókamerki vísa á þá síðu sem þú ert á, með titilinn "
+"óbreyttan. <b>Eyða</b> fjarlægir færslu og <i>lyftir</i> undirliðum hennar í"
+" hennar stað; <b>Eyða með undirliðum</b> fjarlægir alla greinina."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Drag entries within the sidebar to re-nest or reorder them. <b>Expand All "
+"Children</b> and <b>Collapse All Children</b> open or shut a whole branch at"
+" once."
+msgstr ""
+"Dragðu færslur innan hliðarstikunnar til að hreiðra þær eða endurraða. "
+"<b>Fletta út öllum undirliðum</b> og <b>Fella saman alla undirliði</b> opna "
+"eða loka heilli grein í einu."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>Style</b> sets a bookmark bold or italic, or gives it a colour, as the "
+"tree shows."
+msgstr ""
+"<b>Stíll</b> gerir bókamerki feitletrað eða skáletrað, eða gefur því lit, "
+"eins og tréð sýnir."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"A bookmark whose page has been deleted is <b>greyed out</b> rather than "
+"removed: its title may still be worth keeping, and you can point it "
+"somewhere else with Re-home. Undoing the deletion reconnects it. <b>Delete "
+"Dangling Bookmarks</b> clears them all out; it leaves alone any entry that "
+"points nowhere on purpose, which is a legitimate way to write a heading."
+msgstr ""
+"Bókamerki sem á sér ekki lengur síðu er <b>gránað</b> frekar en fjarlægt: "
+"titill þess getur enn verið þess virði að halda, og þú getur beint því "
+"annað. Að afturkalla eyðinguna tengir það aftur. <b>Eyða lausum "
+"bókamerkjum</b> hreinsar þau öll burt; það lætur í friði hverja þá færslu "
+"sem vísar hvergi af ásetningi, sem er fullgild leið til að skrifa fyrirsögn."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Bookmark edits are part of the document and are written when you save, along"
+" with each entry's colour and style and which branches are left open. The "
+"one thing that cannot be saved is a bookmark with no page: there is no way "
+"to record “points at a page that is gone”, so it comes back as a heading "
+"with its title intact."
+msgstr ""
+"Breytingar á bókamerkjum eru hluti af skjalinu og eru skrifaðar þegar þú "
+"vistar, ásamt lit og stíl hverrar færslu og því hvaða greinar eru skildar "
+"eftir opnar. Það eina sem ekki er hægt að vista er bókamerki án síðu: það er"
+" engin leið til að skrá ,,vísar á síðu sem er horfin“, svo það kemur til "
+"baka sem fyrirsögn með titilinn óskertan."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Arranging pages"
+msgstr "Að raða síðum"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Drag pages to reorder them. Hold <b>Ctrl</b> while dropping to copy instead "
+"of move."
+msgstr ""
+"Dragðu síður til að endurraða þeim. Haltu <b>Ctrl</b> þegar þú sleppir til "
+"að afrita í stað þess að færa."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Drag pages onto another window of the application to copy them there, or use"
+" ordinary copy and paste."
+msgstr ""
+"Dragðu síður yfir á annan glugga forritsins til að afrita þær þangað, eða "
+"notaðu venjulegt afrita og líma."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>Paste As Odd/Even Pages</b> interleaves the clipboard with the document —"
+" this is how two single-sided scans of a double-sided original are "
+"recombined. If the second scan came off a duplex feeder it will be in "
+"reverse order; use <b>Arrange ▸ Reverse Order</b> on it first."
+msgstr ""
+"<b>Líma sem oddatölu-/sléttutölusíður</b> fléttar klippispjaldið saman við "
+"skjalið — þannig eru tvær einhliða skannanir af tvíhliða frumriti settar "
+"saman aftur. Hafi seinni skönnunin komið úr tvíhliða matara er hún í öfugri "
+"röð; notaðu <b>Raða ▸ Snúa röðinni við</b> á hana fyrst."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"To move pages a long way, use <b>Move to Start</b>, <b>Move to End</b> or "
+"<b>Move to Page…</b> rather than dragging — in a long document the far end "
+"is a great deal of scrolling away. They are on the Edit menu and on the "
+"right-click menu, and <b>Move to Page…</b> asks for the number the page "
+"should <i>become</i>."
+msgstr ""
+"Til að færa síður langa leið skaltu nota <b>Færa fremst</b>, <b>Færa "
+"aftast</b> eða <b>Færa á síðu…</b> frekar en að draga — í löngu skjali er "
+"hinn endinn ansi mikið skrun í burtu. Þær eru í Breyta-valmyndinni og í "
+"hægrismellsvalmyndinni, og <b>Færa á síðu…</b> spyr um töluna sem síðan á að"
+" <i>verða</i>."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Prefer these to cut and paste for moving. A pasted page is a <i>new</i> page"
+" as far as the document is concerned, so any bookmarks pointing at the "
+"original are left behind with nowhere to go. Moving keeps the page itself, "
+"and its bookmarks come with it."
+msgstr ""
+"Kjóstu þessar fram yfir klippa og líma þegar þú færir. Límd síða er "
+"<i>ný</i> síða frá sjónarhóli skjalsins, svo bókamerki sem vísuðu á "
+"frumritið sitja eftir án viðkomustaðar. Að færa varðveitir síðuna sjálfa, og"
+" bókamerki hennar fylgja með."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Stamping and tiling"
+msgstr "Að stimpla og flísaleggja"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>Page ▸ Add Page Numbers…</b> and <b>Page ▸ Add Watermark…</b> draw text "
+"onto the selected pages. Both add a <i>layer</i> rather than rewriting the "
+"page, so both can be undone and neither touches the file you opened."
+msgstr ""
+"<b>Síða ▸ Bæta við blaðsíðutölum…</b> og <b>Síða ▸ Bæta við vatnsmerki…</b> "
+"teikna texta á valdar síður. Hvort tveggja bætir við <i>lagi</i> frekar en "
+"að endurskrifa síðuna, svo hvort tveggja má afturkalla og hvorugt snertir "
+"skrána sem þú opnaðir."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+#, python-brace-format
+msgid ""
+"Page numbers follow the arrangement, not the source document: they are "
+"numbered in the order the pages are in now. <code>{n}</code> in the format "
+"is the page number and <code>{total}</code> the number of pages, so "
+"<code>Page {n} of {total}</code> does what it looks like."
+msgstr ""
+"Blaðsíðutölur fylgja röðuninni, ekki upprunaskjalinu: þær eru tölusettar í "
+"þeirri röð sem síðurnar eru í núna. <code>{n}</code> í sniðinu er "
+"blaðsíðutalan og <code>{total}</code> fjöldi síðna, svo <code>Síða {n} af "
+"{total}</code> gerir það sem það sýnist gera."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>Arrange ▸ Pages per Sheet…</b> tiles several pages onto one, in reading "
+"order — the printer's <i>N-up</i>. The sheet turns sideways when that lets "
+"the pages come out larger, which is why two-up gives a landscape sheet and "
+"four-up does not."
+msgstr ""
+"<b>Raða ▸ Síður á blað…</b> raðar mörgum síðum á eina, í lestrarröð — "
+"<i>N-up</i> prentsmiðjunnar. Blaðinu er snúið á hliðina þegar síðurnar verða"
+" þannig stærri, og þess vegna gefur tvær á blað liggjandi blað en fjórar á "
+"blað ekki."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Saving a document"
+msgstr "Að vista skjal"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>Optimize for the web</b> in Preferences lays the saved file out so a "
+"browser can show the first page before the rest has arrived. <b>Compress</b>"
+" repacks its streams and objects; how much that saves depends entirely on "
+"the file, and one full of photographs will barely move."
+msgstr ""
+"<b>Fínstilla fyrir vefinn</b> í Kjörstillingum raðar vistuðu skránni þannig "
+"að vafri geti sýnt fyrstu síðuna áður en afgangurinn er kominn. "
+"<b>Þjappa</b> pakkar gagnastraumum hennar og hlutum aftur; hversu miklu það "
+"skilar fer alfarið eftir skránni, og skrá full af ljósmyndum hreyfist varla."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>File ▸ Remove All Metadata</b> is a switch, like Password: turn it on and"
+" the next save writes a document with no title, no author and no record of "
+"what produced it. Edit Properties greys out while it is on, because there "
+"would be nothing to edit."
+msgstr ""
+"<b>Skrá ▸ Fjarlægja öll lýsigögn</b> er rofi, rétt eins og Lykilorð: kveiktu"
+" á honum og næsta vistun skrifar skjal án titils, án höfundar og án "
+"vísbendingar um hvað bjó það til. Breyta eiginleikum gránar meðan kveikt er "
+"á honum, því þá væri ekkert til að breyta."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>File ▸ Viewer Preferences…</b> is how the saved document asks a reader to"
+" open it — with the bookmarks showing, two pages at a time, and so on. "
+"Readers are free to ignore all of it. The settings are read from the file "
+"you opened, so a document that already had them keeps them."
+msgstr ""
+"<b>Skrá ▸ Kjörstillingar skoðara…</b> er hvernig vistaða skjalið biður "
+"lesanda um að opna sig — með bókamerkin sýnileg, tvær síður í einu, og svo "
+"framvegis. Lesendum er frjálst að hunsa allt það. Stillingarnar eru lesnar "
+"úr þeirri skrá sem þú opnaðir, svo skjal sem hafði þær fyrir heldur þeim."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>File ▸ Repair Document…</b> rebuilds a damaged PDF. It works on a file "
+"you pick rather than the one on screen, because the file worth repairing is "
+"usually one this application cannot open properly either. It reports what it"
+" found before writing anything."
+msgstr ""
+"<b>Skrá ▸ Gera við skjal…</b> endurbyggir skemmt PDF-skjal. Það vinnur á "
+"skrá sem þú velur frekar en þeirri sem er á skjánum, því skráin sem er þess "
+"virði að gera við er yfirleitt sú sem þetta forrit getur ekki heldur opnað "
+"almennilega. Það segir frá því sem það fann áður en nokkuð er skrifað."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Mouse"
+msgstr "Mús"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "<b>Ctrl + scroll</b> — zoom"
+msgstr "<b>Ctrl + skrun</b> — aðdráttur"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "<b>Shift + scroll</b> — scroll sideways"
+msgstr "<b>Shift + skrun</b> — skruna til hliðar"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "<b>Alt + scroll</b> — scroll exactly one row"
+msgstr "<b>Alt + skrun</b> — skruna nákvæmlega eina röð"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "<b>Double-click</b> — fit the page to the window, and back"
+msgstr "<b>Tvísmellur</b> — laga síðuna að glugganum, og til baka"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>Click and drag</b> on empty space — rubber-band select; keep scrolling to"
+" extend it"
+msgstr ""
+"<b>Smella og draga</b> á auðu svæði — velja með teygjuramma; haltu áfram að "
+"skruna til að víkka valið"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Moving around the grid"
+msgstr "Að ferðast um reitanetið"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>Arrow keys</b> move between pages, <b>Page Up</b> and <b>Page Down</b> "
+"move a screenful at a time, and <b>Home</b> and <b>End</b> jump to the first"
+" and last page. Hold <b>Shift</b> with any of them to extend the selection."
+msgstr ""
+"<b>Örvatakkarnir</b> færa milli síðna, <b>Page Up</b> og <b>Page Down</b> "
+"færa um heilan skjá í einu, og <b>Home</b> og <b>End</b> stökkva á fyrstu og"
+" síðustu síðu. Haltu <b>Shift</b> með hverjum þeirra til að víkka valið."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>Fit One Page</b> (F) scales so a whole page fits in the window and shows "
+"one page per row — use it to work on a single page at a time. <b>Fit "
+"Multiple Pages</b> (Shift+M) uses the same scale but lets as many pages sit "
+"side by side as the window takes. <b>Fit Width</b> (Shift+F) fills the "
+"window across instead, which shows the page wider but taller than the "
+"window. Double-clicking the grid toggles Fit One Page on and off."
+msgstr ""
+"<b>Laga að einni síðu</b> (F) kvarðar þannig að heil síða rúmist í glugganum"
+" og sýnir eina síðu í röð — notaðu það til að vinna með eina síðu í einu. "
+"<b>Laga að mörgum síðum</b> (Shift+M) notar sömu kvörðun en leyfir jafn "
+"mörgum síðum að standa hlið við hlið og glugginn rúmar. <b>Laga að "
+"breidd</b> (Shift+F) fyllir gluggann þvert í staðinn, sem sýnir síðuna "
+"breiðari en hærri en gluggann. Tvísmellur á netið kveikir og slekkur á Laga "
+"að einni síðu."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"With pages selected, all three fit the selection rather than the whole "
+"document."
+msgstr "Þegar síður eru valdar laga allar þrjár sig að valinu í stað alls skjalsins."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Finding text"
+msgstr "Að finna texta"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>Find</b> selects the pages that contain the phrase and boxes each hit on "
+"the thumbnail, so you can see where on the page it is. The boxes clear as "
+"soon as you change the document, since the pages they were drawn for may "
+"have moved."
+msgstr ""
+"<b>Finna</b> velur þær síður sem innihalda orðasambandið og rammar hverja "
+"niðurstöðu inn á smámyndinni, svo þú sjáir hvar á síðunni hún er. Rammarnir "
+"hverfa um leið og þú breytir skjalinu, því síðurnar sem þeir voru teiknaðir "
+"fyrir kunna að hafa færst til."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Every shortcut can be changed in <b>Edit ▸ Preferences ▸ Keyboard "
+"shortcuts</b>, where they are listed under the menu each one belongs to."
+msgstr ""
+"Öllum flýtilyklum má breyta í <b>Breyta ▸ Kjörstillingar ▸ Flýtilyklar</b>, "
+"þar sem þeir eru taldir upp undir þeirri valmynd sem hver þeirra tilheyrir."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Passwords"
+msgstr "Lykilorð"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Opening an encrypted document asks for its password, which is remembered "
+"until the document is closed."
+msgstr ""
+"Að opna dulritað skjal kallar á lykilorð þess, sem er munað þar til skjalinu"
+" er lokað."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>File ▸ Password</b> encrypts the document when it is next saved. It is a "
+"switch: turn it on and you are asked for a password, turn it off and the "
+"next save is unencrypted. The password is never written to your settings, so"
+" it applies to this session only — and if you forget it, the file cannot be "
+"recovered."
+msgstr ""
+"<b>Skrá ▸ Lykilorð</b> dulritar skjalið næst þegar það er vistað. Þetta er "
+"rofi: kveiktu á honum og þú ert beðin(n) um lykilorð, slökktu á honum og "
+"næsta vistun er ódulrituð. Lykilorðið er aldrei skrifað í stillingarnar "
+"þínar, svo það gildir aðeins fyrir þessa setu — og gleymir þú því verður "
+"skránni ekki bjargað."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Files"
+msgstr "Skrár"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Settings are stored by Qt in the per-user location for this platform; on "
+"Windows that is the registry under "
+"<code>HKEY_CURRENT_USER\\Software\\pdfarranger</code>. There is no "
+"configuration file to edit by hand."
+msgstr ""
+"Qt geymir stillingarnar á þeim stað sem er ætlaður hverjum notanda á þessu "
+"stýrikerfi; á Windows er það systemskráin undir "
+"<code>HKEY_CURRENT_USER\\Software\\pdfarranger</code>. Það er engin "
+"stillingaskrá til að breyta í höndunum."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Credits"
+msgstr "Þakkir"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"PDF Arranger Qt is a PySide6 port of PDF Arranger, which is itself derived "
+"from PDF-Shuffler. It is a separate project and not affiliated with either."
+msgstr ""
+"PDF Arranger Qt er PySide6-útfærsla á PDF Arranger, sem sjálft er komið af "
+"PDF-Shuffler. Þetta er sjálfstætt verkefni og er ekki tengt hvorugu þeirra."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Original authors: Konstantinos Poulios, Jerome Robert."
+msgstr "Upphaflegir höfundar: Konstantinos Poulios, Jerome Robert."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Licensed under the GNU General Public License version 3 or later."
+msgstr "Gefið út undir GNU General Public License útgáfu 3 eða síðari."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+msgid "User Guide"
+msgstr "Notendahandbók"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Insert pages from another PDF or an image"
+msgstr "Setja inn síður úr öðru PDF-skjali eða mynd"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Needs pages copied from a document"
+msgstr "Krefst síðna sem afritaðar hafa verið úr skjali"
+
+#: pdfarranger_qt/mainwindow.py
 msgid "_New Window"
 msgstr "_Nýr gluggi"
 
-#: pdfarranger/config.py:240 pdfarranger/metadata.py:206
-#: pdfarranger/pageutils.py:327 pdfarranger/pdfarranger.py:3026
-msgid "_OK"
-msgstr "Í _lagi"
-
-#: pdfarranger/pdfarranger.py:1366 data/menu.ui:24
+#: pdfarranger_qt/mainwindow.py
 msgid "_Open"
 msgstr "_Opna"
 
-#: data/menu.ui:162 data/menu.ui:437
-msgid "_Page Size…"
-msgstr "_Blaðsíðustærð…"
+#: pdfarranger_qt/mainwindow.py
+msgid "_Import"
+msgstr "Flytja _inn"
 
-#: data/menu.ui:71
-msgid "_Print…"
-msgstr "_Prenta…"
-
-#: pdfarranger/pdfarranger.py:1241 data/menu.ui:302
-msgid "_Quit"
-msgstr "_Hætta"
-
-#: data/menu.ui:82
-msgid "_Redo"
-msgstr "Endu_rtaka"
-
-#: pdfarranger/pageutils.py:952
-msgid "_Revert"
-msgstr "Ta_ka til baka"
-
-#: data/menu.ui:157 data/menu.ui:432
-msgid "_Rotate Right"
-msgstr "Snúa til _hægri"
-
-#: pdfarranger/pdfarranger.py:1194 pdfarranger/pdfarranger.py:1316
-#: data/menu.ui:42
+#: pdfarranger_qt/mainwindow.py
 msgid "_Save"
 msgstr "Vi_sta"
 
-#: data/menu.ui:211 data/menu.ui:380
-msgid "_Select"
-msgstr "_Velja"
+#: pdfarranger_qt/mainwindow.py
+msgid "Save _As…"
+msgstr "Vist_a sem..."
 
-#: data/menu.ui:186 data/menu.ui:461
-msgid "_Split Pages…"
-msgstr "_Kljúfa síður…"
+#: pdfarranger_qt/mainwindow.py
+msgid "E_xport Selection to a Single File…"
+msgstr "Fl_ytja út valið í eina skrá…"
 
-#: data/menu.ui:78
+#: pdfarranger_qt/mainwindow.py
+msgid "_Close"
+msgstr "_Loka"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Quit"
+msgstr "_Hætta"
+
+#: pdfarranger_qt/mainwindow.py
 msgid "_Undo"
 msgstr "Aft_urkalla"
 
-#: data/menu.ui:256
+#: pdfarranger_qt/mainwindow.py
+msgid "_Redo"
+msgstr "Endu_rtaka"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Select _All"
+msgstr "Velja _allt"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Invert Selection"
+msgstr "Snúa vali v_ið"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Delete"
+msgstr "_Eyða"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Duplicate"
+msgstr "Tvöf_alda"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Rotate _Left"
+msgstr "Snúa til _vinstri"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Rotate Right"
+msgstr "Snúa til _hægri"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Zoom _In"
+msgstr "Renna _að"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Zoom _Out"
+msgstr "Renna _frá"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Reset Zoom"
+msgstr "Endurstilla að_drátt"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Project on GitHub"
+msgstr "Verkefnið á GitHub"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_About"
+msgstr "_Um hugbúnaðinn"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Cu_t"
+msgstr "_Klippa"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Copy"
+msgstr "A_frita"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Paste _After"
+msgstr "Lím_a á eftir"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Paste _Before"
+msgstr "Lí_ma á undan"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Paste As _Odd Pages"
+msgstr "Líma sem _oddatölusíður"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Paste As _Even Pages"
+msgstr "Líma s_em jafntölusíður"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Deselect All"
+msgstr "A_fvelja allt"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Select _Odd Pages"
+msgstr "Velja _oddatölusíður"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Select _Even Pages"
+msgstr "V_elja jafntölusíður"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "All From _Same File"
+msgstr "Allt úr _sömu skrá"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Same Page _Format"
+msgstr "Sama _blaðsíðusnið"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Move to Start"
+msgstr "Færa fremst"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Move to End"
+msgstr "Færa aftast"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Move to Page…"
+msgstr "Færa á síðu…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Reverse Order"
+msgstr "Snúa röðinni við"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Swap Odd/Even"
+msgstr "Víxla oddatölum/sléttum tölum"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Split (unimposition)"
+msgstr "_Skipta (afflétta)"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Export _All Pages to Individual Files…"
+msgstr "Flytja út _allar síður í stakar skrár…"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Export Selection to _Individual Files…"
+msgstr "Flyt_ja út valið í stakar skrár…"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Crop Margins…"
+msgstr "_Utansníða spássíur"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Hide Margins…"
+msgstr "_Fela spássíur…"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Page Size…"
+msgstr "_Blaðsíðustærð…"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Insert Blan_k Page…"
+msgstr "Set_ja inn auða síðu…"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Split Pages…"
+msgstr "_Kljúfa síður…"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Merge Pages…"
+msgstr "Sa_meina síður…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Generate (imposition)"
+msgstr "_Búa til (fletta)"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Pages per S_heet…"
+msgstr "Síður á _blað…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Add Page N_umbers…"
+msgstr "Bæta við blaðsíðu_tölum…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Add _Watermark…"
+msgstr "Bæta við vatns_merki…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Pass_word"
+msgstr "L_ykilorð"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Edit _Properties"
+msgstr "_Breyta eiginleikum"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Viewer Preferences…"
+msgstr "_Kjörstillingar skoðara…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Remove All _Metadata"
+msgstr "F_jarlægja öll lýsigögn"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Repair Document…"
+msgstr "_Gera við skjal…"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Crop White Borders"
+msgstr "Skera af hvíta jaðra"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Export Selection to _PNG Images…"
+msgstr "Flytja val út í _PNG-myndir…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Export Selection to _JPG Images…"
+msgstr "Flytja val út í JP_G-myndir…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Export Selection to _Rasterized PDF (png)…"
+msgstr "Flytja val út í _rastað PDF (png)…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Export Selection to _Rasterized PDF (jpg)…"
+msgstr "Flytja val út í rastað PD_F (jpg)…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Copy Text"
+msgstr "Afrita texta"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Copy _Image"
+msgstr "Afrita _mynd"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Explode into Images"
+msgstr "Spr_engja í stakar myndir"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Print…"
+msgstr "_Prenta…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Find…"
+msgstr "Fi_nna…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Find Next"
+msgstr "Finna næsta"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Find Previous"
+msgstr "Finna fyrra"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Find All"
+msgstr "Finna allt"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Select _Range"
+msgstr "Velja _umfang"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Paste As O_verlay…"
+msgstr "Líma sem _yfirlag…"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Paste As _Underlay…"
+msgstr "Líma sem _undirlag…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Fit _One Page"
+msgstr "Laga að _einni síðu"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Fit _Multiple Pages"
+msgstr "Laga að _mörgum síðum"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Fit Width"
+msgstr "Laga að breidd"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Arrange Mode"
+msgstr "Röðunarhamur"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Facing Pages"
+msgstr "Síður hlið við hlið"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Continuous Scroll"
+msgstr "Samfellt skrun"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Next Page"
+msgstr "Næsta síða"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Previous Page"
+msgstr "Fyrri síða"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "First Page"
+msgstr "Fyrsta síða"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Last Page"
+msgstr "Síðasta síða"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Go to Page…"
+msgstr "Fara á síðu…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Fullscreen"
+msgstr "Allur skjárinn"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_File"
+msgstr "_Skrá"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Open Recent"
+msgstr "Opna nýlegt"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "E_xport"
+msgstr "Fl_ytja út"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Edit"
+msgstr "Br_eyta"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Past_e Special"
+msgstr "Sérstök _líming"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Page"
+msgstr "_Síða"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Extract"
+msgstr "Sæ_kja"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Arrange"
+msgstr "Raða"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Select"
+msgstr "_Velja"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Booklet"
+msgstr "_Bæklingur"
+
+#: pdfarranger_qt/mainwindow.py
 msgid "_View"
 msgstr "S_koða"
 
-#: pdfarranger/pageutils.py:142 pdfarranger/pageutils.py:148
-#: pdfarranger/pageutils.py:464 pdfarranger/pageutils.py:514
-msgid "mm"
-msgstr "mm"
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Help"
+msgstr "_Hjálp"
 
-#: pdfarranger/core.py:695
-msgid "page"
-msgstr "síða"
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Read"
+msgstr "Lesa"
 
-#: pdfarranger/pdfarranger.py:1035
-msgid "untitled"
-msgstr "ónefnt"
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "_Undo %s"
+msgstr "Aft_urkalla %s"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "_Redo %s"
+msgstr "Endu_rtaka %s"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "%d page selected"
+msgid_plural "%d pages selected"
+msgstr[0] "%d síða valin"
+msgstr[1] "%d síður valdar"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Untitled"
+msgstr "Ónefnt"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Password required"
+msgstr "Lykilorð nauðsynlegt"
+
+#: pdfarranger_qt/mainwindow.py
+#, python-brace-format
+msgid "The document “{}” is locked and requires a password before it can be opened."
+msgstr "Skjalið “{}” er læst, til að opna það þarf lykilorð."
+
+#: pdfarranger_qt/mainwindow.py
+msgid "The password will be remembered until you close PDF Arranger."
+msgstr "Lykilorðið er geymt þar til þú lokar PDF Arranger."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Importing…"
+msgstr "Flyt inn…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Cancel"
+msgstr "Hætta við"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Import"
+msgstr "Flytja inn"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "No recent files"
+msgstr "Engar nýlegar skrár"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Clear Menu"
+msgstr "Hreinsa valmynd"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "This file is no longer there:"
+msgstr "Þessi skrá er ekki lengur þarna:"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "This document cannot be read."
+msgstr "Ekki er hægt að lesa þetta skjal."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Go to Page"
+msgstr "Fara á síðu"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Page number:"
+msgstr "Blaðsíðunúmer:"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "No document"
+msgstr "Ekkert skjal"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "%d page"
+msgid_plural "%d pages"
+msgstr[0] "%d síða"
+msgstr[1] "%d síður"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-brace-format
+msgid "of {}"
+msgstr "af {}"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "The document will not be encrypted."
+msgstr "Skjalið verður ekki dulritað."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "The document will be encrypted when it is saved."
+msgstr "Skjalið verður dulritað þegar það er vistað."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Could not open a new window."
+msgstr "Tókst ekki að opna nýjan glugga."
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Open"
+msgstr "Opna"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Save As…"
+msgstr "Vista sem…"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Export…"
+msgstr "Flytja út…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "There is nothing to save."
+msgstr "Það er ekkert til að vista."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Could not save:"
+msgstr "Tókst ekki að vista:"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Saved"
+msgstr "Vistað"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "This document has unsaved changes."
+msgstr "Þetta skjal hefur óvistaðar breytingar."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Save before continuing?"
+msgstr "Vista áður en haldið er áfram?"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py pdfarranger_qt/reader.py
+msgid "Delete"
+msgstr "Eyða"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Cut"
+msgstr "Klippa"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Paste"
+msgstr "Líma"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Move to Page"
+msgstr "Færa á síðu"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Move"
+msgstr "Færa"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "The page selection is not contiguous. Cannot unimpose."
+msgstr "Valdar síður eru ekki samfelldar. Get ekki fjarlægt uppsetningu."
+
+#: pdfarranger_qt/mainwindow.py
+msgid "All pages must have the same size."
+msgstr "Allar síður verða að hafa sömu stærð."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Split Booklet"
+msgstr "Skipta bæklingi"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Overwrite existing files?"
+msgstr "Skrifa yfir skrár sem fyrir eru?"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Blank page"
+msgstr "Auð síða"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Copy the pages you want to merge in first."
+msgstr "Afritaðu fyrst síðurnar sem þú vilt sameina."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Generate Booklet"
+msgstr "Búa til bækling"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "The page selection is not contiguous."
+msgstr "Síðuvalið er ekki samfellt."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "All metadata will be removed when the document is saved."
+msgstr "Öllum lýsigögnum verður eytt þegar skjalið er vistað."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Metadata will be kept."
+msgstr "Lýsigögnum verður haldið."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Repair Document…"
+msgstr "Gera við skjal…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Write a rebuilt copy?"
+msgstr "Skrifa endurbyggt afrit?"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Save Repaired Document"
+msgstr "Vista viðgert skjal"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "%d image written"
+msgid_plural "%d images written"
+msgstr[0] "%d mynd skrifuð"
+msgstr[1] "%d myndir skrifaðar"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "The page has no text."
+msgstr "Síðan hefur engan texta."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Copied"
+msgstr "Afritað"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "The page has no image."
+msgstr "Síðan hefur enga mynd."
+
+#: pdfarranger_qt/mainwindow.py
+msgid "The page has several images. Use \"Explode into Images\" first.\""
+msgstr "Síðan er með nokkrar myndir. Notaðu fyrst \"Sprengja í stakar myndir\""
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Explode into Images"
+msgstr "Sundra í myndir"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Printing…"
+msgstr "Prenta..."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Finishing…"
+msgstr "Lýk við…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "The printer driver is processing the job."
+msgstr "Prentrekillinn er að vinna verkið."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "%d page printed"
+msgid_plural "%d pages printed"
+msgstr[0] "%d síða prentuð"
+msgstr[1] "%d síður prentaðar"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Find"
+msgstr "Finna"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "%d page matches"
+msgid_plural "%d pages match"
+msgstr[0] "%d síða passar"
+msgstr[1] "%d síður passa"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Duplicate"
+msgstr "Tvöfalda"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Rotate"
+msgstr "Snúa"
+
+#: pdfarranger_qt/metadata.py
+msgid "Title"
+msgstr "Titill"
+
+#: pdfarranger_qt/metadata.py
+msgid "Subject"
+msgstr "Viðfangsefni"
+
+#: pdfarranger_qt/metadata.py
+msgid "Keywords"
+msgstr "Stikkorð"
+
+#: pdfarranger_qt/metadata.py
+msgid "Producer"
+msgstr "Framleiðandi"
+
+#: pdfarranger_qt/metadata.py
+msgid "Creator"
+msgstr "Höfundur"
+
+#: pdfarranger_qt/metadata.py
+msgid "Creator tool"
+msgstr "Verkfæri fyrir hönnuði"
+
+#: pdfarranger_qt/metadata.py
+msgid "Created"
+msgstr "Búið til"
+
+#: pdfarranger_qt/metadata.py
+msgid "Modified"
+msgstr "Breytt"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/nup.py
+msgid "2 pages per sheet"
+msgstr "2 síður á blað"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/nup.py
+msgid "4 pages per sheet"
+msgstr "4 síður á blað"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/nup.py
+msgid "6 pages per sheet"
+msgstr "6 síður á blað"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/nup.py
+msgid "8 pages per sheet"
+msgstr "8 síður á blað"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/nup.py
+msgid "9 pages per sheet"
+msgstr "9 síður á blað"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/nup.py
+msgid "16 pages per sheet"
+msgstr "16 síður á blað"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Bookmark Colour"
+msgstr "Litur bókamerkis"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Add Bookmark Here"
+msgstr "Bæta við bókamerki hér"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Add Child Bookmark Here"
+msgstr "Bæta við undirbókamerki hér"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Re-home to This Page"
+msgstr "Beina á þessa síðu"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Rename"
+msgstr "Endurnefna"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Style"
+msgstr "Stíll"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Colour…"
+msgstr "Litur…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Default Colour"
+msgstr "Sjálfgefinn litur"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Expand All Children"
+msgstr "Fletta út öllum undirliðum"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Collapse All Children"
+msgstr "Fella saman alla undirliði"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Delete with Children"
+msgstr "Eyða með undirliðum"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Delete Dangling Bookmarks"
+msgstr "Eyða lausum bókamerkjum"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Nothing to read."
+msgstr "Ekkert til að lesa."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+#, python-brace-format
+msgid "Page {} of {}"
+msgstr "Síða {} af {}"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Move Bookmark"
+msgstr "Færa bókamerki"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "This bookmark's page is no longer in the document"
+msgstr "Síða þessa bókamerkis er ekki lengur í skjalinu"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "This bookmark does not point at a page"
+msgstr "Þetta bókamerki vísar ekki á síðu"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Rename Bookmark"
+msgstr "Endurnefna bókamerki"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Add Child Bookmark"
+msgstr "Bæta við undirbókamerki"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Add Bookmark"
+msgstr "Bæta við bókamerki"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Bookmark Style"
+msgstr "Stíll bókamerkis"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Re-home Bookmark"
+msgstr "Beina bókamerki annað"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Delete Bookmark"
+msgstr "Eyða bókamerki"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Delete Bookmark and Children"
+msgstr "Eyða bókamerki og undirliðum"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/repair.py
+msgid "This file cannot be read, even with recovery."
+msgstr "Ekki er hægt að lesa þessa skrá, ekki einu sinni með endurheimt."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/repair.py
+msgid "No damage found; the file reads cleanly."
+msgstr "Engar skemmdir fundust; skráin les hnökralaust."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/repair.py
+msgid "Damaged, and recoverable."
+msgstr "Skemmd, og hægt að endurheimta."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/repair.py
+msgid "The file cannot be read."
+msgstr "Ekki er hægt að lesa skrána."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/stamp.py
+msgid "Top left"
+msgstr "Efst til vinstri"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/stamp.py
+msgid "Top centre"
+msgstr "Efst í miðju"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/stamp.py
+msgid "Top right"
+msgstr "Efst til hægri"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/stamp.py
+msgid "Bottom left"
+msgstr "Neðst til vinstri"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/stamp.py
+msgid "Bottom centre"
+msgstr "Neðst í miðju"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/stamp.py
+msgid "Bottom right"
+msgstr "Neðst til hægri"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/viewer.py
+msgid "Viewer default"
+msgstr "Sjálfgefið í skoðara"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/viewer.py
+msgid "No side panel"
+msgstr "Engin hliðarstika"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/viewer.py
+msgid "Bookmarks panel"
+msgstr "Bókamerkjastika"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/viewer.py
+msgid "Page thumbnails"
+msgstr "Smámyndir síðna"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/viewer.py
+msgid "Continuous scroll"
+msgstr "Samfellt skrun"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/viewer.py
+msgid "Two pages, odd on the left"
+msgstr "Tvær síður, oddatölur til vinstri"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/viewer.py
+msgid "Two pages, odd on the right"
+msgstr "Tvær síður, oddatölur til hægri"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/viewer.py
+msgid "Facing pages, odd on the left"
+msgstr "Síður hlið við hlið, oddatölur til vinstri"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/viewer.py
+msgid "Facing pages, odd on the right"
+msgstr "Síður hlið við hlið, oddatölur til hægri"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/viewer.py
+msgid "Hide the viewer's toolbar"
+msgstr "Fela verkfærastiku skoðarans"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/viewer.py
+msgid "Hide the viewer's menu bar"
+msgstr "Fela valmyndastiku skoðarans"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/viewer.py
+msgid "Centre the window on screen"
+msgstr "Miðja gluggann á skjánum"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/viewer.py
+msgid "Show the title rather than the filename"
+msgstr "Sýna titilinn í stað skráarnafnsins"
 
 #~ msgid "Generate Booklet"
 #~ msgstr "Útbúa bækling"
 
 #~ msgid "Page Size:"
 #~ msgstr "Blaðsíðustærð:"
+
+#~ msgid "#Col"
+#~ msgstr "#Dál"
+
+#~ msgid "#Row"
+#~ msgstr "#Röð"
+
+#~ msgid "%"
+#~ msgstr "%"
+
+#~ msgid "% of height"
+#~ msgstr "% af hæð"
+
+#~ msgid "% of width"
+#~ msgstr "% af breidd"
+
+#~ msgid "%s is a tool for rearranging and modifying PDF files."
+#~ msgstr "%s er verkfæri til að endurraða og breyta PDF-skrám."
+
+#~ msgid "(Libhandy missing)"
+#~ msgstr "(Libhandy vantar)"
+
+#~ msgid "(Requires restart)"
+#~ msgstr "(krefst endurræsingar)"
+
+#~ msgid "A file named \"%s\" already exists. Do you want to replace it?"
+#~ msgstr "Það er þegar til skrá sem heitir \"%s\". Viltu skipta henni út?"
+
+#~ msgid "All files"
+#~ msgstr "Allar skrár"
+
+#~ msgid "All supported files"
+#~ msgstr "Allar studdar skrár"
+
+#~ msgid "Bottom to Top"
+#~ msgstr "Neðan og upp"
+
+#~ msgid "Clipboard image"
+#~ msgstr "Mynd á klippispjaldi"
+
+#~ msgid "Copy _Text"
+#~ msgstr "Afrita _texta"
+
+#~ msgid ""
+#~ "Cropping/hiding does not remove any content"
+#~ " from the PDF file, it only hides"
+#~ " it."
+#~ msgstr ""
+#~ "Utanskurður eða felun fjarlægir ekki neitt"
+#~ " efni úr PDF-skránni, það er "
+#~ "einungis falið."
+
+#~ msgid "Despite the warnings the document(s) should have no visible issues."
+#~ msgstr "Þrátt fyrir aðvaranirnar er skjalið/skölin ekki með nein sýnileg vandamál."
+
+#~ msgid "Discard changes and close?"
+#~ msgstr "Henda breytingum og loka?"
+
+#~ msgid "Discard changes and quit?"
+#~ msgstr "Henda breytingum og hætta?"
+
+#~ msgid "Do not show this dialog again."
+#~ msgstr "Ekki sýna þennan glugga aftur."
+
+#~ msgid "Do_n’t Save"
+#~ msgstr "E_kki vista"
+
+#~ msgid "Don't show warnings when saving again."
+#~ msgstr "Ekki birta neinar aðvaranir aftur við vistun."
+
+#~ msgid "Dupl_icate"
+#~ msgstr "Tvíta_ka"
+
+#~ msgid "Equal column width"
+#~ msgstr "Jöfn breidd dálka"
+
+#~ msgid "Equal row height"
+#~ msgstr "Jöfn hæð raða"
+
+#~ msgid "Exploding into images…"
+#~ msgstr "Sprengi í myndir…"
+
+#~ msgid "File(s) to open"
+#~ msgstr "Skrá(r) til að opna"
+
+#~ msgid "Fit to Full Page"
+#~ msgstr "Aðlaga að allri síðunni"
+
+#~ msgid "Fit to Printable Area"
+#~ msgstr "Aðlaga að prentanlegu svæði"
+
+#~ msgid "For more info see"
+#~ msgstr "Til að fá nánari upplýsingar geturðu skoðað"
+
+#~ msgid "For more options see:"
+#~ msgstr "Fyrir fleiri valkosti skaltu skoða:"
+
+#~ msgid "Full_screen"
+#~ msgstr "_Skjáfylli"
+
+#~ msgid "GNU General Public License (GPL) Version 3."
+#~ msgstr "GNU General Public notkunarleyfið útgáfa 3."
+
+#~ msgid "Generate (imposition)"
+#~ msgstr "Framkalla (uppsetning)"
+
+#~ msgid "Height in %"
+#~ msgstr "Hæð í %"
+
+#~ msgid "Horizontal offset"
+#~ msgstr "Lárétt hliðrun"
+
+#~ msgid "Img2pdf missing."
+#~ msgstr "Img2pdf vantar."
+
+#~ msgid "Import…"
+#~ msgstr "Flytja inn…"
+
+#~ msgid "Invalid date format. Input discarded."
+#~ msgstr "Ógilt dagsetningasnið. Inntaki hent."
+
+#~ msgid "It uses libqpdf %s, pikepdf %s, GTK %s and Python %s."
+#~ msgstr "Notar libqpdf %s, pikepdf %s, GTK %s og Python %s."
+
+#~ msgid "Left to Right"
+#~ msgstr "Vinstri til hægri"
+
+#~ msgid "Main Menu"
+#~ msgstr "Aðalvalmynd"
+
+#~ msgid "Maintainers and contributors"
+#~ msgstr "Höfundar og önnur framlög"
+
+#~ msgid "Margin"
+#~ msgstr "Spássía"
+
+#~ msgid "Merged page size:"
+#~ msgstr "Stærð á sameinaðri síðu:"
+
+#~ msgid "Non-uniform page size - using max size"
+#~ msgstr "Ekki-einsleit blaðastærð - nota hámarksstærð"
+
+#~ msgid "None"
+#~ msgstr "Ekkert"
+
+#~ msgid "Note"
+#~ msgstr "Minnispunktur"
+
+#~ msgid "Note the limitations:"
+#~ msgstr "Athugaðu takmarkanirnar:"
+
+#~ msgid "Open…"
+#~ msgstr "Opna..."
+
+#~ msgid "Outlines and links can be preserved only in certain cases."
+#~ msgstr "Aðeins er hægt að varðveita stigskipan og tengla í ákveðnum tilfellum."
+
+#~ msgid ""
+#~ "PDF Arranger is a small python-gtk"
+#~ " application, which helps the user to"
+#~ " merge or split pdf documents and "
+#~ "rotate, crop and rearrange their pages "
+#~ "using an interactive and intuitive "
+#~ "graphical interface. It is a frontend "
+#~ "for pikepdf."
+#~ msgstr ""
+#~ "PDF Arranger er lítið python-gtk "
+#~ "forrit, sem hjálpar notandanum að sameina"
+#~ " eða skipta upp PDF-skjölum, snúa "
+#~ "síðum eða skera utan af þeim, allt"
+#~ " í gagnvirku og auðveldu myndrænu "
+#~ "viðmóti. Það er í grunninn aðgangsviðmót"
+#~ " fyrir pikepdf."
+
+#~ msgid "PDF document is damaged"
+#~ msgstr "PDF-skjal er skemmt"
+
+#~ msgid "PDF files"
+#~ msgstr "PDF-skrár"
+
+#~ msgid "Page Handling"
+#~ msgstr "Meðhöndlun síðna"
+
+#~ msgid "Page Order"
+#~ msgstr "Síðuröð"
+
+#~ msgid "Pasted data not valid. Aborting paste."
+#~ msgstr "Límd gögn ekki gild. Hætti við límingu."
+
+#~ msgid "Pre_ferences"
+#~ msgstr "K_jörstillingar"
+
+#~ msgid "Print the version of PDF Arranger and exit"
+#~ msgstr "Birta upplýsingar um PDF Arranger og hætta"
+
+#~ msgid "Property"
+#~ msgstr "Eiginleiki"
+
+#~ msgid "Re_verse Order"
+#~ msgstr "Öfu_g röð"
+
+#~ msgid "Rendering Preview…"
+#~ msgstr "Myndgeri forskoðun…"
+
+#~ msgid "Rendering…"
+#~ msgstr "Myndgeri…"
+
+#~ msgid "Replace"
+#~ msgstr "Skipta út"
+
+#~ msgid "Right to Left"
+#~ msgstr "Hægri til vinstri"
+
+#~ msgid "Rotate Left"
+#~ msgstr "Snúa til vinstri"
+
+#~ msgid "Rotate Right"
+#~ msgstr "Snúa til hægri"
+
+#~ msgid "Running on %s"
+#~ msgstr "Keyrir á %s"
+
+#~ msgid "Save"
+#~ msgstr "Vista"
+
+#~ msgid "Save As"
+#~ msgstr "Vista sem"
+
+#~ msgid "Save changes before closing?"
+#~ msgstr "Vista breytingar áður en lokað er?"
+
+#~ msgid "Save changes before quitting?"
+#~ msgstr "Vista breytingar áður en þú hættir?"
+
+#~ msgid "Save changes to “{}” before closing?"
+#~ msgstr "Vista breytingar á '{}' áður en lokað er?"
+
+#~ msgid "Save changes to “{}” before quitting?"
+#~ msgstr "Vista breytingar á '{}' áður en þú hættir?"
+
+#~ msgid "Saving produced some warnings"
+#~ msgstr "Vistun gaf einhverjar aðvaranir"
+
+#~ msgid "Saving…"
+#~ msgstr "Vista…"
+
+#~ msgid "Scale mode:"
+#~ msgstr "Kvörðunarhamur:"
+
+#~ msgid "Selected pages: "
+#~ msgstr "Valdar síður:"
+
+#~ msgid "Show values"
+#~ msgstr "Sýna gildi"
+
+#~ msgid "Split (unimposition)"
+#~ msgstr "Skipta upp (fjarlægja uppsetningu)"
+
+#~ msgid "Supported image files"
+#~ msgstr "Studdar myndskrár"
+
+#~ msgid "Top to Bottom"
+#~ msgstr "Ofan og niður"
+
+#~ msgid "User Manual"
+#~ msgstr "Notendahandbók"
+
+#~ msgid "Value"
+#~ msgstr "Gildi"
+
+#~ msgid "Vertical offset"
+#~ msgstr "Lóðrétt hliðrun"
+
+#~ msgid "Width in %"
+#~ msgstr "Breidd í %"
+
+#~ msgid "Your changes will be lost if you don’t save them."
+#~ msgstr "Breytingarnar þínar tapast ef þú vistar þær ekki."
+
+#~ msgid "Zoom In"
+#~ msgstr "Renna að"
+
+#~ msgid "Zoom Out"
+#~ msgstr "Renna frá"
+
+#~ msgid "Zoom _Fit"
+#~ msgstr "Aðdráttur svo _passi"
+
+#~ msgid "_Apply"
+#~ msgstr "Virkj_a"
+
+#~ msgid "_Cancel"
+#~ msgstr "_Hætta við"
+
+#~ msgid "_OK"
+#~ msgstr "Í _lagi"
+
+#~ msgid "_Revert"
+#~ msgstr "Ta_ka til baka"
+
+#~ msgid "page"
+#~ msgstr "síða"
+
+#~ msgid "untitled"
+#~ msgstr "ónefnt"
+

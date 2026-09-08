@@ -1,804 +1,148 @@
 # Swedish translation for pdfarranger.
-# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# Copyright (C) 2026 THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the pdfarranger package.
 # Translators:
 # kbengs, 2020-2025
 msgid ""
 msgstr ""
-"Project-Id-Version: pdfarranger\n"
+"Project-Id-Version:  pdfarranger\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-05-23 05:41+0300\n"
+"POT-Creation-Date: 2026-09-07 19:17+0000\n"
 "PO-Revision-Date: 2026-05-24 07:36+0300\n"
 "Last-Translator: kbengs\n"
-"Language-Team: Swedish\n"
 "Language: sv\n"
-"MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=UTF-8\n"
-"Content-Transfer-Encoding: 8bit\n"
+"Language-Team: Swedish\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 3.9\n"
-
-#: pdfarranger/splitter.py:87
-msgid "#Col"
-msgstr "#Kolumn"
-
-#: pdfarranger/splitter.py:87
-msgid "#Row"
-msgstr "#Rad"
-
-#: pdfarranger/pageutils.py:128 pdfarranger/pageutils.py:555
-#: pdfarranger/pageutils.py:557
-msgid "%"
-msgstr "%"
-
-#: pdfarranger/pageutils.py:278
-msgid "% of height"
-msgstr "% av höjd"
-
-#: pdfarranger/pageutils.py:278
-msgid "% of width"
-msgstr "% av bredd"
-
-#: pdfarranger/pdfarranger.py:3237
-#, python-format
-msgid "%s is a tool for rearranging and modifying PDF files."
-msgstr "%s är ett verktyg för att arrangera om och modifiera PDF filer."
-
-#: pdfarranger/config.py:342
-msgid "(Libhandy missing)"
-msgstr "(Libhandy saknas)"
-
-#: pdfarranger/config.py:334
-msgid "(Requires restart)"
-msgstr "(Kräver omstart)"
-
-#: pdfarranger/pdfarranger.py:1417
-#, python-format
-msgid "A file named \"%s\" already exists. Do you want to replace it?"
-msgstr "En fil med namnet \"%s\" finns redan. Vill du skriva över den?"
-
-#: pdfarranger/search.py:42
-msgid "All"
-msgstr "Alla"
-
-#: data/menu.ui:258 data/menu.ui:454
-msgid "All From _Same File"
-msgstr "Alla från samma _fil"
-
-#: pdfarranger/pdfarranger.py:730
-msgid "All files"
-msgstr "Alla filer"
-
-#: pdfarranger/pdfarranger.py:519 pdfarranger/pdfarranger.py:598
-msgid "All pages must have the same size."
-msgstr "Alla sidor måste ha samma storlek."
-
-#: pdfarranger/pdfarranger.py:701
-msgid "All supported files"
-msgstr "Alla filer som stöds"
-
-#: pdfarranger/exporter.py:526
-msgid "Auto Rotate"
-msgstr "Rotera automatiskt"
-
-#: pdfarranger/pageutils.py:256
-msgid "Bottom"
-msgstr "Under"
-
-#: pdfarranger/pageutils.py:488
-msgid "Bottom to Top"
-msgstr "Nerifrån uppåt"
-
-#: pdfarranger/core.py:599
-msgid "Clipboard image"
-msgstr "Urklipp bild"
-
-#: pdfarranger/pageutils.py:471 pdfarranger/splitter.py:60
-msgid "Columns"
-msgstr "Kolumner"
-
-#: data/menu.ui:161 data/menu.ui:417
-msgid "Copy _Image"
-msgstr "Kopiera _bild"
-
-#: data/menu.ui:166 data/menu.ui:422
-msgid "Copy _Text"
-msgstr "Kopiera _text"
-
-#: pdfarranger/metadata.py:49
-msgid "Created"
-msgstr "Skapad"
-
-#: pdfarranger/metadata.py:47
-msgid "Creator"
-msgstr "Författare"
-
-#: pdfarranger/metadata.py:48
-msgid "Creator tool"
-msgstr "Program"
-
-#: pdfarranger/pageutils.py:353
-msgid "Crop & Add margins"
-msgstr "Beskär & lägg till marginaler"
-
-#: pdfarranger/pageutils.py:1004
-msgid "Crop Margins"
-msgstr "Beskär marginaler"
-
-#: data/menu.ui:194 data/menu.ui:500
-msgid "Crop White Borders"
-msgstr "_Beskär vita marginaler"
-
-#: pdfarranger/pageutils.py:268 pdfarranger/pdfarranger.py:3211
-msgid ""
-"Cropping/hiding does not remove any content from the PDF file, it only hides "
-"it."
-msgstr ""
-"Beskär/dölj tar inte bort innehåll från PDF-filen utan gömmer endast bort "
-"det."
-
-#: data/menu.ui:114 data/menu.ui:365
-msgid "Cu_t"
-msgstr "_Klipp ut"
-
-#: pdfarranger/pageutils.py:142
-msgid "Custom"
-msgstr "Anpassad"
-
-#: pdfarranger/pdfarranger.py:1542
-msgid "Despite the warnings the document(s) should have no visible issues."
-msgstr "Trots varningarna borde dokumenten inte ha noterbara problem."
-
-#: pdfarranger/pdfarranger.py:1251
-msgid "Discard changes and close?"
-msgstr "Förkasta ändringar och stäng?"
-
-#: pdfarranger/pdfarranger.py:1288
-msgid "Discard changes and quit?"
-msgstr "Förkasta ändringar och avsluta?"
-
-#: pdfarranger/pdfarranger.py:3218
-msgid "Do not show this dialog again."
-msgstr "Visa inte detta meddelande igen."
-
-#: pdfarranger/pdfarranger.py:1242
-msgid "Do_n’t Save"
-msgstr "Spara _inte"
-
-#: pdfarranger/pdfarranger.py:1549
-msgid "Don't show warnings when saving again."
-msgstr "Visa inte varningar när dokument sparas."
-
-#: data/menu.ui:198 data/menu.ui:504
-msgid "Dupl_icate"
-msgstr "Dupli_cera"
-
-#: data/menu.ui:52 data/menu.ui:541
-msgid "E_xport"
-msgstr "E_xportera"
-
-#: data/menu.ui:55 data/menu.ui:544
-msgid "E_xport Selection to a Single File…"
-msgstr "E_xportera markerade sidor till en fil…"
-
-#: data/menu.ui:329
-msgid "Edit _Properties"
-msgstr "Redigera _egenskaper"
-
-#: pdfarranger/metadata.py:213
-msgid "Edit properties"
-msgstr "Dokument egenskaper"
-
-#: pdfarranger/splitter.py:62
-msgid "Equal column width"
-msgstr "Samma kolumnbredd"
-
-#: pdfarranger/splitter.py:62
-msgid "Equal row height"
-msgstr "Samma radhöjd"
-
-#: pdfarranger/pdfarranger.py:2126
-msgid "Exploding into images…"
-msgstr "Exploderar till bilder…"
-
-#: data/menu.ui:60 data/menu.ui:549
-msgid "Export Selection to _Individual Files…"
-msgstr "Exportera markerade sidor till _enskilda filer…"
-
-#: data/menu.ui:74 data/menu.ui:563
-msgid "Export Selection to _JPG Images…"
-msgstr "Exportera markerade sidor till _JPG bilder…"
-
-#: data/menu.ui:69 data/menu.ui:558
-msgid "Export Selection to _PNG Images…"
-msgstr "Exportera markerade sidor till _PNG bilder…"
-
-#: data/menu.ui:84 data/menu.ui:573
-msgid "Export Selection to _Rasterized PDF (jpg)…"
-msgstr "Exportera markerade sidor till _raster PDF (jpg)…"
-
-#: data/menu.ui:79 data/menu.ui:568
-msgid "Export Selection to _Rasterized PDF (png)…"
-msgstr "Exportera markerade sidor till _raster PDF (png)…"
-
-#: data/menu.ui:65 data/menu.ui:554
-msgid "Export _All Pages to Individual Files…"
-msgstr "Exportera _alla sidor till enskilda filer…"
-
-#: pdfarranger/pdfarranger.py:1358
-msgid "Export…"
-msgstr "Exportera…"
-
-#: pdfarranger/core.py:601 pdfarranger/pdfarranger.py:1817
-msgid "File is neither pdf nor image"
-msgstr "Filen är varken en PDF eller en bildfil"
-
-#: pdfarranger/pdfarranger.py:342
-msgid "File(s) to open"
-msgstr "Fil(er) att öppna"
-
-#: pdfarranger/search.py:43
-msgid "Find All"
-msgstr "Sök alla"
-
-#: pdfarranger/search.py:38
-msgid "Find Next"
-msgstr "Sök nästa"
-
-#: pdfarranger/search.py:33
-msgid "Find Previous"
-msgstr "Sök föregående"
-
-#: data/menu.ui:322
-msgid "Find _All"
-msgstr "Sök _alla"
-
-#: data/menu.ui:318
-msgid "Find _Next"
-msgstr "Sök _nästa"
-
-#: data/menu.ui:314
-msgid "Find _Previous"
-msgstr "Sök _föregående"
-
-#: data/menu.ui:296
-msgid "Fit _Multiple Pages"
-msgstr "Zooma till _flera sidor"
-
-#: data/menu.ui:291
-msgid "Fit _One Page"
-msgstr "Zooma till _en sida"
-
-#: pdfarranger/pageutils.py:349
-msgid "Fit mode"
-msgstr "Anpassningssätt"
-
-#: pdfarranger/exporter.py:524
-msgid "Fit to Full Page"
-msgstr "Anpassa till hel sida"
-
-#: pdfarranger/exporter.py:523
-msgid "Fit to Printable Area"
-msgstr "Anpassa till utskrivbart område"
-
-#: pdfarranger/pageutils.py:358
-msgid "Fit to paper"
-msgstr "Anpassa till papper"
-
-#: pdfarranger/pdfarranger.py:3215
-msgid "For more info see"
-msgstr "För mer info se"
-
-#: pdfarranger/config.py:382
-msgid "For more options see:"
-msgstr "För fler inställningar se:"
-
-#: data/menu.ui:301
-msgid "Full_screen"
-msgstr "_Helskärm"
-
-#: pdfarranger/pdfarranger.py:3259
-msgid "GNU General Public License (GPL) Version 3."
-msgstr "GNU General Public License (GPL) Version 3."
-
-#: pdfarranger/config.py:377
-msgid "Greyscale"
-msgstr "Gråskala"
-
-#: pdfarranger/pageutils.py:157
-msgid "Height"
-msgstr "Höjd"
-
-#: pdfarranger/splitter.py:88
-msgid "Height in %"
-msgstr "Höjd i %"
-
-#: pdfarranger/pageutils.py:1004
-msgid "Hide Margins"
-msgstr "Dölj marginaler"
-
-#: pdfarranger/pageutils.py:483
-msgid "Horizontal"
-msgstr "Horizontell"
-
-#: pdfarranger/splitter.py:61
-msgid "Horizontal Splits"
-msgstr "Horisontell delning"
-
-#: pdfarranger/pageutils.py:554
-msgid "Horizontal offset"
-msgstr "Horizontell offset"
-
-#: pdfarranger/config.py:366
-msgid "Image Export"
-msgstr "Bild export"
-
-#: pdfarranger/core.py:589
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: pdfarranger-qt tools/merge_translations.py\n"
+"Generated-By: Babel 2.18.0\n"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py pdfarranger_qt/reader.py
+#, python-brace-format
+msgid "Page {}"
+msgstr "Sida {}"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Open Link"
+msgstr "Öppna länk"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Copy Link Address"
+msgstr "Kopiera länkadress"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+#, python-brace-format
+msgid "Go to {}"
+msgstr "Gå till {}"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Follow Link"
+msgstr "Följ länk"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py pdfarranger_qt/mainwindow.py
+msgid "Copy"
+msgstr "Kopiera"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Select All"
+msgstr "Markera allt"
+
+#: pdfarranger_qt/core.py pdfarranger_qt/mainwindow.py
 msgid "Image files are only supported with img2pdf"
 msgstr "Img2pdf krävs för stöd av bildfiler"
 
-#: pdfarranger/core.py:596
-msgid "Image format is not supported by img2pdf"
-msgstr "Bildformatet stöds inte av img2pdf"
-
-#: pdfarranger/pdfarranger.py:2123
-msgid "Img2pdf missing."
-msgstr "Img2pdf saknas."
-
-#: pdfarranger/pdfarranger.py:1621
-msgid "Img2pdf support missing."
-msgstr "Imgpdf stöd saknas."
-
-#: data/pdfarranger.ui:58
-msgid "Import"
-msgstr "Importera"
-
-#: pdfarranger/pdfarranger.py:1631
-msgid "Import…"
-msgstr "Importera…"
-
-#: data/menu.ui:218 data/menu.ui:524
-msgid "Insert Blan_k Page…"
-msgstr "_Infoga tom sida…"
-
-#: pdfarranger/pageutils.py:437
-msgid "Insert Blank Page"
-msgstr "Infoga tom sida"
-
-#: pdfarranger/metadata.py:184
-msgid "Invalid date format. Input discarded."
-msgstr "Ogiltigt datumformat."
-
-#: pdfarranger/pdfarranger.py:721
-msgid "JPEG images"
-msgstr "JPEG bilder"
-
-#: pdfarranger/metadata.py:45
-msgid "Keywords"
-msgstr "Nyckelord"
-
-#: pdfarranger/pageutils.py:166
-msgid "Landscape"
-msgstr "Liggande"
-
-#: pdfarranger/config.py:332
-msgid "Language"
-msgstr "Språk"
-
-#: pdfarranger/pageutils.py:256
-msgid "Left"
-msgstr "Vänster"
-
-#: pdfarranger/pageutils.py:485
-msgid "Left to Right"
-msgstr "Vänster till höger"
-
-#: data/pdfarranger.ui:122
-msgid "Main Menu"
-msgstr "Huvudmeny"
-
-#: pdfarranger/pdfarranger.py:3254
-msgid "Maintainers and contributors"
-msgstr "Administratörer och bidragsgivare"
-
-#: pdfarranger/pageutils.py:469
-msgid "Margin"
-msgstr "Marginal"
-
-#: pdfarranger/pageutils.py:455
-msgid "Merge Pages"
-msgstr "Slå samman sidor"
-
-#: pdfarranger/pageutils.py:520
-msgid "Merged page size:"
-msgstr "Sammanslagna sidstorleken:"
-
-#: pdfarranger/metadata.py:50
-msgid "Modified"
-msgstr "Ändrad"
-
-#: pdfarranger/pageutils.py:500
-msgid "Non-uniform page size - using max size"
-msgstr "Sidorna har olika storlek - max storleken används"
-
-#: pdfarranger/exporter.py:522
-msgid "None"
-msgstr "Ingen"
-
-#: pdfarranger/pdfarranger.py:3204
-msgid "Note"
-msgstr "Notera"
-
-#: pdfarranger/pdfarranger.py:3210
-msgid "Note the limitations:"
-msgstr "Notera begränsningarna:"
-
-#: data/pdfarranger.ui:37
-msgid "Open"
-msgstr "Öppna"
-
-#: pdfarranger/pdfarranger.py:1473
-msgid "Open…"
-msgstr "Öppna…"
-
-#: pdfarranger/config.py:374
-msgid "Optimize"
-msgstr "Optimera"
-
-#: pdfarranger/pageutils.py:164
-msgid "Orientation"
-msgstr "Orientering"
-
-#: pdfarranger/pdfarranger.py:3212
-msgid "Outlines and links can be preserved only in certain cases."
-msgstr "Bokmärken och länkar kan bevaras endast i vissa fall."
-
-#: pdfarranger/pageutils.py:1057
-msgid "Overlay"
-msgstr "Klistra in ovanpå"
-
-#: pdfarranger/pdfarranger.py:323
-msgid ""
-"PDF Arranger is a small python-gtk application, which helps the user to "
-"merge or split pdf documents and rotate, crop and rearrange their pages "
-"using an interactive and intuitive graphical interface. It is a frontend for "
-"pikepdf."
-msgstr ""
-"PDF Arranger är ett litet python-gtk program som hjälper användaren att slå "
-"samman och dela pdf dokument samt att rotera och arrangera om dess sidor med "
-"ett interaktivt och intuitivt grafiskt användargränssnitt. Programmet "
-"använder pikepdf i bakgrunden."
-
-#: pdfarranger/pdfarranger.py:1811
-msgid "PDF document is damaged"
-msgstr "PDF dokumentet är skadat"
-
-#: pdfarranger/pdfarranger.py:705
-msgid "PDF files"
-msgstr "PDF filer"
-
-#: pdfarranger/pdfarranger.py:713
-msgid "PNG images"
-msgstr "PNG bilder"
-
-#: pdfarranger/exporter.py:577
-msgid "Page Handling"
-msgstr "Sidhantering"
-
-#: pdfarranger/pageutils.py:496
-msgid "Page Order"
-msgstr "Sidordning"
-
-#: pdfarranger/pdfarranger.py:3282
-msgid "Page Size:"
-msgstr "Sidstorlek:"
-
-#: pdfarranger/pageutils.py:345
-msgid "Page size"
-msgstr "Sidstorlek"
-
-#: pdfarranger/pageutils.py:139
-msgid "Paper size"
-msgstr "Pappersstorlek"
-
-#: pdfarranger/core.py:474
-msgid "Password"
-msgstr "Lösenord"
-
-#: pdfarranger/core.py:452
-msgid "Password required"
-msgstr "Lösenord krävs"
-
-#: data/menu.ui:127 data/menu.ui:378
-msgid "Past_e Special"
-msgstr "Klistra in _special"
-
-#: data/menu.ui:144 data/menu.ui:396
-msgid "Paste As O_verlay…"
-msgstr "Klistra in ovanp_å…"
-
-#: data/menu.ui:139 data/menu.ui:391
-msgid "Paste As _Even Pages"
-msgstr "Klistra in som _jämna sidor"
-
-#: data/menu.ui:134 data/menu.ui:386
-msgid "Paste As _Odd Pages"
-msgstr "Klistra in som _udda sidor"
-
-#: data/menu.ui:149 data/menu.ui:401
-msgid "Paste As _Underlay…"
-msgstr "Klistra in unde_r…"
-
-#: data/menu.ui:122 data/menu.ui:373
-msgid "Paste _After"
-msgstr "Klistra in _efter"
-
-#: data/menu.ui:129 data/menu.ui:381
-msgid "Paste _Before"
-msgstr "Klistra in _före"
-
-#: pdfarranger/pdfarranger.py:1971
-msgid "Pasted data not valid. Aborting paste."
-msgstr "Inklistrat data är inte giltigt. Inklistringen avbryts."
-
-#: pdfarranger/config.py:368
-msgid "Pixels/inch:"
-msgstr "Pixlar/tum:"
-
-#: pdfarranger/pageutils.py:165
-msgid "Portrait"
-msgstr "Stående"
-
-#: data/menu.ui:335
-msgid "Pre_ferences"
-msgstr "_Inställningar"
-
-#: pdfarranger/config.py:322
-msgid "Preferences"
-msgstr "Inställningar"
-
-#: pdfarranger/config.py:354
-msgid "Preserve document information from the first file opened"
-msgstr "Behåll dokument information från filen som öppnats först"
-
-#: pdfarranger/pdfarranger.py:334
-msgid "Print the version of PDF Arranger and exit"
-msgstr "Skriv ut PDF Arranger versionen och avsluta"
-
-#: pdfarranger/config.py:347
-msgid "Printing"
-msgstr "Utskrift"
-
-#: pdfarranger/exporter.py:558
-msgid "Printing…"
-msgstr "Skriver ut…"
-
-#: pdfarranger/metadata.py:46
-msgid "Producer"
-msgstr "PDF-framställning"
-
-#: pdfarranger/metadata.py:227
-msgid "Property"
-msgstr "Fält"
-
-#: pdfarranger/pageutils.py:1124
-msgid "Range Select"
-msgstr "Markera intervall"
-
-#: data/menu.ui:202 data/menu.ui:508
-msgid "Re_verse Order"
-msgstr "Omv_änd ordningen"
-
-#: pdfarranger/pageutils.py:359
-msgid "Relative"
-msgstr "Relativt"
-
-#: pdfarranger/exporter.py:595
-msgid "Rendering Preview…"
-msgstr "Renderar förhandsgranskning…"
-
-#: pdfarranger/pdfarranger.py:993
-msgid "Rendering…"
-msgstr "Renderar…"
-
-#: pdfarranger/pdfarranger.py:1419
-msgid "Replace"
-msgstr "Ersätt"
-
-#: pdfarranger/pageutils.py:256
-msgid "Right"
-msgstr "Höger"
-
-#: pdfarranger/pageutils.py:486
-msgid "Right to Left"
-msgstr "Höger till vänster"
-
-#: data/pdfarranger.ui:203
-msgid "Rotate Left"
-msgstr "Rotera åt vänster"
-
-#: data/pdfarranger.ui:227
-msgid "Rotate Right"
-msgstr "Rotera åt höger"
-
-#: data/menu.ui:172 data/menu.ui:478
-msgid "Rotate _Left"
-msgstr "Rotera åt _vänster"
-
-#: pdfarranger/pageutils.py:472 pdfarranger/splitter.py:60
-msgid "Rows"
-msgstr "Rader"
-
-#: pdfarranger/pdfarranger.py:3249
-#, python-format
-msgid "Running on %s"
-msgstr "Kör på %s"
-
-#: data/menu.ui:263 data/menu.ui:459
-msgid "Same Page _Format"
-msgstr "Alla med samma _sidformat"
-
-#: data/pdfarranger.ui:78
-msgid "Save"
-msgstr "Spara"
-
-#: data/pdfarranger.ui:97
-msgid "Save As"
-msgstr "Spara som"
-
-#: pdfarranger/pdfarranger.py:1358
-msgid "Save As…"
-msgstr "Spara som…"
-
-#: data/menu.ui:47
-msgid "Save _As…"
-msgstr "Spara s_om…"
-
-#: pdfarranger/pdfarranger.py:1260
-msgid "Save changes before closing?"
-msgstr "Spara ändringar innan stängning?"
-
-#: pdfarranger/pdfarranger.py:1297
-msgid "Save changes before quitting?"
-msgstr "Spara ändringar innan programmet avslutas?"
-
-#: pdfarranger/pdfarranger.py:1257
-#, python-brace-format
-msgid "Save changes to “{}” before closing?"
-msgstr "Spara ändringar till “{}” innan stängning?"
-
-#: pdfarranger/pdfarranger.py:1294
-#, python-brace-format
-msgid "Save changes to “{}” before quitting?"
-msgstr "Spara ändringar till “{}” innan programmet avslutas?"
-
-#: pdfarranger/pdfarranger.py:1567
-msgid "Saving failed"
-msgstr "Sparningen misslyckades"
-
-#: pdfarranger/pdfarranger.py:1541
-msgid "Saving produced some warnings"
-msgstr "Spara-processen skapade varningar"
-
-#: pdfarranger/config.py:352
-msgid "Saving/exporting to single file"
-msgstr "Spara/exportera till en enskild fil"
-
-#: pdfarranger/pdfarranger.py:1584
-msgid "Saving…"
-msgstr "Sparar…"
-
-#: pdfarranger/pageutils.py:351
-msgid "Scale"
-msgstr "Skala"
-
-#: pdfarranger/pageutils.py:352
-msgid "Scale & Add margins"
-msgstr "Skala & lägg till marginaler"
-
-#: pdfarranger/pageutils.py:122
-msgid "Scale factor"
-msgstr "Skalningsfaktor"
-
-#: pdfarranger/exporter.py:520
-msgid "Scale mode:"
-msgstr "Skalningsmetod:"
-
-#: data/menu.ui:238 data/menu.ui:434
-msgid "Select _All"
-msgstr "_Markera allt"
-
-#: data/menu.ui:253 data/menu.ui:449
-msgid "Select _Even Pages"
-msgstr "Markera _jämna sidor"
-
-#: data/menu.ui:248 data/menu.ui:444
-msgid "Select _Odd Pages"
-msgstr "Markera _udda sidor"
-
-#: data/menu.ui:273 data/menu.ui:469
-msgid "Select _Range"
-msgstr "Markera _intervall"
-
-#: pdfarranger/pageutils.py:1133
-msgid "Select range of pages: "
-msgstr "Välj sidintervall: "
-
-#: pdfarranger/pdfarranger.py:3277
-msgid "Selected pages: "
-msgstr "Markerade sidor: "
-
-#: pdfarranger/pageutils.py:701
-msgid "Show values"
-msgstr "Visa värden"
-
-#: pdfarranger/pdfarranger.py:3240
-msgid "Software versions:"
-msgstr "Programvaruversioner:"
-
-#: pdfarranger/splitter.py:26
-msgid "Split Pages"
-msgstr "Dela sidor"
-
-#: pdfarranger/metadata.py:44
-msgid "Subject"
-msgstr "Ämne"
-
-#: pdfarranger/pdfarranger.py:735
-msgid "Supported image files"
-msgstr "Bildfiler som stöds"
-
-#: data/menu.ui:206 data/menu.ui:512
-msgid "Swap Odd/Even"
-msgstr "Växla udda och jämna"
-
-#: pdfarranger/config.py:388 pdfarranger/config.py:397
-msgid "System setting"
-msgstr "Systemets inställning"
-
-#: pdfarranger/core.py:464
-#, python-brace-format
-msgid ""
-"The document “{}” is locked and requires a password before it can be opened."
-msgstr "Dokumentet “{}” är låst och ett lösenord krävs innan det kan öppnas."
-
-#: pdfarranger/pdfarranger.py:2099
-msgid "The page has several images. Use \"Explode into Images\" first.\""
-msgstr "Sidan har flera bilder. Använd \"Explodera till bilder\" först."
-
-#: pdfarranger/pdfarranger.py:586
-msgid "The page selection is not contiguous. Cannot unimpose."
-msgstr "Markeringen är inte kontinuerlig. Kan inte unimpose."
-
-#: pdfarranger/core.py:463
-msgid "The password will be remembered until you close PDF Arranger."
-msgstr "Lösenordet kommer att vara sparat tills du stänger PDF Arranger."
-
-#: pdfarranger/config.py:340
-msgid "Theme"
-msgstr "Tema"
-
-#: pdfarranger/metadata.py:43
-msgid "Title"
-msgstr "Titel"
-
-#: pdfarranger/pageutils.py:256
-msgid "Top"
-msgstr "Över"
-
-#: pdfarranger/pageutils.py:487
-msgid "Top to Bottom"
-msgstr "Uppifrån neråt"
-
-#: pdfarranger/pageutils.py:1057
-msgid "Underlay"
-msgstr "Klistra in under"
-
-#: pdfarranger/core.py:573 pdfarranger/pdfarranger.py:1807
+# machine translation, unreviewed
+#: pdfarranger_qt/core.py
+msgid "File not found"
+msgstr "Filen hittades inte"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/core.py
+msgid "Invalid file format"
+msgstr "Ogiltigt filformat"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/core.py
+msgid "Data not yet available"
+msgstr "Data är inte tillgängliga ännu"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/core.py
+msgid "Unsupported security scheme"
+msgstr "Säkerhetsmetoden stöds inte"
+
+#: pdfarranger_qt/core.py
 msgid "Unknown file format"
 msgstr "Okänt filformat"
 
-#: pdfarranger/pageutils.py:1140
+#: pdfarranger_qt/core.py
+msgid "Image format is not supported by img2pdf"
+msgstr "Bildformatet stöds inte av img2pdf"
+
+#: pdfarranger_qt/core.py
+msgid "File is neither pdf nor image"
+msgstr "Filen är varken en PDF eller en bildfil"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/core.py
+msgid "Cannot open document"
+msgstr "Kan inte öppna dokumentet"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Paper size"
+msgstr "Pappersstorlek"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Custom"
+msgstr "Anpassad"
+
+#: pdfarranger_qt/dialogs.py
+msgid "mm"
+msgstr "mm"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Width"
+msgstr "Bredd"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Height"
+msgstr "Höjd"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Keep aspect ratio"
+msgstr "Behåll proportioner"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Portrait"
+msgstr "Stående"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Landscape"
+msgstr "Liggande"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Orientation"
+msgstr "Orientering"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Range Select"
+msgstr "Markera intervall"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Select range of pages: "
+msgstr "Välj sidintervall: "
+
+#: pdfarranger_qt/dialogs.py
 msgid ""
 "Use a comma to separate page numbers, a dash to select a range of pages. \n"
 "e.g. : \"1,3,5-7,9\""
@@ -807,222 +151,2564 @@ msgstr ""
 "sidintervall \n"
 "t.ex. : \"1,3,5-7,9\""
 
-#: pdfarranger/pdfarranger.py:3216
-msgid "User Manual"
-msgstr "Användarmanual"
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+msgid "Insert Blank Page"
+msgstr "Infoga tom sida"
 
-#: pdfarranger/metadata.py:227
-msgid "Value"
-msgstr "Innehåll"
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+msgid "Page size"
+msgstr "Sidstorlek"
 
-#: pdfarranger/pageutils.py:484
-msgid "Vertical"
-msgstr "Vertikal"
+#: pdfarranger_qt/dialogs.py
+msgid "Fit to paper"
+msgstr "Anpassa till papper"
 
-#: pdfarranger/splitter.py:61
+#: pdfarranger_qt/dialogs.py
+msgid "Relative"
+msgstr "Relativt"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Scale"
+msgstr "Skala"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Scale & Add margins"
+msgstr "Skala & lägg till marginaler"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Crop & Add margins"
+msgstr "Beskär & lägg till marginaler"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Fit mode"
+msgstr "Anpassningssätt"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Scale factor"
+msgstr "Skalningsfaktor"
+
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+msgid "Hide Margins"
+msgstr "Dölj marginaler"
+
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+msgid "Crop Margins"
+msgstr "Beskär marginaler"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Left"
+msgstr "Vänster"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Right"
+msgstr "Höger"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Top"
+msgstr "Över"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Bottom"
+msgstr "Under"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Margins"
+msgstr "Marginaler"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Same for all sides"
+msgstr "Lika på alla sidor"
+
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+msgid "Split Pages"
+msgstr "Dela sidor"
+
+#: pdfarranger_qt/dialogs.py
 msgid "Vertical Splits"
 msgstr "Vertikal delning"
 
-#: pdfarranger/pageutils.py:556
-msgid "Vertical offset"
-msgstr "Vertikal offset"
+#: pdfarranger_qt/dialogs.py
+msgid "Horizontal Splits"
+msgstr "Horisontell delning"
 
-#: pdfarranger/config.py:357
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+msgid "Pages per Sheet"
+msgstr "Sidor per ark"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Automatic"
+msgstr "Automatiskt"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Automatic turns the sheet sideways when that lets the pages come out larger."
+msgstr "Automatiskt vänder arket på tvären när sidorna då blir större."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Empty space left around each page."
+msgstr "Tomt utrymme runt varje sida."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Layout"
+msgstr "Layout"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Columns"
+msgstr "Kolumner"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Rows"
+msgstr "Rader"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Sheet"
+msgstr "Ark"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Gap"
+msgstr "Mellanrum"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Appearance"
+msgstr "Utseende"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/reader.py
+msgid "Bold"
+msgstr "Fet"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/reader.py
+msgid "Italic"
+msgstr "Kursiv"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Font"
+msgstr "Typsnitt"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Size"
+msgstr "Storlek"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Colour"
+msgstr "Färg"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Opacity"
+msgstr "Opacitet"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Position"
+msgstr "Position"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Angle"
+msgstr "Vinkel"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+msgid "Add Page Numbers"
+msgstr "Lägg till sidnummer"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+#, python-format
+msgid "%s is replaced by the page number, %s by the number of pages."
+msgstr "%s ersätts av sidnumret, %s av antalet sidor."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Leave the first page unnumbered"
+msgstr "Låt första sidan vara onumrerad"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "It is still counted; a title page just does not carry a number."
+msgstr "Den räknas ändå; en titelsida bär bara inget nummer."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Format"
+msgstr "Format"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Start at"
+msgstr "Börja på"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Numbering"
+msgstr "Numrering"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+msgid "Add Watermark"
+msgstr "Lägg till vattenstämpel"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "DRAFT"
+msgstr "UTKAST"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Text"
+msgstr "Text"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Watermark"
+msgstr "Vattenstämpel"
+
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+msgid "Merge Pages"
+msgstr "Slå samman sidor"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Overlay"
+msgstr "Klistra in ovanpå"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Underlay"
+msgstr "Klistra in under"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/stamp.py
+msgid "Centre"
+msgstr "Centrerat"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Middle"
+msgstr "Mitten"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Horizontal"
+msgstr "Horizontell"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Vertical"
+msgstr "Vertikal"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Edit properties"
+msgstr "Dokument egenskaper"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "System"
+msgstr "System"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Light"
+msgstr "Ljust"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Dark"
+msgstr "Mörkt"
+
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+msgid "Preferences"
+msgstr "Inställningar"
+
+#: pdfarranger_qt/dialogs.py
+msgid "System setting"
+msgstr "Systemets inställning"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Language"
+msgstr "Språk"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Theme"
+msgstr "Tema"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "General"
+msgstr "Allmänt"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Fit to page"
+msgstr "Anpassa till sidan"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Actual size"
+msgstr "Verklig storlek"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Auto Rotate"
+msgstr "Rotera automatiskt"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Pages are rasterised at this resolution before being sent to the printer. "
+"Lower it if printing is slow: the printer driver has less to process."
+msgstr ""
+"Sidorna rastreras i den här upplösningen innan de skickas till skrivaren. "
+"Sänk den om utskriften är långsam: skrivardrivrutinen får då mindre att "
+"bearbeta."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Scale mode"
+msgstr "Skalläge"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Pixels/inch:"
+msgstr "Pixlar/tum:"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Printing"
+msgstr "Utskrift"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Preserve document information from the first file opened"
+msgstr "Behåll dokument information från filen som öppnats först"
+
+#: pdfarranger_qt/dialogs.py
 msgid "When checked: use document properties from the first file opened."
 msgstr "Valt: använd dokument information från filen som öppnats först"
 
-#: pdfarranger/config.py:358
+#: pdfarranger_qt/dialogs.py
 msgid "When unchecked: merge bookmarks from all documents."
 msgstr "Ej valt: slå samman bokmärken från alla dokument."
 
-#: pdfarranger/pageutils.py:150
-msgid "Width"
-msgstr "Bredd"
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Optimize for the web (linearize)"
+msgstr "Optimera för webben (linjärisera)"
 
-#: pdfarranger/splitter.py:88
-msgid "Width in %"
-msgstr "Bredd i %"
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Lay the file out so a browser can show page one before the rest has "
+"downloaded."
+msgstr ""
+"Lägg upp filen så att en webbläsare kan visa sida ett innan resten har "
+"hämtats."
 
-#: pdfarranger/pdfarranger.py:1241
-msgid "Your changes will be lost if you don’t save them."
-msgstr "Dina ändringar går förlorade om du inte sparar dem."
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Compress"
+msgstr "Komprimera"
 
-#: data/pdfarranger.ui:144
-msgid "Zoom In"
-msgstr "Zooma in"
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Recompress the file's streams and pack its objects together."
+msgstr "Komprimera om filens strömmar och packa ihop dess objekt."
 
-#: data/pdfarranger.ui:167
-msgid "Zoom Out"
-msgstr "Zooma ut"
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"How much this saves depends on the file: one full of already-compressed "
+"images will barely shrink."
+msgstr ""
+"Hur mycket det sparar beror på filen: en fil full av redan komprimerade "
+"bilder krymper knappt alls."
 
-#: data/menu.ui:283
-msgid "Zoom _In"
-msgstr "Zooma _in"
+#: pdfarranger_qt/dialogs.py
+msgid "Saving/exporting to single file"
+msgstr "Spara/exportera till en enskild fil"
 
-#: data/menu.ui:287
-msgid "Zoom _Out"
-msgstr "Zooma _ut"
+#: pdfarranger_qt/dialogs.py
+msgid "Greyscale"
+msgstr "Gråskala"
 
-#: data/menu.ui:341
-msgid "_About"
-msgstr "_Om PDF Arranger"
+#: pdfarranger_qt/dialogs.py
+msgid "Image Export"
+msgstr "Bild export"
 
-#: pdfarranger/pageutils.py:1014
-msgid "_Apply"
-msgstr "_Verkställ"
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Keyboard shortcuts"
+msgstr "Tangentbordsgenvägar"
 
-#: data/menu.ui:222 data/menu.ui:528
-msgid "_Booklet"
-msgstr "_Häfte"
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Viewer Preferences"
+msgstr "Visningsinställningar"
 
-#: pdfarranger/config.py:326 pdfarranger/core.py:456
-#: pdfarranger/metadata.py:216 pdfarranger/pageutils.py:329
-#: pdfarranger/pdfarranger.py:1233 pdfarranger/pdfarranger.py:1242
-#: pdfarranger/pdfarranger.py:1364 pdfarranger/pdfarranger.py:1431
-#: pdfarranger/splitter.py:30
-msgid "_Cancel"
-msgstr "_Avbryt"
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Open showing:"
+msgstr "Öppna med:"
 
-#: pdfarranger/pdfarranger.py:1252 data/menu.ui:347
-msgid "_Close"
-msgstr "_Stäng"
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Page layout:"
+msgstr "Sidlayout:"
 
-#: data/menu.ui:118 data/menu.ui:369
-msgid "_Copy"
-msgstr "K_opiera"
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "On opening"
+msgstr "Vid öppning"
 
-#: data/menu.ui:186 data/menu.ui:492
-msgid "_Crop Margins…"
-msgstr "_Beskär marginaler…"
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Window"
+msgstr "Fönster"
 
-#: data/menu.ui:110 data/menu.ui:361
-msgid "_Delete"
-msgstr "_Ta bort"
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Readers are free to ignore all of this."
+msgstr "Läsare får ignorera allt detta."
 
-#: data/menu.ui:243 data/menu.ui:439
-msgid "_Deselect All"
-msgstr "_Avmarkera allt"
+#: pdfarranger_qt/dialogs.py
+msgid "Password"
+msgstr "Lösenord"
 
-#: data/menu.ui:107
-msgid "_Edit"
-msgstr "_Redigera"
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Confirm password"
+msgstr "Bekräfta lösenord"
 
-#: data/menu.ui:157 data/menu.ui:413
-msgid "_Explode into Images"
-msgstr "_Explodera till bilder"
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Enter a password, or cancel to leave the document unencrypted."
+msgstr "Ange ett lösenord, eller avbryt för att lämna dokumentet okrypterat."
 
-#: data/menu.ui:155 data/menu.ui:410
-msgid "_Extract"
-msgstr "_Extrahera"
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "The passwords do not match."
+msgstr "Lösenorden stämmer inte överens."
 
-#: data/menu.ui:307
-msgid "_Find"
-msgstr "_Sök"
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Reset"
+msgstr "Återställ"
 
-#: data/menu.ui:310
-msgid "_Find…"
-msgstr "_Sök…"
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Description"
+msgstr "Beskrivning"
 
-#: data/menu.ui:224 data/menu.ui:530
-msgid "_Generate (imposition)"
-msgstr "_Generera (imposition)"
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"PDF Arranger merges, splits, rearranges, rotates and crops PDF documents. "
+"Everything happens in memory against the pages you can see; nothing is "
+"written until you save."
+msgstr ""
+"PDF Arranger slår ihop, delar, ordnar om, roterar och beskär PDF-dokument. "
+"Allt sker i minnet, på de sidor du ser; ingenting skrivs förrän du sparar."
 
-#: data/menu.ui:190 data/menu.ui:496
-msgid "_Hide Margins…"
-msgstr "_Dölj marginaler…"
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"It is a front end for pikepdf. Page content is never rewritten — only page "
+"order, geometry and composition."
+msgstr ""
+"Det är ett skal runt pikepdf. Sidinnehållet skrivs aldrig om — bara "
+"sidordning, geometri och sammansättning."
 
-#: data/menu.ui:30
-msgid "_Import"
-msgstr "Im_portera"
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Command line"
+msgstr "Kommandorad"
 
-#: data/menu.ui:268 data/menu.ui:464
-msgid "_Invert Selection"
-msgstr "_Invertera markeringen"
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Files given on the command line are opened as one document. "
+"<code>--version</code> prints the version and exits."
+msgstr ""
+"Filer som anges på kommandoraden öppnas som ett enda dokument. "
+"<code>--version</code> visar versionen och avslutar."
 
-#: data/menu.ui:214 data/menu.ui:520
-msgid "_Merge Pages…"
-msgstr "Sl_å samman sidor…"
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+msgid "Reading"
+msgstr "Läsning"
 
-#: data/menu.ui:36
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"The application opens in <b>read mode</b>: a continuous page view for "
+"reading the document rather than rearranging it. <b>View ▸ Arrange Mode</b> "
+"(Ctrl+E) swaps to the thumbnail grid and back."
+msgstr ""
+"Programmet öppnas i <b>läsläge</b>: en kontinuerlig sidvy för att läsa "
+"dokumentet i stället för att ordna om det. <b>Visa ▸ Ordningsläge</b> "
+"(Ctrl+E) växlar till miniatyrrutnätet och tillbaka."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Reading shows the document <i>as edited</i>: rotations, crops, deletions and"
+" reordering are all applied, so what you read is what you would get if you "
+"saved. Page-editing commands are disabled while reading — bookmarks are the "
+"exception, and are edited here and nowhere else."
+msgstr ""
+"Läsningen visar dokumentet <i>som det är redigerat</i>: rotationer, "
+"beskärningar, borttagningar och omordningar är alla tillämpade, så det du "
+"läser är vad du skulle få om du sparade. Sidredigeringskommandon är "
+"avstängda under läsning — bokmärken är undantaget och redigeras här och "
+"ingen annanstans."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"The page you are on follows you between the two modes. Switching to read "
+"mode opens at the page selected in the grid, the first of them if several "
+"are selected; switching back scrolls the grid to the page you were reading, "
+"without disturbing what you had selected. With nothing selected, reading "
+"resumes where you left off — your place in each document is remembered "
+"between visits."
+msgstr ""
+"Sidan du är på följer med dig mellan de två lägena. Att växla till läsläge "
+"öppnar på den sida som är markerad i rutnätet, den första av dem om flera är"
+" markerade; att växla tillbaka rullar rutnätet till den sida du läste, utan "
+"att röra det du hade markerat. Utan markering återupptas läsningen där du "
+"slutade — din plats i varje dokument kommer ihåg mellan besöken."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"The toolbar shows which page you are on and how many there are; type a "
+"number into it to jump there, or use <b>Ctrl+G</b>."
+msgstr ""
+"Verktygsfältet visar vilken sida du är på och hur många det finns; skriv ett"
+" nummer i det för att hoppa dit, eller använd <b>Ctrl+G</b>."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>View ▸ Continuous Scroll</b> is on by default; turning it off shows one "
+"page at a time. <b>View ▸ Facing Pages</b> puts two pages side by side, the "
+"way a book falls open. Both settings are remembered."
+msgstr ""
+"<b>Visa ▸ Kontinuerlig rullning</b> är på som standard; stänger du av den "
+"visas en sida i taget. <b>Visa ▸ Uppslag</b> lägger två sidor sida vid sida,"
+" så som en bok faller upp. Båda inställningarna kommer ihåg."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Moving around a document"
+msgstr "Att röra sig i ett dokument"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"One rule for the arrow keys: <b>the modifier decides what moves</b>. Nothing"
+" scrolls the view, Option (Alt) moves the text cursor, Shift extends the "
+"selection, Command (Ctrl) jumps to an edge, and Fn — Page Up, Page Down, "
+"Home and End — jumps further. None of it changes according to whether a text"
+" cursor happens to be on the page."
+msgstr ""
+"En regel för piltangenterna: <b>modifieraren avgör vad som rör sig</b>. "
+"Ingen alls rullar vyn, Option (Alt) flyttar textmarkören, Skift utökar "
+"markeringen, Command (Ctrl) hoppar till en kant, och Fn — Page Up, Page "
+"Down, Home och End — hoppar längre. Inget av det ändras beroende på om det "
+"råkar finnas en textmarkör på sidan."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Keys"
+msgstr "Tangenter"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Continuous"
+msgstr "Kontinuerlig"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/viewer.py
+msgid "One page at a time"
+msgstr "En sida i taget"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "scroll one line"
+msgstr "rulla en rad"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "top of the previous / next page"
+msgstr "början av föregående / nästa sida"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "previous / next page"
+msgstr "föregående / nästa sida"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "scroll one screen"
+msgstr "rulla en skärm"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "start / end of the document"
+msgstr "dokumentets början / slut"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "move the text cursor, by character or line"
+msgstr "flytta textmarkören, tecken- eller radvis"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "extend the selection, by character or line"
+msgstr "utöka markeringen, tecken- eller radvis"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "move the text cursor one word"
+msgstr "flytta textmarkören ett ord"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "extend the selection one word"
+msgstr "utöka markeringen ett ord"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "cursor to the start / end of the line"
+msgstr "markören till radens början / slut"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "cursor to the start / end of the document"
+msgstr "markören till dokumentets början / slut"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Add Shift to a Command or Option combination to extend the selection instead"
+" of moving — <b>Shift+Command+→</b> selects to the end of the line. Adding "
+"Option works by the word rather than the character. On Windows and Linux, "
+"read Command as Ctrl and Option as Alt; the table is the same everywhere."
+msgstr ""
+"Lägg till Skift till en Command- eller Option-kombination för att utöka "
+"markeringen i stället för att flytta — <b>Skift+Command+→</b> markerar till "
+"radens slut. Att lägga till Option arbetar ordvis i stället för teckenvis. "
+"På Windows och Linux läser du Command som Ctrl och Option som Alt; tabellen "
+"är densamma överallt."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Selecting and copying text"
+msgstr "Markera och kopiera text"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Drag across the page to select text, across page boundaries if you keep "
+"going. <b>Double-click</b> selects a word. <b>Ctrl/Cmd+C</b> copies, "
+"<b>Ctrl/Cmd+A</b> selects the text of the page you are on, and <b>Esc</b> "
+"clears the selection. The same commands are on the right-click menu."
+msgstr ""
+"Dra över sidan för att markera text, över sidgränser om du fortsätter. "
+"<b>Dubbelklick</b> markerar ett ord. <b>Ctrl/Cmd+C</b> kopierar, "
+"<b>Ctrl/Cmd+A</b> markerar texten på den sida du är på, och <b>Esc</b> "
+"rensar markeringen. Samma kommandon finns i högerklicksmenyn."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>Shift+click</b> extends an existing selection to where you clicked. The "
+"end you are moving grows out to a whole word, because a single click is an "
+"imprecise way to point at one character; the end you started from stays "
+"exactly where you put it. Dragging selects by character throughout, since "
+"you can watch it and stop where you like."
+msgstr ""
+"<b>Skift+klick</b> utökar en befintlig markering till där du klickade. Den "
+"ände du flyttar växer ut till ett helt ord, eftersom ett enda klick är ett "
+"oprecist sätt att peka på ett tecken; den ände du utgick från stannar exakt "
+"där du satte den. Att dra markerar teckenvis hela vägen, eftersom du kan "
+"följa med och sluta där du vill."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Clicking on text leaves a blinking <b>text cursor</b>. That is what "
+"Shift+arrow extends from, and what the Option and Command combinations above"
+" move. It stays where you put it — scrolling, paging and clicking off the "
+"page all leave it alone — until you press Esc or open another document."
+msgstr ""
+"Att klicka på text lämnar en blinkande <b>textmarkör</b>. Det är den "
+"Skift+pil utökar från, och den som Option- och Command-kombinationerna ovan "
+"flyttar. Den stannar där du satte den — rullning, sidbyten och klick utanför"
+" sidan lämnar den i fred — tills du trycker Esc eller öppnar ett annat "
+"dokument."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Following links"
+msgstr "Följa länkar"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Click a link to follow it. Links to a page in the same document jump there; "
+"links to the web open in your browser. Hovering over one shows where it "
+"goes, which is worth reading before you click: many links in a PDF are not "
+"written by its author at all but inferred from the text, so what a link "
+"points at is not always what the words appear to say."
+msgstr ""
+"Klicka på en länk för att följa den. Länkar till en sida i samma dokument "
+"hoppar dit; länkar till webben öppnas i din webbläsare. Att hålla pekaren "
+"över en visar vart den går, och det är värt att läsa innan du klickar: många"
+" länkar i en PDF är inte skrivna av författaren alls utan härledda ur "
+"texten, så vad en länk pekar på är inte alltid vad orden verkar säga."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Only ordinary web and mail links are handed to the system — http, https, "
+"mailto and ftp. A document is a file that arrived from somewhere, and "
+"anything else it asks to open is refused and reported rather than acted on."
+msgstr ""
+"Bara vanliga webb- och e-postlänkar lämnas vidare till systemet — http, "
+"https, mailto och ftp. Ett dokument är en fil som kommit någonstans ifrån, "
+"och allt annat det ber om att få öppna avvisas och rapporteras i stället för"
+" att utföras."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Right-clicking a link offers <b>Open Link</b> and <b>Copy Link Address</b>."
+msgstr ""
+"Högerklick på en länk erbjuder <b>Öppna länk</b> och <b>Kopiera "
+"länkadress</b>."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Bookmarks"
+msgstr "Bokmärken"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"The sidebar shows the document's bookmarks. Click one to jump to it. "
+"Everything below is on the sidebar's right-click menu, and every command can"
+" be undone."
+msgstr ""
+"Sidopanelen visar dokumentets bokmärken. Klicka på ett för att hoppa dit. "
+"Allt nedan finns i sidopanelens högerklicksmeny, och varje kommando kan "
+"ångras."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>Add Bookmark Here</b> makes one pointing at the page you are reading, "
+"named after whatever text you have selected — so select a heading, then add."
+" With nothing selected it is named after the page. <b>Add Child Bookmark "
+"Here</b> does the same, nested under the entry you clicked."
+msgstr ""
+"<b>Lägg till bokmärke här</b> skapar ett som pekar på den sida du läser, "
+"namngivet efter den text du har markerad — markera alltså en rubrik och lägg"
+" sedan till. Utan markering namnges det efter sidan. <b>Lägg till "
+"underbokmärke här</b> gör detsamma, nästlat under posten du klickade på."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>Rename</b> edits the title in place. <b>Re-home to This Page</b> points "
+"an existing bookmark at the page you are on, keeping its title. "
+"<b>Delete</b> removes an entry and <i>promotes</i> its children into its "
+"place; <b>Delete with Children</b> removes the whole branch."
+msgstr ""
+"<b>Byt namn</b> redigerar titeln på plats. <b>Peka om till den här sidan</b>"
+" låter ett befintligt bokmärke peka på sidan du är på, med titeln kvar. "
+"<b>Ta bort</b> tar bort en post och <i>lyfter upp</i> dess underposter i "
+"dess ställe; <b>Ta bort med underposter</b> tar bort hela grenen."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Drag entries within the sidebar to re-nest or reorder them. <b>Expand All "
+"Children</b> and <b>Collapse All Children</b> open or shut a whole branch at"
+" once."
+msgstr ""
+"Dra poster inom sidopanelen för att nästla om eller ordna om dem. "
+"<b>Expandera alla underposter</b> och <b>Fäll ihop alla underposter</b> "
+"öppnar eller stänger en hel gren på en gång."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>Style</b> sets a bookmark bold or italic, or gives it a colour, as the "
+"tree shows."
+msgstr ""
+"<b>Stil</b> gör ett bokmärke fett eller kursivt, eller ger det en färg, så "
+"som trädet visar."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"A bookmark whose page has been deleted is <b>greyed out</b> rather than "
+"removed: its title may still be worth keeping, and you can point it "
+"somewhere else with Re-home. Undoing the deletion reconnects it. <b>Delete "
+"Dangling Bookmarks</b> clears them all out; it leaves alone any entry that "
+"points nowhere on purpose, which is a legitimate way to write a heading."
+msgstr ""
+"Ett bokmärke vars sida har tagits bort <b>gråas ut</b> i stället för att tas"
+" bort: dess titel kan fortfarande vara värd att behålla, och du kan peka om "
+"det någon annanstans. Att ångra borttagningen kopplar ihop det igen. <b>Ta "
+"bort lösa bokmärken</b> rensar bort dem alla; det lämnar i fred varje post "
+"som pekar ingenstans med avsikt, vilket är ett fullt giltigt sätt att skriva"
+" en rubrik."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Bookmark edits are part of the document and are written when you save, along"
+" with each entry's colour and style and which branches are left open. The "
+"one thing that cannot be saved is a bookmark with no page: there is no way "
+"to record “points at a page that is gone”, so it comes back as a heading "
+"with its title intact."
+msgstr ""
+"Bokmärkesändringar är en del av dokumentet och skrivs när du sparar, "
+"tillsammans med varje posts färg och stil och vilka grenar som lämnas öppna."
+" Det enda som inte kan sparas är ett bokmärke utan sida: det finns inget "
+"sätt att skriva ner ”pekar på en sida som är borta”, så det kommer tillbaka "
+"som en rubrik med titeln intakt."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Arranging pages"
+msgstr "Ordna sidor"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Drag pages to reorder them. Hold <b>Ctrl</b> while dropping to copy instead "
+"of move."
+msgstr ""
+"Dra sidor för att ordna om dem. Håll <b>Ctrl</b> när du släpper för att "
+"kopiera i stället för att flytta."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Drag pages onto another window of the application to copy them there, or use"
+" ordinary copy and paste."
+msgstr ""
+"Dra sidor till ett annat fönster i programmet för att kopiera dem dit, eller"
+" använd vanlig kopiera och klistra in."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>Paste As Odd/Even Pages</b> interleaves the clipboard with the document —"
+" this is how two single-sided scans of a double-sided original are "
+"recombined. If the second scan came off a duplex feeder it will be in "
+"reverse order; use <b>Arrange ▸ Reverse Order</b> on it first."
+msgstr ""
+"<b>Klistra in som udda/jämna sidor</b> flätar samman urklippet med "
+"dokumentet — så återförenas två enkelsidiga skanningar av ett dubbelsidigt "
+"original. Om den andra skanningen kom ur en duplexmatare ligger den i omvänd"
+" ordning; använd <b>Ordna ▸ Omvänd ordning</b> på den först."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"To move pages a long way, use <b>Move to Start</b>, <b>Move to End</b> or "
+"<b>Move to Page…</b> rather than dragging — in a long document the far end "
+"is a great deal of scrolling away. They are on the Edit menu and on the "
+"right-click menu, and <b>Move to Page…</b> asks for the number the page "
+"should <i>become</i>."
+msgstr ""
+"För att flytta sidor långt använder du <b>Flytta till början</b>, <b>Flytta "
+"till slutet</b> eller <b>Flytta till sida…</b> i stället för att dra — i ett"
+" långt dokument ligger andra änden väldigt mycket rullande bort. De finns på"
+" menyn Redigera och i högerklicksmenyn, och <b>Flytta till sida…</b> frågar "
+"efter det nummer sidan ska <i>bli</i>."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Prefer these to cut and paste for moving. A pasted page is a <i>new</i> page"
+" as far as the document is concerned, so any bookmarks pointing at the "
+"original are left behind with nowhere to go. Moving keeps the page itself, "
+"and its bookmarks come with it."
+msgstr ""
+"Föredra dessa framför klipp ut och klistra in när du flyttar. En inklistrad "
+"sida är en <i>ny</i> sida sett från dokumentet, så bokmärken som pekade på "
+"originalet blir kvar utan någonstans att ta vägen. Att flytta behåller "
+"själva sidan, och dess bokmärken följer med."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Stamping and tiling"
+msgstr "Stämpla och sammanfoga"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>Page ▸ Add Page Numbers…</b> and <b>Page ▸ Add Watermark…</b> draw text "
+"onto the selected pages. Both add a <i>layer</i> rather than rewriting the "
+"page, so both can be undone and neither touches the file you opened."
+msgstr ""
+"<b>Sida ▸ Lägg till sidnummer…</b> och <b>Sida ▸ Lägg till "
+"vattenstämpel…</b> ritar text på de markerade sidorna. Båda lägger till ett "
+"<i>lager</i> i stället för att skriva om sidan, så båda kan ångras och ingen"
+" av dem rör filen du öppnade."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+#, python-brace-format
+msgid ""
+"Page numbers follow the arrangement, not the source document: they are "
+"numbered in the order the pages are in now. <code>{n}</code> in the format "
+"is the page number and <code>{total}</code> the number of pages, so "
+"<code>Page {n} of {total}</code> does what it looks like."
+msgstr ""
+"Sidnumren följer ordningen, inte källdokumentet: de numreras i den ordning "
+"sidorna ligger nu. <code>{n}</code> i formatet är sidnumret och "
+"<code>{total}</code> antalet sidor, så <code>Sida {n} av {total}</code> gör "
+"vad det ser ut att göra."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>Arrange ▸ Pages per Sheet…</b> tiles several pages onto one, in reading "
+"order — the printer's <i>N-up</i>. The sheet turns sideways when that lets "
+"the pages come out larger, which is why two-up gives a landscape sheet and "
+"four-up does not."
+msgstr ""
+"<b>Ordna ▸ Sidor per ark…</b> lägger flera sidor på en, i läsordning — "
+"tryckeriets <i>N-up</i>. Arket vänds på tvären när sidorna då blir större, "
+"vilket är varför två per ark ger ett liggande ark och fyra per ark inte gör "
+"det."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Saving a document"
+msgstr "Spara ett dokument"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>Optimize for the web</b> in Preferences lays the saved file out so a "
+"browser can show the first page before the rest has arrived. <b>Compress</b>"
+" repacks its streams and objects; how much that saves depends entirely on "
+"the file, and one full of photographs will barely move."
+msgstr ""
+"<b>Optimera för webben</b> i Inställningar lägger upp den sparade filen så "
+"att en webbläsare kan visa första sidan innan resten har kommit fram. "
+"<b>Komprimera</b> packar om dess strömmar och objekt; hur mycket det sparar "
+"beror helt på filen, och en full av fotografier rör sig knappt."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>File ▸ Remove All Metadata</b> is a switch, like Password: turn it on and"
+" the next save writes a document with no title, no author and no record of "
+"what produced it. Edit Properties greys out while it is on, because there "
+"would be nothing to edit."
+msgstr ""
+"<b>Arkiv ▸ Ta bort alla metadata</b> är en strömbrytare, precis som "
+"Lösenord: slå på den och nästa sparning skriver ett dokument utan titel, "
+"utan författare och utan spår av vad som skapade det. Redigera egenskaper "
+"gråas ut medan den är på, eftersom det då inte skulle finnas något att "
+"redigera."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>File ▸ Viewer Preferences…</b> is how the saved document asks a reader to"
+" open it — with the bookmarks showing, two pages at a time, and so on. "
+"Readers are free to ignore all of it. The settings are read from the file "
+"you opened, so a document that already had them keeps them."
+msgstr ""
+"<b>Arkiv ▸ Visningsinställningar…</b> är hur det sparade dokumentet ber en "
+"läsare att öppna det — med bokmärkena framme, två sidor i taget, och så "
+"vidare. Läsare får ignorera allt det. Inställningarna läses ur filen du "
+"öppnade, så ett dokument som redan hade dem behåller dem."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>File ▸ Repair Document…</b> rebuilds a damaged PDF. It works on a file "
+"you pick rather than the one on screen, because the file worth repairing is "
+"usually one this application cannot open properly either. It reports what it"
+" found before writing anything."
+msgstr ""
+"<b>Arkiv ▸ Reparera dokument…</b> bygger om en skadad PDF. Det arbetar på en"
+" fil du väljer i stället för den på skärmen, eftersom filen som är värd att "
+"reparera oftast är en som det här programmet inte heller kan öppna "
+"ordentligt. Det rapporterar vad det hittade innan något skrivs."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Mouse"
+msgstr "Mus"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "<b>Ctrl + scroll</b> — zoom"
+msgstr "<b>Ctrl + rulla</b> — zooma"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "<b>Shift + scroll</b> — scroll sideways"
+msgstr "<b>Skift + rulla</b> — rulla i sidled"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "<b>Alt + scroll</b> — scroll exactly one row"
+msgstr "<b>Alt + rulla</b> — rulla exakt en rad"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "<b>Double-click</b> — fit the page to the window, and back"
+msgstr "<b>Dubbelklick</b> — anpassa sidan till fönstret, och tillbaka"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>Click and drag</b> on empty space — rubber-band select; keep scrolling to"
+" extend it"
+msgstr ""
+"<b>Klicka och dra</b> på tom yta — markera med gummiband; fortsätt rulla för"
+" att utöka"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Moving around the grid"
+msgstr "Att röra sig i rutnätet"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>Arrow keys</b> move between pages, <b>Page Up</b> and <b>Page Down</b> "
+"move a screenful at a time, and <b>Home</b> and <b>End</b> jump to the first"
+" and last page. Hold <b>Shift</b> with any of them to extend the selection."
+msgstr ""
+"<b>Piltangenterna</b> flyttar mellan sidor, <b>Page Up</b> och <b>Page "
+"Down</b> flyttar en skärm i taget, och <b>Home</b> och <b>End</b> hoppar "
+"till första och sista sidan. Håll <b>Skift</b> med någon av dem för att "
+"utöka markeringen."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>Fit One Page</b> (F) scales so a whole page fits in the window and shows "
+"one page per row — use it to work on a single page at a time. <b>Fit "
+"Multiple Pages</b> (Shift+M) uses the same scale but lets as many pages sit "
+"side by side as the window takes. <b>Fit Width</b> (Shift+F) fills the "
+"window across instead, which shows the page wider but taller than the "
+"window. Double-clicking the grid toggles Fit One Page on and off."
+msgstr ""
+"<b>Zooma till en sida</b> (F) skalar så att en hel sida får plats i fönstret"
+" och visar en sida per rad — använd det för att arbeta med en sida i taget. "
+"<b>Zooma till flera sidor</b> (Skift+M) använder samma skala men låter så "
+"många sidor stå sida vid sida som fönstret rymmer. <b>Zooma till bredden</b>"
+" (Skift+F) fyller fönstret på bredden i stället, vilket visar sidan bredare "
+"men högre än fönstret. Dubbelklick i rutnätet slår på och av Zooma till en "
+"sida."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"With pages selected, all three fit the selection rather than the whole "
+"document."
+msgstr ""
+"Med sidor markerade anpassar alla tre efter markeringen i stället för hela "
+"dokumentet."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Finding text"
+msgstr "Söka text"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>Find</b> selects the pages that contain the phrase and boxes each hit on "
+"the thumbnail, so you can see where on the page it is. The boxes clear as "
+"soon as you change the document, since the pages they were drawn for may "
+"have moved."
+msgstr ""
+"<b>Sök</b> markerar de sidor som innehåller frasen och ramar in varje träff "
+"på miniatyrbilden, så att du ser var på sidan den finns. Ramarna försvinner "
+"så snart du ändrar dokumentet, eftersom sidorna de ritades för kan ha "
+"flyttat sig."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Every shortcut can be changed in <b>Edit ▸ Preferences ▸ Keyboard "
+"shortcuts</b>, where they are listed under the menu each one belongs to."
+msgstr ""
+"Varje genväg kan ändras i <b>Redigera ▸ Inställningar ▸ "
+"Tangentbordsgenvägar</b>, där de är listade under den meny var och en hör "
+"till."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Passwords"
+msgstr "Lösenord"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Opening an encrypted document asks for its password, which is remembered "
+"until the document is closed."
+msgstr ""
+"Att öppna ett krypterat dokument frågar efter dess lösenord, som kommer ihåg"
+" tills dokumentet stängs."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>File ▸ Password</b> encrypts the document when it is next saved. It is a "
+"switch: turn it on and you are asked for a password, turn it off and the "
+"next save is unencrypted. The password is never written to your settings, so"
+" it applies to this session only — and if you forget it, the file cannot be "
+"recovered."
+msgstr ""
+"<b>Arkiv ▸ Lösenord</b> krypterar dokumentet nästa gång det sparas. Det är "
+"en strömbrytare: slå på den och du får ange ett lösenord, slå av den och "
+"nästa sparning är okrypterad. Lösenordet skrivs aldrig till dina "
+"inställningar, så det gäller bara den här sessionen — och glömmer du det går"
+" filen inte att återställa."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Files"
+msgstr "Filer"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Settings are stored by Qt in the per-user location for this platform; on "
+"Windows that is the registry under "
+"<code>HKEY_CURRENT_USER\\Software\\pdfarranger</code>. There is no "
+"configuration file to edit by hand."
+msgstr ""
+"Inställningarna lagras av Qt på plattformens plats per användare; på Windows"
+" är det registret under "
+"<code>HKEY_CURRENT_USER\\Software\\pdfarranger</code>. Det finns ingen "
+"konfigurationsfil att redigera för hand."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Credits"
+msgstr "Tack till"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"PDF Arranger Qt is a PySide6 port of PDF Arranger, which is itself derived "
+"from PDF-Shuffler. It is a separate project and not affiliated with either."
+msgstr ""
+"PDF Arranger Qt är en PySide6-portering av PDF Arranger, som i sin tur "
+"härstammar från PDF-Shuffler. Det är ett separat projekt och inte knutet "
+"till någotdera."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Original authors: Konstantinos Poulios, Jerome Robert."
+msgstr "Ursprungliga upphovsmän: Konstantinos Poulios, Jerome Robert."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Licensed under the GNU General Public License version 3 or later."
+msgstr "Licensierad under GNU General Public License version 3 eller senare."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+msgid "User Guide"
+msgstr "Användarhandbok"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Insert pages from another PDF or an image"
+msgstr "Infoga sidor från en annan PDF eller en bild"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Needs pages copied from a document"
+msgstr "Kräver sidor kopierade från ett dokument"
+
+#: pdfarranger_qt/mainwindow.py
 msgid "_New Window"
 msgstr "_Nytt fönster"
 
-#: pdfarranger/config.py:327 pdfarranger/core.py:458
-#: pdfarranger/metadata.py:217 pdfarranger/pageutils.py:330
-#: pdfarranger/pdfarranger.py:3207 pdfarranger/splitter.py:32
-msgid "_OK"
-msgstr "_OK"
-
-#: pdfarranger/pdfarranger.py:1430 data/menu.ui:24
+#: pdfarranger_qt/mainwindow.py
 msgid "_Open"
 msgstr "_Öppna"
 
-#: data/menu.ui:182 data/menu.ui:488
-msgid "_Page Size…"
-msgstr "_Sidstorlek…"
+#: pdfarranger_qt/mainwindow.py
+msgid "_Import"
+msgstr "Im_portera"
 
-#: data/menu.ui:91
-msgid "_Print…"
-msgstr "_Skriv ut…"
-
-#: pdfarranger/pdfarranger.py:1289 data/menu.ui:353
-msgid "_Quit"
-msgstr "_Avsluta"
-
-#: data/menu.ui:102
-msgid "_Redo"
-msgstr "_Gör om"
-
-#: pdfarranger/pageutils.py:1014
-msgid "_Revert"
-msgstr "_Återställ"
-
-#: data/menu.ui:177 data/menu.ui:483
-msgid "_Rotate Right"
-msgstr "Rotera åt _höger"
-
-#: pdfarranger/pdfarranger.py:1242 pdfarranger/pdfarranger.py:1363
-#: data/menu.ui:42
+#: pdfarranger_qt/mainwindow.py
 msgid "_Save"
 msgstr "_Spara"
 
-#: data/menu.ui:235 data/menu.ui:431
-msgid "_Select"
-msgstr "_Markera"
+#: pdfarranger_qt/mainwindow.py
+msgid "Save _As…"
+msgstr "Spara s_om…"
 
-#: data/menu.ui:228 data/menu.ui:534
-msgid "_Split (unimposition)"
-msgstr "_Dela (unimposition)"
+#: pdfarranger_qt/mainwindow.py
+msgid "E_xport Selection to a Single File…"
+msgstr "E_xportera markerade sidor till en fil…"
 
-#: data/menu.ui:210 data/menu.ui:516
-msgid "_Split Pages…"
-msgstr "_Dela sidor…"
+#: pdfarranger_qt/mainwindow.py
+msgid "_Close"
+msgstr "_Stäng"
 
-#: data/menu.ui:98
+#: pdfarranger_qt/mainwindow.py
+msgid "_Quit"
+msgstr "_Avsluta"
+
+#: pdfarranger_qt/mainwindow.py
 msgid "_Undo"
 msgstr "_Ångra"
 
-#: data/menu.ui:280
+#: pdfarranger_qt/mainwindow.py
+msgid "_Redo"
+msgstr "_Gör om"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Select _All"
+msgstr "_Markera allt"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Invert Selection"
+msgstr "_Invertera markeringen"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Delete"
+msgstr "_Ta bort"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Duplicate"
+msgstr "D_uplicera"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Rotate _Left"
+msgstr "Rotera åt _vänster"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Rotate Right"
+msgstr "Rotera åt _höger"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Zoom _In"
+msgstr "Zooma _in"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Zoom _Out"
+msgstr "Zooma _ut"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Reset Zoom"
+msgstr "_Återställ zoom"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Project on GitHub"
+msgstr "Projektet på GitHub"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_About"
+msgstr "_Om PDF Arranger"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Cu_t"
+msgstr "_Klipp ut"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Copy"
+msgstr "K_opiera"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Paste _After"
+msgstr "Klistra in _efter"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Paste _Before"
+msgstr "Klistra in _före"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Paste As _Odd Pages"
+msgstr "Klistra in som _udda sidor"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Paste As _Even Pages"
+msgstr "Klistra in som _jämna sidor"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Deselect All"
+msgstr "_Avmarkera allt"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Select _Odd Pages"
+msgstr "Markera _udda sidor"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Select _Even Pages"
+msgstr "Markera _jämna sidor"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "All From _Same File"
+msgstr "Alla från samma _fil"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Same Page _Format"
+msgstr "Alla med samma _sidformat"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Move to Start"
+msgstr "Flytta till början"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Move to End"
+msgstr "Flytta till slutet"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Move to Page…"
+msgstr "Flytta till sida…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Reverse Order"
+msgstr "Omvänd ordning"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Swap Odd/Even"
+msgstr "Växla udda och jämna"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Split (unimposition)"
+msgstr "_Dela (unimposition)"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Export _All Pages to Individual Files…"
+msgstr "Exportera _alla sidor till enskilda filer…"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Export Selection to _Individual Files…"
+msgstr "Exportera markerade sidor till _enskilda filer…"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Crop Margins…"
+msgstr "_Beskär marginaler…"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Hide Margins…"
+msgstr "_Dölj marginaler…"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Page Size…"
+msgstr "_Sidstorlek…"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Insert Blan_k Page…"
+msgstr "_Infoga tom sida…"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Split Pages…"
+msgstr "_Dela sidor…"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Merge Pages…"
+msgstr "Sl_å samman sidor…"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Generate (imposition)"
+msgstr "_Generera (imposition)"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Pages per S_heet…"
+msgstr "Sidor per _ark…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Add Page N_umbers…"
+msgstr "Lägg till sid_nummer…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Add _Watermark…"
+msgstr "Lägg till vattenstä_mpel…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Pass_word"
+msgstr "_Lösenord"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Edit _Properties"
+msgstr "Redigera _egenskaper"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Viewer Preferences…"
+msgstr "_Visningsinställningar…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Remove All _Metadata"
+msgstr "Ta bort alla _metadata"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Repair Document…"
+msgstr "_Reparera dokument…"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Crop White Borders"
+msgstr "_Beskär vita marginaler"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Export Selection to _PNG Images…"
+msgstr "Exportera markerade sidor till _PNG bilder…"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Export Selection to _JPG Images…"
+msgstr "Exportera markerade sidor till _JPG bilder…"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Export Selection to _Rasterized PDF (png)…"
+msgstr "Exportera markerade sidor till _raster PDF (png)…"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Export Selection to _Rasterized PDF (jpg)…"
+msgstr "Exportera markerade sidor till _raster PDF (jpg)…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Copy Text"
+msgstr "Kopiera text"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Copy _Image"
+msgstr "Kopiera _bild"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Explode into Images"
+msgstr "_Explodera till bilder"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Print…"
+msgstr "_Skriv ut…"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Find…"
+msgstr "_Sök…"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Find Next"
+msgstr "Sök nästa"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Find Previous"
+msgstr "Sök föregående"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Find All"
+msgstr "Sök alla"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Select _Range"
+msgstr "Markera _intervall"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Paste As O_verlay…"
+msgstr "Klistra in ovanp_å…"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Paste As _Underlay…"
+msgstr "Klistra in unde_r…"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Fit _One Page"
+msgstr "Zooma till _en sida"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Fit _Multiple Pages"
+msgstr "Zooma till _flera sidor"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Fit Width"
+msgstr "Zooma till bredden"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Arrange Mode"
+msgstr "Ordningsläge"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Facing Pages"
+msgstr "Uppslag"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Continuous Scroll"
+msgstr "Kontinuerlig rullning"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Next Page"
+msgstr "Nästa sida"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Previous Page"
+msgstr "Föregående sida"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "First Page"
+msgstr "Första sidan"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Last Page"
+msgstr "Sista sidan"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Go to Page…"
+msgstr "Gå till sida…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Fullscreen"
+msgstr "Helskärm"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_File"
+msgstr "_Arkiv"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Open Recent"
+msgstr "Öppna senaste"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "E_xport"
+msgstr "E_xportera"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Edit"
+msgstr "_Redigera"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Past_e Special"
+msgstr "Klistra in _special"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Page"
+msgstr "_Sida"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Extract"
+msgstr "_Extrahera"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Arrange"
+msgstr "Ordna"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Select"
+msgstr "_Markera"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Booklet"
+msgstr "_Häfte"
+
+#: pdfarranger_qt/mainwindow.py
 msgid "_View"
 msgstr "_Visa"
 
-#: pdfarranger/pageutils.py:155 pdfarranger/pageutils.py:162
-#: pdfarranger/pageutils.py:470 pdfarranger/pageutils.py:520
-#: pdfarranger/pdfarranger.py:3282
-msgid "mm"
-msgstr "mm"
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Help"
+msgstr "_Hjälp"
 
-#: pdfarranger/core.py:730
-msgid "page"
-msgstr "sida"
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Read"
+msgstr "Läs"
 
-#: pdfarranger/pdfarranger.py:1073
-msgid "untitled"
-msgstr "osparat dokument"
-
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
 #, python-format
+msgid "_Undo %s"
+msgstr "_Ångra %s"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "_Redo %s"
+msgstr "_Gör om %s"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "%d page selected"
+msgid_plural "%d pages selected"
+msgstr[0] "%d sida markerad"
+msgstr[1] "%d sidor markerade"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Untitled"
+msgstr "Namnlöst"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Password required"
+msgstr "Lösenord krävs"
+
+#: pdfarranger_qt/mainwindow.py
+#, python-brace-format
+msgid "The document “{}” is locked and requires a password before it can be opened."
+msgstr "Dokumentet “{}” är låst och ett lösenord krävs innan det kan öppnas."
+
+#: pdfarranger_qt/mainwindow.py
+msgid "The password will be remembered until you close PDF Arranger."
+msgstr "Lösenordet kommer att vara sparat tills du stänger PDF Arranger."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Importing…"
+msgstr "Importerar…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Cancel"
+msgstr "Avbryt"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Import"
+msgstr "Importera"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "No recent files"
+msgstr "Inga senaste filer"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Clear Menu"
+msgstr "Rensa menyn"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "This file is no longer there:"
+msgstr "Filen finns inte längre där:"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "This document cannot be read."
+msgstr "Det här dokumentet kan inte läsas."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Go to Page"
+msgstr "Gå till sida"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Page number:"
+msgstr "Sidnummer:"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "No document"
+msgstr "Inget dokument"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "%d page"
+msgid_plural "%d pages"
+msgstr[0] "%d sida"
+msgstr[1] "%d sidor"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-brace-format
+msgid "of {}"
+msgstr "av {}"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "The document will not be encrypted."
+msgstr "Dokumentet kommer inte att krypteras."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "The document will be encrypted when it is saved."
+msgstr "Dokumentet krypteras när det sparas."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Could not open a new window."
+msgstr "Kunde inte öppna ett nytt fönster."
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Open"
+msgstr "Öppna"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Save As…"
+msgstr "Spara som…"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Export…"
+msgstr "Exportera…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "There is nothing to save."
+msgstr "Det finns inget att spara."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Could not save:"
+msgstr "Kunde inte spara:"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Saved"
+msgstr "Sparat"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "This document has unsaved changes."
+msgstr "Det här dokumentet har osparade ändringar."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Save before continuing?"
+msgstr "Spara innan du fortsätter?"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py pdfarranger_qt/reader.py
+msgid "Delete"
+msgstr "Ta bort"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Cut"
+msgstr "Klipp ut"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Paste"
+msgstr "Klistra in"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Move to Page"
+msgstr "Flytta till sida"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Move"
+msgstr "Flytta"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "The page selection is not contiguous. Cannot unimpose."
+msgstr "Markeringen är inte kontinuerlig. Kan inte unimpose."
+
+#: pdfarranger_qt/mainwindow.py
+msgid "All pages must have the same size."
+msgstr "Alla sidor måste ha samma storlek."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Split Booklet"
+msgstr "Dela häfte"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Overwrite existing files?"
+msgstr "Skriva över befintliga filer?"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Blank page"
+msgstr "Tom sida"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Copy the pages you want to merge in first."
+msgstr "Kopiera först in de sidor du vill sammanfoga."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Generate Booklet"
+msgstr "Skapa häfte"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "The page selection is not contiguous."
+msgstr "Sidmarkeringen är inte sammanhängande."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "All metadata will be removed when the document is saved."
+msgstr "Alla metadata tas bort när dokumentet sparas."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Metadata will be kept."
+msgstr "Metadata behålls."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Repair Document…"
+msgstr "Reparera dokument…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Write a rebuilt copy?"
+msgstr "Skriva en återuppbyggd kopia?"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Save Repaired Document"
+msgstr "Spara reparerat dokument"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "%d image written"
+msgid_plural "%d images written"
+msgstr[0] "%d bild skriven"
+msgstr[1] "%d bilder skrivna"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "The page has no text."
+msgstr "Sidan innehåller ingen text."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Copied"
+msgstr "Kopierat"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "The page has no image."
+msgstr "Sidan innehåller ingen bild."
+
+#: pdfarranger_qt/mainwindow.py
+msgid "The page has several images. Use \"Explode into Images\" first.\""
+msgstr "Sidan har flera bilder. Använd \"Explodera till bilder\" först."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Explode into Images"
+msgstr "Dela upp i bilder"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Printing…"
+msgstr "Skriver ut…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Finishing…"
+msgstr "Slutför…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "The printer driver is processing the job."
+msgstr "Skrivardrivrutinen bearbetar jobbet."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "%d page printed"
+msgid_plural "%d pages printed"
+msgstr[0] "%d sida utskriven"
+msgstr[1] "%d sidor utskrivna"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Find"
+msgstr "Sök"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "%d page matches"
+msgid_plural "%d pages match"
+msgstr[0] "%d sida matchar"
+msgstr[1] "%d sidor matchar"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Duplicate"
+msgstr "Duplicera"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Rotate"
+msgstr "Rotera"
+
+#: pdfarranger_qt/metadata.py
+msgid "Title"
+msgstr "Titel"
+
+#: pdfarranger_qt/metadata.py
+msgid "Subject"
+msgstr "Ämne"
+
+#: pdfarranger_qt/metadata.py
+msgid "Keywords"
+msgstr "Nyckelord"
+
+#: pdfarranger_qt/metadata.py
+msgid "Producer"
+msgstr "PDF-framställning"
+
+#: pdfarranger_qt/metadata.py
+msgid "Creator"
+msgstr "Författare"
+
+#: pdfarranger_qt/metadata.py
+msgid "Creator tool"
+msgstr "Program"
+
+#: pdfarranger_qt/metadata.py
+msgid "Created"
+msgstr "Skapad"
+
+#: pdfarranger_qt/metadata.py
+msgid "Modified"
+msgstr "Ändrad"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/nup.py
+msgid "2 pages per sheet"
+msgstr "2 sidor per ark"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/nup.py
+msgid "4 pages per sheet"
+msgstr "4 sidor per ark"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/nup.py
+msgid "6 pages per sheet"
+msgstr "6 sidor per ark"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/nup.py
+msgid "8 pages per sheet"
+msgstr "8 sidor per ark"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/nup.py
+msgid "9 pages per sheet"
+msgstr "9 sidor per ark"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/nup.py
+msgid "16 pages per sheet"
+msgstr "16 sidor per ark"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Bookmark Colour"
+msgstr "Bokmärkesfärg"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Add Bookmark Here"
+msgstr "Lägg till bokmärke här"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Add Child Bookmark Here"
+msgstr "Lägg till underbokmärke här"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Re-home to This Page"
+msgstr "Peka om till den här sidan"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Rename"
+msgstr "Byt namn"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Style"
+msgstr "Stil"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Colour…"
+msgstr "Färg…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Default Colour"
+msgstr "Standardfärg"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Expand All Children"
+msgstr "Expandera alla underposter"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Collapse All Children"
+msgstr "Fäll ihop alla underposter"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Delete with Children"
+msgstr "Ta bort med underposter"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Delete Dangling Bookmarks"
+msgstr "Ta bort lösa bokmärken"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Nothing to read."
+msgstr "Inget att läsa."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+#, python-brace-format
+msgid "Page {} of {}"
+msgstr "Sida {} av {}"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Move Bookmark"
+msgstr "Flytta bokmärke"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "This bookmark's page is no longer in the document"
+msgstr "Bokmärkets sida finns inte längre i dokumentet"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "This bookmark does not point at a page"
+msgstr "Det här bokmärket pekar inte på någon sida"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Rename Bookmark"
+msgstr "Byt namn på bokmärke"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Add Child Bookmark"
+msgstr "Lägg till underbokmärke"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Add Bookmark"
+msgstr "Lägg till bokmärke"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Bookmark Style"
+msgstr "Bokmärkesstil"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Re-home Bookmark"
+msgstr "Peka om bokmärke"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Delete Bookmark"
+msgstr "Ta bort bokmärke"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Delete Bookmark and Children"
+msgstr "Ta bort bokmärke och underposter"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/repair.py
+msgid "This file cannot be read, even with recovery."
+msgstr "Den här filen kan inte läsas, inte ens med återställning."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/repair.py
+msgid "No damage found; the file reads cleanly."
+msgstr "Inga skador hittades; filen läses utan problem."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/repair.py
+msgid "Damaged, and recoverable."
+msgstr "Skadad, och möjlig att återställa."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/repair.py
+msgid "The file cannot be read."
+msgstr "Filen kan inte läsas."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/stamp.py
+msgid "Top left"
+msgstr "Uppe till vänster"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/stamp.py
+msgid "Top centre"
+msgstr "Uppe i mitten"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/stamp.py
+msgid "Top right"
+msgstr "Uppe till höger"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/stamp.py
+msgid "Bottom left"
+msgstr "Nere till vänster"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/stamp.py
+msgid "Bottom centre"
+msgstr "Nere i mitten"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/stamp.py
+msgid "Bottom right"
+msgstr "Nere till höger"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/viewer.py
+msgid "Viewer default"
+msgstr "Visningsprogrammets standard"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/viewer.py
+msgid "No side panel"
+msgstr "Ingen sidopanel"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/viewer.py
+msgid "Bookmarks panel"
+msgstr "Bokmärkespanel"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/viewer.py
+msgid "Page thumbnails"
+msgstr "Miniatyrbilder"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/viewer.py
+msgid "Continuous scroll"
+msgstr "Kontinuerlig rullning"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/viewer.py
+msgid "Two pages, odd on the left"
+msgstr "Två sidor, udda till vänster"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/viewer.py
+msgid "Two pages, odd on the right"
+msgstr "Två sidor, udda till höger"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/viewer.py
+msgid "Facing pages, odd on the left"
+msgstr "Uppslag, udda till vänster"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/viewer.py
+msgid "Facing pages, odd on the right"
+msgstr "Uppslag, udda till höger"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/viewer.py
+msgid "Hide the viewer's toolbar"
+msgstr "Dölj visningsprogrammets verktygsfält"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/viewer.py
+msgid "Hide the viewer's menu bar"
+msgstr "Dölj visningsprogrammets menyrad"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/viewer.py
+msgid "Centre the window on screen"
+msgstr "Centrera fönstret på skärmen"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/viewer.py
+msgid "Show the title rather than the filename"
+msgstr "Visa titeln i stället för filnamnet"
+
 #~ msgid "It uses libqpdf %s, pikepdf %s, GTK %s and Python %s."
 #~ msgstr "Programmet använder libqpdf %s, pikepdf %s, GTK %s och Python %s."
 
 #~ msgid "Zoom _Fit"
 #~ msgstr "_Anpassa zoom"
+
+#~ msgid "#Col"
+#~ msgstr "#Kolumn"
+
+#~ msgid "#Row"
+#~ msgstr "#Rad"
+
+#~ msgid "%"
+#~ msgstr "%"
+
+#~ msgid "% of height"
+#~ msgstr "% av höjd"
+
+#~ msgid "% of width"
+#~ msgstr "% av bredd"
+
+#~ msgid "%s is a tool for rearranging and modifying PDF files."
+#~ msgstr "%s är ett verktyg för att arrangera om och modifiera PDF filer."
+
+#~ msgid "(Libhandy missing)"
+#~ msgstr "(Libhandy saknas)"
+
+#~ msgid "(Requires restart)"
+#~ msgstr "(Kräver omstart)"
+
+#~ msgid "A file named \"%s\" already exists. Do you want to replace it?"
+#~ msgstr "En fil med namnet \"%s\" finns redan. Vill du skriva över den?"
+
+#~ msgid "All"
+#~ msgstr "Alla"
+
+#~ msgid "All files"
+#~ msgstr "Alla filer"
+
+#~ msgid "All supported files"
+#~ msgstr "Alla filer som stöds"
+
+#~ msgid "Bottom to Top"
+#~ msgstr "Nerifrån uppåt"
+
+#~ msgid "Clipboard image"
+#~ msgstr "Urklipp bild"
+
+#~ msgid "Copy _Text"
+#~ msgstr "Kopiera _text"
+
+#~ msgid ""
+#~ "Cropping/hiding does not remove any content"
+#~ " from the PDF file, it only hides"
+#~ " it."
+#~ msgstr ""
+#~ "Beskär/dölj tar inte bort innehåll från "
+#~ "PDF-filen utan gömmer endast bort "
+#~ "det."
+
+#~ msgid "Despite the warnings the document(s) should have no visible issues."
+#~ msgstr "Trots varningarna borde dokumenten inte ha noterbara problem."
+
+#~ msgid "Discard changes and close?"
+#~ msgstr "Förkasta ändringar och stäng?"
+
+#~ msgid "Discard changes and quit?"
+#~ msgstr "Förkasta ändringar och avsluta?"
+
+#~ msgid "Do not show this dialog again."
+#~ msgstr "Visa inte detta meddelande igen."
+
+#~ msgid "Do_n’t Save"
+#~ msgstr "Spara _inte"
+
+#~ msgid "Don't show warnings when saving again."
+#~ msgstr "Visa inte varningar när dokument sparas."
+
+#~ msgid "Dupl_icate"
+#~ msgstr "Dupli_cera"
+
+#~ msgid "Equal column width"
+#~ msgstr "Samma kolumnbredd"
+
+#~ msgid "Equal row height"
+#~ msgstr "Samma radhöjd"
+
+#~ msgid "Exploding into images…"
+#~ msgstr "Exploderar till bilder…"
+
+#~ msgid "File(s) to open"
+#~ msgstr "Fil(er) att öppna"
+
+#~ msgid "Find _All"
+#~ msgstr "Sök _alla"
+
+#~ msgid "Find _Next"
+#~ msgstr "Sök _nästa"
+
+#~ msgid "Find _Previous"
+#~ msgstr "Sök _föregående"
+
+#~ msgid "Fit to Full Page"
+#~ msgstr "Anpassa till hel sida"
+
+#~ msgid "Fit to Printable Area"
+#~ msgstr "Anpassa till utskrivbart område"
+
+#~ msgid "For more info see"
+#~ msgstr "För mer info se"
+
+#~ msgid "For more options see:"
+#~ msgstr "För fler inställningar se:"
+
+#~ msgid "Full_screen"
+#~ msgstr "_Helskärm"
+
+#~ msgid "GNU General Public License (GPL) Version 3."
+#~ msgstr "GNU General Public License (GPL) Version 3."
+
+#~ msgid "Height in %"
+#~ msgstr "Höjd i %"
+
+#~ msgid "Horizontal offset"
+#~ msgstr "Horizontell offset"
+
+#~ msgid "Img2pdf missing."
+#~ msgstr "Img2pdf saknas."
+
+#~ msgid "Img2pdf support missing."
+#~ msgstr "Imgpdf stöd saknas."
+
+#~ msgid "Import…"
+#~ msgstr "Importera…"
+
+#~ msgid "Invalid date format. Input discarded."
+#~ msgstr "Ogiltigt datumformat."
+
+#~ msgid "JPEG images"
+#~ msgstr "JPEG bilder"
+
+#~ msgid "Left to Right"
+#~ msgstr "Vänster till höger"
+
+#~ msgid "Main Menu"
+#~ msgstr "Huvudmeny"
+
+#~ msgid "Maintainers and contributors"
+#~ msgstr "Administratörer och bidragsgivare"
+
+#~ msgid "Margin"
+#~ msgstr "Marginal"
+
+#~ msgid "Merged page size:"
+#~ msgstr "Sammanslagna sidstorleken:"
+
+#~ msgid "Non-uniform page size - using max size"
+#~ msgstr "Sidorna har olika storlek - max storleken används"
+
+#~ msgid "None"
+#~ msgstr "Ingen"
+
+#~ msgid "Note"
+#~ msgstr "Notera"
+
+#~ msgid "Note the limitations:"
+#~ msgstr "Notera begränsningarna:"
+
+#~ msgid "Open…"
+#~ msgstr "Öppna…"
+
+#~ msgid "Optimize"
+#~ msgstr "Optimera"
+
+#~ msgid "Outlines and links can be preserved only in certain cases."
+#~ msgstr "Bokmärken och länkar kan bevaras endast i vissa fall."
+
+#~ msgid ""
+#~ "PDF Arranger is a small python-gtk"
+#~ " application, which helps the user to"
+#~ " merge or split pdf documents and "
+#~ "rotate, crop and rearrange their pages "
+#~ "using an interactive and intuitive "
+#~ "graphical interface. It is a frontend "
+#~ "for pikepdf."
+#~ msgstr ""
+#~ "PDF Arranger är ett litet python-gtk"
+#~ " program som hjälper användaren att slå"
+#~ " samman och dela pdf dokument samt "
+#~ "att rotera och arrangera om dess "
+#~ "sidor med ett interaktivt och intuitivt "
+#~ "grafiskt användargränssnitt. Programmet använder "
+#~ "pikepdf i bakgrunden."
+
+#~ msgid "PDF document is damaged"
+#~ msgstr "PDF dokumentet är skadat"
+
+#~ msgid "PDF files"
+#~ msgstr "PDF filer"
+
+#~ msgid "PNG images"
+#~ msgstr "PNG bilder"
+
+#~ msgid "Page Handling"
+#~ msgstr "Sidhantering"
+
+#~ msgid "Page Order"
+#~ msgstr "Sidordning"
+
+#~ msgid "Page Size:"
+#~ msgstr "Sidstorlek:"
+
+#~ msgid "Pasted data not valid. Aborting paste."
+#~ msgstr "Inklistrat data är inte giltigt. Inklistringen avbryts."
+
+#~ msgid "Pre_ferences"
+#~ msgstr "_Inställningar"
+
+#~ msgid "Print the version of PDF Arranger and exit"
+#~ msgstr "Skriv ut PDF Arranger versionen och avsluta"
+
+#~ msgid "Property"
+#~ msgstr "Fält"
+
+#~ msgid "Re_verse Order"
+#~ msgstr "Omv_änd ordningen"
+
+#~ msgid "Rendering Preview…"
+#~ msgstr "Renderar förhandsgranskning…"
+
+#~ msgid "Rendering…"
+#~ msgstr "Renderar…"
+
+#~ msgid "Replace"
+#~ msgstr "Ersätt"
+
+#~ msgid "Right to Left"
+#~ msgstr "Höger till vänster"
+
+#~ msgid "Rotate Left"
+#~ msgstr "Rotera åt vänster"
+
+#~ msgid "Rotate Right"
+#~ msgstr "Rotera åt höger"
+
+#~ msgid "Running on %s"
+#~ msgstr "Kör på %s"
+
+#~ msgid "Save"
+#~ msgstr "Spara"
+
+#~ msgid "Save As"
+#~ msgstr "Spara som"
+
+#~ msgid "Save changes before closing?"
+#~ msgstr "Spara ändringar innan stängning?"
+
+#~ msgid "Save changes before quitting?"
+#~ msgstr "Spara ändringar innan programmet avslutas?"
+
+#~ msgid "Save changes to “{}” before closing?"
+#~ msgstr "Spara ändringar till “{}” innan stängning?"
+
+#~ msgid "Save changes to “{}” before quitting?"
+#~ msgstr "Spara ändringar till “{}” innan programmet avslutas?"
+
+#~ msgid "Saving failed"
+#~ msgstr "Sparningen misslyckades"
+
+#~ msgid "Saving produced some warnings"
+#~ msgstr "Spara-processen skapade varningar"
+
+#~ msgid "Saving…"
+#~ msgstr "Sparar…"
+
+#~ msgid "Scale mode:"
+#~ msgstr "Skalningsmetod:"
+
+#~ msgid "Selected pages: "
+#~ msgstr "Markerade sidor: "
+
+#~ msgid "Show values"
+#~ msgstr "Visa värden"
+
+#~ msgid "Software versions:"
+#~ msgstr "Programvaruversioner:"
+
+#~ msgid "Supported image files"
+#~ msgstr "Bildfiler som stöds"
+
+#~ msgid "Top to Bottom"
+#~ msgstr "Uppifrån neråt"
+
+#~ msgid "User Manual"
+#~ msgstr "Användarmanual"
+
+#~ msgid "Value"
+#~ msgstr "Innehåll"
+
+#~ msgid "Vertical offset"
+#~ msgstr "Vertikal offset"
+
+#~ msgid "Width in %"
+#~ msgstr "Bredd i %"
+
+#~ msgid "Your changes will be lost if you don’t save them."
+#~ msgstr "Dina ändringar går förlorade om du inte sparar dem."
+
+#~ msgid "Zoom In"
+#~ msgstr "Zooma in"
+
+#~ msgid "Zoom Out"
+#~ msgstr "Zooma ut"
+
+#~ msgid "_Apply"
+#~ msgstr "_Verkställ"
+
+#~ msgid "_Cancel"
+#~ msgstr "_Avbryt"
+
+#~ msgid "_Find"
+#~ msgstr "_Sök"
+
+#~ msgid "_OK"
+#~ msgstr "_OK"
+
+#~ msgid "_Revert"
+#~ msgstr "_Återställ"
+
+#~ msgid "page"
+#~ msgstr "sida"
+
+#~ msgid "untitled"
+#~ msgstr "osparat dokument"
+
