@@ -18,12 +18,12 @@
 
 import os
 import unittest
+
 import pikepdf
+from support import QtDocumentTestCase
 
 from pdfarranger_qt.core import Dims, Page
 from pdfarranger_qt.export import export
-
-from support import QtDocumentTestCase
 
 
 class TestBooklet(unittest.TestCase):

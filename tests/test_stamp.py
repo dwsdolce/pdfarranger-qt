@@ -30,10 +30,9 @@ import tempfile
 import unittest
 
 import pikepdf
+from support import QtDocumentTestCase
 
 from pdfarranger_qt import raster, stamp
-
-from support import QtDocumentTestCase
 
 PPI = 72
 

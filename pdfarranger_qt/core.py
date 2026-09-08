@@ -421,19 +421,22 @@ class Page(BasePage):
         # If the page is cropped, adjust the new crop for the visible part of the page.
         hscale = 1 - (left + right)
         vscale = 1 - (top + bottom)
-        vcrops = [(l * hscale, r * hscale) for (l, r) in vcrops]
-        hcrops = [(t * vscale, b * vscale) for (t, b) in hcrops]
+        # x0/x1 and y0/y1 rather than l/r and t/b: `l` is unreadable beside a
+        # `1`, and the two loops below would otherwise both want to call their
+        # second element `b`, with the inner one shadowing the outer.
+        vcrops = [(x0 * hscale, x1 * hscale) for (x0, x1) in vcrops]
+        hcrops = [(y0 * vscale, y1 * vscale) for (y0, y1) in hcrops]
 
-        for (t, b) in reversed(hcrops):
-            topcrop = top + t
-            row_height = b - t
+        for (y0, y1) in reversed(hcrops):
+            topcrop = top + y0
+            row_height = y1 - y0
             bottomcrop = 1 - (topcrop + row_height)
-            for (l, r) in reversed(vcrops):
-                leftcrop = left + l
-                col_width = r - l
+            for (x0, x1) in reversed(vcrops):
+                leftcrop = left + x0
+                col_width = x1 - x0
                 rightcrop = 1 - (leftcrop + col_width)
                 crop = Sides(leftcrop, rightcrop, topcrop, bottomcrop)
-                if l == 0.0 and t == 0.0:
+                if x0 == 0.0 and y0 == 0.0:
                     # Update the original page
                     self.crop = crop
                 else:
@@ -585,7 +588,9 @@ class PDFDoc:
                 shutil.copy(self.filename, self.copyname)
         elif filemime.split("/")[0] == "image":
             if img2pdf is None:
-                raise PDFDocError(_("Image files are only supported with img2pdf") + ": " + filename)
+                raise PDFDocError(
+                    _("Image files are only supported with img2pdf")
+                    + ": " + filename)
             if mimetypes.guess_type(filename, strict=False)[0] not in img2pdf_supported_img:
                 raise PDFDocError(_("Image format is not supported by img2pdf") + ": " + filename)
             self.copyname = _img_to_pdf([filename], tmp_dir)

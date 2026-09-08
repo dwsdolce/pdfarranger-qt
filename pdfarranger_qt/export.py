@@ -37,7 +37,6 @@ import pikepdf
 
 from . import metadata
 from .core import Page, Sides
-from .i18n import gettext_ as _
 
 #: export_doc_job() uses the pikepdf Job interface, added in pikepdf 8.
 HAS_PIKEPDF8 = packaging.version.parse(pikepdf.__version__) >= packaging.version.Version("8.0")

@@ -24,10 +24,15 @@ heading -- are answerable exactly rather than by poking a widget.
 import os
 import unittest
 
-from pdfarranger_qt.outline import (
-    BOLD, ITALIC, Bookmark, Outline, from_pdf_outline,
-)
 from support import HERE, settle
+
+from pdfarranger_qt.outline import (
+    BOLD,
+    ITALIC,
+    Bookmark,
+    Outline,
+    from_pdf_outline,
+)
 
 OUTLINE_PDF = os.path.join(HERE, "exporter", "outlines.pdf")
 
@@ -248,6 +253,7 @@ class TestOutlineThroughEditing(unittest.TestCase):
 
     def setUp(self):
         from PySide6.QtWidgets import QApplication  # noqa: F401
+
         from pdfarranger_qt.mainwindow import MainWindow
 
         self.win = MainWindow()
@@ -409,6 +415,7 @@ class TestBookmarkCommands(unittest.TestCase):
 
     def setUp(self):
         from PySide6.QtWidgets import QApplication  # noqa: F401
+
         from pdfarranger_qt.mainwindow import MainWindow
 
         self.win = MainWindow()
@@ -755,7 +762,9 @@ class TestOutlineSurvivesASave(unittest.TestCase):
 
     def setUp(self):
         import tempfile
+
         from PySide6.QtWidgets import QApplication  # noqa: F401
+
         from pdfarranger_qt.mainwindow import MainWindow
 
         self.dir = tempfile.mkdtemp()
@@ -902,6 +911,7 @@ class TestDragToReNest(unittest.TestCase):
 
     def setUp(self):
         from PySide6.QtWidgets import QApplication  # noqa: F401
+
         from pdfarranger_qt.mainwindow import MainWindow
 
         self.win = MainWindow()
@@ -996,7 +1006,7 @@ class TestDragToReNest(unittest.TestCase):
         self.assertEqual(self.titles()[:2], ["Page 1", "  Page 2"])
 
     def test_dropping_an_entry_where_it_already_is_does_nothing(self):
-        from PySide6.QtCore import Qt, QModelIndex
+        from PySide6.QtCore import QModelIndex, Qt
         data = self.model.mimeData([self.root(1)])
         for row in (1, 2):
             self.assertFalse(self.model.canDropMimeData(data, Qt.MoveAction,
@@ -1034,6 +1044,7 @@ class TestClosingADocument(unittest.TestCase):
 
     def setUp(self):
         from PySide6.QtWidgets import QApplication  # noqa: F401
+
         from pdfarranger_qt.mainwindow import MainWindow
 
         self.win = MainWindow()
@@ -1087,6 +1098,7 @@ class TestMovingPagesALongWay(unittest.TestCase):
 
     def setUp(self):
         from PySide6.QtWidgets import QApplication  # noqa: F401
+
         from pdfarranger_qt.mainwindow import MainWindow
 
         self.win = MainWindow()
@@ -1249,8 +1261,10 @@ class TestBookmarkAppearance(unittest.TestCase):
     def setUp(self):
         import shutil
         import tempfile
+
         import pikepdf
         from PySide6.QtWidgets import QApplication  # noqa: F401
+
         from pdfarranger_qt.mainwindow import MainWindow
 
         self.dir = tempfile.mkdtemp()
@@ -1381,8 +1395,10 @@ class TestOutlineExpansion(unittest.TestCase):
     def setUp(self):
         import shutil
         import tempfile
+
         import pikepdf
         from PySide6.QtWidgets import QApplication  # noqa: F401
+
         from pdfarranger_qt.mainwindow import MainWindow
 
         self.dir = tempfile.mkdtemp()

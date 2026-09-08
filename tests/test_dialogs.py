@@ -191,6 +191,7 @@ class TestPreferencesDialogWidget(unittest.TestCase):
 
     def test_preferences_reports_no_shortcut_changes_by_default(self):
         from PySide6.QtGui import QAction, QKeySequence
+
         from pdfarranger_qt.dialogs import PreferencesDialog
 
         action = QAction("&Duplicate")
@@ -225,6 +226,7 @@ class TestShortcutsDialog(unittest.TestCase):
 
     def test_editing_a_binding_is_reported(self):
         from PySide6.QtGui import QKeySequence
+
         from pdfarranger_qt.dialogs import ShortcutsDialog
 
         d = ShortcutsDialog(self.actions())
@@ -261,6 +263,7 @@ class TestShortcutsDialog(unittest.TestCase):
 
     def test_body_is_scrollable(self):
         from PySide6.QtWidgets import QScrollArea
+
         from pdfarranger_qt.dialogs import ShortcutsDialog
 
         d = ShortcutsDialog(self.actions())

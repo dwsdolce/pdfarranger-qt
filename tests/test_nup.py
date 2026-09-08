@@ -25,10 +25,10 @@ landed in which cell" a colour lookup.
 
 import unittest
 
+from support import QtDocumentTestCase
+
 from pdfarranger_qt import nup, raster
 from pdfarranger_qt.core import Dims
-
-from support import QtDocumentTestCase
 
 #: Rendering resolution. Low on purpose: the tests ask which quadrant is red,
 #: not how well an edge is anti-aliased, and every one of them renders.

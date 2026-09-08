@@ -111,6 +111,7 @@ class TestTheme(unittest.TestCase):
         """DARK asks Qt for a dark scheme, and gets one where that is possible."""
         from PySide6.QtCore import Qt
         from PySide6.QtGui import QGuiApplication
+
         from pdfarranger_qt import theme
 
         with recording_hints() as hints:
@@ -128,6 +129,7 @@ class TestTheme(unittest.TestCase):
         """And the same for light, which is a different enum and a real mistake."""
         from PySide6.QtCore import Qt
         from PySide6.QtGui import QGuiApplication
+
         from pdfarranger_qt import theme
 
         with recording_hints() as hints:

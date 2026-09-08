@@ -21,17 +21,15 @@ rectangles around found text"); this port only selected the matching pages
 until now, which was the last outstanding parity gap.
 """
 
-import os
 import unittest
 
 from PySide6.QtCore import QRectF
 from PySide6.QtGui import QImage, QPainter
 from PySide6.QtWidgets import QStyleOptionViewItem
+from support import TEST_PDF, TEXT_PDF, settle
 
 from pdfarranger_qt.core import DocumentSet, Sides
 from pdfarranger_qt.search import SearchIndex
-
-from support import TEST_PDF, TEXT_PDF, settle
 
 
 class TestMatchRectangles(unittest.TestCase):

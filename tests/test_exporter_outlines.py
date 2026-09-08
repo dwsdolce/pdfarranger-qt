@@ -10,16 +10,15 @@ Helper conventions:
   dest_page_index(pdf, dest_array) → which 0-based page index a dest array points to
 """
 
-import io
 import builtins
+import io
+from collections import namedtuple
+from unittest.mock import patch
 
 import pikepdf
 import pytest
-from unittest.mock import patch
-from collections import namedtuple
 
 from pdfarranger_qt.exporter_outlines import rebuild_outlines, write_named_dests
-
 
 # ---------------------------------------------------------------------------
 # Helpers

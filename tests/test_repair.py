@@ -22,10 +22,9 @@ import tempfile
 import unittest
 
 import pikepdf
+from support import TEST_PDF, temp_path
 
 from pdfarranger_qt import repair
-
-from support import TEST_PDF, temp_path
 
 #: A file with a proper cross-reference table, unlike TEST_PDF.
 HEALTHY = os.path.join(os.path.dirname(os.path.abspath(__file__)),

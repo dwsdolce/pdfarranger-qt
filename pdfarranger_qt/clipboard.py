@@ -33,7 +33,7 @@ upstream behaviour, not an accident of this port.
 """
 
 import hashlib
-from typing import List, Optional, Tuple
+from typing import List, Optional
 
 MARKER = "pdfarranger-clipboard\n"
 PAGE_SEPARATOR = "\n;\n"

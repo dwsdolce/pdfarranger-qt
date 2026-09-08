@@ -29,7 +29,7 @@ went through poppler and cairo.
 
 import io
 import os
-from typing import Iterator, List, Optional, Sequence, Tuple
+from typing import Iterator, List, Sequence
 
 from PySide6.QtCore import QSize
 from PySide6.QtGui import QImage

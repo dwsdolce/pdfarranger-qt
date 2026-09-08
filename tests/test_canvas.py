@@ -25,20 +25,33 @@ import os
 import unittest
 
 from PySide6.QtCore import (
-    QEvent, QModelIndex, QPointF, QRectF, QSize, QSizeF, Qt, QUrl,
+    QEvent,
+    QModelIndex,
+    QPointF,
+    QRectF,
+    QSize,
+    QSizeF,
+    Qt,
+    QUrl,
 )
 from PySide6.QtGui import QKeyEvent, QKeySequence, QMouseEvent
 from PySide6.QtPdf import QPdfLinkModel, QPdfSearchModel
 from PySide6.QtWidgets import QApplication
+from support import HERE, TEXT_PDF, settle
 
 from pdfarranger_qt.canvas import (
-    DEFAULT_MARGIN, DEFAULT_SPACING, ZOOM_LIMITS, FitMode, PageCanvas, PageLayout,
-    AsynchronousPages, PageText,
+    DEFAULT_MARGIN,
+    DEFAULT_SPACING,
+    ZOOM_LIMITS,
+    AsynchronousPages,
+    FitMode,
+    PageCanvas,
+    PageLayout,
+    PageText,
 )
 from pdfarranger_qt.core import DocumentSet, Sides
 from pdfarranger_qt.export import get_in_memory_pdf
 from pdfarranger_qt.render import MemoryDocument
-from support import HERE, TEXT_PDF, settle
 
 OUTLINE_PDF = os.path.join(HERE, "exporter", "outlines.pdf")
 LINK_PDF = os.path.join(HERE, "text_and_link.pdf")
@@ -1466,6 +1479,12 @@ class TestFacingPages(unittest.TestCase):
                              sizes=[self.WIDE, self.LETTER, self.LETTER, self.LETTER])
         first, second = layout.page_rect(0), layout.page_rect(1)
         third = layout.page_rect(2)
+        # The premise the assertion below rests on, and which nothing used to
+        # state: the two pages share a row, and the landscape one is the
+        # shorter, so the row's height can only have come from its neighbour.
+        self.assertEqual(first.top(), second.top(), "these are not one row")
+        self.assertLess(first.bottom(), second.bottom(),
+                        "the landscape page is meant to be the shorter one")
         self.assertGreater(third.top(), second.bottom() - 1,
                            "the next row overlaps the taller page beside it")
 

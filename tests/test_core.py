@@ -18,12 +18,12 @@
 
 import os
 import unittest
+
 import pikepdf
+from support import TEST_PDF, QtDocumentTestCase
 
 from pdfarranger_qt.core import Dims, Page, Sides
 from pdfarranger_qt.model import contiguous_blocks
-
-from support import QtDocumentTestCase, TEST_PDF
 
 
 class TestGeometry(unittest.TestCase):

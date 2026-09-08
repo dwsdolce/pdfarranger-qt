@@ -16,13 +16,13 @@
 
 """ PDF meta data edition """
 
-import pikepdf
 import gettext
-import re
 import json
+import re
 import traceback
-from datetime import datetime
-from dateutil import parser
+
+import pikepdf
+
 _ = gettext.gettext
 
 # The producer property can be overridden by pikepdf

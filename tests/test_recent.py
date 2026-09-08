@@ -54,7 +54,9 @@ class TestRecentFiles(unittest.TestCase):
         """
         import shutil
         import tempfile
+
         from PySide6.QtCore import QSettings
+
         from pdfarranger_qt.recent import RecentFiles
 
         directory = tempfile.mkdtemp(prefix="pdfarranger-recent-")

@@ -30,7 +30,6 @@ See `pseudo` for why a generated locale rather than a real one.
 import unittest
 
 import pseudo
-
 from support import TEST_PDF, settle
 
 

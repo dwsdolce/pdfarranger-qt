@@ -32,7 +32,7 @@ sheet is a blank double-width page with two source pages composited onto it,
 flush left and flush right.
 """
 
-from typing import List, Optional, Tuple
+from typing import List, Tuple
 
 from .core import OVERLAY, Dims, DocumentSet, Page
 from .layers import entry_from_page, layer_stacks_from_entries, paste_as_layer

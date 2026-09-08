@@ -25,10 +25,9 @@ when it is wrong.
 import unittest
 
 import pikepdf
+from support import TEST_PDF, settle, temp_path
 
 from pdfarranger_qt import dialogs, viewer
-
-from support import TEST_PDF, settle, temp_path
 
 
 def with_viewer_prefs(**kwargs):

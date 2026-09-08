@@ -17,12 +17,12 @@
 """The item model: undo, reordering, list ops and page geometry edits."""
 
 import os
+
 import pikepdf
+from support import TEST_PDF, QtDocumentTestCase
 
 from pdfarranger_qt.core import Dims, Sides
 from pdfarranger_qt.export import export
-
-from support import QtDocumentTestCase, TEST_PDF
 
 
 class TestUndo(QtDocumentTestCase):

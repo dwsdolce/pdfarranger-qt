@@ -35,6 +35,7 @@ class TestTheCurrentPageFollows(unittest.TestCase):
 
     def setUp(self):
         from PySide6.QtWidgets import QApplication  # noqa: F401
+
         from pdfarranger_qt.mainwindow import MainWindow
 
         self.win = MainWindow()
@@ -156,6 +157,7 @@ class TestShiftClickSelectsARange(unittest.TestCase):
 
     def setUp(self):
         from PySide6.QtWidgets import QApplication  # noqa: F401
+
         from pdfarranger_qt.mainwindow import MainWindow
 
         self.win = MainWindow()
@@ -181,7 +183,7 @@ class TestShiftClickSelectsARange(unittest.TestCase):
         self.win.close()
 
     def click(self, row, modifiers=None):
-        from PySide6.QtCore import Qt, QEvent, QPointF
+        from PySide6.QtCore import QEvent, QPointF, Qt
         from PySide6.QtGui import QMouseEvent
         from PySide6.QtWidgets import QApplication
         modifiers = Qt.NoModifier if modifiers is None else modifiers
@@ -270,7 +272,7 @@ class TestShiftClickSelectsARange(unittest.TestCase):
         The offscreen platform may not reproduce the overwrite, so this guards
         the rule rather than the platform.
         """
-        from PySide6.QtCore import Qt, QEvent, QPointF
+        from PySide6.QtCore import QEvent, QPointF, Qt
         from PySide6.QtGui import QMouseEvent
         from PySide6.QtWidgets import QApplication
         self.click(2)
@@ -291,7 +293,7 @@ class TestShiftClickSelectsARange(unittest.TestCase):
 
     def test_a_shift_click_with_a_twitch_does_not_start_a_drag(self):
         """The press is a selection gesture, so it must not arm the reorder."""
-        from PySide6.QtCore import Qt, QEvent, QPointF
+        from PySide6.QtCore import QEvent, QPointF, Qt
         from PySide6.QtGui import QMouseEvent
         from PySide6.QtWidgets import QApplication
         self.click(2)
@@ -328,6 +330,7 @@ class TestOpeningDoesNotSelectEverything(unittest.TestCase):
 
     def setUp(self):
         from PySide6.QtWidgets import QApplication  # noqa: F401
+
         from pdfarranger_qt.mainwindow import MainWindow
 
         self.win = MainWindow()
@@ -365,6 +368,7 @@ class TestTheStatusBarSaysWhereYouAre(unittest.TestCase):
 
     def setUp(self):
         from PySide6.QtWidgets import QApplication  # noqa: F401
+
         from pdfarranger_qt.mainwindow import MainWindow
 
         self.win = MainWindow()

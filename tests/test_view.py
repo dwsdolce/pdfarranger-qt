@@ -31,6 +31,7 @@ class TestDragReorder(unittest.TestCase):
 
     def setUp(self):
         from PySide6.QtCore import QPointF
+
         from pdfarranger_qt.mainwindow import MainWindow
 
         self.QPointF = QPointF

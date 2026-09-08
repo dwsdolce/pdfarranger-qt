@@ -24,11 +24,10 @@ different means.
 import os
 
 import pikepdf
+from support import QtDocumentTestCase
 
 from pdfarranger_qt import viewer
 from pdfarranger_qt.export import HAS_PIKEPDF8, SaveOptions, export
-
-from support import QtDocumentTestCase
 
 #: Something to put in the file, so a metadata test has something to remove.
 #: XMP tags, which is what the properties dialog deals in; the Info dictionary

@@ -28,7 +28,11 @@ from PySide6.QtCore import QSettings
 
 from pdfarranger_qt import settings as app_settings_module
 from pdfarranger_qt.settings import (
-    APPLICATION, ORGANISATION, TEST_SUFFIX, app_settings, scratch_path,
+    APPLICATION,
+    ORGANISATION,
+    TEST_SUFFIX,
+    app_settings,
+    scratch_path,
     under_test,
 )
 

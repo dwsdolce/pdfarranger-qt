@@ -18,14 +18,13 @@
 
 import unittest
 
-from pdfarranger_qt.core import DocumentSet
-
 from support import TEXT_PDF
+
+from pdfarranger_qt.core import DocumentSet
 
 
 class TestSearch(unittest.TestCase):
     def setUp(self):
-        from pdfarranger_qt.core import DocumentSet
         from pdfarranger_qt.search import SearchIndex
 
         self.docs = DocumentSet()

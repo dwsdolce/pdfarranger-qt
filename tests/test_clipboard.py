@@ -19,9 +19,9 @@
 import os
 import unittest
 
-from pdfarranger_qt.core import Dims, Page, Sides
-
 from support import QT_APP, TEST_PDF, settle
+
+from pdfarranger_qt.core import Dims, Page, Sides
 
 
 class TestClipboardFormat(unittest.TestCase):
@@ -34,7 +34,6 @@ class TestClipboardFormat(unittest.TestCase):
         return text, clipboard.parse(text)
 
     def test_header_and_hash(self):
-        from pdfarranger_qt import clipboard
 
         page = Page(1, 3, "a.pdf", description="d", size_orig=Dims(612, 792))
         text, parsed = self.roundtrip([page])
@@ -159,6 +158,7 @@ class TestCrossInstanceDrop(unittest.TestCase):
         """
         from PySide6.QtCore import QMimeData, QPointF, Qt
         from PySide6.QtGui import QDragEnterEvent, QDragMoveEvent, QDropEvent
+
         from pdfarranger_qt import clipboard
 
         mime = QMimeData()
@@ -306,6 +306,7 @@ class TestCrossInstanceDrop(unittest.TestCase):
 
     def test_view_advertises_the_page_format(self):
         from PySide6.QtCore import QMimeData
+
         from pdfarranger_qt import clipboard
 
         mime = QMimeData()

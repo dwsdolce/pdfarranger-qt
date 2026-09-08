@@ -17,6 +17,7 @@
 """Application entry point."""
 
 import argparse
+import io
 import logging
 import os
 import sys
@@ -166,10 +167,99 @@ def install_icon(app) -> bool:
     return True
 
 
+def self_test(app) -> int:
+    """Check that this build has everything it needs. Returns an exit code.
+
+    A packaged application can be built perfectly and still be broken, because
+    PyInstaller decides what to carry by inspecting imports and cannot see a Qt
+    plugin, a data file or a compiled catalogue. Both of the faults this checks
+    for were shipped: the catalogues were unreachable in the Windows bundle for
+    every language at once, and nothing ever set the window icon.
+
+    Run by CI against the *frozen* binary, which is the only place these can
+    go wrong -- from source they all pass trivially.
+    """
+    from . import i18n
+
+    results = []
+
+    def check(name, test):
+        try:
+            detail = test()
+            results.append((name, True, detail))
+        except Exception as exc:  # noqa: BLE001 - any failure is a failure
+            results.append((name, False, f"{type(exc).__name__}: {exc}"))
+
+    def icon():
+        path = icon_path()
+        assert path, "no artwork found"
+        assert not QIcon(path).isNull(), f"{path} loaded as an empty icon"
+        return path
+
+    def catalogues():
+        directories = [d for d in i18n.locale_dirs() if os.path.isdir(d)]
+        assert directories, f"none of {i18n.locale_dirs()} exists"
+        found = i18n.setup("de")
+        assert found == "de", "the German catalogue did not load"
+        assert i18n.gettext_("_Save") != "_Save", "it loaded but translated nothing"
+        return directories[0]
+
+    def rendering():
+        # QtPdf is PDFium behind a Qt plugin, and a missing plugin is invisible
+        # until something asks it to draw.
+        import pikepdf
+        from PySide6.QtCore import QSize
+
+        from .render import MemoryDocument
+
+        buffer = io.BytesIO()
+        with pikepdf.Pdf.new() as pdf:
+            pdf.add_blank_page(page_size=(200, 300))
+            pdf.save(buffer)
+        with MemoryDocument(buffer.getvalue()) as document:
+            assert document.ok, f"QtPdf could not open it: {document.error}"
+            image = document.document.render(0, QSize(40, 60))
+            assert not image.isNull(), "QtPdf returned an empty image"
+        return "QtPdf rendered a page"
+
+    def exporting():
+        import pikepdf
+
+        return f"pikepdf {pikepdf.__version__}, qpdf {pikepdf.__libqpdf_version__}"
+
+    check("icon", icon)
+    check("catalogues", catalogues)
+    check("rendering", rendering)
+    check("pdf backend", exporting)
+    check("window", lambda: _build_a_window())
+
+    for name, ok, detail in results:
+        print(f"{'ok  ' if ok else 'FAIL'}  {name:<12} {detail}")
+    failed = [name for name, ok, _d in results if not ok]
+    if failed:
+        print(f"self-test failed: {', '.join(failed)}")
+        return 1
+    print(f"self-test passed ({__version_string__})")
+    return 0
+
+
+def _build_a_window():
+    """Construct the real window, which is what a broken bundle falls over on."""
+    from .mainwindow import MainWindow
+
+    window = MainWindow()
+    count = len(window.menuBar().actions())
+    window.close()
+    assert count >= 6, f"the menu bar came up with {count} menus"
+    return f"{count} menus"
+
+
 def main(argv=None):
     parser = argparse.ArgumentParser(prog="pdfarranger-qt", description=APP_NAME)
     parser.add_argument("files", nargs="*", help="PDF or image files to open")
     parser.add_argument("--version", action="version", version=__version_string__)
+    parser.add_argument("--self-test", action="store_true",
+                        help="check that this build has what it needs, then exit")
     args = parser.parse_args(argv if argv is not None else sys.argv[1:])
 
     app = Application(sys.argv[:1])
@@ -187,6 +277,9 @@ def main(argv=None):
     settings = app_settings()
     language = i18n.setup(settings.value("language", "") or None)
     install_qt_translations(app, language)
+
+    if args.self_test:
+        return self_test(app)
 
     # Imported after QApplication exists so QtPdf initialises against a live
     # GUI application object, and after i18n.setup() so its strings are translated.

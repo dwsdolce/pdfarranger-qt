@@ -26,10 +26,8 @@ import os
 import sys
 from typing import List, Optional
 
-from PySide6.QtCore import QProcess, QSettings, QSize, Qt, QTimer, QUrl
-from PySide6.QtGui import (QAction, QActionGroup, QDesktopServices,
-                           QFontMetrics,
-                           QKeySequence)
+from PySide6.QtCore import QProcess, QSize, Qt, QUrl
+from PySide6.QtGui import QAction, QDesktopServices, QFontMetrics, QKeySequence
 from PySide6.QtWidgets import (
     QApplication,
     QDialog,
@@ -39,31 +37,47 @@ from PySide6.QtWidgets import (
     QLineEdit,
     QMainWindow,
     QMenu,
-    QStackedWidget,
     QMessageBox,
     QProgressDialog,
+    QStackedWidget,
     QStyle,
     QToolBar,
 )
 
-from . import APP_NAME, PROJECT_URL, UPSTREAM_URL, __version_string__
-from .settings import app_settings
-from . import (booklet, clipboard, dialogs, layers, nup, printing, raster,
-               reader, repair, stamp, theme, viewer)
-from .core import DocumentSet, PDFDocError, Page
+from . import (
+    APP_NAME,
+    PROJECT_URL,
+    UPSTREAM_URL,
+    __version_string__,
+    booklet,
+    clipboard,
+    dialogs,
+    layers,
+    nup,
+    printing,
+    raster,
+    reader,
+    repair,
+    stamp,
+    theme,
+    viewer,
+)
+from .core import DocumentSet, Page, PDFDocError
+from .export import SaveOptions, export
 from .i18n import gettext_ as _
 from .i18n import menu_label as _m
 from .i18n import ngettext
-from .export import SaveOptions, export
 from .model import PageListModel
 from .outline import Outline
 from .recent import RecentFiles
 from .render import Renderer
 from .search import SearchIndex
+from .settings import app_settings
 from .view import PageView
 
 PDF_FILTER = "PDF files (*.pdf)"
-IMPORT_FILTER = "PDF and images (*.pdf *.png *.jpg *.jpeg *.tif *.tiff *.bmp *.gif);;PDF files (*.pdf);;All files (*)"
+IMPORT_FILTER = ("PDF and images (*.pdf *.png *.jpg *.jpeg *.tif *.tiff *.bmp *.gif)"
+                 ";;PDF files (*.pdf);;All files (*)")
 
 
 class MainWindow(QMainWindow):

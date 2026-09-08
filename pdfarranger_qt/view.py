@@ -47,14 +47,20 @@ from PySide6.QtCore import (
 from PySide6.QtGui import (
     QColor,
     QDrag,
-    QMouseEvent,
     QFontMetrics,
+    QMouseEvent,
     QPainter,
     QPalette,
     QPen,
     QPixmap,
 )
-from PySide6.QtWidgets import QAbstractItemView, QApplication, QListView, QStyle, QStyledItemDelegate
+from PySide6.QtWidgets import (
+    QAbstractItemView,
+    QApplication,
+    QListView,
+    QStyle,
+    QStyledItemDelegate,
+)
 
 from . import clipboard
 from .model import contiguous_blocks

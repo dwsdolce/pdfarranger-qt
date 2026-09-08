@@ -28,8 +28,6 @@ import unittest
 
 from PySide6.QtCore import QUrl
 from PySide6.QtGui import QFileOpenEvent
-from PySide6.QtWidgets import QApplication
-
 from support import HERE, settle
 
 PDF = os.path.join(HERE, "exporter", "outlines.pdf")
@@ -163,6 +161,7 @@ class TestNewWindowCarriesPaths(unittest.TestCase):
         wrapped so it cannot start depending on that.
         """
         from PySide6.QtCore import QProcess
+
         from pdfarranger_qt.mainwindow import MainWindow
 
         window = MainWindow()

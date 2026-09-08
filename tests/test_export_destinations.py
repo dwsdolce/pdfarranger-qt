@@ -28,11 +28,10 @@ import os
 import unittest
 
 import pikepdf
+from support import temp_path
 
 from pdfarranger_qt.core import DocumentSet
 from pdfarranger_qt.export import export
-
-from support import temp_path
 
 
 def build_fixture(path, pages=6, link_target=None):

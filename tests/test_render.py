@@ -18,10 +18,10 @@
 
 import unittest
 
+from support import QtDocumentTestCase
+
 from pdfarranger_qt.core import Sides
 from pdfarranger_qt.render import ThumbnailCache
-
-from support import QtDocumentTestCase
 
 
 class TestCache(unittest.TestCase):

@@ -17,12 +17,12 @@
 """Compositing one page on top of another."""
 
 import os
+
 import pikepdf
+from support import QtDocumentTestCase
 
 from pdfarranger_qt.core import Dims, Page
 from pdfarranger_qt.export import export
-
-from support import QtDocumentTestCase
 
 
 class TestLayers(QtDocumentTestCase):
@@ -61,7 +61,7 @@ class TestLayers(QtDocumentTestCase):
                                    msg=f"equal sizes should sit flush: {offset}")
 
     def test_offset_places_the_layer_left_or_right(self):
-        from pdfarranger_qt.core import OVERLAY, Dims, Page
+        from pdfarranger_qt.core import OVERLAY
         from pdfarranger_qt.layers import layer_stacks_from_entries, paste_as_layer
 
         src = self.model.pages[0]
@@ -109,7 +109,6 @@ class TestLayers(QtDocumentTestCase):
             self.assertEqual(len(pdf.pages), 1, "the layer must not become a page")
 
     def test_center_on_blank_pages_adds_margins(self):
-        from pdfarranger_qt.core import Dims
         from pdfarranger_qt.layers import center_on_blank_pages
 
         bigger = Dims(842, 1191)  # A3-ish, larger than the test page

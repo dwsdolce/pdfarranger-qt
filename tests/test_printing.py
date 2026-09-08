@@ -17,8 +17,8 @@
 """Painting pages onto a QPrinter."""
 
 import os
-import pikepdf
 
+import pikepdf
 from support import QtDocumentTestCase
 
 
@@ -66,7 +66,6 @@ class TestPrinting(QtDocumentTestCase):
     def test_auto_rotate_does_not_change_the_sheet_mid_job(self):
         """Regression: setPageOrientation() between pages wedged the native
         Windows engine after the output had already been written."""
-        from PySide6.QtGui import QPageLayout
         from pdfarranger_qt import printing
 
         self.model.rotate([1], 90)  # one landscape page among portrait ones
@@ -81,6 +80,7 @@ class TestPrinting(QtDocumentTestCase):
 
     def test_dominant_orientation(self):
         from PySide6.QtGui import QPageLayout
+
         from pdfarranger_qt import printing
 
         self.assertEqual(printing.dominant_orientation(self.model.pages),
@@ -91,8 +91,9 @@ class TestPrinting(QtDocumentTestCase):
                          QPageLayout.Landscape)
 
     def test_mismatched_pages_are_rotated_to_fit(self):
-        from pdfarranger_qt import printing
         from PySide6.QtGui import QImage
+
+        from pdfarranger_qt import printing
 
         portrait = QImage(100, 200, QImage.Format_RGB32)
         turned = printing._match_orientation(portrait, sheet_is_landscape=True)

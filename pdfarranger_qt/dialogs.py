@@ -25,15 +25,11 @@ showing them.
 """
 
 import re
-from typing import List, Optional, Tuple
+from typing import List, Tuple
 
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QColor, QFont, QKeySequence
 from PySide6.QtWidgets import (
-    QKeySequenceEdit,
-    QPushButton,
-    QScrollArea,
-    QWidget,
     QButtonGroup,
     QCheckBox,
     QColorDialog,
@@ -46,12 +42,16 @@ from PySide6.QtWidgets import (
     QGridLayout,
     QGroupBox,
     QHBoxLayout,
+    QKeySequenceEdit,
     QLabel,
     QLineEdit,
+    QPushButton,
     QRadioButton,
+    QScrollArea,
     QSpinBox,
     QTextBrowser,
     QVBoxLayout,
+    QWidget,
 )
 
 from . import nup, stamp, viewer

@@ -18,12 +18,12 @@
 
 import os
 import unittest
+
 import pikepdf
-
 from PySide6.QtWidgets import QApplication
-from pdfarranger_qt.core import Dims, Sides
+from support import MESSAGE_BOXES, TEST_PDF, TEXT_PDF, settle, temp_path
 
-from support import HERE, MESSAGE_BOXES, TEST_PDF, TEXT_PDF, settle, temp_path
+from pdfarranger_qt.core import Dims, Sides
 
 
 class TestPhase1Actions(unittest.TestCase):
@@ -296,7 +296,6 @@ class TestPhase2WindowActions(unittest.TestCase):
     def test_properties_round_trip_to_the_saved_file(self):
         import tempfile
 
-        from pdfarranger_qt import metadata
 
         title_key = "{http://purl.org/dc/elements/1.1/}title"
         self.stub("PropertiesDialog", {title_key: "A Test Title"})
@@ -341,8 +340,6 @@ class TestPhase2WindowActions(unittest.TestCase):
         self.assertEqual(MESSAGE_BOXES[-1][0], "information")
         self.assertEqual(len(self.win.model.pages[0].layerpages), 0)
 
-
-TEXT_PDF = os.path.join(HERE, "test_raster_image_text.pdf")
 
 def dialogs_defaults():
     from pdfarranger_qt import dialogs
@@ -640,6 +637,7 @@ class TestPhase4Parity(unittest.TestCase):
         windows genuinely being different processes.
         """
         from PySide6.QtCore import QProcess
+
         from pdfarranger_qt import mainwindow
 
         calls = []

@@ -18,11 +18,11 @@
 
 import os
 import unittest
+
 import pikepdf
+from support import TEST_PDF, TEXT_PDF, QtDocumentTestCase
 
 from pdfarranger_qt.core import Dims, DocumentSet, Page, Sides
-
-from support import QtDocumentTestCase, TEST_PDF, TEXT_PDF
 
 
 class TestRaster(QtDocumentTestCase):
@@ -79,7 +79,6 @@ class TestRaster(QtDocumentTestCase):
 
     def test_blank_page_is_left_alone(self):
         from pdfarranger_qt import raster
-        from pdfarranger_qt.core import Dims, Page
 
         name, nfile = self.docs.get_blank_doc(Dims(612, 792))
         blank = Page(nfile, 1, name, size_orig=Dims(612, 792))
@@ -102,6 +101,7 @@ class TestRaster(QtDocumentTestCase):
         import tempfile
 
         from PySide6.QtGui import QImage
+
         from pdfarranger_qt import raster
 
         target = tempfile.mkdtemp()
@@ -127,7 +127,6 @@ class TestRaster(QtDocumentTestCase):
         import tempfile
 
         from pdfarranger_qt import raster
-        from pdfarranger_qt.core import DocumentSet
 
         source = DocumentSet()
         self.addCleanup(source.cleanup)
@@ -153,7 +152,6 @@ class TestEmbeddedImages(unittest.TestCase):
     """Extract and Explode work off the embedded images, not a render."""
 
     def setUp(self):
-        from pdfarranger_qt.core import DocumentSet
 
         self.docs = DocumentSet()
         self.addCleanup(self.docs.cleanup)
@@ -187,7 +185,6 @@ class TestEmbeddedImages(unittest.TestCase):
 
     def test_a_vector_page_has_no_embedded_images(self):
         from pdfarranger_qt import raster
-        from pdfarranger_qt.core import DocumentSet
 
         plain = DocumentSet()
         self.addCleanup(plain.cleanup)

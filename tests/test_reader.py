@@ -25,11 +25,10 @@ import os
 import unittest
 
 from PySide6.QtCore import QUrl
+from support import HERE, MESSAGE_BOXES, TEST_PDF, TEXT_PDF, settle
 
 from pdfarranger_qt.core import DocumentSet
 from pdfarranger_qt.reader import ReaderView
-
-from support import HERE, MESSAGE_BOXES, TEST_PDF, TEXT_PDF, settle
 
 #: Four pages, and the only fixture with a real bookmark tree.
 OUTLINE_PDF = os.path.join(HERE, "exporter", "outlines.pdf")
@@ -1028,6 +1027,7 @@ class TestCopyFollowsTheReader(unittest.TestCase):
 
     def setUp(self):
         from PySide6.QtWidgets import QApplication as _App
+
         from pdfarranger_qt.mainwindow import MainWindow
 
         self.App = _App
@@ -1091,6 +1091,7 @@ class TestEditMenuFollowsTheMode(unittest.TestCase):
 
     def setUp(self):
         from PySide6.QtWidgets import QApplication as _App
+
         from pdfarranger_qt.mainwindow import MainWindow
 
         self.App = _App

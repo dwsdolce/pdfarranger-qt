@@ -20,10 +20,11 @@
 
 """Rebuild PDF outlines after page reorder, subset, or merge."""
 
-import warnings
-import pikepdf
 import decimal
 import os
+import warnings
+
+import pikepdf
 
 
 def external_target(action, source_names):

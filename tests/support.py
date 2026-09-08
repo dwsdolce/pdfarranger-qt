@@ -25,10 +25,9 @@ import os
 import tempfile
 import unittest
 
-from PySide6.QtCore import QEventLoop, QTimer
-
 # Re-exported so a test module needs only one import line, not two.
 from conftest import MESSAGE_BOXES, QT_APP  # noqa: F401
+from PySide6.QtCore import QEventLoop, QTimer
 
 from pdfarranger_qt.core import DocumentSet
 from pdfarranger_qt.model import PageListModel

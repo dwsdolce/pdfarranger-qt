@@ -30,7 +30,6 @@ as *images* instead, which looks the same on paper and never touches the engine.
 """
 
 import os
-import sys
 import tempfile
 import time
 from typing import Callable, Optional, Sequence

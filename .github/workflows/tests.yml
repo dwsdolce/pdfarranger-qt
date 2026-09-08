@@ -72,11 +72,15 @@ jobs:
       - name: Compile the message catalogues
         run: python tools/build_mo.py
 
-      # No ruff gate yet. `ruff check` reports 106 findings on this tree today,
-      # 98 of them auto-fixable import ordering in the test modules. Turning
-      # that on is a decision to make deliberately, with a one-time cleanup
-      # commit of its own -- not something to discover as a red first run.
-      #
+      # The gate the first version of this workflow deliberately left out,
+      # because `ruff check` reported 108 findings and starting red teaches
+      # nobody anything. Those are cleaned up now -- 98 mechanically, ten by
+      # hand, two of which were real: an undefined name that only survived
+      # because it sat inside a string annotation, and a test that assigned a
+      # variable it never asserted on.
+      - name: Lint
+        run: python -m ruff check pdfarranger_qt tests tools
+
       # conftest.py forces the offscreen platform itself, before Qt is
       # imported, and settings are isolated to a temp ini keyed by process id,
       # so nothing here needs a display or touches a real settings store. The

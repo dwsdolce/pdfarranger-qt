@@ -17,12 +17,12 @@
 """Writing PDFs back out, including the pikepdf Job path."""
 
 import os
+
 import pikepdf
+from support import QtDocumentTestCase
 
 from pdfarranger_qt.core import Dims, Sides
 from pdfarranger_qt.export import export
-
-from support import QtDocumentTestCase
 
 
 class TestExport(QtDocumentTestCase):

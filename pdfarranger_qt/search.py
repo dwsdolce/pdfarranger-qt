@@ -26,9 +26,16 @@ in the source file. That does mean the index is rebuilt when the document
 changes, which is why ``invalidate()`` exists.
 """
 
-from typing import List, Optional
+from typing import TYPE_CHECKING, List, Optional
 
 from PySide6.QtPdf import QPdfSearchModel
+
+if TYPE_CHECKING:
+    # Only the annotation on `rectangles` needs it, and that is a string. Left
+    # unimported the name was undefined, which costs nothing until something
+    # resolves the annotation -- `typing.get_type_hints`, a documentation
+    # generator -- and then raises NameError for a type that was there all along.
+    from PySide6.QtCore import QRectF
 
 from .export import get_in_memory_pdf
 from .render import MemoryDocument

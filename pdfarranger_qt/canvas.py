@@ -45,7 +45,15 @@ import math
 from typing import List, Optional, Sequence, Tuple
 
 from PySide6.QtCore import (
-    QObject, QPointF, QRectF, QSize, QSizeF, Qt, QTimer, QUrl, Signal,
+    QObject,
+    QPointF,
+    QRectF,
+    QSize,
+    QSizeF,
+    Qt,
+    QTimer,
+    QUrl,
+    Signal,
 )
 from PySide6.QtGui import QColor, QImage, QKeySequence, QPainter, QPalette
 from PySide6.QtPdf import QPdfDocumentRenderOptions, QPdfLinkModel
@@ -569,7 +577,8 @@ class PageRenderTask:
 class AsynchronousPages(QObject):
     """The reader's bitmaps, rendered off the GUI thread, with placeholders.
 
-    Replaces the synchronous source step 1 left as a seam. A quarter of the Handbook's pages miss a 60 Hz frame at 2000 px and the
+    Replaces the synchronous source step 1 left as a seam. A quarter of the
+    Handbook's pages miss a 60 Hz frame at 2000 px and the
     worst takes 247 ms, so rendering where the painting happens stutters
     visibly. `page_image` therefore never blocks -- it answers with what it has
     and asks for what it does not.
@@ -991,7 +1000,8 @@ class PageCanvas(QAbstractScrollArea):
         the current page changed -- which in continuous mode is simply what
         scrolling does, so extending a selection onto the next page and then
         scrolling to look at it killed the caret and the next shift+arrow
-        scrolled instead of extending. With the arrow table there is no longer any reason for a position in the
+        scrolled instead of extending. With the arrow table there is no longer
+        any reason for a position in the
         document to evaporate because the view moved: the caret is placed by a
         click and cleared by Escape or a new document, and survives everything
         else.
