@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: unnamed project\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-08 16:18+0000\n"
+"POT-Creation-Date: 2026-09-08 18:41+0000\n"
 "PO-Revision-Date: 2026-05-27 19:30+0300\n"
 "Last-Translator: Dymko <Dymkovych@proton.me>\n"
 "Language: uk\n"
@@ -386,6 +386,95 @@ msgstr "Текст"
 msgid "Watermark"
 msgstr "Водяний знак"
 
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+msgid "Compress Images"
+msgstr "Стиснути зображення"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+#, python-format
+msgid "%(count)d images, %(size)s"
+msgstr "зображень: %(count)d, %(size)s"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Screen"
+msgstr "Екран"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Balanced"
+msgstr "Збалансовано"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Print"
+msgstr "Друк"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Unchanged"
+msgstr "Без змін"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+#, python-format
+msgid ""
+"Images painted at a higher resolution than this are shrunk to it. Leaving it"
+" unchanged still re-encodes them, which is worth about 40% on a scan and "
+"costs no sharpness."
+msgstr ""
+"Зображення, намальовані з більшою роздільністю, зменшуються до цієї. Якщо "
+"лишити без змін, вони все одно перекодовуються, що на скані дає близько 40 %"
+" і не коштує різкості."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Images below this are left exactly as they are. Without it a logo at its "
+"natural size would be made larger and blurrier."
+msgstr ""
+"Зображення нижче цього значення лишаються точно такими, як є. Без нього "
+"логотип у його природному розмірі був би збільшений і розмитий."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Lower loses more detail. Below about 60 the losses start to show on text."
+msgstr ""
+"Що нижче, то більше втрачається деталей. Приблизно нижче 60 втрати починають"
+" помічатися на тексті."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Convert to greyscale"
+msgstr "Перетворити у відтінки сірого"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Level"
+msgstr "Рівень"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Resolution"
+msgstr "Роздільність"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Only images above"
+msgstr "Лише зображення понад"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Quality"
+msgstr "Якість"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "This cannot be undone by saving — undo it in the document."
+msgstr "Це не скасовується тим, що ви не збережете, — скасуйте це в документі."
+
 #: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
 msgid "Merge Pages"
 msgstr "Об'єднання сторінок"
@@ -523,8 +612,8 @@ msgstr ""
 
 # machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
-msgid "Compress"
-msgstr "Стиснути"
+msgid "Recompress streams and pack objects"
+msgstr "Перестиснути потоки та спакувати об’єкти"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
@@ -534,11 +623,11 @@ msgstr "Перестиснути потоки файла та упакувати
 # machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
 msgid ""
-"How much this saves depends on the file: one full of already-compressed "
-"images will barely shrink."
+"This does not touch the images. To make a file of scans smaller, use Page ▸ "
+"Compress Images."
 msgstr ""
-"Скільки це заощаджує, залежить від файла: файл, повний уже стиснених "
-"зображень, майже не зменшиться."
+"Це не торкається зображень. Щоб зменшити файл зі сканами, скористайтеся "
+"Сторінка ▸ Стиснути зображення."
 
 #: pdfarranger_qt/dialogs.py
 msgid "Saving/exporting to single file"
@@ -1578,6 +1667,11 @@ msgstr "Додати водяний _знак…"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
+msgid "Compress _Images…"
+msgstr "С_тиснути зображення…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
 msgid "Pass_word"
 msgstr "Паро_ль"
 
@@ -2010,6 +2104,45 @@ msgstr "Створити буклет"
 #: pdfarranger_qt/mainwindow.py
 msgid "The page selection is not contiguous."
 msgstr "Виділення сторінок не є неперервним."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "The selected pages contain no images to compress."
+msgstr "На вибраних сторінках немає зображень для стиснення."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Compressing…"
+msgstr "Стиснення…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "%d image re-encoded"
+msgid_plural "%d images re-encoded"
+msgstr[0] "%d зображення перекодовано"
+msgstr[1] "%d зображення перекодовано"
+msgstr[2] "%d зображень перекодовано"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "%(before)s → %(after)s (%(percent)d%% smaller)"
+msgstr "%(before)s → %(after)s (на %(percent)d%% менше)"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Nothing was worth re-encoding."
+msgstr "Ніщо не варте було перекодування."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "%d image was left as it was"
+msgid_plural "%d images were left as they were"
+msgstr[0] "%d зображення залишено як було"
+msgstr[1] "%d зображення залишено як були"
+msgstr[2] "%d зображень залишено як були"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
@@ -2750,4 +2883,18 @@ msgstr "Показувати заголовок замість імені фай
 
 #~ msgid "untitled"
 #~ msgstr "без назви"
+
+# machine translation, unreviewed
+#~ msgid "Compress"
+#~ msgstr "Стиснути"
+
+# machine translation, unreviewed
+#~ msgid ""
+#~ "How much this saves depends on the"
+#~ " file: one full of already-compressed"
+#~ " images will barely shrink."
+#~ msgstr ""
+#~ "Скільки це заощаджує, залежить від файла:"
+#~ " файл, повний уже стиснених зображень, "
+#~ "майже не зменшиться."
 

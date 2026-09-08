@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pdfarranger - Korean\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-08 16:18+0000\n"
+"POT-Creation-Date: 2026-09-08 18:41+0000\n"
 "PO-Revision-Date: 2026-05-25 00:41+0900\n"
 "Last-Translator: VenusGirl <venusgirl@outlook.com>\n"
 "Language: ko\n"
@@ -380,6 +380,90 @@ msgstr "텍스트"
 msgid "Watermark"
 msgstr "워터마크"
 
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+msgid "Compress Images"
+msgstr "이미지 압축"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+#, python-format
+msgid "%(count)d images, %(size)s"
+msgstr "이미지 %(count)d개, %(size)s"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Screen"
+msgstr "화면"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Balanced"
+msgstr "균형"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Print"
+msgstr "인쇄"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Unchanged"
+msgstr "그대로"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+#, python-format
+msgid ""
+"Images painted at a higher resolution than this are shrunk to it. Leaving it"
+" unchanged still re-encodes them, which is worth about 40% on a scan and "
+"costs no sharpness."
+msgstr ""
+"이보다 높은 해상도로 그려지는 이미지는 여기까지 줄어듭니다. 그대로 두어도 다시 인코딩되며, 스캔 문서에서는 약 40 % 줄고 선명도는 "
+"잃지 않습니다."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Images below this are left exactly as they are. Without it a logo at its "
+"natural size would be made larger and blurrier."
+msgstr "이보다 낮은 이미지는 있는 그대로 둡니다. 이것이 없으면 본래 크기의 로고가 더 커지고 흐려집니다."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Lower loses more detail. Below about 60 the losses start to show on text."
+msgstr "낮을수록 세부가 더 사라집니다. 대략 60 아래에서는 손실이 글자에 보이기 시작합니다."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Convert to greyscale"
+msgstr "회색조로 변환"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Level"
+msgstr "수준"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Resolution"
+msgstr "해상도"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Only images above"
+msgstr "다음보다 큰 이미지만"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Quality"
+msgstr "품질"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "This cannot be undone by saving — undo it in the document."
+msgstr "저장하지 않는 것으로는 되돌릴 수 없습니다. 문서에서 되돌리십시오."
+
 #: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
 msgid "Merge Pages"
 msgstr "페이지 병합"
@@ -510,8 +594,8 @@ msgstr "나머지가 내려받아지기 전에 브라우저가 첫 페이지를 
 
 # machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
-msgid "Compress"
-msgstr "압축"
+msgid "Recompress streams and pack objects"
+msgstr "스트림을 다시 압축하고 개체를 묶기"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
@@ -521,9 +605,9 @@ msgstr "파일의 스트림을 다시 압축하고 객체를 함께 묶습니다
 # machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
 msgid ""
-"How much this saves depends on the file: one full of already-compressed "
-"images will barely shrink."
-msgstr "얼마나 줄어드는지는 파일에 달려 있습니다: 이미 압축된 이미지로 가득한 파일은 거의 줄지 않습니다."
+"This does not touch the images. To make a file of scans smaller, use Page ▸ "
+"Compress Images."
+msgstr "이것은 이미지를 건드리지 않습니다. 스캔 파일을 줄이려면 페이지 ▸ 이미지 압축을 사용하십시오."
 
 #: pdfarranger_qt/dialogs.py
 msgid "Saving/exporting to single file"
@@ -1487,6 +1571,11 @@ msgstr "워터마크 추가…(_W)"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
+msgid "Compress _Images…"
+msgstr "이미지 압축(_I)…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
 msgid "Pass_word"
 msgstr "암호(_W)"
 
@@ -1913,6 +2002,41 @@ msgstr "소책자 만들기"
 #: pdfarranger_qt/mainwindow.py
 msgid "The page selection is not contiguous."
 msgstr "선택한 페이지가 연속되지 않습니다."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "The selected pages contain no images to compress."
+msgstr "선택한 페이지에 압축할 이미지가 없습니다."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Compressing…"
+msgstr "압축하는 중…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "%d image re-encoded"
+msgid_plural "%d images re-encoded"
+msgstr[0] "이미지 %d개를 다시 인코딩했습니다"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "%(before)s → %(after)s (%(percent)d%% smaller)"
+msgstr "%(before)s → %(after)s (%(percent)d%% 작아짐)"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Nothing was worth re-encoding."
+msgstr "다시 인코딩할 만한 것이 없었습니다."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "%d image was left as it was"
+msgid_plural "%d images were left as they were"
+msgstr[0] "이미지 %d개는 그대로 두었습니다"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
@@ -2645,4 +2769,15 @@ msgstr "파일 이름 대신 제목 보이기"
 
 #~ msgid "untitled"
 #~ msgstr "제목 없음"
+
+# machine translation, unreviewed
+#~ msgid "Compress"
+#~ msgstr "압축"
+
+# machine translation, unreviewed
+#~ msgid ""
+#~ "How much this saves depends on the"
+#~ " file: one full of already-compressed"
+#~ " images will barely shrink."
+#~ msgstr "얼마나 줄어드는지는 파일에 달려 있습니다: 이미 압축된 이미지로 가득한 파일은 거의 줄지 않습니다."
 

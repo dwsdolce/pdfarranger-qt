@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-08 16:18+0000\n"
+"POT-Creation-Date: 2026-09-08 18:41+0000\n"
 "PO-Revision-Date: 2023-06-08 10:00+0700\n"
 "Last-Translator: Abdul Munif Hanafi <amunifhanafi@gmail.com>\n"
 "Language: id\n"
@@ -400,6 +400,95 @@ msgstr "Teks"
 msgid "Watermark"
 msgstr "Tanda air"
 
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+msgid "Compress Images"
+msgstr "Kompres Gambar"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+#, python-format
+msgid "%(count)d images, %(size)s"
+msgstr "%(count)d gambar, %(size)s"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Screen"
+msgstr "Layar"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Balanced"
+msgstr "Seimbang"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Print"
+msgstr "Cetak"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Unchanged"
+msgstr "Tidak diubah"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+#, python-format
+msgid ""
+"Images painted at a higher resolution than this are shrunk to it. Leaving it"
+" unchanged still re-encodes them, which is worth about 40% on a scan and "
+"costs no sharpness."
+msgstr ""
+"Gambar yang digambar pada resolusi lebih tinggi dikecilkan ke nilai ini. "
+"Membiarkannya tetap pun tetap mengodekan ulang, yang bernilai sekitar 40 % "
+"pada hasil pindai dan tidak mengorbankan ketajaman."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Images below this are left exactly as they are. Without it a logo at its "
+"natural size would be made larger and blurrier."
+msgstr ""
+"Gambar di bawah nilai ini dibiarkan persis apa adanya. Tanpa itu, logo pada "
+"ukuran aslinya akan dibuat lebih besar dan lebih buram."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Lower loses more detail. Below about 60 the losses start to show on text."
+msgstr ""
+"Makin rendah, makin banyak detail yang hilang. Di bawah sekitar 60, "
+"kehilangannya mulai terlihat pada teks."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Convert to greyscale"
+msgstr "Ubah ke skala abu-abu"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Level"
+msgstr "Tingkat"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Resolution"
+msgstr "Resolusi"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Only images above"
+msgstr "Hanya gambar di atas"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Quality"
+msgstr "Kualitas"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "This cannot be undone by saving — undo it in the document."
+msgstr "Ini tidak dibatalkan dengan tidak menyimpan — batalkan di dalam dokumen."
+
 #: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
 msgid "Merge Pages"
 msgstr "Gabungkan Halaman"
@@ -543,8 +632,8 @@ msgstr ""
 
 # machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
-msgid "Compress"
-msgstr "Mampatkan"
+msgid "Recompress streams and pack objects"
+msgstr "Kompres ulang aliran dan bungkus objek"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
@@ -554,11 +643,11 @@ msgstr "Mampatkan ulang aliran berkas dan kemas objeknya menjadi satu."
 # machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
 msgid ""
-"How much this saves depends on the file: one full of already-compressed "
-"images will barely shrink."
+"This does not touch the images. To make a file of scans smaller, use Page ▸ "
+"Compress Images."
 msgstr ""
-"Berapa banyak yang dihemat bergantung pada berkasnya: berkas yang penuh "
-"gambar termampat tidak akan menyusut berarti."
+"Ini tidak menyentuh gambar. Untuk memperkecil berkas hasil pindai, gunakan "
+"Halaman ▸ Kompres Gambar."
 
 # machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
@@ -1616,6 +1705,11 @@ msgstr "Tambah Tanda _Air…"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
+msgid "Compress _Images…"
+msgstr "Kompres _Gambar…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
 msgid "Pass_word"
 msgstr "Kata _Sandi"
 
@@ -2059,6 +2153,43 @@ msgstr "Membuat Buku Saku"
 #: pdfarranger_qt/mainwindow.py
 msgid "The page selection is not contiguous."
 msgstr "Pilihan halaman tidak berurutan."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "The selected pages contain no images to compress."
+msgstr "Halaman yang dipilih tidak memuat gambar untuk dikompres."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Compressing…"
+msgstr "Mengompres…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "%d image re-encoded"
+msgid_plural "%d images re-encoded"
+msgstr[0] "%d gambar dikodekan ulang"
+msgstr[1] "%d gambar dikodekan ulang"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "%(before)s → %(after)s (%(percent)d%% smaller)"
+msgstr "%(before)s → %(after)s (%(percent)d%% lebih kecil)"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Nothing was worth re-encoding."
+msgstr "Tidak ada yang layak dikodekan ulang."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "%d image was left as it was"
+msgid_plural "%d images were left as they were"
+msgstr[0] "%d gambar dibiarkan apa adanya"
+msgstr[1] "%d gambar dibiarkan apa adanya"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
@@ -2758,4 +2889,18 @@ msgstr "Tampilkan judul alih-alih nama berkas"
 
 #~ msgid "untitled"
 #~ msgstr "tanpa judul"
+
+# machine translation, unreviewed
+#~ msgid "Compress"
+#~ msgstr "Mampatkan"
+
+# machine translation, unreviewed
+#~ msgid ""
+#~ "How much this saves depends on the"
+#~ " file: one full of already-compressed"
+#~ " images will barely shrink."
+#~ msgstr ""
+#~ "Berapa banyak yang dihemat bergantung pada"
+#~ " berkasnya: berkas yang penuh gambar "
+#~ "termampat tidak akan menyusut berarti."
 

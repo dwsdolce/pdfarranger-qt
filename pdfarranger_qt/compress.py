@@ -685,6 +685,48 @@ def apply(pages: Sequence[Page], docs: DocumentSet,
     return total
 
 
+def survey_pages(pages: Sequence[Page], docs: DocumentSet) -> Tuple[int, int]:
+    """``(images, bytes)`` for what ``pages`` use, without re-encoding a thing.
+
+    What the dialog opens with. Keyed by document *and* object, because an
+    object number means nothing outside the file it came from.
+    """
+    seen: Dict[Tuple[int, Tuple[int, int]], int] = {}
+    by_source: Dict[int, List[Page]] = {}
+    for page in pages:
+        by_source.setdefault(page.nfile, []).append(page)
+
+    for nfile, group in sorted(by_source.items()):
+        if not 0 < nfile <= len(docs.docs):
+            continue
+        doc = docs.docs[nfile - 1]
+        try:
+            pdf = pikepdf.open(doc.copyname, password=doc.password)
+        except pikepdf.PdfError:
+            continue
+        with pdf:
+            for number in sorted({page.npage - 1 for page in group}):
+                if not 0 <= number < len(pdf.pages):
+                    continue
+                for obj in images_of(pdf.pages[number]).values():
+                    seen.setdefault((nfile, obj.objgen), _stream_length(obj))
+    return len(seen), sum(seen.values())
+
+
+def human_size(count: int) -> str:
+    """Bytes as somebody would say them.
+
+    The units are left untranslated: kB and MB are written the same way in
+    every language this ships in, and three msgids for them would cost 99
+    translations to say nothing.
+    """
+    if count >= 1_000_000:
+        return f"{count / 1_000_000:.1f} MB"
+    if count >= 1_000:
+        return f"{count / 1_000:.0f} kB"
+    return f"{count} B"
+
+
 def _repoint(pages: Iterable[Page], old: str, nfile: int, copyname: str):
     """Move pages, and any layers drawn from the same file, to the new one.
 

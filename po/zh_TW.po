@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-08 16:18+0000\n"
+"POT-Creation-Date: 2026-09-08 18:41+0000\n"
 "PO-Revision-Date: 2024-03-20 17:20+0800\n"
 "Last-Translator: 錢政維 <e.cwchien@gmail.com>\n"
 "Language: zh_TW\n"
@@ -398,6 +398,88 @@ msgstr "文字"
 msgid "Watermark"
 msgstr "浮水印"
 
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+msgid "Compress Images"
+msgstr "壓縮影像"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+#, python-format
+msgid "%(count)d images, %(size)s"
+msgstr "%(count)d 張影像，%(size)s"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Screen"
+msgstr "螢幕"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Balanced"
+msgstr "平衡"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Print"
+msgstr "列印"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Unchanged"
+msgstr "維持不變"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+#, python-format
+msgid ""
+"Images painted at a higher resolution than this are shrunk to it. Leaving it"
+" unchanged still re-encodes them, which is worth about 40% on a scan and "
+"costs no sharpness."
+msgstr "以更高解析度繪製的影像會縮小到此值。保持不變仍會重新編碼，在掃描檔上約可減少 40 %，且不損失銳利度。"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Images below this are left exactly as they are. Without it a logo at its "
+"natural size would be made larger and blurrier."
+msgstr "低於此值的影像原樣保留。沒有它，原始尺寸的標誌會被放大並變得更模糊。"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Lower loses more detail. Below about 60 the losses start to show on text."
+msgstr "越低失去的細節越多。大約低於 60 時，損失會開始在文字上顯現。"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Convert to greyscale"
+msgstr "轉換為灰階"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Level"
+msgstr "等級"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Resolution"
+msgstr "解析度"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Only images above"
+msgstr "僅高於此值的影像"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Quality"
+msgstr "品質"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "This cannot be undone by saving — undo it in the document."
+msgstr "不儲存並不能還原它——請在文件中還原。"
+
 #: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
 msgid "Merge Pages"
 msgstr "合併頁面"
@@ -532,8 +614,8 @@ msgstr "調整檔案配置，讓瀏覽器能在其餘部分下載完成前顯示
 
 # machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
-msgid "Compress"
-msgstr "壓縮"
+msgid "Recompress streams and pack objects"
+msgstr "重新壓縮串流並打包物件"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
@@ -543,9 +625,9 @@ msgstr "重新壓縮檔案的資料流，並把物件打包在一起。"
 # machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
 msgid ""
-"How much this saves depends on the file: one full of already-compressed "
-"images will barely shrink."
-msgstr "能省下多少要看檔案：一份滿是已壓縮影像的檔案幾乎不會變小。"
+"This does not touch the images. To make a file of scans smaller, use Page ▸ "
+"Compress Images."
+msgstr "這不會動到影像。要讓掃描檔更小，請使用「頁面 ▸ 壓縮影像」。"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
@@ -1468,6 +1550,11 @@ msgstr "加入浮水印…(_W)"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
+msgid "Compress _Images…"
+msgstr "壓縮影像(_I)…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
 msgid "Pass_word"
 msgstr "密碼(_W)"
 
@@ -1906,6 +1993,41 @@ msgstr "製作小冊子"
 #: pdfarranger_qt/mainwindow.py
 msgid "The page selection is not contiguous."
 msgstr "所選頁面不連續。"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "The selected pages contain no images to compress."
+msgstr "所選頁面中沒有可壓縮的影像。"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Compressing…"
+msgstr "正在壓縮…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "%d image re-encoded"
+msgid_plural "%d images re-encoded"
+msgstr[0] "已重新編碼 %d 張影像"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "%(before)s → %(after)s (%(percent)d%% smaller)"
+msgstr "%(before)s → %(after)s（縮小 %(percent)d%%）"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Nothing was worth re-encoding."
+msgstr "沒有值得重新編碼的內容。"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "%d image was left as it was"
+msgid_plural "%d images were left as they were"
+msgstr[0] "%d 張影像維持原樣"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
@@ -2595,4 +2717,15 @@ msgstr "顯示標題而非檔案名稱"
 
 #~ msgid "untitled"
 #~ msgstr "未命名"
+
+# machine translation, unreviewed
+#~ msgid "Compress"
+#~ msgstr "壓縮"
+
+# machine translation, unreviewed
+#~ msgid ""
+#~ "How much this saves depends on the"
+#~ " file: one full of already-compressed"
+#~ " images will barely shrink."
+#~ msgstr "能省下多少要看檔案：一份滿是已壓縮影像的檔案幾乎不會變小。"
 

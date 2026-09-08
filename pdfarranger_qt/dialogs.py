@@ -55,7 +55,7 @@ from PySide6.QtWidgets import (
     QWidget,
 )
 
-from . import i18n, nup, stamp, viewer
+from . import compress, i18n, nup, stamp, viewer
 from .core import Dims, Sides
 from .i18n import N_
 from .i18n import gettext_ as _
@@ -719,6 +719,132 @@ class WatermarkDialog(BaseDialog):
 
 
 # --------------------------------------------------------------------------
+# Compress
+
+
+class CompressDialog(BaseDialog):
+    """Re-encode the images on the selected pages.
+
+    A level is what most people want, so the presets come first and drive the
+    fields; the fields stay editable, and touching one switches the combo to
+    Custom. Same shape as the N-up dialog, for the same reason.
+
+    It opens by saying what is actually there -- "34 images, 8.1 MB" -- because
+    half of why a compress option reads as broken is that nobody can see their
+    8 MB is 7.9 MB of JPEG.
+    """
+
+    #: Shown in place of a resolution when the images keep the one they have.
+    UNCHANGED = 0
+
+    def __init__(self, images: int, size: int, parent=None):
+        super().__init__(_("Compress Images"), parent)
+
+        self.add(QLabel(_("%(count)d images, %(size)s")
+                        % {"count": images, "size": compress.human_size(size)}))
+
+        # Built before the fields, because their first setValue fires the
+        # handler that reads it.
+        self.preset = QComboBox()
+        self.preset.addItem(_("Custom"), "")
+        for key, label in ((compress.SCREEN, _("Screen")),
+                           (compress.BALANCED, _("Balanced")),
+                           (compress.PRINT, _("Print"))):
+            self.preset.addItem(label, key)
+
+        self.ppi = QSpinBox()
+        self.ppi.setRange(self.UNCHANGED, 1200)
+        self.ppi.setSpecialValueText(_("Unchanged"))
+        self.ppi.setSuffix(" ppi")
+        self.ppi.setToolTip(
+            _("Images painted at a higher resolution than this are shrunk to "
+              "it. Leaving it unchanged still re-encodes them, which is worth "
+              "about 40% on a scan and costs no sharpness."))
+
+        self.above = QSpinBox()
+        self.above.setRange(1, 2400)
+        self.above.setSuffix(" ppi")
+        self.above.setToolTip(
+            _("Images below this are left exactly as they are. Without it a "
+              "logo at its natural size would be made larger and blurrier."))
+
+        self.quality = QSpinBox()
+        self.quality.setRange(1, 100)
+        self.quality.setToolTip(
+            _("Lower loses more detail. Below about 60 the losses start to "
+              "show on text."))
+
+        self.greyscale = QCheckBox(_("Convert to greyscale"))
+
+        for spin in (self.ppi, self.above, self.quality):
+            spin.valueChanged.connect(self._match_preset)
+        self.greyscale.toggled.connect(self._match_preset)
+        self.preset.currentIndexChanged.connect(self._apply_preset)
+
+        form = QFormLayout()
+        form.addRow(_("Level"), self.preset)
+        form.addRow(_("Resolution"), self.ppi)
+        form.addRow(_("Only images above"), self.above)
+        form.addRow(_("Quality"), self.quality)
+        form.addRow("", self.greyscale)
+        box = QGroupBox()
+        box.setLayout(form)
+        self.add(box)
+
+        self.add(QLabel(
+            _("This cannot be undone by saving — undo it in the document.")))
+
+        self.preset.setCurrentIndex(self.preset.findData(compress.BALANCED))
+        self._apply_preset()
+        self.finish()
+
+    def _settings(self) -> "compress.Settings":
+        ppi = self.ppi.value() or None
+        return compress.Settings(ppi=ppi, above=self.above.value(),
+                                 quality=self.quality.value(),
+                                 greyscale=self.greyscale.isChecked())
+
+    def _apply_preset(self):
+        chosen = self.preset.currentData()
+        if not chosen:
+            return
+        settings = compress.PRESETS[chosen]
+        widgets = (self.ppi, self.above, self.quality, self.greyscale)
+        # Blocked so that setting the first field does not reset the combo to
+        # Custom before the rest have been set.
+        for widget in widgets:
+            widget.blockSignals(True)
+        self.ppi.setValue(settings.ppi or self.UNCHANGED)
+        self.above.setValue(int(settings.threshold or self.above.value()))
+        self.quality.setValue(settings.quality)
+        self.greyscale.setChecked(settings.greyscale)
+        for widget in widgets:
+            widget.blockSignals(False)
+        self._enable_threshold()
+
+    def _match_preset(self):
+        """Point the combo at whichever preset the fields now describe."""
+        self._enable_threshold()
+        current = self._settings()
+        for key, settings in compress.PRESETS.items():
+            if (settings.ppi == current.ppi
+                    and settings.quality == current.quality
+                    and settings.greyscale == current.greyscale
+                    and (settings.ppi is None
+                         or settings.threshold == current.above)):
+                self.preset.setCurrentIndex(self.preset.findData(key))
+                return
+        self.preset.setCurrentIndex(0)
+
+    def _enable_threshold(self):
+        """A threshold means nothing when no resolution is being targeted."""
+        self.above.setEnabled(self.ppi.value() != self.UNCHANGED)
+
+    def value(self) -> "compress.Settings":
+        return self._settings()
+
+
+# --------------------------------------------------------------------------
 # Merge / paste as layer
 
 
@@ -899,13 +1025,18 @@ class PreferencesDialog(BaseDialog):
             _("Lay the file out so a browser can show page one "
               "before the rest has downloaded."))
 
-        self.compress = QCheckBox(_("Compress"))
+        # Named for what it does rather than what people hope it does. It
+        # measured 0.0% on a scanned document and 0.6% on a page of vector
+        # text -- it recovers what another producer left uncompressed, worth
+        # 80% there -- and calling that "Compress" is what made it read as
+        # broken. The word now belongs to the command that earns it.
+        self.compress = QCheckBox(_("Recompress streams and pack objects"))
         self.compress.setChecked(bool(current["export/compress"]))
         self.compress.setToolTip(
             _("Recompress the file's streams and pack its objects together.")
             + "\n"
-            + _("How much this saves depends on the file: one full of "
-                "already-compressed images will barely shrink."))
+            + _("This does not touch the images. To make a file of scans "
+                "smaller, use Page ▸ Compress Images."))
 
         saving = QVBoxLayout()
         saving.addWidget(self.preserve_first)

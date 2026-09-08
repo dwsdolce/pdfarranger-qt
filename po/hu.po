@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-08 16:18+0000\n"
+"POT-Creation-Date: 2026-09-08 18:41+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: hu\n"
@@ -397,6 +397,95 @@ msgstr "Szöveg"
 msgid "Watermark"
 msgstr "Vízjel"
 
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+msgid "Compress Images"
+msgstr "Képek tömörítése"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+#, python-format
+msgid "%(count)d images, %(size)s"
+msgstr "%(count)d kép, %(size)s"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Screen"
+msgstr "Képernyő"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Balanced"
+msgstr "Kiegyensúlyozott"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Print"
+msgstr "Nyomtatás"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Unchanged"
+msgstr "Változatlan"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+#, python-format
+msgid ""
+"Images painted at a higher resolution than this are shrunk to it. Leaving it"
+" unchanged still re-encodes them, which is worth about 40% on a scan and "
+"costs no sharpness."
+msgstr ""
+"Az ennél nagyobb felbontásban rajzolt képek erre zsugorodnak. Ha "
+"változatlanul hagyja, akkor is újrakódolódnak, ami egy beolvasáson "
+"körülbelül 40 százalékot ér, és nem kerül élességbe."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Images below this are left exactly as they are. Without it a logo at its "
+"natural size would be made larger and blurrier."
+msgstr ""
+"Az ennél kisebb képek pontosan úgy maradnak, ahogy vannak. Enélkül egy logó "
+"a természetes méretében nagyobbá és elmosódottabbá válna."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Lower loses more detail. Below about 60 the losses start to show on text."
+msgstr ""
+"Az alacsonyabb több részletet veszít. Nagyjából 60 alatt a veszteség kezd "
+"látszani a szövegen."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Convert to greyscale"
+msgstr "Átalakítás szürkeárnyalatossá"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Level"
+msgstr "Szint"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Resolution"
+msgstr "Felbontás"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Only images above"
+msgstr "Csak az ennél nagyobb képek"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Quality"
+msgstr "Minőség"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "This cannot be undone by saving — undo it in the document."
+msgstr "Ezt nem vonja vissza az, ha nem ment – a dokumentumban vonja vissza."
+
 #: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
 msgid "Merge Pages"
 msgstr "Oldalak egyesítése"
@@ -536,8 +625,8 @@ msgstr ""
 
 # machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
-msgid "Compress"
-msgstr "Tömörítés"
+msgid "Recompress streams and pack objects"
+msgstr "Adatfolyamok újratömörítése és objektumok csomagolása"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
@@ -547,11 +636,11 @@ msgstr "A fájl adatfolyamainak újratömörítése és objektumainak összecsom
 # machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
 msgid ""
-"How much this saves depends on the file: one full of already-compressed "
-"images will barely shrink."
+"This does not touch the images. To make a file of scans smaller, use Page ▸ "
+"Compress Images."
 msgstr ""
-"Hogy mennyit takarít meg, a fájltól függ: egy már tömörített képekkel teli "
-"fájl alig zsugorodik."
+"Ez nem nyúl a képekhez. Beolvasott lapokat tartalmazó fájl kicsinyítéséhez "
+"használja az Oldal ▸ Képek tömörítése menüpontot."
 
 # machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
@@ -1607,6 +1696,11 @@ msgstr "Vízjel hozzáadás_a…"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
+msgid "Compress _Images…"
+msgstr "_Képek tömörítése…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
 msgid "Pass_word"
 msgstr "Jels_zó"
 
@@ -2047,6 +2141,43 @@ msgstr "Füzet létrehozása"
 #: pdfarranger_qt/mainwindow.py
 msgid "The page selection is not contiguous."
 msgstr "Az oldalkijelölés nem összefüggő."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "The selected pages contain no images to compress."
+msgstr "A kijelölt oldalak nem tartalmaznak tömöríthető képet."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Compressing…"
+msgstr "Tömörítés…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "%d image re-encoded"
+msgid_plural "%d images re-encoded"
+msgstr[0] "%d kép újrakódolva"
+msgstr[1] "%d kép újrakódolva"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "%(before)s → %(after)s (%(percent)d%% smaller)"
+msgstr "%(before)s → %(after)s (%(percent)d%%-kal kisebb)"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Nothing was worth re-encoding."
+msgstr "Semmit sem érte meg újrakódolni."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "%d image was left as it was"
+msgid_plural "%d images were left as they were"
+msgstr[0] "%d kép változatlan maradt"
+msgstr[1] "%d kép változatlan maradt"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
@@ -2750,4 +2881,18 @@ msgstr "A cím megjelenítése a fájlnév helyett"
 
 #~ msgid "untitled"
 #~ msgstr "névtelen"
+
+# machine translation, unreviewed
+#~ msgid "Compress"
+#~ msgstr "Tömörítés"
+
+# machine translation, unreviewed
+#~ msgid ""
+#~ "How much this saves depends on the"
+#~ " file: one full of already-compressed"
+#~ " images will barely shrink."
+#~ msgstr ""
+#~ "Hogy mennyit takarít meg, a fájltól "
+#~ "függ: egy már tömörített képekkel teli "
+#~ "fájl alig zsugorodik."
 

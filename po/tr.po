@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pdfarranger main\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-08 16:18+0000\n"
+"POT-Creation-Date: 2026-09-08 18:41+0000\n"
 "PO-Revision-Date: 2026-04-24 21:19+0300\n"
 "Last-Translator: Oğuz Ersen <oguz@ersen.moe>\n"
 "Language: tr\n"
@@ -382,6 +382,95 @@ msgstr "Metin"
 msgid "Watermark"
 msgstr "Filigran"
 
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+msgid "Compress Images"
+msgstr "Görüntüleri Sıkıştır"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+#, python-format
+msgid "%(count)d images, %(size)s"
+msgstr "%(count)d görüntü, %(size)s"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Screen"
+msgstr "Ekran"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Balanced"
+msgstr "Dengeli"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Print"
+msgstr "Baskı"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Unchanged"
+msgstr "Değişmemiş"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+#, python-format
+msgid ""
+"Images painted at a higher resolution than this are shrunk to it. Leaving it"
+" unchanged still re-encodes them, which is worth about 40% on a scan and "
+"costs no sharpness."
+msgstr ""
+"Bundan yüksek çözünürlükte çizilen görüntüler buna küçültülür. Değiştirmeden"
+" bırakırsanız yine de yeniden kodlanırlar; bu bir taramada yaklaşık % 40 "
+"kazandırır ve keskinlikten bir şey götürmez."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Images below this are left exactly as they are. Without it a logo at its "
+"natural size would be made larger and blurrier."
+msgstr ""
+"Bunun altındaki görüntüler tam olduğu gibi bırakılır. Bu olmadan, doğal "
+"boyutundaki bir logo büyütülür ve bulanıklaştırılırdı."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Lower loses more detail. Below about 60 the losses start to show on text."
+msgstr ""
+"Düşük olan daha çok ayrıntı yitirir. Yaklaşık 60’ın altında kayıplar metinde"
+" görünmeye başlar."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Convert to greyscale"
+msgstr "Gri tonlamaya dönüştür"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Level"
+msgstr "Düzey"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Resolution"
+msgstr "Çözünürlük"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Only images above"
+msgstr "Yalnızca şundan büyük görüntüler"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Quality"
+msgstr "Kalite"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "This cannot be undone by saving — undo it in the document."
+msgstr "Bu, kaydetmeyerek geri alınmaz — belgede geri alın."
+
 #: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
 msgid "Merge Pages"
 msgstr "Sayfaları Birleştir"
@@ -520,8 +609,8 @@ msgstr ""
 
 # machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
-msgid "Compress"
-msgstr "Sıkıştır"
+msgid "Recompress streams and pack objects"
+msgstr "Akışları yeniden sıkıştır ve nesneleri paketle"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
@@ -531,11 +620,11 @@ msgstr "Dosyanın akışlarını yeniden sıkıştır ve nesnelerini bir araya p
 # machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
 msgid ""
-"How much this saves depends on the file: one full of already-compressed "
-"images will barely shrink."
+"This does not touch the images. To make a file of scans smaller, use Page ▸ "
+"Compress Images."
 msgstr ""
-"Bunun ne kadar kazandırdığı dosyaya bağlıdır: zaten sıkıştırılmış "
-"görüntülerle dolu bir dosya neredeyse hiç küçülmez."
+"Bu, görüntülere dokunmaz. Taramalardan oluşan bir dosyayı küçültmek için "
+"Sayfa ▸ Görüntüleri Sıkıştır’ı kullanın."
 
 #: pdfarranger_qt/dialogs.py
 msgid "Saving/exporting to single file"
@@ -1568,6 +1657,11 @@ msgstr "_Filigran Ekle…"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
+msgid "Compress _Images…"
+msgstr "Görüntüleri _Sıkıştır…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
 msgid "Pass_word"
 msgstr "Paro_la"
 
@@ -1994,6 +2088,41 @@ msgstr "Kitapçık Oluştur"
 #: pdfarranger_qt/mainwindow.py
 msgid "The page selection is not contiguous."
 msgstr "Sayfa seçimi bitişik değil."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "The selected pages contain no images to compress."
+msgstr "Seçili sayfalarda sıkıştırılacak görüntü yok."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Compressing…"
+msgstr "Sıkıştırılıyor…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "%d image re-encoded"
+msgid_plural "%d images re-encoded"
+msgstr[0] "%d görüntü yeniden kodlandı"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "%(before)s → %(after)s (%(percent)d%% smaller)"
+msgstr "%(before)s → %(after)s (%%%(percent)d daha küçük)"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Nothing was worth re-encoding."
+msgstr "Yeniden kodlamaya değer bir şey yoktu."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "%d image was left as it was"
+msgid_plural "%d images were left as they were"
+msgstr[0] "%d görüntü olduğu gibi bırakıldı"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
@@ -2722,4 +2851,18 @@ msgstr "Dosya adı yerine başlığı göster"
 
 #~ msgid "untitled"
 #~ msgstr "başlıksız"
+
+# machine translation, unreviewed
+#~ msgid "Compress"
+#~ msgstr "Sıkıştır"
+
+# machine translation, unreviewed
+#~ msgid ""
+#~ "How much this saves depends on the"
+#~ " file: one full of already-compressed"
+#~ " images will barely shrink."
+#~ msgstr ""
+#~ "Bunun ne kadar kazandırdığı dosyaya "
+#~ "bağlıdır: zaten sıkıştırılmış görüntülerle dolu"
+#~ " bir dosya neredeyse hiç küçülmez."
 

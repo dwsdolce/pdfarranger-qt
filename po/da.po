@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  pdfarranger\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-08 16:18+0000\n"
+"POT-Creation-Date: 2026-09-08 18:41+0000\n"
 "PO-Revision-Date: 2023-10-22 00:28+0200\n"
 "Last-Translator: Lrss <dev@lrss.dk>\n"
 "Language: da\n"
@@ -394,6 +394,97 @@ msgstr "Tekst"
 msgid "Watermark"
 msgstr "Vandmærke"
 
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+msgid "Compress Images"
+msgstr "Komprimér billeder"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+#, python-format
+msgid "%(count)d images, %(size)s"
+msgstr "%(count)d billeder, %(size)s"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Screen"
+msgstr "Skærm"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Balanced"
+msgstr "Afbalanceret"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Print"
+msgstr "Udskrift"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Unchanged"
+msgstr "Uændret"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+#, python-format
+msgid ""
+"Images painted at a higher resolution than this are shrunk to it. Leaving it"
+" unchanged still re-encodes them, which is worth about 40% on a scan and "
+"costs no sharpness."
+msgstr ""
+"Billeder, der tegnes i højere opløsning end denne, formindskes til den. "
+"Lader du den være uændret, omkodes de alligevel, hvilket giver omkring 40 % "
+"på en indscanning og ikke koster skarphed."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Images below this are left exactly as they are. Without it a logo at its "
+"natural size would be made larger and blurrier."
+msgstr ""
+"Billeder under denne værdi efterlades præcis, som de er. Uden den ville et "
+"logo i sin naturlige størrelse blive gjort større og mere sløret."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Lower loses more detail. Below about 60 the losses start to show on text."
+msgstr ""
+"Lavere mister flere detaljer. Under omkring 60 begynder tabene at kunne ses "
+"på tekst."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Convert to greyscale"
+msgstr "Konvertér til gråtoner"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Level"
+msgstr "Niveau"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Resolution"
+msgstr "Opløsning"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Only images above"
+msgstr "Kun billeder over"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Quality"
+msgstr "Kvalitet"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "This cannot be undone by saving — undo it in the document."
+msgstr ""
+"Dette fortrydes ikke ved at lade være med at gemme – fortryd det i "
+"dokumentet."
+
 #: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
 msgid "Merge Pages"
 msgstr "Flet Sider"
@@ -533,8 +624,8 @@ msgstr "Læg filen op, så en browser kan vise side ét, før resten er hentet."
 
 # machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
-msgid "Compress"
-msgstr "Komprimér"
+msgid "Recompress streams and pack objects"
+msgstr "Komprimér strømmene igen, og pak objekterne sammen"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
@@ -544,11 +635,11 @@ msgstr "Komprimér filens strømme igen, og pak dens objekter sammen."
 # machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
 msgid ""
-"How much this saves depends on the file: one full of already-compressed "
-"images will barely shrink."
+"This does not touch the images. To make a file of scans smaller, use Page ▸ "
+"Compress Images."
 msgstr ""
-"Hvor meget det sparer afhænger af filen: en fil fuld af allerede "
-"komprimerede billeder skrumper næsten ikke."
+"Dette rører ikke ved billederne. Brug Side ▸ Komprimér billeder for at gøre "
+"en fil med indscanninger mindre."
 
 # machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
@@ -1590,6 +1681,11 @@ msgstr "Tilføj vand_mærke…"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
+msgid "Compress _Images…"
+msgstr "Komprimér bil_leder…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
 msgid "Pass_word"
 msgstr "Adgangs_kode"
 
@@ -2033,6 +2129,43 @@ msgstr "Generer Hæfte"
 #: pdfarranger_qt/mainwindow.py
 msgid "The page selection is not contiguous."
 msgstr "Sidemarkeringen er ikke sammenhængende."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "The selected pages contain no images to compress."
+msgstr "De valgte sider indeholder ingen billeder at komprimere."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Compressing…"
+msgstr "Komprimerer…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "%d image re-encoded"
+msgid_plural "%d images re-encoded"
+msgstr[0] "%d billede omkodet"
+msgstr[1] "%d billeder omkodet"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "%(before)s → %(after)s (%(percent)d%% smaller)"
+msgstr "%(before)s → %(after)s (%(percent)d%% mindre)"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Nothing was worth re-encoding."
+msgstr "Intet var værd at omkode."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "%d image was left as it was"
+msgid_plural "%d images were left as they were"
+msgstr[0] "%d billede blev efterladt, som det var"
+msgstr[1] "%d billeder blev efterladt, som de var"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
@@ -2735,4 +2868,18 @@ msgstr "Vis titlen frem for filnavnet"
 
 #~ msgid "untitled"
 #~ msgstr "unavngivet"
+
+# machine translation, unreviewed
+#~ msgid "Compress"
+#~ msgstr "Komprimér"
+
+# machine translation, unreviewed
+#~ msgid ""
+#~ "How much this saves depends on the"
+#~ " file: one full of already-compressed"
+#~ " images will barely shrink."
+#~ msgstr ""
+#~ "Hvor meget det sparer afhænger af "
+#~ "filen: en fil fuld af allerede "
+#~ "komprimerede billeder skrumper næsten ikke."
 

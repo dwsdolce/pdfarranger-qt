@@ -466,3 +466,79 @@ class TestHelpCoversWhatWasBuilt(unittest.TestCase):
 
     def test_read_mode_is_described_as_the_default(self):
         self.assertIn("opens in <b>read mode</b>", self.text())
+
+
+class TestCompressDialog(unittest.TestCase):
+    """A level for most people, fields for the rest, and the fields win."""
+
+    def dialog(self, images=12, size=8_090_000):
+        from pdfarranger_qt.dialogs import CompressDialog
+
+        return CompressDialog(images, size)
+
+    def assertSame(self, settings, preset):
+        """Equivalent, not identical.
+
+        A preset leaves `above` as None, meaning "1.5x the target"; the dialog
+        has to hand back the number the user can see and edit. Comparing the
+        dataclasses directly calls those two different, which they are not.
+        """
+        self.assertEqual(settings.ppi, preset.ppi)
+        self.assertEqual(settings.quality, preset.quality)
+        self.assertEqual(settings.greyscale, preset.greyscale)
+        self.assertEqual(settings.threshold, preset.threshold)
+
+    def test_it_opens_on_balanced(self):
+        from pdfarranger_qt import compress
+
+        d = self.dialog()
+        self.assertEqual(d.preset.currentData(), compress.BALANCED)
+        self.assertSame(d.value(), compress.PRESETS[compress.BALANCED])
+
+    def test_a_preset_fills_the_fields(self):
+        from pdfarranger_qt import compress
+
+        d = self.dialog()
+        d.preset.setCurrentIndex(d.preset.findData(compress.SCREEN))
+        self.assertEqual(d.ppi.value(), 100)
+        self.assertEqual(d.quality.value(), 60)
+        self.assertSame(d.value(), compress.PRESETS[compress.SCREEN])
+
+    def test_editing_a_field_moves_the_combo_to_custom(self):
+        d = self.dialog()
+        d.quality.setValue(42)
+        self.assertEqual(d.preset.currentData(), "")
+        self.assertEqual(d.value().quality, 42)
+
+    def test_returning_to_a_preset_s_numbers_names_it_again(self):
+        """Otherwise the combo says Custom about a preset's own settings."""
+        from pdfarranger_qt import compress
+
+        d = self.dialog()
+        d.quality.setValue(42)
+        d.quality.setValue(75)
+        self.assertEqual(d.preset.currentData(), compress.BALANCED)
+
+    def test_print_keeps_the_resolution(self):
+        from pdfarranger_qt import compress
+
+        d = self.dialog()
+        d.preset.setCurrentIndex(d.preset.findData(compress.PRINT))
+        self.assertEqual(d.ppi.value(), d.UNCHANGED)
+        self.assertIsNone(d.value().ppi)
+        self.assertEqual(d.ppi.text(), d.ppi.specialValueText())
+
+    def test_the_threshold_is_dead_while_no_resolution_is_targeted(self):
+        d = self.dialog()
+        self.assertTrue(d.above.isEnabled())
+        d.ppi.setValue(d.UNCHANGED)
+        self.assertFalse(d.above.isEnabled())
+
+    def test_it_says_what_is_there_before_anything_is_chosen(self):
+        """The one line that stops a compressor reading as broken."""
+        from PySide6.QtWidgets import QLabel
+
+        d = self.dialog(images=34, size=8_090_000)
+        labels = [w.text() for w in d.findChildren(QLabel)]
+        self.assertTrue(any("34" in text and "8.1 MB" in text
+                            for text in labels), labels)

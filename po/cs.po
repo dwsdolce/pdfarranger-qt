@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  pdfarranger\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-08 16:18+0000\n"
+"POT-Creation-Date: 2026-09-08 18:41+0000\n"
 "PO-Revision-Date: 2023-07-10 15:37+0000\n"
 "Last-Translator: PavelZ\n"
 "Language: cs_CZ\n"
@@ -392,6 +392,95 @@ msgstr "Text"
 msgid "Watermark"
 msgstr "Vodoznak"
 
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+msgid "Compress Images"
+msgstr "Komprimovat obrázky"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+#, python-format
+msgid "%(count)d images, %(size)s"
+msgstr "%(count)d obrázků, %(size)s"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Screen"
+msgstr "Obrazovka"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Balanced"
+msgstr "Vyvážené"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Print"
+msgstr "Tisk"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Unchanged"
+msgstr "Beze změny"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+#, python-format
+msgid ""
+"Images painted at a higher resolution than this are shrunk to it. Leaving it"
+" unchanged still re-encodes them, which is worth about 40% on a scan and "
+"costs no sharpness."
+msgstr ""
+"Obrázky kreslené ve vyšším rozlišení se na toto rozlišení zmenší. Ponecháte-"
+"li je beze změny, přesto se překódují, což u skenu vynese asi 40 % a nestojí"
+" to žádnou ostrost."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Images below this are left exactly as they are. Without it a logo at its "
+"natural size would be made larger and blurrier."
+msgstr ""
+"Obrázky pod touto hodnotou zůstanou přesně takové, jaké jsou. Bez ní by logo"
+" ve své přirozené velikosti bylo zvětšeno a rozmazáno."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Lower loses more detail. Below about 60 the losses start to show on text."
+msgstr ""
+"Nižší ztrácí více detailů. Zhruba pod 60 se ztráty začínají projevovat na "
+"textu."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Convert to greyscale"
+msgstr "Převést do odstínů šedi"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Level"
+msgstr "Úroveň"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Resolution"
+msgstr "Rozlišení"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Only images above"
+msgstr "Jen obrázky nad"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Quality"
+msgstr "Kvalita"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "This cannot be undone by saving — undo it in the document."
+msgstr "Tohle nevrátíte tím, že neuložíte – vraťte to zpět v dokumentu."
+
 #: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
 msgid "Merge Pages"
 msgstr "Sloučit stránky"
@@ -532,8 +621,8 @@ msgstr ""
 
 # machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
-msgid "Compress"
-msgstr "Komprimovat"
+msgid "Recompress streams and pack objects"
+msgstr "Znovu komprimovat proudy a sbalit objekty"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
@@ -543,11 +632,11 @@ msgstr "Znovu zkomprimovat datové proudy souboru a sbalit jeho objekty."
 # machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
 msgid ""
-"How much this saves depends on the file: one full of already-compressed "
-"images will barely shrink."
+"This does not touch the images. To make a file of scans smaller, use Page ▸ "
+"Compress Images."
 msgstr ""
-"Kolik se tím ušetří, závisí na souboru: soubor plný již zkomprimovaných "
-"obrázků se skoro nezmenší."
+"Tohle se obrázků netýká. Chcete-li zmenšit soubor se skeny, použijte Stránka"
+" ▸ Komprimovat obrázky."
 
 # machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
@@ -1585,6 +1674,11 @@ msgstr "Přidat _vodoznak…"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
+msgid "Compress _Images…"
+msgstr "Komprimovat o_brázky…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
 msgid "Pass_word"
 msgstr "_Heslo"
 
@@ -2030,6 +2124,45 @@ msgstr "Vytvořit brožuru"
 #: pdfarranger_qt/mainwindow.py
 msgid "The page selection is not contiguous."
 msgstr "Výběr stránek není souvislý."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "The selected pages contain no images to compress."
+msgstr "Vybrané stránky neobsahují žádné obrázky ke kompresi."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Compressing…"
+msgstr "Komprimuje se…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "%d image re-encoded"
+msgid_plural "%d images re-encoded"
+msgstr[0] "%d obrázek překódován"
+msgstr[1] "%d obrázky překódovány"
+msgstr[2] "%d obrázků překódováno"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "%(before)s → %(after)s (%(percent)d%% smaller)"
+msgstr "%(before)s → %(after)s (o %(percent)d%% méně)"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Nothing was worth re-encoding."
+msgstr "Nic nestálo za překódování."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "%d image was left as it was"
+msgid_plural "%d images were left as they were"
+msgstr[0] "%d obrázek zůstal beze změny"
+msgstr[1] "%d obrázky zůstaly beze změny"
+msgstr[2] "%d obrázků zůstalo beze změny"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
@@ -2730,4 +2863,18 @@ msgstr "Zobrazit název místo jména souboru"
 
 #~ msgid "untitled"
 #~ msgstr "nepojmenovaný"
+
+# machine translation, unreviewed
+#~ msgid "Compress"
+#~ msgstr "Komprimovat"
+
+# machine translation, unreviewed
+#~ msgid ""
+#~ "How much this saves depends on the"
+#~ " file: one full of already-compressed"
+#~ " images will barely shrink."
+#~ msgstr ""
+#~ "Kolik se tím ušetří, závisí na "
+#~ "souboru: soubor plný již zkomprimovaných "
+#~ "obrázků se skoro nezmenší."
 

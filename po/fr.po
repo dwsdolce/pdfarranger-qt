@@ -13,7 +13,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-08 16:18+0000\n"
+"POT-Creation-Date: 2026-09-08 18:41+0000\n"
 "PO-Revision-Date: 2024-02-24 20:47+0100\n"
 "Last-Translator: Jérôme Robert <jeromerobert@gmx.com>\n"
 "Language: fr\n"
@@ -404,6 +404,96 @@ msgstr "Texte"
 msgid "Watermark"
 msgstr "Filigrane"
 
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+msgid "Compress Images"
+msgstr "Compresser les images"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+#, python-format
+msgid "%(count)d images, %(size)s"
+msgstr "%(count)d images, %(size)s"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Screen"
+msgstr "Écran"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Balanced"
+msgstr "Équilibré"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Print"
+msgstr "Impression"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Unchanged"
+msgstr "Inchangée"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+#, python-format
+msgid ""
+"Images painted at a higher resolution than this are shrunk to it. Leaving it"
+" unchanged still re-encodes them, which is worth about 40% on a scan and "
+"costs no sharpness."
+msgstr ""
+"Les images dessinées à une résolution supérieure sont réduites à celle-ci. "
+"Si vous la laissez inchangée, elles sont tout de même réencodées, ce qui "
+"rapporte environ 40 % sur un scan sans rien coûter en netteté."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Images below this are left exactly as they are. Without it a logo at its "
+"natural size would be made larger and blurrier."
+msgstr ""
+"Les images en dessous de cette valeur sont laissées exactement telles "
+"quelles. Sans elle, un logo à sa taille naturelle serait agrandi et rendu "
+"plus flou."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Lower loses more detail. Below about 60 the losses start to show on text."
+msgstr ""
+"Plus bas, plus de détails sont perdus. En dessous de 60 environ, les pertes "
+"commencent à se voir sur le texte."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Convert to greyscale"
+msgstr "Convertir en niveaux de gris"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Level"
+msgstr "Niveau"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Resolution"
+msgstr "Résolution"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Only images above"
+msgstr "Seulement les images au-dessus de"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Quality"
+msgstr "Qualité"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "This cannot be undone by saving — undo it in the document."
+msgstr "Cela ne s’annule pas en ne sauvegardant pas : annulez-le dans le document."
+
 #: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
 msgid "Merge Pages"
 msgstr "Fusionner les pages"
@@ -543,8 +633,8 @@ msgstr ""
 
 # machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
-msgid "Compress"
-msgstr "Compresser"
+msgid "Recompress streams and pack objects"
+msgstr "Recompresser les flux et regrouper les objets"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
@@ -554,11 +644,11 @@ msgstr "Recompresser les flux du fichier et regrouper ses objets."
 # machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
 msgid ""
-"How much this saves depends on the file: one full of already-compressed "
-"images will barely shrink."
+"This does not touch the images. To make a file of scans smaller, use Page ▸ "
+"Compress Images."
 msgstr ""
-"Le gain dépend entièrement du fichier : un fichier plein d'images déjà "
-"compressées ne diminuera guère."
+"Cela ne touche pas aux images. Pour réduire un fichier de scans, utilisez "
+"Page ▸ Compresser les images."
 
 # machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
@@ -1609,6 +1699,11 @@ msgstr "Ajouter un _filigrane…"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
+msgid "Compress _Images…"
+msgstr "Compresser les _images…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
 msgid "Pass_word"
 msgstr "Mot de _passe"
 
@@ -2051,6 +2146,43 @@ msgstr "Générer un livret"
 #: pdfarranger_qt/mainwindow.py
 msgid "The page selection is not contiguous."
 msgstr "La sélection de pages n'est pas contiguë."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "The selected pages contain no images to compress."
+msgstr "Les pages sélectionnées ne contiennent aucune image à compresser."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Compressing…"
+msgstr "Compression…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "%d image re-encoded"
+msgid_plural "%d images re-encoded"
+msgstr[0] "%d image réencodée"
+msgstr[1] "%d images réencodées"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "%(before)s → %(after)s (%(percent)d%% smaller)"
+msgstr "%(before)s → %(after)s (%(percent)d%% de moins)"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Nothing was worth re-encoding."
+msgstr "Rien ne méritait d’être réencodé."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "%d image was left as it was"
+msgid_plural "%d images were left as they were"
+msgstr[0] "%d image laissée telle quelle"
+msgstr[1] "%d images laissées telles quelles"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
@@ -2761,4 +2893,18 @@ msgstr "Afficher le titre plutôt que le nom du fichier"
 
 #~ msgid "untitled"
 #~ msgstr "sans titre"
+
+# machine translation, unreviewed
+#~ msgid "Compress"
+#~ msgstr "Compresser"
+
+# machine translation, unreviewed
+#~ msgid ""
+#~ "How much this saves depends on the"
+#~ " file: one full of already-compressed"
+#~ " images will barely shrink."
+#~ msgstr ""
+#~ "Le gain dépend entièrement du fichier "
+#~ ": un fichier plein d'images déjà "
+#~ "compressées ne diminuera guère."
 

@@ -176,7 +176,21 @@ def available_languages():
     return sorted(name[:-3] for name in os.listdir(PO_DIR) if name.endswith(".po"))
 
 
+def _speak_utf8():
+    """Say msgids without depending on the console's code page.
+
+    Both of these tools print the messages they are complaining about, and a
+    Windows console is cp1252 by default: one arrow or dash in a msgid and the
+    report dies with a UnicodeEncodeError instead of telling anybody what is
+    wrong. A gate that crashes rather than reporting is worse than no gate.
+    """
+    for stream in (sys.stdout, sys.stderr):
+        if hasattr(stream, "reconfigure"):
+            stream.reconfigure(encoding="utf-8", errors="replace")
+
+
 def main(argv=None) -> int:
+    _speak_utf8()
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("languages", nargs="*",
                         help="languages to build (default: all in po/)")

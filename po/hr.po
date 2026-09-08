@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  pdfarranger\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-08 16:18+0000\n"
+"POT-Creation-Date: 2026-09-08 18:41+0000\n"
 "PO-Revision-Date: 2023-06-06 13:27+0200\n"
 "Last-Translator: Milo Ivir <mail@milotype.de>\n"
 "Language: hr\n"
@@ -396,6 +396,95 @@ msgstr "Tekst"
 msgid "Watermark"
 msgstr "Vodeni žig"
 
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+msgid "Compress Images"
+msgstr "Sažmi slike"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+#, python-format
+msgid "%(count)d images, %(size)s"
+msgstr "%(count)d slika, %(size)s"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Screen"
+msgstr "Zaslon"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Balanced"
+msgstr "Uravnoteženo"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Print"
+msgstr "Ispis"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Unchanged"
+msgstr "Nepromijenjeno"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+#, python-format
+msgid ""
+"Images painted at a higher resolution than this are shrunk to it. Leaving it"
+" unchanged still re-encodes them, which is worth about 40% on a scan and "
+"costs no sharpness."
+msgstr ""
+"Slike nacrtane u višoj razlučivosti smanjuju se na ovu. Ostaviš li je "
+"nepromijenjenom, one se svejedno ponovno kodiraju, što na skenu vrijedi oko "
+"40 % i ne košta oštrinu."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Images below this are left exactly as they are. Without it a logo at its "
+"natural size would be made larger and blurrier."
+msgstr ""
+"Slike ispod ove vrijednosti ostaju točno onakve kakve jesu. Bez nje bi "
+"logotip u svojoj prirodnoj veličini bio povećan i mutniji."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Lower loses more detail. Below about 60 the losses start to show on text."
+msgstr ""
+"Niže gubi više detalja. Ispod otprilike 60 gubici se počinju vidjeti na "
+"tekstu."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Convert to greyscale"
+msgstr "Pretvori u sive tonove"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Level"
+msgstr "Razina"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Resolution"
+msgstr "Razlučivost"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Only images above"
+msgstr "Samo slike iznad"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Quality"
+msgstr "Kvaliteta"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "This cannot be undone by saving — undo it in the document."
+msgstr "Ovo se ne poništava time što nećeš spremiti – poništi to u dokumentu."
+
 #: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
 msgid "Merge Pages"
 msgstr "Sjedini stranice"
@@ -536,8 +625,8 @@ msgstr ""
 
 # machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
-msgid "Compress"
-msgstr "Komprimiraj"
+msgid "Recompress streams and pack objects"
+msgstr "Ponovno sažmi tokove i spakiraj objekte"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
@@ -547,11 +636,11 @@ msgstr "Ponovo komprimiraj tokove datoteke i zbij njezine objekte."
 # machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
 msgid ""
-"How much this saves depends on the file: one full of already-compressed "
-"images will barely shrink."
+"This does not touch the images. To make a file of scans smaller, use Page ▸ "
+"Compress Images."
 msgstr ""
-"Koliko se time uštedi ovisi o datoteci: datoteka puna već komprimiranih "
-"slika jedva će se smanjiti."
+"Ovo ne dira slike. Za manju datoteku sa skenovima upotrijebi Stranica ▸ "
+"Sažmi slike."
 
 # machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
@@ -1596,6 +1685,11 @@ msgstr "Dodaj _vodeni žig…"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
+msgid "Compress _Images…"
+msgstr "Sažmi _slike…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
 msgid "Pass_word"
 msgstr "_Lozinka"
 
@@ -2041,6 +2135,45 @@ msgstr "Generiraj knjižicu"
 #: pdfarranger_qt/mainwindow.py
 msgid "The page selection is not contiguous."
 msgstr "Odabir stranica nije neprekinut."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "The selected pages contain no images to compress."
+msgstr "Odabrane stranice ne sadrže slike za sažimanje."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Compressing…"
+msgstr "Sažimanje…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "%d image re-encoded"
+msgid_plural "%d images re-encoded"
+msgstr[0] "%d slika ponovno kodirana"
+msgstr[1] "%d slike ponovno kodirane"
+msgstr[2] "%d slika ponovno kodirano"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "%(before)s → %(after)s (%(percent)d%% smaller)"
+msgstr "%(before)s → %(after)s (%(percent)d%% manje)"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Nothing was worth re-encoding."
+msgstr "Ništa nije bilo vrijedno ponovnog kodiranja."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "%d image was left as it was"
+msgid_plural "%d images were left as they were"
+msgstr[0] "%d slika ostavljena je kakva je bila"
+msgstr[1] "%d slike ostavljene su kakve su bile"
+msgstr[2] "%d slika ostavljeno je kakve su bile"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
@@ -2740,4 +2873,18 @@ msgstr "Prikaži naslov umjesto naziva datoteke"
 
 #~ msgid "untitled"
 #~ msgstr "bez naslova"
+
+# machine translation, unreviewed
+#~ msgid "Compress"
+#~ msgstr "Komprimiraj"
+
+# machine translation, unreviewed
+#~ msgid ""
+#~ "How much this saves depends on the"
+#~ " file: one full of already-compressed"
+#~ " images will barely shrink."
+#~ msgstr ""
+#~ "Koliko se time uštedi ovisi o "
+#~ "datoteci: datoteka puna već komprimiranih "
+#~ "slika jedva će se smanjiti."
 

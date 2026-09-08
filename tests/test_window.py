@@ -905,3 +905,112 @@ class TestWindowTitle(unittest.TestCase):
         settle(timeout_ms=200)
         self.assertEqual(self.win.windowFilePath(), "")
         self.assertIn("Untitled", self.win.windowTitle())
+
+
+class TestCompressCommand(unittest.TestCase):
+    """Page ▸ Compress Images, and what it does to the page list.
+
+    The window is driven with the dialog stubbed out, the way the other
+    dialog-backed commands are tested: what is interesting here is the undo
+    bookkeeping and the report, not Qt showing a modal.
+    """
+
+    def setUp(self):
+        from pdfarranger_qt.mainwindow import MainWindow
+
+        self.scan = temp_path("scan.pdf")
+        _write_scan(self.scan, pages=2)
+        self.win = MainWindow()
+        self.win.show()
+        self.win.open_paths([self.scan])
+        self.win.modified = False
+        settle(timeout_ms=300)
+        self.win.set_read_mode(False)
+        self.win.act_select_all.trigger()
+        MESSAGE_BOXES.clear()
+
+    def tearDown(self):
+        self.win.modified = False
+        self.win.close()
+
+    def choose(self, settings):
+        """Stand in for the modal dialog."""
+        from pdfarranger_qt import dialogs
+
+        original = dialogs.CompressDialog.get_value
+        dialogs.CompressDialog.get_value = lambda self: settings
+        self.addCleanup(setattr, dialogs.CompressDialog, "get_value", original)
+
+    def test_it_is_offered_only_with_a_selection(self):
+        self.win.view.clearSelection()
+        self.win._refresh_state()
+        self.assertFalse(self.win.act_compress.isEnabled())
+        self.win.act_select_all.trigger()
+        self.assertTrue(self.win.act_compress.isEnabled())
+
+    def test_compressing_moves_the_pages_and_marks_the_document(self):
+        from pdfarranger_qt import compress
+
+        before = self.win.model.pages[0].copyname
+        self.choose(compress.PRESETS[compress.BALANCED])
+        self.win.compress_images()
+        self.assertNotEqual(self.win.model.pages[0].copyname, before)
+        self.assertTrue(self.win.modified)
+        self.assertTrue(self.win.model.undo.can_undo)
+        self.assertEqual(self.win.model.undo.undo_label(), "Compress Images")
+
+    def test_the_report_gives_the_two_numbers_that_matter(self):
+        from pdfarranger_qt import compress
+
+        self.choose(compress.PRESETS[compress.BALANCED])
+        self.win.compress_images()
+        kind, _title, text = MESSAGE_BOXES[-1]
+        self.assertEqual(kind, "information")
+        self.assertIn("smaller", text)
+        self.assertIn("MB", text)
+
+    def test_cancelling_the_dialog_does_nothing_at_all(self):
+        before = self.win.model.pages[0].copyname
+        self.choose(None)
+        self.win.compress_images()
+        self.assertEqual(self.win.model.pages[0].copyname, before)
+        self.assertFalse(self.win.model.undo.can_undo)
+        self.assertFalse(self.win.modified)
+
+    def test_a_document_with_no_images_says_so_and_stops(self):
+        """Its own window: opening a second file into this one races the
+        renderer, which is a separate matter from compression."""
+        from pdfarranger_qt.mainwindow import MainWindow
+
+        vector = MainWindow()
+        self.addCleanup(vector.close)
+        vector.show()
+        vector.open_paths([TEST_PDF])
+        vector.modified = False
+        settle(timeout_ms=300)
+        vector.set_read_mode(False)
+        vector.act_select_all.trigger()
+        MESSAGE_BOXES.clear()
+        self.choose(None)
+        vector.compress_images()
+        self.assertEqual(MESSAGE_BOXES[-1][0], "information")
+        self.assertIn("no images", MESSAGE_BOXES[-1][2])
+        self.assertFalse(vector.model.undo.can_undo)
+
+    def test_undo_puts_the_original_pages_back(self):
+        from pdfarranger_qt import compress
+
+        before = self.win.model.pages[0].copyname
+        self.choose(compress.PRESETS[compress.BALANCED])
+        self.win.compress_images()
+        self.win.model.undo.undo()
+        self.assertEqual(self.win.model.pages[0].copyname, before)
+
+
+def _write_scan(path, pages=2, ppi=300):
+    """A file of page-sized JPEGs, since the repository has no image fixtures."""
+    from test_compress import full_page_scan
+
+    with pikepdf.Pdf.new() as pdf:
+        full_page_scan(pdf, ppi=ppi, pages=pages)
+        pdf.save(path)

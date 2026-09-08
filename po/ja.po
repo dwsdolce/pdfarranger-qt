@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-08 16:18+0000\n"
+"POT-Creation-Date: 2026-09-08 18:41+0000\n"
 "PO-Revision-Date: 2022-09-01 00:40+0900\n"
 "Last-Translator: sicklylife <translation@sicklylife.jp>\n"
 "Language: ja\n"
@@ -399,6 +399,90 @@ msgstr "透かし"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+msgid "Compress Images"
+msgstr "画像を圧縮"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+#, python-format
+msgid "%(count)d images, %(size)s"
+msgstr "%(count)d 個の画像、%(size)s"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Screen"
+msgstr "画面"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Balanced"
+msgstr "バランス"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Print"
+msgstr "印刷"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Unchanged"
+msgstr "変更しない"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+#, python-format
+msgid ""
+"Images painted at a higher resolution than this are shrunk to it. Leaving it"
+" unchanged still re-encodes them, which is worth about 40% on a scan and "
+"costs no sharpness."
+msgstr ""
+"これより高い解像度で描かれる画像はここまで縮小されます。変更しないままでも再エンコードは行われ、スキャン文書ではおよそ 40 % "
+"小さくなり、鮮明さは損なわれません。"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Images below this are left exactly as they are. Without it a logo at its "
+"natural size would be made larger and blurrier."
+msgstr "これより低い画像はそのまま残します。これがないと、自然な大きさのロゴが拡大されてぼやけてしまいます。"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Lower loses more detail. Below about 60 the losses start to show on text."
+msgstr "低いほど細部が失われます。おおよそ 60 を下回ると、劣化が文字に見え始めます。"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Convert to greyscale"
+msgstr "グレースケールに変換"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Level"
+msgstr "レベル"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Resolution"
+msgstr "解像度"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Only images above"
+msgstr "次を超える画像のみ"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Quality"
+msgstr "品質"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "This cannot be undone by saving — undo it in the document."
+msgstr "保存しないことでは元に戻せません。文書の中で元に戻してください。"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
 msgid "Merge Pages"
 msgstr "ページを結合"
 
@@ -542,8 +626,8 @@ msgstr "残りがダウンロードされる前にブラウザーが 1 ページ
 
 # machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
-msgid "Compress"
-msgstr "圧縮"
+msgid "Recompress streams and pack objects"
+msgstr "ストリームを再圧縮してオブジェクトをまとめる"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
@@ -553,9 +637,9 @@ msgstr "ファイルのストリームを再圧縮し、オブジェクトをま
 # machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
 msgid ""
-"How much this saves depends on the file: one full of already-compressed "
-"images will barely shrink."
-msgstr "どれだけ小さくなるかはファイル次第です。すでに圧縮された画像ばかりのファイルはほとんど縮みません。"
+"This does not touch the images. To make a file of scans smaller, use Page ▸ "
+"Compress Images."
+msgstr "これは画像には触れません。スキャン文書のファイルを小さくするには、ページ ▸ 画像を圧縮 を使ってください。"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
@@ -1502,6 +1586,11 @@ msgstr "透かしを追加…(_W)"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
+msgid "Compress _Images…"
+msgstr "画像を圧縮(_I)…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
 msgid "Pass_word"
 msgstr "パスワード(_W)"
 
@@ -1947,6 +2036,41 @@ msgstr "ブックレットを生成"
 #: pdfarranger_qt/mainwindow.py
 msgid "The page selection is not contiguous."
 msgstr "選択したページが連続していません。"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "The selected pages contain no images to compress."
+msgstr "選択したページに圧縮できる画像はありません。"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Compressing…"
+msgstr "圧縮中…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "%d image re-encoded"
+msgid_plural "%d images re-encoded"
+msgstr[0] "%d 個の画像を再エンコードしました"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "%(before)s → %(after)s (%(percent)d%% smaller)"
+msgstr "%(before)s → %(after)s (%(percent)d%% 小さく)"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Nothing was worth re-encoding."
+msgstr "再エンコードする価値のあるものはありませんでした。"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "%d image was left as it was"
+msgid_plural "%d images were left as they were"
+msgstr[0] "%d 個の画像はそのままにしました"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
@@ -2638,4 +2762,15 @@ msgstr "ファイル名ではなくタイトルを表示する"
 
 #~ msgid "untitled"
 #~ msgstr "タイトルなし"
+
+# machine translation, unreviewed
+#~ msgid "Compress"
+#~ msgstr "圧縮"
+
+# machine translation, unreviewed
+#~ msgid ""
+#~ "How much this saves depends on the"
+#~ " file: one full of already-compressed"
+#~ " images will barely shrink."
+#~ msgstr "どれだけ小さくなるかはファイル次第です。すでに圧縮された画像ばかりのファイルはほとんど縮みません。"
 

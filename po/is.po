@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-08 16:18+0000\n"
+"POT-Creation-Date: 2026-09-08 18:41+0000\n"
 "PO-Revision-Date: 2025-09-28 16:51+0000\n"
 "Last-Translator: Sveinn í Felli <sv1@fellsnet.is>\n"
 "Language: is\n"
@@ -382,6 +382,97 @@ msgstr "Texti"
 msgid "Watermark"
 msgstr "Vatnsmerki"
 
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+msgid "Compress Images"
+msgstr "Þjappa myndir"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+#, python-format
+msgid "%(count)d images, %(size)s"
+msgstr "%(count)d myndir, %(size)s"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Screen"
+msgstr "Skjár"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Balanced"
+msgstr "Jafnvægi"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Print"
+msgstr "Prentun"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Unchanged"
+msgstr "Óbreytt"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+#, python-format
+msgid ""
+"Images painted at a higher resolution than this are shrunk to it. Leaving it"
+" unchanged still re-encodes them, which is worth about 40% on a scan and "
+"costs no sharpness."
+msgstr ""
+"Myndir sem teiknaðar eru í hærri upplausn en þessari eru minnkaðar niður í "
+"hana. Ef þú lætur hana óbreytta eru þær samt endurkóðaðar, sem skilar um 40 "
+"% af skönnun og kostar enga skerpu."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Images below this are left exactly as they are. Without it a logo at its "
+"natural size would be made larger and blurrier."
+msgstr ""
+"Myndir undir þessu gildi eru látnar nákvæmlega óbreyttar. Án þess yrði merki"
+" í sinni eðlilegu stærð stækkað og gert óskýrara."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Lower loses more detail. Below about 60 the losses start to show on text."
+msgstr ""
+"Lægra tapar fleiri smáatriðum. Undir um það bil 60 fara töpin að sjást á "
+"texta."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Convert to greyscale"
+msgstr "Umbreyta í grátóna"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Level"
+msgstr "Stig"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Resolution"
+msgstr "Upplausn"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Only images above"
+msgstr "Aðeins myndir yfir"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Quality"
+msgstr "Gæði"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "This cannot be undone by saving — undo it in the document."
+msgstr ""
+"Þetta verður ekki afturkallað með því að vista ekki – afturkallaðu það í "
+"skjalinu."
+
 #: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
 msgid "Merge Pages"
 msgstr "Sameina síður"
@@ -521,8 +612,8 @@ msgstr ""
 
 # machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
-msgid "Compress"
-msgstr "Þjappa"
+msgid "Recompress streams and pack objects"
+msgstr "Endurþjappa streymin og pakka hlutunum saman"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
@@ -532,11 +623,11 @@ msgstr "Endurþjappa gagnastrauma skrárinnar og pakka hlutum hennar saman."
 # machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
 msgid ""
-"How much this saves depends on the file: one full of already-compressed "
-"images will barely shrink."
+"This does not touch the images. To make a file of scans smaller, use Page ▸ "
+"Compress Images."
 msgstr ""
-"Hversu miklu þetta skilar fer eftir skránni: skrá full af þegar þjöppuðum "
-"myndum minnkar varla neitt."
+"Þetta snertir ekki myndirnar. Notaðu Síða ▸ Þjappa myndir til að minnka "
+"skjal með skönnunum."
 
 # machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
@@ -1575,6 +1666,11 @@ msgstr "Bæta við vatns_merki…"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
+msgid "Compress _Images…"
+msgstr "Þjappa myn_dir…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
 msgid "Pass_word"
 msgstr "L_ykilorð"
 
@@ -2013,6 +2109,43 @@ msgstr "Búa til bækling"
 #: pdfarranger_qt/mainwindow.py
 msgid "The page selection is not contiguous."
 msgstr "Síðuvalið er ekki samfellt."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "The selected pages contain no images to compress."
+msgstr "Völdu síðurnar innihalda engar myndir til að þjappa."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Compressing…"
+msgstr "Þjappa…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "%d image re-encoded"
+msgid_plural "%d images re-encoded"
+msgstr[0] "%d mynd endurkóðuð"
+msgstr[1] "%d myndir endurkóðaðar"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "%(before)s → %(after)s (%(percent)d%% smaller)"
+msgstr "%(before)s → %(after)s (%(percent)d%% minna)"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Nothing was worth re-encoding."
+msgstr "Ekkert var þess virði að endurkóða."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "%d image was left as it was"
+msgid_plural "%d images were left as they were"
+msgstr[0] "%d mynd var látin óbreytt"
+msgstr[1] "%d myndir voru látnar óbreyttar"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
@@ -2724,4 +2857,18 @@ msgstr "Sýna titilinn í stað skráarnafnsins"
 
 #~ msgid "untitled"
 #~ msgstr "ónefnt"
+
+# machine translation, unreviewed
+#~ msgid "Compress"
+#~ msgstr "Þjappa"
+
+# machine translation, unreviewed
+#~ msgid ""
+#~ "How much this saves depends on the"
+#~ " file: one full of already-compressed"
+#~ " images will barely shrink."
+#~ msgstr ""
+#~ "Hversu miklu þetta skilar fer eftir "
+#~ "skránni: skrá full af þegar þjöppuðum "
+#~ "myndum minnkar varla neitt."
 

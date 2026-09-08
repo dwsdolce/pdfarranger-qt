@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  pdfarranger\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-08 16:18+0000\n"
+"POT-Creation-Date: 2026-09-08 18:41+0000\n"
 "PO-Revision-Date: 2024-03-24 19:16+0200\n"
 "Last-Translator: \n"
 "Language: fi\n"
@@ -395,6 +395,95 @@ msgstr "Teksti"
 msgid "Watermark"
 msgstr "Vesileima"
 
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+msgid "Compress Images"
+msgstr "Pakkaa kuvat"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+#, python-format
+msgid "%(count)d images, %(size)s"
+msgstr "%(count)d kuvaa, %(size)s"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Screen"
+msgstr "Näyttö"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Balanced"
+msgstr "Tasapainoinen"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Print"
+msgstr "Tuloste"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Unchanged"
+msgstr "Ennallaan"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+#, python-format
+msgid ""
+"Images painted at a higher resolution than this are shrunk to it. Leaving it"
+" unchanged still re-encodes them, which is worth about 40% on a scan and "
+"costs no sharpness."
+msgstr ""
+"Tätä suuremmalla tarkkuudella piirretyt kuvat pienennetään tähän. Jos jätät "
+"sen ennalleen, ne koodataan silti uudelleen, mikä tuo skannauksessa noin 40 "
+"% eikä maksa terävyyttä."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Images below this are left exactly as they are. Without it a logo at its "
+"natural size would be made larger and blurrier."
+msgstr ""
+"Tätä pienemmät kuvat jätetään täsmälleen ennalleen. Ilman tätä logo "
+"luonnollisessa koossaan suurennettaisiin ja sumennettaisiin."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Lower loses more detail. Below about 60 the losses start to show on text."
+msgstr ""
+"Pienempi hävittää enemmän yksityiskohtia. Noin 60:n alapuolella häviöt "
+"alkavat näkyä tekstissä."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Convert to greyscale"
+msgstr "Muunna harmaasävyiksi"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Level"
+msgstr "Taso"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Resolution"
+msgstr "Tarkkuus"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Only images above"
+msgstr "Vain kuvat, jotka ovat yli"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Quality"
+msgstr "Laatu"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "This cannot be undone by saving — undo it in the document."
+msgstr "Tätä ei kumota jättämällä tallentamatta – kumoa se asiakirjassa."
+
 #: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
 msgid "Merge Pages"
 msgstr "Yhdistä sivuja"
@@ -534,8 +623,8 @@ msgstr ""
 
 # machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
-msgid "Compress"
-msgstr "Pakkaa"
+msgid "Recompress streams and pack objects"
+msgstr "Pakkaa virrat uudelleen ja niputa oliot"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
@@ -545,11 +634,11 @@ msgstr "Pakkaa tiedoston virrat uudelleen ja tiivistä sen objektit yhteen."
 # machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
 msgid ""
-"How much this saves depends on the file: one full of already-compressed "
-"images will barely shrink."
+"This does not touch the images. To make a file of scans smaller, use Page ▸ "
+"Compress Images."
 msgstr ""
-"Kuinka paljon tämä säästää riippuu tiedostosta: jo valmiiksi pakattuja kuvia"
-" täynnä oleva tiedosto kutistuu tuskin lainkaan."
+"Tämä ei koske kuviin. Pienennä skannauksia sisältävä tiedosto valinnalla "
+"Sivu ▸ Pakkaa kuvat."
 
 # machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
@@ -1599,6 +1688,11 @@ msgstr "Lisää _vesileima…"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
+msgid "Compress _Images…"
+msgstr "Pakkaa _kuvat…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
 msgid "Pass_word"
 msgstr "Sa_lasana"
 
@@ -2039,6 +2133,43 @@ msgstr "Luo kirjanen"
 #: pdfarranger_qt/mainwindow.py
 msgid "The page selection is not contiguous."
 msgstr "Sivuvalinta ei ole yhtenäinen."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "The selected pages contain no images to compress."
+msgstr "Valituilla sivuilla ei ole pakattavia kuvia."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Compressing…"
+msgstr "Pakataan…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "%d image re-encoded"
+msgid_plural "%d images re-encoded"
+msgstr[0] "%d kuva koodattu uudelleen"
+msgstr[1] "%d kuvaa koodattu uudelleen"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "%(before)s → %(after)s (%(percent)d%% smaller)"
+msgstr "%(before)s → %(after)s (%(percent)d%% pienempi)"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Nothing was worth re-encoding."
+msgstr "Mitään ei kannattanut koodata uudelleen."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "%d image was left as it was"
+msgid_plural "%d images were left as they were"
+msgstr[0] "%d kuva jätettiin ennalleen"
+msgstr[1] "%d kuvaa jätettiin ennalleen"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
@@ -2732,4 +2863,19 @@ msgstr "Näytä otsikko tiedostonimen sijaan"
 
 #~ msgid "untitled"
 #~ msgstr "Nimetön"
+
+# machine translation, unreviewed
+#~ msgid "Compress"
+#~ msgstr "Pakkaa"
+
+# machine translation, unreviewed
+#~ msgid ""
+#~ "How much this saves depends on the"
+#~ " file: one full of already-compressed"
+#~ " images will barely shrink."
+#~ msgstr ""
+#~ "Kuinka paljon tämä säästää riippuu "
+#~ "tiedostosta: jo valmiiksi pakattuja kuvia "
+#~ "täynnä oleva tiedosto kutistuu tuskin "
+#~ "lainkaan."
 

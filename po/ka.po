@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  pdfarranger\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-08 16:18+0000\n"
+"POT-Creation-Date: 2026-09-08 18:41+0000\n"
 "PO-Revision-Date: 2026-01-21 05:07+0100\n"
 "Last-Translator: Ekaterine Papava <papava.e@gtu.ge>\n"
 "Language: ka\n"
@@ -383,6 +383,95 @@ msgstr "ტექსტი"
 msgid "Watermark"
 msgstr "ჭვირნიშანი"
 
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+msgid "Compress Images"
+msgstr "გამოსახულებების შეკუმშვა"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+#, python-format
+msgid "%(count)d images, %(size)s"
+msgstr "%(count)d გამოსახულება, %(size)s"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Screen"
+msgstr "ეკრანი"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Balanced"
+msgstr "დაბალანსებული"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Print"
+msgstr "ბეჭდვა"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Unchanged"
+msgstr "უცვლელი"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+#, python-format
+msgid ""
+"Images painted at a higher resolution than this are shrunk to it. Leaving it"
+" unchanged still re-encodes them, which is worth about 40% on a scan and "
+"costs no sharpness."
+msgstr ""
+"ამაზე მაღალი გარჩევადობით დახატული გამოსახულებები ამამდე მცირდება. თუ "
+"უცვლელს დატოვებთ, ისინი მაინც ხელახლა დაიკოდირება, რაც სკანირებულ დოკუმენტში"
+" დაახლოებით 40 % იძლევა და სიმკვეთრეს არ ხარჯავს."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Images below this are left exactly as they are. Without it a logo at its "
+"natural size would be made larger and blurrier."
+msgstr ""
+"ამაზე დაბალი გამოსახულებები ზუსტად ისე რჩება, როგორც არის. ამის გარეშე "
+"ბუნებრივი ზომის ლოგო გადიდდებოდა და დაბუნდოვანდებოდა."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Lower loses more detail. Below about 60 the losses start to show on text."
+msgstr ""
+"რაც უფრო დაბალია, მით მეტი დეტალი იკარგება. დაახლოებით 60-ის ქვემოთ "
+"დანაკარგები ტექსტზე ჩანს."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Convert to greyscale"
+msgstr "ნაცრისფერში გადაყვანა"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Level"
+msgstr "დონე"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Resolution"
+msgstr "გარჩევადობა"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Only images above"
+msgstr "მხოლოდ გამოსახულებები, რომლებიც აღემატება"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Quality"
+msgstr "ხარისხი"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "This cannot be undone by saving — undo it in the document."
+msgstr "ეს არ გაუქმდება იმით, რომ არ შეინახავთ — გააუქმეთ დოკუმენტში."
+
 #: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
 msgid "Merge Pages"
 msgstr "გვერდების შერწყმა"
@@ -520,8 +609,8 @@ msgstr ""
 
 # machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
-msgid "Compress"
-msgstr "შეკუმშვა"
+msgid "Recompress streams and pack objects"
+msgstr "ნაკადების ხელახლა შეკუმშვა და ობიექტების შეფუთვა"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
@@ -531,11 +620,11 @@ msgstr "ფაილის ნაკადების თავიდან შ
 # machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
 msgid ""
-"How much this saves depends on the file: one full of already-compressed "
-"images will barely shrink."
+"This does not touch the images. To make a file of scans smaller, use Page ▸ "
+"Compress Images."
 msgstr ""
-"რამდენს დაზოგავს, ფაილზეა დამოკიდებული: უკვე შეკუმშული სურათებით სავსე ფაილი"
-" თითქმის არ შემცირდება."
+"ეს გამოსახულებებს არ ეხება. სკანირებული ფაილის დასაპატარავებლად გამოიყენეთ "
+"გვერდი ▸ გამოსახულებების შეკუმშვა."
 
 #: pdfarranger_qt/dialogs.py
 msgid "Saving/exporting to single file"
@@ -1574,6 +1663,11 @@ msgstr "ჭვირნიშნის და_მატება…"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
+msgid "Compress _Images…"
+msgstr "გამოსახულებების _შეკუმშვა…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
 msgid "Pass_word"
 msgstr "_პაროლი"
 
@@ -2002,6 +2096,41 @@ msgstr "წიგნაკის შექმნა"
 #: pdfarranger_qt/mainwindow.py
 msgid "The page selection is not contiguous."
 msgstr "მონიშნული გვერდები მიმდევრობითი არაა."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "The selected pages contain no images to compress."
+msgstr "მონიშნულ გვერდებზე შესაკუმში გამოსახულებები არაა."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Compressing…"
+msgstr "მიმდინარეობს შეკუმშვა…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "%d image re-encoded"
+msgid_plural "%d images re-encoded"
+msgstr[0] "%d გამოსახულება ხელახლა დაიკოდირდა"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "%(before)s → %(after)s (%(percent)d%% smaller)"
+msgstr "%(before)s → %(after)s (%(percent)d%%-ით ნაკლები)"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Nothing was worth re-encoding."
+msgstr "ხელახლა დაკოდირების ღირსი არაფერი იყო."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "%d image was left as it was"
+msgid_plural "%d images were left as they were"
+msgstr[0] "%d გამოსახულება უცვლელი დარჩა"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
@@ -2726,4 +2855,18 @@ msgstr "ფაილის სახელის ნაცვლად სათ
 
 #~ msgid "untitled"
 #~ msgstr "უსახელო"
+
+# machine translation, unreviewed
+#~ msgid "Compress"
+#~ msgstr "შეკუმშვა"
+
+# machine translation, unreviewed
+#~ msgid ""
+#~ "How much this saves depends on the"
+#~ " file: one full of already-compressed"
+#~ " images will barely shrink."
+#~ msgstr ""
+#~ "რამდენს დაზოგავს, ფაილზეა დამოკიდებული: უკვე "
+#~ "შეკუმშული სურათებით სავსე ფაილი თითქმის არ"
+#~ " შემცირდება."
 

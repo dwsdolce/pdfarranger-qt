@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-08 16:18+0000\n"
+"POT-Creation-Date: 2026-09-08 18:41+0000\n"
 "PO-Revision-Date: 2023-06-12 11:22+0300\n"
 "Last-Translator: Yaron Shahrabani <sh.yaron@gmail.com>\n"
 "Language: he\n"
@@ -396,6 +396,94 @@ msgstr "טקסט"
 msgid "Watermark"
 msgstr "סימן מים"
 
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+msgid "Compress Images"
+msgstr "כיווץ תמונות"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+#, python-format
+msgid "%(count)d images, %(size)s"
+msgstr "%(count)d תמונות, %(size)s"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Screen"
+msgstr "מסך"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Balanced"
+msgstr "מאוזן"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Print"
+msgstr "הדפסה"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Unchanged"
+msgstr "ללא שינוי"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+#, python-format
+msgid ""
+"Images painted at a higher resolution than this are shrunk to it. Leaving it"
+" unchanged still re-encodes them, which is worth about 40% on a scan and "
+"costs no sharpness."
+msgstr ""
+"תמונות המצוירות ברזולוציה גבוהה מזו מוקטנות אליה. אם משאירים ללא שינוי הן "
+"מקודדות מחדש בכל זאת, מה ששווה כ־40 % בסריקה ואינו עולה בחדות."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Images below this are left exactly as they are. Without it a logo at its "
+"natural size would be made larger and blurrier."
+msgstr ""
+"תמונות מתחת לערך הזה נותרות בדיוק כפי שהן. בלעדיו לוגו בגודלו הטבעי היה "
+"מוגדל ומטושטש."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Lower loses more detail. Below about 60 the losses start to show on text."
+msgstr ""
+"ככל שנמוך יותר, אובדים יותר פרטים. מתחת ל־60 בערך ההפסדים מתחילים להיראות על"
+" טקסט."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Convert to greyscale"
+msgstr "המרה לגווני אפור"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Level"
+msgstr "רמה"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Resolution"
+msgstr "רזולוציה"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Only images above"
+msgstr "רק תמונות מעל"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Quality"
+msgstr "איכות"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "This cannot be undone by saving — undo it in the document."
+msgstr "לא מבטלים את זה בכך שלא שומרים — בטלו את זה במסמך."
+
 #: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
 msgid "Merge Pages"
 msgstr "מיזוג עמודים"
@@ -534,8 +622,8 @@ msgstr "לפרוס את הקובץ כך שדפדפן יוכל להציג את ה
 
 # machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
-msgid "Compress"
-msgstr "כיווץ"
+msgid "Recompress streams and pack objects"
+msgstr "כיווץ מחדש של הזרמים ואריזת האובייקטים"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
@@ -545,9 +633,9 @@ msgstr "לכווץ מחדש את הזרמים של הקובץ ולארוז יח�
 # machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
 msgid ""
-"How much this saves depends on the file: one full of already-compressed "
-"images will barely shrink."
-msgstr "כמה זה חוסך תלוי בקובץ: קובץ מלא בתמונות שכבר כווצו כמעט לא יקטן."
+"This does not touch the images. To make a file of scans smaller, use Page ▸ "
+"Compress Images."
+msgstr "זה לא נוגע בתמונות. כדי להקטין קובץ של סריקות השתמשו בעמוד ▸ כיווץ תמונות."
 
 # machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
@@ -1555,6 +1643,11 @@ msgstr "_הוספת סימן מים…"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
+msgid "Compress _Images…"
+msgstr "כיווץ תמו_נות…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
 msgid "Pass_word"
 msgstr "ססמ_ה"
 
@@ -2002,6 +2095,47 @@ msgstr "יצירת חוברת"
 #: pdfarranger_qt/mainwindow.py
 msgid "The page selection is not contiguous."
 msgstr "בחירת העמודים אינה רציפה."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "The selected pages contain no images to compress."
+msgstr "בעמודים הנבחרים אין תמונות לכיווץ."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Compressing…"
+msgstr "מתבצע כיווץ…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "%d image re-encoded"
+msgid_plural "%d images re-encoded"
+msgstr[0] "%d תמונה קודדה מחדש"
+msgstr[1] "%d תמונות קודדו מחדש"
+msgstr[2] "%d תמונות קודדו מחדש"
+msgstr[3] "%d תמונות קודדו מחדש"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "%(before)s → %(after)s (%(percent)d%% smaller)"
+msgstr "%(before)s ← %(after)s (קטן ב־%(percent)d%%)"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Nothing was worth re-encoding."
+msgstr "לא היה שווה לקודד דבר מחדש."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "%d image was left as it was"
+msgid_plural "%d images were left as they were"
+msgstr[0] "%d תמונה נותרה כפי שהייתה"
+msgstr[1] "%d תמונות נותרו כפי שהיו"
+msgstr[2] "%d תמונות נותרו כפי שהיו"
+msgstr[3] "%d תמונות נותרו כפי שהיו"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
@@ -2703,4 +2837,15 @@ msgstr "הצגת הכותרת במקום שם הקובץ"
 
 #~ msgid "untitled"
 #~ msgstr "ללא כותרת"
+
+# machine translation, unreviewed
+#~ msgid "Compress"
+#~ msgstr "כיווץ"
+
+# machine translation, unreviewed
+#~ msgid ""
+#~ "How much this saves depends on the"
+#~ " file: one full of already-compressed"
+#~ " images will barely shrink."
+#~ msgstr "כמה זה חוסך תלוי בקובץ: קובץ מלא בתמונות שכבר כווצו כמעט לא יקטן."
 

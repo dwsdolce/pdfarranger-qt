@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PDF Arranger 1.9.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-08 16:18+0000\n"
+"POT-Creation-Date: 2026-09-08 18:41+0000\n"
 "PO-Revision-Date: 2023-06-12 10:30+0300\n"
 "Last-Translator: Manussos Pulinakis "
 "<38626261+manussos@users.noreply.github.com>\n"
@@ -403,6 +403,97 @@ msgstr "Κείμενο"
 msgid "Watermark"
 msgstr "Υδατογράφημα"
 
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+msgid "Compress Images"
+msgstr "Συμπίεση εικόνων"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+#, python-format
+msgid "%(count)d images, %(size)s"
+msgstr "%(count)d εικόνες, %(size)s"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Screen"
+msgstr "Οθόνη"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Balanced"
+msgstr "Ισορροπημένο"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Print"
+msgstr "Εκτύπωση"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Unchanged"
+msgstr "Αμετάβλητη"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+#, python-format
+msgid ""
+"Images painted at a higher resolution than this are shrunk to it. Leaving it"
+" unchanged still re-encodes them, which is worth about 40% on a scan and "
+"costs no sharpness."
+msgstr ""
+"Οι εικόνες που σχεδιάζονται σε μεγαλύτερη ανάλυση σμικρύνονται σε αυτήν. Αν "
+"την αφήσετε αμετάβλητη, κωδικοποιούνται ούτως ή άλλως ξανά, κάτι που σε μια "
+"σάρωση αξίζει περίπου 40 % και δεν κοστίζει ευκρίνεια."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Images below this are left exactly as they are. Without it a logo at its "
+"natural size would be made larger and blurrier."
+msgstr ""
+"Οι εικόνες κάτω από αυτό μένουν ακριβώς όπως είναι. Χωρίς αυτό, ένα λογότυπο"
+" στο φυσικό του μέγεθος θα μεγάλωνε και θα θόλωνε."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Lower loses more detail. Below about 60 the losses start to show on text."
+msgstr ""
+"Όσο χαμηλότερη, τόσο περισσότερη λεπτομέρεια χάνεται. Κάτω από το 60 "
+"περίπου, οι απώλειες αρχίζουν να φαίνονται στο κείμενο."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Convert to greyscale"
+msgstr "Μετατροπή σε κλίμακα του γκρι"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Level"
+msgstr "Επίπεδο"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Resolution"
+msgstr "Ανάλυση"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Only images above"
+msgstr "Μόνο εικόνες πάνω από"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Quality"
+msgstr "Ποιότητα"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "This cannot be undone by saving — undo it in the document."
+msgstr ""
+"Αυτό δεν αναιρείται με το να μην αποθηκεύσετε — αναιρέστε το μέσα στο "
+"έγγραφο."
+
 #: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
 msgid "Merge Pages"
 msgstr "Συγχώνευση σελίδων"
@@ -546,8 +637,8 @@ msgstr ""
 
 # machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
-msgid "Compress"
-msgstr "Συμπίεση"
+msgid "Recompress streams and pack objects"
+msgstr "Επανασυμπίεση των ροών και συσκευασία των αντικειμένων"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
@@ -557,11 +648,11 @@ msgstr "Επανασυμπίεση των ροών του αρχείου και 
 # machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
 msgid ""
-"How much this saves depends on the file: one full of already-compressed "
-"images will barely shrink."
+"This does not touch the images. To make a file of scans smaller, use Page ▸ "
+"Compress Images."
 msgstr ""
-"Πόσο κερδίζει κανείς εξαρτάται από το αρχείο: ένα γεμάτο ήδη συμπιεσμένες "
-"εικόνες μετά βίας θα συρρικνωθεί."
+"Αυτό δεν αγγίζει τις εικόνες. Για να μικρύνετε ένα αρχείο με σαρώσεις, "
+"χρησιμοποιήστε Σελίδα ▸ Συμπίεση εικόνων."
 
 # machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
@@ -1629,6 +1720,11 @@ msgstr "Προσθήκη _υδατογραφήματος…"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
+msgid "Compress _Images…"
+msgstr "Συμπίεση _εικόνων…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
 msgid "Pass_word"
 msgstr "Κω_δικός"
 
@@ -2072,6 +2168,43 @@ msgstr "Δημιουργία ένθετου"
 #: pdfarranger_qt/mainwindow.py
 msgid "The page selection is not contiguous."
 msgstr "Η επιλογή σελίδων δεν είναι συνεχόμενη."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "The selected pages contain no images to compress."
+msgstr "Οι επιλεγμένες σελίδες δεν περιέχουν εικόνες προς συμπίεση."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Compressing…"
+msgstr "Συμπίεση…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "%d image re-encoded"
+msgid_plural "%d images re-encoded"
+msgstr[0] "%d εικόνα κωδικοποιήθηκε ξανά"
+msgstr[1] "%d εικόνες κωδικοποιήθηκαν ξανά"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "%(before)s → %(after)s (%(percent)d%% smaller)"
+msgstr "%(before)s → %(after)s (%(percent)d%% μικρότερο)"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Nothing was worth re-encoding."
+msgstr "Τίποτε δεν άξιζε να κωδικοποιηθεί ξανά."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "%d image was left as it was"
+msgid_plural "%d images were left as they were"
+msgstr[0] "%d εικόνα έμεινε όπως ήταν"
+msgstr[1] "%d εικόνες έμειναν όπως ήταν"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
@@ -2770,4 +2903,18 @@ msgstr "Εμφάνιση του τίτλου αντί του ονόματος α
 
 #~ msgid "untitled"
 #~ msgstr "χωρίς τίτλο"
+
+# machine translation, unreviewed
+#~ msgid "Compress"
+#~ msgstr "Συμπίεση"
+
+# machine translation, unreviewed
+#~ msgid ""
+#~ "How much this saves depends on the"
+#~ " file: one full of already-compressed"
+#~ " images will barely shrink."
+#~ msgstr ""
+#~ "Πόσο κερδίζει κανείς εξαρτάται από το "
+#~ "αρχείο: ένα γεμάτο ήδη συμπιεσμένες εικόνες"
+#~ " μετά βίας θα συρρικνωθεί."
 

@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-08 16:18+0000\n"
+"POT-Creation-Date: 2026-09-08 18:41+0000\n"
 "PO-Revision-Date: 2025-12-15 00:59+0700\n"
 "Last-Translator: Loc Huynh <https://github.com/hthienloc>\n"
 "Language: vi\n"
@@ -380,6 +380,97 @@ msgstr "Chữ"
 msgid "Watermark"
 msgstr "Hình mờ"
 
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+msgid "Compress Images"
+msgstr "Nén hình ảnh"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+#, python-format
+msgid "%(count)d images, %(size)s"
+msgstr "%(count)d hình ảnh, %(size)s"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Screen"
+msgstr "Màn hình"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Balanced"
+msgstr "Cân bằng"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Print"
+msgstr "In"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Unchanged"
+msgstr "Giữ nguyên"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+#, python-format
+msgid ""
+"Images painted at a higher resolution than this are shrunk to it. Leaving it"
+" unchanged still re-encodes them, which is worth about 40% on a scan and "
+"costs no sharpness."
+msgstr ""
+"Hình ảnh được vẽ ở độ phân giải cao hơn sẽ được thu về mức này. Nếu để "
+"nguyên, chúng vẫn được mã hóa lại, điều này đáng khoảng 40 % trên một bản "
+"quét và không tốn độ sắc nét."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Images below this are left exactly as they are. Without it a logo at its "
+"natural size would be made larger and blurrier."
+msgstr ""
+"Hình ảnh dưới mức này được giữ nguyên đúng như vậy. Không có nó, một biểu "
+"trưng ở kích thước tự nhiên sẽ bị phóng to và mờ đi."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Lower loses more detail. Below about 60 the losses start to show on text."
+msgstr ""
+"Thấp hơn thì mất nhiều chi tiết hơn. Dưới khoảng 60, tổn thất bắt đầu lộ ra "
+"trên chữ."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Convert to greyscale"
+msgstr "Chuyển sang thang xám"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Level"
+msgstr "Mức"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Resolution"
+msgstr "Độ phân giải"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Only images above"
+msgstr "Chỉ hình ảnh trên"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Quality"
+msgstr "Chất lượng"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "This cannot be undone by saving — undo it in the document."
+msgstr ""
+"Điều này không được hoàn tác bằng cách không lưu — hãy hoàn tác nó trong tài"
+" liệu."
+
 #: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
 msgid "Merge Pages"
 msgstr "Hợp nhất các trang"
@@ -518,8 +609,8 @@ msgstr ""
 
 # machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
-msgid "Compress"
-msgstr "Nén"
+msgid "Recompress streams and pack objects"
+msgstr "Nén lại các luồng và gói các đối tượng"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
@@ -529,11 +620,11 @@ msgstr "Nén lại các luồng của tập tin và gói các đối tượng l�
 # machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
 msgid ""
-"How much this saves depends on the file: one full of already-compressed "
-"images will barely shrink."
+"This does not touch the images. To make a file of scans smaller, use Page ▸ "
+"Compress Images."
 msgstr ""
-"Tiết kiệm được bao nhiêu là tùy tập tin: một tập tin đầy ảnh đã nén sẵn thì "
-"hầu như không nhỏ đi."
+"Điều này không đụng đến hình ảnh. Để làm nhỏ một tệp gồm các bản quét, hãy "
+"dùng Trang ▸ Nén hình ảnh."
 
 # machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
@@ -1563,6 +1654,11 @@ msgstr "Thêm _hình mờ…"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
+msgid "Compress _Images…"
+msgstr "N_én hình ảnh…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
 msgid "Pass_word"
 msgstr "Mật _khẩu"
 
@@ -1999,6 +2095,41 @@ msgstr "Tạo tập sách nhỏ"
 #: pdfarranger_qt/mainwindow.py
 msgid "The page selection is not contiguous."
 msgstr "Vùng chọn trang không liền mạch."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "The selected pages contain no images to compress."
+msgstr "Các trang đã chọn không có hình ảnh nào để nén."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Compressing…"
+msgstr "Đang nén…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "%d image re-encoded"
+msgid_plural "%d images re-encoded"
+msgstr[0] "Đã mã hóa lại %d hình ảnh"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "%(before)s → %(after)s (%(percent)d%% smaller)"
+msgstr "%(before)s → %(after)s (nhỏ hơn %(percent)d%%)"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Nothing was worth re-encoding."
+msgstr "Không có gì đáng để mã hóa lại."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "%d image was left as it was"
+msgid_plural "%d images were left as they were"
+msgstr[0] "%d hình ảnh được giữ nguyên"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
@@ -2705,4 +2836,19 @@ msgstr "Hiện tiêu đề thay cho tên tập tin"
 
 #~ msgid "untitled"
 #~ msgstr "không có tiêu đề"
+
+# machine translation, unreviewed
+#~ msgid "Compress"
+#~ msgstr "Nén"
+
+# machine translation, unreviewed
+#~ msgid ""
+#~ "How much this saves depends on the"
+#~ " file: one full of already-compressed"
+#~ " images will barely shrink."
+#~ msgstr ""
+#~ "Tiết kiệm được bao nhiêu là tùy "
+#~ "tập tin: một tập tin đầy ảnh đã"
+#~ " nén sẵn thì hầu như không nhỏ "
+#~ "đi."
 

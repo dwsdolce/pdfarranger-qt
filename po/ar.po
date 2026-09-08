@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-08 16:18+0000\n"
+"POT-Creation-Date: 2026-09-08 18:41+0000\n"
 "PO-Revision-Date: 2024-09-05 17:05+0300\n"
 "Last-Translator: Abdullah Albaroty <albaroty@gmail.com>\n"
 "Language: ar\n"
@@ -397,6 +397,93 @@ msgstr "نص"
 msgid "Watermark"
 msgstr "علامة مائية"
 
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+msgid "Compress Images"
+msgstr "ضغط الصور"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+#, python-format
+msgid "%(count)d images, %(size)s"
+msgstr "%(count)d صورة، %(size)s"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Screen"
+msgstr "الشاشة"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Balanced"
+msgstr "متوازن"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Print"
+msgstr "الطباعة"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Unchanged"
+msgstr "دون تغيير"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+#, python-format
+msgid ""
+"Images painted at a higher resolution than this are shrunk to it. Leaving it"
+" unchanged still re-encodes them, which is worth about 40% on a scan and "
+"costs no sharpness."
+msgstr ""
+"الصور المرسومة بدقة أعلى من هذه تُصغَّر إليها. وإن تركتها دون تغيير فستُعاد "
+"ترميزها على أي حال، وهو ما يوفّر نحو 40 % في المستند الممسوح ولا يكلّف "
+"حِدّة."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Images below this are left exactly as they are. Without it a logo at its "
+"natural size would be made larger and blurrier."
+msgstr ""
+"الصور دون هذه القيمة تُترك كما هي تمامًا. بدونها سيُكبَّر شعار بحجمه الطبيعي"
+" ويصير أكثر ضبابية."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Lower loses more detail. Below about 60 the losses start to show on text."
+msgstr "الأقل يفقد تفاصيل أكثر. دون 60 تقريبًا تبدأ الخسائر بالظهور على النص."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Convert to greyscale"
+msgstr "حوّل إلى تدرج رمادي"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Level"
+msgstr "المستوى"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Resolution"
+msgstr "الدقة"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Only images above"
+msgstr "الصور التي تفوق فقط"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Quality"
+msgstr "الجودة"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "This cannot be undone by saving — undo it in the document."
+msgstr "لا يُتراجع عن هذا بترك الحفظ — تراجع عنه في المستند."
+
 #: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
 msgid "Merge Pages"
 msgstr "دمج الصفحات"
@@ -536,8 +623,8 @@ msgstr "رتب الملف بحيث يستطيع المتصفح عرض الصفح
 
 # machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
-msgid "Compress"
-msgstr "اضغط"
+msgid "Recompress streams and pack objects"
+msgstr "أعد ضغط الدفقات واحزم الكائنات"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
@@ -547,11 +634,9 @@ msgstr "أعد ضغط تدفقات الملف واحزم كائناته معًا
 # machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
 msgid ""
-"How much this saves depends on the file: one full of already-compressed "
-"images will barely shrink."
-msgstr ""
-"مقدار ما يوفره هذا يعتمد على الملف: ملف مليء بصور مضغوطة أصلًا لن ينكمش إلا "
-"بالكاد."
+"This does not touch the images. To make a file of scans smaller, use Page ▸ "
+"Compress Images."
+msgstr "هذا لا يمس الصور. لتصغير ملف من المستندات الممسوحة استخدم صفحة ▸ ضغط الصور."
 
 # machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
@@ -1555,6 +1640,11 @@ msgstr "أضف _علامة مائية…"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
+msgid "Compress _Images…"
+msgstr "اض_غط الصور…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
 msgid "Pass_word"
 msgstr "_كلمة السر"
 
@@ -2005,6 +2095,51 @@ msgstr "إنشاء كتيب"
 #: pdfarranger_qt/mainwindow.py
 msgid "The page selection is not contiguous."
 msgstr "تحديد الصفحات غير متصل."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "The selected pages contain no images to compress."
+msgstr "الصفحات المختارة لا تحوي صورًا لضغطها."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Compressing…"
+msgstr "يضغط…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "%d image re-encoded"
+msgid_plural "%d images re-encoded"
+msgstr[0] "لم يُعَد ترميز %d صورة"
+msgstr[1] "أُعيد ترميز %d صورة"
+msgstr[2] "أُعيد ترميز %d صورتين"
+msgstr[3] "أُعيد ترميز %d صور"
+msgstr[4] "أُعيد ترميز %d صورة"
+msgstr[5] "أُعيد ترميز %d صورة"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "%(before)s → %(after)s (%(percent)d%% smaller)"
+msgstr "%(before)s ← %(after)s (أصغر بنسبة %(percent)d%%)"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Nothing was worth re-encoding."
+msgstr "لم يكن هناك ما يستحق إعادة الترميز."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "%d image was left as it was"
+msgid_plural "%d images were left as they were"
+msgstr[0] "تُركت %d صورة كما هي"
+msgstr[1] "تُركت %d صورة كما هي"
+msgstr[2] "تُركت %d صورتان كما هما"
+msgstr[3] "تُركت %d صور كما هي"
+msgstr[4] "تُركت %d صورة كما هي"
+msgstr[5] "تُركت %d صورة كما هي"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
@@ -2713,4 +2848,18 @@ msgstr "أظهر العنوان بدل اسم الملف"
 
 #~ msgid "untitled"
 #~ msgstr "بدون عنوان"
+
+# machine translation, unreviewed
+#~ msgid "Compress"
+#~ msgstr "اضغط"
+
+# machine translation, unreviewed
+#~ msgid ""
+#~ "How much this saves depends on the"
+#~ " file: one full of already-compressed"
+#~ " images will barely shrink."
+#~ msgstr ""
+#~ "مقدار ما يوفره هذا يعتمد على الملف:"
+#~ " ملف مليء بصور مضغوطة أصلًا لن "
+#~ "ينكمش إلا بالكاد."
 

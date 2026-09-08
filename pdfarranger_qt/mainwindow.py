@@ -51,6 +51,7 @@ from . import (
     __version_string__,
     booklet,
     clipboard,
+    compress,
     dialogs,
     layers,
     nup,
@@ -465,6 +466,9 @@ class MainWindow(QMainWindow):
         self.act_watermark = self._action("Add _Watermark…")
         self.act_watermark.triggered.connect(self.add_watermark)
 
+        self.act_compress = self._action("Compress _Images…")
+        self.act_compress.triggered.connect(self.compress_images)
+
         self.act_password = self._action("Pass_word")
         self.act_password.setCheckable(True)
         self.act_password.triggered.connect(self.set_password)
@@ -730,6 +734,8 @@ class MainWindow(QMainWindow):
         m.addSeparator()
         m.addAction(self.act_page_numbers)
         m.addAction(self.act_watermark)
+        m.addSeparator()
+        m.addAction(self.act_compress)
 
         m = self._menu(bar, "Arrange", mnemonic=False, role="Arrange")
         select_menu = self._menu(m, "_Select")
@@ -1047,7 +1053,8 @@ class MainWindow(QMainWindow):
                     self.act_export_raster_pdf,
                     self.act_export_raster_pdf_jpg, self.act_copy_text,
                     self.act_copy_image, self.act_explode,
-                    self.act_page_numbers, self.act_watermark):
+                    self.act_page_numbers, self.act_watermark,
+                    self.act_compress):
             act.setEnabled(has_sel)
         # Reversing, swapping, unimposing and tiling all need a contiguous run.
         contiguous = self._is_contiguous(rows)
@@ -2178,6 +2185,83 @@ class MainWindow(QMainWindow):
         stamp.add_watermark(pages, self.docs, result["text"],
                             style=result["style"])
         self._stamped(pages)
+
+    def compress_images(self):
+        """Re-encode the images on the selected pages.
+
+        A command rather than a save option, because it is lossy and cannot be
+        reversed once written: the pages change in front of the user, and Undo
+        puts the originals back. The save-time checkbox next to it does a
+        different and much smaller job -- deflating streams -- which is why it
+        no longer calls itself Compress.
+        """
+        pages = self._selected_pages()
+        if not pages:
+            return
+        images, size = compress.survey_pages(pages, self.docs)
+        if not images:
+            QMessageBox.information(
+                self, APP_NAME,
+                _("The selected pages contain no images to compress."))
+            return
+        settings = dialogs.CompressDialog(images, size, self).get_value()
+        if settings is None:
+            return
+
+        progress = QProgressDialog(_("Compressing…"), _("Cancel"), 0, images, self)
+        progress.setWindowModality(Qt.WindowModal)
+        progress.setMinimumDuration(0)
+
+        def tick(done, total):
+            progress.setMaximum(total)
+            progress.setValue(done)
+            QApplication.processEvents()
+            return not progress.wasCanceled()
+
+        # Committed before the work, because that is when the pages are still
+        # the originals -- and taken back again if the work came to nothing,
+        # so a cancelled compression does not leave an Undo entry that undoes
+        # nothing.
+        self.model.undo.commit(_("Compress Images"))
+        try:
+            result = compress.apply(pages, self.docs, settings, progress=tick)
+        finally:
+            progress.close()
+        if result.stopped or not result.changed:
+            self.model.undo.discard_last()
+        if result.stopped:
+            return
+
+        self._stamped(pages)
+        self._report_compression(result)
+
+    def _report_compression(self, result):
+        """Say what happened, in the two terms that mean anything.
+
+        Images that could not be re-encoded are counted rather than listed:
+        the reasons are technical -- JPEG 2000, ink channels, an indexed
+        palette -- and what a user needs to know is that those pages were left
+        exactly as they were.
+        """
+        untouched = result.images - result.changed
+        lines = []
+        if result.changed:
+            lines.append(
+                ngettext("%d image re-encoded", "%d images re-encoded",
+                         result.changed) % result.changed)
+            lines.append(
+                _("%(before)s → %(after)s (%(percent)d%% smaller)")
+                % {"before": compress.human_size(result.before),
+                   "after": compress.human_size(result.after),
+                   "percent": round(result.fraction * 100)})
+        else:
+            lines.append(_("Nothing was worth re-encoding."))
+        if untouched:
+            lines.append(
+                ngettext("%d image was left as it was",
+                         "%d images were left as they were",
+                         untouched) % untouched)
+        QMessageBox.information(self, APP_NAME, "\n".join(lines))
 
     def _stamped(self, pages):
         """Redraw the pages a stamp was just composited onto.

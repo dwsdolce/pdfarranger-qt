@@ -77,6 +77,18 @@ class UndoManager:
         self.states.append(self.snapshot(label))
         self.current += 1
 
+    def discard_last(self):
+        """Take back the most recent ``commit``, for an action that did not happen.
+
+        An action has to commit *before* it mutates anything, so one that then
+        turns out to do nothing -- a compression the user cancelled halfway --
+        would otherwise leave an undo entry that undoes nothing while claiming
+        a name. Only safe immediately after the commit, before any mutation.
+        """
+        if self.current == len(self.states) and self.states:
+            self.states.pop()
+            self.current -= 1
+
     @property
     def can_undo(self) -> bool:
         return self.current >= 1
