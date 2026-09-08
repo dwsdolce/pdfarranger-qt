@@ -26,55 +26,66 @@ msgstr ""
 "X-Generator: pdfarranger-qt tools/merge_translations.py\n"
 "Generated-By: Babel 2.18.0\n"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/canvas.py pdfarranger_qt/reader.py
 #, python-brace-format
 msgid "Page {}"
-msgstr ""
+msgstr "Página {}"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
 msgid "Open Link"
-msgstr ""
+msgstr "Abrir enlace"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
 msgid "Copy Link Address"
-msgstr ""
+msgstr "Copiar dirección del enlace"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
 #, python-brace-format
 msgid "Go to {}"
-msgstr ""
+msgstr "Ir a {}"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
 msgid "Follow Link"
-msgstr ""
+msgstr "Seguir enlace"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/canvas.py pdfarranger_qt/mainwindow.py
 msgid "Copy"
-msgstr ""
+msgstr "Copiar"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
 msgid "Select All"
-msgstr ""
+msgstr "Seleccionar todo"
 
 #: pdfarranger_qt/core.py pdfarranger_qt/mainwindow.py
 msgid "Image files are only supported with img2pdf"
 msgstr "Los archivos de imagen sólo están disponibles con img2pdf"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/core.py
 msgid "File not found"
-msgstr ""
+msgstr "Archivo no encontrado"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/core.py
 msgid "Invalid file format"
-msgstr ""
+msgstr "Formato de archivo no válido"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/core.py
 msgid "Data not yet available"
-msgstr ""
+msgstr "Datos aún no disponibles"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/core.py
 msgid "Unsupported security scheme"
-msgstr ""
+msgstr "Esquema de seguridad no admitido"
 
 #: pdfarranger_qt/core.py
 msgid "Unknown file format"
@@ -88,9 +99,10 @@ msgstr "El formato de imagen no es compatible con img2pdf"
 msgid "File is neither pdf nor image"
 msgstr "El archivo es ni pdf ni imagen"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/core.py
 msgid "Cannot open document"
-msgstr ""
+msgstr "No se puede abrir el documento"
 
 #: pdfarranger_qt/dialogs.py
 msgid "Paper size"
@@ -112,9 +124,10 @@ msgstr "Anchura"
 msgid "Height"
 msgstr "Altura"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
 msgid "Keep aspect ratio"
-msgstr ""
+msgstr "Mantener la proporción"
 
 #: pdfarranger_qt/dialogs.py
 msgid "Portrait"
@@ -205,13 +218,15 @@ msgstr "Superior"
 msgid "Bottom"
 msgstr "Inferior"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
 msgid "Margins"
-msgstr ""
+msgstr "Márgenes"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
 msgid "Same for all sides"
-msgstr ""
+msgstr "Igual en todos los lados"
 
 #: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
 msgid "Split Pages"
@@ -225,25 +240,32 @@ msgstr "Número de columnas"
 msgid "Horizontal Splits"
 msgstr "Número de filas"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
 msgid "Pages per Sheet"
-msgstr ""
+msgstr "Páginas por hoja"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
 msgid "Automatic"
-msgstr ""
+msgstr "Automático"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
 msgid "Automatic turns the sheet sideways when that lets the pages come out larger."
 msgstr ""
+"El modo automático gira la hoja a horizontal cuando así las páginas salen "
+"más grandes."
 
+# machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
 msgid "Empty space left around each page."
-msgstr ""
+msgstr "Espacio libre alrededor de cada página."
 
+# machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
 msgid "Layout"
-msgstr ""
+msgstr "Disposición"
 
 #: pdfarranger_qt/dialogs.py
 msgid "Columns"
@@ -253,94 +275,116 @@ msgstr "Columnas"
 msgid "Rows"
 msgstr "Filas"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
 msgid "Sheet"
-msgstr ""
+msgstr "Hoja"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
 msgid "Gap"
-msgstr ""
+msgstr "Separación"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
 msgid "Appearance"
-msgstr ""
+msgstr "Apariencia"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py pdfarranger_qt/reader.py
 msgid "Bold"
-msgstr ""
+msgstr "Negrita"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py pdfarranger_qt/reader.py
 msgid "Italic"
-msgstr ""
+msgstr "Cursiva"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
 msgid "Font"
-msgstr ""
+msgstr "Tipo de letra"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
 msgid "Size"
-msgstr ""
+msgstr "Tamaño"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
 msgid "Colour"
-msgstr ""
+msgstr "Color"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
 msgid "Opacity"
-msgstr ""
+msgstr "Opacidad"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
 msgid "Position"
-msgstr ""
+msgstr "Posición"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
 msgid "Angle"
-msgstr ""
+msgstr "Ángulo"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
 msgid "Add Page Numbers"
-msgstr ""
+msgstr "Añadir números de página"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
 #, python-format
 msgid "%s is replaced by the page number, %s by the number of pages."
-msgstr ""
+msgstr "%s se sustituye por el número de página, %s por el número de páginas."
 
+# machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
 msgid "Leave the first page unnumbered"
-msgstr ""
+msgstr "Dejar la primera página sin numerar"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
 msgid "It is still counted; a title page just does not carry a number."
-msgstr ""
+msgstr "Se sigue contando; una portada simplemente no lleva número."
 
+# machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
 msgid "Format"
-msgstr ""
+msgstr "Formato"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
 msgid "Start at"
-msgstr ""
+msgstr "Empezar en"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
 msgid "Numbering"
-msgstr ""
+msgstr "Numeración"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
 msgid "Add Watermark"
-msgstr ""
+msgstr "Añadir marca de agua"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
 msgid "DRAFT"
-msgstr ""
+msgstr "BORRADOR"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
 msgid "Text"
-msgstr ""
+msgstr "Texto"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
 msgid "Watermark"
-msgstr ""
+msgstr "Marca de agua"
 
 #: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
 msgid "Merge Pages"
@@ -354,13 +398,15 @@ msgstr "Superponer"
 msgid "Underlay"
 msgstr "Subyacer"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py pdfarranger_qt/stamp.py
 msgid "Centre"
-msgstr ""
+msgstr "Centro"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
 msgid "Middle"
-msgstr ""
+msgstr "Medio"
 
 #: pdfarranger_qt/dialogs.py
 msgid "Horizontal"
@@ -374,17 +420,20 @@ msgstr "Vertical"
 msgid "Edit properties"
 msgstr "Editar las propiedades"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
 msgid "System"
-msgstr ""
+msgstr "Sistema"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
 msgid "Light"
-msgstr ""
+msgstr "Claro"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
 msgid "Dark"
-msgstr ""
+msgstr "Oscuro"
 
 #: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
 msgid "Preferences"
@@ -402,31 +451,39 @@ msgstr "Idioma"
 msgid "Theme"
 msgstr "Tema"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
 msgid "General"
-msgstr ""
+msgstr "General"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
 msgid "Fit to page"
-msgstr ""
+msgstr "Ajustar a la página"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
 msgid "Actual size"
-msgstr ""
+msgstr "Tamaño real"
 
 #: pdfarranger_qt/dialogs.py
 msgid "Auto Rotate"
 msgstr "Rotación automática"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
 msgid ""
 "Pages are rasterised at this resolution before being sent to the printer. "
 "Lower it if printing is slow: the printer driver has less to process."
 msgstr ""
+"Las páginas se rasterizan a esta resolución antes de enviarse a la "
+"impresora. Redúzcala si la impresión es lenta: el controlador tendrá menos "
+"que procesar."
 
+# machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
 msgid "Scale mode"
-msgstr ""
+msgstr "Modo de escala"
 
 #: pdfarranger_qt/dialogs.py
 msgid "Pixels/inch:"
@@ -436,41 +493,53 @@ msgstr "Píxeles/pulgada:"
 msgid "Printing"
 msgstr "Impresión"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
 msgid "Preserve document information from the first file opened"
-msgstr ""
+msgstr "Conservar la información del primer archivo abierto"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
 msgid "When checked: use document properties from the first file opened."
-msgstr ""
+msgstr "Marcado: usar las propiedades del primer archivo abierto."
 
+# machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
 msgid "When unchecked: merge bookmarks from all documents."
-msgstr ""
+msgstr "Sin marcar: combinar los marcadores de todos los documentos."
 
+# machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
 msgid "Optimize for the web (linearize)"
-msgstr ""
+msgstr "Optimizar para la web (linealizar)"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
 msgid ""
 "Lay the file out so a browser can show page one before the rest has "
 "downloaded."
 msgstr ""
+"Disponer el archivo para que un navegador pueda mostrar la primera página "
+"antes de descargar el resto."
 
+# machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
 msgid "Compress"
-msgstr ""
+msgstr "Comprimir"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
 msgid "Recompress the file's streams and pack its objects together."
-msgstr ""
+msgstr "Recomprimir los flujos del archivo y agrupar sus objetos."
 
+# machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
 msgid ""
 "How much this saves depends on the file: one full of already-compressed "
 "images will barely shrink."
 msgstr ""
+"Cuánto ahorra esto depende del archivo: uno lleno de imágenes ya comprimidas"
+" apenas se reducirá."
 
 #: pdfarranger_qt/dialogs.py
 msgid "Saving/exporting to single file"
@@ -484,92 +553,121 @@ msgstr "Escala de grises"
 msgid "Image Export"
 msgstr "Exportar imagen"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
 msgid "Keyboard shortcuts"
-msgstr ""
+msgstr "Atajos de teclado"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
 msgid "Viewer Preferences"
-msgstr ""
+msgstr "Preferencias del visor"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
 msgid "Open showing:"
-msgstr ""
+msgstr "Al abrir, mostrar:"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
 msgid "Page layout:"
-msgstr ""
+msgstr "Disposición de páginas:"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
 msgid "On opening"
-msgstr ""
+msgstr "Al abrir"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
 msgid "Window"
-msgstr ""
+msgstr "Ventana"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
 msgid "Readers are free to ignore all of this."
-msgstr ""
+msgstr "Los lectores pueden ignorar todo esto."
 
 #: pdfarranger_qt/dialogs.py
 msgid "Password"
 msgstr "Contraseña"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
 msgid "Confirm password"
-msgstr ""
+msgstr "Confirmar contraseña"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
 msgid "Enter a password, or cancel to leave the document unencrypted."
-msgstr ""
+msgstr "Introduzca una contraseña, o cancele para dejar el documento sin cifrar."
 
+# machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
 msgid "The passwords do not match."
-msgstr ""
+msgstr "Las contraseñas no coinciden."
 
+# machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
 msgid "Reset"
-msgstr ""
+msgstr "Restablecer"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
 msgid "Description"
-msgstr ""
+msgstr "Descripción"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
 msgid ""
 "PDF Arranger merges, splits, rearranges, rotates and crops PDF documents. "
 "Everything happens in memory against the pages you can see; nothing is "
 "written until you save."
 msgstr ""
+"PDF Arranger combina, divide, reorganiza, gira y recorta documentos PDF. "
+"Todo ocurre en memoria sobre las páginas que ve; no se escribe nada hasta "
+"que guarda."
 
+# machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
 msgid ""
 "It is a front end for pikepdf. Page content is never rewritten — only page "
 "order, geometry and composition."
 msgstr ""
+"Es una interfaz para pikepdf. El contenido de las páginas nunca se reescribe"
+" — solo el orden, la geometría y la composición."
 
+# machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
 msgid "Command line"
-msgstr ""
+msgstr "Línea de órdenes"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
 msgid ""
 "Files given on the command line are opened as one document. "
 "<code>--version</code> prints the version and exits."
 msgstr ""
+"Los archivos indicados en la línea de órdenes se abren como un solo "
+"documento. <code>--version</code> muestra la versión y termina."
 
+# machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
 msgid "Reading"
-msgstr ""
+msgstr "Lectura"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
 msgid ""
 "The application opens in <b>read mode</b>: a continuous page view for "
 "reading the document rather than rearranging it. <b>View ▸ Arrange Mode</b> "
 "(Ctrl+E) swaps to the thumbnail grid and back."
 msgstr ""
+"La aplicación se abre en <b>modo lectura</b>: una vista continua de páginas "
+"para leer el documento en lugar de reorganizarlo. <b>Ver ▸ Modo de "
+"organización</b> (Ctrl+E) cambia a la cuadrícula de miniaturas y vuelve."
 
+# machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
 msgid ""
 "Reading shows the document <i>as edited</i>: rotations, crops, deletions and"
@@ -577,7 +675,13 @@ msgid ""
 "saved. Page-editing commands are disabled while reading — bookmarks are the "
 "exception, and are edited here and nowhere else."
 msgstr ""
+"La lectura muestra el documento <i>tal como está editado</i>: giros, "
+"recortes, eliminaciones y reordenaciones están aplicados, de modo que lo que"
+" lee es lo que obtendría al guardar. Las órdenes de edición de páginas están"
+" desactivadas durante la lectura — los marcadores son la excepción, y se "
+"editan aquí y en ningún otro sitio."
 
+# machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
 msgid ""
 "The page you are on follows you between the two modes. Switching to read "
@@ -587,24 +691,39 @@ msgid ""
 "resumes where you left off — your place in each document is remembered "
 "between visits."
 msgstr ""
+"La página en la que está le sigue entre los dos modos. Pasar al modo lectura"
+" abre por la página seleccionada en la cuadrícula, la primera si hay varias;"
+" volver desplaza la cuadrícula hasta la página que estaba leyendo, sin "
+"alterar su selección. Sin nada seleccionado, la lectura se reanuda donde la "
+"dejó — su posición en cada documento se recuerda entre visitas."
 
+# machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
 msgid ""
 "The toolbar shows which page you are on and how many there are; type a "
 "number into it to jump there, or use <b>Ctrl+G</b>."
 msgstr ""
+"La barra de herramientas muestra en qué página está y cuántas hay; escriba "
+"un número en ella para saltar allí, o use <b>Ctrl+G</b>."
 
+# machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
 msgid ""
 "<b>View ▸ Continuous Scroll</b> is on by default; turning it off shows one "
 "page at a time. <b>View ▸ Facing Pages</b> puts two pages side by side, the "
 "way a book falls open. Both settings are remembered."
 msgstr ""
+"<b>Ver ▸ Desplazamiento continuo</b> está activado de forma predeterminada; "
+"al desactivarlo se muestra una página cada vez. <b>Ver ▸ Páginas "
+"enfrentadas</b> pone dos páginas una junto a otra, como se abre un libro. "
+"Ambos ajustes se recuerdan."
 
+# machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
 msgid "Moving around a document"
-msgstr ""
+msgstr "Desplazarse por un documento"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
 msgid ""
 "One rule for the arrow keys: <b>the modifier decides what moves</b>. Nothing"
@@ -613,63 +732,83 @@ msgid ""
 "Home and End — jumps further. None of it changes according to whether a text"
 " cursor happens to be on the page."
 msgstr ""
+"Una sola regla para las flechas: <b>la tecla modificadora decide qué se "
+"mueve</b>. Sin modificador se desplaza la vista, Opción (Alt) mueve el "
+"cursor de texto, Mayús extiende la selección, Command (Ctrl) salta a un "
+"borde, y Fn — Re Pág, Av Pág, Inicio y Fin — salta más lejos. Nada de esto "
+"cambia según si hay o no un cursor de texto en la página."
 
+# machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
 msgid "Keys"
-msgstr ""
+msgstr "Teclas"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
 msgid "Continuous"
-msgstr ""
+msgstr "Continuo"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py pdfarranger_qt/viewer.py
 msgid "One page at a time"
-msgstr ""
+msgstr "Una página cada vez"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
 msgid "scroll one line"
-msgstr ""
+msgstr "desplazar una línea"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
 msgid "top of the previous / next page"
-msgstr ""
+msgstr "principio de la página anterior / siguiente"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
 msgid "previous / next page"
-msgstr ""
+msgstr "página anterior / siguiente"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
 msgid "scroll one screen"
-msgstr ""
+msgstr "desplazar una pantalla"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
 msgid "start / end of the document"
-msgstr ""
+msgstr "principio / final del documento"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
 msgid "move the text cursor, by character or line"
-msgstr ""
+msgstr "mover el cursor de texto, por carácter o línea"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
 msgid "extend the selection, by character or line"
-msgstr ""
+msgstr "extender la selección, por carácter o línea"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
 msgid "move the text cursor one word"
-msgstr ""
+msgstr "mover el cursor de texto una palabra"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
 msgid "extend the selection one word"
-msgstr ""
+msgstr "extender la selección una palabra"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
 msgid "cursor to the start / end of the line"
-msgstr ""
+msgstr "cursor al principio / final de la línea"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
 msgid "cursor to the start / end of the document"
-msgstr ""
+msgstr "cursor al principio / final del documento"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
 msgid ""
 "Add Shift to a Command or Option combination to extend the selection instead"
@@ -677,11 +816,18 @@ msgid ""
 "Option works by the word rather than the character. On Windows and Linux, "
 "read Command as Ctrl and Option as Alt; the table is the same everywhere."
 msgstr ""
+"Añada Mayús a una combinación con Command u Opción para extender la "
+"selección en lugar de moverse — <b>Mayús+Command+→</b> selecciona hasta el "
+"final de la línea. Con Opción funciona por palabras en lugar de por "
+"caracteres. En Windows y Linux, lea Command como Ctrl y Opción como Alt; la "
+"tabla es la misma en todas partes."
 
+# machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
 msgid "Selecting and copying text"
-msgstr ""
+msgstr "Seleccionar y copiar texto"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
 msgid ""
 "Drag across the page to select text, across page boundaries if you keep "
@@ -689,7 +835,13 @@ msgid ""
 "<b>Ctrl/Cmd+A</b> selects the text of the page you are on, and <b>Esc</b> "
 "clears the selection. The same commands are on the right-click menu."
 msgstr ""
+"Arrastre por la página para seleccionar texto, más allá de los límites de "
+"página si continúa. <b>Doble clic</b> selecciona una palabra. "
+"<b>Ctrl/Cmd+C</b> copia, <b>Ctrl/Cmd+A</b> selecciona el texto de la página "
+"actual, y <b>Esc</b> anula la selección. Las mismas órdenes están en el menú"
+" contextual."
 
+# machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
 msgid ""
 "<b>Shift+click</b> extends an existing selection to where you clicked. The "
@@ -698,7 +850,13 @@ msgid ""
 "exactly where you put it. Dragging selects by character throughout, since "
 "you can watch it and stop where you like."
 msgstr ""
+"<b>Mayús+clic</b> extiende una selección existente hasta donde hizo clic. El"
+" extremo que mueve crece hasta una palabra entera, porque un solo clic es "
+"una forma imprecisa de señalar un carácter; el extremo del que partió se "
+"queda exactamente donde lo puso. Al arrastrar se selecciona carácter a "
+"carácter, ya que puede verlo y detenerse donde quiera."
 
+# machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
 msgid ""
 "Clicking on text leaves a blinking <b>text cursor</b>. That is what "
@@ -706,11 +864,18 @@ msgid ""
 " move. It stays where you put it — scrolling, paging and clicking off the "
 "page all leave it alone — until you press Esc or open another document."
 msgstr ""
+"Al hacer clic sobre el texto queda un <b>cursor de texto</b> parpadeante. "
+"Desde ahí extiende Mayús+flecha, y a él mueven las combinaciones con Opción "
+"y Command anteriores. Permanece donde lo puso — el desplazamiento, el cambio"
+" de página y los clics fuera de la página no lo tocan — hasta que pulse Esc "
+"o abra otro documento."
 
+# machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
 msgid "Following links"
-msgstr ""
+msgstr "Seguir enlaces"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
 msgid ""
 "Click a link to follow it. Links to a page in the same document jump there; "
@@ -719,29 +884,49 @@ msgid ""
 "written by its author at all but inferred from the text, so what a link "
 "points at is not always what the words appear to say."
 msgstr ""
+"Haga clic en un enlace para seguirlo. Los enlaces a una página del mismo "
+"documento saltan allí; los enlaces web se abren en su navegador. Al pasar el"
+" puntero se muestra su destino, que conviene leer antes de hacer clic: "
+"muchos enlaces de un PDF no los escribe su autor, sino que se deducen del "
+"texto, de modo que el destino no siempre es lo que las palabras parecen "
+"decir."
 
+# machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
 msgid ""
 "Only ordinary web and mail links are handed to the system — http, https, "
 "mailto and ftp. A document is a file that arrived from somewhere, and "
 "anything else it asks to open is refused and reported rather than acted on."
 msgstr ""
+"Solo se entregan al sistema los enlaces web y de correo habituales — http, "
+"https, mailto y ftp. Un documento es un archivo que llegó de algún sitio, y "
+"cualquier otra cosa que pida abrir se rechaza y se informa en lugar de "
+"ejecutarse."
 
+# machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
 msgid "Right-clicking a link offers <b>Open Link</b> and <b>Copy Link Address</b>."
 msgstr ""
+"Al hacer clic derecho en un enlace se ofrecen <b>Abrir enlace</b> y "
+"<b>Copiar dirección del enlace</b>."
 
+# machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
 msgid "Bookmarks"
-msgstr ""
+msgstr "Marcadores"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
 msgid ""
 "The sidebar shows the document's bookmarks. Click one to jump to it. "
 "Everything below is on the sidebar's right-click menu, and every command can"
 " be undone."
 msgstr ""
+"El panel lateral muestra los marcadores del documento. Haga clic en uno para"
+" saltar a él. Todo lo siguiente está en su menú contextual, y toda orden se "
+"puede deshacer."
 
+# machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
 msgid ""
 "<b>Add Bookmark Here</b> makes one pointing at the page you are reading, "
@@ -749,7 +934,13 @@ msgid ""
 " With nothing selected it is named after the page. <b>Add Child Bookmark "
 "Here</b> does the same, nested under the entry you clicked."
 msgstr ""
+"<b>Añadir un marcador aquí</b> crea uno que apunta a la página que está "
+"leyendo, con el nombre del texto que tenga seleccionado — seleccione un "
+"título y luego añádalo. Sin selección, toma el nombre de la página. "
+"<b>Añadir un submarcador aquí</b> hace lo mismo, anidado bajo la entrada en "
+"la que hizo clic."
 
+# machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
 msgid ""
 "<b>Rename</b> edits the title in place. <b>Re-home to This Page</b> points "
@@ -757,20 +948,32 @@ msgid ""
 "<b>Delete</b> removes an entry and <i>promotes</i> its children into its "
 "place; <b>Delete with Children</b> removes the whole branch."
 msgstr ""
+"<b>Cambiar el nombre</b> edita el título en el sitio. <b>Reasignar a esta "
+"página</b> hace que un marcador existente apunte a la página actual, "
+"conservando su título. <b>Eliminar</b> quita una entrada y <i>asciende</i> a"
+" sus hijos a su lugar; <b>Eliminar con los hijos</b> quita toda la rama."
 
+# machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
 msgid ""
 "Drag entries within the sidebar to re-nest or reorder them. <b>Expand All "
 "Children</b> and <b>Collapse All Children</b> open or shut a whole branch at"
 " once."
 msgstr ""
+"Arrastre las entradas dentro del panel para reanidarlas o reordenarlas. "
+"<b>Desplegar todos los hijos</b> y <b>Plegar todos los hijos</b> abren o "
+"cierran una rama entera de una vez."
 
+# machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
 msgid ""
 "<b>Style</b> sets a bookmark bold or italic, or gives it a colour, as the "
 "tree shows."
 msgstr ""
+"<b>Estilo</b> pone un marcador en negrita o cursiva, o le da un color, como "
+"muestra el árbol."
 
+# machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
 msgid ""
 "A bookmark whose page has been deleted is <b>greyed out</b> rather than "
@@ -779,7 +982,14 @@ msgid ""
 "Dangling Bookmarks</b> clears them all out; it leaves alone any entry that "
 "points nowhere on purpose, which is a legitimate way to write a heading."
 msgstr ""
+"Un marcador cuya página se ha eliminado aparece <b>atenuado</b> en lugar de "
+"quitarse: su título puede seguir siendo útil, y puede apuntarlo a otro sitio"
+" con Reasignar. Deshacer la eliminación lo reconecta. <b>Eliminar los "
+"marcadores huérfanos</b> los quita todos; deja en paz cualquier entrada que "
+"no apunte a ninguna parte a propósito, que es una forma legítima de escribir"
+" un título."
 
+# machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
 msgid ""
 "Bookmark edits are part of the document and are written when you save, along"
@@ -788,23 +998,36 @@ msgid ""
 "to record “points at a page that is gone”, so it comes back as a heading "
 "with its title intact."
 msgstr ""
+"Los cambios en los marcadores forman parte del documento y se escriben al "
+"guardar, junto con el color y el estilo de cada entrada y qué ramas quedan "
+"abiertas. Lo único que no puede guardarse es un marcador sin página: no hay "
+"forma de anotar «apunta a una página que ya no está», así que vuelve como un"
+" título, intacto."
 
+# machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
 msgid "Arranging pages"
-msgstr ""
+msgstr "Organizar páginas"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
 msgid ""
 "Drag pages to reorder them. Hold <b>Ctrl</b> while dropping to copy instead "
 "of move."
 msgstr ""
+"Arrastre las páginas para reordenarlas. Mantenga <b>Ctrl</b> al soltar para "
+"copiar en lugar de mover."
 
+# machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
 msgid ""
 "Drag pages onto another window of the application to copy them there, or use"
 " ordinary copy and paste."
 msgstr ""
+"Arrastre páginas a otra ventana de la aplicación para copiarlas allí, o use "
+"el copiar y pegar habitual."
 
+# machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
 msgid ""
 "<b>Paste As Odd/Even Pages</b> interleaves the clipboard with the document —"
@@ -812,7 +1035,12 @@ msgid ""
 "recombined. If the second scan came off a duplex feeder it will be in "
 "reverse order; use <b>Arrange ▸ Reverse Order</b> on it first."
 msgstr ""
+"<b>Pegar como páginas impares/pares</b> intercala el portapapeles con el "
+"documento — así se vuelven a unir dos escaneos por una cara de un original a"
+" doble cara. Si el segundo escaneo salió de un alimentador dúplex estará en "
+"orden inverso; aplíquele antes <b>Organizar ▸ Invertir el orden</b>."
 
+# machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
 msgid ""
 "To move pages a long way, use <b>Move to Start</b>, <b>Move to End</b> or "
@@ -821,7 +1049,13 @@ msgid ""
 "right-click menu, and <b>Move to Page…</b> asks for the number the page "
 "should <i>become</i>."
 msgstr ""
+"Para mover páginas muy lejos, use <b>Mover al principio</b>, <b>Mover al "
+"final</b> o <b>Mover a la página…</b> en lugar de arrastrar — en un "
+"documento largo el otro extremo queda a mucho desplazamiento. Están en el "
+"menú Editar y en el menú contextual, y <b>Mover a la página…</b> pide el "
+"número que la página debe <i>pasar a ser</i>."
 
+# machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
 msgid ""
 "Prefer these to cut and paste for moving. A pasted page is a <i>new</i> page"
@@ -829,18 +1063,29 @@ msgid ""
 "original are left behind with nowhere to go. Moving keeps the page itself, "
 "and its bookmarks come with it."
 msgstr ""
+"Prefiéralos a cortar y pegar para mover. Una página pegada es una página "
+"<i>nueva</i> a efectos del documento, de modo que los marcadores que "
+"apuntaban a la original se quedan atrás sin destino. Mover conserva la "
+"propia página, y sus marcadores la acompañan."
 
+# machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
 msgid "Stamping and tiling"
-msgstr ""
+msgstr "Estampado y mosaico"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
 msgid ""
 "<b>Page ▸ Add Page Numbers…</b> and <b>Page ▸ Add Watermark…</b> draw text "
 "onto the selected pages. Both add a <i>layer</i> rather than rewriting the "
 "page, so both can be undone and neither touches the file you opened."
 msgstr ""
+"<b>Página ▸ Añadir números de página…</b> y <b>Página ▸ Añadir marca de "
+"agua…</b> dibujan texto sobre las páginas seleccionadas. Ambos añaden una "
+"<i>capa</i> en lugar de reescribir la página, así que ambos pueden "
+"deshacerse y ninguno toca el archivo que abrió."
 
+# machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
 #, python-brace-format
 msgid ""
@@ -849,7 +1094,12 @@ msgid ""
 "is the page number and <code>{total}</code> the number of pages, so "
 "<code>Page {n} of {total}</code> does what it looks like."
 msgstr ""
+"Los números de página siguen la disposición, no el documento de origen: se "
+"numeran en el orden en que están las páginas ahora. <code>{n}</code> en el "
+"formato es el número de página y <code>{total}</code> el número de páginas, "
+"así que <code>Página {n} de {total}</code> hace lo que parece."
 
+# machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
 msgid ""
 "<b>Arrange ▸ Pages per Sheet…</b> tiles several pages onto one, in reading "
@@ -857,11 +1107,17 @@ msgid ""
 "the pages come out larger, which is why two-up gives a landscape sheet and "
 "four-up does not."
 msgstr ""
+"<b>Organizar ▸ Páginas por hoja…</b> coloca varias páginas en una, en orden "
+"de lectura — el <i>N-up</i> de la imprenta. La hoja gira a horizontal cuando"
+" así las páginas salen más grandes, por lo que dos por hoja da una hoja "
+"apaisada y cuatro no."
 
+# machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
 msgid "Saving a document"
-msgstr ""
+msgstr "Guardar un documento"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
 msgid ""
 "<b>Optimize for the web</b> in Preferences lays the saved file out so a "
@@ -869,7 +1125,13 @@ msgid ""
 " repacks its streams and objects; how much that saves depends entirely on "
 "the file, and one full of photographs will barely move."
 msgstr ""
+"<b>Optimizar para la web</b> en Preferencias dispone el archivo guardado "
+"para que un navegador pueda mostrar la primera página antes de que llegue el"
+" resto. <b>Comprimir</b> reempaqueta sus flujos y objetos; cuánto ahorra "
+"depende por completo del archivo, y uno lleno de fotografías apenas se "
+"moverá."
 
+# machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
 msgid ""
 "<b>File ▸ Remove All Metadata</b> is a switch, like Password: turn it on and"
@@ -877,7 +1139,12 @@ msgid ""
 "what produced it. Edit Properties greys out while it is on, because there "
 "would be nothing to edit."
 msgstr ""
+"<b>Archivo ▸ Eliminar todos los metadatos</b> es un interruptor, como la "
+"contraseña: actívelo y el siguiente guardado escribirá un documento sin "
+"título, sin autor y sin rastro de qué lo produjo. Editar propiedades queda "
+"atenuado mientras está activo, porque no habría nada que editar."
 
+# machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
 msgid ""
 "<b>File ▸ Viewer Preferences…</b> is how the saved document asks a reader to"
@@ -885,7 +1152,13 @@ msgid ""
 "Readers are free to ignore all of it. The settings are read from the file "
 "you opened, so a document that already had them keeps them."
 msgstr ""
+"<b>Archivo ▸ Preferencias del visor…</b> es la forma en que el documento "
+"guardado pide a un lector que lo abra — con los marcadores a la vista, dos "
+"páginas cada vez, y demás. Los lectores pueden ignorarlo todo. Los ajustes "
+"se leen del archivo que abrió, así que un documento que ya los tenía los "
+"conserva."
 
+# machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
 msgid ""
 "<b>File ▸ Repair Document…</b> rebuilds a damaged PDF. It works on a file "
@@ -893,44 +1166,63 @@ msgid ""
 "usually one this application cannot open properly either. It reports what it"
 " found before writing anything."
 msgstr ""
+"<b>Archivo ▸ Reparar el documento…</b> reconstruye un PDF dañado. Trabaja "
+"sobre un archivo que usted elige y no sobre el que está en pantalla, porque "
+"el archivo que merece reparación suele ser uno que esta aplicación tampoco "
+"puede abrir bien. Informa de lo que encontró antes de escribir nada."
 
+# machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
 msgid "Mouse"
-msgstr ""
+msgstr "Ratón"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
 msgid "<b>Ctrl + scroll</b> — zoom"
-msgstr ""
+msgstr "<b>Ctrl + rueda</b> — ampliar"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
 msgid "<b>Shift + scroll</b> — scroll sideways"
-msgstr ""
+msgstr "<b>Mayús + rueda</b> — desplazar lateralmente"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
 msgid "<b>Alt + scroll</b> — scroll exactly one row"
-msgstr ""
+msgstr "<b>Alt + rueda</b> — desplazar exactamente una fila"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
 msgid "<b>Double-click</b> — fit the page to the window, and back"
-msgstr ""
+msgstr "<b>Doble clic</b> — ajustar la página a la ventana, y volver"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
 msgid ""
 "<b>Click and drag</b> on empty space — rubber-band select; keep scrolling to"
 " extend it"
 msgstr ""
+"<b>Clic y arrastre</b> sobre espacio vacío — selección por recuadro; siga "
+"desplazando para ampliarla"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
 msgid "Moving around the grid"
-msgstr ""
+msgstr "Desplazarse por la cuadrícula"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
 msgid ""
 "<b>Arrow keys</b> move between pages, <b>Page Up</b> and <b>Page Down</b> "
 "move a screenful at a time, and <b>Home</b> and <b>End</b> jump to the first"
 " and last page. Hold <b>Shift</b> with any of them to extend the selection."
 msgstr ""
+"Las <b>flechas</b> se mueven entre páginas, <b>Re Pág</b> y <b>Av Pág</b> "
+"avanzan una pantalla cada vez, e <b>Inicio</b> y <b>Fin</b> saltan a la "
+"primera y a la última página. Mantenga <b>Mayús</b> con cualquiera de ellas "
+"para extender la selección."
 
+# machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
 msgid ""
 "<b>Fit One Page</b> (F) scales so a whole page fits in the window and shows "
@@ -940,17 +1232,29 @@ msgid ""
 "window across instead, which shows the page wider but taller than the "
 "window. Double-clicking the grid toggles Fit One Page on and off."
 msgstr ""
+"<b>Ajustar una página</b> (F) escala para que quepa una página entera en la "
+"ventana y muestra una página por fila — úselo para trabajar en una sola "
+"página cada vez. <b>Ajustar varias páginas</b> (Mayús+M) usa la misma escala"
+" pero deja tantas páginas una junto a otra como admita la ventana. "
+"<b>Ajustar al ancho</b> (Mayús+F) llena en cambio la ventana a lo ancho, lo "
+"que muestra la página más ancha pero más alta que la ventana. Un doble clic "
+"en la cuadrícula activa y desactiva Ajustar una página."
 
+# machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
 msgid ""
 "With pages selected, all three fit the selection rather than the whole "
 "document."
 msgstr ""
+"Con páginas seleccionadas, los tres ajustan la selección en lugar del "
+"documento entero."
 
+# machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
 msgid "Finding text"
-msgstr ""
+msgstr "Buscar texto"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
 msgid ""
 "<b>Find</b> selects the pages that contain the phrase and boxes each hit on "
@@ -958,23 +1262,35 @@ msgid ""
 "soon as you change the document, since the pages they were drawn for may "
 "have moved."
 msgstr ""
+"<b>Buscar</b> selecciona las páginas que contienen la expresión y recuadra "
+"cada coincidencia en la miniatura, para que vea en qué parte de la página "
+"está. Los recuadros desaparecen en cuanto modifica el documento, ya que las "
+"páginas para las que se dibujaron pueden haberse movido."
 
+# machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
 msgid ""
 "Every shortcut can be changed in <b>Edit ▸ Preferences ▸ Keyboard "
 "shortcuts</b>, where they are listed under the menu each one belongs to."
 msgstr ""
+"Todo atajo puede cambiarse en <b>Editar ▸ Preferencias ▸ Atajos de "
+"teclado</b>, donde aparecen listados bajo el menú al que pertenece cada uno."
 
+# machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
 msgid "Passwords"
-msgstr ""
+msgstr "Contraseñas"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
 msgid ""
 "Opening an encrypted document asks for its password, which is remembered "
 "until the document is closed."
 msgstr ""
+"Al abrir un documento cifrado se pide su contraseña, que se recuerda hasta "
+"que se cierra el documento."
 
+# machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
 msgid ""
 "<b>File ▸ Password</b> encrypts the document when it is next saved. It is a "
@@ -983,11 +1299,18 @@ msgid ""
 " it applies to this session only — and if you forget it, the file cannot be "
 "recovered."
 msgstr ""
+"<b>Archivo ▸ Contraseña</b> cifra el documento en el siguiente guardado. Es "
+"un interruptor: actívelo y se le pedirá una contraseña, desactívelo y el "
+"siguiente guardado será sin cifrar. La contraseña nunca se escribe en sus "
+"ajustes, así que solo vale para esta sesión — y si la olvida, el archivo no "
+"podrá recuperarse."
 
+# machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
 msgid "Files"
-msgstr ""
+msgstr "Archivos"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
 msgid ""
 "Settings are stored by Qt in the per-user location for this platform; on "
@@ -995,36 +1318,50 @@ msgid ""
 "<code>HKEY_CURRENT_USER\\Software\\pdfarranger</code>. There is no "
 "configuration file to edit by hand."
 msgstr ""
+"Qt guarda los ajustes en la ubicación por usuario de esta plataforma; en "
+"Windows es el registro bajo "
+"<code>HKEY_CURRENT_USER\\Software\\pdfarranger</code>. No hay ningún archivo"
+" de configuración que editar a mano."
 
+# machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
 msgid "Credits"
-msgstr ""
+msgstr "Créditos"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
 msgid ""
 "PDF Arranger Qt is a PySide6 port of PDF Arranger, which is itself derived "
 "from PDF-Shuffler. It is a separate project and not affiliated with either."
 msgstr ""
+"PDF Arranger Qt es una adaptación a PySide6 de PDF Arranger, que a su vez "
+"deriva de PDF-Shuffler. Es un proyecto independiente y no está afiliado a "
+"ninguno de los dos."
 
+# machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
 msgid "Original authors: Konstantinos Poulios, Jerome Robert."
-msgstr ""
+msgstr "Autores originales: Konstantinos Poulios, Jerome Robert."
 
+# machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
 msgid "Licensed under the GNU General Public License version 3 or later."
-msgstr ""
+msgstr "Bajo la licencia GNU General Public License versión 3 o posterior."
 
+# machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
 msgid "User Guide"
-msgstr ""
+msgstr "Guía del usuario"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
 msgid "Insert pages from another PDF or an image"
-msgstr ""
+msgstr "Insertar páginas de otro PDF o de una imagen"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
 msgid "Needs pages copied from a document"
-msgstr ""
+msgstr "Necesita páginas copiadas de un documento"
 
 #: pdfarranger_qt/mainwindow.py
 msgid "_New Window"
@@ -1078,9 +1415,10 @@ msgstr "_Invertir selección"
 msgid "_Delete"
 msgstr "E_liminar"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
 msgid "_Duplicate"
-msgstr ""
+msgstr "_Duplicar"
 
 #: pdfarranger_qt/mainwindow.py
 msgid "Rotate _Left"
@@ -1098,13 +1436,15 @@ msgstr "A_cercar"
 msgid "Zoom _Out"
 msgstr "A_lejar"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
 msgid "_Reset Zoom"
-msgstr ""
+msgstr "_Restablecer la ampliación"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
 msgid "Project on GitHub"
-msgstr ""
+msgstr "Proyecto en GitHub"
 
 #: pdfarranger_qt/mainwindow.py
 msgid "_About"
@@ -1154,25 +1494,30 @@ msgstr "Todas las páginas del _mismo archivo"
 msgid "Same Page _Format"
 msgstr "El mismo formato de página"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
 msgid "Move to Start"
-msgstr ""
+msgstr "Mover al principio"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
 msgid "Move to End"
-msgstr ""
+msgstr "Mover al final"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
 msgid "Move to Page…"
-msgstr ""
+msgstr "Mover a la página…"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
 msgid "Reverse Order"
-msgstr ""
+msgstr "Invertir el orden"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
 msgid "Swap Odd/Even"
-msgstr ""
+msgstr "Intercambiar impares/pares"
 
 #: pdfarranger_qt/mainwindow.py
 msgid "_Split (unimposition)"
@@ -1214,37 +1559,44 @@ msgstr "_Fusionar páginas…"
 msgid "_Generate (imposition)"
 msgstr "_Generar (imposición)"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
 msgid "Pages per S_heet…"
-msgstr ""
+msgstr "Páginas por _hoja…"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
 msgid "Add Page N_umbers…"
-msgstr ""
+msgstr "Añadir _números de página…"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
 msgid "Add _Watermark…"
-msgstr ""
+msgstr "Añadir _marca de agua…"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
 msgid "Pass_word"
-msgstr ""
+msgstr "Contrase_ña"
 
 #: pdfarranger_qt/mainwindow.py
 msgid "Edit _Properties"
 msgstr "Editar las _propiedades"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
 msgid "_Viewer Preferences…"
-msgstr ""
+msgstr "Preferencias del _visor…"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
 msgid "Remove All _Metadata"
-msgstr ""
+msgstr "Eliminar todos los _metadatos"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
 msgid "_Repair Document…"
-msgstr ""
+msgstr "_Reparar el documento…"
 
 #: pdfarranger_qt/mainwindow.py
 msgid "Crop White Borders"
@@ -1266,9 +1618,10 @@ msgstr "Exportar selección a PDF rasterizado (png)…"
 msgid "Export Selection to _Rasterized PDF (jpg)…"
 msgstr "Exportar selección a PDF rasterizado (jpg)…"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
 msgid "Copy Text"
-msgstr ""
+msgstr "Copiar el texto"
 
 #: pdfarranger_qt/mainwindow.py
 msgid "Copy _Image"
@@ -1310,61 +1663,75 @@ msgstr "Pegar como superposición…"
 msgid "Paste As _Underlay…"
 msgstr "Pegar como subyacente…"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
 msgid "Fit _One Page"
-msgstr ""
+msgstr "Ajustar _una página"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
 msgid "Fit _Multiple Pages"
-msgstr ""
+msgstr "Ajustar _varias páginas"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
 msgid "Fit Width"
-msgstr ""
+msgstr "Ajustar al ancho"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
 msgid "Arrange Mode"
-msgstr ""
+msgstr "Modo de organización"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
 msgid "Facing Pages"
-msgstr ""
+msgstr "Páginas enfrentadas"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
 msgid "Continuous Scroll"
-msgstr ""
+msgstr "Desplazamiento continuo"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
 msgid "Next Page"
-msgstr ""
+msgstr "Página siguiente"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
 msgid "Previous Page"
-msgstr ""
+msgstr "Página anterior"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
 msgid "First Page"
-msgstr ""
+msgstr "Primera página"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
 msgid "Last Page"
-msgstr ""
+msgstr "Última página"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
 msgid "Go to Page…"
-msgstr ""
+msgstr "Ir a la página…"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
 msgid "Fullscreen"
-msgstr ""
+msgstr "Pantalla completa"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
 msgid "_File"
-msgstr ""
+msgstr "_Archivo"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
 msgid "Open Recent"
-msgstr ""
+msgstr "Abrir reciente"
 
 #: pdfarranger_qt/mainwindow.py
 msgid "E_xport"
@@ -1378,17 +1745,19 @@ msgstr "_Editar"
 msgid "Past_e Special"
 msgstr "Pegado _especial"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
 msgid "_Page"
-msgstr ""
+msgstr "_Página"
 
 #: pdfarranger_qt/mainwindow.py
 msgid "_Extract"
 msgstr "_Extraer"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
 msgid "Arrange"
-msgstr ""
+msgstr "Organizar"
 
 #: pdfarranger_qt/mainwindow.py
 msgid "_Select"
@@ -1402,34 +1771,40 @@ msgstr "_Folleto"
 msgid "_View"
 msgstr "_Ver"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
 msgid "_Help"
-msgstr ""
+msgstr "Ay_uda"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
 msgid "Read"
-msgstr ""
+msgstr "Lectura"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
 #, python-format
 msgid "_Undo %s"
-msgstr ""
+msgstr "_Deshacer: %s"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
 #, python-format
 msgid "_Redo %s"
-msgstr ""
+msgstr "_Rehacer: %s"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
 #, python-format
 msgid "%d page selected"
 msgid_plural "%d pages selected"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "%d página seleccionada"
+msgstr[1] "%d páginas seleccionadas"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
 msgid "Untitled"
-msgstr ""
+msgstr "Sin título"
 
 #: pdfarranger_qt/mainwindow.py
 msgid "Password required"
@@ -1444,69 +1819,83 @@ msgstr "El documento “{}” requiere una contraseña para abrirlo."
 msgid "The password will be remembered until you close PDF Arranger."
 msgstr "La contraseña se guarda hasta que cierre PDF Arranger."
 
+# machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
 msgid "Importing…"
-msgstr ""
+msgstr "Importando…"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
 msgid "Cancel"
-msgstr ""
+msgstr "Cancelar"
 
 #: pdfarranger_qt/mainwindow.py
 msgid "Import"
 msgstr "Importar"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
 msgid "No recent files"
-msgstr ""
+msgstr "No hay archivos recientes"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
 msgid "Clear Menu"
-msgstr ""
+msgstr "Vaciar el menú"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
 msgid "This file is no longer there:"
-msgstr ""
+msgstr "Este archivo ya no está ahí:"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
 msgid "This document cannot be read."
-msgstr ""
+msgstr "Este documento no se puede leer."
 
+# machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
 msgid "Go to Page"
-msgstr ""
+msgstr "Ir a la página"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
 msgid "Page number:"
-msgstr ""
+msgstr "Número de página:"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
 msgid "No document"
-msgstr ""
+msgstr "Ningún documento"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
 #, python-format
 msgid "%d page"
 msgid_plural "%d pages"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "%d página"
+msgstr[1] "%d páginas"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
 #, python-brace-format
 msgid "of {}"
-msgstr ""
+msgstr "de {}"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
 msgid "The document will not be encrypted."
-msgstr ""
+msgstr "El documento no se cifrará."
 
+# machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
 msgid "The document will be encrypted when it is saved."
-msgstr ""
+msgstr "El documento se cifrará al guardarlo."
 
+# machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
 msgid "Could not open a new window."
-msgstr ""
+msgstr "No se pudo abrir una ventana nueva."
 
 #: pdfarranger_qt/mainwindow.py
 msgid "Open"
@@ -1520,45 +1909,55 @@ msgstr "Guardar como…"
 msgid "Export…"
 msgstr "Exportar…"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
 msgid "There is nothing to save."
-msgstr ""
+msgstr "No hay nada que guardar."
 
+# machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
 msgid "Could not save:"
-msgstr ""
+msgstr "No se pudo guardar:"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
 msgid "Saved"
-msgstr ""
+msgstr "Guardado"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
 msgid "This document has unsaved changes."
-msgstr ""
+msgstr "Este documento tiene cambios sin guardar."
 
+# machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
 msgid "Save before continuing?"
-msgstr ""
+msgstr "¿Guardar antes de continuar?"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py pdfarranger_qt/reader.py
 msgid "Delete"
-msgstr ""
+msgstr "Eliminar"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
 msgid "Cut"
-msgstr ""
+msgstr "Cortar"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
 msgid "Paste"
-msgstr ""
+msgstr "Pegar"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
 msgid "Move to Page"
-msgstr ""
+msgstr "Mover a la página"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
 msgid "Move"
-msgstr ""
+msgstr "Mover"
 
 #: pdfarranger_qt/mainwindow.py
 msgid "The page selection is not contiguous. Cannot unimpose."
@@ -1568,114 +1967,137 @@ msgstr "La selección de páginas no es contigua. No se puede desimponer."
 msgid "All pages must have the same size."
 msgstr "Todas las páginas deben tener el mismo tamaño."
 
+# machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
 msgid "Split Booklet"
-msgstr ""
+msgstr "Separar el cuadernillo"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
 msgid "Overwrite existing files?"
-msgstr ""
+msgstr "¿Sobrescribir los archivos existentes?"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
 msgid "Blank page"
-msgstr ""
+msgstr "Página en blanco"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
 msgid "Copy the pages you want to merge in first."
-msgstr ""
+msgstr "Copie primero las páginas que quiera combinar."
 
+# machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
 msgid "Generate Booklet"
-msgstr ""
+msgstr "Generar cuadernillo"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
 msgid "The page selection is not contiguous."
-msgstr ""
+msgstr "La selección de páginas no es contigua."
 
+# machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
 msgid "All metadata will be removed when the document is saved."
-msgstr ""
+msgstr "Se eliminarán todos los metadatos al guardar el documento."
 
+# machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
 msgid "Metadata will be kept."
-msgstr ""
+msgstr "Se conservarán los metadatos."
 
+# machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
 msgid "Repair Document…"
-msgstr ""
+msgstr "Reparar el documento…"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
 msgid "Write a rebuilt copy?"
-msgstr ""
+msgstr "¿Escribir una copia reconstruida?"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
 msgid "Save Repaired Document"
-msgstr ""
+msgstr "Guardar el documento reparado"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
 #, python-format
 msgid "%d image written"
 msgid_plural "%d images written"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "%d imagen escrita"
+msgstr[1] "%d imágenes escritas"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
 msgid "The page has no text."
-msgstr ""
+msgstr "La página no tiene texto."
 
+# machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
 msgid "Copied"
-msgstr ""
+msgstr "Copiado"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
 msgid "The page has no image."
-msgstr ""
+msgstr "La página no tiene imagen."
 
 #: pdfarranger_qt/mainwindow.py
 msgid "The page has several images. Use \"Explode into Images\" first.\""
 msgstr "La página tiene varias imágenes. Use primero \"Detonar en imágenes\"."
 
+# machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
 msgid "Explode into Images"
-msgstr ""
+msgstr "Descomponer en imágenes"
 
 #: pdfarranger_qt/mainwindow.py
 msgid "Printing…"
 msgstr "Imprimiendo…"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
 msgid "Finishing…"
-msgstr ""
+msgstr "Finalizando…"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
 msgid "The printer driver is processing the job."
-msgstr ""
+msgstr "El controlador de impresión está procesando el trabajo."
 
+# machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
 #, python-format
 msgid "%d page printed"
 msgid_plural "%d pages printed"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "%d página impresa"
+msgstr[1] "%d páginas impresas"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
 msgid "Find"
-msgstr ""
+msgstr "Buscar"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
 #, python-format
 msgid "%d page matches"
 msgid_plural "%d pages match"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "%d página coincide"
+msgstr[1] "%d páginas coinciden"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
 msgid "Duplicate"
-msgstr ""
+msgstr "Duplicar"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
 msgid "Rotate"
-msgstr ""
+msgstr "Girar"
 
 #: pdfarranger_qt/metadata.py
 msgid "Title"
@@ -1709,218 +2131,271 @@ msgstr "Creado"
 msgid "Modified"
 msgstr "Modificado"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/nup.py
 msgid "2 pages per sheet"
-msgstr ""
+msgstr "2 páginas por hoja"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/nup.py
 msgid "4 pages per sheet"
-msgstr ""
+msgstr "4 páginas por hoja"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/nup.py
 msgid "6 pages per sheet"
-msgstr ""
+msgstr "6 páginas por hoja"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/nup.py
 msgid "8 pages per sheet"
-msgstr ""
+msgstr "8 páginas por hoja"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/nup.py
 msgid "9 pages per sheet"
-msgstr ""
+msgstr "9 páginas por hoja"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/nup.py
 msgid "16 pages per sheet"
-msgstr ""
+msgstr "16 páginas por hoja"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/reader.py
 msgid "Bookmark Colour"
-msgstr ""
+msgstr "Color del marcador"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/reader.py
 msgid "Add Bookmark Here"
-msgstr ""
+msgstr "Añadir un marcador aquí"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/reader.py
 msgid "Add Child Bookmark Here"
-msgstr ""
+msgstr "Añadir un submarcador aquí"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/reader.py
 msgid "Re-home to This Page"
-msgstr ""
+msgstr "Reasignar a esta página"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/reader.py
 msgid "Rename"
-msgstr ""
+msgstr "Cambiar el nombre"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/reader.py
 msgid "Style"
-msgstr ""
+msgstr "Estilo"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/reader.py
 msgid "Colour…"
-msgstr ""
+msgstr "Color…"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/reader.py
 msgid "Default Colour"
-msgstr ""
+msgstr "Color predeterminado"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/reader.py
 msgid "Expand All Children"
-msgstr ""
+msgstr "Desplegar todos los hijos"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/reader.py
 msgid "Collapse All Children"
-msgstr ""
+msgstr "Plegar todos los hijos"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/reader.py
 msgid "Delete with Children"
-msgstr ""
+msgstr "Eliminar con los hijos"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/reader.py
 msgid "Delete Dangling Bookmarks"
-msgstr ""
+msgstr "Eliminar los marcadores huérfanos"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/reader.py
 msgid "Nothing to read."
-msgstr ""
+msgstr "Nada que leer."
 
+# machine translation, unreviewed
 #: pdfarranger_qt/reader.py
 #, python-brace-format
 msgid "Page {} of {}"
-msgstr ""
+msgstr "Página {} de {}"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/reader.py
 msgid "Move Bookmark"
-msgstr ""
+msgstr "Mover el marcador"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/reader.py
 msgid "This bookmark's page is no longer in the document"
-msgstr ""
+msgstr "La página de este marcador ya no está en el documento"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/reader.py
 msgid "This bookmark does not point at a page"
-msgstr ""
+msgstr "Este marcador no apunta a ninguna página"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/reader.py
 msgid "Rename Bookmark"
-msgstr ""
+msgstr "Cambiar el nombre del marcador"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/reader.py
 msgid "Add Child Bookmark"
-msgstr ""
+msgstr "Añadir un submarcador"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/reader.py
 msgid "Add Bookmark"
-msgstr ""
+msgstr "Añadir un marcador"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/reader.py
 msgid "Bookmark Style"
-msgstr ""
+msgstr "Estilo del marcador"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/reader.py
 msgid "Re-home Bookmark"
-msgstr ""
+msgstr "Reasignar el marcador"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/reader.py
 msgid "Delete Bookmark"
-msgstr ""
+msgstr "Eliminar el marcador"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/reader.py
 msgid "Delete Bookmark and Children"
-msgstr ""
+msgstr "Eliminar el marcador y sus hijos"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/repair.py
 msgid "This file cannot be read, even with recovery."
-msgstr ""
+msgstr "Este archivo no se puede leer, ni siquiera con recuperación."
 
+# machine translation, unreviewed
 #: pdfarranger_qt/repair.py
 msgid "No damage found; the file reads cleanly."
-msgstr ""
+msgstr "No se encontraron daños; el archivo se lee correctamente."
 
+# machine translation, unreviewed
 #: pdfarranger_qt/repair.py
 msgid "Damaged, and recoverable."
-msgstr ""
+msgstr "Dañado, pero recuperable."
 
+# machine translation, unreviewed
 #: pdfarranger_qt/repair.py
 msgid "The file cannot be read."
-msgstr ""
+msgstr "El archivo no se puede leer."
 
+# machine translation, unreviewed
 #: pdfarranger_qt/stamp.py
 msgid "Top left"
-msgstr ""
+msgstr "Arriba a la izquierda"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/stamp.py
 msgid "Top centre"
-msgstr ""
+msgstr "Arriba en el centro"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/stamp.py
 msgid "Top right"
-msgstr ""
+msgstr "Arriba a la derecha"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/stamp.py
 msgid "Bottom left"
-msgstr ""
+msgstr "Abajo a la izquierda"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/stamp.py
 msgid "Bottom centre"
-msgstr ""
+msgstr "Abajo en el centro"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/stamp.py
 msgid "Bottom right"
-msgstr ""
+msgstr "Abajo a la derecha"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/viewer.py
 msgid "Viewer default"
-msgstr ""
+msgstr "Ajuste del visor"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/viewer.py
 msgid "No side panel"
-msgstr ""
+msgstr "Sin panel lateral"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/viewer.py
 msgid "Bookmarks panel"
-msgstr ""
+msgstr "Panel de marcadores"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/viewer.py
 msgid "Page thumbnails"
-msgstr ""
+msgstr "Miniaturas de página"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/viewer.py
 msgid "Continuous scroll"
-msgstr ""
+msgstr "Desplazamiento continuo"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/viewer.py
 msgid "Two pages, odd on the left"
-msgstr ""
+msgstr "Dos páginas, impares a la izquierda"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/viewer.py
 msgid "Two pages, odd on the right"
-msgstr ""
+msgstr "Dos páginas, impares a la derecha"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/viewer.py
 msgid "Facing pages, odd on the left"
-msgstr ""
+msgstr "Páginas enfrentadas, impares a la izquierda"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/viewer.py
 msgid "Facing pages, odd on the right"
-msgstr ""
+msgstr "Páginas enfrentadas, impares a la derecha"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/viewer.py
 msgid "Hide the viewer's toolbar"
-msgstr ""
+msgstr "Ocultar la barra de herramientas del visor"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/viewer.py
 msgid "Hide the viewer's menu bar"
-msgstr ""
+msgstr "Ocultar la barra de menús del visor"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/viewer.py
 msgid "Centre the window on screen"
-msgstr ""
+msgstr "Centrar la ventana en la pantalla"
 
+# machine translation, unreviewed
 #: pdfarranger_qt/viewer.py
 msgid "Show the title rather than the filename"
-msgstr ""
+msgstr "Mostrar el título en lugar del nombre del archivo"
 
 #~ msgid "Generate Booklet"
 #~ msgstr "Generar folleto"
