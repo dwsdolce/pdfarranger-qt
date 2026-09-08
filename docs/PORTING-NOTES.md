@@ -460,7 +460,7 @@ something can change and closing it is how the item would be lost:
 - [Issue #10](https://github.com/dwsdolce/pdfarranger-qt/issues/10) — split view with full-page preview
 - [Issue #11](https://github.com/dwsdolce/pdfarranger-qt/issues/11) — dual-pane merging
 - [Issue #12](https://github.com/dwsdolce/pdfarranger-qt/issues/12) — visible undo history
-- [x] **Own the reader's view, on the engine we already have.** Done. Cost about
+- [x] **Own the reader's view, on the engine we already have.** Cost about
       what was predicted --
       comparable in size to phase 6. Every reader limitation met until then
       traced to `QPdfView` being a closed widget rather than to the engine

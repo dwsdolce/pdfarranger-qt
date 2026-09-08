@@ -31,6 +31,18 @@ as fixed as any other historical fact. What is not allowed is a phase number as
 the **name** of a body of work, or as somewhere to go and look, which is what
 phases 8 and 9 had become.
 
+**Done is a checkbox, never a word.** `- [x]` finished, `- [~]` partly, with
+the reason on the same item. Not *"— **done**"* appended to a heading, not
+*"Done."* after a ticked box, not both at once — all three were in use here at
+the same time, which is why the state of the internationalisation work could
+not be read off the page.
+
+**An unticked box never appears in a document.** `- [ ]` is a to-do nobody is
+assigned to and nothing closes; open work is an
+[Issue](https://github.com/dwsdolce/pdfarranger-qt/issues). So a checkbox in
+`docs/` is a record of something finished, and the documents describe the
+approach while GitHub holds the status. `tests/test_docs.py` enforces it.
+
 **Documents cite each other by title, never by position.**
 `[FINDINGS.md](FINDINGS.md), *Owning the reader's view*`. Numbers move when
 anything is inserted above them; titles move with the thing they name. This was

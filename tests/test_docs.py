@@ -199,3 +199,55 @@ class TestTheDocumentsHangTogether(unittest.TestCase):
     def test_the_readme_points_at_the_documentation(self):
         readme = open(os.path.join(ROOT, "README.md"), encoding="utf-8").read()
         self.assertIn("docs/README.md", readme)
+
+
+class TestHowThingsAreMarkedDone(unittest.TestCase):
+    """One notation, and status lives in Issues rather than here.
+
+    Three notations were in use at once -- a ticked box, "**done**" appended to
+    a heading, and "Done." after the box -- so what was finished could not be
+    read off the page. See CONVENTIONS.md, *How to refer to things*.
+    """
+
+    def documents(self):
+        return sorted(name for name in os.listdir(DOCS) if name.endswith(".md"))
+
+    def test_no_document_holds_an_unticked_box(self):
+        """`- [ ]` is a to-do nobody is assigned to and nothing closes."""
+        for name in self.documents():
+            text = open(os.path.join(DOCS, name), encoding="utf-8").read()
+            for number, line in enumerate(text.splitlines(), 1):
+                with self.subTest(f"{name}:{number}"):
+                    self.assertNotRegex(
+                        line.rstrip(), r"^\s*[-*] \[ \]",
+                        f"docs/{name}:{number} has an open checkbox; "
+                        f"open work belongs in an Issue")
+
+    def test_a_section_heading_uses_one_word_for_it(self):
+        """A heading may state the status of the section it names.
+
+        What it may not do is pick a different word each time. `**complete**`
+        throughout, because that is what the port's phase headings have always
+        used and there are more of them than of anything else.
+        """
+        wrong = re.compile(r"(?i)[—-]\s*\*\*(?!complete\*\*)(done|finished|"
+                           r"landed)\*\*\s*$")
+        for name in self.documents():
+            text = open(os.path.join(DOCS, name), encoding="utf-8").read()
+            for number, line in enumerate(text.splitlines(), 1):
+                if not line.startswith("#"):
+                    continue
+                with self.subTest(f"{name}:{number}"):
+                    self.assertIsNone(
+                        wrong.search(line),
+                        f"docs/{name}:{number} says it another way; "
+                        f"use '**complete**'")
+
+    def test_a_ticked_box_does_not_also_say_done(self):
+        pattern = re.compile(r"^\s*[-*] \[[x~]\].*\bDone\.")
+        for name in self.documents():
+            text = open(os.path.join(DOCS, name), encoding="utf-8").read()
+            for number, line in enumerate(text.splitlines(), 1):
+                with self.subTest(f"{name}:{number}"):
+                    self.assertIsNone(pattern.match(line),
+                                      f"docs/{name}:{number} says it twice")
