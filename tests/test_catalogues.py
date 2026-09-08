@@ -30,7 +30,7 @@ became ratchets instead:
 - **markup** — 31 translated entries carry a tag, 0 disagree. Hard failure.
 - **plural forms** — every plural entry already has the count its locale
   declares. Hard failure.
-- **mnemonics kept** — 101 of 2239 are dropped, in 15 of the 33 languages;
+- **mnemonics kept** — 101 of 2272 are dropped, in 15 of the 33 languages;
   Catalan loses 38 of 46. Upstream's translations, and adding an accelerator to
   Catalan is a translation decision rather than a repair. Ratchet.
 - **mnemonics unique within a menu** — every language collides, *including
@@ -78,8 +78,8 @@ MNEMONICS_LOST = {
 #: is in here because English collides too -- this is not a translation fault.
 CLASHES = {
     "ar": 3, "ca": 2, "ca@valencia": 2, "cs": 2, "da": 2, "de": 10,
-    "el": 3, "en": 5, "es": 5, "eu": 8, "fi": 6, "fr": 4,
-    "he": 4, "hr": 3, "hu": 4, "id": 11, "is": 3, "it": 7,
+    "el": 2, "en": 5, "es": 5, "eu": 8, "fi": 6, "fr": 4,
+    "he": 4, "hr": 3, "hu": 3, "id": 11, "is": 3, "it": 7,
     "ja": 5, "ka": 4, "ko": 4, "nl": 6, "oc": 11, "pl_PL": 2,
     "pt_BR": 7, "pt_PT": 5, "ru": 5, "sl": 2, "sv": 4, "tr": 9,
     "uk": 5, "vi": 12, "zh_CN": 5, "zh_TW": 5,
@@ -497,3 +497,85 @@ class TestThePreferenceOffersWhatExists(CatalogueTestCase):
                                      f"{code} is offered but loads nothing")
         finally:
             i18n.setup(None)
+
+
+class TestNoWordMixesTwoScripts(CatalogueTestCase):
+    """A Latin `o` inside a Cyrillic word, and everything like it.
+
+    Russian carried `% oт высоты` -- Latin U+006F where Cyrillic U+043E
+    belongs. It renders identically, it survived every check in this file, and
+    it came in with a human translation rather than a machine one. The same
+    slip nearly reached Croatian from this side: `visеće` with a Cyrillic `е`.
+
+    Whole strings mix scripts all the time and must: `PDF`, `Ctrl+G` and `GNU
+    General Public License` appear in every catalogue. So the rule is per
+    *word*, where mixing is essentially never deliberate.
+
+    The exception is real rather than a workaround. Korean attaches its
+    particles straight onto a Latin loanword -- `Arranger는`, `pikepdf의` --
+    and Japanese runs kanji, hiragana and katakana together. Latin beside CJK
+    is how those languages are written.
+    """
+
+    #: Japanese and Korean are one writing system for this purpose.
+    FAMILIES = {"HAN": "CJK", "HIRAGANA": "CJK", "KATAKANA": "CJK",
+                "HANGUL": "CJK"}
+
+    #: Latin next to CJK in one word is Korean and Japanese orthography.
+    ALLOWED = frozenset([frozenset({"LATIN", "CJK"})])
+
+    SCRIPTS = ("LATIN", "CYRILLIC", "GREEK", "HEBREW", "ARABIC", "HAN",
+               "HIRAGANA", "KATAKANA", "HANGUL", "GEORGIAN", "ARMENIAN")
+
+    #: A run of letters. `\d` and `_` are excluded so that `Ctrl+G` and
+    #: `HKEY_CURRENT_USER` split into their parts rather than reading as one
+    #: mixed word.
+    WORD = re.compile(r"[^\W\d_]+", re.UNICODE)
+
+    def script_of(self, character):
+        import unicodedata
+
+        name = unicodedata.name(character, "")
+        for script in self.SCRIPTS:
+            if name.startswith(script):
+                return self.FAMILIES.get(script, script)
+        return None
+
+    def mixed_words(self, text):
+        found = []
+        for word in self.WORD.findall(text):
+            scripts = {s for s in map(self.script_of, word) if s}
+            if len(scripts) > 1 and frozenset(scripts) not in self.ALLOWED:
+                found.append((word, sorted(scripts)))
+        return found
+
+    def test_the_detector_fires_on_a_known_homoglyph(self):
+        """Without this, a check measuring nothing would pass forever."""
+        self.assertEqual(self.mixed_words("% o\u0442 \u0432\u044b\u0441\u043e\u0442\u044b"),
+                         [("o\u0442", ["CYRILLIC", "LATIN"])],
+                         "the Latin o that was really in ru.po")
+        self.assertEqual(self.mixed_words("Izbri\u0161i vis\u0435\u0107e"),
+                         [("vis\u0435\u0107e", ["CYRILLIC", "LATIN"])])
+        # And does not fire on the things that legitimately mix.
+        self.assertEqual(self.mixed_words("Arranger\ub294 pikepdf\uc758"), [])
+        self.assertEqual(self.mixed_words("PDF Arranger, Ctrl+G"), [])
+        self.assertEqual(self.mixed_words("HKEY_CURRENT_USER"), [])
+
+    def test_no_translation_mixes_scripts_inside_one_word(self):
+        for language in self.languages:
+            for message in catalogue(language):
+                if not message.id:
+                    continue
+                forms = (message.string
+                         if isinstance(message.string, (list, tuple))
+                         else [message.string])
+                for form in forms:
+                    if not form:
+                        continue
+                    found = self.mixed_words(form)
+                    if found:
+                        with self.subTest(language=language):
+                            self.fail(
+                                f"{language}: {found} in {form!r} -- one word "
+                                f"drawn from two writing systems, which is "
+                                f"almost always a homoglyph typo")

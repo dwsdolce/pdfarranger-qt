@@ -1,833 +1,2729 @@
 # This file is part of PDF Arranger which is released under the GNU General
 # Public License version 3 or later.
-# See file COPYING or go to <http://www.gnu.org/licenses/> for full license details.
+# See file COPYING or go to <http://www.gnu.org/licenses/> for full license
+# details.
 # Translators:
 # Péter Bojtos <ptr@ulx.hu>, 2011
 msgid ""
 msgstr ""
+"Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-02-24 20:19+0100\n"
+"POT-Creation-Date: 2026-09-07 19:17+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Poedit-Language: Hungarian\n"
-"X-Poedit-Country: HUNGARY\n"
-"X-Poedit-SourceCharset: utf-8\n"
+"X-Generator: pdfarranger-qt tools/merge_translations.py\n"
+"Generated-By: Babel 2.18.0\n"
 
-#: pdfarranger/splitter.py:87
-msgid "#Col"
-msgstr "Oszlop száma"
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py pdfarranger_qt/reader.py
+#, python-brace-format
+msgid "Page {}"
+msgstr "Oldal {}"
 
-#: pdfarranger/splitter.py:87
-msgid "#Row"
-msgstr "Sor száma"
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Open Link"
+msgstr "Hivatkozás megnyitása"
 
-#: pdfarranger/pageutils.py:127 pdfarranger/pageutils.py:453
-#: pdfarranger/pageutils.py:455
-msgid "%"
-msgstr "%"
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Copy Link Address"
+msgstr "Hivatkozás címének másolása"
 
-#: pdfarranger/pageutils.py:176
-#, python-format
-msgid "% of height"
-msgstr "A magasság százaléka"
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+#, python-brace-format
+msgid "Go to {}"
+msgstr "Ugrás ide: {}"
 
-#: pdfarranger/pageutils.py:176
-#, python-format
-msgid "% of width"
-msgstr "A szélesség százaléka"
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Follow Link"
+msgstr "Hivatkozás követése"
 
-#: pdfarranger/pdfarranger.py:2764
-#, python-format
-msgid "%s is a tool for rearranging and modifying PDF files."
-msgstr ""
-"A(z) %s egy olyan eszköz, mellyel átrendezhetők és módosíthatóak a PDF-"
-"fájlok."
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py pdfarranger_qt/mainwindow.py
+msgid "Copy"
+msgstr "Másolás"
 
-#: pdfarranger/config.py:262
-msgid "(Libhandy missing)"
-msgstr "(libhandy-könyvtár hiányzik)"
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Select All"
+msgstr "Az összes kijelölése"
 
-#: pdfarranger/config.py:254
-msgid "(Requires restart)"
-msgstr "(Újraindítás szükséges)"
-
-#: pdfarranger/pdfarranger.py:1144
-#, python-format
-msgid "A file named \"%s\" already exists. Do you want to replace it?"
-msgstr "A(z) „%s” nevű fájl már létezik. Szeretné felülírni?"
-
-#: data/menu.ui:227 data/menu.ui:391
-msgid "All From _Same File"
-msgstr "Mindegyik _ugyanabból a fájlból"
-
-#: pdfarranger/pdfarranger.py:518
-msgid "All files"
-msgstr "Minden fájl"
-
-#: pdfarranger/pdfarranger.py:470
-msgid "All pages must have the same size."
-msgstr "Minden oldalnak azonos méretűnek kell lennie."
-
-#: pdfarranger/pdfarranger.py:506
-msgid "All supported files"
-msgstr "Minden támogatott fájl"
-
-#: pdfarranger/exporter.py:563
-msgid "Auto Rotate"
-msgstr "Automatikus forgatás"
-
-#: pdfarranger/pageutils.py:154
-msgid "Bottom"
-msgstr "Alulról"
-
-#: pdfarranger/pageutils.py:386
-msgid "Bottom to Top"
-msgstr "Alulról felfelé"
-
-#: pdfarranger/core.py:569
-msgid "Clipboard image"
-msgstr "Vágólap képe"
-
-#: pdfarranger/pageutils.py:369 pdfarranger/splitter.py:60
-msgid "Columns"
-msgstr "Oszlopok"
-
-#: data/menu.ui:141 data/menu.ui:354
-msgid "Copy _Image"
-msgstr "_Kép másolása"
-
-#: data/menu.ui:146 data/menu.ui:359
-msgid "Copy _Text"
-msgstr "_Szöveg másolása"
-
-#: pdfarranger/metadata.py:49
-msgid "Created"
-msgstr "Készült"
-
-#: pdfarranger/metadata.py:47
-msgid "Creator"
-msgstr "Készítő"
-
-#: pdfarranger/metadata.py:48
-msgid "Creator tool"
-msgstr "Készítő eszköz"
-
-#: pdfarranger/pageutils.py:846
-msgid "Crop Margins"
-msgstr "Margók körülvágása"
-
-#: data/menu.ui:174 data/menu.ui:432
-msgid "Crop White Borders"
-msgstr "Fehér szegélyek körülvágása"
-
-#: pdfarranger/pageutils.py:166 pdfarranger/pdfarranger.py:2730
-msgid ""
-"Cropping/hiding does not remove any content from the PDF file, it only hides "
-"it."
-msgstr ""
-"A körbevágás/elrejtés nem távolít el semmilyen tartalmat a PDF fájlból, csak "
-"elrejti azt."
-
-#: data/menu.ui:94 data/menu.ui:302
-msgid "Cu_t"
-msgstr "_Kivágás"
-
-#: pdfarranger/pdfarranger.py:1258
-msgid "Despite the warnings the document(s) should have no visible issues."
-msgstr ""
-"A figyelmeztetések ellenére a dokumentum(ok)on nem lehetnek látható hibák."
-
-#: pdfarranger/pdfarranger.py:993
-msgid "Discard changes and close?"
-msgstr "Módosítások elvetése és bezárás?"
-
-#: pdfarranger/pdfarranger.py:1030
-msgid "Discard changes and quit?"
-msgstr "Módosítások elvetése és kilépés?"
-
-#: pdfarranger/pdfarranger.py:2737
-msgid "Do not show this dialog again."
-msgstr "Ne jelenjen meg újra ez a párbeszédpanel."
-
-#: pdfarranger/pdfarranger.py:984
-msgid "Do_n’t Save"
-msgstr "_Nincs mentés"
-
-#: pdfarranger/pdfarranger.py:1265
-msgid "Don't show warnings when saving again."
-msgstr "Ne jelenjen meg többé ez az üzenet mentéskor."
-
-#: data/menu.ui:178 data/menu.ui:436
-msgid "Dupl_icate"
-msgstr "Megkettő_zés"
-
-#: data/menu.ui:52 data/menu.ui:462
-msgid "E_xport"
-msgstr "Exportálás…"
-
-#: data/menu.ui:55 data/menu.ui:465
-msgid "E_xport Selection to a Single File…"
-msgstr "Kijelölés e_xportálása egyetlen fájlként…"
-
-#: data/menu.ui:266
-msgid "Edit _Properties"
-msgstr "_Tulajdonságok szerkesztése"
-
-#: pdfarranger/metadata.py:202
-msgid "Edit properties"
-msgstr "Tulajdonságok szerkesztése"
-
-#: pdfarranger/splitter.py:62
-msgid "Equal column width"
-msgstr "Azonos hasábszélesség"
-
-#: pdfarranger/splitter.py:62
-msgid "Equal row height"
-msgstr "Azonos sormagasság"
-
-#: pdfarranger/pdfarranger.py:1792
-msgid "Exploding into images…"
-msgstr "Képekké felbontása…"
-
-#: data/menu.ui:60 data/menu.ui:470
-msgid "Export Selection to _Individual Files…"
-msgstr "Kijelölés exportálása _külön fájlokként…"
-
-#: data/menu.ui:65 data/menu.ui:475
-msgid "Export _All Pages to Individual Files…"
-msgstr "Összes _oldal exportálása külön fájlokként"
-
-#: pdfarranger/pdfarranger.py:1102
-msgid "Export…"
-msgstr "Exportálás…"
-
-#: pdfarranger/core.py:571 pdfarranger/pdfarranger.py:1512
-msgid "File is neither pdf nor image"
-msgstr "A fájl nem pdf vagy kép"
-
-#: pdfarranger/pdfarranger.py:300
-msgid "File(s) to open"
-msgstr "Megnyitandó fájl(ok)"
-
-#: pdfarranger/exporter.py:561
-msgid "Fit to Full Page"
-msgstr "Teljes oldalhoz igazítás"
-
-#: pdfarranger/exporter.py:560
-msgid "Fit to Printable Area"
-msgstr "Nyomtatási területhez igazítás"
-
-#: pdfarranger/pdfarranger.py:2734
-msgid "For more info see"
-msgstr "További információért lásd"
-
-#: pdfarranger/config.py:271
-msgid "For more options see:"
-msgstr "További beállításokért lásd:"
-
-#: data/menu.ui:259
-msgid "Full_screen"
-msgstr "_Teljes képernyő"
-
-#: pdfarranger/pdfarranger.py:2778
-msgid "GNU General Public License (GPL) Version 3."
-msgstr ""
-"GNU GPL (General Public License - általános nyilvános engedély) 3. verzió."
-
-#: data/menu.ui:198 data/menu.ui:456
-msgid "Generate Booklet"
-msgstr "Füzet létrehozása"
-
-#: pdfarranger/pageutils.py:248 pdfarranger/pageutils.py:252
-#: pdfarranger/pageutils.py:334
-msgid "Height"
-msgstr "Magasság"
-
-#: pdfarranger/splitter.py:88
-msgid "Height in %"
-msgstr "Magasság százalékként"
-
-#: pdfarranger/pageutils.py:846
-msgid "Hide Margins"
-msgstr "Margók elrejtése"
-
-#: pdfarranger/pageutils.py:381
-msgid "Horizontal"
-msgstr "Vízszintes"
-
-#: pdfarranger/splitter.py:61
-msgid "Horizontal Splits"
-msgstr "Vízszintes felosztása"
-
-#: pdfarranger/pageutils.py:452
-msgid "Horizontal offset"
-msgstr "Vízszintes eltolása"
-
-#: pdfarranger/core.py:560
+#: pdfarranger_qt/core.py pdfarranger_qt/mainwindow.py
 msgid "Image files are only supported with img2pdf"
 msgstr "A képfájlokat csak az img2pdf támogatja"
 
-#: pdfarranger/core.py:566
-msgid "Image format is not supported by img2pdf"
-msgstr "Az img2pdf nem támogatja a képformátumot"
-
-#: pdfarranger/pdfarranger.py:1789
-msgid "Img2pdf missing."
-msgstr "Az img2pdf hiányzik."
-
-#: data/pdfarranger.ui:58
-msgid "Import"
-msgstr "Importálás"
-
-#: pdfarranger/pdfarranger.py:1335
-msgid "Import…"
-msgstr "Importálás…"
-
-#: data/menu.ui:194 data/menu.ui:452
-msgid "Insert Blan_k Page…"
-msgstr "Üres oldal bes_zúrása…"
-
-#: pdfarranger/pageutils.py:331
-msgid "Insert Blank Page"
-msgstr "Üres oldal beszúrása"
-
-#: pdfarranger/metadata.py:173
-msgid "Invalid date format. Input discarded."
-msgstr "Érvénytelen dátumformátum. A bevitelt elvetve."
-
-#: pdfarranger/pdfarranger.py:2767
-#, python-format
-msgid "It uses libqpdf %s, pikepdf %s, GTK %s and Python %s."
-msgstr "A libqpdf %s, a pikepdf %s, a GTK %s és a Python %s használata"
-
-#: pdfarranger/metadata.py:45
-msgid "Keywords"
-msgstr "Kulcsszavak"
-
-#: pdfarranger/config.py:252
-msgid "Language"
-msgstr "Nyelv"
-
-#: pdfarranger/pageutils.py:154
-msgid "Left"
-msgstr "Balról"
-
-#: pdfarranger/pageutils.py:383
-msgid "Left to Right"
-msgstr "Balról jobbra"
-
-#: data/pdfarranger.ui:122
-msgid "Main Menu"
-msgstr "Főmenü"
-
-#: pdfarranger/pdfarranger.py:2773
-msgid "Maintainers and contributors"
-msgstr "Fenntartók és közreműködők"
-
-#: pdfarranger/pageutils.py:367
-msgid "Margin"
-msgstr "Margó"
-
-#: pdfarranger/pageutils.py:353
-msgid "Merge Pages"
-msgstr "Oldalak egyesítése"
-
-#: pdfarranger/pageutils.py:418
-msgid "Merged page size:"
-msgstr "Egyesített oldal mérete:"
-
-#: pdfarranger/metadata.py:50
-msgid "Modified"
-msgstr "Módosítva"
-
-#: pdfarranger/pageutils.py:398
-msgid "Non-uniform page size - using max size"
-msgstr "Nem egységes oldalméret – a legfeljebb méret használata"
-
-#: pdfarranger/exporter.py:559
-msgid "None"
-msgstr "Nincs"
-
-#: pdfarranger/pdfarranger.py:2723
-msgid "Note"
-msgstr "Megjegyzés"
-
-#: pdfarranger/pdfarranger.py:2729
-msgid "Note the limitations:"
-msgstr "Vegye figyelembe a korlátozásokat:"
-
-#: data/pdfarranger.ui:37
-msgid "Open"
-msgstr "Megnyitás"
-
-#: pdfarranger/pdfarranger.py:1200
-msgid "Open…"
-msgstr "Megnyitás…"
-
-#: pdfarranger/pdfarranger.py:2731
-msgid "Outlines and links can be preserved only in certain cases."
-msgstr "A körvonalak és a hivatkozások csak bizonyos esetekben őrizhetők meg."
-
-#: pdfarranger/pageutils.py:899
-msgid "Overlay"
-msgstr "Átfedés"
-
-#: pdfarranger/pdfarranger.py:281
-msgid ""
-"PDF Arranger is a small python-gtk application, which helps the user to "
-"merge or split pdf documents and rotate, crop and rearrange their pages "
-"using an interactive and intuitive graphical interface. It is a frontend for "
-"pikepdf."
-msgstr ""
-"A PDF-rendező egy kis python-gtk alkalmazás, amely egy interaktív és "
-"intuitív grafikus felület segítségével segíti a felhasználót a pdf "
-"dokumentumok egyesítésében vagy felosztásában, valamint az oldalak "
-"elforgatásában, kivágásában és átrendezésében. Ez a pikepdf Python-könyvtár "
-"kezelőfelülete."
-
-#: pdfarranger/pdfarranger.py:1506
-msgid "PDF document is damaged"
-msgstr "A PDF-dokumentum sérült"
-
-#: pdfarranger/pdfarranger.py:510
-msgid "PDF files"
-msgstr "PDF-fájlok"
-
-#: pdfarranger/exporter.py:599
-msgid "Page Handling"
-msgstr "Oldalkezelés"
-
-#: pdfarranger/pageutils.py:394
-msgid "Page Order"
-msgstr "Oldalsorrend"
-
-#: pdfarranger/pdfarranger.py:2801
-msgid "Page Size:"
-msgstr "Oldalméret:"
-
-#: pdfarranger/pageutils.py:243
-msgid "Page size"
-msgstr "Oldalméret"
-
-#: pdfarranger/core.py:457
-msgid "Password"
-msgstr "Jelszó"
-
-#: pdfarranger/core.py:435
-msgid "Password required"
-msgstr "Jelszó szükséges"
-
-#: data/menu.ui:107 data/menu.ui:315
-msgid "Past_e Special"
-msgstr "Irá_nyított beillesztés"
-
-#: data/menu.ui:124 data/menu.ui:333
-msgid "Paste As O_verlay…"
-msgstr "Beillesztés _átfedésként…"
-
-#: data/menu.ui:119 data/menu.ui:328
-msgid "Paste As _Even Pages"
-msgstr "Beillesztés _páros oldalakként"
-
-#: data/menu.ui:114 data/menu.ui:323
-msgid "Paste As _Odd Pages"
-msgstr "Beillesztés párat_lan oldalakként"
-
-#: data/menu.ui:129 data/menu.ui:338
-msgid "Paste As _Underlay…"
-msgstr "Beillesztés _alátfedésként…"
-
-#: data/menu.ui:102 data/menu.ui:310
-msgid "Paste _After"
-msgstr "Beillesztés _után"
-
-#: data/menu.ui:109 data/menu.ui:318
-msgid "Paste _Before"
-msgstr "Beillesztés _előtt"
-
-#: pdfarranger/pdfarranger.py:1636
-msgid "Pasted data not valid. Aborting paste."
-msgstr "A beillesztett adatok érvénytelenek. A beillesztés megszakadt."
-
-#: data/menu.ui:272
-msgid "Pre_ferences"
-msgstr "_Beállítások"
-
-#: pdfarranger/config.py:242
-msgid "Preferences"
-msgstr "Beállítások"
-
-#: pdfarranger/pdfarranger.py:292
-msgid "Print the version of PDF Arranger and exit"
-msgstr "PDF-rendező verzió nyomtatása és kilépés"
-
-#: pdfarranger/config.py:267
-msgid "Printing"
-msgstr "Nyomtatás"
-
-#: pdfarranger/exporter.py:579
-msgid "Printing…"
-msgstr "Nyomtatás…"
-
-#: pdfarranger/metadata.py:46
-msgid "Producer"
-msgstr "Gyártó"
-
-#: pdfarranger/metadata.py:216
-msgid "Property"
-msgstr "Tulajdonság"
-
-#: data/menu.ui:182 data/menu.ui:440
-msgid "Re_verse Order"
-msgstr "Sorrend meg_fordítása"
-
-#: pdfarranger/pageutils.py:250
-msgid "Relative"
-msgstr "Viszonylagos"
-
-#: pdfarranger/exporter.py:617
-msgid "Rendering Preview…"
-msgstr "Előnézet megjelenítése…"
-
-#: pdfarranger/pdfarranger.py:746
-msgid "Rendering…"
-msgstr "Renderelés folyamatban van…"
-
-#: pdfarranger/pdfarranger.py:1146
-msgid "Replace"
-msgstr "Csere"
-
-#: pdfarranger/pageutils.py:154
-msgid "Right"
-msgstr "Jobbról"
-
-#: pdfarranger/pageutils.py:384
-msgid "Right to Left"
-msgstr "Jobbról balra"
-
-#: data/pdfarranger.ui:203
-msgid "Rotate Left"
-msgstr "Forgatás balra"
-
-#: data/pdfarranger.ui:227
-msgid "Rotate Right"
-msgstr "Forgatás jobbra"
-
-#: data/menu.ui:152 data/menu.ui:410
-msgid "Rotate _Left"
-msgstr "Forgatás _balra"
-
-#: pdfarranger/pageutils.py:370 pdfarranger/splitter.py:60
-msgid "Rows"
-msgstr "Sorok"
-
-#: data/menu.ui:232 data/menu.ui:396
-msgid "Same Page _Format"
-msgstr "Ugyanaz az oldal_formátum"
-
-#: data/pdfarranger.ui:78
-msgid "Save"
-msgstr "Mentés"
-
-#: data/pdfarranger.ui:97
-msgid "Save As"
-msgstr "Mentés másként…"
-
-#: pdfarranger/pdfarranger.py:1102
-msgid "Save As…"
-msgstr "Mentés másként…"
-
-#: data/menu.ui:47
-msgid "Save _As…"
-msgstr "Menté_s másként…"
-
-#: pdfarranger/pdfarranger.py:1002
-msgid "Save changes before closing?"
-msgstr "Menti a módosításokat a bezárás előtt?"
-
-#: pdfarranger/pdfarranger.py:1039
-msgid "Save changes before quitting?"
-msgstr "Menti a módosításokat a kilépés előtt?"
-
-#: pdfarranger/pdfarranger.py:999
-msgid "Save changes to “{}” before closing?"
-msgstr "Menti a változásokat a(z) „{}” fájlba bezárás előtt?"
-
-#: pdfarranger/pdfarranger.py:1036
-msgid "Save changes to “{}” before quitting?"
-msgstr "Menti a(z) „{}” módosításait a kilépés előtt?"
-
-#: pdfarranger/pdfarranger.py:1257
-msgid "Saving produced some warnings"
-msgstr "A mentés néhány figyelmeztetést jelentett"
-
-#: pdfarranger/pdfarranger.py:1296
-msgid "Saving…"
-msgstr "Mentés…"
-
-#: pdfarranger/pageutils.py:121
-msgid "Scale factor"
-msgstr "Nagyságrendi tényező"
-
-#: pdfarranger/exporter.py:557
-msgid "Scale mode:"
-msgstr "Méretezési mód:"
-
-#: data/menu.ui:207 data/menu.ui:371
-msgid "Select _All"
-msgstr "_Az összes kijelölése"
-
-#: data/menu.ui:222 data/menu.ui:386
-msgid "Select _Even Pages"
-msgstr "_Páros oldalak kijelölése"
-
-#: data/menu.ui:217 data/menu.ui:381
-msgid "Select _Odd Pages"
-msgstr "Párat_lan oldalak kijelölése"
-
-#: pdfarranger/pdfarranger.py:2796
-msgid "Selected pages: "
-msgstr "Kiválasztott oldalak: "
-
-#: pdfarranger/pageutils.py:548
-msgid "Show values"
-msgstr "Értékek megjelenítése"
-
-#: pdfarranger/splitter.py:26
-msgid "Split Pages"
-msgstr "Oldalak felosztása"
-
-#: pdfarranger/metadata.py:44
-msgid "Subject"
-msgstr "Tárgy"
-
-#: pdfarranger/pdfarranger.py:523
-msgid "Supported image files"
-msgstr "Támogatott képfájlok"
-
-#: pdfarranger/config.py:282 pdfarranger/config.py:290
-msgid "System setting"
-msgstr "Rendszerbeállítás"
-
-#: pdfarranger/core.py:447
-msgid ""
-"The document “{}” is locked and requires a password before it can be opened."
-msgstr "A(z) „{}” dokumentum zárolva van és megnyitásához jelszó szükséges."
-
-#: pdfarranger/pdfarranger.py:1765
-msgid "The page has several images. Use \"Explode into Images\" first.\""
-msgstr "Az oldalon több kép található. A „Képekké felbontása” első használat."
-
-#: pdfarranger/core.py:446
-msgid "The password will be remembered until you close PDF Arranger."
-msgstr "A jelszó mindaddig emlékezetes marad, amíg bezárja a PDF-rendezőt"
-
-#: pdfarranger/config.py:260
-msgid "Theme"
-msgstr "Téma"
-
-#: pdfarranger/metadata.py:43
-msgid "Title"
-msgstr "Cím"
-
-#: pdfarranger/pageutils.py:154
-msgid "Top"
-msgstr "Felülről"
-
-#: pdfarranger/pageutils.py:385
-msgid "Top to Bottom"
-msgstr "Fentről lefelé"
-
-#: pdfarranger/pageutils.py:899
-msgid "Underlay"
-msgstr "Alátfedés"
-
-#: pdfarranger/core.py:544 pdfarranger/pdfarranger.py:1502
+# machine translation, unreviewed
+#: pdfarranger_qt/core.py
+msgid "File not found"
+msgstr "A fájl nem található"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/core.py
+msgid "Invalid file format"
+msgstr "Érvénytelen fájlformátum"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/core.py
+msgid "Data not yet available"
+msgstr "Az adatok még nem érhetők el"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/core.py
+msgid "Unsupported security scheme"
+msgstr "Nem támogatott biztonsági séma"
+
+#: pdfarranger_qt/core.py
 msgid "Unknown file format"
 msgstr "Ismeretlen fájlformátum"
 
-#: pdfarranger/pdfarranger.py:2735
-msgid "User Manual"
-msgstr "Felhasználói kézikönyv"
+#: pdfarranger_qt/core.py
+msgid "Image format is not supported by img2pdf"
+msgstr "Az img2pdf nem támogatja a képformátumot"
 
-#: pdfarranger/metadata.py:216
-msgid "Value"
-msgstr "Érték"
+#: pdfarranger_qt/core.py
+msgid "File is neither pdf nor image"
+msgstr "A fájl nem pdf vagy kép"
 
-#: pdfarranger/pageutils.py:382
-msgid "Vertical"
-msgstr "Függőleges"
+# machine translation, unreviewed
+#: pdfarranger_qt/core.py
+msgid "Cannot open document"
+msgstr "A dokumentum nem nyitható meg"
 
-#: pdfarranger/splitter.py:61
-msgid "Vertical Splits"
-msgstr "Függőleges felosztása"
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Paper size"
+msgstr "Papírméret"
 
-#: pdfarranger/pageutils.py:454
-msgid "Vertical offset"
-msgstr "Függőleges eltolása"
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Custom"
+msgstr "Egyéni"
 
-#: pdfarranger/pageutils.py:247 pdfarranger/pageutils.py:251
-#: pdfarranger/pageutils.py:333
-msgid "Width"
-msgstr "Szélesség"
-
-#: pdfarranger/splitter.py:88
-msgid "Width in %"
-msgstr "Szélesség százalékként"
-
-#: pdfarranger/pdfarranger.py:983
-msgid "Your changes will be lost if you don’t save them."
-msgstr "A változtatások elvesznek, ha nem menti őket."
-
-#: data/pdfarranger.ui:144
-msgid "Zoom In"
-msgstr "Nagyítás"
-
-#: data/pdfarranger.ui:167
-msgid "Zoom Out"
-msgstr "Kicsinyítés"
-
-#: data/menu.ui:255
-msgid "Zoom _Fit"
-msgstr "_Mérethez igazítás"
-
-#: data/menu.ui:247
-msgid "Zoom _In"
-msgstr "Na_gyítás"
-
-#: data/menu.ui:251
-msgid "Zoom _Out"
-msgstr "Ki_csinyítés"
-
-#: data/menu.ui:278
-msgid "_About"
-msgstr "_Névjegy"
-
-#: pdfarranger/pageutils.py:856
-msgid "_Apply"
-msgstr "_Alkalmazás"
-
-#: pdfarranger/config.py:246 pdfarranger/pageutils.py:227
-#: pdfarranger/pdfarranger.py:975 pdfarranger/pdfarranger.py:984
-#: pdfarranger/pdfarranger.py:1108 pdfarranger/pdfarranger.py:1158
-msgid "_Cancel"
-msgstr "_Mégse"
-
-#: pdfarranger/pdfarranger.py:994 data/menu.ui:284
-msgid "_Close"
-msgstr "_Bezárás"
-
-#: data/menu.ui:98 data/menu.ui:306
-msgid "_Copy"
-msgstr "_Másolás"
-
-#: data/menu.ui:166 data/menu.ui:424
-msgid "_Crop Margins…"
-msgstr "Margók ki_vágása…"
-
-#: data/menu.ui:90 data/menu.ui:298
-msgid "_Delete"
-msgstr "_Törlés"
-
-#: data/menu.ui:212 data/menu.ui:376
-msgid "_Deselect All"
-msgstr "Öss_zes kijelölés törlése"
-
-#: data/menu.ui:87
-msgid "_Edit"
-msgstr "S_zerkesztés"
-
-#: data/menu.ui:137 data/menu.ui:350
-msgid "_Explode into Images"
-msgstr "Képekké fel_bontása"
-
-#: data/menu.ui:135 data/menu.ui:347
-msgid "_Extract"
-msgstr "Ki_bontás"
-
-#: data/menu.ui:170 data/menu.ui:428
-msgid "_Hide Margins…"
-msgstr "Margók el_rejtése…"
-
-#: data/menu.ui:30
-msgid "_Import"
-msgstr "_Importálás…"
-
-#: data/menu.ui:237 data/menu.ui:401
-msgid "_Invert Selection"
-msgstr "Kijelölés meg_fordítása"
-
-#: data/menu.ui:190 data/menu.ui:448
-msgid "_Merge Pages…"
-msgstr "Oldalak _egyesítése…"
-
-#: data/menu.ui:36
-msgid "_New Window"
-msgstr "Új _ablak"
-
-#: pdfarranger/config.py:247 pdfarranger/pageutils.py:228
-msgid "_OK"
-msgstr "_Rendben"
-
-#: pdfarranger/pdfarranger.py:1157 data/menu.ui:24
-msgid "_Open"
-msgstr "_Megnyitás…"
-
-#: data/menu.ui:162 data/menu.ui:420
-msgid "_Page Size…"
-msgstr "_Oldalméret…"
-
-#: data/menu.ui:71
-msgid "_Print…"
-msgstr "_Nyomtatás…"
-
-#: pdfarranger/pdfarranger.py:1031 data/menu.ui:290
-msgid "_Quit"
-msgstr "_Kilépés"
-
-#: data/menu.ui:82
-msgid "_Redo"
-msgstr "Új_ra"
-
-#: pdfarranger/pageutils.py:856
-msgid "_Revert"
-msgstr "_Visszaállítás"
-
-#: data/menu.ui:157 data/menu.ui:415
-msgid "_Rotate Right"
-msgstr "Forgatás _jobbra"
-
-#: pdfarranger/pdfarranger.py:984 pdfarranger/pdfarranger.py:1107
-#: data/menu.ui:42
-msgid "_Save"
-msgstr "_Mentés"
-
-#: data/menu.ui:204 data/menu.ui:368
-msgid "_Select"
-msgstr "_Kijelölés"
-
-#: data/menu.ui:186 data/menu.ui:444
-msgid "_Split Pages…"
-msgstr "Oldalak fel_osztása…"
-
-#: data/menu.ui:78
-msgid "_Undo"
-msgstr "_Visszavonás"
-
-#: data/menu.ui:244
-msgid "_View"
-msgstr "_Nézet"
-
-#: pdfarranger/pageutils.py:144 pdfarranger/pageutils.py:368
-#: pdfarranger/pageutils.py:418
+#: pdfarranger_qt/dialogs.py
 msgid "mm"
 msgstr "mm"
 
-#: pdfarranger/core.py:326
-msgid "page"
-msgstr "oldal"
+#: pdfarranger_qt/dialogs.py
+msgid "Width"
+msgstr "Szélesség"
 
-#: pdfarranger/pdfarranger.py:825
-msgid "untitled"
-msgstr "névtelen"
+#: pdfarranger_qt/dialogs.py
+msgid "Height"
+msgstr "Magasság"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Keep aspect ratio"
+msgstr "Méretarány megtartása"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Portrait"
+msgstr "Álló"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Landscape"
+msgstr "Fekvő"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Orientation"
+msgstr "Tájolás"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Range Select"
+msgstr "Tartomány kijelölése"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Select range of pages: "
+msgstr "Oldaltartomány kijelölése: "
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Use a comma to separate page numbers, a dash to select a range of pages. \n"
+"e.g. : \"1,3,5-7,9\""
+msgstr ""
+"Az oldalszámokat vesszővel válassza el, oldaltartományt pedig kötőjellel "
+"jelöljön ki. \n"
+"pl.: \"1,3,5-7,9\""
+
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+msgid "Insert Blank Page"
+msgstr "Üres oldal beszúrása"
+
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+msgid "Page size"
+msgstr "Oldalméret"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Fit to paper"
+msgstr "Igazítás a papírhoz"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Relative"
+msgstr "Viszonylagos"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Scale"
+msgstr "Méretezés"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Scale & Add margins"
+msgstr "Méretezés és margók hozzáadása"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Crop & Add margins"
+msgstr "Vágás és margók hozzáadása"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Fit mode"
+msgstr "Igazítási mód"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Scale factor"
+msgstr "Nagyságrendi tényező"
+
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+msgid "Hide Margins"
+msgstr "Margók elrejtése"
+
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+msgid "Crop Margins"
+msgstr "Margók körülvágása"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Left"
+msgstr "Balról"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Right"
+msgstr "Jobbról"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Top"
+msgstr "Felülről"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Bottom"
+msgstr "Alulról"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Margins"
+msgstr "Margók"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Same for all sides"
+msgstr "Minden oldalon azonos"
+
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+msgid "Split Pages"
+msgstr "Oldalak felosztása"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Vertical Splits"
+msgstr "Függőleges felosztása"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Horizontal Splits"
+msgstr "Vízszintes felosztása"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+msgid "Pages per Sheet"
+msgstr "Oldal laponként"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Automatic"
+msgstr "Automatikus"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Automatic turns the sheet sideways when that lets the pages come out larger."
+msgstr ""
+"Az automatikus mód oldalra fordítja a lapot, ha így az oldalak nagyobbra "
+"jönnek ki."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Empty space left around each page."
+msgstr "Az egyes oldalak körül hagyott üres hely."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Layout"
+msgstr "Elrendezés"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Columns"
+msgstr "Oszlopok"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Rows"
+msgstr "Sorok"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Sheet"
+msgstr "Lap"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Gap"
+msgstr "Rés"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Appearance"
+msgstr "Megjelenés"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/reader.py
+msgid "Bold"
+msgstr "Félkövér"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/reader.py
+msgid "Italic"
+msgstr "Dőlt"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Font"
+msgstr "Betűtípus"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Size"
+msgstr "Méret"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Colour"
+msgstr "Szín"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Opacity"
+msgstr "Átlátszatlanság"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Position"
+msgstr "Pozíció"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Angle"
+msgstr "Szög"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+msgid "Add Page Numbers"
+msgstr "Oldalszámok hozzáadása"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+#, python-format
+msgid "%s is replaced by the page number, %s by the number of pages."
+msgstr "A %s helyére az oldalszám kerül, a %s helyére az oldalak száma."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Leave the first page unnumbered"
+msgstr "Az első oldal maradjon szám nélkül"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "It is still counted; a title page just does not carry a number."
+msgstr "Ettől még beleszámít; a címoldal csak nem visel számot."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Format"
+msgstr "Formátum"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Start at"
+msgstr "Kezdés ettől"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Numbering"
+msgstr "Számozás"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+msgid "Add Watermark"
+msgstr "Vízjel hozzáadása"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "DRAFT"
+msgstr "PISZKOZAT"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Text"
+msgstr "Szöveg"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Watermark"
+msgstr "Vízjel"
+
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+msgid "Merge Pages"
+msgstr "Oldalak egyesítése"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Overlay"
+msgstr "Átfedés"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Underlay"
+msgstr "Alátfedés"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/stamp.py
+msgid "Centre"
+msgstr "Középre"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Middle"
+msgstr "Középen"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Horizontal"
+msgstr "Vízszintes"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Vertical"
+msgstr "Függőleges"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Edit properties"
+msgstr "Tulajdonságok szerkesztése"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "System"
+msgstr "Rendszer"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Light"
+msgstr "Világos"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Dark"
+msgstr "Sötét"
+
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+msgid "Preferences"
+msgstr "Beállítások"
+
+#: pdfarranger_qt/dialogs.py
+msgid "System setting"
+msgstr "Rendszerbeállítás"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Language"
+msgstr "Nyelv"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Theme"
+msgstr "Téma"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "General"
+msgstr "Általános"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Fit to page"
+msgstr "Igazítás az oldalhoz"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Actual size"
+msgstr "Valós méret"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Auto Rotate"
+msgstr "Automatikus forgatás"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Pages are rasterised at this resolution before being sent to the printer. "
+"Lower it if printing is slow: the printer driver has less to process."
+msgstr ""
+"Az oldalak ezzel a felbontással raszterizálódnak, mielőtt a nyomtatóra "
+"kerülnének. Csökkentse, ha a nyomtatás lassú: a nyomtató-illesztőprogramnak "
+"kevesebbet kell feldolgoznia."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Scale mode"
+msgstr "Méretezési mód"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Pixels/inch:"
+msgstr "Képpont/hüvelyk:"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Printing"
+msgstr "Nyomtatás"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Preserve document information from the first file opened"
+msgstr "Dokumentumadatok megtartása az elsőként megnyitott fájlból"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "When checked: use document properties from the first file opened."
+msgstr "Bejelölve: az elsőként megnyitott fájl dokumentumtulajdonságainak használata."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "When unchecked: merge bookmarks from all documents."
+msgstr "Nincs bejelölve: az összes dokumentum könyvjelzőinek egyesítése."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Optimize for the web (linearize)"
+msgstr "Optimalizálás webre (linearizálás)"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Lay the file out so a browser can show page one before the rest has "
+"downloaded."
+msgstr ""
+"A fájl olyan elrendezése, hogy a böngésző megjeleníthesse az első oldalt, "
+"mielőtt a többi letöltődik."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Compress"
+msgstr "Tömörítés"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Recompress the file's streams and pack its objects together."
+msgstr "A fájl adatfolyamainak újratömörítése és objektumainak összecsomagolása."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"How much this saves depends on the file: one full of already-compressed "
+"images will barely shrink."
+msgstr ""
+"Hogy mennyit takarít meg, a fájltól függ: egy már tömörített képekkel teli "
+"fájl alig zsugorodik."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Saving/exporting to single file"
+msgstr "Mentés/exportálás egyetlen fájlba"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Greyscale"
+msgstr "Szürkeárnyalatos"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Image Export"
+msgstr "Képexportálás"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Keyboard shortcuts"
+msgstr "Gyorsbillentyűk"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Viewer Preferences"
+msgstr "Megjelenítő beállításai"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Open showing:"
+msgstr "Megnyitás ezzel:"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Page layout:"
+msgstr "Oldalelrendezés:"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "On opening"
+msgstr "Megnyitáskor"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Window"
+msgstr "Ablak"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Readers are free to ignore all of this."
+msgstr "Az olvasóprogramok mindezt nyugodtan figyelmen kívül hagyhatják."
+
+#: pdfarranger_qt/dialogs.py
+msgid "Password"
+msgstr "Jelszó"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Confirm password"
+msgstr "Jelszó megerősítése"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Enter a password, or cancel to leave the document unencrypted."
+msgstr ""
+"Adjon meg egy jelszót, vagy a mégse gombbal hagyja titkosítatlanul a "
+"dokumentumot."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "The passwords do not match."
+msgstr "A jelszavak nem egyeznek."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Reset"
+msgstr "Visszaállítás"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Description"
+msgstr "Leírás"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"PDF Arranger merges, splits, rearranges, rotates and crops PDF documents. "
+"Everything happens in memory against the pages you can see; nothing is "
+"written until you save."
+msgstr ""
+"A PDF Arranger PDF-dokumentumokat egyesít, bont, rendez át, forgat és vág "
+"körbe. Minden a memóriában történik, azokon az oldalakon, amelyeket lát; "
+"semmi sem íródik ki, amíg nem ment."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"It is a front end for pikepdf. Page content is never rewritten — only page "
+"order, geometry and composition."
+msgstr ""
+"Ez a pikepdf felülete. Az oldalak tartalma soha nem íródik újra — csak az "
+"oldalsorrend, a geometria és az összeállítás."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Command line"
+msgstr "Parancssor"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Files given on the command line are opened as one document. "
+"<code>--version</code> prints the version and exits."
+msgstr ""
+"A parancssorban megadott fájlok egyetlen dokumentumként nyílnak meg. A "
+"<code>--version</code> kiírja a verziót és kilép."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+msgid "Reading"
+msgstr "Olvasás"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"The application opens in <b>read mode</b>: a continuous page view for "
+"reading the document rather than rearranging it. <b>View ▸ Arrange Mode</b> "
+"(Ctrl+E) swaps to the thumbnail grid and back."
+msgstr ""
+"Az alkalmazás <b>olvasási módban</b> indul: folyamatos oldalnézetben, amely "
+"a dokumentum olvasására való, nem az átrendezésére. A <b>Nézet ▸ Rendezési "
+"mód</b> (Ctrl+E) a bélyegképrácsra vált és vissza."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Reading shows the document <i>as edited</i>: rotations, crops, deletions and"
+" reordering are all applied, so what you read is what you would get if you "
+"saved. Page-editing commands are disabled while reading — bookmarks are the "
+"exception, and are edited here and nowhere else."
+msgstr ""
+"Az olvasás a dokumentumot <i>a szerkesztések után</i> mutatja: a forgatások,"
+" vágások, törlések és átrendezések mind érvényesek, tehát amit olvas, azt "
+"kapná mentés esetén is. Az oldalszerkesztő parancsok olvasás közben ki "
+"vannak kapcsolva — a könyvjelzők a kivétel, azokat itt és sehol máshol nem "
+"lehet szerkeszteni."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"The page you are on follows you between the two modes. Switching to read "
+"mode opens at the page selected in the grid, the first of them if several "
+"are selected; switching back scrolls the grid to the page you were reading, "
+"without disturbing what you had selected. With nothing selected, reading "
+"resumes where you left off — your place in each document is remembered "
+"between visits."
+msgstr ""
+"Az az oldal, amelyen áll, elkíséri a két mód között. Olvasási módra váltva a"
+" rácsban kijelölt oldal nyílik meg, több kijelölés esetén az első; "
+"visszaváltáskor a rács arra az oldalra gördül, amelyet olvasott, anélkül "
+"hogy a kijelölést megbolygatná. Kijelölés nélkül az olvasás ott folytatódik,"
+" ahol abbahagyta — az egyes dokumentumokban elfoglalt helyét a program két "
+"látogatás között megjegyzi."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"The toolbar shows which page you are on and how many there are; type a "
+"number into it to jump there, or use <b>Ctrl+G</b>."
+msgstr ""
+"Az eszköztár mutatja, hányadik oldalon áll és hány oldal van; írjon bele egy"
+" számot az odaugráshoz, vagy használja a <b>Ctrl+G</b> billentyűt."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>View ▸ Continuous Scroll</b> is on by default; turning it off shows one "
+"page at a time. <b>View ▸ Facing Pages</b> puts two pages side by side, the "
+"way a book falls open. Both settings are remembered."
+msgstr ""
+"A <b>Nézet ▸ Folyamatos görgetés</b> alapból be van kapcsolva; kikapcsolva "
+"egyszerre egy oldal látszik. A <b>Nézet ▸ Szemben lévő oldalak</b> két "
+"oldalt tesz egymás mellé, ahogy a könyv kinyílik. Mindkét beállítást "
+"megjegyzi a program."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Moving around a document"
+msgstr "Mozgás a dokumentumban"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"One rule for the arrow keys: <b>the modifier decides what moves</b>. Nothing"
+" scrolls the view, Option (Alt) moves the text cursor, Shift extends the "
+"selection, Command (Ctrl) jumps to an edge, and Fn — Page Up, Page Down, "
+"Home and End — jumps further. None of it changes according to whether a text"
+" cursor happens to be on the page."
+msgstr ""
+"Egy szabály a nyílbillentyűkre: <b>a módosító dönti el, mi mozdul</b>. "
+"Semelyik a nézetet görgeti, az Option (Alt) a szövegkurzort mozgatja, a "
+"Shift a kijelölést bővíti, a Command (Ctrl) a szélre ugrik, az Fn — Page Up,"
+" Page Down, Home és End — pedig messzebbre. Ebből semmi nem változik attól "
+"függően, hogy van-e éppen szövegkurzor az oldalon."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Keys"
+msgstr "Billentyűk"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Continuous"
+msgstr "Folyamatos"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/viewer.py
+msgid "One page at a time"
+msgstr "Egyszerre egy oldal"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "scroll one line"
+msgstr "görgetés egy sorral"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "top of the previous / next page"
+msgstr "az előző / következő oldal teteje"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "previous / next page"
+msgstr "előző / következő oldal"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "scroll one screen"
+msgstr "görgetés egy képernyővel"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "start / end of the document"
+msgstr "a dokumentum eleje / vége"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "move the text cursor, by character or line"
+msgstr "a szövegkurzor mozgatása karakterenként vagy soronként"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "extend the selection, by character or line"
+msgstr "a kijelölés bővítése karakterenként vagy soronként"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "move the text cursor one word"
+msgstr "a szövegkurzor mozgatása egy szóval"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "extend the selection one word"
+msgstr "a kijelölés bővítése egy szóval"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "cursor to the start / end of the line"
+msgstr "kurzor a sor elejére / végére"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "cursor to the start / end of the document"
+msgstr "kurzor a dokumentum elejére / végére"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Add Shift to a Command or Option combination to extend the selection instead"
+" of moving — <b>Shift+Command+→</b> selects to the end of the line. Adding "
+"Option works by the word rather than the character. On Windows and Linux, "
+"read Command as Ctrl and Option as Alt; the table is the same everywhere."
+msgstr ""
+"Adjon Shiftet egy Command vagy Option kombinációhoz, hogy mozgatás helyett "
+"bővítse a kijelölést — a <b>Shift+Command+→</b> a sor végéig jelöl ki. Az "
+"Option hozzáadása szavanként dolgozik karakterek helyett. Windowson és "
+"Linuxon a Command Ctrlként, az Option Altként olvasandó; a táblázat "
+"mindenhol ugyanaz."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Selecting and copying text"
+msgstr "Szöveg kijelölése és másolása"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Drag across the page to select text, across page boundaries if you keep "
+"going. <b>Double-click</b> selects a word. <b>Ctrl/Cmd+C</b> copies, "
+"<b>Ctrl/Cmd+A</b> selects the text of the page you are on, and <b>Esc</b> "
+"clears the selection. The same commands are on the right-click menu."
+msgstr ""
+"Húzza végig az oldalon a szöveg kijelöléséhez, oldalhatárokon át is, ha "
+"tovább halad. A <b>dupla kattintás</b> egy szót jelöl ki. A "
+"<b>Ctrl/Cmd+C</b> másol, a <b>Ctrl/Cmd+A</b> annak az oldalnak a szövegét "
+"jelöli ki, amelyen áll, az <b>Esc</b> pedig megszünteti a kijelölést. "
+"Ugyanezek a parancsok a jobb gombos menüben is megvannak."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>Shift+click</b> extends an existing selection to where you clicked. The "
+"end you are moving grows out to a whole word, because a single click is an "
+"imprecise way to point at one character; the end you started from stays "
+"exactly where you put it. Dragging selects by character throughout, since "
+"you can watch it and stop where you like."
+msgstr ""
+"A <b>Shift+kattintás</b> a meglévő kijelölést oda bővíti, ahová kattintott. "
+"Az a vég, amelyet mozgat, egész szóvá nő, mert egyetlen kattintás pontatlan "
+"módja egy karakterre mutatni; az a vég, ahonnan indult, pontosan ott marad, "
+"ahová tette. A húzás végig karakterenként jelöl ki, hiszen követni tudja, és"
+" ott állhat meg, ahol akar."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Clicking on text leaves a blinking <b>text cursor</b>. That is what "
+"Shift+arrow extends from, and what the Option and Command combinations above"
+" move. It stays where you put it — scrolling, paging and clicking off the "
+"page all leave it alone — until you press Esc or open another document."
+msgstr ""
+"A szövegre kattintva villogó <b>szövegkurzor</b> marad. Innen bővít a "
+"Shift+nyíl, és ezt mozgatják a fenti Option és Command kombinációk. Ott "
+"marad, ahová tette — a görgetés, a lapozás és az oldalon kívülre kattintás "
+"sem mozdítja el —, amíg meg nem nyomja az Esc billentyűt, vagy meg nem nyit "
+"egy másik dokumentumot."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Following links"
+msgstr "Hivatkozások követése"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Click a link to follow it. Links to a page in the same document jump there; "
+"links to the web open in your browser. Hovering over one shows where it "
+"goes, which is worth reading before you click: many links in a PDF are not "
+"written by its author at all but inferred from the text, so what a link "
+"points at is not always what the words appear to say."
+msgstr ""
+"Kattintson egy hivatkozásra a követéséhez. Az ugyanabban a dokumentumban "
+"lévő oldalra mutató hivatkozások odaugranak; a webre mutatók a böngészőjében"
+" nyílnak meg. Fölé húzva a mutatót látszik, hová vezet, és ezt érdemes "
+"elolvasni, mielőtt rákattint: egy PDF-ben sok hivatkozást nem is a szerző "
+"írt, hanem a szövegből következtettek rá, így amire a hivatkozás mutat, nem "
+"mindig az, amit a szavak sugallnak."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Only ordinary web and mail links are handed to the system — http, https, "
+"mailto and ftp. A document is a file that arrived from somewhere, and "
+"anything else it asks to open is refused and reported rather than acted on."
+msgstr ""
+"Csak a szokásos web- és levelezési hivatkozások kerülnek át a rendszerhez — "
+"http, https, mailto és ftp. A dokumentum egy fájl, amely valahonnan "
+"érkezett, és minden mást, amit meg akar nyitni, a program elutasít és jelez,"
+" ahelyett hogy végrehajtaná."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Right-clicking a link offers <b>Open Link</b> and <b>Copy Link Address</b>."
+msgstr ""
+"Egy hivatkozásra jobb gombbal kattintva a <b>Hivatkozás megnyitása</b> és a "
+"<b>Hivatkozás címének másolása</b> jelenik meg."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Bookmarks"
+msgstr "Könyvjelzők"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"The sidebar shows the document's bookmarks. Click one to jump to it. "
+"Everything below is on the sidebar's right-click menu, and every command can"
+" be undone."
+msgstr ""
+"Az oldalsáv a dokumentum könyvjelzőit mutatja. Kattintson egyre az "
+"odaugráshoz. Minden alábbi az oldalsáv jobb gombos menüjében található, és "
+"minden parancs visszavonható."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>Add Bookmark Here</b> makes one pointing at the page you are reading, "
+"named after whatever text you have selected — so select a heading, then add."
+" With nothing selected it is named after the page. <b>Add Child Bookmark "
+"Here</b> does the same, nested under the entry you clicked."
+msgstr ""
+"A <b>Könyvjelző hozzáadása ide</b> olyat készít, amely az olvasott oldalra "
+"mutat, és a kijelölt szövegről kapja a nevét — jelöljön ki tehát egy "
+"címsort, azután adja hozzá. Kijelölés nélkül az oldalról kapja a nevét. A "
+"<b>Gyermek könyvjelző hozzáadása ide</b> ugyanezt teszi, annak a "
+"bejegyzésnek alárendelve, amelyre kattintott."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>Rename</b> edits the title in place. <b>Re-home to This Page</b> points "
+"an existing bookmark at the page you are on, keeping its title. "
+"<b>Delete</b> removes an entry and <i>promotes</i> its children into its "
+"place; <b>Delete with Children</b> removes the whole branch."
+msgstr ""
+"Az <b>Átnevezés</b> helyben szerkeszti a címet. Az <b>Átirányítás erre az "
+"oldalra</b> egy meglévő könyvjelzőt arra az oldalra irányít, amelyen áll, a "
+"címét megtartva. A <b>Törlés</b> eltávolít egy bejegyzést, és a gyermekeit a"
+" helyére <i>lépteti elő</i>; a <b>Törlés a gyermekekkel</b> az egész ágat "
+"eltávolítja."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Drag entries within the sidebar to re-nest or reorder them. <b>Expand All "
+"Children</b> and <b>Collapse All Children</b> open or shut a whole branch at"
+" once."
+msgstr ""
+"Húzza a bejegyzéseket az oldalsávon belül az átrendezésükhöz vagy más szint "
+"alá helyezésükhöz. Az <b>Az összes gyermek kibontása</b> és <b>Az összes "
+"gyermek összecsukása</b> egy egész ágat nyit meg vagy zár be egyszerre."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>Style</b> sets a bookmark bold or italic, or gives it a colour, as the "
+"tree shows."
+msgstr ""
+"A <b>Stílus</b> félkövérré vagy dőltté teszi a könyvjelzőt, vagy színt ad "
+"neki, ahogy a fa mutatja."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"A bookmark whose page has been deleted is <b>greyed out</b> rather than "
+"removed: its title may still be worth keeping, and you can point it "
+"somewhere else with Re-home. Undoing the deletion reconnects it. <b>Delete "
+"Dangling Bookmarks</b> clears them all out; it leaves alone any entry that "
+"points nowhere on purpose, which is a legitimate way to write a heading."
+msgstr ""
+"Az a könyvjelző, amelynek az oldalát törölték, <b>kiszürkül</b> ahelyett, "
+"hogy eltűnne: a címe még mindig megérheti a megtartást, és átirányíthatja "
+"máshová. A törlés visszavonása újra összekapcsolja. A <b>Lógó könyvjelzők "
+"törlése</b> mindet kitakarítja; békén hagy minden olyan bejegyzést, amely "
+"szándékosan nem mutat sehová, mert ez teljesen jogos módja egy címsor "
+"megírásának."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Bookmark edits are part of the document and are written when you save, along"
+" with each entry's colour and style and which branches are left open. The "
+"one thing that cannot be saved is a bookmark with no page: there is no way "
+"to record “points at a page that is gone”, so it comes back as a heading "
+"with its title intact."
+msgstr ""
+"A könyvjelzők módosításai a dokumentum részei, és mentéskor íródnak ki, az "
+"egyes bejegyzések színével és stílusával, valamint azzal együtt, mely ágak "
+"maradnak nyitva. Az egyetlen, amit nem lehet menteni, az oldal nélküli "
+"könyvjelző: nincs mód rögzíteni azt, hogy „olyan oldalra mutat, amely már "
+"nincs meg”, ezért címsorként tér vissza, érintetlen névvel."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Arranging pages"
+msgstr "Oldalak rendezése"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Drag pages to reorder them. Hold <b>Ctrl</b> while dropping to copy instead "
+"of move."
+msgstr ""
+"Húzza az oldalakat az átrendezésükhöz. Ejtés közben tartsa lenyomva a "
+"<b>Ctrl</b> billentyűt a mozgatás helyetti másoláshoz."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Drag pages onto another window of the application to copy them there, or use"
+" ordinary copy and paste."
+msgstr ""
+"Húzza az oldalakat az alkalmazás egy másik ablakára, hogy odamásolja őket, "
+"vagy használjon szokásos másolást és beillesztést."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>Paste As Odd/Even Pages</b> interleaves the clipboard with the document —"
+" this is how two single-sided scans of a double-sided original are "
+"recombined. If the second scan came off a duplex feeder it will be in "
+"reverse order; use <b>Arrange ▸ Reverse Order</b> on it first."
+msgstr ""
+"A <b>Beillesztés páratlan/páros oldalakként</b> a vágólapot a dokumentumba "
+"fésüli — így áll össze újra egy kétoldalas eredeti két egyoldalas "
+"beolvasása. Ha a második beolvasás duplex adagolóból jött, fordított "
+"sorrendben lesz; alkalmazza rá előbb a <b>Rendezés ▸ Sorrend "
+"megfordítása</b> parancsot."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"To move pages a long way, use <b>Move to Start</b>, <b>Move to End</b> or "
+"<b>Move to Page…</b> rather than dragging — in a long document the far end "
+"is a great deal of scrolling away. They are on the Edit menu and on the "
+"right-click menu, and <b>Move to Page…</b> asks for the number the page "
+"should <i>become</i>."
+msgstr ""
+"Ha messzire mozgat oldalakat, húzás helyett használja a <b>Mozgatás az "
+"elejére</b>, <b>Mozgatás a végére</b> vagy <b>Mozgatás oldalra…</b> "
+"parancsot — hosszú dokumentumban a másik vég rengeteg görgetésre van. A "
+"Szerkesztés menüben és a jobb gombos menüben találhatók, és a <b>Mozgatás "
+"oldalra…</b> azt a számot kérdezi, amellyé az oldalnak <i>válnia</i> kell."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Prefer these to cut and paste for moving. A pasted page is a <i>new</i> page"
+" as far as the document is concerned, so any bookmarks pointing at the "
+"original are left behind with nowhere to go. Moving keeps the page itself, "
+"and its bookmarks come with it."
+msgstr ""
+"Mozgatáshoz ezeket részesítse előnyben a kivágás és beillesztés helyett. A "
+"beillesztett oldal a dokumentum szempontjából <i>új</i> oldal, így az "
+"eredetire mutató könyvjelzők cél nélkül maradnak. A mozgatás megőrzi magát "
+"az oldalt, és a könyvjelzői vele tartanak."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Stamping and tiling"
+msgstr "Bélyegzés és mozaikolás"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>Page ▸ Add Page Numbers…</b> and <b>Page ▸ Add Watermark…</b> draw text "
+"onto the selected pages. Both add a <i>layer</i> rather than rewriting the "
+"page, so both can be undone and neither touches the file you opened."
+msgstr ""
+"Az <b>Oldal ▸ Oldalszámok hozzáadása…</b> és az <b>Oldal ▸ Vízjel "
+"hozzáadása…</b> szöveget rajzol a kijelölt oldalakra. Mindkettő "
+"<i>réteget</i> ad hozzá ahelyett, hogy újraírná az oldalt, tehát mindkettő "
+"visszavonható, és egyik sem nyúl a megnyitott fájlhoz."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+#, python-brace-format
+msgid ""
+"Page numbers follow the arrangement, not the source document: they are "
+"numbered in the order the pages are in now. <code>{n}</code> in the format "
+"is the page number and <code>{total}</code> the number of pages, so "
+"<code>Page {n} of {total}</code> does what it looks like."
+msgstr ""
+"Az oldalszámok a rendezést követik, nem a forrásdokumentumot: abban a "
+"sorrendben számozódnak, ahogy az oldalak most állnak. A formátumban az "
+"<code>{n}</code> az oldalszám, a <code>{total}</code> pedig az oldalak "
+"száma, tehát az <code>{n} / {total} oldal</code> azt teszi, aminek látszik."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>Arrange ▸ Pages per Sheet…</b> tiles several pages onto one, in reading "
+"order — the printer's <i>N-up</i>. The sheet turns sideways when that lets "
+"the pages come out larger, which is why two-up gives a landscape sheet and "
+"four-up does not."
+msgstr ""
+"A <b>Rendezés ▸ Oldal laponként…</b> több oldalt helyez egyre, olvasási "
+"sorrendben — ez a nyomdai <i>N-up</i>. A lap oldalra fordul, ha így az "
+"oldalak nagyobbra jönnek ki, ezért ad a kettő laponként fekvő lapot, a négy "
+"laponként pedig nem."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Saving a document"
+msgstr "Dokumentum mentése"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>Optimize for the web</b> in Preferences lays the saved file out so a "
+"browser can show the first page before the rest has arrived. <b>Compress</b>"
+" repacks its streams and objects; how much that saves depends entirely on "
+"the file, and one full of photographs will barely move."
+msgstr ""
+"A Beállítások <b>Optimalizálás webre</b> jelölőnégyzete úgy rendezi el a "
+"mentett fájlt, hogy a böngésző megjeleníthesse az első oldalt, mielőtt a "
+"többi megérkezik. A <b>Tömörítés</b> újracsomagolja az adatfolyamait és "
+"objektumait; hogy ez mennyit takarít meg, teljesen a fájltól függ, és egy "
+"fényképekkel teli fájl alig mozdul."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>File ▸ Remove All Metadata</b> is a switch, like Password: turn it on and"
+" the next save writes a document with no title, no author and no record of "
+"what produced it. Edit Properties greys out while it is on, because there "
+"would be nothing to edit."
+msgstr ""
+"A <b>Fájl ▸ Az összes metaadat eltávolítása</b> kapcsoló, akárcsak a Jelszó:"
+" kapcsolja be, és a következő mentés cím, szerző és a készítő program nyoma "
+"nélküli dokumentumot ír ki. A Tulajdonságok szerkesztése kiszürkül, amíg be "
+"van kapcsolva, mert nem lenne mit szerkeszteni."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>File ▸ Viewer Preferences…</b> is how the saved document asks a reader to"
+" open it — with the bookmarks showing, two pages at a time, and so on. "
+"Readers are free to ignore all of it. The settings are read from the file "
+"you opened, so a document that already had them keeps them."
+msgstr ""
+"A <b>Fájl ▸ Megjelenítő beállításai…</b> az a mód, ahogyan a mentett "
+"dokumentum megkéri az olvasót, hogyan nyissa meg — látható könyvjelzőkkel, "
+"egyszerre két oldallal, és így tovább. Az olvasóprogramok mindezt nyugodtan "
+"figyelmen kívül hagyhatják. A beállítások a megnyitott fájlból olvasódnak "
+"be, tehát az a dokumentum, amelyben már megvoltak, megtartja őket."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>File ▸ Repair Document…</b> rebuilds a damaged PDF. It works on a file "
+"you pick rather than the one on screen, because the file worth repairing is "
+"usually one this application cannot open properly either. It reports what it"
+" found before writing anything."
+msgstr ""
+"A <b>Fájl ▸ Dokumentum javítása…</b> újraépít egy sérült PDF-et. Egy Ön "
+"által választott fájlon dolgozik, nem a képernyőn lévőn, mert a javításra "
+"érdemes fájl rendszerint olyan, amelyet ez az alkalmazás sem tud rendesen "
+"megnyitni. Mielőtt bármit kiírna, jelenti, mit talált."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Mouse"
+msgstr "Egér"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "<b>Ctrl + scroll</b> — zoom"
+msgstr "<b>Ctrl + görgetés</b> — nagyítás"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "<b>Shift + scroll</b> — scroll sideways"
+msgstr "<b>Shift + görgetés</b> — görgetés oldalirányban"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "<b>Alt + scroll</b> — scroll exactly one row"
+msgstr "<b>Alt + görgetés</b> — görgetés pontosan egy sorral"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "<b>Double-click</b> — fit the page to the window, and back"
+msgstr "<b>Dupla kattintás</b> — az oldal igazítása az ablakhoz, és vissza"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>Click and drag</b> on empty space — rubber-band select; keep scrolling to"
+" extend it"
+msgstr ""
+"<b>Kattintás és húzás</b> üres területen — kijelölés gumikerettel; görgessen"
+" tovább a bővítéséhez"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Moving around the grid"
+msgstr "Mozgás a rácsban"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>Arrow keys</b> move between pages, <b>Page Up</b> and <b>Page Down</b> "
+"move a screenful at a time, and <b>Home</b> and <b>End</b> jump to the first"
+" and last page. Hold <b>Shift</b> with any of them to extend the selection."
+msgstr ""
+"A <b>nyílbillentyűk</b> oldalak között mozognak, a <b>Page Up</b> és a "
+"<b>Page Down</b> képernyőnyit lép, a <b>Home</b> és az <b>End</b> pedig az "
+"első és az utolsó oldalra ugrik. Tartsa lenyomva bármelyikük mellett a "
+"<b>Shift</b> billentyűt a kijelölés bővítéséhez."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>Fit One Page</b> (F) scales so a whole page fits in the window and shows "
+"one page per row — use it to work on a single page at a time. <b>Fit "
+"Multiple Pages</b> (Shift+M) uses the same scale but lets as many pages sit "
+"side by side as the window takes. <b>Fit Width</b> (Shift+F) fills the "
+"window across instead, which shows the page wider but taller than the "
+"window. Double-clicking the grid toggles Fit One Page on and off."
+msgstr ""
+"Az <b>Egy oldal igazítása</b> (F) úgy méretez, hogy egy teljes oldal "
+"beférjen az ablakba, és soronként egy oldalt mutat — ezt használja, ha "
+"egyszerre egy oldalon dolgozik. A <b>Több oldal igazítása</b> (Shift+M) "
+"ugyanezt a méretarányt használja, de annyi oldalt enged egymás mellé, "
+"amennyi az ablakba fér. Az <b>Igazítás szélességre</b> (Shift+F) ehelyett "
+"vízszintesen tölti ki az ablakot, amitől az oldal szélesebb, de magasabb "
+"lesz az ablaknál. A rácsra kettőt kattintva az Egy oldal igazítása be- és "
+"kikapcsol."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"With pages selected, all three fit the selection rather than the whole "
+"document."
+msgstr ""
+"Ha vannak kijelölt oldalak, mindhárom a kijelöléshez igazít az egész "
+"dokumentum helyett."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Finding text"
+msgstr "Szöveg keresése"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>Find</b> selects the pages that contain the phrase and boxes each hit on "
+"the thumbnail, so you can see where on the page it is. The boxes clear as "
+"soon as you change the document, since the pages they were drawn for may "
+"have moved."
+msgstr ""
+"A <b>Keresés</b> kijelöli a kifejezést tartalmazó oldalakat, és minden "
+"találatot bekeretez a bélyegképen, hogy lássa, hol van az oldalon. A keretek"
+" eltűnnek, amint módosítja a dokumentumot, mivel az oldalak, amelyekre "
+"rajzolták őket, elmozdulhattak."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Every shortcut can be changed in <b>Edit ▸ Preferences ▸ Keyboard "
+"shortcuts</b>, where they are listed under the menu each one belongs to."
+msgstr ""
+"Minden gyorsbillentyű megváltoztatható a <b>Szerkesztés ▸ Beállítások ▸ "
+"Gyorsbillentyűk</b> lapon, ahol az alá a menü alá vannak sorolva, amelyhez "
+"tartoznak."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Passwords"
+msgstr "Jelszavak"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Opening an encrypted document asks for its password, which is remembered "
+"until the document is closed."
+msgstr ""
+"Egy titkosított dokumentum megnyitása bekéri a jelszavát, amelyet a program "
+"megjegyez, amíg a dokumentumot be nem zárja."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>File ▸ Password</b> encrypts the document when it is next saved. It is a "
+"switch: turn it on and you are asked for a password, turn it off and the "
+"next save is unencrypted. The password is never written to your settings, so"
+" it applies to this session only — and if you forget it, the file cannot be "
+"recovered."
+msgstr ""
+"A <b>Fájl ▸ Jelszó</b> a következő mentéskor titkosítja a dokumentumot. Ez "
+"kapcsoló: kapcsolja be, és a program jelszót kér, kapcsolja ki, és a "
+"következő mentés titkosítatlan lesz. A jelszó soha nem kerül a beállításai "
+"közé, tehát csak erre a munkamenetre érvényes — és ha elfelejti, a fájl nem "
+"állítható helyre."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Files"
+msgstr "Fájlok"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Settings are stored by Qt in the per-user location for this platform; on "
+"Windows that is the registry under "
+"<code>HKEY_CURRENT_USER\\Software\\pdfarranger</code>. There is no "
+"configuration file to edit by hand."
+msgstr ""
+"A beállításokat a Qt tárolja ezen a rendszeren a felhasználónkénti helyen; "
+"Windowson ez a beállításjegyzék a "
+"<code>HKEY_CURRENT_USER\\Software\\pdfarranger</code> alatt. Nincs kézzel "
+"szerkeszthető konfigurációs fájl."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Credits"
+msgstr "Köszönetnyilvánítás"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"PDF Arranger Qt is a PySide6 port of PDF Arranger, which is itself derived "
+"from PDF-Shuffler. It is a separate project and not affiliated with either."
+msgstr ""
+"A PDF Arranger Qt a PDF Arranger PySide6-ra készült átirata, amely maga a "
+"PDF-Shufflerből származik. Külön projekt, és egyikkel sincs kapcsolatban."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Original authors: Konstantinos Poulios, Jerome Robert."
+msgstr "Eredeti szerzők: Konstantinos Poulios, Jerome Robert."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Licensed under the GNU General Public License version 3 or later."
+msgstr "A GNU General Public License 3. vagy későbbi változata alatt kiadva."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+msgid "User Guide"
+msgstr "Felhasználói kézikönyv"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Insert pages from another PDF or an image"
+msgstr "Oldalak beszúrása másik PDF-ből vagy képből"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Needs pages copied from a document"
+msgstr "Dokumentumból másolt oldalakat igényel"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_New Window"
+msgstr "Új _ablak"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Open"
+msgstr "_Megnyitás…"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Import"
+msgstr "_Importálás…"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Save"
+msgstr "_Mentés"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Save _As…"
+msgstr "Menté_s másként…"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "E_xport Selection to a Single File…"
+msgstr "Kijelölés e_xportálása egyetlen fájlként…"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Close"
+msgstr "_Bezárás"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Quit"
+msgstr "_Kilépés"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Undo"
+msgstr "_Visszavonás"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Redo"
+msgstr "Új_ra"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Select _All"
+msgstr "_Az összes kijelölése"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Invert Selection"
+msgstr "Kijelölés meg_fordítása"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Delete"
+msgstr "_Törlés"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Duplicate"
+msgstr "_Megkettőzés"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Rotate _Left"
+msgstr "Forgatás _balra"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Rotate Right"
+msgstr "Forgatás _jobbra"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Zoom _In"
+msgstr "Na_gyítás"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Zoom _Out"
+msgstr "Ki_csinyítés"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Reset Zoom"
+msgstr "Nagyítás _visszaállítása"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Project on GitHub"
+msgstr "A projekt a GitHubon"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_About"
+msgstr "_Névjegy"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Cu_t"
+msgstr "_Kivágás"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Copy"
+msgstr "_Másolás"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Paste _After"
+msgstr "Beillesztés _után"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Paste _Before"
+msgstr "Beillesztés _előtt"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Paste As _Odd Pages"
+msgstr "Beillesztés párat_lan oldalakként"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Paste As _Even Pages"
+msgstr "Beillesztés _páros oldalakként"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Deselect All"
+msgstr "Öss_zes kijelölés törlése"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Select _Odd Pages"
+msgstr "Párat_lan oldalak kijelölése"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Select _Even Pages"
+msgstr "_Páros oldalak kijelölése"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "All From _Same File"
+msgstr "Mindegyik _ugyanabból a fájlból"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Same Page _Format"
+msgstr "Ugyanaz az oldal_formátum"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Move to Start"
+msgstr "Mozgatás az elejére"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Move to End"
+msgstr "Mozgatás a végére"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Move to Page…"
+msgstr "Mozgatás oldalra…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Reverse Order"
+msgstr "Sorrend megfordítása"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Swap Odd/Even"
+msgstr "Páros/páratlan felcserélése"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Split (unimposition)"
+msgstr "_Szétbontás (kivetés visszavonása)"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Export _All Pages to Individual Files…"
+msgstr "Összes _oldal exportálása külön fájlokként"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Export Selection to _Individual Files…"
+msgstr "Kijelölés exportálása _külön fájlokként…"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Crop Margins…"
+msgstr "Margók ki_vágása…"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Hide Margins…"
+msgstr "Margók el_rejtése…"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Page Size…"
+msgstr "_Oldalméret…"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Insert Blan_k Page…"
+msgstr "Üres oldal bes_zúrása…"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Split Pages…"
+msgstr "Oldalak fel_osztása…"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Merge Pages…"
+msgstr "Oldalak _egyesítése…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Generate (imposition)"
+msgstr "_Létrehozás (kivetés)"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Pages per S_heet…"
+msgstr "Oldal la_ponként…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Add Page N_umbers…"
+msgstr "Oldalszámok _hozzáadása…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Add _Watermark…"
+msgstr "Vízjel hozzáadás_a…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Pass_word"
+msgstr "Jels_zó"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Edit _Properties"
+msgstr "_Tulajdonságok szerkesztése"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Viewer Preferences…"
+msgstr "Megjelenítő b_eállításai…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Remove All _Metadata"
+msgstr "Az összes metaadat eltávo_lítása"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Repair Document…"
+msgstr "Dokumentum _javítása…"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Crop White Borders"
+msgstr "Fehér szegélyek körülvágása"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Export Selection to _PNG Images…"
+msgstr "Kijelölés exportálása _PNG képekbe…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Export Selection to _JPG Images…"
+msgstr "Kijelölés exportálása _JPG képekbe…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Export Selection to _Rasterized PDF (png)…"
+msgstr "Kijelölés exportálása _raszteres PDF-be (png)…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Export Selection to _Rasterized PDF (jpg)…"
+msgstr "Kijelölés exportálása raszteres PDF-_be (jpg)…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Copy Text"
+msgstr "Szöveg másolása"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Copy _Image"
+msgstr "_Kép másolása"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Explode into Images"
+msgstr "Képekké fel_bontása"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Print…"
+msgstr "_Nyomtatás…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Find…"
+msgstr "K_eresés…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Find Next"
+msgstr "Következő keresése"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Find Previous"
+msgstr "Előző keresése"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Find All"
+msgstr "Az összes keresése"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Select _Range"
+msgstr "_Tartomány kijelölése"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Paste As O_verlay…"
+msgstr "Beillesztés _átfedésként…"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Paste As _Underlay…"
+msgstr "Beillesztés _alátfedésként…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Fit _One Page"
+msgstr "_Egy oldal igazítása"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Fit _Multiple Pages"
+msgstr "_Több oldal igazítása"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Fit Width"
+msgstr "Igazítás szélességre"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Arrange Mode"
+msgstr "Rendezési mód"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Facing Pages"
+msgstr "Szemben lévő oldalak"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Continuous Scroll"
+msgstr "Folyamatos görgetés"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Next Page"
+msgstr "Következő oldal"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Previous Page"
+msgstr "Előző oldal"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "First Page"
+msgstr "Első oldal"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Last Page"
+msgstr "Utolsó oldal"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Go to Page…"
+msgstr "Ugrás oldalra…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Fullscreen"
+msgstr "Teljes képernyő"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_File"
+msgstr "_Fájl"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Open Recent"
+msgstr "Legutóbbi megnyitása"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "E_xport"
+msgstr "Exportálás…"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Edit"
+msgstr "S_zerkesztés"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Past_e Special"
+msgstr "Irá_nyított beillesztés"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Page"
+msgstr "_Oldal"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Extract"
+msgstr "Ki_bontás"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Arrange"
+msgstr "Rendezés"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Select"
+msgstr "_Kijelölés"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Booklet"
+msgstr "_Füzet"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_View"
+msgstr "_Nézet"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Help"
+msgstr "_Súgó"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Read"
+msgstr "Olvasás"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "_Undo %s"
+msgstr "_Visszavonás: %s"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "_Redo %s"
+msgstr "Új_ra: %s"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "%d page selected"
+msgid_plural "%d pages selected"
+msgstr[0] "%d oldal kijelölve"
+msgstr[1] "%d oldal kijelölve"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Untitled"
+msgstr "Névtelen"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Password required"
+msgstr "Jelszó szükséges"
+
+#: pdfarranger_qt/mainwindow.py
+#, python-brace-format
+msgid "The document “{}” is locked and requires a password before it can be opened."
+msgstr "A(z) „{}” dokumentum zárolva van és megnyitásához jelszó szükséges."
+
+#: pdfarranger_qt/mainwindow.py
+msgid "The password will be remembered until you close PDF Arranger."
+msgstr "A jelszó mindaddig emlékezetes marad, amíg bezárja a PDF-rendezőt"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Importing…"
+msgstr "Importálás…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Cancel"
+msgstr "Mégse"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Import"
+msgstr "Importálás"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "No recent files"
+msgstr "Nincsenek legutóbbi fájlok"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Clear Menu"
+msgstr "Menü ürítése"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "This file is no longer there:"
+msgstr "Ez a fájl már nincs ott:"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "This document cannot be read."
+msgstr "Ez a dokumentum nem olvasható."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Go to Page"
+msgstr "Ugrás oldalra"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Page number:"
+msgstr "Oldalszám:"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "No document"
+msgstr "Nincs dokumentum"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "%d page"
+msgid_plural "%d pages"
+msgstr[0] "%d oldal"
+msgstr[1] "%d oldal"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-brace-format
+msgid "of {}"
+msgstr "/ {}"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "The document will not be encrypted."
+msgstr "A dokumentum nem lesz titkosítva."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "The document will be encrypted when it is saved."
+msgstr "A dokumentum mentéskor titkosítva lesz."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Could not open a new window."
+msgstr "Nem sikerült új ablakot nyitni."
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Open"
+msgstr "Megnyitás"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Save As…"
+msgstr "Mentés másként…"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Export…"
+msgstr "Exportálás…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "There is nothing to save."
+msgstr "Nincs mit menteni."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Could not save:"
+msgstr "Nem sikerült menteni:"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Saved"
+msgstr "Mentve"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "This document has unsaved changes."
+msgstr "Ennek a dokumentumnak mentetlen változtatásai vannak."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Save before continuing?"
+msgstr "Menti a folytatás előtt?"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py pdfarranger_qt/reader.py
+msgid "Delete"
+msgstr "Törlés"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Cut"
+msgstr "Kivágás"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Paste"
+msgstr "Beillesztés"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Move to Page"
+msgstr "Mozgatás oldalra"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Move"
+msgstr "Mozgatás"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "The page selection is not contiguous. Cannot unimpose."
+msgstr "Az oldalkijelölés nem összefüggő. A kivetés nem vonható vissza."
+
+#: pdfarranger_qt/mainwindow.py
+msgid "All pages must have the same size."
+msgstr "Minden oldalnak azonos méretűnek kell lennie."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Split Booklet"
+msgstr "Füzet szétbontása"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Overwrite existing files?"
+msgstr "Felülírja a meglévő fájlokat?"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Blank page"
+msgstr "Üres oldal"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Copy the pages you want to merge in first."
+msgstr "Először másolja be az egyesíteni kívánt oldalakat."
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Generate Booklet"
+msgstr "Füzet létrehozása"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "The page selection is not contiguous."
+msgstr "Az oldalkijelölés nem összefüggő."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "All metadata will be removed when the document is saved."
+msgstr "A dokumentum mentésekor minden metaadat eltávolításra kerül."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Metadata will be kept."
+msgstr "A metaadatok megmaradnak."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Repair Document…"
+msgstr "Dokumentum javítása…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Write a rebuilt copy?"
+msgstr "Ír egy újraépített másolatot?"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Save Repaired Document"
+msgstr "Javított dokumentum mentése"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "%d image written"
+msgid_plural "%d images written"
+msgstr[0] "%d kép kiírva"
+msgstr[1] "%d kép kiírva"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "The page has no text."
+msgstr "Az oldalon nincs szöveg."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Copied"
+msgstr "Másolva"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "The page has no image."
+msgstr "Az oldalon nincs kép."
+
+#: pdfarranger_qt/mainwindow.py
+msgid "The page has several images. Use \"Explode into Images\" first.\""
+msgstr "Az oldalon több kép található. A „Képekké felbontása” első használat."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Explode into Images"
+msgstr "Szétbontás képekre"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Printing…"
+msgstr "Nyomtatás…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Finishing…"
+msgstr "Befejezés…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "The printer driver is processing the job."
+msgstr "A nyomtató-illesztőprogram dolgozik a feladaton."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "%d page printed"
+msgid_plural "%d pages printed"
+msgstr[0] "%d oldal kinyomtatva"
+msgstr[1] "%d oldal kinyomtatva"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Find"
+msgstr "Keresés"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "%d page matches"
+msgid_plural "%d pages match"
+msgstr[0] "%d oldal egyezik"
+msgstr[1] "%d oldal egyezik"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Duplicate"
+msgstr "Megkettőzés"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Rotate"
+msgstr "Forgatás"
+
+#: pdfarranger_qt/metadata.py
+msgid "Title"
+msgstr "Cím"
+
+#: pdfarranger_qt/metadata.py
+msgid "Subject"
+msgstr "Tárgy"
+
+#: pdfarranger_qt/metadata.py
+msgid "Keywords"
+msgstr "Kulcsszavak"
+
+#: pdfarranger_qt/metadata.py
+msgid "Producer"
+msgstr "Gyártó"
+
+#: pdfarranger_qt/metadata.py
+msgid "Creator"
+msgstr "Készítő"
+
+#: pdfarranger_qt/metadata.py
+msgid "Creator tool"
+msgstr "Készítő eszköz"
+
+#: pdfarranger_qt/metadata.py
+msgid "Created"
+msgstr "Készült"
+
+#: pdfarranger_qt/metadata.py
+msgid "Modified"
+msgstr "Módosítva"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/nup.py
+msgid "2 pages per sheet"
+msgstr "2 oldal laponként"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/nup.py
+msgid "4 pages per sheet"
+msgstr "4 oldal laponként"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/nup.py
+msgid "6 pages per sheet"
+msgstr "6 oldal laponként"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/nup.py
+msgid "8 pages per sheet"
+msgstr "8 oldal laponként"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/nup.py
+msgid "9 pages per sheet"
+msgstr "9 oldal laponként"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/nup.py
+msgid "16 pages per sheet"
+msgstr "16 oldal laponként"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Bookmark Colour"
+msgstr "Könyvjelző színe"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Add Bookmark Here"
+msgstr "Könyvjelző hozzáadása ide"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Add Child Bookmark Here"
+msgstr "Gyermek könyvjelző hozzáadása ide"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Re-home to This Page"
+msgstr "Átirányítás erre az oldalra"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Rename"
+msgstr "Átnevezés"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Style"
+msgstr "Stílus"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Colour…"
+msgstr "Szín…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Default Colour"
+msgstr "Alapértelmezett szín"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Expand All Children"
+msgstr "Az összes gyermek kibontása"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Collapse All Children"
+msgstr "Az összes gyermek összecsukása"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Delete with Children"
+msgstr "Törlés a gyermekekkel"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Delete Dangling Bookmarks"
+msgstr "Lógó könyvjelzők törlése"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Nothing to read."
+msgstr "Nincs mit olvasni."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+#, python-brace-format
+msgid "Page {} of {}"
+msgstr "{} / {} oldal"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Move Bookmark"
+msgstr "Könyvjelző mozgatása"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "This bookmark's page is no longer in the document"
+msgstr "Ennek a könyvjelzőnek az oldala már nincs a dokumentumban"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "This bookmark does not point at a page"
+msgstr "Ez a könyvjelző nem mutat oldalra"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Rename Bookmark"
+msgstr "Könyvjelző átnevezése"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Add Child Bookmark"
+msgstr "Gyermek könyvjelző hozzáadása"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Add Bookmark"
+msgstr "Könyvjelző hozzáadása"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Bookmark Style"
+msgstr "Könyvjelző stílusa"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Re-home Bookmark"
+msgstr "Könyvjelző átirányítása"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Delete Bookmark"
+msgstr "Könyvjelző törlése"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Delete Bookmark and Children"
+msgstr "Könyvjelző és gyermekei törlése"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/repair.py
+msgid "This file cannot be read, even with recovery."
+msgstr "Ez a fájl nem olvasható, még helyreállítással sem."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/repair.py
+msgid "No damage found; the file reads cleanly."
+msgstr "Nem található sérülés; a fájl hibátlanul olvasható."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/repair.py
+msgid "Damaged, and recoverable."
+msgstr "Sérült, és helyreállítható."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/repair.py
+msgid "The file cannot be read."
+msgstr "A fájl nem olvasható."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/stamp.py
+msgid "Top left"
+msgstr "Bal felül"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/stamp.py
+msgid "Top centre"
+msgstr "Középen felül"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/stamp.py
+msgid "Top right"
+msgstr "Jobb felül"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/stamp.py
+msgid "Bottom left"
+msgstr "Bal alul"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/stamp.py
+msgid "Bottom centre"
+msgstr "Középen alul"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/stamp.py
+msgid "Bottom right"
+msgstr "Jobb alul"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/viewer.py
+msgid "Viewer default"
+msgstr "A megjelenítő alapértelmezése"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/viewer.py
+msgid "No side panel"
+msgstr "Nincs oldalsáv"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/viewer.py
+msgid "Bookmarks panel"
+msgstr "Könyvjelzők panel"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/viewer.py
+msgid "Page thumbnails"
+msgstr "Oldalbélyegképek"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/viewer.py
+msgid "Continuous scroll"
+msgstr "Folyamatos görgetés"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/viewer.py
+msgid "Two pages, odd on the left"
+msgstr "Két oldal, páratlanok balra"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/viewer.py
+msgid "Two pages, odd on the right"
+msgstr "Két oldal, páratlanok jobbra"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/viewer.py
+msgid "Facing pages, odd on the left"
+msgstr "Szemben lévő oldalak, páratlanok balra"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/viewer.py
+msgid "Facing pages, odd on the right"
+msgstr "Szemben lévő oldalak, páratlanok jobbra"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/viewer.py
+msgid "Hide the viewer's toolbar"
+msgstr "A megjelenítő eszköztárának elrejtése"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/viewer.py
+msgid "Hide the viewer's menu bar"
+msgstr "A megjelenítő menüsorának elrejtése"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/viewer.py
+msgid "Centre the window on screen"
+msgstr "Az ablak középre helyezése a képernyőn"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/viewer.py
+msgid "Show the title rather than the filename"
+msgstr "A cím megjelenítése a fájlnév helyett"
+
+#~ msgid "#Col"
+#~ msgstr "Oszlop száma"
+
+#~ msgid "#Row"
+#~ msgstr "Sor száma"
+
+#~ msgid "%"
+#~ msgstr "%"
+
+#~ msgid "% of height"
+#~ msgstr "A magasság százaléka"
+
+#~ msgid "% of width"
+#~ msgstr "A szélesség százaléka"
+
+#~ msgid "%s is a tool for rearranging and modifying PDF files."
+#~ msgstr ""
+#~ "A(z) %s egy olyan eszköz, mellyel "
+#~ "átrendezhetők és módosíthatóak a PDF-"
+#~ "fájlok."
+
+#~ msgid "(Libhandy missing)"
+#~ msgstr "(libhandy-könyvtár hiányzik)"
+
+#~ msgid "(Requires restart)"
+#~ msgstr "(Újraindítás szükséges)"
+
+#~ msgid "A file named \"%s\" already exists. Do you want to replace it?"
+#~ msgstr "A(z) „%s” nevű fájl már létezik. Szeretné felülírni?"
+
+#~ msgid "All files"
+#~ msgstr "Minden fájl"
+
+#~ msgid "All supported files"
+#~ msgstr "Minden támogatott fájl"
+
+#~ msgid "Bottom to Top"
+#~ msgstr "Alulról felfelé"
+
+#~ msgid "Clipboard image"
+#~ msgstr "Vágólap képe"
+
+#~ msgid "Copy _Text"
+#~ msgstr "_Szöveg másolása"
+
+#~ msgid ""
+#~ "Cropping/hiding does not remove any content"
+#~ " from the PDF file, it only hides"
+#~ " it."
+#~ msgstr ""
+#~ "A körbevágás/elrejtés nem távolít el "
+#~ "semmilyen tartalmat a PDF fájlból, csak "
+#~ "elrejti azt."
+
+#~ msgid "Despite the warnings the document(s) should have no visible issues."
+#~ msgstr "A figyelmeztetések ellenére a dokumentum(ok)on nem lehetnek látható hibák."
+
+#~ msgid "Discard changes and close?"
+#~ msgstr "Módosítások elvetése és bezárás?"
+
+#~ msgid "Discard changes and quit?"
+#~ msgstr "Módosítások elvetése és kilépés?"
+
+#~ msgid "Do not show this dialog again."
+#~ msgstr "Ne jelenjen meg újra ez a párbeszédpanel."
+
+#~ msgid "Do_n’t Save"
+#~ msgstr "_Nincs mentés"
+
+#~ msgid "Don't show warnings when saving again."
+#~ msgstr "Ne jelenjen meg többé ez az üzenet mentéskor."
+
+#~ msgid "Dupl_icate"
+#~ msgstr "Megkettő_zés"
+
+#~ msgid "Equal column width"
+#~ msgstr "Azonos hasábszélesség"
+
+#~ msgid "Equal row height"
+#~ msgstr "Azonos sormagasság"
+
+#~ msgid "Exploding into images…"
+#~ msgstr "Képekké felbontása…"
+
+#~ msgid "File(s) to open"
+#~ msgstr "Megnyitandó fájl(ok)"
+
+#~ msgid "Fit to Full Page"
+#~ msgstr "Teljes oldalhoz igazítás"
+
+#~ msgid "Fit to Printable Area"
+#~ msgstr "Nyomtatási területhez igazítás"
+
+#~ msgid "For more info see"
+#~ msgstr "További információért lásd"
+
+#~ msgid "For more options see:"
+#~ msgstr "További beállításokért lásd:"
+
+#~ msgid "Full_screen"
+#~ msgstr "_Teljes képernyő"
+
+#~ msgid "GNU General Public License (GPL) Version 3."
+#~ msgstr "GNU GPL (General Public License - általános nyilvános engedély) 3. verzió."
+
+#~ msgid "Height in %"
+#~ msgstr "Magasság százalékként"
+
+#~ msgid "Horizontal offset"
+#~ msgstr "Vízszintes eltolása"
+
+#~ msgid "Img2pdf missing."
+#~ msgstr "Az img2pdf hiányzik."
+
+#~ msgid "Import…"
+#~ msgstr "Importálás…"
+
+#~ msgid "Invalid date format. Input discarded."
+#~ msgstr "Érvénytelen dátumformátum. A bevitelt elvetve."
+
+#~ msgid "It uses libqpdf %s, pikepdf %s, GTK %s and Python %s."
+#~ msgstr "A libqpdf %s, a pikepdf %s, a GTK %s és a Python %s használata"
+
+#~ msgid "Left to Right"
+#~ msgstr "Balról jobbra"
+
+#~ msgid "Main Menu"
+#~ msgstr "Főmenü"
+
+#~ msgid "Maintainers and contributors"
+#~ msgstr "Fenntartók és közreműködők"
+
+#~ msgid "Margin"
+#~ msgstr "Margó"
+
+#~ msgid "Merged page size:"
+#~ msgstr "Egyesített oldal mérete:"
+
+#~ msgid "Non-uniform page size - using max size"
+#~ msgstr "Nem egységes oldalméret – a legfeljebb méret használata"
+
+#~ msgid "None"
+#~ msgstr "Nincs"
+
+#~ msgid "Note"
+#~ msgstr "Megjegyzés"
+
+#~ msgid "Note the limitations:"
+#~ msgstr "Vegye figyelembe a korlátozásokat:"
+
+#~ msgid "Open…"
+#~ msgstr "Megnyitás…"
+
+#~ msgid "Outlines and links can be preserved only in certain cases."
+#~ msgstr "A körvonalak és a hivatkozások csak bizonyos esetekben őrizhetők meg."
+
+#~ msgid ""
+#~ "PDF Arranger is a small python-gtk"
+#~ " application, which helps the user to"
+#~ " merge or split pdf documents and "
+#~ "rotate, crop and rearrange their pages "
+#~ "using an interactive and intuitive "
+#~ "graphical interface. It is a frontend "
+#~ "for pikepdf."
+#~ msgstr ""
+#~ "A PDF-rendező egy kis python-gtk "
+#~ "alkalmazás, amely egy interaktív és "
+#~ "intuitív grafikus felület segítségével segíti "
+#~ "a felhasználót a pdf dokumentumok "
+#~ "egyesítésében vagy felosztásában, valamint az "
+#~ "oldalak elforgatásában, kivágásában és "
+#~ "átrendezésében. Ez a pikepdf Python-"
+#~ "könyvtár kezelőfelülete."
+
+#~ msgid "PDF document is damaged"
+#~ msgstr "A PDF-dokumentum sérült"
+
+#~ msgid "PDF files"
+#~ msgstr "PDF-fájlok"
+
+#~ msgid "Page Handling"
+#~ msgstr "Oldalkezelés"
+
+#~ msgid "Page Order"
+#~ msgstr "Oldalsorrend"
+
+#~ msgid "Page Size:"
+#~ msgstr "Oldalméret:"
+
+#~ msgid "Pasted data not valid. Aborting paste."
+#~ msgstr "A beillesztett adatok érvénytelenek. A beillesztés megszakadt."
+
+#~ msgid "Pre_ferences"
+#~ msgstr "_Beállítások"
+
+#~ msgid "Print the version of PDF Arranger and exit"
+#~ msgstr "PDF-rendező verzió nyomtatása és kilépés"
+
+#~ msgid "Property"
+#~ msgstr "Tulajdonság"
+
+#~ msgid "Re_verse Order"
+#~ msgstr "Sorrend meg_fordítása"
+
+#~ msgid "Rendering Preview…"
+#~ msgstr "Előnézet megjelenítése…"
+
+#~ msgid "Rendering…"
+#~ msgstr "Renderelés folyamatban van…"
+
+#~ msgid "Replace"
+#~ msgstr "Csere"
+
+#~ msgid "Right to Left"
+#~ msgstr "Jobbról balra"
+
+#~ msgid "Rotate Left"
+#~ msgstr "Forgatás balra"
+
+#~ msgid "Rotate Right"
+#~ msgstr "Forgatás jobbra"
+
+#~ msgid "Save"
+#~ msgstr "Mentés"
+
+#~ msgid "Save As"
+#~ msgstr "Mentés másként…"
+
+#~ msgid "Save changes before closing?"
+#~ msgstr "Menti a módosításokat a bezárás előtt?"
+
+#~ msgid "Save changes before quitting?"
+#~ msgstr "Menti a módosításokat a kilépés előtt?"
+
+#~ msgid "Save changes to “{}” before closing?"
+#~ msgstr "Menti a változásokat a(z) „{}” fájlba bezárás előtt?"
+
+#~ msgid "Save changes to “{}” before quitting?"
+#~ msgstr "Menti a(z) „{}” módosításait a kilépés előtt?"
+
+#~ msgid "Saving produced some warnings"
+#~ msgstr "A mentés néhány figyelmeztetést jelentett"
+
+#~ msgid "Saving…"
+#~ msgstr "Mentés…"
+
+#~ msgid "Scale mode:"
+#~ msgstr "Méretezési mód:"
+
+#~ msgid "Selected pages: "
+#~ msgstr "Kiválasztott oldalak: "
+
+#~ msgid "Show values"
+#~ msgstr "Értékek megjelenítése"
+
+#~ msgid "Supported image files"
+#~ msgstr "Támogatott képfájlok"
+
+#~ msgid "Top to Bottom"
+#~ msgstr "Fentről lefelé"
+
+#~ msgid "User Manual"
+#~ msgstr "Felhasználói kézikönyv"
+
+#~ msgid "Value"
+#~ msgstr "Érték"
+
+#~ msgid "Vertical offset"
+#~ msgstr "Függőleges eltolása"
+
+#~ msgid "Width in %"
+#~ msgstr "Szélesség százalékként"
+
+#~ msgid "Your changes will be lost if you don’t save them."
+#~ msgstr "A változtatások elvesznek, ha nem menti őket."
+
+#~ msgid "Zoom In"
+#~ msgstr "Nagyítás"
+
+#~ msgid "Zoom Out"
+#~ msgstr "Kicsinyítés"
+
+#~ msgid "Zoom _Fit"
+#~ msgstr "_Mérethez igazítás"
+
+#~ msgid "_Apply"
+#~ msgstr "_Alkalmazás"
+
+#~ msgid "_Cancel"
+#~ msgstr "_Mégse"
+
+#~ msgid "_OK"
+#~ msgstr "_Rendben"
+
+#~ msgid "_Revert"
+#~ msgstr "_Visszaállítás"
+
+#~ msgid "page"
+#~ msgstr "oldal"
+
+#~ msgid "untitled"
+#~ msgstr "névtelen"
+

@@ -2,840 +2,2751 @@
 #
 # This file is part of PDF Arranger which is released under the GNU General
 # Public License version 3 or later.
-# See file COPYING or go to <http://www.gnu.org/licenses/> for full license details.
-#
+# See file COPYING or go to <http://www.gnu.org/licenses/> for full license
+# details.
 # Translators:
 # Konstantinos Poulios, 2008-2017
 # Manussos Pulinakis, 2022
-#
 msgid ""
 msgstr ""
 "Project-Id-Version: PDF Arranger 1.9.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-02-24 20:19+0100\n"
+"POT-Creation-Date: 2026-09-07 19:17+0000\n"
 "PO-Revision-Date: 2023-06-12 10:30+0300\n"
-"Last-Translator: Manussos Pulinakis <38626261+manussos@users.noreply.github."
-"com>\n"
-"Language-Team: \n"
+"Last-Translator: Manussos Pulinakis "
+"<38626261+manussos@users.noreply.github.com>\n"
 "Language: el\n"
-"MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=UTF-8\n"
-"Content-Transfer-Encoding: 8bit\n"
+"Language-Team: \n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 3.0.1\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: pdfarranger-qt tools/merge_translations.py\n"
+"Generated-By: Babel 2.18.0\n"
 
-#: pdfarranger/splitter.py:87
-msgid "#Col"
-msgstr "#Στήλη"
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py pdfarranger_qt/reader.py
+#, python-brace-format
+msgid "Page {}"
+msgstr "Σελίδα {}"
 
-#: pdfarranger/splitter.py:87
-msgid "#Row"
-msgstr "#Σειρά"
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Open Link"
+msgstr "Άνοιγμα συνδέσμου"
 
-#: pdfarranger/pageutils.py:127 pdfarranger/pageutils.py:453
-#: pdfarranger/pageutils.py:455
-msgid "%"
-msgstr "%"
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Copy Link Address"
+msgstr "Αντιγραφή διεύθυνσης συνδέσμου"
 
-#: pdfarranger/pageutils.py:176
-#, python-format
-msgid "% of height"
-msgstr "% του ύψους"
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+#, python-brace-format
+msgid "Go to {}"
+msgstr "Μετάβαση σε {}"
 
-#: pdfarranger/pageutils.py:176
-#, python-format
-msgid "% of width"
-msgstr "% του πλάτους"
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Follow Link"
+msgstr "Ακολούθηση συνδέσμου"
 
-#: pdfarranger/pdfarranger.py:2764
-#, python-format
-msgid "%s is a tool for rearranging and modifying PDF files."
-msgstr "Το %s είναι ένα εργαλείο για αναδιάταξη και τροποποίηση αρχείων PDF."
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py pdfarranger_qt/mainwindow.py
+msgid "Copy"
+msgstr "Αντιγραφή"
 
-#: pdfarranger/config.py:262
-msgid "(Libhandy missing)"
-msgstr "(Η Libhandy απουσιάζει)"
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Select All"
+msgstr "Επιλογή όλων"
 
-#: pdfarranger/config.py:254
-msgid "(Requires restart)"
-msgstr "(Απαιτεί επανεκίνηση)"
-
-#: pdfarranger/pdfarranger.py:1144
-#, python-format
-msgid "A file named \"%s\" already exists. Do you want to replace it?"
-msgstr ""
-"Ένα αρχείο με το όνομα \"%s\" υπάρχει ήδη. Θέλετε να το αντικαταστήσετε;"
-
-#: data/menu.ui:227 data/menu.ui:391
-msgid "All From _Same File"
-msgstr "Όλε_ς από το ίδιο αρχείο"
-
-#: pdfarranger/pdfarranger.py:518
-msgid "All files"
-msgstr "Όλα τα αρχεία"
-
-#: pdfarranger/pdfarranger.py:470
-msgid "All pages must have the same size."
-msgstr "Οι σελίδες θα πρέπει να έχουν όλες το ίδιο μέγεθος."
-
-#: pdfarranger/pdfarranger.py:506
-msgid "All supported files"
-msgstr "Όλα τα υποστηριζόμενα αρχεία"
-
-#: pdfarranger/exporter.py:563
-msgid "Auto Rotate"
-msgstr ""
-
-#: pdfarranger/pageutils.py:154
-msgid "Bottom"
-msgstr "Κάτω"
-
-#: pdfarranger/pageutils.py:386
-msgid "Bottom to Top"
-msgstr "Από κάτω προς τα πάνω"
-
-#: pdfarranger/core.py:569
-msgid "Clipboard image"
-msgstr "Εικόνα πρόχειρου"
-
-#: pdfarranger/pageutils.py:369 pdfarranger/splitter.py:60
-msgid "Columns"
-msgstr "Στήλες"
-
-#: data/menu.ui:141 data/menu.ui:354
-msgid "Copy _Image"
-msgstr ""
-
-#: data/menu.ui:146 data/menu.ui:359
-msgid "Copy _Text"
-msgstr ""
-
-#: pdfarranger/metadata.py:49
-msgid "Created"
-msgstr "Δημιουργήθηκε"
-
-#: pdfarranger/metadata.py:47
-msgid "Creator"
-msgstr "Δημιουργός"
-
-#: pdfarranger/metadata.py:48
-msgid "Creator tool"
-msgstr "Εργαλείο δημιουργίας"
-
-#: pdfarranger/pageutils.py:846
-msgid "Crop Margins"
-msgstr "Περικοπή περιθωρίων"
-
-#: data/menu.ui:174 data/menu.ui:432
-msgid "Crop White Borders"
-msgstr "Περικοπή λευκών περιθωρίων"
-
-#: pdfarranger/pageutils.py:166 pdfarranger/pdfarranger.py:2730
-msgid ""
-"Cropping/hiding does not remove any content from the PDF file, it only hides "
-"it."
-msgstr ""
-
-#: data/menu.ui:94 data/menu.ui:302
-msgid "Cu_t"
-msgstr "Απο_κοπή"
-
-#: pdfarranger/pdfarranger.py:1258
-msgid "Despite the warnings the document(s) should have no visible issues."
-msgstr ""
-"Παρά τις προειδοποιήσεις, το έγγραφο δεν πρέπει να έχει εμφανή προβλήματα."
-
-#: pdfarranger/pdfarranger.py:993
-msgid "Discard changes and close?"
-msgstr "Απόρριψη αλλαγών και κλείσιμο;"
-
-#: pdfarranger/pdfarranger.py:1030
-msgid "Discard changes and quit?"
-msgstr "Απόρριψη αλλαγών και έξοδος;"
-
-#: pdfarranger/pdfarranger.py:2737
-msgid "Do not show this dialog again."
-msgstr "Να μην ξαναεμφανιστεί αυτό το παράθυρο διαλόγου."
-
-#: pdfarranger/pdfarranger.py:984
-msgid "Do_n’t Save"
-msgstr "_Χωρίς αποθήκευση"
-
-#: pdfarranger/pdfarranger.py:1265
-msgid "Don't show warnings when saving again."
-msgstr "Να μην εμφανίζονται ειδοποιήσεις κατά την αποθήκευση."
-
-#: data/menu.ui:178 data/menu.ui:436
-msgid "Dupl_icate"
-msgstr "Δ_ιπλασιασμός"
-
-#: data/menu.ui:52 data/menu.ui:462
-msgid "E_xport"
-msgstr "Ε_ξαγωγή"
-
-#: data/menu.ui:55 data/menu.ui:465
-msgid "E_xport Selection to a Single File…"
-msgstr "Ε_ξαγωγή επιλογής σε μονό αρχείο…"
-
-#: data/menu.ui:266
-msgid "Edit _Properties"
-msgstr "Επεξεργασία _ιδιοτήτων"
-
-#: pdfarranger/metadata.py:202
-msgid "Edit properties"
-msgstr "Επεξεργασία ιδιοτήτων"
-
-#: pdfarranger/splitter.py:62
-msgid "Equal column width"
-msgstr "Ίσο πλάτος στηλών"
-
-#: pdfarranger/splitter.py:62
-msgid "Equal row height"
-msgstr "Ίσο ύψος σειρών"
-
-#: pdfarranger/pdfarranger.py:1792
-msgid "Exploding into images…"
-msgstr ""
-
-#: data/menu.ui:60 data/menu.ui:470
-msgid "Export Selection to _Individual Files…"
-msgstr "Εξαγωγή επιλογής σε ξεχωρ_ιστά αρχεία…"
-
-#: data/menu.ui:65 data/menu.ui:475
-msgid "Export _All Pages to Individual Files…"
-msgstr "Εξαγωγή _όλων των σελίδων σε ξεχωριστά αρχεία…"
-
-#: pdfarranger/pdfarranger.py:1102
-msgid "Export…"
-msgstr "Εξαγωγή…"
-
-#: pdfarranger/core.py:571 pdfarranger/pdfarranger.py:1512
-msgid "File is neither pdf nor image"
-msgstr "Το αρχείο δεν είναι ούτε pdf ούτε εικόνα"
-
-#: pdfarranger/pdfarranger.py:300
-msgid "File(s) to open"
-msgstr "Αρχείο/α για άνοιγμα"
-
-#: pdfarranger/exporter.py:561
-msgid "Fit to Full Page"
-msgstr ""
-
-#: pdfarranger/exporter.py:560
-msgid "Fit to Printable Area"
-msgstr ""
-
-#: pdfarranger/pdfarranger.py:2734
-msgid "For more info see"
-msgstr ""
-
-#: pdfarranger/config.py:271
-msgid "For more options see:"
-msgstr "Για περισσότερες επιλογές δείτε:"
-
-#: data/menu.ui:259
-msgid "Full_screen"
-msgstr "Π_λήρης οθόνη"
-
-#: pdfarranger/pdfarranger.py:2778
-msgid "GNU General Public License (GPL) Version 3."
-msgstr "Γενική Άδεια Δημόσιας Χρήσης GNU (GPL) Έκδοση 3η."
-
-#: data/menu.ui:198 data/menu.ui:456
-msgid "Generate Booklet"
-msgstr "Δημιουργία ένθετου"
-
-#: pdfarranger/pageutils.py:248 pdfarranger/pageutils.py:252
-#: pdfarranger/pageutils.py:334
-msgid "Height"
-msgstr "Ύψος"
-
-#: pdfarranger/splitter.py:88
-msgid "Height in %"
-msgstr "Ύψος σε %"
-
-#: pdfarranger/pageutils.py:846
-msgid "Hide Margins"
-msgstr ""
-
-#: pdfarranger/pageutils.py:381
-msgid "Horizontal"
-msgstr "Οριζόντια"
-
-#: pdfarranger/splitter.py:61
-msgid "Horizontal Splits"
-msgstr "Οριζόντιοι διαχωρισμοί"
-
-#: pdfarranger/pageutils.py:452
-msgid "Horizontal offset"
-msgstr "Οριζόντια μετατόπιση"
-
-#: pdfarranger/core.py:560
+#: pdfarranger_qt/core.py pdfarranger_qt/mainwindow.py
 msgid "Image files are only supported with img2pdf"
 msgstr "Τα αρχεία εικόνας υποστηρίζονται μόνο μέσω img2pdf"
 
-#: pdfarranger/core.py:566
-msgid "Image format is not supported by img2pdf"
-msgstr "Η διαμόρφωση του αρχείου εικόνας δεν υποστηρίζεται από το img2pdf"
-
-#: pdfarranger/pdfarranger.py:1789
-msgid "Img2pdf missing."
-msgstr ""
-
-#: data/pdfarranger.ui:58
-msgid "Import"
-msgstr "Εισαγωγή"
-
-#: pdfarranger/pdfarranger.py:1335
-msgid "Import…"
-msgstr "Εισαγωγή…"
-
-#: data/menu.ui:194 data/menu.ui:452
-msgid "Insert Blan_k Page…"
-msgstr "Εισαγωγή _κενής σελίδας…"
-
-#: pdfarranger/pageutils.py:331
-msgid "Insert Blank Page"
-msgstr "Εισαγωγή κενής σελίδας"
-
-#: pdfarranger/metadata.py:173
-msgid "Invalid date format. Input discarded."
-msgstr "Εσφαλμένη μορφή ημερομηνίας. Η ενέργεια απορρίφθηκε."
-
-#: pdfarranger/pdfarranger.py:2767
-#, python-format
-msgid "It uses libqpdf %s, pikepdf %s, GTK %s and Python %s."
-msgstr "Χρησιμοποιεί τα libqpdf %s, pikepdf %s, GTK %s και Python %s."
-
-#: pdfarranger/metadata.py:45
-msgid "Keywords"
-msgstr "Λέξεις κλειδιά"
-
-#: pdfarranger/config.py:252
-msgid "Language"
-msgstr "Γλώσσα"
-
-#: pdfarranger/pageutils.py:154
-msgid "Left"
-msgstr "Αριστερά"
-
-#: pdfarranger/pageutils.py:383
-msgid "Left to Right"
-msgstr "Αριστερά προς δεξιά"
-
-#: data/pdfarranger.ui:122
-msgid "Main Menu"
-msgstr "Κεντρικό μενού"
-
-#: pdfarranger/pdfarranger.py:2773
-msgid "Maintainers and contributors"
-msgstr "Συντηρητές και συνεισφέροντες"
-
-#: pdfarranger/pageutils.py:367
-msgid "Margin"
-msgstr "Περιθώριο"
-
-#: pdfarranger/pageutils.py:353
-msgid "Merge Pages"
-msgstr "Συγχώνευση σελίδων"
-
-#: pdfarranger/pageutils.py:418
-msgid "Merged page size:"
-msgstr "Μέγεθος συγχωνευμένης σελίδας:"
-
-#: pdfarranger/metadata.py:50
-msgid "Modified"
-msgstr "Τροποποιήθηκε"
-
-#: pdfarranger/pageutils.py:398
-msgid "Non-uniform page size - using max size"
-msgstr "Μη ομοιόμορφο μέγεθος σελίδας - χρήση μέγιστου μεγέθους"
-
-#: pdfarranger/exporter.py:559
-msgid "None"
-msgstr ""
-
-#: pdfarranger/pdfarranger.py:2723
-msgid "Note"
-msgstr ""
-
-#: pdfarranger/pdfarranger.py:2729
-msgid "Note the limitations:"
-msgstr ""
-
-#: data/pdfarranger.ui:37
-msgid "Open"
-msgstr "Άνοιγμα"
-
-#: pdfarranger/pdfarranger.py:1200
-msgid "Open…"
-msgstr "Άνοιγμα…"
-
-#: pdfarranger/pdfarranger.py:2731
-msgid "Outlines and links can be preserved only in certain cases."
-msgstr ""
-
-#: pdfarranger/pageutils.py:899
-msgid "Overlay"
-msgstr "Επικάλυψη"
-
-#: pdfarranger/pdfarranger.py:281
-msgid ""
-"PDF Arranger is a small python-gtk application, which helps the user to "
-"merge or split pdf documents and rotate, crop and rearrange their pages "
-"using an interactive and intuitive graphical interface. It is a frontend for "
-"pikepdf."
-msgstr ""
-"Το PDF Arranger είναι μια μικρή εφαρμογή, που βοηθά τον χρήστη να "
-"συγχωνεύσει ή να διαχωρίσει αρχεία τύπου PDF καθώς και να περιστρέψει, "
-"περικόψει και αναδιατάξει τις σελίδες τους χρησιμοποιώντας ένα διαδραστικό "
-"και διαισθητικό γραφικό περιβάλλον. Είναι δηλαδή ένα γραφικό περιβάλλον για "
-"το pikepdf."
-
-#: pdfarranger/pdfarranger.py:1506
-msgid "PDF document is damaged"
-msgstr "Το έγγραφο PDF είναι κατεστραμένο"
-
-#: pdfarranger/pdfarranger.py:510
-msgid "PDF files"
-msgstr "Αρχεία PDF"
-
-#: pdfarranger/exporter.py:599
-msgid "Page Handling"
-msgstr ""
-
-#: pdfarranger/pageutils.py:394
-msgid "Page Order"
-msgstr "Σειρά σελίδων"
-
-#: pdfarranger/pdfarranger.py:2801
-msgid "Page Size:"
-msgstr "Μέγεθος σελίδας:"
-
-#: pdfarranger/pageutils.py:243
-msgid "Page size"
-msgstr ""
-
-#: pdfarranger/core.py:457
-msgid "Password"
-msgstr "Κωδικός"
-
-#: pdfarranger/core.py:435
-msgid "Password required"
-msgstr "Απαιτείται κωδικός"
-
-#: data/menu.ui:107 data/menu.ui:315
-msgid "Past_e Special"
-msgstr "_Επικόλληση συγκεκριμένα"
-
-#: data/menu.ui:124 data/menu.ui:333
-msgid "Paste As O_verlay…"
-msgstr "Επικόλληση ως υπε_ρκάλυψη"
-
-#: data/menu.ui:119 data/menu.ui:328
-msgid "Paste As _Even Pages"
-msgstr "Επικόλληση ως _ζυγές σελίδες"
-
-#: data/menu.ui:114 data/menu.ui:323
-msgid "Paste As _Odd Pages"
-msgstr "Επικόλληση ως μ_ονές σελίδες"
-
-#: data/menu.ui:129 data/menu.ui:338
-msgid "Paste As _Underlay…"
-msgstr "Επικόλληση ως _υπόστρωμα…"
-
-#: data/menu.ui:102 data/menu.ui:310
-msgid "Paste _After"
-msgstr "Ε_πικόλληση μετά"
-
-#: data/menu.ui:109 data/menu.ui:318
-msgid "Paste _Before"
-msgstr "Επικόλληση _πριν"
-
-#: pdfarranger/pdfarranger.py:1636
-msgid "Pasted data not valid. Aborting paste."
-msgstr "Δεδομένα επικόλλησης μη έγκυρα. Η επικόλληση ακυρώθηκε."
-
-#: data/menu.ui:272
-msgid "Pre_ferences"
-msgstr "Προ_τιμήσεις"
-
-#: pdfarranger/config.py:242
-msgid "Preferences"
-msgstr "Προτιμήσεις"
-
-#: pdfarranger/pdfarranger.py:292
-msgid "Print the version of PDF Arranger and exit"
-msgstr "Εμφάνιση της έκδοσης του PDF Arranger και έξοδος"
-
-#: pdfarranger/config.py:267
-msgid "Printing"
-msgstr ""
-
-#: pdfarranger/exporter.py:579
-msgid "Printing…"
-msgstr "Εκτύπωση…"
-
-#: pdfarranger/metadata.py:46
-msgid "Producer"
-msgstr "Παραγωγός"
-
-#: pdfarranger/metadata.py:216
-msgid "Property"
-msgstr "Ιδιότητα"
-
-#: data/menu.ui:182 data/menu.ui:440
-msgid "Re_verse Order"
-msgstr "Αναστρο_φή σειράς"
-
-#: pdfarranger/pageutils.py:250
-msgid "Relative"
-msgstr "Αναλογία"
-
-#: pdfarranger/exporter.py:617
-msgid "Rendering Preview…"
-msgstr "Προεπισκόπηση…"
-
-#: pdfarranger/pdfarranger.py:746
-msgid "Rendering…"
-msgstr "Σχεδίαση…"
-
-#: pdfarranger/pdfarranger.py:1146
-msgid "Replace"
-msgstr "Αντικατάσταση"
-
-#: pdfarranger/pageutils.py:154
-msgid "Right"
-msgstr "Δεξιά"
-
-#: pdfarranger/pageutils.py:384
-msgid "Right to Left"
-msgstr "Δεξιά προς αριστερά"
-
-#: data/pdfarranger.ui:203
-msgid "Rotate Left"
-msgstr "Περιστροφή αριστερά"
-
-#: data/pdfarranger.ui:227
-msgid "Rotate Right"
-msgstr "Περιστροφή δεξιά"
-
-#: data/menu.ui:152 data/menu.ui:410
-msgid "Rotate _Left"
-msgstr "Περιστροφή _αριστερά"
-
-#: pdfarranger/pageutils.py:370 pdfarranger/splitter.py:60
-msgid "Rows"
-msgstr "Σειρές"
-
-#: data/menu.ui:232 data/menu.ui:396
-msgid "Same Page _Format"
-msgstr "Ίδιας μορ_φοποίησης σελίδας"
-
-#: data/pdfarranger.ui:78
-msgid "Save"
-msgstr "Αποθήκευση"
-
-#: data/pdfarranger.ui:97
-msgid "Save As"
-msgstr "Αποθήκευση ως"
-
-#: pdfarranger/pdfarranger.py:1102
-msgid "Save As…"
-msgstr "Αποθήκευση ως…"
-
-#: data/menu.ui:47
-msgid "Save _As…"
-msgstr "_Αποθήκευση ως…"
-
-#: pdfarranger/pdfarranger.py:1002
-msgid "Save changes before closing?"
-msgstr "Να αποθηκευτούν οι αλλαγές πριν το κλείσιμο;"
-
-#: pdfarranger/pdfarranger.py:1039
-msgid "Save changes before quitting?"
-msgstr "Να αποθηκευτούν οι αλλαγές πριν την έξοδο;"
-
-#: pdfarranger/pdfarranger.py:999
-msgid "Save changes to “{}” before closing?"
-msgstr "Να αποθηκευτούν οι αλλαγές στο “{}” πριν το κλείσιμο;"
-
-#: pdfarranger/pdfarranger.py:1036
-msgid "Save changes to “{}” before quitting?"
-msgstr "Να αποθηκευτούν οι αλλαγές στο “{}” πριν την έξοδο;"
-
-#: pdfarranger/pdfarranger.py:1257
-msgid "Saving produced some warnings"
-msgstr "Η αποθήκευση παρήγαγε ορισμένες προειδοποιήσεις"
-
-#: pdfarranger/pdfarranger.py:1296
-msgid "Saving…"
-msgstr "Γίνεται αποθήκευση…"
-
-#: pdfarranger/pageutils.py:121
-msgid "Scale factor"
-msgstr "Συντελεστής κλίμακας"
-
-#: pdfarranger/exporter.py:557
-msgid "Scale mode:"
-msgstr ""
-
-#: data/menu.ui:207 data/menu.ui:371
-msgid "Select _All"
-msgstr "Επιλογή ό_λων"
-
-#: data/menu.ui:222 data/menu.ui:386
-msgid "Select _Even Pages"
-msgstr "_Επιλογή ζυγών σελίδων"
-
-#: data/menu.ui:217 data/menu.ui:381
-msgid "Select _Odd Pages"
-msgstr "Επιλογή μ_ονών σελίδων"
-
-#: pdfarranger/pdfarranger.py:2796
-msgid "Selected pages: "
-msgstr "Επιλεγμένες σελίδες: "
-
-#: pdfarranger/pageutils.py:548
-msgid "Show values"
-msgstr ""
-
-#: pdfarranger/splitter.py:26
-msgid "Split Pages"
-msgstr "Διαχωρισμός σελίδων"
-
-#: pdfarranger/metadata.py:44
-msgid "Subject"
-msgstr "Θέμα"
-
-#: pdfarranger/pdfarranger.py:523
-msgid "Supported image files"
-msgstr "Υποστηριζόμενα αρχεία εικόνας"
-
-#: pdfarranger/config.py:282 pdfarranger/config.py:290
-msgid "System setting"
-msgstr "Ρύθμιση συστήματος"
-
-#: pdfarranger/core.py:447
-msgid ""
-"The document “{}” is locked and requires a password before it can be opened."
-msgstr ""
-"Το έγγραφο “{}” είναι κλειδωμένο και απαιτείται κωδικός για το άνοιγμά του."
-
-#: pdfarranger/pdfarranger.py:1765
-msgid "The page has several images. Use \"Explode into Images\" first.\""
-msgstr ""
-
-#: pdfarranger/core.py:446
-msgid "The password will be remembered until you close PDF Arranger."
-msgstr ""
-"Ο κωδικός θα παραμείνει αποθηκευμένος μέχρι να κλείσετε το PDF Arranger."
-
-#: pdfarranger/config.py:260
-msgid "Theme"
-msgstr "Θέμα"
-
-#: pdfarranger/metadata.py:43
-msgid "Title"
-msgstr "Τίτλος"
-
-#: pdfarranger/pageutils.py:154
-msgid "Top"
-msgstr "Πάνω"
-
-#: pdfarranger/pageutils.py:385
-msgid "Top to Bottom"
-msgstr "Από πάνω προς τα κάτω"
-
-#: pdfarranger/pageutils.py:899
-msgid "Underlay"
-msgstr "Υπόστρωμα"
-
-#: pdfarranger/core.py:544 pdfarranger/pdfarranger.py:1502
+# machine translation, unreviewed
+#: pdfarranger_qt/core.py
+msgid "File not found"
+msgstr "Το αρχείο δεν βρέθηκε"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/core.py
+msgid "Invalid file format"
+msgstr "Μη έγκυρη μορφή αρχείου"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/core.py
+msgid "Data not yet available"
+msgstr "Τα δεδομένα δεν είναι ακόμη διαθέσιμα"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/core.py
+msgid "Unsupported security scheme"
+msgstr "Μη υποστηριζόμενο σχήμα ασφαλείας"
+
+#: pdfarranger_qt/core.py
 msgid "Unknown file format"
 msgstr "Άγνωστη μορφή αρχείου"
 
-#: pdfarranger/pdfarranger.py:2735
-msgid "User Manual"
-msgstr ""
+#: pdfarranger_qt/core.py
+msgid "Image format is not supported by img2pdf"
+msgstr "Η διαμόρφωση του αρχείου εικόνας δεν υποστηρίζεται από το img2pdf"
 
-#: pdfarranger/metadata.py:216
-msgid "Value"
-msgstr "Τιμή"
+#: pdfarranger_qt/core.py
+msgid "File is neither pdf nor image"
+msgstr "Το αρχείο δεν είναι ούτε pdf ούτε εικόνα"
 
-#: pdfarranger/pageutils.py:382
-msgid "Vertical"
-msgstr "Κάθετα"
+# machine translation, unreviewed
+#: pdfarranger_qt/core.py
+msgid "Cannot open document"
+msgstr "Αδύνατο το άνοιγμα του εγγράφου"
 
-#: pdfarranger/splitter.py:61
-msgid "Vertical Splits"
-msgstr "Κάθετοι διαχωρισμοί"
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Paper size"
+msgstr "Μέγεθος χαρτιού"
 
-#: pdfarranger/pageutils.py:454
-msgid "Vertical offset"
-msgstr "Κατακόρυφη μετατόπιση"
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Custom"
+msgstr "Προσαρμοσμένο"
 
-#: pdfarranger/pageutils.py:247 pdfarranger/pageutils.py:251
-#: pdfarranger/pageutils.py:333
-msgid "Width"
-msgstr "Πλάτος"
-
-#: pdfarranger/splitter.py:88
-msgid "Width in %"
-msgstr "Πλάτος σε %"
-
-#: pdfarranger/pdfarranger.py:983
-msgid "Your changes will be lost if you don’t save them."
-msgstr "Οι αλλαγές θα χαθούν αν δεν αποθηκεύσετε."
-
-#: data/pdfarranger.ui:144
-msgid "Zoom In"
-msgstr "Μεγέθυνση"
-
-#: data/pdfarranger.ui:167
-msgid "Zoom Out"
-msgstr "Σμίκρυνση"
-
-#: data/menu.ui:255
-msgid "Zoom _Fit"
-msgstr "Προσαρμο_γή"
-
-#: data/menu.ui:247
-msgid "Zoom _In"
-msgstr "_Μεγέθυνση"
-
-#: data/menu.ui:251
-msgid "Zoom _Out"
-msgstr "_Σμίκρυνση"
-
-#: data/menu.ui:278
-msgid "_About"
-msgstr "Σ_χετικά"
-
-#: pdfarranger/pageutils.py:856
-msgid "_Apply"
-msgstr ""
-
-#: pdfarranger/config.py:246 pdfarranger/pageutils.py:227
-#: pdfarranger/pdfarranger.py:975 pdfarranger/pdfarranger.py:984
-#: pdfarranger/pdfarranger.py:1108 pdfarranger/pdfarranger.py:1158
-msgid "_Cancel"
-msgstr "_Ακύρωση"
-
-#: pdfarranger/pdfarranger.py:994 data/menu.ui:284
-msgid "_Close"
-msgstr "_Κλείσιμο"
-
-#: data/menu.ui:98 data/menu.ui:306
-msgid "_Copy"
-msgstr "Αντι_γραφή"
-
-#: data/menu.ui:166 data/menu.ui:424
-msgid "_Crop Margins…"
-msgstr ""
-
-#: data/menu.ui:90 data/menu.ui:298
-msgid "_Delete"
-msgstr "_Διαγραφή"
-
-#: data/menu.ui:212 data/menu.ui:376
-msgid "_Deselect All"
-msgstr "_Αποεπιλογή όλων"
-
-#: data/menu.ui:87
-msgid "_Edit"
-msgstr "_Επεξεργασία"
-
-#: data/menu.ui:137 data/menu.ui:350
-msgid "_Explode into Images"
-msgstr ""
-
-#: data/menu.ui:135 data/menu.ui:347
-msgid "_Extract"
-msgstr ""
-
-#: data/menu.ui:170 data/menu.ui:428
-msgid "_Hide Margins…"
-msgstr ""
-
-#: data/menu.ui:30
-msgid "_Import"
-msgstr "Ε_ισαγωγή"
-
-#: data/menu.ui:237 data/menu.ui:401
-msgid "_Invert Selection"
-msgstr "Αντ_ιστροφή επιλογής"
-
-#: data/menu.ui:190 data/menu.ui:448
-msgid "_Merge Pages…"
-msgstr "Συγ_χώνευση σελίδων…"
-
-#: data/menu.ui:36
-msgid "_New Window"
-msgstr "_Νέο παράθυρο"
-
-#: pdfarranger/config.py:247 pdfarranger/pageutils.py:228
-msgid "_OK"
-msgstr ""
-
-#: pdfarranger/pdfarranger.py:1157 data/menu.ui:24
-msgid "_Open"
-msgstr "Άν_οιγμα"
-
-#: data/menu.ui:162 data/menu.ui:420
-msgid "_Page Size…"
-msgstr ""
-
-#: data/menu.ui:71
-msgid "_Print…"
-msgstr "Εκτύ_πωση…"
-
-#: pdfarranger/pdfarranger.py:1031 data/menu.ui:290
-msgid "_Quit"
-msgstr "Έξ_οδος"
-
-#: data/menu.ui:82
-msgid "_Redo"
-msgstr "Επανάλη_ψη"
-
-#: pdfarranger/pageutils.py:856
-msgid "_Revert"
-msgstr ""
-
-#: data/menu.ui:157 data/menu.ui:415
-msgid "_Rotate Right"
-msgstr "Πε_ριστροφή δεξιά"
-
-#: pdfarranger/pdfarranger.py:984 pdfarranger/pdfarranger.py:1107
-#: data/menu.ui:42
-msgid "_Save"
-msgstr "Αποθήκευ_ση"
-
-#: data/menu.ui:204 data/menu.ui:368
-msgid "_Select"
-msgstr "Επιλο_γή"
-
-#: data/menu.ui:186 data/menu.ui:444
-msgid "_Split Pages…"
-msgstr "Διαχωρισμός _σελίδων…"
-
-#: data/menu.ui:78
-msgid "_Undo"
-msgstr "Αναί_ρεση"
-
-#: data/menu.ui:244
-msgid "_View"
-msgstr "Προ_βολή"
-
-#: pdfarranger/pageutils.py:144 pdfarranger/pageutils.py:368
-#: pdfarranger/pageutils.py:418
+#: pdfarranger_qt/dialogs.py
 msgid "mm"
 msgstr "χιλ"
 
-#: pdfarranger/core.py:326
-msgid "page"
-msgstr "σελίδα"
+#: pdfarranger_qt/dialogs.py
+msgid "Width"
+msgstr "Πλάτος"
 
-#: pdfarranger/pdfarranger.py:825
-msgid "untitled"
-msgstr "χωρίς τίτλο"
+#: pdfarranger_qt/dialogs.py
+msgid "Height"
+msgstr "Ύψος"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Keep aspect ratio"
+msgstr "Διατήρηση αναλογιών"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Portrait"
+msgstr "Κατακόρυφος"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Landscape"
+msgstr "Οριζόντιος"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Orientation"
+msgstr "Προσανατολισμός"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Range Select"
+msgstr "Επιλογή εύρους"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Select range of pages: "
+msgstr "Επιλέξτε εύρος σελίδων: "
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Use a comma to separate page numbers, a dash to select a range of pages. \n"
+"e.g. : \"1,3,5-7,9\""
+msgstr ""
+"Χωρίστε τους αριθμούς σελίδων με κόμμα και επιλέξτε εύρος σελίδων με παύλα."
+" \n"
+"π.χ.: \"1,3,5-7,9\""
+
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+msgid "Insert Blank Page"
+msgstr "Εισαγωγή κενής σελίδας"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+msgid "Page size"
+msgstr "Μέγεθος σελίδας"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Fit to paper"
+msgstr "Προσαρμογή στο χαρτί"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Relative"
+msgstr "Αναλογία"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Scale"
+msgstr "Κλιμάκωση"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Scale & Add margins"
+msgstr "Κλιμάκωση και προσθήκη περιθωρίων"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Crop & Add margins"
+msgstr "Περικοπή και προσθήκη περιθωρίων"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Fit mode"
+msgstr "Τρόπος προσαρμογής"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Scale factor"
+msgstr "Συντελεστής κλίμακας"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+msgid "Hide Margins"
+msgstr "Απόκρυψη περιθωρίων"
+
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+msgid "Crop Margins"
+msgstr "Περικοπή περιθωρίων"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Left"
+msgstr "Αριστερά"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Right"
+msgstr "Δεξιά"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Top"
+msgstr "Πάνω"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Bottom"
+msgstr "Κάτω"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Margins"
+msgstr "Περιθώρια"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Same for all sides"
+msgstr "Ίδια σε όλες τις πλευρές"
+
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+msgid "Split Pages"
+msgstr "Διαχωρισμός σελίδων"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Vertical Splits"
+msgstr "Κάθετοι διαχωρισμοί"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Horizontal Splits"
+msgstr "Οριζόντιοι διαχωρισμοί"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+msgid "Pages per Sheet"
+msgstr "Σελίδες ανά φύλλο"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Automatic"
+msgstr "Αυτόματα"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Automatic turns the sheet sideways when that lets the pages come out larger."
+msgstr ""
+"Η αυτόματη λειτουργία γυρίζει το φύλλο πλαγίως όταν έτσι οι σελίδες βγαίνουν"
+" μεγαλύτερες."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Empty space left around each page."
+msgstr "Κενός χώρος γύρω από κάθε σελίδα."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Layout"
+msgstr "Διάταξη"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Columns"
+msgstr "Στήλες"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Rows"
+msgstr "Σειρές"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Sheet"
+msgstr "Φύλλο"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Gap"
+msgstr "Κενό"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Appearance"
+msgstr "Εμφάνιση"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/reader.py
+msgid "Bold"
+msgstr "Έντονα"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/reader.py
+msgid "Italic"
+msgstr "Πλάγια"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Font"
+msgstr "Γραμματοσειρά"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Size"
+msgstr "Μέγεθος"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Colour"
+msgstr "Χρώμα"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Opacity"
+msgstr "Αδιαφάνεια"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Position"
+msgstr "Θέση"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Angle"
+msgstr "Γωνία"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+msgid "Add Page Numbers"
+msgstr "Προσθήκη αριθμών σελίδων"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+#, python-format
+msgid "%s is replaced by the page number, %s by the number of pages."
+msgstr "Το %s αντικαθίσταται από τον αριθμό σελίδας, το %s από το πλήθος των σελίδων."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Leave the first page unnumbered"
+msgstr "Να μείνει η πρώτη σελίδα χωρίς αριθμό"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "It is still counted; a title page just does not carry a number."
+msgstr "Εξακολουθεί να μετράει· απλώς μια σελίδα τίτλου δεν φέρει αριθμό."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Format"
+msgstr "Μορφή"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Start at"
+msgstr "Έναρξη από"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Numbering"
+msgstr "Αρίθμηση"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+msgid "Add Watermark"
+msgstr "Προσθήκη υδατογραφήματος"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "DRAFT"
+msgstr "ΠΡΟΧΕΙΡΟ"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Text"
+msgstr "Κείμενο"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Watermark"
+msgstr "Υδατογράφημα"
+
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+msgid "Merge Pages"
+msgstr "Συγχώνευση σελίδων"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Overlay"
+msgstr "Επικάλυψη"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Underlay"
+msgstr "Υπόστρωμα"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/stamp.py
+msgid "Centre"
+msgstr "Στο κέντρο"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Middle"
+msgstr "Στη μέση"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Horizontal"
+msgstr "Οριζόντια"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Vertical"
+msgstr "Κάθετα"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Edit properties"
+msgstr "Επεξεργασία ιδιοτήτων"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "System"
+msgstr "Σύστημα"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Light"
+msgstr "Φωτεινό"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Dark"
+msgstr "Σκοτεινό"
+
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+msgid "Preferences"
+msgstr "Προτιμήσεις"
+
+#: pdfarranger_qt/dialogs.py
+msgid "System setting"
+msgstr "Ρύθμιση συστήματος"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Language"
+msgstr "Γλώσσα"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Theme"
+msgstr "Θέμα"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "General"
+msgstr "Γενικά"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Fit to page"
+msgstr "Προσαρμογή στη σελίδα"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Actual size"
+msgstr "Πραγματικό μέγεθος"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Auto Rotate"
+msgstr "Αυτόματη περιστροφή"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Pages are rasterised at this resolution before being sent to the printer. "
+"Lower it if printing is slow: the printer driver has less to process."
+msgstr ""
+"Οι σελίδες ψηφιδοποιούνται σε αυτήν την ανάλυση προτού σταλούν στον "
+"εκτυπωτή. Χαμηλώστε την αν η εκτύπωση είναι αργή: το πρόγραμμα οδήγησης του "
+"εκτυπωτή θα έχει λιγότερα να επεξεργαστεί."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Scale mode"
+msgstr "Τρόπος κλιμάκωσης"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Pixels/inch:"
+msgstr "Εικονοστοιχεία/ίντσα:"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Printing"
+msgstr "Εκτύπωση"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Preserve document information from the first file opened"
+msgstr "Διατήρηση των πληροφοριών εγγράφου από το πρώτο αρχείο που ανοίχθηκε"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "When checked: use document properties from the first file opened."
+msgstr ""
+"Όταν είναι επιλεγμένο: χρήση των ιδιοτήτων εγγράφου από το πρώτο αρχείο που "
+"ανοίχθηκε."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "When unchecked: merge bookmarks from all documents."
+msgstr "Όταν δεν είναι επιλεγμένο: συγχώνευση των σελιδοδεικτών από όλα τα έγγραφα."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Optimize for the web (linearize)"
+msgstr "Βελτιστοποίηση για το διαδίκτυο (γραμμικοποίηση)"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Lay the file out so a browser can show page one before the rest has "
+"downloaded."
+msgstr ""
+"Διάταξη του αρχείου ώστε ένας περιηγητής να μπορεί να δείξει την πρώτη "
+"σελίδα προτού κατέβουν τα υπόλοιπα."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Compress"
+msgstr "Συμπίεση"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Recompress the file's streams and pack its objects together."
+msgstr "Επανασυμπίεση των ροών του αρχείου και συμπύκνωση των αντικειμένων του."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"How much this saves depends on the file: one full of already-compressed "
+"images will barely shrink."
+msgstr ""
+"Πόσο κερδίζει κανείς εξαρτάται από το αρχείο: ένα γεμάτο ήδη συμπιεσμένες "
+"εικόνες μετά βίας θα συρρικνωθεί."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Saving/exporting to single file"
+msgstr "Αποθήκευση/εξαγωγή σε ένα αρχείο"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Greyscale"
+msgstr "Κλίμακα του γκρι"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Image Export"
+msgstr "Εξαγωγή εικόνων"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Keyboard shortcuts"
+msgstr "Συντομεύσεις πληκτρολογίου"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Viewer Preferences"
+msgstr "Προτιμήσεις προβολέα"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Open showing:"
+msgstr "Άνοιγμα με εμφάνιση:"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Page layout:"
+msgstr "Διάταξη σελίδας:"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "On opening"
+msgstr "Κατά το άνοιγμα"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Window"
+msgstr "Παράθυρο"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Readers are free to ignore all of this."
+msgstr "Οι αναγνώστες είναι ελεύθεροι να αγνοήσουν όλα αυτά."
+
+#: pdfarranger_qt/dialogs.py
+msgid "Password"
+msgstr "Κωδικός"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Confirm password"
+msgstr "Επιβεβαίωση κωδικού"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Enter a password, or cancel to leave the document unencrypted."
+msgstr "Δώστε έναν κωδικό, ή ακυρώστε για να μείνει το έγγραφο χωρίς κρυπτογράφηση."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "The passwords do not match."
+msgstr "Οι κωδικοί δεν ταιριάζουν."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Reset"
+msgstr "Επαναφορά"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Description"
+msgstr "Περιγραφή"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"PDF Arranger merges, splits, rearranges, rotates and crops PDF documents. "
+"Everything happens in memory against the pages you can see; nothing is "
+"written until you save."
+msgstr ""
+"Το PDF Arranger συγχωνεύει, διαχωρίζει, αναδιατάσσει, περιστρέφει και "
+"περικόπτει έγγραφα PDF. Όλα συμβαίνουν στη μνήμη, πάνω στις σελίδες που "
+"βλέπετε· τίποτα δεν γράφεται ώσπου να αποθηκεύσετε."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"It is a front end for pikepdf. Page content is never rewritten — only page "
+"order, geometry and composition."
+msgstr ""
+"Είναι ένα περιβάλλον πάνω από το pikepdf. Το περιεχόμενο των σελίδων δεν "
+"ξαναγράφεται ποτέ — μόνο η σειρά των σελίδων, η γεωμετρία και η σύνθεση."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Command line"
+msgstr "Γραμμή εντολών"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Files given on the command line are opened as one document. "
+"<code>--version</code> prints the version and exits."
+msgstr ""
+"Τα αρχεία που δίνονται στη γραμμή εντολών ανοίγουν ως ένα έγγραφο. Το "
+"<code>--version</code> τυπώνει την έκδοση και τερματίζει."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+msgid "Reading"
+msgstr "Ανάγνωση"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"The application opens in <b>read mode</b>: a continuous page view for "
+"reading the document rather than rearranging it. <b>View ▸ Arrange Mode</b> "
+"(Ctrl+E) swaps to the thumbnail grid and back."
+msgstr ""
+"Η εφαρμογή ανοίγει σε <b>λειτουργία ανάγνωσης</b>: μια συνεχή προβολή "
+"σελίδων για να διαβάζετε το έγγραφο αντί να το αναδιατάσσετε. Το <b>Προβολή "
+"▸ Λειτουργία τακτοποίησης</b> (Ctrl+E) εναλλάσσει στο πλέγμα μικρογραφιών "
+"και πίσω."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Reading shows the document <i>as edited</i>: rotations, crops, deletions and"
+" reordering are all applied, so what you read is what you would get if you "
+"saved. Page-editing commands are disabled while reading — bookmarks are the "
+"exception, and are edited here and nowhere else."
+msgstr ""
+"Η ανάγνωση δείχνει το έγγραφο <i>όπως έχει επεξεργαστεί</i>: περιστροφές, "
+"περικοπές, διαγραφές και αναδιατάξεις εφαρμόζονται όλες, οπότε αυτό που "
+"διαβάζετε είναι αυτό που θα παίρνατε αν αποθηκεύατε. Οι εντολές επεξεργασίας"
+" σελίδων είναι απενεργοποιημένες κατά την ανάγνωση — οι σελιδοδείκτες είναι "
+"η εξαίρεση και επεξεργάζονται εδώ και πουθενά αλλού."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"The page you are on follows you between the two modes. Switching to read "
+"mode opens at the page selected in the grid, the first of them if several "
+"are selected; switching back scrolls the grid to the page you were reading, "
+"without disturbing what you had selected. With nothing selected, reading "
+"resumes where you left off — your place in each document is remembered "
+"between visits."
+msgstr ""
+"Η σελίδα στην οποία βρίσκεστε σας ακολουθεί ανάμεσα στις δύο λειτουργίες. Η "
+"μετάβαση στη λειτουργία ανάγνωσης ανοίγει στη σελίδα που είναι επιλεγμένη "
+"στο πλέγμα, την πρώτη από αυτές αν είναι επιλεγμένες πολλές· η επιστροφή "
+"κυλά το πλέγμα στη σελίδα που διαβάζατε, χωρίς να πειράξει αυτό που είχατε "
+"επιλέξει. Χωρίς επιλογή, η ανάγνωση συνεχίζει εκεί που την αφήσατε — η θέση "
+"σας σε κάθε έγγραφο θυμάται ανάμεσα στις επισκέψεις."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"The toolbar shows which page you are on and how many there are; type a "
+"number into it to jump there, or use <b>Ctrl+G</b>."
+msgstr ""
+"Η γραμμή εργαλείων δείχνει σε ποια σελίδα βρίσκεστε και πόσες υπάρχουν· "
+"πληκτρολογήστε έναν αριθμό σε αυτήν για να μεταβείτε εκεί, ή χρησιμοποιήστε "
+"<b>Ctrl+G</b>."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>View ▸ Continuous Scroll</b> is on by default; turning it off shows one "
+"page at a time. <b>View ▸ Facing Pages</b> puts two pages side by side, the "
+"way a book falls open. Both settings are remembered."
+msgstr ""
+"Το <b>Προβολή ▸ Συνεχής κύλιση</b> είναι ενεργό εξ ορισμού· αν το "
+"απενεργοποιήσετε, εμφανίζεται μία σελίδα κάθε φορά. Το <b>Προβολή ▸ "
+"Αντικριστές σελίδες</b> βάζει δύο σελίδες δίπλα δίπλα, όπως ανοίγει ένα "
+"βιβλίο. Και οι δύο ρυθμίσεις θυμούνται."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Moving around a document"
+msgstr "Μετακίνηση μέσα σε ένα έγγραφο"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"One rule for the arrow keys: <b>the modifier decides what moves</b>. Nothing"
+" scrolls the view, Option (Alt) moves the text cursor, Shift extends the "
+"selection, Command (Ctrl) jumps to an edge, and Fn — Page Up, Page Down, "
+"Home and End — jumps further. None of it changes according to whether a text"
+" cursor happens to be on the page."
+msgstr ""
+"Ένας κανόνας για τα βέλη: <b>το τι κινείται το αποφασίζει ο "
+"τροποποιητής</b>. Κανένας κυλά την προβολή, το Option (Alt) μετακινεί τον "
+"δρομέα κειμένου, το Shift επεκτείνει την επιλογή, το Command (Ctrl) πηδά σε "
+"μια άκρη, και το Fn — Page Up, Page Down, Home και End — πηδά πιο μακριά. "
+"Τίποτα από αυτά δεν αλλάζει ανάλογα με το αν τυχαίνει να υπάρχει δρομέας "
+"κειμένου στη σελίδα."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Keys"
+msgstr "Πλήκτρα"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Continuous"
+msgstr "Συνεχής"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/viewer.py
+msgid "One page at a time"
+msgstr "Μία σελίδα κάθε φορά"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "scroll one line"
+msgstr "κύλιση μίας γραμμής"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "top of the previous / next page"
+msgstr "κορυφή της προηγούμενης / επόμενης σελίδας"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "previous / next page"
+msgstr "προηγούμενη / επόμενη σελίδα"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "scroll one screen"
+msgstr "κύλιση μίας οθόνης"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "start / end of the document"
+msgstr "αρχή / τέλος του εγγράφου"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "move the text cursor, by character or line"
+msgstr "μετακίνηση του δρομέα κειμένου, κατά χαρακτήρα ή γραμμή"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "extend the selection, by character or line"
+msgstr "επέκταση της επιλογής, κατά χαρακτήρα ή γραμμή"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "move the text cursor one word"
+msgstr "μετακίνηση του δρομέα κειμένου κατά μία λέξη"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "extend the selection one word"
+msgstr "επέκταση της επιλογής κατά μία λέξη"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "cursor to the start / end of the line"
+msgstr "δρομέας στην αρχή / στο τέλος της γραμμής"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "cursor to the start / end of the document"
+msgstr "δρομέας στην αρχή / στο τέλος του εγγράφου"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Add Shift to a Command or Option combination to extend the selection instead"
+" of moving — <b>Shift+Command+→</b> selects to the end of the line. Adding "
+"Option works by the word rather than the character. On Windows and Linux, "
+"read Command as Ctrl and Option as Alt; the table is the same everywhere."
+msgstr ""
+"Προσθέστε Shift σε έναν συνδυασμό με Command ή Option για να επεκτείνετε την"
+" επιλογή αντί να μετακινήσετε — το <b>Shift+Command+→</b> επιλέγει ως το "
+"τέλος της γραμμής. Η προσθήκη του Option δουλεύει κατά λέξη αντί κατά "
+"χαρακτήρα. Σε Windows και Linux διαβάστε το Command ως Ctrl και το Option ως"
+" Alt· ο πίνακας είναι ο ίδιος παντού."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Selecting and copying text"
+msgstr "Επιλογή και αντιγραφή κειμένου"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Drag across the page to select text, across page boundaries if you keep "
+"going. <b>Double-click</b> selects a word. <b>Ctrl/Cmd+C</b> copies, "
+"<b>Ctrl/Cmd+A</b> selects the text of the page you are on, and <b>Esc</b> "
+"clears the selection. The same commands are on the right-click menu."
+msgstr ""
+"Σύρετε πάνω στη σελίδα για να επιλέξετε κείμενο, πέρα από τα όρια των "
+"σελίδων αν συνεχίσετε. Το <b>διπλό κλικ</b> επιλέγει μια λέξη. Το "
+"<b>Ctrl/Cmd+C</b> αντιγράφει, το <b>Ctrl/Cmd+A</b> επιλέγει το κείμενο της "
+"σελίδας στην οποία βρίσκεστε, και το <b>Esc</b> καθαρίζει την επιλογή. Οι "
+"ίδιες εντολές βρίσκονται στο μενού του δεξιού κλικ."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>Shift+click</b> extends an existing selection to where you clicked. The "
+"end you are moving grows out to a whole word, because a single click is an "
+"imprecise way to point at one character; the end you started from stays "
+"exactly where you put it. Dragging selects by character throughout, since "
+"you can watch it and stop where you like."
+msgstr ""
+"Το <b>Shift+κλικ</b> επεκτείνει μια υπάρχουσα επιλογή ως εκεί που κάνατε "
+"κλικ. Η άκρη που μετακινείτε μεγαλώνει ως ολόκληρη λέξη, επειδή ένα μονό "
+"κλικ είναι ανακριβής τρόπος να δείξει κανείς έναν χαρακτήρα· η άκρη από την "
+"οποία ξεκινήσατε μένει ακριβώς εκεί που την βάλατε. Το σύρσιμο επιλέγει κατά"
+" χαρακτήρα σε όλη τη διαδρομή, αφού μπορείτε να το παρακολουθείτε και να "
+"σταματήσετε όπου θέλετε."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Clicking on text leaves a blinking <b>text cursor</b>. That is what "
+"Shift+arrow extends from, and what the Option and Command combinations above"
+" move. It stays where you put it — scrolling, paging and clicking off the "
+"page all leave it alone — until you press Esc or open another document."
+msgstr ""
+"Το κλικ στο κείμενο αφήνει έναν αναβοσβήνοντα <b>δρομέα κειμένου</b>. Από "
+"αυτόν επεκτείνει το Shift+βέλος, και αυτόν μετακινούν οι παραπάνω συνδυασμοί"
+" με Option και Command. Μένει εκεί που τον βάλατε — η κύλιση, η αλλαγή "
+"σελίδας και το κλικ εκτός σελίδας δεν τον πειράζουν — ώσπου να πατήσετε Esc "
+"ή να ανοίξετε άλλο έγγραφο."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Following links"
+msgstr "Ακολούθηση συνδέσμων"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Click a link to follow it. Links to a page in the same document jump there; "
+"links to the web open in your browser. Hovering over one shows where it "
+"goes, which is worth reading before you click: many links in a PDF are not "
+"written by its author at all but inferred from the text, so what a link "
+"points at is not always what the words appear to say."
+msgstr ""
+"Κάντε κλικ σε έναν σύνδεσμο για να τον ακολουθήσετε. Οι σύνδεσμοι προς "
+"σελίδα του ίδιου εγγράφου πηδούν εκεί· οι σύνδεσμοι προς το διαδίκτυο "
+"ανοίγουν στον περιηγητή σας. Αν σταθείτε πάνω σε έναν, δείχνει πού οδηγεί, "
+"και αξίζει να το διαβάσετε πριν κάνετε κλικ: πολλοί σύνδεσμοι σε ένα PDF δεν"
+" γράφτηκαν καθόλου από τον συγγραφέα αλλά συνάχθηκαν από το κείμενο, οπότε "
+"αυτό που δείχνει ένας σύνδεσμος δεν είναι πάντα αυτό που φαίνεται να λένε οι"
+" λέξεις."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Only ordinary web and mail links are handed to the system — http, https, "
+"mailto and ftp. A document is a file that arrived from somewhere, and "
+"anything else it asks to open is refused and reported rather than acted on."
+msgstr ""
+"Μόνο συνηθισμένοι σύνδεσμοι ιστού και αλληλογραφίας παραδίδονται στο σύστημα"
+" — http, https, mailto και ftp. Ένα έγγραφο είναι ένα αρχείο που ήρθε από "
+"κάπου, και οτιδήποτε άλλο ζητά να ανοίξει απορρίπτεται και αναφέρεται αντί "
+"να εκτελεστεί."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Right-clicking a link offers <b>Open Link</b> and <b>Copy Link Address</b>."
+msgstr ""
+"Το δεξί κλικ σε έναν σύνδεσμο προσφέρει <b>Άνοιγμα συνδέσμου</b> και "
+"<b>Αντιγραφή διεύθυνσης συνδέσμου</b>."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Bookmarks"
+msgstr "Σελιδοδείκτες"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"The sidebar shows the document's bookmarks. Click one to jump to it. "
+"Everything below is on the sidebar's right-click menu, and every command can"
+" be undone."
+msgstr ""
+"Η πλευρική στήλη δείχνει τους σελιδοδείκτες του εγγράφου. Κάντε κλικ σε έναν"
+" για να μεταβείτε εκεί. Όλα τα παρακάτω βρίσκονται στο μενού του δεξιού κλικ"
+" της πλευρικής στήλης, και κάθε εντολή μπορεί να αναιρεθεί."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>Add Bookmark Here</b> makes one pointing at the page you are reading, "
+"named after whatever text you have selected — so select a heading, then add."
+" With nothing selected it is named after the page. <b>Add Child Bookmark "
+"Here</b> does the same, nested under the entry you clicked."
+msgstr ""
+"Η <b>Προσθήκη σελιδοδείκτη εδώ</b> φτιάχνει έναν που δείχνει στη σελίδα που "
+"διαβάζετε, ονομασμένο από το κείμενο που έχετε επιλέξει — επιλέξτε λοιπόν "
+"έναν τίτλο και μετά προσθέστε. Χωρίς επιλογή ονομάζεται από τη σελίδα. Η "
+"<b>Προσθήκη θυγατρικού σελιδοδείκτη εδώ</b> κάνει το ίδιο, ένθετα κάτω από "
+"την καταχώριση στην οποία κάνατε κλικ."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>Rename</b> edits the title in place. <b>Re-home to This Page</b> points "
+"an existing bookmark at the page you are on, keeping its title. "
+"<b>Delete</b> removes an entry and <i>promotes</i> its children into its "
+"place; <b>Delete with Children</b> removes the whole branch."
+msgstr ""
+"Η <b>Μετονομασία</b> επεξεργάζεται τον τίτλο επιτόπου. Η <b>Ανακατεύθυνση σε"
+" αυτήν τη σελίδα</b> κάνει έναν υπάρχοντα σελιδοδείκτη να δείχνει στη σελίδα"
+" στην οποία βρίσκεστε, κρατώντας τον τίτλο του. Η <b>Διαγραφή</b> αφαιρεί "
+"μια καταχώριση και <i>ανεβάζει</i> τα θυγατρικά της στη θέση της· η "
+"<b>Διαγραφή με τα θυγατρικά</b> αφαιρεί ολόκληρο τον κλάδο."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Drag entries within the sidebar to re-nest or reorder them. <b>Expand All "
+"Children</b> and <b>Collapse All Children</b> open or shut a whole branch at"
+" once."
+msgstr ""
+"Σύρετε καταχωρίσεις μέσα στην πλευρική στήλη για να τις ενθέσετε ή να τις "
+"αναδιατάξετε. Η <b>Ανάπτυξη όλων των θυγατρικών</b> και η <b>Σύμπτυξη όλων "
+"των θυγατρικών</b> ανοίγουν ή κλείνουν έναν ολόκληρο κλάδο με τη μία."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>Style</b> sets a bookmark bold or italic, or gives it a colour, as the "
+"tree shows."
+msgstr ""
+"Το <b>Στυλ</b> κάνει έναν σελιδοδείκτη έντονο ή πλάγιο, ή του δίνει χρώμα, "
+"όπως δείχνει το δέντρο."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"A bookmark whose page has been deleted is <b>greyed out</b> rather than "
+"removed: its title may still be worth keeping, and you can point it "
+"somewhere else with Re-home. Undoing the deletion reconnects it. <b>Delete "
+"Dangling Bookmarks</b> clears them all out; it leaves alone any entry that "
+"points nowhere on purpose, which is a legitimate way to write a heading."
+msgstr ""
+"Ένας σελιδοδείκτης του οποίου η σελίδα διαγράφηκε <b>γκριζάρει</b> αντί να "
+"αφαιρεθεί: ο τίτλος του μπορεί να αξίζει ακόμη να κρατηθεί, και μπορείτε να "
+"τον στρέψετε αλλού με την Ανακατεύθυνση. Η αναίρεση της διαγραφής τον "
+"ξανασυνδέει. Η <b>Διαγραφή αιωρούμενων σελιδοδεικτών</b> τους καθαρίζει "
+"όλους· αφήνει ήσυχη κάθε καταχώριση που δεν δείχνει πουθενά επίτηδες, που "
+"είναι απολύτως θεμιτός τρόπος να γράψει κανείς έναν τίτλο."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Bookmark edits are part of the document and are written when you save, along"
+" with each entry's colour and style and which branches are left open. The "
+"one thing that cannot be saved is a bookmark with no page: there is no way "
+"to record “points at a page that is gone”, so it comes back as a heading "
+"with its title intact."
+msgstr ""
+"Οι αλλαγές στους σελιδοδείκτες είναι μέρος του εγγράφου και γράφονται όταν "
+"αποθηκεύετε, μαζί με το χρώμα και το στυλ κάθε καταχώρισης και με το ποιοι "
+"κλάδοι μένουν ανοιχτοί. Το μόνο που δεν μπορεί να αποθηκευτεί είναι "
+"σελιδοδείκτης χωρίς σελίδα: δεν υπάρχει τρόπος να καταγραφεί το «δείχνει σε "
+"σελίδα που έφυγε», οπότε επιστρέφει ως τίτλος με το όνομά του ανέπαφο."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Arranging pages"
+msgstr "Τακτοποίηση σελίδων"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Drag pages to reorder them. Hold <b>Ctrl</b> while dropping to copy instead "
+"of move."
+msgstr ""
+"Σύρετε σελίδες για να τις αναδιατάξετε. Κρατήστε <b>Ctrl</b> καθώς τις "
+"αφήνετε για να αντιγράψετε αντί να μετακινήσετε."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Drag pages onto another window of the application to copy them there, or use"
+" ordinary copy and paste."
+msgstr ""
+"Σύρετε σελίδες πάνω σε άλλο παράθυρο της εφαρμογής για να τις αντιγράψετε "
+"εκεί, ή χρησιμοποιήστε τη συνηθισμένη αντιγραφή και επικόλληση."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>Paste As Odd/Even Pages</b> interleaves the clipboard with the document —"
+" this is how two single-sided scans of a double-sided original are "
+"recombined. If the second scan came off a duplex feeder it will be in "
+"reverse order; use <b>Arrange ▸ Reverse Order</b> on it first."
+msgstr ""
+"Η <b>Επικόλληση ως μονές/ζυγές σελίδες</b> εναλλάσσει το πρόχειρο με το "
+"έγγραφο — έτσι ξανασυνενώνονται δύο μονόπλευρες σαρώσεις ενός δίπλευρου "
+"πρωτοτύπου. Αν η δεύτερη σάρωση βγήκε από τροφοδότη διπλής όψης, θα είναι σε"
+" αντίστροφη σειρά· εφαρμόστε πρώτα σε αυτήν <b>Τακτοποίηση ▸ Αντιστροφή "
+"σειράς</b>."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"To move pages a long way, use <b>Move to Start</b>, <b>Move to End</b> or "
+"<b>Move to Page…</b> rather than dragging — in a long document the far end "
+"is a great deal of scrolling away. They are on the Edit menu and on the "
+"right-click menu, and <b>Move to Page…</b> asks for the number the page "
+"should <i>become</i>."
+msgstr ""
+"Για να μετακινήσετε σελίδες μακριά, χρησιμοποιήστε <b>Μετακίνηση στην "
+"αρχή</b>, <b>Μετακίνηση στο τέλος</b> ή <b>Μετακίνηση στη σελίδα…</b> αντί "
+"να τις σύρετε — σε ένα μακρύ έγγραφο η άλλη άκρη απέχει πάρα πολλή κύλιση. "
+"Βρίσκονται στο μενού Επεξεργασία και στο μενού του δεξιού κλικ, και η "
+"<b>Μετακίνηση στη σελίδα…</b> ζητά τον αριθμό που πρέπει να <i>γίνει</i> η "
+"σελίδα."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Prefer these to cut and paste for moving. A pasted page is a <i>new</i> page"
+" as far as the document is concerned, so any bookmarks pointing at the "
+"original are left behind with nowhere to go. Moving keeps the page itself, "
+"and its bookmarks come with it."
+msgstr ""
+"Προτιμήστε αυτά από την αποκοπή και επικόλληση για τη μετακίνηση. Μια "
+"επικολλημένη σελίδα είναι, από την πλευρά του εγγράφου, <i>νέα</i> σελίδα, "
+"οπότε οι σελιδοδείκτες που έδειχναν στην αρχική μένουν πίσω χωρίς προορισμό."
+" Η μετακίνηση κρατά την ίδια τη σελίδα, και οι σελιδοδείκτες της έρχονται "
+"μαζί της."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Stamping and tiling"
+msgstr "Σφραγίδες και παράθεση"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>Page ▸ Add Page Numbers…</b> and <b>Page ▸ Add Watermark…</b> draw text "
+"onto the selected pages. Both add a <i>layer</i> rather than rewriting the "
+"page, so both can be undone and neither touches the file you opened."
+msgstr ""
+"Η <b>Σελίδα ▸ Προσθήκη αριθμών σελίδων…</b> και η <b>Σελίδα ▸ Προσθήκη "
+"υδατογραφήματος…</b> σχεδιάζουν κείμενο πάνω στις επιλεγμένες σελίδες. Και "
+"οι δύο προσθέτουν ένα <i>στρώμα</i> αντί να ξαναγράψουν τη σελίδα, οπότε και"
+" οι δύο αναιρούνται και καμία δεν αγγίζει το αρχείο που ανοίξατε."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+#, python-brace-format
+msgid ""
+"Page numbers follow the arrangement, not the source document: they are "
+"numbered in the order the pages are in now. <code>{n}</code> in the format "
+"is the page number and <code>{total}</code> the number of pages, so "
+"<code>Page {n} of {total}</code> does what it looks like."
+msgstr ""
+"Οι αριθμοί σελίδων ακολουθούν την τακτοποίηση, όχι το έγγραφο προέλευσης: "
+"αριθμούνται με τη σειρά που έχουν τώρα οι σελίδες. Το <code>{n}</code> στη "
+"μορφή είναι ο αριθμός σελίδας και το <code>{total}</code> το πλήθος των "
+"σελίδων, οπότε το <code>Σελίδα {n} από {total}</code> κάνει αυτό που "
+"φαίνεται."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>Arrange ▸ Pages per Sheet…</b> tiles several pages onto one, in reading "
+"order — the printer's <i>N-up</i>. The sheet turns sideways when that lets "
+"the pages come out larger, which is why two-up gives a landscape sheet and "
+"four-up does not."
+msgstr ""
+"Η <b>Τακτοποίηση ▸ Σελίδες ανά φύλλο…</b> παραθέτει πολλές σελίδες σε μία, "
+"με τη σειρά ανάγνωσης — το <i>N-up</i> του τυπογράφου. Το φύλλο γυρίζει "
+"πλαγίως όταν έτσι οι σελίδες βγαίνουν μεγαλύτερες, γι' αυτό δύο ανά φύλλο "
+"δίνουν οριζόντιο φύλλο και τέσσερις ανά φύλλο όχι."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Saving a document"
+msgstr "Αποθήκευση εγγράφου"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>Optimize for the web</b> in Preferences lays the saved file out so a "
+"browser can show the first page before the rest has arrived. <b>Compress</b>"
+" repacks its streams and objects; how much that saves depends entirely on "
+"the file, and one full of photographs will barely move."
+msgstr ""
+"Η <b>Βελτιστοποίηση για το διαδίκτυο</b> στις Προτιμήσεις διατάσσει το "
+"αποθηκευμένο αρχείο ώστε ένας περιηγητής να μπορεί να δείξει την πρώτη "
+"σελίδα προτού φτάσουν τα υπόλοιπα. Η <b>Συμπίεση</b> ξαναπακετάρει τις ροές "
+"και τα αντικείμενά του· πόσο κερδίζει εξαρτάται εξ ολοκλήρου από το αρχείο, "
+"και ένα γεμάτο φωτογραφίες μετά βίας θα κουνηθεί."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>File ▸ Remove All Metadata</b> is a switch, like Password: turn it on and"
+" the next save writes a document with no title, no author and no record of "
+"what produced it. Edit Properties greys out while it is on, because there "
+"would be nothing to edit."
+msgstr ""
+"Η <b>Αρχείο ▸ Αφαίρεση όλων των μεταδεδομένων</b> είναι διακόπτης, όπως και "
+"ο Κωδικός: ενεργοποιήστε τον και η επόμενη αποθήκευση γράφει ένα έγγραφο "
+"χωρίς τίτλο, χωρίς συγγραφέα και χωρίς ίχνος του τι το παρήγαγε. Η "
+"Επεξεργασία ιδιοτήτων γκριζάρει όσο είναι ενεργός, επειδή δεν θα υπήρχε "
+"τίποτα να επεξεργαστείτε."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>File ▸ Viewer Preferences…</b> is how the saved document asks a reader to"
+" open it — with the bookmarks showing, two pages at a time, and so on. "
+"Readers are free to ignore all of it. The settings are read from the file "
+"you opened, so a document that already had them keeps them."
+msgstr ""
+"Η <b>Αρχείο ▸ Προτιμήσεις προβολέα…</b> είναι ο τρόπος με τον οποίο το "
+"αποθηκευμένο έγγραφο ζητά από έναν αναγνώστη να το ανοίξει — με τους "
+"σελιδοδείκτες ορατούς, δύο σελίδες κάθε φορά, και ούτω καθεξής. Οι "
+"αναγνώστες είναι ελεύθεροι να τα αγνοήσουν όλα αυτά. Οι ρυθμίσεις "
+"διαβάζονται από το αρχείο που ανοίξατε, οπότε ένα έγγραφο που τις είχε ήδη "
+"τις κρατά."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>File ▸ Repair Document…</b> rebuilds a damaged PDF. It works on a file "
+"you pick rather than the one on screen, because the file worth repairing is "
+"usually one this application cannot open properly either. It reports what it"
+" found before writing anything."
+msgstr ""
+"Η <b>Αρχείο ▸ Επισκευή εγγράφου…</b> ανακατασκευάζει ένα κατεστραμμένο PDF. "
+"Δουλεύει σε ένα αρχείο που διαλέγετε εσείς και όχι σε αυτό που είναι στην "
+"οθόνη, επειδή το αρχείο που αξίζει να επισκευαστεί είναι συνήθως ένα που "
+"ούτε αυτή η εφαρμογή ανοίγει σωστά. Αναφέρει τι βρήκε προτού γράψει "
+"οτιδήποτε."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Mouse"
+msgstr "Ποντίκι"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "<b>Ctrl + scroll</b> — zoom"
+msgstr "<b>Ctrl + κύλιση</b> — μεγέθυνση"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "<b>Shift + scroll</b> — scroll sideways"
+msgstr "<b>Shift + κύλιση</b> — κύλιση στο πλάι"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "<b>Alt + scroll</b> — scroll exactly one row"
+msgstr "<b>Alt + κύλιση</b> — κύλιση ακριβώς μίας σειράς"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "<b>Double-click</b> — fit the page to the window, and back"
+msgstr "<b>Διπλό κλικ</b> — προσαρμογή της σελίδας στο παράθυρο, και πίσω"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>Click and drag</b> on empty space — rubber-band select; keep scrolling to"
+" extend it"
+msgstr ""
+"<b>Κλικ και σύρσιμο</b> σε κενό χώρο — επιλογή με πλαίσιο· συνεχίστε την "
+"κύλιση για να την επεκτείνετε"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Moving around the grid"
+msgstr "Μετακίνηση μέσα στο πλέγμα"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>Arrow keys</b> move between pages, <b>Page Up</b> and <b>Page Down</b> "
+"move a screenful at a time, and <b>Home</b> and <b>End</b> jump to the first"
+" and last page. Hold <b>Shift</b> with any of them to extend the selection."
+msgstr ""
+"Τα <b>βέλη</b> μετακινούνται ανάμεσα στις σελίδες, τα <b>Page Up</b> και "
+"<b>Page Down</b> κατά μία οθόνη κάθε φορά, και τα <b>Home</b> και <b>End</b>"
+" πηδούν στην πρώτη και την τελευταία σελίδα. Κρατήστε <b>Shift</b> με "
+"οποιοδήποτε από αυτά για να επεκτείνετε την επιλογή."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>Fit One Page</b> (F) scales so a whole page fits in the window and shows "
+"one page per row — use it to work on a single page at a time. <b>Fit "
+"Multiple Pages</b> (Shift+M) uses the same scale but lets as many pages sit "
+"side by side as the window takes. <b>Fit Width</b> (Shift+F) fills the "
+"window across instead, which shows the page wider but taller than the "
+"window. Double-clicking the grid toggles Fit One Page on and off."
+msgstr ""
+"Η <b>Προσαρμογή μίας σελίδας</b> (F) κλιμακώνει ώστε μια ολόκληρη σελίδα να "
+"χωρά στο παράθυρο και δείχνει μία σελίδα ανά σειρά — χρησιμοποιήστε την για "
+"να δουλέψετε σε μία σελίδα κάθε φορά. Η <b>Προσαρμογή πολλών σελίδων</b> "
+"(Shift+M) χρησιμοποιεί την ίδια κλίμακα αλλά αφήνει όσες σελίδες χωρά το "
+"παράθυρο να σταθούν δίπλα δίπλα. Η <b>Προσαρμογή στο πλάτος</b> (Shift+F) "
+"γεμίζει αντ' αυτού το παράθυρο κατά πλάτος, πράγμα που δείχνει τη σελίδα "
+"πλατύτερη αλλά ψηλότερη από το παράθυρο. Το διπλό κλικ στο πλέγμα ανοίγει "
+"και κλείνει την Προσαρμογή μίας σελίδας."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"With pages selected, all three fit the selection rather than the whole "
+"document."
+msgstr ""
+"Με επιλεγμένες σελίδες, και τα τρία προσαρμόζουν την επιλογή αντί για "
+"ολόκληρο το έγγραφο."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Finding text"
+msgstr "Αναζήτηση κειμένου"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>Find</b> selects the pages that contain the phrase and boxes each hit on "
+"the thumbnail, so you can see where on the page it is. The boxes clear as "
+"soon as you change the document, since the pages they were drawn for may "
+"have moved."
+msgstr ""
+"Η <b>Εύρεση</b> επιλέγει τις σελίδες που περιέχουν τη φράση και πλαισιώνει "
+"κάθε εύρημα στη μικρογραφία, ώστε να βλέπετε πού στη σελίδα βρίσκεται. Τα "
+"πλαίσια σβήνουν μόλις αλλάξετε το έγγραφο, αφού οι σελίδες για τις οποίες "
+"σχεδιάστηκαν μπορεί να έχουν μετακινηθεί."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Every shortcut can be changed in <b>Edit ▸ Preferences ▸ Keyboard "
+"shortcuts</b>, where they are listed under the menu each one belongs to."
+msgstr ""
+"Κάθε συντόμευση μπορεί να αλλάξει στο <b>Επεξεργασία ▸ Προτιμήσεις ▸ "
+"Συντομεύσεις πληκτρολογίου</b>, όπου παρατίθενται κάτω από το μενού στο "
+"οποίο ανήκει η καθεμία."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Passwords"
+msgstr "Κωδικοί"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Opening an encrypted document asks for its password, which is remembered "
+"until the document is closed."
+msgstr ""
+"Το άνοιγμα ενός κρυπτογραφημένου εγγράφου ζητά τον κωδικό του, ο οποίος "
+"θυμάται ώσπου να κλείσει το έγγραφο."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>File ▸ Password</b> encrypts the document when it is next saved. It is a "
+"switch: turn it on and you are asked for a password, turn it off and the "
+"next save is unencrypted. The password is never written to your settings, so"
+" it applies to this session only — and if you forget it, the file cannot be "
+"recovered."
+msgstr ""
+"Η <b>Αρχείο ▸ Κωδικός</b> κρυπτογραφεί το έγγραφο στην επόμενη αποθήκευση. "
+"Είναι διακόπτης: ενεργοποιήστε τον και θα σας ζητηθεί κωδικός, "
+"απενεργοποιήστε τον και η επόμενη αποθήκευση θα είναι χωρίς κρυπτογράφηση. Ο"
+" κωδικός δεν γράφεται ποτέ στις ρυθμίσεις σας, οπότε ισχύει μόνο για αυτήν "
+"τη συνεδρία — και αν τον ξεχάσετε, το αρχείο δεν ανακτάται."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Files"
+msgstr "Αρχεία"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Settings are stored by Qt in the per-user location for this platform; on "
+"Windows that is the registry under "
+"<code>HKEY_CURRENT_USER\\Software\\pdfarranger</code>. There is no "
+"configuration file to edit by hand."
+msgstr ""
+"Οι ρυθμίσεις αποθηκεύονται από το Qt στη θέση που προορίζεται για κάθε "
+"χρήστη σε αυτήν την πλατφόρμα· στα Windows είναι το μητρώο κάτω από το "
+"<code>HKEY_CURRENT_USER\\Software\\pdfarranger</code>. Δεν υπάρχει αρχείο "
+"ρυθμίσεων για επεξεργασία στο χέρι."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Credits"
+msgstr "Ευχαριστίες"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"PDF Arranger Qt is a PySide6 port of PDF Arranger, which is itself derived "
+"from PDF-Shuffler. It is a separate project and not affiliated with either."
+msgstr ""
+"Το PDF Arranger Qt είναι μεταφορά του PDF Arranger σε PySide6, το οποίο με "
+"τη σειρά του προέρχεται από το PDF-Shuffler. Είναι ξεχωριστό έργο και δεν "
+"συνδέεται με κανένα από τα δύο."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Original authors: Konstantinos Poulios, Jerome Robert."
+msgstr "Αρχικοί δημιουργοί: Konstantinos Poulios, Jerome Robert."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Licensed under the GNU General Public License version 3 or later."
+msgstr "Υπό την άδεια GNU General Public License έκδοσης 3 ή νεότερης."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+msgid "User Guide"
+msgstr "Οδηγός χρήσης"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Insert pages from another PDF or an image"
+msgstr "Εισαγωγή σελίδων από άλλο PDF ή από εικόνα"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Needs pages copied from a document"
+msgstr "Απαιτεί σελίδες αντιγραμμένες από έγγραφο"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_New Window"
+msgstr "_Νέο παράθυρο"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Open"
+msgstr "Άν_οιγμα"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Import"
+msgstr "Ε_ισαγωγή"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Save"
+msgstr "Αποθήκευ_ση"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Save _As…"
+msgstr "_Αποθήκευση ως…"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "E_xport Selection to a Single File…"
+msgstr "Ε_ξαγωγή επιλογής σε μονό αρχείο…"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Close"
+msgstr "_Κλείσιμο"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Quit"
+msgstr "Έξ_οδος"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Undo"
+msgstr "Αναί_ρεση"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Redo"
+msgstr "Επανάλη_ψη"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Select _All"
+msgstr "Επιλογή ό_λων"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Invert Selection"
+msgstr "Αντ_ιστροφή επιλογής"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Delete"
+msgstr "_Διαγραφή"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Duplicate"
+msgstr "Διπλα_σιασμός"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Rotate _Left"
+msgstr "Περιστροφή _αριστερά"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Rotate Right"
+msgstr "Πε_ριστροφή δεξιά"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Zoom _In"
+msgstr "_Μεγέθυνση"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Zoom _Out"
+msgstr "_Σμίκρυνση"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Reset Zoom"
+msgstr "Επανα_φορά μεγέθυνσης"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Project on GitHub"
+msgstr "Το έργο στο GitHub"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_About"
+msgstr "Σ_χετικά"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Cu_t"
+msgstr "Απο_κοπή"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Copy"
+msgstr "Αντι_γραφή"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Paste _After"
+msgstr "Ε_πικόλληση μετά"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Paste _Before"
+msgstr "Επικόλληση _πριν"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Paste As _Odd Pages"
+msgstr "Επικόλληση ως μ_ονές σελίδες"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Paste As _Even Pages"
+msgstr "Επικόλληση ως _ζυγές σελίδες"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Deselect All"
+msgstr "_Αποεπιλογή όλων"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Select _Odd Pages"
+msgstr "Επιλογή μ_ονών σελίδων"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Select _Even Pages"
+msgstr "_Επιλογή ζυγών σελίδων"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "All From _Same File"
+msgstr "Όλε_ς από το ίδιο αρχείο"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Same Page _Format"
+msgstr "Ίδιας μορ_φοποίησης σελίδας"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Move to Start"
+msgstr "Μετακίνηση στην αρχή"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Move to End"
+msgstr "Μετακίνηση στο τέλος"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Move to Page…"
+msgstr "Μετακίνηση στη σελίδα…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Reverse Order"
+msgstr "Αντιστροφή σειράς"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Swap Odd/Even"
+msgstr "Εναλλαγή μονών/ζυγών"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Split (unimposition)"
+msgstr "_Διαχωρισμός (αποσύνθεση)"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Export _All Pages to Individual Files…"
+msgstr "Εξαγωγή _όλων των σελίδων σε ξεχωριστά αρχεία…"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Export Selection to _Individual Files…"
+msgstr "Εξαγωγή επιλογής σε ξεχωρ_ιστά αρχεία…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Crop Margins…"
+msgstr "Περικο_πή περιθωρίων…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Hide Margins…"
+msgstr "Απόκρυ_ψη περιθωρίων…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Page Size…"
+msgstr "Μέγεθος σε_λίδας…"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Insert Blan_k Page…"
+msgstr "Εισαγωγή _κενής σελίδας…"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Split Pages…"
+msgstr "Διαχωρισμός _σελίδων…"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Merge Pages…"
+msgstr "Συγ_χώνευση σελίδων…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Generate (imposition)"
+msgstr "Δημιου_ργία (σύνθεση)"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Pages per S_heet…"
+msgstr "Σελίδες ανά _φύλλο…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Add Page N_umbers…"
+msgstr "Προσθήκη αρι_θμών σελίδων…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Add _Watermark…"
+msgstr "Προσθήκη _υδατογραφήματος…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Pass_word"
+msgstr "Κω_δικός"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Edit _Properties"
+msgstr "Επεξεργασία _ιδιοτήτων"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Viewer Preferences…"
+msgstr "Προτιμήσεις προ_βολέα…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Remove All _Metadata"
+msgstr "Αφαίρεση όλων των _μεταδεδομένων"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Repair Document…"
+msgstr "Επισκ_ευή εγγράφου…"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Crop White Borders"
+msgstr "Περικοπή λευκών περιθωρίων"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Export Selection to _PNG Images…"
+msgstr "Εξαγωγή επιλογής σε εικόνες _PNG…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Export Selection to _JPG Images…"
+msgstr "Εξαγωγή επιλογής σε εικόνες _JPG…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Export Selection to _Rasterized PDF (png)…"
+msgstr "Εξαγωγή επιλογής σε PDF με _ψηφιδοποίηση (png)…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Export Selection to _Rasterized PDF (jpg)…"
+msgstr "Εξαγωγή επιλογής σε PDF με ψη_φιδοποίηση (jpg)…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Copy Text"
+msgstr "Αντιγραφή κειμένου"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Copy _Image"
+msgstr "Αντιγραφή ει_κόνας"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Explode into Images"
+msgstr "Α_νάλυση σε εικόνες"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Print…"
+msgstr "Εκτύ_πωση…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Find…"
+msgstr "_Εύρεση…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Find Next"
+msgstr "Εύρεση επόμενου"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Find Previous"
+msgstr "Εύρεση προηγούμενου"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Find All"
+msgstr "Εύρεση όλων"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Select _Range"
+msgstr "Επιλογή ε_ύρους"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Paste As O_verlay…"
+msgstr "Επικόλληση ως υπε_ρκάλυψη"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Paste As _Underlay…"
+msgstr "Επικόλληση ως _υπόστρωμα…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Fit _One Page"
+msgstr "Προσαρμογή μί_ας σελίδας"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Fit _Multiple Pages"
+msgstr "Προσαρμογή π_ολλών σελίδων"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Fit Width"
+msgstr "Προσαρμογή στο πλάτος"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Arrange Mode"
+msgstr "Λειτουργία τακτοποίησης"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Facing Pages"
+msgstr "Αντικριστές σελίδες"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Continuous Scroll"
+msgstr "Συνεχής κύλιση"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Next Page"
+msgstr "Επόμενη σελίδα"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Previous Page"
+msgstr "Προηγούμενη σελίδα"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "First Page"
+msgstr "Πρώτη σελίδα"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Last Page"
+msgstr "Τελευταία σελίδα"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Go to Page…"
+msgstr "Μετάβαση στη σελίδα…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Fullscreen"
+msgstr "Πλήρης οθόνη"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_File"
+msgstr "_Αρχείο"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Open Recent"
+msgstr "Άνοιγμα πρόσφατου"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "E_xport"
+msgstr "Ε_ξαγωγή"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Edit"
+msgstr "_Επεξεργασία"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Past_e Special"
+msgstr "_Επικόλληση συγκεκριμένα"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Page"
+msgstr "_Σελίδα"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Extract"
+msgstr "Ε_ξαγωγή τμήματος"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Arrange"
+msgstr "Τακτοποίηση"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Select"
+msgstr "Επιλο_γή"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Booklet"
+msgstr "_Φυλλάδιο"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_View"
+msgstr "Προ_βολή"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Help"
+msgstr "_Βοήθεια"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Read"
+msgstr "Ανάγνωση"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "_Undo %s"
+msgstr "Αναί_ρεση %s"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "_Redo %s"
+msgstr "Επανάλη_ψη %s"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "%d page selected"
+msgid_plural "%d pages selected"
+msgstr[0] "Επιλέχθηκε %d σελίδα"
+msgstr[1] "Επιλέχθηκαν %d σελίδες"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Untitled"
+msgstr "Χωρίς τίτλο"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Password required"
+msgstr "Απαιτείται κωδικός"
+
+#: pdfarranger_qt/mainwindow.py
+#, python-brace-format
+msgid "The document “{}” is locked and requires a password before it can be opened."
+msgstr "Το έγγραφο “{}” είναι κλειδωμένο και απαιτείται κωδικός για το άνοιγμά του."
+
+#: pdfarranger_qt/mainwindow.py
+msgid "The password will be remembered until you close PDF Arranger."
+msgstr "Ο κωδικός θα παραμείνει αποθηκευμένος μέχρι να κλείσετε το PDF Arranger."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Importing…"
+msgstr "Εισαγωγή…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Cancel"
+msgstr "Ακύρωση"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Import"
+msgstr "Εισαγωγή"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "No recent files"
+msgstr "Δεν υπάρχουν πρόσφατα αρχεία"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Clear Menu"
+msgstr "Καθαρισμός μενού"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "This file is no longer there:"
+msgstr "Αυτό το αρχείο δεν βρίσκεται πια εκεί:"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "This document cannot be read."
+msgstr "Αυτό το έγγραφο δεν μπορεί να διαβαστεί."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Go to Page"
+msgstr "Μετάβαση στη σελίδα"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Page number:"
+msgstr "Αριθμός σελίδας:"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "No document"
+msgstr "Κανένα έγγραφο"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "%d page"
+msgid_plural "%d pages"
+msgstr[0] "%d σελίδα"
+msgstr[1] "%d σελίδες"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-brace-format
+msgid "of {}"
+msgstr "από {}"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "The document will not be encrypted."
+msgstr "Το έγγραφο δεν θα κρυπτογραφηθεί."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "The document will be encrypted when it is saved."
+msgstr "Το έγγραφο θα κρυπτογραφηθεί κατά την αποθήκευση."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Could not open a new window."
+msgstr "Δεν ήταν δυνατό το άνοιγμα νέου παραθύρου."
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Open"
+msgstr "Άνοιγμα"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Save As…"
+msgstr "Αποθήκευση ως…"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Export…"
+msgstr "Εξαγωγή…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "There is nothing to save."
+msgstr "Δεν υπάρχει τίποτα για αποθήκευση."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Could not save:"
+msgstr "Δεν ήταν δυνατή η αποθήκευση:"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Saved"
+msgstr "Αποθηκεύτηκε"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "This document has unsaved changes."
+msgstr "Αυτό το έγγραφο έχει μη αποθηκευμένες αλλαγές."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Save before continuing?"
+msgstr "Αποθήκευση πριν τη συνέχεια;"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py pdfarranger_qt/reader.py
+msgid "Delete"
+msgstr "Διαγραφή"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Cut"
+msgstr "Αποκοπή"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Paste"
+msgstr "Επικόλληση"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Move to Page"
+msgstr "Μετακίνηση στη σελίδα"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Move"
+msgstr "Μετακίνηση"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "The page selection is not contiguous. Cannot unimpose."
+msgstr "Η επιλογή σελίδων δεν είναι συνεχόμενη. Αδύνατη η αποσύνθεση."
+
+#: pdfarranger_qt/mainwindow.py
+msgid "All pages must have the same size."
+msgstr "Οι σελίδες θα πρέπει να έχουν όλες το ίδιο μέγεθος."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Split Booklet"
+msgstr "Διαχωρισμός φυλλαδίου"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Overwrite existing files?"
+msgstr "Αντικατάσταση των υπαρχόντων αρχείων;"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Blank page"
+msgstr "Κενή σελίδα"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Copy the pages you want to merge in first."
+msgstr "Αντιγράψτε πρώτα τις σελίδες που θέλετε να συγχωνεύσετε."
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Generate Booklet"
+msgstr "Δημιουργία ένθετου"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "The page selection is not contiguous."
+msgstr "Η επιλογή σελίδων δεν είναι συνεχόμενη."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "All metadata will be removed when the document is saved."
+msgstr "Όλα τα μεταδεδομένα θα αφαιρεθούν κατά την αποθήκευση του εγγράφου."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Metadata will be kept."
+msgstr "Τα μεταδεδομένα θα διατηρηθούν."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Repair Document…"
+msgstr "Επισκευή εγγράφου…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Write a rebuilt copy?"
+msgstr "Να γραφτεί ανακατασκευασμένο αντίγραφο;"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Save Repaired Document"
+msgstr "Αποθήκευση επισκευασμένου εγγράφου"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "%d image written"
+msgid_plural "%d images written"
+msgstr[0] "Γράφτηκε %d εικόνα"
+msgstr[1] "Γράφτηκαν %d εικόνες"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "The page has no text."
+msgstr "Η σελίδα δεν έχει κείμενο."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Copied"
+msgstr "Αντιγράφηκε"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "The page has no image."
+msgstr "Η σελίδα δεν έχει εικόνα."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "The page has several images. Use \"Explode into Images\" first.\""
+msgstr "Η σελίδα έχει πολλές εικόνες. Χρησιμοποιήστε πρώτα «Ανάλυση σε εικόνες».\""
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Explode into Images"
+msgstr "Ανάλυση σε εικόνες"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Printing…"
+msgstr "Εκτύπωση…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Finishing…"
+msgstr "Ολοκλήρωση…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "The printer driver is processing the job."
+msgstr "Το πρόγραμμα οδήγησης του εκτυπωτή επεξεργάζεται την εργασία."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "%d page printed"
+msgid_plural "%d pages printed"
+msgstr[0] "Εκτυπώθηκε %d σελίδα"
+msgstr[1] "Εκτυπώθηκαν %d σελίδες"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Find"
+msgstr "Εύρεση"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "%d page matches"
+msgid_plural "%d pages match"
+msgstr[0] "%d σελίδα ταιριάζει"
+msgstr[1] "%d σελίδες ταιριάζουν"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Duplicate"
+msgstr "Διπλασιασμός"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Rotate"
+msgstr "Περιστροφή"
+
+#: pdfarranger_qt/metadata.py
+msgid "Title"
+msgstr "Τίτλος"
+
+#: pdfarranger_qt/metadata.py
+msgid "Subject"
+msgstr "Θέμα"
+
+#: pdfarranger_qt/metadata.py
+msgid "Keywords"
+msgstr "Λέξεις κλειδιά"
+
+#: pdfarranger_qt/metadata.py
+msgid "Producer"
+msgstr "Παραγωγός"
+
+#: pdfarranger_qt/metadata.py
+msgid "Creator"
+msgstr "Δημιουργός"
+
+#: pdfarranger_qt/metadata.py
+msgid "Creator tool"
+msgstr "Εργαλείο δημιουργίας"
+
+#: pdfarranger_qt/metadata.py
+msgid "Created"
+msgstr "Δημιουργήθηκε"
+
+#: pdfarranger_qt/metadata.py
+msgid "Modified"
+msgstr "Τροποποιήθηκε"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/nup.py
+msgid "2 pages per sheet"
+msgstr "2 σελίδες ανά φύλλο"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/nup.py
+msgid "4 pages per sheet"
+msgstr "4 σελίδες ανά φύλλο"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/nup.py
+msgid "6 pages per sheet"
+msgstr "6 σελίδες ανά φύλλο"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/nup.py
+msgid "8 pages per sheet"
+msgstr "8 σελίδες ανά φύλλο"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/nup.py
+msgid "9 pages per sheet"
+msgstr "9 σελίδες ανά φύλλο"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/nup.py
+msgid "16 pages per sheet"
+msgstr "16 σελίδες ανά φύλλο"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Bookmark Colour"
+msgstr "Χρώμα σελιδοδείκτη"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Add Bookmark Here"
+msgstr "Προσθήκη σελιδοδείκτη εδώ"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Add Child Bookmark Here"
+msgstr "Προσθήκη θυγατρικού σελιδοδείκτη εδώ"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Re-home to This Page"
+msgstr "Ανακατεύθυνση σε αυτήν τη σελίδα"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Rename"
+msgstr "Μετονομασία"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Style"
+msgstr "Στυλ"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Colour…"
+msgstr "Χρώμα…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Default Colour"
+msgstr "Προεπιλεγμένο χρώμα"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Expand All Children"
+msgstr "Ανάπτυξη όλων των θυγατρικών"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Collapse All Children"
+msgstr "Σύμπτυξη όλων των θυγατρικών"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Delete with Children"
+msgstr "Διαγραφή με τα θυγατρικά"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Delete Dangling Bookmarks"
+msgstr "Διαγραφή αιωρούμενων σελιδοδεικτών"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Nothing to read."
+msgstr "Τίποτα για ανάγνωση."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+#, python-brace-format
+msgid "Page {} of {}"
+msgstr "Σελίδα {} από {}"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Move Bookmark"
+msgstr "Μετακίνηση σελιδοδείκτη"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "This bookmark's page is no longer in the document"
+msgstr "Η σελίδα αυτού του σελιδοδείκτη δεν βρίσκεται πια στο έγγραφο"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "This bookmark does not point at a page"
+msgstr "Αυτός ο σελιδοδείκτης δεν δείχνει σε σελίδα"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Rename Bookmark"
+msgstr "Μετονομασία σελιδοδείκτη"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Add Child Bookmark"
+msgstr "Προσθήκη θυγατρικού σελιδοδείκτη"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Add Bookmark"
+msgstr "Προσθήκη σελιδοδείκτη"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Bookmark Style"
+msgstr "Στυλ σελιδοδείκτη"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Re-home Bookmark"
+msgstr "Ανακατεύθυνση σελιδοδείκτη"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Delete Bookmark"
+msgstr "Διαγραφή σελιδοδείκτη"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Delete Bookmark and Children"
+msgstr "Διαγραφή σελιδοδείκτη και θυγατρικών"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/repair.py
+msgid "This file cannot be read, even with recovery."
+msgstr "Αυτό το αρχείο δεν μπορεί να διαβαστεί, ούτε καν με ανάκτηση."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/repair.py
+msgid "No damage found; the file reads cleanly."
+msgstr "Δεν βρέθηκε ζημιά· το αρχείο διαβάζεται κανονικά."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/repair.py
+msgid "Damaged, and recoverable."
+msgstr "Κατεστραμμένο, και ανακτήσιμο."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/repair.py
+msgid "The file cannot be read."
+msgstr "Το αρχείο δεν μπορεί να διαβαστεί."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/stamp.py
+msgid "Top left"
+msgstr "Πάνω αριστερά"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/stamp.py
+msgid "Top centre"
+msgstr "Πάνω στο κέντρο"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/stamp.py
+msgid "Top right"
+msgstr "Πάνω δεξιά"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/stamp.py
+msgid "Bottom left"
+msgstr "Κάτω αριστερά"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/stamp.py
+msgid "Bottom centre"
+msgstr "Κάτω στο κέντρο"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/stamp.py
+msgid "Bottom right"
+msgstr "Κάτω δεξιά"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/viewer.py
+msgid "Viewer default"
+msgstr "Προεπιλογή προβολέα"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/viewer.py
+msgid "No side panel"
+msgstr "Χωρίς πλευρικό πλαίσιο"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/viewer.py
+msgid "Bookmarks panel"
+msgstr "Πλαίσιο σελιδοδεικτών"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/viewer.py
+msgid "Page thumbnails"
+msgstr "Μικρογραφίες σελίδων"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/viewer.py
+msgid "Continuous scroll"
+msgstr "Συνεχής κύλιση"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/viewer.py
+msgid "Two pages, odd on the left"
+msgstr "Δύο σελίδες, μονές στα αριστερά"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/viewer.py
+msgid "Two pages, odd on the right"
+msgstr "Δύο σελίδες, μονές στα δεξιά"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/viewer.py
+msgid "Facing pages, odd on the left"
+msgstr "Αντικριστές σελίδες, μονές στα αριστερά"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/viewer.py
+msgid "Facing pages, odd on the right"
+msgstr "Αντικριστές σελίδες, μονές στα δεξιά"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/viewer.py
+msgid "Hide the viewer's toolbar"
+msgstr "Απόκρυψη της γραμμής εργαλείων του προβολέα"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/viewer.py
+msgid "Hide the viewer's menu bar"
+msgstr "Απόκρυψη της γραμμής μενού του προβολέα"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/viewer.py
+msgid "Centre the window on screen"
+msgstr "Κεντράρισμα του παραθύρου στην οθόνη"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/viewer.py
+msgid "Show the title rather than the filename"
+msgstr "Εμφάνιση του τίτλου αντί του ονόματος αρχείου"
+
+#~ msgid "#Col"
+#~ msgstr "#Στήλη"
+
+#~ msgid "#Row"
+#~ msgstr "#Σειρά"
+
+#~ msgid "%"
+#~ msgstr "%"
+
+#~ msgid "% of height"
+#~ msgstr "% του ύψους"
+
+#~ msgid "% of width"
+#~ msgstr "% του πλάτους"
+
+#~ msgid "%s is a tool for rearranging and modifying PDF files."
+#~ msgstr "Το %s είναι ένα εργαλείο για αναδιάταξη και τροποποίηση αρχείων PDF."
+
+#~ msgid "(Libhandy missing)"
+#~ msgstr "(Η Libhandy απουσιάζει)"
+
+#~ msgid "(Requires restart)"
+#~ msgstr "(Απαιτεί επανεκίνηση)"
+
+#~ msgid "A file named \"%s\" already exists. Do you want to replace it?"
+#~ msgstr "Ένα αρχείο με το όνομα \"%s\" υπάρχει ήδη. Θέλετε να το αντικαταστήσετε;"
+
+#~ msgid "All files"
+#~ msgstr "Όλα τα αρχεία"
+
+#~ msgid "All supported files"
+#~ msgstr "Όλα τα υποστηριζόμενα αρχεία"
+
+#~ msgid "Bottom to Top"
+#~ msgstr "Από κάτω προς τα πάνω"
+
+#~ msgid "Clipboard image"
+#~ msgstr "Εικόνα πρόχειρου"
+
+#~ msgid "Copy _Text"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Cropping/hiding does not remove any content"
+#~ " from the PDF file, it only hides"
+#~ " it."
+#~ msgstr ""
+
+#~ msgid "Despite the warnings the document(s) should have no visible issues."
+#~ msgstr "Παρά τις προειδοποιήσεις, το έγγραφο δεν πρέπει να έχει εμφανή προβλήματα."
+
+#~ msgid "Discard changes and close?"
+#~ msgstr "Απόρριψη αλλαγών και κλείσιμο;"
+
+#~ msgid "Discard changes and quit?"
+#~ msgstr "Απόρριψη αλλαγών και έξοδος;"
+
+#~ msgid "Do not show this dialog again."
+#~ msgstr "Να μην ξαναεμφανιστεί αυτό το παράθυρο διαλόγου."
+
+#~ msgid "Do_n’t Save"
+#~ msgstr "_Χωρίς αποθήκευση"
+
+#~ msgid "Don't show warnings when saving again."
+#~ msgstr "Να μην εμφανίζονται ειδοποιήσεις κατά την αποθήκευση."
+
+#~ msgid "Dupl_icate"
+#~ msgstr "Δ_ιπλασιασμός"
+
+#~ msgid "Equal column width"
+#~ msgstr "Ίσο πλάτος στηλών"
+
+#~ msgid "Equal row height"
+#~ msgstr "Ίσο ύψος σειρών"
+
+#~ msgid "Exploding into images…"
+#~ msgstr ""
+
+#~ msgid "File(s) to open"
+#~ msgstr "Αρχείο/α για άνοιγμα"
+
+#~ msgid "Fit to Full Page"
+#~ msgstr ""
+
+#~ msgid "Fit to Printable Area"
+#~ msgstr ""
+
+#~ msgid "For more info see"
+#~ msgstr ""
+
+#~ msgid "For more options see:"
+#~ msgstr "Για περισσότερες επιλογές δείτε:"
+
+#~ msgid "Full_screen"
+#~ msgstr "Π_λήρης οθόνη"
+
+#~ msgid "GNU General Public License (GPL) Version 3."
+#~ msgstr "Γενική Άδεια Δημόσιας Χρήσης GNU (GPL) Έκδοση 3η."
+
+#~ msgid "Height in %"
+#~ msgstr "Ύψος σε %"
+
+#~ msgid "Horizontal offset"
+#~ msgstr "Οριζόντια μετατόπιση"
+
+#~ msgid "Img2pdf missing."
+#~ msgstr ""
+
+#~ msgid "Import…"
+#~ msgstr "Εισαγωγή…"
+
+#~ msgid "Invalid date format. Input discarded."
+#~ msgstr "Εσφαλμένη μορφή ημερομηνίας. Η ενέργεια απορρίφθηκε."
+
+#~ msgid "It uses libqpdf %s, pikepdf %s, GTK %s and Python %s."
+#~ msgstr "Χρησιμοποιεί τα libqpdf %s, pikepdf %s, GTK %s και Python %s."
+
+#~ msgid "Left to Right"
+#~ msgstr "Αριστερά προς δεξιά"
+
+#~ msgid "Main Menu"
+#~ msgstr "Κεντρικό μενού"
+
+#~ msgid "Maintainers and contributors"
+#~ msgstr "Συντηρητές και συνεισφέροντες"
+
+#~ msgid "Margin"
+#~ msgstr "Περιθώριο"
+
+#~ msgid "Merged page size:"
+#~ msgstr "Μέγεθος συγχωνευμένης σελίδας:"
+
+#~ msgid "Non-uniform page size - using max size"
+#~ msgstr "Μη ομοιόμορφο μέγεθος σελίδας - χρήση μέγιστου μεγέθους"
+
+#~ msgid "None"
+#~ msgstr ""
+
+#~ msgid "Note"
+#~ msgstr ""
+
+#~ msgid "Note the limitations:"
+#~ msgstr ""
+
+#~ msgid "Open…"
+#~ msgstr "Άνοιγμα…"
+
+#~ msgid "Outlines and links can be preserved only in certain cases."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "PDF Arranger is a small python-gtk"
+#~ " application, which helps the user to"
+#~ " merge or split pdf documents and "
+#~ "rotate, crop and rearrange their pages "
+#~ "using an interactive and intuitive "
+#~ "graphical interface. It is a frontend "
+#~ "for pikepdf."
+#~ msgstr ""
+#~ "Το PDF Arranger είναι μια μικρή "
+#~ "εφαρμογή, που βοηθά τον χρήστη να "
+#~ "συγχωνεύσει ή να διαχωρίσει αρχεία τύπου"
+#~ " PDF καθώς και να περιστρέψει, περικόψει"
+#~ " και αναδιατάξει τις σελίδες τους "
+#~ "χρησιμοποιώντας ένα διαδραστικό και διαισθητικό"
+#~ " γραφικό περιβάλλον. Είναι δηλαδή ένα "
+#~ "γραφικό περιβάλλον για το pikepdf."
+
+#~ msgid "PDF document is damaged"
+#~ msgstr "Το έγγραφο PDF είναι κατεστραμένο"
+
+#~ msgid "PDF files"
+#~ msgstr "Αρχεία PDF"
+
+#~ msgid "Page Handling"
+#~ msgstr ""
+
+#~ msgid "Page Order"
+#~ msgstr "Σειρά σελίδων"
+
+#~ msgid "Page Size:"
+#~ msgstr "Μέγεθος σελίδας:"
+
+#~ msgid "Pasted data not valid. Aborting paste."
+#~ msgstr "Δεδομένα επικόλλησης μη έγκυρα. Η επικόλληση ακυρώθηκε."
+
+#~ msgid "Pre_ferences"
+#~ msgstr "Προ_τιμήσεις"
+
+#~ msgid "Print the version of PDF Arranger and exit"
+#~ msgstr "Εμφάνιση της έκδοσης του PDF Arranger και έξοδος"
+
+#~ msgid "Property"
+#~ msgstr "Ιδιότητα"
+
+#~ msgid "Re_verse Order"
+#~ msgstr "Αναστρο_φή σειράς"
+
+#~ msgid "Rendering Preview…"
+#~ msgstr "Προεπισκόπηση…"
+
+#~ msgid "Rendering…"
+#~ msgstr "Σχεδίαση…"
+
+#~ msgid "Replace"
+#~ msgstr "Αντικατάσταση"
+
+#~ msgid "Right to Left"
+#~ msgstr "Δεξιά προς αριστερά"
+
+#~ msgid "Rotate Left"
+#~ msgstr "Περιστροφή αριστερά"
+
+#~ msgid "Rotate Right"
+#~ msgstr "Περιστροφή δεξιά"
+
+#~ msgid "Save"
+#~ msgstr "Αποθήκευση"
+
+#~ msgid "Save As"
+#~ msgstr "Αποθήκευση ως"
+
+#~ msgid "Save changes before closing?"
+#~ msgstr "Να αποθηκευτούν οι αλλαγές πριν το κλείσιμο;"
+
+#~ msgid "Save changes before quitting?"
+#~ msgstr "Να αποθηκευτούν οι αλλαγές πριν την έξοδο;"
+
+#~ msgid "Save changes to “{}” before closing?"
+#~ msgstr "Να αποθηκευτούν οι αλλαγές στο “{}” πριν το κλείσιμο;"
+
+#~ msgid "Save changes to “{}” before quitting?"
+#~ msgstr "Να αποθηκευτούν οι αλλαγές στο “{}” πριν την έξοδο;"
+
+#~ msgid "Saving produced some warnings"
+#~ msgstr "Η αποθήκευση παρήγαγε ορισμένες προειδοποιήσεις"
+
+#~ msgid "Saving…"
+#~ msgstr "Γίνεται αποθήκευση…"
+
+#~ msgid "Scale mode:"
+#~ msgstr ""
+
+#~ msgid "Selected pages: "
+#~ msgstr "Επιλεγμένες σελίδες: "
+
+#~ msgid "Show values"
+#~ msgstr ""
+
+#~ msgid "Supported image files"
+#~ msgstr "Υποστηριζόμενα αρχεία εικόνας"
+
+#~ msgid "Top to Bottom"
+#~ msgstr "Από πάνω προς τα κάτω"
+
+#~ msgid "User Manual"
+#~ msgstr ""
+
+#~ msgid "Value"
+#~ msgstr "Τιμή"
+
+#~ msgid "Vertical offset"
+#~ msgstr "Κατακόρυφη μετατόπιση"
+
+#~ msgid "Width in %"
+#~ msgstr "Πλάτος σε %"
+
+#~ msgid "Your changes will be lost if you don’t save them."
+#~ msgstr "Οι αλλαγές θα χαθούν αν δεν αποθηκεύσετε."
+
+#~ msgid "Zoom In"
+#~ msgstr "Μεγέθυνση"
+
+#~ msgid "Zoom Out"
+#~ msgstr "Σμίκρυνση"
+
+#~ msgid "Zoom _Fit"
+#~ msgstr "Προσαρμο_γή"
+
+#~ msgid "_Apply"
+#~ msgstr ""
+
+#~ msgid "_Cancel"
+#~ msgstr "_Ακύρωση"
+
+#~ msgid "_OK"
+#~ msgstr ""
+
+#~ msgid "_Revert"
+#~ msgstr ""
+
+#~ msgid "page"
+#~ msgstr "σελίδα"
+
+#~ msgid "untitled"
+#~ msgstr "χωρίς τίτλο"
+

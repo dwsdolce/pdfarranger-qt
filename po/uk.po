@@ -9,802 +9,143 @@ msgid ""
 msgstr ""
 "Project-Id-Version: unnamed project\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-05-23 05:41+0300\n"
+"POT-Creation-Date: 2026-09-07 19:17+0000\n"
 "PO-Revision-Date: 2026-05-27 19:30+0300\n"
 "Last-Translator: Dymko <Dymkovych@proton.me>\n"
-"Language-Team: Ukrainian\n"
 "Language: uk\n"
-"MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=UTF-8\n"
-"Content-Transfer-Encoding: 8bit\n"
+"Language-Team: Ukrainian\n"
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n != 0 ? 1 : "
 "2);\n"
-"X-Generator: Gtranslator 50.0\n"
-
-#: pdfarranger/splitter.py:87
-msgid "#Col"
-msgstr "#Стовпців"
-
-#: pdfarranger/splitter.py:87
-msgid "#Row"
-msgstr "#Рядків"
-
-#: pdfarranger/pageutils.py:128 pdfarranger/pageutils.py:555
-#: pdfarranger/pageutils.py:557
-msgid "%"
-msgstr "%"
-
-#: pdfarranger/pageutils.py:278
-msgid "% of height"
-msgstr "% висоти"
-
-#: pdfarranger/pageutils.py:278
-msgid "% of width"
-msgstr "% ширини"
-
-#: pdfarranger/pdfarranger.py:3237
-#, python-format
-msgid "%s is a tool for rearranging and modifying PDF files."
-msgstr "%s — це інструмент для перестановки сторінок і редагування PDF-файлів."
-
-#: pdfarranger/config.py:342
-msgid "(Libhandy missing)"
-msgstr "(відсутня бібліотека Libhandy)"
-
-#: pdfarranger/config.py:334
-msgid "(Requires restart)"
-msgstr "(потрібно перезапустити застосунок)"
-
-#: pdfarranger/pdfarranger.py:1417
-#, python-format
-msgid "A file named \"%s\" already exists. Do you want to replace it?"
-msgstr "Файл з ім'ям \"%s\" вже існує. Бажаєте перезаписати його?"
-
-#: pdfarranger/search.py:42
-msgid "All"
-msgstr "Усе"
-
-#: data/menu.ui:258 data/menu.ui:454
-msgid "All From _Same File"
-msgstr "Усе із _одного файлу"
-
-#: pdfarranger/pdfarranger.py:730
-msgid "All files"
-msgstr "Усі файли"
-
-#: pdfarranger/pdfarranger.py:519 pdfarranger/pdfarranger.py:598
-msgid "All pages must have the same size."
-msgstr "Усі сторінки мають бути однакового розміру."
-
-#: pdfarranger/pdfarranger.py:701
-msgid "All supported files"
-msgstr "Усі підтримані файли"
-
-#: pdfarranger/exporter.py:526
-msgid "Auto Rotate"
-msgstr "Автоматично обертати"
-
-#: pdfarranger/pageutils.py:256
-msgid "Bottom"
-msgstr "Знизу"
-
-#: pdfarranger/pageutils.py:488
-msgid "Bottom to Top"
-msgstr "Знизу вгору"
-
-#: pdfarranger/core.py:599
-msgid "Clipboard image"
-msgstr "Зображення із буферу обміну"
-
-#: pdfarranger/pageutils.py:471 pdfarranger/splitter.py:60
-msgid "Columns"
-msgstr "Стовпців"
-
-#: data/menu.ui:161 data/menu.ui:417
-msgid "Copy _Image"
-msgstr "Скопіювати _зображення"
-
-#: data/menu.ui:166 data/menu.ui:422
-msgid "Copy _Text"
-msgstr "Скопіювати _текст"
-
-#: pdfarranger/metadata.py:49
-msgid "Created"
-msgstr "Створено"
-
-#: pdfarranger/metadata.py:47
-msgid "Creator"
-msgstr "Автор"
-
-#: pdfarranger/metadata.py:48
-msgid "Creator tool"
-msgstr "Інструмент створення"
-
-#: pdfarranger/pageutils.py:353
-msgid "Crop & Add margins"
-msgstr "Обрізати та додати межі"
-
-#: pdfarranger/pageutils.py:1004
-msgid "Crop Margins"
-msgstr "Обрізати межи"
-
-#: data/menu.ui:194 data/menu.ui:500
-msgid "Crop White Borders"
-msgstr "Обрізати білі межи"
-
-#: pdfarranger/pageutils.py:268 pdfarranger/pdfarranger.py:3211
-msgid ""
-"Cropping/hiding does not remove any content from the PDF file, it only hides "
-"it."
-msgstr "Обрізання/ховання не видаляє вміст у PDF-файлуі, а лише приховує його."
-
-#: data/menu.ui:114 data/menu.ui:365
-msgid "Cu_t"
-msgstr "Ви_різати"
-
-#: pdfarranger/pageutils.py:142
-msgid "Custom"
-msgstr "Власне"
-
-#: pdfarranger/pdfarranger.py:1542
-msgid "Despite the warnings the document(s) should have no visible issues."
-msgstr ""
-"Незважаючи на попередження, документ(и) не будуть мати помітних проблем."
-
-#: pdfarranger/pdfarranger.py:1251
-msgid "Discard changes and close?"
-msgstr "Відкинути зміни та зачинити?"
-
-#: pdfarranger/pdfarranger.py:1288
-msgid "Discard changes and quit?"
-msgstr "Відкинути зміни та закрити застосунок?"
-
-#: pdfarranger/pdfarranger.py:3218
-msgid "Do not show this dialog again."
-msgstr "Не показувати це діалогове вікно знову."
-
-#: pdfarranger/pdfarranger.py:1242
-msgid "Do_n’t Save"
-msgstr "_Не зберігати"
-
-#: pdfarranger/pdfarranger.py:1549
-msgid "Don't show warnings when saving again."
-msgstr "Не показувати це повідомлення при збереженні знову."
-
-#: data/menu.ui:198 data/menu.ui:504
-msgid "Dupl_icate"
-msgstr "_Дублювати"
-
-#: data/menu.ui:52 data/menu.ui:541
-msgid "E_xport"
-msgstr "_Експортувати"
-
-#: data/menu.ui:55 data/menu.ui:544
-msgid "E_xport Selection to a Single File…"
-msgstr "Експортувати обране в _один файл…"
-
-#: data/menu.ui:329
-msgid "Edit _Properties"
-msgstr "Редагувати влас_тивості"
-
-#: pdfarranger/metadata.py:213
-msgid "Edit properties"
-msgstr "Редагувати властивості"
-
-#: pdfarranger/splitter.py:62
-msgid "Equal column width"
-msgstr "Рівна ширина стовпців"
-
-#: pdfarranger/splitter.py:62
-msgid "Equal row height"
-msgstr "Рівна висота рядків"
-
-#: pdfarranger/pdfarranger.py:2126
-msgid "Exploding into images…"
-msgstr "Витягуємо вбудовані зображення…"
-
-#: data/menu.ui:60 data/menu.ui:549
-msgid "Export Selection to _Individual Files…"
-msgstr "Експортувати обране в _індивідуальні файли…"
-
-#: data/menu.ui:74 data/menu.ui:563
-msgid "Export Selection to _JPG Images…"
-msgstr "Експортувати обране в зображення _JPG…"
-
-#: data/menu.ui:69 data/menu.ui:558
-msgid "Export Selection to _PNG Images…"
-msgstr "Експортувати обране в зображення _PNG…"
-
-#: data/menu.ui:84 data/menu.ui:573
-msgid "Export Selection to _Rasterized PDF (jpg)…"
-msgstr "Експортувати обране в _растровий PDF (jpg)…"
-
-#: data/menu.ui:79 data/menu.ui:568
-msgid "Export Selection to _Rasterized PDF (png)…"
-msgstr "Експортувати обране в _растровий PDF (png)…"
-
-#: data/menu.ui:65 data/menu.ui:554
-msgid "Export _All Pages to Individual Files…"
-msgstr "Експортувати _усі сторінки в індивідуальні файли…"
-
-#: pdfarranger/pdfarranger.py:1358
-msgid "Export…"
-msgstr "Експортувати…"
-
-#: pdfarranger/core.py:601 pdfarranger/pdfarranger.py:1817
-msgid "File is neither pdf nor image"
-msgstr "Файл не є pdf або зображенням"
-
-#: pdfarranger/pdfarranger.py:342
-msgid "File(s) to open"
-msgstr "Файл(и) для відкриття"
-
-#: pdfarranger/search.py:43
-msgid "Find All"
-msgstr "Знайти все"
-
-#: pdfarranger/search.py:38
-msgid "Find Next"
-msgstr "Знайти наступне"
-
-#: pdfarranger/search.py:33
-msgid "Find Previous"
-msgstr "Знайти попереднє"
-
-#: data/menu.ui:322
-msgid "Find _All"
-msgstr "Знайти _все"
-
-#: data/menu.ui:318
-msgid "Find _Next"
-msgstr "Знайти _наступне"
-
-#: data/menu.ui:314
-msgid "Find _Previous"
-msgstr "Знайти _попереднє"
-
-#: data/menu.ui:296
-msgid "Fit _Multiple Pages"
-msgstr "Вмістити _декілька сторінок"
-
-#: data/menu.ui:291
-msgid "Fit _One Page"
-msgstr "Вмістити _одну сторінку"
-
-#: pdfarranger/pageutils.py:349
-msgid "Fit mode"
-msgstr "Режим вміщання"
-
-#: pdfarranger/exporter.py:524
-msgid "Fit to Full Page"
-msgstr "Вмістити у повну сторінку"
-
-#: pdfarranger/exporter.py:523
-msgid "Fit to Printable Area"
-msgstr "Вмістити в область друку"
-
-#: pdfarranger/pageutils.py:358
-msgid "Fit to paper"
-msgstr "Вмістити на папері"
-
-#: pdfarranger/pdfarranger.py:3215
-msgid "For more info see"
-msgstr "Щоб дізнатися більше, дивіться"
-
-#: pdfarranger/config.py:382
-msgid "For more options see:"
-msgstr "Більше налаштувань можна знайти тут:"
-
-#: data/menu.ui:301
-msgid "Full_screen"
-msgstr "На весь _екран"
-
-#: pdfarranger/pdfarranger.py:3259
-msgid "GNU General Public License (GPL) Version 3."
-msgstr "GNU General Public License (GPL) Version 3."
-
-#: pdfarranger/config.py:377
-msgid "Greyscale"
-msgstr "Відтінки сірого"
-
-#: pdfarranger/pageutils.py:157
-msgid "Height"
-msgstr "Висота"
-
-#: pdfarranger/splitter.py:88
-msgid "Height in %"
-msgstr "Висота у процентах %"
-
-#: pdfarranger/pageutils.py:1004
-msgid "Hide Margins"
-msgstr "Сховати межі"
-
-#: pdfarranger/pageutils.py:483
-msgid "Horizontal"
-msgstr "Горизонтально"
-
-#: pdfarranger/splitter.py:61
-msgid "Horizontal Splits"
-msgstr "Горизонтальні поділки"
-
-#: pdfarranger/pageutils.py:554
-msgid "Horizontal offset"
-msgstr "Горизонтальний зсув"
-
-#: pdfarranger/config.py:366
-msgid "Image Export"
-msgstr "Експорт зображень"
-
-#: pdfarranger/core.py:589
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: pdfarranger-qt tools/merge_translations.py\n"
+"Generated-By: Babel 2.18.0\n"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py pdfarranger_qt/reader.py
+#, python-brace-format
+msgid "Page {}"
+msgstr "Сторінка {}"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Open Link"
+msgstr "Відкрити посилання"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Copy Link Address"
+msgstr "Копіювати адресу посилання"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+#, python-brace-format
+msgid "Go to {}"
+msgstr "Перейти до {}"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Follow Link"
+msgstr "Перейти за посиланням"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py pdfarranger_qt/mainwindow.py
+msgid "Copy"
+msgstr "Копіювати"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Select All"
+msgstr "Обрати усі"
+
+#: pdfarranger_qt/core.py pdfarranger_qt/mainwindow.py
 msgid "Image files are only supported with img2pdf"
 msgstr "Файли зображень, які підтримуються img2pdf"
 
-#: pdfarranger/core.py:596
-msgid "Image format is not supported by img2pdf"
-msgstr "Формат зображення не підтримується img2pdf"
-
-#: pdfarranger/pdfarranger.py:2123
-msgid "Img2pdf missing."
-msgstr "бракує img2pdf."
-
-#: pdfarranger/pdfarranger.py:1621
-msgid "Img2pdf support missing."
-msgstr "Підтримка Img2pdf відсутня."
-
-#: data/pdfarranger.ui:58
-msgid "Import"
-msgstr "Імпортувати"
-
-#: pdfarranger/pdfarranger.py:1631
-msgid "Import…"
-msgstr "Імпортувати…"
-
-#: data/menu.ui:218 data/menu.ui:524
-msgid "Insert Blan_k Page…"
-msgstr "Вставити _порожню сторінку…"
-
-#: pdfarranger/pageutils.py:437
-msgid "Insert Blank Page"
-msgstr "Вставити порожню сторінку"
-
-#: pdfarranger/metadata.py:184
-msgid "Invalid date format. Input discarded."
-msgstr "Неправильний формат дати. Введені дані відхилено."
-
-#: pdfarranger/pdfarranger.py:721
-msgid "JPEG images"
-msgstr "Зображення JPEG"
-
-#: pdfarranger/metadata.py:45
-msgid "Keywords"
-msgstr "Ключові слова"
-
-#: pdfarranger/pageutils.py:166
-msgid "Landscape"
-msgstr "Альбомне"
-
-#: pdfarranger/config.py:332
-msgid "Language"
-msgstr "Мова"
-
-#: pdfarranger/pageutils.py:256
-msgid "Left"
-msgstr "Зліва"
-
-#: pdfarranger/pageutils.py:485
-msgid "Left to Right"
-msgstr "Зліва направо"
-
-#: data/pdfarranger.ui:122
-msgid "Main Menu"
-msgstr "Головне меню"
-
-#: pdfarranger/pdfarranger.py:3254
-msgid "Maintainers and contributors"
-msgstr "Розробники та спільнота"
-
-#: pdfarranger/pageutils.py:469
-msgid "Margin"
-msgstr "Межі"
-
-#: pdfarranger/pageutils.py:455
-msgid "Merge Pages"
-msgstr "Об'єднання сторінок"
-
-#: pdfarranger/pageutils.py:520
-msgid "Merged page size:"
-msgstr "Розмір об'єднаної сторінки:"
-
-#: pdfarranger/metadata.py:50
-msgid "Modified"
-msgstr "Змінено"
-
-#: pdfarranger/pageutils.py:500
-msgid "Non-uniform page size - using max size"
-msgstr "Не однаковий розмір сторінки - використовується максимальний розмір"
-
-#: pdfarranger/exporter.py:522
-msgid "None"
-msgstr "Нічого"
-
-#: pdfarranger/pdfarranger.py:3204
-msgid "Note"
-msgstr "Примітка"
-
-#: pdfarranger/pdfarranger.py:3210
-msgid "Note the limitations:"
-msgstr "Примітка про обмеження:"
-
-#: data/pdfarranger.ui:37
-msgid "Open"
-msgstr "Відкрити"
-
-#: pdfarranger/pdfarranger.py:1473
-msgid "Open…"
-msgstr "Відкрити…"
-
-#: pdfarranger/config.py:374
-msgid "Optimize"
-msgstr "Оптимізувати"
-
-#: pdfarranger/pageutils.py:164
-msgid "Orientation"
-msgstr "Орієнтація"
-
-#: pdfarranger/pdfarranger.py:3212
-msgid "Outlines and links can be preserved only in certain cases."
-msgstr "Структура та посилання можуть бути збережені лише в певних випадках."
-
-#: pdfarranger/pageutils.py:1057
-msgid "Overlay"
-msgstr "Накладка"
-
-#: pdfarranger/pdfarranger.py:323
-msgid ""
-"PDF Arranger is a small python-gtk application, which helps the user to "
-"merge or split pdf documents and rotate, crop and rearrange their pages "
-"using an interactive and intuitive graphical interface. It is a frontend for "
-"pikepdf."
-msgstr ""
-"Редактор PDF — це невеликий застосунок, який допоможе об'єднати або "
-"розділити PDF-документи, обертати, обрізати і переміщати місцями сторінки за "
-"допомогою інтерактивного й інтуїтивно зрозумілого графічного інтерфейсу. Це "
-"графічна оболонка для pikepdf. "
-
-#: pdfarranger/pdfarranger.py:1811
-msgid "PDF document is damaged"
-msgstr "Цей PDF-документ пошкоджений"
-
-#: pdfarranger/pdfarranger.py:705
-msgid "PDF files"
-msgstr "PDF файли"
-
-#: pdfarranger/pdfarranger.py:713
-msgid "PNG images"
-msgstr "Зображення PNG"
-
-#: pdfarranger/exporter.py:577
-msgid "Page Handling"
-msgstr "Керування сторінками"
-
-#: pdfarranger/pageutils.py:496
-msgid "Page Order"
-msgstr "Порядок сторінок"
-
-#: pdfarranger/pdfarranger.py:3282
-msgid "Page Size:"
-msgstr "Розмір сторінки:"
-
-#: pdfarranger/pageutils.py:345
-msgid "Page size"
-msgstr "Розмір сторінки"
-
-#: pdfarranger/pageutils.py:139
-msgid "Paper size"
-msgstr "Розмір паперу"
-
-#: pdfarranger/core.py:474
-msgid "Password"
-msgstr "Пароль"
-
-#: pdfarranger/core.py:452
-msgid "Password required"
-msgstr "Потрібен пароль"
-
-#: data/menu.ui:127 data/menu.ui:378
-msgid "Past_e Special"
-msgstr "_Особлива вставка"
-
-#: data/menu.ui:144 data/menu.ui:396
-msgid "Paste As O_verlay…"
-msgstr "Вставити як _накладку…"
-
-#: data/menu.ui:139 data/menu.ui:391
-msgid "Paste As _Even Pages"
-msgstr "Вставити як _парні сторінки"
-
-#: data/menu.ui:134 data/menu.ui:386
-msgid "Paste As _Odd Pages"
-msgstr "Вставити як _непарні сторінки"
-
-#: data/menu.ui:149 data/menu.ui:401
-msgid "Paste As _Underlay…"
-msgstr "Вставити як підкладку…"
-
-#: data/menu.ui:122 data/menu.ui:373
-msgid "Paste _After"
-msgstr "Вставити піс_ля"
-
-#: data/menu.ui:129 data/menu.ui:381
-msgid "Paste _Before"
-msgstr "Вставити _до"
-
-#: pdfarranger/pdfarranger.py:1971
-msgid "Pasted data not valid. Aborting paste."
-msgstr "Дані для вставки є не дійсними. Скасування вставки."
-
-#: pdfarranger/config.py:368
-msgid "Pixels/inch:"
-msgstr ""
-
-#: pdfarranger/pageutils.py:165
-msgid "Portrait"
-msgstr "Портретна"
-
-#: data/menu.ui:335
-msgid "Pre_ferences"
-msgstr "_Налаштування"
-
-#: pdfarranger/config.py:322
-msgid "Preferences"
-msgstr "Налаштування"
-
-#: pdfarranger/config.py:354
-msgid "Preserve document information from the first file opened"
-msgstr "Зберігати інформацію про документ з першого відкритого файлу"
-
-#: pdfarranger/pdfarranger.py:334
-msgid "Print the version of PDF Arranger and exit"
-msgstr "Вивести версію PDF Arranger та вийти"
-
-#: pdfarranger/config.py:347
-msgid "Printing"
-msgstr "Друкування"
-
-#: pdfarranger/exporter.py:558
-msgid "Printing…"
-msgstr "Друкувати…"
-
-#: pdfarranger/metadata.py:46
-msgid "Producer"
-msgstr "Програма"
-
-#: pdfarranger/metadata.py:227
-msgid "Property"
-msgstr "Властивість"
-
-#: pdfarranger/pageutils.py:1124
-msgid "Range Select"
-msgstr "_Обрати діапазон"
-
-#: data/menu.ui:202 data/menu.ui:508
-msgid "Re_verse Order"
-msgstr "_Зворотний порядок"
-
-#: pdfarranger/pageutils.py:359
-msgid "Relative"
-msgstr "Відносний"
-
-#: pdfarranger/exporter.py:595
-msgid "Rendering Preview…"
-msgstr "Обробка попереднього перегляду…"
-
-#: pdfarranger/pdfarranger.py:993
-msgid "Rendering…"
-msgstr "Обробка…"
-
-#: pdfarranger/pdfarranger.py:1419
-msgid "Replace"
-msgstr "Замінити"
-
-#: pdfarranger/pageutils.py:256
-msgid "Right"
-msgstr "Справа"
-
-#: pdfarranger/pageutils.py:486
-msgid "Right to Left"
-msgstr "Справа наліво"
-
-#: data/pdfarranger.ui:203
-msgid "Rotate Left"
-msgstr "Перегорнути вліво"
-
-#: data/pdfarranger.ui:227
-msgid "Rotate Right"
-msgstr "Перегорнути вправо"
-
-#: data/menu.ui:172 data/menu.ui:478
-msgid "Rotate _Left"
-msgstr "Перегорнути в_ліво"
-
-#: pdfarranger/pageutils.py:472 pdfarranger/splitter.py:60
-msgid "Rows"
-msgstr "Рядки"
-
-#: pdfarranger/pdfarranger.py:3249
-#, python-format
-msgid "Running on %s"
-msgstr "Запущено на %s"
-
-#: data/menu.ui:263 data/menu.ui:459
-msgid "Same Page _Format"
-msgstr "Сторінки того ж _формату"
-
-#: data/pdfarranger.ui:78
-msgid "Save"
-msgstr "Зберегти"
-
-#: data/pdfarranger.ui:97
-msgid "Save As"
-msgstr "Зберегти як"
-
-#: pdfarranger/pdfarranger.py:1358
-msgid "Save As…"
-msgstr "Зберегти як…"
-
-#: data/menu.ui:47
-msgid "Save _As…"
-msgstr "Зберегти _як…"
-
-#: pdfarranger/pdfarranger.py:1260
-msgid "Save changes before closing?"
-msgstr "Зберегти зміни перед тим як закрити?"
-
-#: pdfarranger/pdfarranger.py:1297
-msgid "Save changes before quitting?"
-msgstr "Зберегти зміни перед закриттям?"
-
-#: pdfarranger/pdfarranger.py:1257
-#, python-brace-format
-msgid "Save changes to “{}” before closing?"
-msgstr "Зберегти зміну у “{}” перед тим як закрити?"
-
-#: pdfarranger/pdfarranger.py:1294
-#, python-brace-format
-msgid "Save changes to “{}” before quitting?"
-msgstr "Зберегти зміни у “{}” перед закриттям?"
-
-#: pdfarranger/pdfarranger.py:1567
-msgid "Saving failed"
-msgstr "Не вдалося зберегти"
-
-#: pdfarranger/pdfarranger.py:1541
-msgid "Saving produced some warnings"
-msgstr "Збереження було завершено з деякими попередженнями"
-
-#: pdfarranger/config.py:352
-msgid "Saving/exporting to single file"
-msgstr "Збереження/експорт в один файл"
-
-#: pdfarranger/pdfarranger.py:1584
-msgid "Saving…"
-msgstr "Збереження…"
-
-#: pdfarranger/pageutils.py:351
-msgid "Scale"
-msgstr "Масштаб"
-
-#: pdfarranger/pageutils.py:352
-msgid "Scale & Add margins"
-msgstr "Масштабувати та додати межі"
-
-#: pdfarranger/pageutils.py:122
-msgid "Scale factor"
-msgstr "Масштаб"
-
-#: pdfarranger/exporter.py:520
-msgid "Scale mode:"
-msgstr "Режим масштабування:"
-
-#: data/menu.ui:238 data/menu.ui:434
-msgid "Select _All"
-msgstr "Обрати _усі"
-
-#: data/menu.ui:253 data/menu.ui:449
-msgid "Select _Even Pages"
-msgstr "Обрати _парні сторінки"
-
-#: data/menu.ui:248 data/menu.ui:444
-msgid "Select _Odd Pages"
-msgstr "Обрати _непарні сторінки"
-
-#: data/menu.ui:273 data/menu.ui:469
-msgid "Select _Range"
-msgstr "Обрати _діапазон"
-
-#: pdfarranger/pageutils.py:1133
-msgid "Select range of pages: "
-msgstr "Оберіть діапазон сторінок: "
-
-#: pdfarranger/pdfarranger.py:3277
-msgid "Selected pages: "
-msgstr "Обрані сторінки: "
-
-#: pdfarranger/pageutils.py:701
-msgid "Show values"
-msgstr "Показати значення"
-
-#: pdfarranger/pdfarranger.py:3240
-msgid "Software versions:"
-msgstr "Версії компонентів"
-
-#: pdfarranger/splitter.py:26
-msgid "Split Pages"
-msgstr "Розділити сторінки"
-
-#: pdfarranger/metadata.py:44
-msgid "Subject"
-msgstr "Тема"
-
-#: pdfarranger/pdfarranger.py:735
-msgid "Supported image files"
-msgstr "Підтримувані файли зображень"
-
-#: data/menu.ui:206 data/menu.ui:512
-msgid "Swap Odd/Even"
-msgstr "Поміняти місцями парні та непарні"
-
-#: pdfarranger/config.py:388 pdfarranger/config.py:397
-msgid "System setting"
-msgstr "Системні налаштування"
-
-#: pdfarranger/core.py:464
-#, python-brace-format
-msgid ""
-"The document “{}” is locked and requires a password before it can be opened."
-msgstr ""
-"Документ “{}” заблокований і потрібен пароль, перед тим як він зможе буде "
-"відкритим."
-
-#: pdfarranger/pdfarranger.py:2099
-msgid "The page has several images. Use \"Explode into Images\" first.\""
-msgstr ""
-"Сторінка має декілька зображень. Використайте \"Витягти вбудовані "
-"зображення\" спочатку."
-
-#: pdfarranger/pdfarranger.py:586
-msgid "The page selection is not contiguous. Cannot unimpose."
-msgstr "Виділення сторінки не є безперервним. Неможливо розділити."
-
-#: pdfarranger/core.py:463
-msgid "The password will be remembered until you close PDF Arranger."
-msgstr "Пароль буде запам'ятовувано доки ви не закриєте PDF Arranger."
-
-#: pdfarranger/config.py:340
-msgid "Theme"
-msgstr "Тема"
-
-#: pdfarranger/metadata.py:43
-msgid "Title"
-msgstr "Назва"
-
-#: pdfarranger/pageutils.py:256
-msgid "Top"
-msgstr "Зверху"
-
-#: pdfarranger/pageutils.py:487
-msgid "Top to Bottom"
-msgstr "Зверху вниз"
-
-#: pdfarranger/pageutils.py:1057
-msgid "Underlay"
-msgstr "Підкладка"
-
-#: pdfarranger/core.py:573 pdfarranger/pdfarranger.py:1807
+# machine translation, unreviewed
+#: pdfarranger_qt/core.py
+msgid "File not found"
+msgstr "Файл не знайдено"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/core.py
+msgid "Invalid file format"
+msgstr "Хибний формат файла"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/core.py
+msgid "Data not yet available"
+msgstr "Дані ще не доступні"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/core.py
+msgid "Unsupported security scheme"
+msgstr "Непідтримувана схема захисту"
+
+#: pdfarranger_qt/core.py
 msgid "Unknown file format"
 msgstr "Невідомий формат файлу"
 
-#: pdfarranger/pageutils.py:1140
+#: pdfarranger_qt/core.py
+msgid "Image format is not supported by img2pdf"
+msgstr "Формат зображення не підтримується img2pdf"
+
+#: pdfarranger_qt/core.py
+msgid "File is neither pdf nor image"
+msgstr "Файл не є pdf або зображенням"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/core.py
+msgid "Cannot open document"
+msgstr "Не вдалося відкрити документ"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Paper size"
+msgstr "Розмір паперу"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Custom"
+msgstr "Власне"
+
+#: pdfarranger_qt/dialogs.py
+msgid "mm"
+msgstr "мм"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Width"
+msgstr "Ширина"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Height"
+msgstr "Висота"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Keep aspect ratio"
+msgstr "Зберігати пропорції"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Portrait"
+msgstr "Портретна"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Landscape"
+msgstr "Альбомне"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Orientation"
+msgstr "Орієнтація"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Range Select"
+msgstr "_Обрати діапазон"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Select range of pages: "
+msgstr "Оберіть діапазон сторінок: "
+
+#: pdfarranger_qt/dialogs.py
 msgid ""
 "Use a comma to separate page numbers, a dash to select a range of pages. \n"
 "e.g. : \"1,3,5-7,9\""
@@ -813,223 +154,2247 @@ msgstr ""
 "діапазон сторінок.\n"
 "Наприклад: \"1,3,5-7,9\""
 
-#: pdfarranger/pdfarranger.py:3216
-msgid "User Manual"
-msgstr "Довідник користувача"
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+msgid "Insert Blank Page"
+msgstr "Вставити порожню сторінку"
 
-#: pdfarranger/metadata.py:227
-msgid "Value"
-msgstr "Значення"
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+msgid "Page size"
+msgstr "Розмір сторінки"
 
-#: pdfarranger/pageutils.py:484
-msgid "Vertical"
-msgstr "Вертикальний"
+#: pdfarranger_qt/dialogs.py
+msgid "Fit to paper"
+msgstr "Вмістити на папері"
 
-#: pdfarranger/splitter.py:61
+#: pdfarranger_qt/dialogs.py
+msgid "Relative"
+msgstr "Відносний"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Scale"
+msgstr "Масштаб"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Scale & Add margins"
+msgstr "Масштабувати та додати межі"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Crop & Add margins"
+msgstr "Обрізати та додати межі"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Fit mode"
+msgstr "Режим вміщання"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Scale factor"
+msgstr "Масштаб"
+
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+msgid "Hide Margins"
+msgstr "Сховати межі"
+
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+msgid "Crop Margins"
+msgstr "Обрізати межи"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Left"
+msgstr "Зліва"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Right"
+msgstr "Справа"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Top"
+msgstr "Зверху"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Bottom"
+msgstr "Знизу"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Margins"
+msgstr "Поля"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Same for all sides"
+msgstr "Однаково з усіх боків"
+
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+msgid "Split Pages"
+msgstr "Розділити сторінки"
+
+#: pdfarranger_qt/dialogs.py
 msgid "Vertical Splits"
 msgstr "Вертикальні поділки"
 
-#: pdfarranger/pageutils.py:556
-msgid "Vertical offset"
-msgstr "Вертикальний зсув"
+#: pdfarranger_qt/dialogs.py
+msgid "Horizontal Splits"
+msgstr "Горизонтальні поділки"
 
-#: pdfarranger/config.py:357
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+msgid "Pages per Sheet"
+msgstr "Сторінок на аркуші"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Automatic"
+msgstr "Автоматично"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Automatic turns the sheet sideways when that lets the pages come out larger."
+msgstr ""
+"Автоматичний режим повертає аркуш упоперек, коли сторінки від цього виходять"
+" більшими."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Empty space left around each page."
+msgstr "Порожнє місце навколо кожної сторінки."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Layout"
+msgstr "Розкладка"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Columns"
+msgstr "Стовпців"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Rows"
+msgstr "Рядки"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Sheet"
+msgstr "Аркуш"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Gap"
+msgstr "Проміжок"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Appearance"
+msgstr "Вигляд"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/reader.py
+msgid "Bold"
+msgstr "Жирний"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/reader.py
+msgid "Italic"
+msgstr "Курсив"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Font"
+msgstr "Шрифт"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Size"
+msgstr "Розмір"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Colour"
+msgstr "Колір"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Opacity"
+msgstr "Непрозорість"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Position"
+msgstr "Розташування"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Angle"
+msgstr "Кут"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+msgid "Add Page Numbers"
+msgstr "Додати номери сторінок"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+#, python-format
+msgid "%s is replaced by the page number, %s by the number of pages."
+msgstr "%s замінюється номером сторінки, %s — кількістю сторінок."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Leave the first page unnumbered"
+msgstr "Залишити першу сторінку без номера"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "It is still counted; a title page just does not carry a number."
+msgstr "Вона все одно рахується; титульна сторінка просто не несе номера."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Format"
+msgstr "Формат"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Start at"
+msgstr "Почати з"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Numbering"
+msgstr "Нумерація"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+msgid "Add Watermark"
+msgstr "Додати водяний знак"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "DRAFT"
+msgstr "ЧЕРНЕТКА"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Text"
+msgstr "Текст"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Watermark"
+msgstr "Водяний знак"
+
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+msgid "Merge Pages"
+msgstr "Об'єднання сторінок"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Overlay"
+msgstr "Накладка"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Underlay"
+msgstr "Підкладка"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/stamp.py
+msgid "Centre"
+msgstr "По центру"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Middle"
+msgstr "Посередині"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Horizontal"
+msgstr "Горизонтально"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Vertical"
+msgstr "Вертикальний"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Edit properties"
+msgstr "Редагувати властивості"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "System"
+msgstr "Системна"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Light"
+msgstr "Світла"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Dark"
+msgstr "Темна"
+
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+msgid "Preferences"
+msgstr "Налаштування"
+
+#: pdfarranger_qt/dialogs.py
+msgid "System setting"
+msgstr "Системні налаштування"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Language"
+msgstr "Мова"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Theme"
+msgstr "Тема"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "General"
+msgstr "Загальне"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Fit to page"
+msgstr "Вмістити у сторінку"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Actual size"
+msgstr "Справжній розмір"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Auto Rotate"
+msgstr "Автоматично обертати"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Pages are rasterised at this resolution before being sent to the printer. "
+"Lower it if printing is slow: the printer driver has less to process."
+msgstr ""
+"Сторінки растеризуються з цією роздільністю перед надсиланням на принтер. "
+"Знизьте її, якщо друк повільний: драйверу принтера буде менше обробляти."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Scale mode"
+msgstr "Режим масштабування"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Pixels/inch:"
+msgstr "Пікселів/дюйм:"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Printing"
+msgstr "Друкування"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Preserve document information from the first file opened"
+msgstr "Зберігати інформацію про документ з першого відкритого файлу"
+
+#: pdfarranger_qt/dialogs.py
 msgid "When checked: use document properties from the first file opened."
 msgstr ""
 "Якщо увімкнено: використовувати властивості документа з першого відкритого "
 "файлу."
 
-#: pdfarranger/config.py:358
+#: pdfarranger_qt/dialogs.py
 msgid "When unchecked: merge bookmarks from all documents."
 msgstr "Якщо вимкнено: об'єднувати закладки з усіх документів."
 
-#: pdfarranger/pageutils.py:150
-msgid "Width"
-msgstr "Ширина"
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Optimize for the web (linearize)"
+msgstr "Оптимізувати для вебу (лінеаризувати)"
 
-#: pdfarranger/splitter.py:88
-msgid "Width in %"
-msgstr "Ширина у %"
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Lay the file out so a browser can show page one before the rest has "
+"downloaded."
+msgstr ""
+"Розкласти файл так, щоб браузер міг показати першу сторінку, доки решта ще "
+"завантажується."
 
-#: pdfarranger/pdfarranger.py:1241
-msgid "Your changes will be lost if you don’t save them."
-msgstr "Ваші зміни будуть втрачені, якщо ви не збережете їх."
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Compress"
+msgstr "Стиснути"
 
-#: data/pdfarranger.ui:144
-msgid "Zoom In"
-msgstr "Збільшити"
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Recompress the file's streams and pack its objects together."
+msgstr "Перестиснути потоки файла та упакувати його об'єкти разом."
 
-#: data/pdfarranger.ui:167
-msgid "Zoom Out"
-msgstr "Зменшити"
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"How much this saves depends on the file: one full of already-compressed "
+"images will barely shrink."
+msgstr ""
+"Скільки це заощаджує, залежить від файла: файл, повний уже стиснених "
+"зображень, майже не зменшиться."
 
-#: data/menu.ui:283
-msgid "Zoom _In"
-msgstr "З_більшити"
+#: pdfarranger_qt/dialogs.py
+msgid "Saving/exporting to single file"
+msgstr "Збереження/експорт в один файл"
 
-#: data/menu.ui:287
-msgid "Zoom _Out"
-msgstr "З_меншити"
+#: pdfarranger_qt/dialogs.py
+msgid "Greyscale"
+msgstr "Відтінки сірого"
 
-#: data/menu.ui:341
-msgid "_About"
-msgstr "Про програ_му"
+#: pdfarranger_qt/dialogs.py
+msgid "Image Export"
+msgstr "Експорт зображень"
 
-#: pdfarranger/pageutils.py:1014
-msgid "_Apply"
-msgstr "_Прийняти"
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Keyboard shortcuts"
+msgstr "Комбінації клавіш"
 
-#: data/menu.ui:222 data/menu.ui:528
-msgid "_Booklet"
-msgstr "_Буклет"
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Viewer Preferences"
+msgstr "Налаштування переглядача"
 
-#: pdfarranger/config.py:326 pdfarranger/core.py:456
-#: pdfarranger/metadata.py:216 pdfarranger/pageutils.py:329
-#: pdfarranger/pdfarranger.py:1233 pdfarranger/pdfarranger.py:1242
-#: pdfarranger/pdfarranger.py:1364 pdfarranger/pdfarranger.py:1431
-#: pdfarranger/splitter.py:30
-msgid "_Cancel"
-msgstr "_Скасувати"
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Open showing:"
+msgstr "Відкривати з показом:"
 
-#: pdfarranger/pdfarranger.py:1252 data/menu.ui:347
-msgid "_Close"
-msgstr "За_крити"
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Page layout:"
+msgstr "Розкладка сторінок:"
 
-#: data/menu.ui:118 data/menu.ui:369
-msgid "_Copy"
-msgstr "_Скопіювати"
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "On opening"
+msgstr "Під час відкриття"
 
-#: data/menu.ui:186 data/menu.ui:492
-msgid "_Crop Margins…"
-msgstr "_Обрізати рамки…"
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Window"
+msgstr "Вікно"
 
-#: data/menu.ui:110 data/menu.ui:361
-msgid "_Delete"
-msgstr "_Видалити"
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Readers are free to ignore all of this."
+msgstr "Переглядачі можуть усе це проігнорувати."
 
-#: data/menu.ui:243 data/menu.ui:439
-msgid "_Deselect All"
-msgstr "_Скасувати вибір"
+#: pdfarranger_qt/dialogs.py
+msgid "Password"
+msgstr "Пароль"
 
-#: data/menu.ui:107
-msgid "_Edit"
-msgstr "_Редагувати"
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Confirm password"
+msgstr "Підтвердити пароль"
 
-#: data/menu.ui:157 data/menu.ui:413
-msgid "_Explode into Images"
-msgstr "_Витягти вбудовані зображення"
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Enter a password, or cancel to leave the document unencrypted."
+msgstr "Введіть пароль або скасуйте, щоб залишити документ незашифрованим."
 
-#: data/menu.ui:155 data/menu.ui:410
-msgid "_Extract"
-msgstr "_Витягти"
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "The passwords do not match."
+msgstr "Паролі не збігаються."
 
-#: data/menu.ui:307
-msgid "_Find"
-msgstr "_Пошук"
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Reset"
+msgstr "Скинути"
 
-#: data/menu.ui:310
-msgid "_Find…"
-msgstr "_Знайти…"
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Description"
+msgstr "Опис"
 
-#: data/menu.ui:224 data/menu.ui:530
-msgid "_Generate (imposition)"
-msgstr "_Створити (додати)"
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"PDF Arranger merges, splits, rearranges, rotates and crops PDF documents. "
+"Everything happens in memory against the pages you can see; nothing is "
+"written until you save."
+msgstr ""
+"PDF Arranger об'єднує, розділяє, переставляє, обертає та обрізає документи "
+"PDF. Усе відбувається в пам'яті, над сторінками, які ви бачите; нічого не "
+"записується, доки ви не збережете."
 
-#: data/menu.ui:190 data/menu.ui:496
-msgid "_Hide Margins…"
-msgstr "_Сховати межі…"
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"It is a front end for pikepdf. Page content is never rewritten — only page "
+"order, geometry and composition."
+msgstr ""
+"Це надбудова над pikepdf. Вміст сторінок ніколи не переписується — лише "
+"порядок сторінок, геометрія та композиція."
 
-#: data/menu.ui:30
-msgid "_Import"
-msgstr "_Імпортувати"
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Command line"
+msgstr "Командний рядок"
 
-#: data/menu.ui:268 data/menu.ui:464
-msgid "_Invert Selection"
-msgstr "_Інвертувати вибір"
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Files given on the command line are opened as one document. "
+"<code>--version</code> prints the version and exits."
+msgstr ""
+"Файли, задані у командному рядку, відкриваються як один документ. "
+"<code>--version</code> виводить версію та завершує роботу."
 
-#: data/menu.ui:214 data/menu.ui:520
-msgid "_Merge Pages…"
-msgstr "_Об'єднати сторінки…"
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+msgid "Reading"
+msgstr "Читання"
 
-#: data/menu.ui:36
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"The application opens in <b>read mode</b>: a continuous page view for "
+"reading the document rather than rearranging it. <b>View ▸ Arrange Mode</b> "
+"(Ctrl+E) swaps to the thumbnail grid and back."
+msgstr ""
+"Програма відкривається у <b>режимі читання</b>: безперервному перегляді "
+"сторінок для читання документа, а не для його перевпорядкування. <b>Перегляд"
+" ▸ Режим упорядкування</b> (Ctrl+E) перемикає на сітку мініатюр і назад."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Reading shows the document <i>as edited</i>: rotations, crops, deletions and"
+" reordering are all applied, so what you read is what you would get if you "
+"saved. Page-editing commands are disabled while reading — bookmarks are the "
+"exception, and are edited here and nowhere else."
+msgstr ""
+"Читання показує документ <i>таким, яким його відредаговано</i>: обертання, "
+"обрізання, видалення та перевпорядкування — усе застосовано, тож те, що ви "
+"читаєте, і є те, що ви отримали б, якби зберегли. Команди редагування "
+"сторінок під час читання вимкнено — закладки є винятком і редагуються тут і "
+"більше ніде."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"The page you are on follows you between the two modes. Switching to read "
+"mode opens at the page selected in the grid, the first of them if several "
+"are selected; switching back scrolls the grid to the page you were reading, "
+"without disturbing what you had selected. With nothing selected, reading "
+"resumes where you left off — your place in each document is remembered "
+"between visits."
+msgstr ""
+"Сторінка, на якій ви перебуваєте, супроводжує вас між двома режимами. "
+"Перехід у режим читання відкриває сторінку, виділену в сітці, першу з них, "
+"якщо виділено кілька; повернення прокручує сітку до сторінки, яку ви читали,"
+" не зачіпаючи того, що ви виділили. Без виділення читання поновлюється там, "
+"де ви зупинилися — ваше місце у кожному документі запам'ятовується між "
+"відвідинами."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"The toolbar shows which page you are on and how many there are; type a "
+"number into it to jump there, or use <b>Ctrl+G</b>."
+msgstr ""
+"Панель інструментів показує, на якій ви сторінці та скільки їх усього; "
+"введіть у неї номер, щоб перейти туди, або скористайтеся <b>Ctrl+G</b>."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>View ▸ Continuous Scroll</b> is on by default; turning it off shows one "
+"page at a time. <b>View ▸ Facing Pages</b> puts two pages side by side, the "
+"way a book falls open. Both settings are remembered."
+msgstr ""
+"<b>Перегляд ▸ Безперервне прокручування</b> типово увімкнено; якщо вимкнути,"
+" показується одна сторінка за раз. <b>Перегляд ▸ Розворот</b> кладе дві "
+"сторінки поруч, як розгортається книга. Обидва налаштування "
+"запам'ятовуються."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Moving around a document"
+msgstr "Пересування документом"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"One rule for the arrow keys: <b>the modifier decides what moves</b>. Nothing"
+" scrolls the view, Option (Alt) moves the text cursor, Shift extends the "
+"selection, Command (Ctrl) jumps to an edge, and Fn — Page Up, Page Down, "
+"Home and End — jumps further. None of it changes according to whether a text"
+" cursor happens to be on the page."
+msgstr ""
+"Одне правило для клавіш зі стрілками: <b>що саме рухається, вирішує "
+"модифікатор</b>. Жодного — гортає перегляд, Option (Alt) пересуває текстовий"
+" курсор, Shift розширює виділення, Command (Ctrl) стрибає до краю, а Fn — "
+"Page Up, Page Down, Home та End — стрибає далі. Ніщо з цього не змінюється "
+"залежно від того, чи стоїть на сторінці текстовий курсор."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Keys"
+msgstr "Клавіші"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Continuous"
+msgstr "Безперервно"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/viewer.py
+msgid "One page at a time"
+msgstr "Одна сторінка за раз"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "scroll one line"
+msgstr "прогорнути на рядок"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "top of the previous / next page"
+msgstr "верх попередньої / наступної сторінки"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "previous / next page"
+msgstr "попередня / наступна сторінка"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "scroll one screen"
+msgstr "прогорнути на екран"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "start / end of the document"
+msgstr "початок / кінець документа"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "move the text cursor, by character or line"
+msgstr "пересунути текстовий курсор, посимвольно або порядково"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "extend the selection, by character or line"
+msgstr "розширити виділення, посимвольно або порядково"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "move the text cursor one word"
+msgstr "пересунути текстовий курсор на слово"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "extend the selection one word"
+msgstr "розширити виділення на слово"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "cursor to the start / end of the line"
+msgstr "курсор на початок / кінець рядка"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "cursor to the start / end of the document"
+msgstr "курсор на початок / кінець документа"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Add Shift to a Command or Option combination to extend the selection instead"
+" of moving — <b>Shift+Command+→</b> selects to the end of the line. Adding "
+"Option works by the word rather than the character. On Windows and Linux, "
+"read Command as Ctrl and Option as Alt; the table is the same everywhere."
+msgstr ""
+"Додайте Shift до сполучення з Command або Option, щоб розширити виділення "
+"замість пересування — <b>Shift+Command+→</b> виділяє до кінця рядка. "
+"Додавання Option працює по словах, а не по символах. У Windows та Linux "
+"читайте Command як Ctrl, а Option як Alt; таблиця скрізь однакова."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Selecting and copying text"
+msgstr "Виділення та копіювання тексту"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Drag across the page to select text, across page boundaries if you keep "
+"going. <b>Double-click</b> selects a word. <b>Ctrl/Cmd+C</b> copies, "
+"<b>Ctrl/Cmd+A</b> selects the text of the page you are on, and <b>Esc</b> "
+"clears the selection. The same commands are on the right-click menu."
+msgstr ""
+"Проведіть по сторінці, щоб виділити текст, через межі сторінок, якщо "
+"продовжите. <b>Подвійне клацання</b> виділяє слово. <b>Ctrl/Cmd+C</b> "
+"копіює, <b>Ctrl/Cmd+A</b> виділяє текст сторінки, на якій ви перебуваєте, а "
+"<b>Esc</b> знімає виділення. Ті самі команди є у меню правої кнопки."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>Shift+click</b> extends an existing selection to where you clicked. The "
+"end you are moving grows out to a whole word, because a single click is an "
+"imprecise way to point at one character; the end you started from stays "
+"exactly where you put it. Dragging selects by character throughout, since "
+"you can watch it and stop where you like."
+msgstr ""
+"<b>Shift+клацання</b> розширює наявне виділення до місця, де ви клацнули. "
+"Кінець, який ви пересуваєте, доростає до цілого слова, бо одне клацання — "
+"неточний спосіб вказати на один символ; кінець, з якого ви почали, лишається"
+" точно там, де ви його поставили. Перетягування виділяє посимвольно увесь "
+"час, бо ви можете стежити за ним і спинитися там, де схочете."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Clicking on text leaves a blinking <b>text cursor</b>. That is what "
+"Shift+arrow extends from, and what the Option and Command combinations above"
+" move. It stays where you put it — scrolling, paging and clicking off the "
+"page all leave it alone — until you press Esc or open another document."
+msgstr ""
+"Клацання по тексту лишає блимаючий <b>текстовий курсор</b>. Саме від нього "
+"Shift+стрілка розширює виділення, і саме його пересувають наведені вище "
+"сполучення з Option та Command. Він лишається там, де ви його поставили — "
+"прокручування, гортання та клацання поза сторінкою його не чіпають — доки ви"
+" не натиснете Esc або не відкриєте інший документ."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Following links"
+msgstr "Перехід за посиланнями"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Click a link to follow it. Links to a page in the same document jump there; "
+"links to the web open in your browser. Hovering over one shows where it "
+"goes, which is worth reading before you click: many links in a PDF are not "
+"written by its author at all but inferred from the text, so what a link "
+"points at is not always what the words appear to say."
+msgstr ""
+"Клацніть посилання, щоб перейти за ним. Посилання на сторінку того самого "
+"документа переносять туди; посилання у веб відкриваються у вашому браузері. "
+"Наведення на посилання показує, куди воно веде, і це варто прочитати перед "
+"клацанням: багато посилань у PDF написав зовсім не автор, а їх виведено з "
+"тексту, тож те, куди веде посилання, не завжди є тим, про що начебто "
+"говорять слова."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Only ordinary web and mail links are handed to the system — http, https, "
+"mailto and ftp. A document is a file that arrived from somewhere, and "
+"anything else it asks to open is refused and reported rather than acted on."
+msgstr ""
+"Системі передаються лише звичайні вебпосилання та поштові посилання — http, "
+"https, mailto і ftp. Документ — це файл, який звідкись прийшов, і все інше, "
+"що він просить відкрити, відхиляється та повідомляється, а не виконується."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Right-clicking a link offers <b>Open Link</b> and <b>Copy Link Address</b>."
+msgstr ""
+"Клацання правою кнопкою на посиланні пропонує <b>Відкрити посилання</b> та "
+"<b>Копіювати адресу посилання</b>."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Bookmarks"
+msgstr "Закладки"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"The sidebar shows the document's bookmarks. Click one to jump to it. "
+"Everything below is on the sidebar's right-click menu, and every command can"
+" be undone."
+msgstr ""
+"Бічна панель показує закладки документа. Клацніть одну, щоб перейти до неї. "
+"Усе наведене нижче є у меню правої кнопки бічної панелі, і кожну команду "
+"можна скасувати."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>Add Bookmark Here</b> makes one pointing at the page you are reading, "
+"named after whatever text you have selected — so select a heading, then add."
+" With nothing selected it is named after the page. <b>Add Child Bookmark "
+"Here</b> does the same, nested under the entry you clicked."
+msgstr ""
+"<b>Додати закладку тут</b> створює закладку, що вказує на сторінку, яку ви "
+"читаєте, названу за виділеним вами текстом — тож виділіть заголовок, а тоді "
+"додайте. Без виділення її буде названо за сторінкою. <b>Додати дочірню "
+"закладку тут</b> робить те саме, вкладено під записом, на який ви клацнули."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>Rename</b> edits the title in place. <b>Re-home to This Page</b> points "
+"an existing bookmark at the page you are on, keeping its title. "
+"<b>Delete</b> removes an entry and <i>promotes</i> its children into its "
+"place; <b>Delete with Children</b> removes the whole branch."
+msgstr ""
+"<b>Перейменувати</b> редагує назву на місці. <b>Перенаправити на цю "
+"сторінку</b> змушує наявну закладку вказувати на сторінку, де ви "
+"перебуваєте, зберігаючи назву. <b>Видалити</b> вилучає запис і "
+"<i>підносить</i> його дочірні на його місце; <b>Видалити з дочірніми</b> "
+"вилучає цілу гілку."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Drag entries within the sidebar to re-nest or reorder them. <b>Expand All "
+"Children</b> and <b>Collapse All Children</b> open or shut a whole branch at"
+" once."
+msgstr ""
+"Перетягуйте записи всередині бічної панелі, щоб перевкласти чи "
+"перевпорядкувати їх. <b>Розгорнути всі дочірні</b> та <b>Згорнути всі "
+"дочірні</b> відкривають або закривають цілу гілку за раз."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>Style</b> sets a bookmark bold or italic, or gives it a colour, as the "
+"tree shows."
+msgstr ""
+"<b>Стиль</b> робить закладку жирною чи курсивною або надає їй колір, як "
+"показує дерево."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"A bookmark whose page has been deleted is <b>greyed out</b> rather than "
+"removed: its title may still be worth keeping, and you can point it "
+"somewhere else with Re-home. Undoing the deletion reconnects it. <b>Delete "
+"Dangling Bookmarks</b> clears them all out; it leaves alone any entry that "
+"points nowhere on purpose, which is a legitimate way to write a heading."
+msgstr ""
+"Закладка, чию сторінку видалено, <b>сіріє</b>, а не зникає: її назва все ще "
+"може бути вартою збереження, і ви можете перенаправити її кудись інде. "
+"Скасування видалення знову її під'єднує. <b>Видалити висячі закладки</b> "
+"прибирає їх усі; вона лишає у спокої будь-який запис, що навмисно не вказує "
+"нікуди, бо це цілком законний спосіб написати заголовок."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Bookmark edits are part of the document and are written when you save, along"
+" with each entry's colour and style and which branches are left open. The "
+"one thing that cannot be saved is a bookmark with no page: there is no way "
+"to record “points at a page that is gone”, so it comes back as a heading "
+"with its title intact."
+msgstr ""
+"Зміни закладок є частиною документа й записуються під час збереження, разом "
+"із кольором і стилем кожного запису та тим, які гілки лишаються відкритими. "
+"Єдине, чого не можна зберегти, — це закладка без сторінки: немає способу "
+"записати «вказує на сторінку, якої вже немає», тож вона повертається як "
+"заголовок із незмінною назвою."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Arranging pages"
+msgstr "Впорядкування сторінок"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Drag pages to reorder them. Hold <b>Ctrl</b> while dropping to copy instead "
+"of move."
+msgstr ""
+"Перетягуйте сторінки, щоб змінити їхній порядок. Утримуйте <b>Ctrl</b> під "
+"час відпускання, щоб копіювати, а не пересувати."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Drag pages onto another window of the application to copy them there, or use"
+" ordinary copy and paste."
+msgstr ""
+"Перетягніть сторінки на інше вікно програми, щоб скопіювати їх туди, або "
+"скористайтеся звичайним копіюванням і вставленням."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>Paste As Odd/Even Pages</b> interleaves the clipboard with the document —"
+" this is how two single-sided scans of a double-sided original are "
+"recombined. If the second scan came off a duplex feeder it will be in "
+"reverse order; use <b>Arrange ▸ Reverse Order</b> on it first."
+msgstr ""
+"<b>Вставити як непарні/парні сторінки</b> перемежовує буфер обміну з "
+"документом — так знову поєднуються два односторонні сканування "
+"двостороннього оригіналу. Якщо друге сканування вийшло з двостороннього "
+"подавача, воно буде у зворотному порядку; застосуйте до нього спершу "
+"<b>Упорядкувати ▸ Зворотний порядок</b>."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"To move pages a long way, use <b>Move to Start</b>, <b>Move to End</b> or "
+"<b>Move to Page…</b> rather than dragging — in a long document the far end "
+"is a great deal of scrolling away. They are on the Edit menu and on the "
+"right-click menu, and <b>Move to Page…</b> asks for the number the page "
+"should <i>become</i>."
+msgstr ""
+"Щоб пересунути сторінки далеко, скористайтеся <b>Пересунути на початок</b>, "
+"<b>Пересунути в кінець</b> або <b>Пересунути на сторінку…</b>, а не "
+"перетягуванням — у довгому документі інший кінець дуже далеко. Вони є у меню"
+" Редагувати та у меню правої кнопки, і <b>Пересунути на сторінку…</b> "
+"запитує номер, яким сторінка має <i>стати</i>."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Prefer these to cut and paste for moving. A pasted page is a <i>new</i> page"
+" as far as the document is concerned, so any bookmarks pointing at the "
+"original are left behind with nowhere to go. Moving keeps the page itself, "
+"and its bookmarks come with it."
+msgstr ""
+"Для пересування віддавайте перевагу їм, а не вирізанню та вставленню. "
+"Вставлена сторінка — з погляду документа <i>нова</i> сторінка, тож закладки,"
+" що вказували на первісну, лишаються без цілі. Пересування зберігає саму "
+"сторінку, і її закладки йдуть разом із нею."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Stamping and tiling"
+msgstr "Штампи та розкладка"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>Page ▸ Add Page Numbers…</b> and <b>Page ▸ Add Watermark…</b> draw text "
+"onto the selected pages. Both add a <i>layer</i> rather than rewriting the "
+"page, so both can be undone and neither touches the file you opened."
+msgstr ""
+"<b>Сторінка ▸ Додати номери сторінок…</b> та <b>Сторінка ▸ Додати водяний "
+"знак…</b> малюють текст на виділених сторінках. Обидва додають <i>шар</i>, а"
+" не переписують сторінку, тож обидва можна скасувати і жоден не чіпає "
+"відкритий вами файл."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+#, python-brace-format
+msgid ""
+"Page numbers follow the arrangement, not the source document: they are "
+"numbered in the order the pages are in now. <code>{n}</code> in the format "
+"is the page number and <code>{total}</code> the number of pages, so "
+"<code>Page {n} of {total}</code> does what it looks like."
+msgstr ""
+"Номери сторінок слідують за впорядкуванням, а не за початковим документом: "
+"вони нумеруються у тому порядку, в якому сторінки перебувають зараз. "
+"<code>{n}</code> у форматі — це номер сторінки, а <code>{total}</code> — "
+"кількість сторінок, тож <code>Сторінка {n} з {total}</code> робить те, на що"
+" схоже."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>Arrange ▸ Pages per Sheet…</b> tiles several pages onto one, in reading "
+"order — the printer's <i>N-up</i>. The sheet turns sideways when that lets "
+"the pages come out larger, which is why two-up gives a landscape sheet and "
+"four-up does not."
+msgstr ""
+"<b>Упорядкувати ▸ Сторінок на аркуші…</b> розміщує кілька сторінок на одній,"
+" у порядку читання — друкарський <i>N-up</i>. Аркуш повертається упоперек, "
+"коли сторінки від цього виходять більшими, і саме тому дві на аркуші дають "
+"горизонтальний аркуш, а чотири на аркуші — ні."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Saving a document"
+msgstr "Збереження документа"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>Optimize for the web</b> in Preferences lays the saved file out so a "
+"browser can show the first page before the rest has arrived. <b>Compress</b>"
+" repacks its streams and objects; how much that saves depends entirely on "
+"the file, and one full of photographs will barely move."
+msgstr ""
+"<b>Оптимізувати для вебу</b> у Налаштуваннях розкладає збережений файл так, "
+"щоб браузер міг показати першу сторінку, доки решта ще не надійшла. "
+"<b>Стиснути</b> перепаковує його потоки та об'єкти; скільки це заощаджує, "
+"залежить цілком від файла, і файл, повний світлин, майже не зміниться."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>File ▸ Remove All Metadata</b> is a switch, like Password: turn it on and"
+" the next save writes a document with no title, no author and no record of "
+"what produced it. Edit Properties greys out while it is on, because there "
+"would be nothing to edit."
+msgstr ""
+"<b>Файл ▸ Вилучити всі метадані</b> — це перемикач, як і Пароль: увімкніть "
+"його, і наступне збереження запише документ без заголовка, без автора та без"
+" запису про те, чим його створено. Редагувати властивості сіріє, доки він "
+"увімкнений, бо редагувати було б нічого."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>File ▸ Viewer Preferences…</b> is how the saved document asks a reader to"
+" open it — with the bookmarks showing, two pages at a time, and so on. "
+"Readers are free to ignore all of it. The settings are read from the file "
+"you opened, so a document that already had them keeps them."
+msgstr ""
+"<b>Файл ▸ Налаштування переглядача…</b> — це те, як збережений документ "
+"просить переглядач відкрити його: з показаними закладками, по дві сторінки "
+"за раз і так далі. Переглядачі можуть усе це проігнорувати. Налаштування "
+"читаються з відкритого вами файла, тож документ, який їх уже мав, їх "
+"зберігає."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>File ▸ Repair Document…</b> rebuilds a damaged PDF. It works on a file "
+"you pick rather than the one on screen, because the file worth repairing is "
+"usually one this application cannot open properly either. It reports what it"
+" found before writing anything."
+msgstr ""
+"<b>Файл ▸ Відновити документ…</b> перебудовує пошкоджений PDF. Він працює з "
+"файлом, який ви обираєте, а не з тим, що на екрані, бо файл, вартий "
+"відновлення, зазвичай і цією програмою до ладу не відкривається. Він "
+"повідомляє, що знайшов, перш ніж щось записати."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Mouse"
+msgstr "Миша"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "<b>Ctrl + scroll</b> — zoom"
+msgstr "<b>Ctrl + прокручування</b> — масштаб"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "<b>Shift + scroll</b> — scroll sideways"
+msgstr "<b>Shift + прокручування</b> — прокручування вбік"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "<b>Alt + scroll</b> — scroll exactly one row"
+msgstr "<b>Alt + прокручування</b> — прокручування рівно на один рядок"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "<b>Double-click</b> — fit the page to the window, and back"
+msgstr "<b>Подвійне клацання</b> — вмістити сторінку у вікно, і назад"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>Click and drag</b> on empty space — rubber-band select; keep scrolling to"
+" extend it"
+msgstr ""
+"<b>Клацання та перетягування</b> на порожньому місці — виділення рамкою; "
+"продовжуйте прокручувати, щоб розширити його"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Moving around the grid"
+msgstr "Пересування сіткою"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>Arrow keys</b> move between pages, <b>Page Up</b> and <b>Page Down</b> "
+"move a screenful at a time, and <b>Home</b> and <b>End</b> jump to the first"
+" and last page. Hold <b>Shift</b> with any of them to extend the selection."
+msgstr ""
+"<b>Клавіші зі стрілками</b> пересувають між сторінками, <b>Page Up</b> та "
+"<b>Page Down</b> — на екран за раз, а <b>Home</b> та <b>End</b> стрибають на"
+" першу й останню сторінку. Утримуйте <b>Shift</b> із будь-якою з них, щоб "
+"розширити виділення."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>Fit One Page</b> (F) scales so a whole page fits in the window and shows "
+"one page per row — use it to work on a single page at a time. <b>Fit "
+"Multiple Pages</b> (Shift+M) uses the same scale but lets as many pages sit "
+"side by side as the window takes. <b>Fit Width</b> (Shift+F) fills the "
+"window across instead, which shows the page wider but taller than the "
+"window. Double-clicking the grid toggles Fit One Page on and off."
+msgstr ""
+"<b>Вмістити одну сторінку</b> (F) масштабує так, щоб ціла сторінка "
+"вмістилася у вікні, і показує одну сторінку в рядку — застосовуйте це, "
+"працюючи над однією сторінкою за раз. <b>Вмістити декілька сторінок</b> "
+"(Shift+M) використовує той самий масштаб, але дає стати поруч стільком "
+"сторінкам, скільки вміщає вікно. <b>Вмістити за шириною</b> (Shift+F) "
+"натомість заповнює вікно упоперек, показуючи сторінку ширшою, але вищою за "
+"вікно. Подвійне клацання по сітці вмикає та вимикає Вмістити одну сторінку."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"With pages selected, all three fit the selection rather than the whole "
+"document."
+msgstr "Коли сторінки виділено, усі три вміщують виділення, а не весь документ."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Finding text"
+msgstr "Пошук тексту"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>Find</b> selects the pages that contain the phrase and boxes each hit on "
+"the thumbnail, so you can see where on the page it is. The boxes clear as "
+"soon as you change the document, since the pages they were drawn for may "
+"have moved."
+msgstr ""
+"<b>Знайти</b> виділяє сторінки, що містять вираз, і обводить кожне влучання "
+"на мініатюрі, щоб ви бачили, де саме на сторінці воно є. Рамки зникають, "
+"щойно ви змінюєте документ, бо сторінки, для яких їх намальовано, могли "
+"пересунутися."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Every shortcut can be changed in <b>Edit ▸ Preferences ▸ Keyboard "
+"shortcuts</b>, where they are listed under the menu each one belongs to."
+msgstr ""
+"Кожне сполучення можна змінити у <b>Редагувати ▸ Налаштування ▸ Комбінації "
+"клавіш</b>, де їх перелічено під тим меню, до якого кожне належить."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Passwords"
+msgstr "Паролі"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Opening an encrypted document asks for its password, which is remembered "
+"until the document is closed."
+msgstr ""
+"Відкриття зашифрованого документа запитує його пароль, який "
+"запам'ятовується, доки документ не буде закрито."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>File ▸ Password</b> encrypts the document when it is next saved. It is a "
+"switch: turn it on and you are asked for a password, turn it off and the "
+"next save is unencrypted. The password is never written to your settings, so"
+" it applies to this session only — and if you forget it, the file cannot be "
+"recovered."
+msgstr ""
+"<b>Файл ▸ Пароль</b> шифрує документ під час наступного збереження. Це "
+"перемикач: увімкніть його, і у вас запитають пароль, вимкніть — і наступне "
+"збереження буде незашифрованим. Пароль ніколи не записується у ваші "
+"налаштування, тож він діє лише для цього сеансу — а якщо ви його забудете, "
+"файл не вдасться відновити."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Files"
+msgstr "Файли"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Settings are stored by Qt in the per-user location for this platform; on "
+"Windows that is the registry under "
+"<code>HKEY_CURRENT_USER\\Software\\pdfarranger</code>. There is no "
+"configuration file to edit by hand."
+msgstr ""
+"Налаштування зберігає Qt у місці, відведеному окремому користувачеві на цій "
+"платформі; у Windows це реєстр під "
+"<code>HKEY_CURRENT_USER\\Software\\pdfarranger</code>. Файла конфігурації "
+"для редагування вручну немає."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Credits"
+msgstr "Подяки"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"PDF Arranger Qt is a PySide6 port of PDF Arranger, which is itself derived "
+"from PDF-Shuffler. It is a separate project and not affiliated with either."
+msgstr ""
+"PDF Arranger Qt — це перенесення PDF Arranger на PySide6, а сам PDF Arranger"
+" походить від PDF-Shuffler. Це окремий проєкт, не пов'язаний із жодним із "
+"них."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Original authors: Konstantinos Poulios, Jerome Robert."
+msgstr "Первісні автори: Konstantinos Poulios, Jerome Robert."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Licensed under the GNU General Public License version 3 or later."
+msgstr "Ліцензовано за GNU General Public License версії 3 або новішої."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+msgid "User Guide"
+msgstr "Посібник користувача"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Insert pages from another PDF or an image"
+msgstr "Вставити сторінки з іншого PDF або із зображення"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Needs pages copied from a document"
+msgstr "Потребує сторінок, скопійованих з документа"
+
+#: pdfarranger_qt/mainwindow.py
 msgid "_New Window"
 msgstr "_Нове вікно"
 
-#: pdfarranger/config.py:327 pdfarranger/core.py:458
-#: pdfarranger/metadata.py:217 pdfarranger/pageutils.py:330
-#: pdfarranger/pdfarranger.py:3207 pdfarranger/splitter.py:32
-msgid "_OK"
-msgstr "_Добре"
-
-#: pdfarranger/pdfarranger.py:1430 data/menu.ui:24
+#: pdfarranger_qt/mainwindow.py
 msgid "_Open"
 msgstr "_Відкрити"
 
-#: data/menu.ui:182 data/menu.ui:488
-msgid "_Page Size…"
-msgstr "_Розмір сторінки…"
+#: pdfarranger_qt/mainwindow.py
+msgid "_Import"
+msgstr "_Імпортувати"
 
-#: data/menu.ui:91
-msgid "_Print…"
-msgstr "_Друк…"
-
-#: pdfarranger/pdfarranger.py:1289 data/menu.ui:353
-msgid "_Quit"
-msgstr "Ви_йти"
-
-#: data/menu.ui:102
-msgid "_Redo"
-msgstr "_Повторити дію"
-
-#: pdfarranger/pageutils.py:1014
-msgid "_Revert"
-msgstr "_Скасувати"
-
-#: data/menu.ui:177 data/menu.ui:483
-msgid "_Rotate Right"
-msgstr "Перегорнути в_право"
-
-#: pdfarranger/pdfarranger.py:1242 pdfarranger/pdfarranger.py:1363
-#: data/menu.ui:42
+#: pdfarranger_qt/mainwindow.py
 msgid "_Save"
 msgstr "_Зберегти"
 
-#: data/menu.ui:235 data/menu.ui:431
-msgid "_Select"
-msgstr "_Обрати"
+#: pdfarranger_qt/mainwindow.py
+msgid "Save _As…"
+msgstr "Зберегти _як…"
 
-#: data/menu.ui:228 data/menu.ui:534
-#| msgid "Split (unimposition)"
-msgid "_Split (unimposition)"
-msgstr "_Розділити (розбиття)"
+#: pdfarranger_qt/mainwindow.py
+msgid "E_xport Selection to a Single File…"
+msgstr "Експортувати обране в _один файл…"
 
-#: data/menu.ui:210 data/menu.ui:516
-msgid "_Split Pages…"
-msgstr "_Розділити сторінки…"
+#: pdfarranger_qt/mainwindow.py
+msgid "_Close"
+msgstr "За_крити"
 
-#: data/menu.ui:98
+#: pdfarranger_qt/mainwindow.py
+msgid "_Quit"
+msgstr "Ви_йти"
+
+#: pdfarranger_qt/mainwindow.py
 msgid "_Undo"
 msgstr "_Скасувати дію"
 
-#: data/menu.ui:280
+#: pdfarranger_qt/mainwindow.py
+msgid "_Redo"
+msgstr "_Повторити дію"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Select _All"
+msgstr "Обрати _усі"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Invert Selection"
+msgstr "_Інвертувати вибір"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Delete"
+msgstr "_Видалити"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Duplicate"
+msgstr "_Дублювати"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Rotate _Left"
+msgstr "Перегорнути в_ліво"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Rotate Right"
+msgstr "Перегорнути в_право"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Zoom _In"
+msgstr "З_більшити"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Zoom _Out"
+msgstr "З_меншити"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Reset Zoom"
+msgstr "_Скинути масштаб"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Project on GitHub"
+msgstr "Проєкт на GitHub"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_About"
+msgstr "Про програ_му"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Cu_t"
+msgstr "Ви_різати"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Copy"
+msgstr "_Скопіювати"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Paste _After"
+msgstr "Вставити піс_ля"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Paste _Before"
+msgstr "Вставити _до"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Paste As _Odd Pages"
+msgstr "Вставити як _непарні сторінки"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Paste As _Even Pages"
+msgstr "Вставити як _парні сторінки"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Deselect All"
+msgstr "_Скасувати вибір"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Select _Odd Pages"
+msgstr "Обрати _непарні сторінки"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Select _Even Pages"
+msgstr "Обрати _парні сторінки"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "All From _Same File"
+msgstr "Усе із _одного файлу"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Same Page _Format"
+msgstr "Сторінки того ж _формату"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Move to Start"
+msgstr "Пересунути на початок"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Move to End"
+msgstr "Пересунути в кінець"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Move to Page…"
+msgstr "Пересунути на сторінку…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Reverse Order"
+msgstr "Зворотний порядок"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Swap Odd/Even"
+msgstr "Поміняти місцями парні та непарні"
+
+# | msgid "Split (unimposition)"
+#: pdfarranger_qt/mainwindow.py
+msgid "_Split (unimposition)"
+msgstr "_Розділити (розбиття)"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Export _All Pages to Individual Files…"
+msgstr "Експортувати _усі сторінки в індивідуальні файли…"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Export Selection to _Individual Files…"
+msgstr "Експортувати обране в _індивідуальні файли…"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Crop Margins…"
+msgstr "_Обрізати рамки…"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Hide Margins…"
+msgstr "_Сховати межі…"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Page Size…"
+msgstr "_Розмір сторінки…"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Insert Blan_k Page…"
+msgstr "Вставити _порожню сторінку…"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Split Pages…"
+msgstr "_Розділити сторінки…"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Merge Pages…"
+msgstr "_Об'єднати сторінки…"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Generate (imposition)"
+msgstr "_Створити (додати)"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Pages per S_heet…"
+msgstr "Сторінок на _аркуші…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Add Page N_umbers…"
+msgstr "Додати _номери сторінок…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Add _Watermark…"
+msgstr "Додати водяний _знак…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Pass_word"
+msgstr "Паро_ль"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Edit _Properties"
+msgstr "Редагувати влас_тивості"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Viewer Preferences…"
+msgstr "Налаштування _переглядача…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Remove All _Metadata"
+msgstr "Вилучити всі _метадані"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Repair Document…"
+msgstr "Відн_овити документ…"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Crop White Borders"
+msgstr "Обрізати білі межи"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Export Selection to _PNG Images…"
+msgstr "Експортувати обране в зображення _PNG…"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Export Selection to _JPG Images…"
+msgstr "Експортувати обране в зображення _JPG…"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Export Selection to _Rasterized PDF (png)…"
+msgstr "Експортувати обране в _растровий PDF (png)…"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Export Selection to _Rasterized PDF (jpg)…"
+msgstr "Експортувати обране в _растровий PDF (jpg)…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Copy Text"
+msgstr "Копіювати текст"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Copy _Image"
+msgstr "Скопіювати _зображення"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Explode into Images"
+msgstr "_Витягти вбудовані зображення"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Print…"
+msgstr "_Друк…"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Find…"
+msgstr "_Знайти…"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Find Next"
+msgstr "Знайти наступне"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Find Previous"
+msgstr "Знайти попереднє"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Find All"
+msgstr "Знайти все"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Select _Range"
+msgstr "Обрати _діапазон"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Paste As O_verlay…"
+msgstr "Вставити як _накладку…"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Paste As _Underlay…"
+msgstr "Вставити як підкладку…"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Fit _One Page"
+msgstr "Вмістити _одну сторінку"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Fit _Multiple Pages"
+msgstr "Вмістити _декілька сторінок"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Fit Width"
+msgstr "Вмістити за шириною"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Arrange Mode"
+msgstr "Режим упорядкування"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Facing Pages"
+msgstr "Розворот"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Continuous Scroll"
+msgstr "Безперервне прокручування"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Next Page"
+msgstr "Наступна сторінка"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Previous Page"
+msgstr "Попередня сторінка"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "First Page"
+msgstr "Перша сторінка"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Last Page"
+msgstr "Остання сторінка"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Go to Page…"
+msgstr "Перейти на сторінку…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Fullscreen"
+msgstr "Повний екран"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_File"
+msgstr "_Файл"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Open Recent"
+msgstr "Відкрити нещодавні"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "E_xport"
+msgstr "_Експортувати"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Edit"
+msgstr "_Редагувати"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Past_e Special"
+msgstr "_Особлива вставка"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Page"
+msgstr "_Сторінка"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Extract"
+msgstr "_Витягти"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Arrange"
+msgstr "Упорядкувати"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Select"
+msgstr "_Обрати"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Booklet"
+msgstr "_Буклет"
+
+#: pdfarranger_qt/mainwindow.py
 msgid "_View"
 msgstr "Перегля_д"
 
-#: pdfarranger/pageutils.py:155 pdfarranger/pageutils.py:162
-#: pdfarranger/pageutils.py:470 pdfarranger/pageutils.py:520
-#: pdfarranger/pdfarranger.py:3282
-msgid "mm"
-msgstr "мм"
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Help"
+msgstr "_Довідка"
 
-#: pdfarranger/core.py:730
-msgid "page"
-msgstr "сторінка"
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Read"
+msgstr "Читати"
 
-#: pdfarranger/pdfarranger.py:1073
-msgid "untitled"
-msgstr "без назви"
-
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
 #, python-format
+msgid "_Undo %s"
+msgstr "_Скасувати дію %s"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "_Redo %s"
+msgstr "_Повторити дію %s"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "%d page selected"
+msgid_plural "%d pages selected"
+msgstr[0] "Виділено %d сторінку"
+msgstr[1] "Виділено %d сторінки"
+msgstr[2] "Виділено %d сторінок"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Untitled"
+msgstr "Без назви"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Password required"
+msgstr "Потрібен пароль"
+
+#: pdfarranger_qt/mainwindow.py
+#, python-brace-format
+msgid "The document “{}” is locked and requires a password before it can be opened."
+msgstr ""
+"Документ “{}” заблокований і потрібен пароль, перед тим як він зможе буде "
+"відкритим."
+
+#: pdfarranger_qt/mainwindow.py
+msgid "The password will be remembered until you close PDF Arranger."
+msgstr "Пароль буде запам'ятовувано доки ви не закриєте PDF Arranger."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Importing…"
+msgstr "Імпортування…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Cancel"
+msgstr "Скасувати"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Import"
+msgstr "Імпортувати"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "No recent files"
+msgstr "Немає нещодавніх файлів"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Clear Menu"
+msgstr "Очистити меню"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "This file is no longer there:"
+msgstr "Цього файла там більше немає:"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "This document cannot be read."
+msgstr "Цей документ не вдалося прочитати."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Go to Page"
+msgstr "Перейти на сторінку"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Page number:"
+msgstr "Номер сторінки:"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "No document"
+msgstr "Немає документа"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "%d page"
+msgid_plural "%d pages"
+msgstr[0] "%d сторінка"
+msgstr[1] "%d сторінки"
+msgstr[2] "%d сторінок"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-brace-format
+msgid "of {}"
+msgstr "з {}"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "The document will not be encrypted."
+msgstr "Документ не буде зашифровано."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "The document will be encrypted when it is saved."
+msgstr "Документ буде зашифровано під час збереження."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Could not open a new window."
+msgstr "Не вдалося відкрити нове вікно."
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Open"
+msgstr "Відкрити"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Save As…"
+msgstr "Зберегти як…"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Export…"
+msgstr "Експортувати…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "There is nothing to save."
+msgstr "Немає чого зберігати."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Could not save:"
+msgstr "Не вдалося зберегти:"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Saved"
+msgstr "Збережено"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "This document has unsaved changes."
+msgstr "Цей документ має незбережені зміни."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Save before continuing?"
+msgstr "Зберегти перед продовженням?"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py pdfarranger_qt/reader.py
+msgid "Delete"
+msgstr "Видалити"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Cut"
+msgstr "Вирізати"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Paste"
+msgstr "Вставити"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Move to Page"
+msgstr "Пересунути на сторінку"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Move"
+msgstr "Пересунути"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "The page selection is not contiguous. Cannot unimpose."
+msgstr "Виділення сторінки не є безперервним. Неможливо розділити."
+
+#: pdfarranger_qt/mainwindow.py
+msgid "All pages must have the same size."
+msgstr "Усі сторінки мають бути однакового розміру."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Split Booklet"
+msgstr "Розділити буклет"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Overwrite existing files?"
+msgstr "Перезаписати наявні файли?"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Blank page"
+msgstr "Порожня сторінка"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Copy the pages you want to merge in first."
+msgstr "Спершу скопіюйте сторінки, які хочете об'єднати."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Generate Booklet"
+msgstr "Створити буклет"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "The page selection is not contiguous."
+msgstr "Виділення сторінок не є неперервним."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "All metadata will be removed when the document is saved."
+msgstr "Усі метадані буде вилучено під час збереження документа."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Metadata will be kept."
+msgstr "Метадані буде збережено."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Repair Document…"
+msgstr "Відновити документ…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Write a rebuilt copy?"
+msgstr "Записати перебудовану копію?"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Save Repaired Document"
+msgstr "Зберегти відновлений документ"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "%d image written"
+msgid_plural "%d images written"
+msgstr[0] "Записано %d зображення"
+msgstr[1] "Записано %d зображення"
+msgstr[2] "Записано %d зображень"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "The page has no text."
+msgstr "Сторінка не містить тексту."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Copied"
+msgstr "Скопійовано"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "The page has no image."
+msgstr "Сторінка не містить зображення."
+
+#: pdfarranger_qt/mainwindow.py
+msgid "The page has several images. Use \"Explode into Images\" first.\""
+msgstr ""
+"Сторінка має декілька зображень. Використайте \"Витягти вбудовані "
+"зображення\" спочатку."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Explode into Images"
+msgstr "Розібрати на зображення"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Printing…"
+msgstr "Друкувати…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Finishing…"
+msgstr "Завершення…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "The printer driver is processing the job."
+msgstr "Драйвер принтера обробляє завдання."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "%d page printed"
+msgid_plural "%d pages printed"
+msgstr[0] "Надруковано %d сторінку"
+msgstr[1] "Надруковано %d сторінки"
+msgstr[2] "Надруковано %d сторінок"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Find"
+msgstr "Знайти"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "%d page matches"
+msgid_plural "%d pages match"
+msgstr[0] "%d сторінка збігається"
+msgstr[1] "%d сторінки збігаються"
+msgstr[2] "%d сторінок збігається"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Duplicate"
+msgstr "Дублювати"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Rotate"
+msgstr "Перегорнути"
+
+#: pdfarranger_qt/metadata.py
+msgid "Title"
+msgstr "Назва"
+
+#: pdfarranger_qt/metadata.py
+msgid "Subject"
+msgstr "Тема"
+
+#: pdfarranger_qt/metadata.py
+msgid "Keywords"
+msgstr "Ключові слова"
+
+#: pdfarranger_qt/metadata.py
+msgid "Producer"
+msgstr "Програма"
+
+#: pdfarranger_qt/metadata.py
+msgid "Creator"
+msgstr "Автор"
+
+#: pdfarranger_qt/metadata.py
+msgid "Creator tool"
+msgstr "Інструмент створення"
+
+#: pdfarranger_qt/metadata.py
+msgid "Created"
+msgstr "Створено"
+
+#: pdfarranger_qt/metadata.py
+msgid "Modified"
+msgstr "Змінено"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/nup.py
+msgid "2 pages per sheet"
+msgstr "2 сторінки на аркуші"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/nup.py
+msgid "4 pages per sheet"
+msgstr "4 сторінки на аркуші"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/nup.py
+msgid "6 pages per sheet"
+msgstr "6 сторінок на аркуші"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/nup.py
+msgid "8 pages per sheet"
+msgstr "8 сторінок на аркуші"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/nup.py
+msgid "9 pages per sheet"
+msgstr "9 сторінок на аркуші"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/nup.py
+msgid "16 pages per sheet"
+msgstr "16 сторінок на аркуші"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Bookmark Colour"
+msgstr "Колір закладки"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Add Bookmark Here"
+msgstr "Додати закладку тут"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Add Child Bookmark Here"
+msgstr "Додати дочірню закладку тут"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Re-home to This Page"
+msgstr "Перенаправити на цю сторінку"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Rename"
+msgstr "Перейменувати"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Style"
+msgstr "Стиль"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Colour…"
+msgstr "Колір…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Default Colour"
+msgstr "Типовий колір"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Expand All Children"
+msgstr "Розгорнути всі дочірні"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Collapse All Children"
+msgstr "Згорнути всі дочірні"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Delete with Children"
+msgstr "Видалити з дочірніми"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Delete Dangling Bookmarks"
+msgstr "Видалити висячі закладки"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Nothing to read."
+msgstr "Немає чого читати."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+#, python-brace-format
+msgid "Page {} of {}"
+msgstr "Сторінка {} з {}"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Move Bookmark"
+msgstr "Пересунути закладку"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "This bookmark's page is no longer in the document"
+msgstr "Сторінки цієї закладки більше немає в документі"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "This bookmark does not point at a page"
+msgstr "Ця закладка не вказує на сторінку"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Rename Bookmark"
+msgstr "Перейменувати закладку"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Add Child Bookmark"
+msgstr "Додати дочірню закладку"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Add Bookmark"
+msgstr "Додати закладку"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Bookmark Style"
+msgstr "Стиль закладки"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Re-home Bookmark"
+msgstr "Перенаправити закладку"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Delete Bookmark"
+msgstr "Видалити закладку"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Delete Bookmark and Children"
+msgstr "Видалити закладку та дочірні"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/repair.py
+msgid "This file cannot be read, even with recovery."
+msgstr "Цей файл не читається навіть з відновленням."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/repair.py
+msgid "No damage found; the file reads cleanly."
+msgstr "Пошкоджень не знайдено; файл читається без помилок."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/repair.py
+msgid "Damaged, and recoverable."
+msgstr "Пошкоджений, і піддається відновленню."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/repair.py
+msgid "The file cannot be read."
+msgstr "Файл не читається."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/stamp.py
+msgid "Top left"
+msgstr "Згори ліворуч"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/stamp.py
+msgid "Top centre"
+msgstr "Згори по центру"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/stamp.py
+msgid "Top right"
+msgstr "Згори праворуч"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/stamp.py
+msgid "Bottom left"
+msgstr "Знизу ліворуч"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/stamp.py
+msgid "Bottom centre"
+msgstr "Знизу по центру"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/stamp.py
+msgid "Bottom right"
+msgstr "Знизу праворуч"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/viewer.py
+msgid "Viewer default"
+msgstr "Типово у переглядачі"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/viewer.py
+msgid "No side panel"
+msgstr "Без бічної панелі"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/viewer.py
+msgid "Bookmarks panel"
+msgstr "Панель закладок"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/viewer.py
+msgid "Page thumbnails"
+msgstr "Мініатюри сторінок"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/viewer.py
+msgid "Continuous scroll"
+msgstr "Безперервне прокручування"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/viewer.py
+msgid "Two pages, odd on the left"
+msgstr "Дві сторінки, непарні ліворуч"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/viewer.py
+msgid "Two pages, odd on the right"
+msgstr "Дві сторінки, непарні праворуч"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/viewer.py
+msgid "Facing pages, odd on the left"
+msgstr "Розворот, непарні ліворуч"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/viewer.py
+msgid "Facing pages, odd on the right"
+msgstr "Розворот, непарні праворуч"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/viewer.py
+msgid "Hide the viewer's toolbar"
+msgstr "Приховати панель інструментів переглядача"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/viewer.py
+msgid "Hide the viewer's menu bar"
+msgstr "Приховати рядок меню переглядача"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/viewer.py
+msgid "Centre the window on screen"
+msgstr "Розмістити вікно по центру екрана"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/viewer.py
+msgid "Show the title rather than the filename"
+msgstr "Показувати заголовок замість імені файла"
+
 #~ msgid "It uses libqpdf %s, pikepdf %s, GTK %s and Python %s."
 #~ msgstr "Застосунок використовує libqpdf %s, pikepdf %s, GTK %s і Python %s."
 
@@ -1038,3 +2403,330 @@ msgstr "без назви"
 
 #~ msgid "Generate Booklet"
 #~ msgstr "Створити буклет"
+
+#~ msgid "#Col"
+#~ msgstr "#Стовпців"
+
+#~ msgid "#Row"
+#~ msgstr "#Рядків"
+
+#~ msgid "%"
+#~ msgstr "%"
+
+#~ msgid "% of height"
+#~ msgstr "% висоти"
+
+#~ msgid "% of width"
+#~ msgstr "% ширини"
+
+#~ msgid "%s is a tool for rearranging and modifying PDF files."
+#~ msgstr "%s — це інструмент для перестановки сторінок і редагування PDF-файлів."
+
+#~ msgid "(Libhandy missing)"
+#~ msgstr "(відсутня бібліотека Libhandy)"
+
+#~ msgid "(Requires restart)"
+#~ msgstr "(потрібно перезапустити застосунок)"
+
+#~ msgid "A file named \"%s\" already exists. Do you want to replace it?"
+#~ msgstr "Файл з ім'ям \"%s\" вже існує. Бажаєте перезаписати його?"
+
+#~ msgid "All"
+#~ msgstr "Усе"
+
+#~ msgid "All files"
+#~ msgstr "Усі файли"
+
+#~ msgid "All supported files"
+#~ msgstr "Усі підтримані файли"
+
+#~ msgid "Bottom to Top"
+#~ msgstr "Знизу вгору"
+
+#~ msgid "Clipboard image"
+#~ msgstr "Зображення із буферу обміну"
+
+#~ msgid "Copy _Text"
+#~ msgstr "Скопіювати _текст"
+
+#~ msgid ""
+#~ "Cropping/hiding does not remove any content"
+#~ " from the PDF file, it only hides"
+#~ " it."
+#~ msgstr "Обрізання/ховання не видаляє вміст у PDF-файлуі, а лише приховує його."
+
+#~ msgid "Despite the warnings the document(s) should have no visible issues."
+#~ msgstr "Незважаючи на попередження, документ(и) не будуть мати помітних проблем."
+
+#~ msgid "Discard changes and close?"
+#~ msgstr "Відкинути зміни та зачинити?"
+
+#~ msgid "Discard changes and quit?"
+#~ msgstr "Відкинути зміни та закрити застосунок?"
+
+#~ msgid "Do not show this dialog again."
+#~ msgstr "Не показувати це діалогове вікно знову."
+
+#~ msgid "Do_n’t Save"
+#~ msgstr "_Не зберігати"
+
+#~ msgid "Don't show warnings when saving again."
+#~ msgstr "Не показувати це повідомлення при збереженні знову."
+
+#~ msgid "Dupl_icate"
+#~ msgstr "_Дублювати"
+
+#~ msgid "Equal column width"
+#~ msgstr "Рівна ширина стовпців"
+
+#~ msgid "Equal row height"
+#~ msgstr "Рівна висота рядків"
+
+#~ msgid "Exploding into images…"
+#~ msgstr "Витягуємо вбудовані зображення…"
+
+#~ msgid "File(s) to open"
+#~ msgstr "Файл(и) для відкриття"
+
+#~ msgid "Find _All"
+#~ msgstr "Знайти _все"
+
+#~ msgid "Find _Next"
+#~ msgstr "Знайти _наступне"
+
+#~ msgid "Find _Previous"
+#~ msgstr "Знайти _попереднє"
+
+#~ msgid "Fit to Full Page"
+#~ msgstr "Вмістити у повну сторінку"
+
+#~ msgid "Fit to Printable Area"
+#~ msgstr "Вмістити в область друку"
+
+#~ msgid "For more info see"
+#~ msgstr "Щоб дізнатися більше, дивіться"
+
+#~ msgid "For more options see:"
+#~ msgstr "Більше налаштувань можна знайти тут:"
+
+#~ msgid "Full_screen"
+#~ msgstr "На весь _екран"
+
+#~ msgid "GNU General Public License (GPL) Version 3."
+#~ msgstr "GNU General Public License (GPL) Version 3."
+
+#~ msgid "Height in %"
+#~ msgstr "Висота у процентах %"
+
+#~ msgid "Horizontal offset"
+#~ msgstr "Горизонтальний зсув"
+
+#~ msgid "Img2pdf missing."
+#~ msgstr "бракує img2pdf."
+
+#~ msgid "Img2pdf support missing."
+#~ msgstr "Підтримка Img2pdf відсутня."
+
+#~ msgid "Import…"
+#~ msgstr "Імпортувати…"
+
+#~ msgid "Invalid date format. Input discarded."
+#~ msgstr "Неправильний формат дати. Введені дані відхилено."
+
+#~ msgid "JPEG images"
+#~ msgstr "Зображення JPEG"
+
+#~ msgid "Left to Right"
+#~ msgstr "Зліва направо"
+
+#~ msgid "Main Menu"
+#~ msgstr "Головне меню"
+
+#~ msgid "Maintainers and contributors"
+#~ msgstr "Розробники та спільнота"
+
+#~ msgid "Margin"
+#~ msgstr "Межі"
+
+#~ msgid "Merged page size:"
+#~ msgstr "Розмір об'єднаної сторінки:"
+
+#~ msgid "Non-uniform page size - using max size"
+#~ msgstr "Не однаковий розмір сторінки - використовується максимальний розмір"
+
+#~ msgid "None"
+#~ msgstr "Нічого"
+
+#~ msgid "Note"
+#~ msgstr "Примітка"
+
+#~ msgid "Note the limitations:"
+#~ msgstr "Примітка про обмеження:"
+
+#~ msgid "Open…"
+#~ msgstr "Відкрити…"
+
+#~ msgid "Optimize"
+#~ msgstr "Оптимізувати"
+
+#~ msgid "Outlines and links can be preserved only in certain cases."
+#~ msgstr "Структура та посилання можуть бути збережені лише в певних випадках."
+
+#~ msgid ""
+#~ "PDF Arranger is a small python-gtk"
+#~ " application, which helps the user to"
+#~ " merge or split pdf documents and "
+#~ "rotate, crop and rearrange their pages "
+#~ "using an interactive and intuitive "
+#~ "graphical interface. It is a frontend "
+#~ "for pikepdf."
+#~ msgstr ""
+#~ "Редактор PDF — це невеликий застосунок, "
+#~ "який допоможе об'єднати або розділити "
+#~ "PDF-документи, обертати, обрізати і переміщати"
+#~ " місцями сторінки за допомогою інтерактивного"
+#~ " й інтуїтивно зрозумілого графічного "
+#~ "інтерфейсу. Це графічна оболонка для "
+#~ "pikepdf. "
+
+#~ msgid "PDF document is damaged"
+#~ msgstr "Цей PDF-документ пошкоджений"
+
+#~ msgid "PDF files"
+#~ msgstr "PDF файли"
+
+#~ msgid "PNG images"
+#~ msgstr "Зображення PNG"
+
+#~ msgid "Page Handling"
+#~ msgstr "Керування сторінками"
+
+#~ msgid "Page Order"
+#~ msgstr "Порядок сторінок"
+
+#~ msgid "Page Size:"
+#~ msgstr "Розмір сторінки:"
+
+#~ msgid "Pasted data not valid. Aborting paste."
+#~ msgstr "Дані для вставки є не дійсними. Скасування вставки."
+
+#~ msgid "Pre_ferences"
+#~ msgstr "_Налаштування"
+
+#~ msgid "Print the version of PDF Arranger and exit"
+#~ msgstr "Вивести версію PDF Arranger та вийти"
+
+#~ msgid "Property"
+#~ msgstr "Властивість"
+
+#~ msgid "Re_verse Order"
+#~ msgstr "_Зворотний порядок"
+
+#~ msgid "Rendering Preview…"
+#~ msgstr "Обробка попереднього перегляду…"
+
+#~ msgid "Rendering…"
+#~ msgstr "Обробка…"
+
+#~ msgid "Replace"
+#~ msgstr "Замінити"
+
+#~ msgid "Right to Left"
+#~ msgstr "Справа наліво"
+
+#~ msgid "Rotate Left"
+#~ msgstr "Перегорнути вліво"
+
+#~ msgid "Rotate Right"
+#~ msgstr "Перегорнути вправо"
+
+#~ msgid "Running on %s"
+#~ msgstr "Запущено на %s"
+
+#~ msgid "Save"
+#~ msgstr "Зберегти"
+
+#~ msgid "Save As"
+#~ msgstr "Зберегти як"
+
+#~ msgid "Save changes before closing?"
+#~ msgstr "Зберегти зміни перед тим як закрити?"
+
+#~ msgid "Save changes before quitting?"
+#~ msgstr "Зберегти зміни перед закриттям?"
+
+#~ msgid "Save changes to “{}” before closing?"
+#~ msgstr "Зберегти зміну у “{}” перед тим як закрити?"
+
+#~ msgid "Save changes to “{}” before quitting?"
+#~ msgstr "Зберегти зміни у “{}” перед закриттям?"
+
+#~ msgid "Saving failed"
+#~ msgstr "Не вдалося зберегти"
+
+#~ msgid "Saving produced some warnings"
+#~ msgstr "Збереження було завершено з деякими попередженнями"
+
+#~ msgid "Saving…"
+#~ msgstr "Збереження…"
+
+#~ msgid "Scale mode:"
+#~ msgstr "Режим масштабування:"
+
+#~ msgid "Selected pages: "
+#~ msgstr "Обрані сторінки: "
+
+#~ msgid "Show values"
+#~ msgstr "Показати значення"
+
+#~ msgid "Software versions:"
+#~ msgstr "Версії компонентів"
+
+#~ msgid "Supported image files"
+#~ msgstr "Підтримувані файли зображень"
+
+#~ msgid "Top to Bottom"
+#~ msgstr "Зверху вниз"
+
+#~ msgid "User Manual"
+#~ msgstr "Довідник користувача"
+
+#~ msgid "Value"
+#~ msgstr "Значення"
+
+#~ msgid "Vertical offset"
+#~ msgstr "Вертикальний зсув"
+
+#~ msgid "Width in %"
+#~ msgstr "Ширина у %"
+
+#~ msgid "Your changes will be lost if you don’t save them."
+#~ msgstr "Ваші зміни будуть втрачені, якщо ви не збережете їх."
+
+#~ msgid "Zoom In"
+#~ msgstr "Збільшити"
+
+#~ msgid "Zoom Out"
+#~ msgstr "Зменшити"
+
+#~ msgid "_Apply"
+#~ msgstr "_Прийняти"
+
+#~ msgid "_Cancel"
+#~ msgstr "_Скасувати"
+
+#~ msgid "_Find"
+#~ msgstr "_Пошук"
+
+#~ msgid "_OK"
+#~ msgstr "_Добре"
+
+#~ msgid "_Revert"
+#~ msgstr "_Скасувати"
+
+#~ msgid "page"
+#~ msgstr "сторінка"
+
+#~ msgid "untitled"
+#~ msgstr "без назви"
+
