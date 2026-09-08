@@ -144,6 +144,58 @@ class TestTheDocumentsHangTogether(unittest.TestCase):
                 self.assertTrue(first.startswith("# "),
                                 f"docs/{name} does not begin with a title")
 
+    #: A `#12` that does not say what kind of thing it is. Four numbering
+    #: systems are in play and two of them use a `#`, so the word in front is
+    #: the only thing distinguishing "Issue #8" from "phase 8".
+    UNNAMED = re.compile(r"(?<!Issue )(?<!Pull Request )(?<!PR )(?<![\w&])#\d{1,3}\b")
+
+    #: Inline code quotes rather than refers: `#8` in a sentence *about* the
+    #: notation is not a citation, and neither is `#000000`. Stripped before
+    #: the check, so the rule stays one rule instead of a rule plus exceptions.
+    CODE_SPAN = re.compile(r"`[^`]*`")
+
+    def lines_of(self, name):
+        text = open(os.path.join(DOCS, name), encoding="utf-8").read()
+        for number, raw in enumerate(text.splitlines(), 1):
+            yield number, self.CODE_SPAN.sub("", raw)
+
+    def test_every_github_reference_says_what_it_is(self):
+        """`Issue #12` and `Pull Request #2`, never a bare `#12`."""
+        for name in self.documents():
+            for number, line in self.lines_of(name):
+                with self.subTest(f"{name}:{number}"):
+                    self.assertIsNone(
+                        self.UNNAMED.search(line),
+                        f"docs/{name}:{number} has a bare #number; write "
+                        f"'Issue #N' or 'Pull Request #N'")
+
+    def test_work_after_the_port_is_named_not_numbered(self):
+        """Phases 0–7 are the port. Everything since has a name and a file.
+
+        The ordinal earned nothing once each body of work had a document of its
+        own, and it collided with GitHub the moment Issue #8 existed alongside
+        phase 8.
+        """
+        for name in self.documents():
+            if name == "CONVENTIONS.md":
+                continue  # states the rule, so it has to name the thing
+            for number, line in self.lines_of(name):
+                with self.subTest(f"{name}:{number}"):
+                    self.assertNotRegex(
+                        line, r"[Pp]hase\s+[89]",
+                        f"docs/{name}:{number} still uses a phase number; "
+                        f"name the work instead")
+
+    def test_those_patterns_match_what_they_claim_to(self):
+        strip = self.CODE_SPAN.sub
+        self.assertTrue(self.UNNAMED.search("blocked on #8 for now"))
+        self.assertIsNone(self.UNNAMED.search("see Issue #8"))
+        self.assertIsNone(self.UNNAMED.search("see Pull Request #2"))
+        self.assertIsNone(self.UNNAMED.search("see PR #2"))
+        # Quoted rather than cited, so both of these are allowed through.
+        self.assertIsNone(self.UNNAMED.search(strip("", "colour `#000000`")))
+        self.assertIsNone(self.UNNAMED.search(strip("", "never a bare `#8`")))
+
     def test_the_readme_points_at_the_documentation(self):
         readme = open(os.path.join(ROOT, "README.md"), encoding="utf-8").read()
         self.assertIn("docs/README.md", readme)

@@ -22,8 +22,8 @@ belongs when you come to add to it.
 
 | File | State |
 |---|---|
-| [PDF24-COMPARISON.md](PDF24-COMPARISON.md) | Phase 8 — **complete**. Scored against PDF24 Toolbox's tool list; seven features built. |
-| [I18N.md](I18N.md) | Phase 9 — **active**. The translated interface that was not one, and what filling 33 catalogues takes. |
+| [PDF24-COMPARISON.md](PDF24-COMPARISON.md) | **Complete but for image downsampling** ([Issue #8](https://github.com/dwsdolce/pdfarranger-qt/issues/8)). Scored against PDF24 Toolbox's tool list; seven features built. |
+| [I18N.md](I18N.md) | **Active** — the [Internationalisation milestone](https://github.com/dwsdolce/pdfarranger-qt/milestone/1). The translated interface that was not one, and what filling 33 catalogues takes. |
 
 ## Where to put a new thing
 

@@ -1,11 +1,11 @@
-# PDF24 comparison — phase 8
+# PDF24 comparison
 
 [The port's goal](PORTING-NOTES.md) names dissatisfaction with **PDF24 Toolbox**
 as the reason this project exists, so its tool list is the fairest external
 yardstick there is. This is the score against it, and the work that came out of
 it. The scope reasoning itself is [D21](DECISIONS.md).
 
-**Complete apart from [#8](https://github.com/dwsdolce/pdfarranger-qt/issues/8).**
+**Complete apart from [Issue #8](https://github.com/dwsdolce/pdfarranger-qt/issues/8).**
 
 Scored against the live menus on 2026-09-07: **17 of its 37 tools are already here**,
 four more are cheap, three are real work worth doing, and thirteen are things a
@@ -14,7 +14,7 @@ page arranger should not be.
 Everything from that list judged worth having is built, with one exception that
 is marked `[~]` rather than `[x]`: **Compress** is two features wearing one
 name, and only the cheap half exists. Image downsampling — what people usually
-mean by the word — is [#8](https://github.com/dwsdolce/pdfarranger-qt/issues/8).
+mean by the word — is [Issue #8](https://github.com/dwsdolce/pdfarranger-qt/issues/8).
 
 **Already covered.** Organize · Merge · Split · Extract pages · Remove pages ·
 Rotate · Sort · Crop · Change page size · Images to PDF · PDF to images ·
@@ -66,7 +66,7 @@ different job.
       Written as `[x]` at first with the caveat below it, which is precisely how
       it came to be believed finished: a checkbox holds one bit and "half done"
       does not fit in it. The rest is
-      [#8](https://github.com/dwsdolce/pdfarranger-qt/issues/8).
+      [Issue #8](https://github.com/dwsdolce/pdfarranger-qt/issues/8).
 
       The trivial half is done. `compress_streams` plus object streams,
       a Preferences checkbox beside Web optimize. Gains little on a file full of

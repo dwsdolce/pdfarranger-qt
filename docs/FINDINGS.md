@@ -675,7 +675,8 @@ Two things had to move with it:
   batch, and only when a page in that batch actually has layers.
 ## Compressing turned a damaged file into an unreadable one
 
-Found while testing the phase 8 save options, on the project's own `test.pdf`.
+Found while testing the PDF24-comparison save options, on the project's own
+`test.pdf`.
 
 The "preserve first document" save (`export_doc_job`) preserves the first
 document's *faults* along with everything else. `tests/test.pdf` is hand-written

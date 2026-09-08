@@ -1,8 +1,50 @@
 # Conventions
 
-How the project is laid out and built: where tests live, how they are kept from
-touching a real settings store, where temporary files go, and how the installers
-are produced.
+How the project is laid out and built: how one thing refers to another, where
+tests live, how they are kept from touching a real settings store, where
+temporary files go, and how the installers are produced.
+
+## How to refer to things
+
+Four numbering systems are in play, two of them spelled with a `#`, and nothing
+in the notation says which is which. "Phase 8", "Issue #8", "D8" and
+"Pull Request #8" can appear in one paragraph and look alike. So each is named
+in full, every time.
+
+| Thing | Written as | Notes |
+|---|---|---|
+| A GitHub issue | `Issue #12` | Never a bare `#12`. The `#` stays so GitHub still links it. |
+| A pull request | `Pull Request #2`, then `PR #2` | The long form on first mention in a document, the short one after. |
+| A decision | `D20` | An identifier, not a position — it keeps its number for ever, even when superseded. |
+| A phase of the port | `phase 5` | **Only 0–7, and only as a date.** See below. |
+
+**Work after the port is named, not numbered.** It used to be "phase 8" and
+"phase 9". Once each had a file of its own the ordinal earned nothing, and it
+collided with GitHub the moment Issue #8 existed alongside phase 8. So: *the
+PDF24 comparison*, *the internationalisation work* — the human name in a
+sentence, the filename in a link.
+
+Phases 0–7 survive, but only in the sense a **date** does. *"`hide` is
+implemented as of phase 0"*, *"the package phase 5 deleted"*, *"has produced
+layer-only sheets since phase 2"* — these say **when**, and they are as true and
+as fixed as any other historical fact. What is not allowed is a phase number as
+the **name** of a body of work, or as somewhere to go and look, which is what
+phases 8 and 9 had become.
+
+**Documents cite each other by title, never by position.**
+`[FINDINGS.md](FINDINGS.md), *Owning the reader's view*`. Numbers move when
+anything is inserted above them; titles move with the thing they name. This was
+learned the expensive way — nine comments cited "section 6" for material that
+had drifted into section 7, silently, for months.
+
+**Code cites nothing.** Not a document, not a section. A comment has to stand on
+its own, because documentation is ephemeral and source is not: where a
+measurement justifies a decision the number goes in the docstring — *"the worst
+page costs 247 ms"* — rather than a pointer to where it was written down. The
+one exception is a decision number, which is a name rather than a location.
+
+Each of these is enforced by `tests/test_docs.py`. A convention with no check is
+a wish, and this project has watched two of them rot.
 
 ## Temp files
 
@@ -37,7 +79,7 @@ One file per package module, so a failure names the layer it is in:
 | `test_stamp.py` | page numbers and watermarks, and the text primitive |
 | `test_save_options.py` | linearize, strip metadata, compress, viewer prefs |
 | `test_viewer_prefs.py` · `test_repair.py` | as named |
-| `test_phase8_ui.py` | the window's end of all of phase 8 |
+| `test_pdf24_ui.py` | the window's end of the PDF24-comparison features |
 
 `tests/conftest.py` holds what must happen once per process and before any Qt
 import — the offscreen platform, the single `QApplication`, the message-box

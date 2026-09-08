@@ -43,7 +43,8 @@ credit the original project.
   *reading* it, not only rearranging it. See D14–D17.
 
 Everything still unported is Tier 1 or Tier 3. Nothing remaining requires content
-editing. Phase 8 scores this boundary against PDF24's own tool list, since that
+editing. [PDF24-COMPARISON.md](PDF24-COMPARISON.md) scores this boundary
+against PDF24's own tool list, since that
 application is the reason given below for starting; D21 records what of it is in
 and what is out.
 ### Beyond parity — the reason for the port
@@ -105,7 +106,7 @@ Legend: `[x]` done and tested · `[~]` partially done · `[ ]` not started
 Ordered by dependency, not by date, so the numbers do not run in the order the
 work happened — phase 5 retired GTK and shipped installers before phase 4 had
 finished closing the parity gaps, and that was the point. Everything through
-phase 6a is complete, and so is phase 8. What is left is the three items D12
+phase 6a is complete. What is left is the three items D12
 deprioritised in phase 7.
 ### Phase 0 — shared plumbing — **complete**
 
@@ -456,9 +457,9 @@ David's own decision, not blocked.
 They stay **open** rather than closed, as issues, because a decision not to do
 something can change and closing it is how the item would be lost:
 
-- [#10](https://github.com/dwsdolce/pdfarranger-qt/issues/10) — split view with full-page preview
-- [#11](https://github.com/dwsdolce/pdfarranger-qt/issues/11) — dual-pane merging
-- [#12](https://github.com/dwsdolce/pdfarranger-qt/issues/12) — visible undo history
+- [Issue #10](https://github.com/dwsdolce/pdfarranger-qt/issues/10) — split view with full-page preview
+- [Issue #11](https://github.com/dwsdolce/pdfarranger-qt/issues/11) — dual-pane merging
+- [Issue #12](https://github.com/dwsdolce/pdfarranger-qt/issues/12) — visible undo history
 - [x] **Own the reader's view, on the engine we already have.** Done. Cost about
       what was predicted --
       comparable in size to phase 6. Every reader limitation met until then

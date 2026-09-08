@@ -14,7 +14,7 @@
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-"""Phase 8: the window's end of web-optimize, strip-metadata and viewer prefs.
+"""The window's end of web-optimize, strip-metadata and viewer preferences.
 
 The backends have their own tests. What is checked here is the wiring -- that
 a checkbox in Preferences and a toggle in the File menu actually reach the
