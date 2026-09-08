@@ -197,7 +197,7 @@ setting. The corollary is that the existing checkbox should be renamed to what
 it does — *Recompress streams and pack objects* — and the word *Compress* left
 for the command that earns it.
 
-**Where the change lands — decided: a new temporary document.** The re-encoded
+**Where the change lands — [D25](DECISIONS.md): a new temporary document.** The re-encoded
 pages are written to a fresh temp PDF, registered through
 `DocumentSet.get_doc`, and each affected page has its `nfile` and `copyname`
 repointed at it. This is what `stamp.py`, `nup.py`, `booklet.py` and
