@@ -703,6 +703,25 @@ Worth stating plainly because the obvious reading is that Compress broke it. It
 did not — it removed the slack that had been hiding a pre-existing bug. Measured
 before and after with `pikepdf.open(..., attempt_recovery=False)`, which is the
 same trick `repair.py` is built on.
+## Babel drops the header fields it does not model
+
+`write_po` does not edit a catalogue's header, it *rebuilds* it from the fields
+Babel has attributes for. Anything else is silently gone — `X-Generator` among
+them, which is precisely the field `tools/merge_translations.py` has to set to
+record that a machine wrote the strings below it.
+
+Measured, and the measuring is the interesting part: the first check said
+nothing was lost, because the regex comparing the two headers had been mangled
+into one that matched nothing, so it compared two empty sets and found them
+equal. A check that cannot fail reports success. Redone without the regex, the
+answer was the opposite.
+
+So the tool writes to a buffer, repairs the header, and only then writes the
+file. `tests/test_merge_translations.py` has a test asserting that **Babel
+alone would have dropped it** — if a future version starts preserving unknown
+headers, that test fails and the repair can be deleted rather than carried for
+ever.
+
 ## A note on content streams
 
 Scaling and overlay *do* synthesize a content stream — they wrap the page as a Form

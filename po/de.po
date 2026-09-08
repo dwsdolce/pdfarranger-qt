@@ -1,5 +1,5 @@
 # German translation for pdfarranger.
-# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# Copyright (C) 2025 THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the pdfarranger package.
 # Translators:
 # Konstantinos Poulios, 2008-2017
@@ -13,1007 +13,2268 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: pdfarranger\n"
+"Project-Id-Version:  pdfarranger\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-02-18 16:00+0100\n"
+"POT-Creation-Date: 2026-09-07 19:17+0000\n"
 "PO-Revision-Date: 2025-07-09 08:35+0200\n"
 "Last-Translator: Sebastian Scherch\n"
-"Language-Team: \n"
 "Language: de\n"
-"MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=UTF-8\n"
-"Content-Transfer-Encoding: 8bit\n"
+"Language-Team: \n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Gtranslator 48.0\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: pdfarranger-qt tools/merge_translations.py\n"
+"Generated-By: Babel 2.18.0\n"
 
-#: pdfarranger/splitter.py:87
-msgid "#Col"
-msgstr "Spalte"
-
-#: pdfarranger/splitter.py:87
-msgid "#Row"
-msgstr "Zeile"
-
-#: pdfarranger/pageutils.py:128 pdfarranger/pageutils.py:553
-#: pdfarranger/pageutils.py:555
-msgid "%"
-msgstr "%"
-
-#: pdfarranger/pageutils.py:276
-msgid "% of height"
-msgstr "% der Höhe"
-
-#: pdfarranger/pageutils.py:276
-msgid "% of width"
-msgstr "% der Breite"
-
-#: pdfarranger/pdfarranger.py:3195
-#, python-format
-msgid "%s is a tool for rearranging and modifying PDF files."
-msgstr "%s ist ein Werkzeug zum Neuordnen und Ändern von PDF-Dateien."
-
-#: pdfarranger/config.py:334
-msgid "(Libhandy missing)"
-msgstr "(Libhandy fehlt)"
-
-#: pdfarranger/config.py:326
-msgid "(Requires restart)"
-msgstr "(Erfordert Neustart)"
-
-#: pdfarranger/pdfarranger.py:1413
-#, python-format
-msgid "A file named \"%s\" already exists. Do you want to replace it?"
+#: pdfarranger_qt/canvas.py pdfarranger_qt/reader.py
+#, python-brace-format
+msgid "Page {}"
 msgstr ""
-"Eine Datei mit dem Namen »%s« existiert bereits. Möchten Sie diese ersetzen?"
 
-#: pdfarranger/search.py:42
-msgid "All"
-msgstr "Alles"
-
-#: data/menu.ui:254 data/menu.ui:444
-msgid "All From _Same File"
-msgstr "Alle der _gleichen Datei"
-
-#: pdfarranger/pdfarranger.py:728
-msgid "All files"
-msgstr "Alle Dateien"
-
-#: pdfarranger/pdfarranger.py:517 pdfarranger/pdfarranger.py:596
-msgid "All pages must have the same size."
-msgstr "Alle Seiten müssen die gleiche Größe haben."
-
-#: pdfarranger/pdfarranger.py:699
-msgid "All supported files"
-msgstr "Alle unterstützten Dateien"
-
-#: pdfarranger/exporter.py:522
-msgid "Auto Rotate"
-msgstr "Automatisch drehen"
-
-#: pdfarranger/pageutils.py:254
-msgid "Bottom"
-msgstr "Unten"
-
-#: pdfarranger/pageutils.py:486
-msgid "Bottom to Top"
-msgstr "Unten nach oben"
-
-#: pdfarranger/core.py:599
-msgid "Clipboard image"
-msgstr "Zwischenablage-Bild"
-
-#: pdfarranger/pageutils.py:469 pdfarranger/splitter.py:60
-msgid "Columns"
-msgstr "Spalten"
-
-#: data/menu.ui:161 data/menu.ui:407
-msgid "Copy _Image"
-msgstr "_Bild kopieren"
-
-#: data/menu.ui:166 data/menu.ui:412
-msgid "Copy _Text"
-msgstr "_Text kopieren"
-
-#: pdfarranger/metadata.py:49
-msgid "Created"
-msgstr "Erstellt"
-
-#: pdfarranger/metadata.py:47
-msgid "Creator"
-msgstr "Ersteller"
-
-#: pdfarranger/metadata.py:48
-msgid "Creator tool"
-msgstr "Erstellungswerkzeug"
-
-#: pdfarranger/pageutils.py:351
-msgid "Crop & Add margins"
-msgstr "Seitenränder beschneiden & hinzufügen"
-
-#: pdfarranger/pageutils.py:1002
-msgid "Crop Margins"
-msgstr "Seitenränder beschneiden"
-
-#: data/menu.ui:194 data/menu.ui:490
-msgid "Crop White Borders"
-msgstr "Weiße Ränder beschneiden"
-
-#: pdfarranger/pageutils.py:266 pdfarranger/pdfarranger.py:3169
-msgid ""
-"Cropping/hiding does not remove any content from the PDF file, it only hides "
-"it."
+#: pdfarranger_qt/canvas.py
+msgid "Open Link"
 msgstr ""
-"Durch Beschneiden/Verbergen wird kein Inhalt aus der PDF-Datei entfernt, er "
-"wird nur verborgen."
 
-#: data/menu.ui:114 data/menu.ui:355
-msgid "Cu_t"
-msgstr "_Ausschneiden"
-
-#: pdfarranger/pageutils.py:154
-msgid "Custom"
-msgstr "Benutzerdefiniert"
-
-#: pdfarranger/pdfarranger.py:1538
-msgid "Despite the warnings the document(s) should have no visible issues."
+#: pdfarranger_qt/canvas.py
+msgid "Copy Link Address"
 msgstr ""
-"Trotz der Warnungen sollte(n) das/die Dokument(e) keine sichtbaren Probleme "
-"aufweisen."
 
-#: pdfarranger/pdfarranger.py:1247
-msgid "Discard changes and close?"
-msgstr "Änderungen verwerfen und schließen?"
+#: pdfarranger_qt/canvas.py
+#, python-brace-format
+msgid "Go to {}"
+msgstr ""
 
-#: pdfarranger/pdfarranger.py:1284
-msgid "Discard changes and quit?"
-msgstr "Änderungen verwerfen und beenden?"
+#: pdfarranger_qt/canvas.py
+msgid "Follow Link"
+msgstr ""
 
-#: pdfarranger/pdfarranger.py:3176
-msgid "Do not show this dialog again."
-msgstr "Diesen Dialog nicht mehr anzeigen."
+#: pdfarranger_qt/canvas.py pdfarranger_qt/mainwindow.py
+msgid "Copy"
+msgstr ""
 
-#: pdfarranger/pdfarranger.py:1238
-msgid "Do_n’t Save"
-msgstr "_Nicht speichern"
+#: pdfarranger_qt/canvas.py
+msgid "Select All"
+msgstr ""
 
-#: pdfarranger/pdfarranger.py:1545
-msgid "Don't show warnings when saving again."
-msgstr "Beim erneuten Speichern keine Warnungen anzeigen."
-
-#: data/menu.ui:198 data/menu.ui:494
-msgid "Dupl_icate"
-msgstr "_Duplizieren"
-
-#: data/menu.ui:52 data/menu.ui:527
-msgid "E_xport"
-msgstr "E_xportieren"
-
-#: data/menu.ui:55 data/menu.ui:530
-msgid "E_xport Selection to a Single File…"
-msgstr "Auswahl in eine Datei e_xportieren…"
-
-#: data/menu.ui:319
-msgid "Edit _Properties"
-msgstr "Eige_nschaften ändern"
-
-#: pdfarranger/metadata.py:213
-msgid "Edit properties"
-msgstr "Eigenschaften ändern"
-
-#: pdfarranger/splitter.py:62
-msgid "Equal column width"
-msgstr "Gleiche Spaltenbreite"
-
-#: pdfarranger/splitter.py:62
-msgid "Equal row height"
-msgstr "Gleiche Zeilenhöhe"
-
-#: pdfarranger/pdfarranger.py:2122
-msgid "Exploding into images…"
-msgstr "In Einzelbilder umwandeln…"
-
-#: data/menu.ui:60 data/menu.ui:535
-msgid "Export Selection to _Individual Files…"
-msgstr "Auswahl in E_inzeldateien exportieren…"
-
-#: data/menu.ui:74 data/menu.ui:549
-msgid "Export Selection to _JPG Images…"
-msgstr "Auswahl als _JPG Bilddateien exportieren…"
-
-#: data/menu.ui:69 data/menu.ui:544
-msgid "Export Selection to _PNG Images…"
-msgstr "Auswahl als _PNG Bilddateien exportieren…"
-
-#: data/menu.ui:84 data/menu.ui:559
-msgid "Export Selection to _Rasterized PDF (jpg)…"
-msgstr "Auswahl als ge_rastertes PDF (JPG) exportieren…"
-
-#: data/menu.ui:79 data/menu.ui:554
-msgid "Export Selection to _Rasterized PDF (png)…"
-msgstr "Auswahl als ge_rastertes PDF (PNG) exportieren…"
-
-#: data/menu.ui:65 data/menu.ui:540
-msgid "Export _All Pages to Individual Files…"
-msgstr "_Alle Seiten in Einzeldateien exportieren…"
-
-#: pdfarranger/pdfarranger.py:1354
-msgid "Export…"
-msgstr "Exportieren…"
-
-#: pdfarranger/core.py:601 pdfarranger/pdfarranger.py:1813
-msgid "File is neither pdf nor image"
-msgstr "Datei ist weder ein PDF noch ein Bild"
-
-#: pdfarranger/pdfarranger.py:341
-msgid "File(s) to open"
-msgstr "Zu öffnende Datei(en)"
-
-#: pdfarranger/search.py:43
-msgid "Find All"
-msgstr "Alle suchen"
-
-#: pdfarranger/search.py:38
-msgid "Find Next"
-msgstr "Nächsten suchen"
-
-#: pdfarranger/search.py:33
-msgid "Find Previous"
-msgstr "Vorherigen suchen"
-
-#: data/menu.ui:312
-msgid "Find _All"
-msgstr "_Alle suchen"
-
-#: data/menu.ui:308
-msgid "Find _Next"
-msgstr "_Nächsten suchen"
-
-#: data/menu.ui:304
-msgid "Find _Previous"
-msgstr "_Vorherigen suchen"
-
-#: pdfarranger/pageutils.py:347
-msgid "Fit mode"
-msgstr "Anpassungsmodus"
-
-#: pdfarranger/exporter.py:520
-msgid "Fit to Full Page"
-msgstr "An ganze Seite anpassen"
-
-#: pdfarranger/exporter.py:519
-msgid "Fit to Printable Area"
-msgstr "An Druckbereich anpassen"
-
-#: pdfarranger/pageutils.py:356
-msgid "Fit to paper"
-msgstr "An Papierformat anpassen"
-
-#: pdfarranger/pdfarranger.py:3173
-msgid "For more info see"
-msgstr "Weitere Informationen finden Sie im"
-
-#: pdfarranger/config.py:370
-msgid "For more options see:"
-msgstr "Weitere Optionen in der Konfigurationsdatei:"
-
-#: data/menu.ui:291
-msgid "Full_screen"
-msgstr "Voll_bild"
-
-#: pdfarranger/pdfarranger.py:3217
-msgid "GNU General Public License (GPL) Version 3."
-msgstr "GNU General Public License (GPL) Version 3."
-
-#: pdfarranger/config.py:365
-msgid "Greyscale"
-msgstr "Graustufen"
-
-#: pdfarranger/pageutils.py:145
-msgid "Height"
-msgstr "Höhe"
-
-#: pdfarranger/splitter.py:88
-msgid "Height in %"
-msgstr "Höhe in %"
-
-#: pdfarranger/pageutils.py:1002
-msgid "Hide Margins"
-msgstr "Ränder verbergen"
-
-#: pdfarranger/pageutils.py:481
-msgid "Horizontal"
-msgstr "Horizontal"
-
-#: pdfarranger/splitter.py:61
-msgid "Horizontal Splits"
-msgstr "Waagerechte Teilungen"
-
-#: pdfarranger/pageutils.py:552
-msgid "Horizontal offset"
-msgstr "Horizontale Verschiebung"
-
-#: pdfarranger/config.py:354
-msgid "Image Export"
-msgstr "Bildexport"
-
-#: pdfarranger/core.py:589
+#: pdfarranger_qt/core.py pdfarranger_qt/mainwindow.py
 msgid "Image files are only supported with img2pdf"
 msgstr "Bilddateien werden nur mit img2pdf unterstützt"
 
-#: pdfarranger/core.py:596
-msgid "Image format is not supported by img2pdf"
-msgstr "Bildformat wird von img2pdf nicht unterstützt"
-
-#: pdfarranger/pdfarranger.py:2119
-msgid "Img2pdf missing."
-msgstr "Img2pdf nicht vorhanden"
-
-#: pdfarranger/pdfarranger.py:1617
-msgid "Img2pdf support missing."
-msgstr "Img2pdf Unterstützung nicht vorhanden."
-
-#: data/pdfarranger.ui:58
-msgid "Import"
-msgstr "Importieren"
-
-#: pdfarranger/pdfarranger.py:1627
-msgid "Import…"
-msgstr "Importieren …"
-
-#: data/menu.ui:214 data/menu.ui:510
-msgid "Insert Blan_k Page…"
-msgstr "_Leere Seite einfügen …"
-
-#: pdfarranger/pageutils.py:435
-msgid "Insert Blank Page"
-msgstr "Leere Seite einfügen"
-
-#: pdfarranger/metadata.py:184
-msgid "Invalid date format. Input discarded."
-msgstr "Ungültiges Datumsformat. Eingabe verworfen."
-
-#: pdfarranger/pdfarranger.py:719
-msgid "JPEG images"
-msgstr "JPEG-Dateien"
-
-#: pdfarranger/metadata.py:45
-msgid "Keywords"
-msgstr "Schlagworte"
-
-#: pdfarranger/pageutils.py:164
-msgid "Landscape"
-msgstr "Querformat"
-
-#: pdfarranger/config.py:324
-msgid "Language"
-msgstr "Sprache"
-
-#: pdfarranger/pageutils.py:254
-msgid "Left"
-msgstr "Links"
-
-#: pdfarranger/pageutils.py:483
-msgid "Left to Right"
-msgstr "Links nach rechts"
-
-#: data/pdfarranger.ui:122
-msgid "Main Menu"
-msgstr "Hauptmenü"
-
-#: pdfarranger/pdfarranger.py:3212
-msgid "Maintainers and contributors"
-msgstr "Hauptentwickler und Mitwirkende"
-
-#: pdfarranger/pageutils.py:467
-msgid "Margin"
-msgstr "Seitenrand"
-
-#: pdfarranger/pageutils.py:453
-msgid "Merge Pages"
-msgstr "Seiten zusammenfügen"
-
-#: pdfarranger/pageutils.py:518
-msgid "Merged page size:"
-msgstr "Größe der zusammengefügten Seiten:"
-
-#: pdfarranger/metadata.py:50
-msgid "Modified"
-msgstr "Geändert"
-
-#: pdfarranger/pageutils.py:498
-msgid "Non-uniform page size - using max size"
-msgstr "Uneinheitliche Seitengröße - die größte Seite ist maßgeblich"
-
-#: pdfarranger/exporter.py:518
-msgid "None"
-msgstr "Keine"
-
-#: pdfarranger/pdfarranger.py:3162
-msgid "Note"
-msgstr "Hinweis"
-
-#: pdfarranger/pdfarranger.py:3168
-msgid "Note the limitations:"
-msgstr "Beachten Sie die Einschränkungen:"
-
-#: data/pdfarranger.ui:37
-msgid "Open"
-msgstr "Öffnen"
-
-#: pdfarranger/pdfarranger.py:1469
-msgid "Open…"
-msgstr "Öffnen…"
-
-#: pdfarranger/config.py:362
-msgid "Optimize"
-msgstr "Optimieren"
-
-#: pdfarranger/pageutils.py:162
-msgid "Orientation"
-msgstr "Ausrichtung"
-
-#: pdfarranger/pdfarranger.py:3170
-msgid "Outlines and links can be preserved only in certain cases."
+#: pdfarranger_qt/core.py
+msgid "File not found"
 msgstr ""
-"Inhaltsverzeichnisse und Verweise könnnen nur in bestimmten Fällen erhalten "
-"werden."
 
-#: pdfarranger/pageutils.py:1055
-msgid "Overlay"
-msgstr "Overlay"
-
-#: pdfarranger/pdfarranger.py:322
-msgid ""
-"PDF Arranger is a small python-gtk application, which helps the user to "
-"merge or split pdf documents and rotate, crop and rearrange their pages "
-"using an interactive and intuitive graphical interface. It is a frontend for "
-"pikepdf."
+#: pdfarranger_qt/core.py
+msgid "Invalid file format"
 msgstr ""
-"PDF Arranger ist eine kleine Python-GTK-Anwendung, die dem Benutzer hilft, "
-"PDF-Dokumente zusammenzuführen oder aufzuteilen und ihre Seiten mit Hilfe "
-"einer interaktiven und intuitiven grafischen Oberfläche zu drehen, "
-"zuzuschneiden und neu anzuordnen. Es ist ein Frontend für Pikepdf."
 
-#: pdfarranger/pdfarranger.py:1807
-msgid "PDF document is damaged"
-msgstr "PDF-Dokument ist beschädigt"
-
-#: pdfarranger/pdfarranger.py:703
-msgid "PDF files"
-msgstr "PDF-Dateien"
-
-#: pdfarranger/pdfarranger.py:711
-msgid "PNG images"
-msgstr "PNG-Dateien"
-
-#: pdfarranger/exporter.py:573
-msgid "Page Handling"
-msgstr "Seitenhandhabung"
-
-#: pdfarranger/pageutils.py:494
-msgid "Page Order"
-msgstr "Sortierung"
-
-#: pdfarranger/pdfarranger.py:3240
-msgid "Page Size:"
-msgstr "Seitengröße:"
-
-#: pdfarranger/pageutils.py:343
-msgid "Page size"
-msgstr "Seitengröße"
-
-#: pdfarranger/pageutils.py:151
-msgid "Paper size"
-msgstr "Papierformat"
-
-#: pdfarranger/core.py:474
-msgid "Password"
-msgstr "Passwort"
-
-#: pdfarranger/core.py:452
-msgid "Password required"
-msgstr "Passwort wird benötigt"
-
-#: data/menu.ui:127 data/menu.ui:368
-msgid "Past_e Special"
-msgstr "Spezielles Ein_fügen"
-
-#: data/menu.ui:144 data/menu.ui:386
-msgid "Paste As O_verlay…"
-msgstr "Als _Overlay einfügen …"
-
-#: data/menu.ui:139 data/menu.ui:381
-msgid "Paste As _Even Pages"
-msgstr "Als _gerade Seiten einfügen"
-
-#: data/menu.ui:134 data/menu.ui:376
-msgid "Paste As _Odd Pages"
-msgstr "Als _ungerade Seiten einfügen"
-
-#: data/menu.ui:149 data/menu.ui:391
-msgid "Paste As _Underlay…"
-msgstr "Als _Hintergrund einfügen …"
-
-#: data/menu.ui:122 data/menu.ui:363
-msgid "Paste _After"
-msgstr "Einfügen _nach"
-
-#: data/menu.ui:129 data/menu.ui:371
-msgid "Paste _Before"
-msgstr "Einfügen _vor"
-
-#: pdfarranger/pdfarranger.py:1967
-msgid "Pasted data not valid. Aborting paste."
-msgstr "Eingefügte Daten sind ungültig. Einfügen wird abgebrochen."
-
-#: pdfarranger/config.py:356
-msgid "Pixels/inch:"
-msgstr "Pixel/Inch:"
-
-#: pdfarranger/pageutils.py:163
-msgid "Portrait"
-msgstr "Hochformat"
-
-#: data/menu.ui:325
-msgid "Pre_ferences"
-msgstr "_Einstellungen"
-
-#: pdfarranger/config.py:314
-msgid "Preferences"
-msgstr "Einstellungen"
-
-#: pdfarranger/pdfarranger.py:333
-msgid "Print the version of PDF Arranger and exit"
-msgstr "PDF Arranger Version anzeigen und beenden"
-
-#: pdfarranger/config.py:339
-msgid "Printing"
-msgstr "Drucken"
-
-#: pdfarranger/exporter.py:554
-msgid "Printing…"
-msgstr "Drucken…"
-
-#: pdfarranger/metadata.py:46
-msgid "Producer"
-msgstr "Hersteller"
-
-#: pdfarranger/metadata.py:227
-msgid "Property"
-msgstr "Eigenschaft"
-
-#: pdfarranger/pageutils.py:1122
-msgid "Range Select"
-msgstr "Bereichsauswahl"
-
-#: data/menu.ui:202 data/menu.ui:498
-msgid "Re_verse Order"
-msgstr "Rei_henfolge umkehren"
-
-#: pdfarranger/pageutils.py:357
-msgid "Relative"
-msgstr "Relativ"
-
-#: pdfarranger/exporter.py:591
-msgid "Rendering Preview…"
-msgstr "Vorschau erstellen…"
-
-#: pdfarranger/pdfarranger.py:991
-msgid "Rendering…"
-msgstr "Vorschau erstellen…"
-
-#: pdfarranger/pdfarranger.py:1415
-msgid "Replace"
-msgstr "Ersetzen"
-
-#: pdfarranger/config.py:346
-msgid "Retain document-level information of the first opened file"
-msgstr "Dokumentinformationen der zuerst geöffneten Datei beibehalten"
-
-#: pdfarranger/pageutils.py:254
-msgid "Right"
-msgstr "Rechts"
-
-#: pdfarranger/pageutils.py:484
-msgid "Right to Left"
-msgstr "Rechts nach links"
-
-#: data/pdfarranger.ui:203
-msgid "Rotate Left"
-msgstr "Nach links drehen"
-
-#: data/pdfarranger.ui:227
-msgid "Rotate Right"
-msgstr "Nach rechts drehen"
-
-#: data/menu.ui:172 data/menu.ui:468
-msgid "Rotate _Left"
-msgstr "Nach _links drehen"
-
-#: pdfarranger/pageutils.py:470 pdfarranger/splitter.py:60
-msgid "Rows"
-msgstr "Zeilen"
-
-#: pdfarranger/pdfarranger.py:3207
-#, python-format
-msgid "Running on %s"
-msgstr "Betriebssystem: %s"
-
-#: data/menu.ui:259 data/menu.ui:449
-msgid "Same Page _Format"
-msgstr "Gleiches Seiten_format"
-
-#: data/pdfarranger.ui:78
-msgid "Save"
-msgstr "Speichern"
-
-#: data/pdfarranger.ui:97
-msgid "Save As"
-msgstr "Speichern unter"
-
-#: pdfarranger/pdfarranger.py:1354
-msgid "Save As…"
-msgstr "Speichern unter …"
-
-#: data/menu.ui:47
-msgid "Save _As…"
-msgstr "Speichern _unter …"
-
-#: pdfarranger/pdfarranger.py:1256
-msgid "Save changes before closing?"
-msgstr "Änderungen vor dem Schließen speichern?"
-
-#: pdfarranger/pdfarranger.py:1293
-msgid "Save changes before quitting?"
-msgstr "Änderungen vor dem Beenden speichern?"
-
-#: pdfarranger/pdfarranger.py:1253
-#, python-brace-format
-msgid "Save changes to “{}” before closing?"
-msgstr "Änderungen an »{}« vor dem Schließen speichern?"
-
-#: pdfarranger/pdfarranger.py:1290
-#, python-brace-format
-msgid "Save changes to “{}” before quitting?"
-msgstr "Änderungen an »{}« vor dem Beenden speichern?"
-
-#: pdfarranger/pdfarranger.py:1563
-msgid "Saving failed"
-msgstr "Speichern fehlgeschlagen"
-
-#: pdfarranger/pdfarranger.py:1537
-msgid "Saving produced some warnings"
-msgstr "Speichern führte zu einigen Warnungen"
-
-#: pdfarranger/config.py:344
-msgid "Saving/exporting to single file"
-msgstr "Speichern/exportieren als einzelne Datei"
-
-#: pdfarranger/pdfarranger.py:1580
-msgid "Saving…"
-msgstr "Speichern…"
-
-#: pdfarranger/pageutils.py:349
-msgid "Scale"
-msgstr "Skalieren"
-
-#: pdfarranger/pageutils.py:350
-msgid "Scale & Add margins"
-msgstr "Skalieren & Ränder hinzufügen"
-
-#: pdfarranger/pageutils.py:122
-msgid "Scale factor"
-msgstr "Vergrößerung"
-
-#: pdfarranger/exporter.py:516
-msgid "Scale mode:"
-msgstr "Skalierung:"
-
-#: data/menu.ui:234 data/menu.ui:424
-msgid "Select _All"
-msgstr "_Alles auswählen"
-
-#: data/menu.ui:249 data/menu.ui:439
-msgid "Select _Even Pages"
-msgstr "_Gerade Seiten auswählen"
-
-#: data/menu.ui:244 data/menu.ui:434
-msgid "Select _Odd Pages"
-msgstr "_Ungerade Seiten auswählen"
-
-#: data/menu.ui:269 data/menu.ui:459
-msgid "Select _Range"
-msgstr "_Bereich auswählen"
-
-#: pdfarranger/pageutils.py:1131
-msgid "Select range of pages: "
-msgstr "Seiten auswählen: "
-
-#: pdfarranger/pdfarranger.py:3235
-msgid "Selected pages: "
-msgstr "Ausgewählte Seiten: "
-
-#: pdfarranger/pageutils.py:699
-msgid "Show values"
-msgstr "Werte anzeigen"
-
-#: pdfarranger/pdfarranger.py:3198
-msgid "Software versions:"
-msgstr "Softwareversionen:"
-
-#: pdfarranger/splitter.py:26
-msgid "Split Pages"
-msgstr "Seiten teilen"
-
-#: pdfarranger/metadata.py:44
-msgid "Subject"
-msgstr "Thema"
-
-#: pdfarranger/pdfarranger.py:733
-msgid "Supported image files"
-msgstr "Unterstützte Bilddateien"
-
-#: pdfarranger/config.py:376 pdfarranger/config.py:385
-msgid "System setting"
-msgstr "Systemeinstellung"
-
-#: pdfarranger/core.py:464
-#, python-brace-format
-msgid ""
-"The document “{}” is locked and requires a password before it can be opened."
+#: pdfarranger_qt/core.py
+msgid "Data not yet available"
 msgstr ""
-"Das Dokument »{}« ist gesperrt und ein Passwort wird benötigt, um es zu "
-"öffnen."
 
-#: pdfarranger/pdfarranger.py:2095
-msgid "The page has several images. Use \"Explode into Images\" first.\""
+#: pdfarranger_qt/core.py
+msgid "Unsupported security scheme"
 msgstr ""
-"Die Seite hat mehrere Bilder. Verwenden Sie zunächst »In Bilder aufteilen«."
 
-#: pdfarranger/pdfarranger.py:584
-msgid "The page selection is not contiguous. Cannot unimpose."
-msgstr "Seitenauswahl ist nicht fortlaufend. Kann nicht aufgeteilt werden."
-
-#: pdfarranger/core.py:463
-msgid "The password will be remembered until you close PDF Arranger."
-msgstr "Das Passwort wird gespeichert, bis PDF Arranger geschlossen wird."
-
-#: pdfarranger/config.py:332
-msgid "Theme"
-msgstr "Erscheinungsbild"
-
-#: pdfarranger/metadata.py:43
-msgid "Title"
-msgstr "Titel"
-
-#: pdfarranger/pageutils.py:254
-msgid "Top"
-msgstr "Oben"
-
-#: pdfarranger/pageutils.py:485
-msgid "Top to Bottom"
-msgstr "Oben nach unten"
-
-#: pdfarranger/pageutils.py:1055
-msgid "Underlay"
-msgstr "Hintergrund"
-
-#: pdfarranger/core.py:573 pdfarranger/pdfarranger.py:1803
+#: pdfarranger_qt/core.py
 msgid "Unknown file format"
 msgstr "Unbekanntes Dateiformat"
 
-#: pdfarranger/pageutils.py:1138
+#: pdfarranger_qt/core.py
+msgid "Image format is not supported by img2pdf"
+msgstr "Bildformat wird von img2pdf nicht unterstützt"
+
+#: pdfarranger_qt/core.py
+msgid "File is neither pdf nor image"
+msgstr "Datei ist weder ein PDF noch ein Bild"
+
+#: pdfarranger_qt/core.py
+msgid "Cannot open document"
+msgstr ""
+
+#: pdfarranger_qt/dialogs.py
+msgid "Paper size"
+msgstr "Papierformat"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Custom"
+msgstr "Benutzerdefiniert"
+
+#: pdfarranger_qt/dialogs.py
+msgid "mm"
+msgstr "mm"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Width"
+msgstr "Breite"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Height"
+msgstr "Höhe"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Keep aspect ratio"
+msgstr ""
+
+#: pdfarranger_qt/dialogs.py
+msgid "Portrait"
+msgstr "Hochformat"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Landscape"
+msgstr "Querformat"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Orientation"
+msgstr "Ausrichtung"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Range Select"
+msgstr "Bereichsauswahl"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Select range of pages: "
+msgstr "Seiten auswählen: "
+
+#: pdfarranger_qt/dialogs.py
 msgid ""
 "Use a comma to separate page numbers, a dash to select a range of pages. \n"
 "e.g. : \"1,3,5-7,9\""
 msgstr ""
-"Benutzen Sie Kommas zum Aufzählen von Seitennummern und eine Bindestrich, um "
-"Nummernbereiche auszuwählen.\n"
+"Benutzen Sie Kommas zum Aufzählen von Seitennummern und eine Bindestrich, um"
+" Nummernbereiche auszuwählen.\n"
 "z.B.: »1,3,5-7,9«"
 
-#: pdfarranger/pdfarranger.py:3174
-msgid "User Manual"
-msgstr "Benutzerhandbuch"
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+msgid "Insert Blank Page"
+msgstr "Leere Seite einfügen"
 
-#: pdfarranger/metadata.py:227
-msgid "Value"
-msgstr "Wert"
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+msgid "Page size"
+msgstr "Seitengröße"
 
-#: pdfarranger/pageutils.py:482
-msgid "Vertical"
-msgstr "Vertikal"
+#: pdfarranger_qt/dialogs.py
+msgid "Fit to paper"
+msgstr "An Papierformat anpassen"
 
-#: pdfarranger/splitter.py:61
+#: pdfarranger_qt/dialogs.py
+msgid "Relative"
+msgstr "Relativ"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Scale"
+msgstr "Skalieren"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Scale & Add margins"
+msgstr "Skalieren & Ränder hinzufügen"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Crop & Add margins"
+msgstr "Seitenränder beschneiden & hinzufügen"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Fit mode"
+msgstr "Anpassungsmodus"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Scale factor"
+msgstr "Vergrößerung"
+
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+msgid "Hide Margins"
+msgstr "Ränder verbergen"
+
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+msgid "Crop Margins"
+msgstr "Seitenränder beschneiden"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Left"
+msgstr "Links"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Right"
+msgstr "Rechts"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Top"
+msgstr "Oben"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Bottom"
+msgstr "Unten"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Margins"
+msgstr ""
+
+#: pdfarranger_qt/dialogs.py
+msgid "Same for all sides"
+msgstr ""
+
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+msgid "Split Pages"
+msgstr "Seiten teilen"
+
+#: pdfarranger_qt/dialogs.py
 msgid "Vertical Splits"
 msgstr "Senkrechte Teilungen"
 
-#: pdfarranger/pageutils.py:554
-msgid "Vertical offset"
-msgstr "Vertikale Verschiebung"
+#: pdfarranger_qt/dialogs.py
+msgid "Horizontal Splits"
+msgstr "Waagerechte Teilungen"
 
-#: pdfarranger/pageutils.py:139
-msgid "Width"
-msgstr "Breite"
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+msgid "Pages per Sheet"
+msgstr ""
 
-#: pdfarranger/splitter.py:88
-msgid "Width in %"
-msgstr "Breite in %"
+#: pdfarranger_qt/dialogs.py
+msgid "Automatic"
+msgstr ""
 
-#: pdfarranger/pdfarranger.py:1237
-msgid "Your changes will be lost if you don’t save them."
-msgstr "Änderungen gehen verloren, wenn sie nicht gespeichert werden."
+#: pdfarranger_qt/dialogs.py
+msgid "Automatic turns the sheet sideways when that lets the pages come out larger."
+msgstr ""
 
-#: data/pdfarranger.ui:144
-msgid "Zoom In"
-msgstr "Vergrößern"
+#: pdfarranger_qt/dialogs.py
+msgid "Empty space left around each page."
+msgstr ""
 
-#: data/pdfarranger.ui:167
-msgid "Zoom Out"
-msgstr "Verkleinern"
+#: pdfarranger_qt/dialogs.py
+msgid "Layout"
+msgstr ""
 
-#: data/menu.ui:287
-msgid "Zoom _Fit"
-msgstr "Zoom _einpassen"
+#: pdfarranger_qt/dialogs.py
+msgid "Columns"
+msgstr "Spalten"
 
-#: data/menu.ui:279
-msgid "Zoom _In"
-msgstr "Ver_größern"
+#: pdfarranger_qt/dialogs.py
+msgid "Rows"
+msgstr "Zeilen"
 
-#: data/menu.ui:283
-msgid "Zoom _Out"
-msgstr "Ver_kleinern"
+#: pdfarranger_qt/dialogs.py
+msgid "Sheet"
+msgstr ""
 
-#: data/menu.ui:331
-msgid "_About"
-msgstr "Über _PDF Arranger"
+#: pdfarranger_qt/dialogs.py
+msgid "Gap"
+msgstr ""
 
-#: pdfarranger/pageutils.py:1012
-msgid "_Apply"
-msgstr "An_wenden"
+#: pdfarranger_qt/dialogs.py
+msgid "Appearance"
+msgstr ""
 
-#: data/menu.ui:218 data/menu.ui:514
-msgid "_Booklet"
-msgstr "Broschüre"
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/reader.py
+msgid "Bold"
+msgstr ""
 
-#: pdfarranger/config.py:318 pdfarranger/metadata.py:216
-#: pdfarranger/pageutils.py:327 pdfarranger/pdfarranger.py:1229
-#: pdfarranger/pdfarranger.py:1238 pdfarranger/pdfarranger.py:1360
-#: pdfarranger/pdfarranger.py:1427
-msgid "_Cancel"
-msgstr "_Abbrechen"
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/reader.py
+msgid "Italic"
+msgstr ""
 
-#: pdfarranger/pdfarranger.py:1248 data/menu.ui:337
-msgid "_Close"
-msgstr "_Schließen"
+#: pdfarranger_qt/dialogs.py
+msgid "Font"
+msgstr ""
 
-#: data/menu.ui:118 data/menu.ui:359
-msgid "_Copy"
-msgstr "_Kopieren"
+#: pdfarranger_qt/dialogs.py
+msgid "Size"
+msgstr ""
 
-#: data/menu.ui:186 data/menu.ui:482
-msgid "_Crop Margins…"
-msgstr "Ränder _beschneiden …"
+#: pdfarranger_qt/dialogs.py
+msgid "Colour"
+msgstr ""
 
-#: data/menu.ui:110 data/menu.ui:351
-msgid "_Delete"
-msgstr "_Entfernen"
+#: pdfarranger_qt/dialogs.py
+msgid "Opacity"
+msgstr ""
 
-#: data/menu.ui:239 data/menu.ui:429
-msgid "_Deselect All"
-msgstr "Auswahl au_fheben"
+#: pdfarranger_qt/dialogs.py
+msgid "Position"
+msgstr ""
 
-#: data/menu.ui:107
-msgid "_Edit"
-msgstr "_Bearbeiten"
+#: pdfarranger_qt/dialogs.py
+msgid "Angle"
+msgstr ""
 
-#: data/menu.ui:157 data/menu.ui:403
-msgid "_Explode into Images"
-msgstr "In Bilder aufteilen"
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+msgid "Add Page Numbers"
+msgstr ""
 
-#: data/menu.ui:155 data/menu.ui:400
-msgid "_Extract"
-msgstr "_Extrahieren"
+#: pdfarranger_qt/dialogs.py
+#, python-format
+msgid "%s is replaced by the page number, %s by the number of pages."
+msgstr ""
 
-#: data/menu.ui:297
-msgid "_Find"
-msgstr "_Suchen"
+#: pdfarranger_qt/dialogs.py
+msgid "Leave the first page unnumbered"
+msgstr ""
 
-#: data/menu.ui:300
-msgid "_Find…"
-msgstr "_Suchen…"
+#: pdfarranger_qt/dialogs.py
+msgid "It is still counted; a title page just does not carry a number."
+msgstr ""
 
-#: data/menu.ui:220 data/menu.ui:516
-msgid "_Generate (imposition)"
-msgstr "_Erzeugen"
+#: pdfarranger_qt/dialogs.py
+msgid "Format"
+msgstr ""
 
-#: data/menu.ui:190 data/menu.ui:486
-msgid "_Hide Margins…"
-msgstr "_Ränder verbergen …"
+#: pdfarranger_qt/dialogs.py
+msgid "Start at"
+msgstr ""
 
-#: data/menu.ui:30
-msgid "_Import"
-msgstr "_Importieren"
+#: pdfarranger_qt/dialogs.py
+msgid "Numbering"
+msgstr ""
 
-#: data/menu.ui:264 data/menu.ui:454
-msgid "_Invert Selection"
-msgstr "Auswahl _umkehren"
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+msgid "Add Watermark"
+msgstr ""
 
-#: data/menu.ui:210 data/menu.ui:506
-msgid "_Merge Pages…"
-msgstr "Seiten _zusammenfügen …"
+#: pdfarranger_qt/dialogs.py
+msgid "DRAFT"
+msgstr ""
 
-#: data/menu.ui:36
+#: pdfarranger_qt/dialogs.py
+msgid "Text"
+msgstr ""
+
+#: pdfarranger_qt/dialogs.py
+msgid "Watermark"
+msgstr ""
+
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+msgid "Merge Pages"
+msgstr "Seiten zusammenfügen"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Overlay"
+msgstr "Overlay"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Underlay"
+msgstr "Hintergrund"
+
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/stamp.py
+msgid "Centre"
+msgstr ""
+
+#: pdfarranger_qt/dialogs.py
+msgid "Middle"
+msgstr ""
+
+#: pdfarranger_qt/dialogs.py
+msgid "Horizontal"
+msgstr "Horizontal"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Vertical"
+msgstr "Vertikal"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Edit properties"
+msgstr "Eigenschaften ändern"
+
+#: pdfarranger_qt/dialogs.py
+msgid "System"
+msgstr ""
+
+#: pdfarranger_qt/dialogs.py
+msgid "Light"
+msgstr ""
+
+#: pdfarranger_qt/dialogs.py
+msgid "Dark"
+msgstr ""
+
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+msgid "Preferences"
+msgstr "Einstellungen"
+
+#: pdfarranger_qt/dialogs.py
+msgid "System setting"
+msgstr "Systemeinstellung"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Language"
+msgstr "Sprache"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Theme"
+msgstr "Erscheinungsbild"
+
+#: pdfarranger_qt/dialogs.py
+msgid "General"
+msgstr ""
+
+#: pdfarranger_qt/dialogs.py
+msgid "Fit to page"
+msgstr ""
+
+#: pdfarranger_qt/dialogs.py
+msgid "Actual size"
+msgstr ""
+
+#: pdfarranger_qt/dialogs.py
+msgid "Auto Rotate"
+msgstr "Automatisch drehen"
+
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Pages are rasterised at this resolution before being sent to the printer. "
+"Lower it if printing is slow: the printer driver has less to process."
+msgstr ""
+
+#: pdfarranger_qt/dialogs.py
+msgid "Scale mode"
+msgstr ""
+
+#: pdfarranger_qt/dialogs.py
+msgid "Pixels/inch:"
+msgstr "Pixel/Inch:"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Printing"
+msgstr "Drucken"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Preserve document information from the first file opened"
+msgstr ""
+
+#: pdfarranger_qt/dialogs.py
+msgid "When checked: use document properties from the first file opened."
+msgstr ""
+
+#: pdfarranger_qt/dialogs.py
+msgid "When unchecked: merge bookmarks from all documents."
+msgstr ""
+
+#: pdfarranger_qt/dialogs.py
+msgid "Optimize for the web (linearize)"
+msgstr ""
+
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Lay the file out so a browser can show page one before the rest has "
+"downloaded."
+msgstr ""
+
+#: pdfarranger_qt/dialogs.py
+msgid "Compress"
+msgstr ""
+
+#: pdfarranger_qt/dialogs.py
+msgid "Recompress the file's streams and pack its objects together."
+msgstr ""
+
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"How much this saves depends on the file: one full of already-compressed "
+"images will barely shrink."
+msgstr ""
+
+#: pdfarranger_qt/dialogs.py
+msgid "Saving/exporting to single file"
+msgstr "Speichern/exportieren als einzelne Datei"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Greyscale"
+msgstr "Graustufen"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Image Export"
+msgstr "Bildexport"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Keyboard shortcuts"
+msgstr ""
+
+#: pdfarranger_qt/dialogs.py
+msgid "Viewer Preferences"
+msgstr ""
+
+#: pdfarranger_qt/dialogs.py
+msgid "Open showing:"
+msgstr ""
+
+#: pdfarranger_qt/dialogs.py
+msgid "Page layout:"
+msgstr ""
+
+#: pdfarranger_qt/dialogs.py
+msgid "On opening"
+msgstr ""
+
+#: pdfarranger_qt/dialogs.py
+msgid "Window"
+msgstr ""
+
+#: pdfarranger_qt/dialogs.py
+msgid "Readers are free to ignore all of this."
+msgstr ""
+
+#: pdfarranger_qt/dialogs.py
+msgid "Password"
+msgstr "Passwort"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Confirm password"
+msgstr ""
+
+#: pdfarranger_qt/dialogs.py
+msgid "Enter a password, or cancel to leave the document unencrypted."
+msgstr ""
+
+#: pdfarranger_qt/dialogs.py
+msgid "The passwords do not match."
+msgstr ""
+
+#: pdfarranger_qt/dialogs.py
+msgid "Reset"
+msgstr ""
+
+#: pdfarranger_qt/dialogs.py
+msgid "Description"
+msgstr ""
+
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"PDF Arranger merges, splits, rearranges, rotates and crops PDF documents. "
+"Everything happens in memory against the pages you can see; nothing is "
+"written until you save."
+msgstr ""
+
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"It is a front end for pikepdf. Page content is never rewritten — only page "
+"order, geometry and composition."
+msgstr ""
+
+#: pdfarranger_qt/dialogs.py
+msgid "Command line"
+msgstr ""
+
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Files given on the command line are opened as one document. "
+"<code>--version</code> prints the version and exits."
+msgstr ""
+
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+msgid "Reading"
+msgstr ""
+
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"The application opens in <b>read mode</b>: a continuous page view for "
+"reading the document rather than rearranging it. <b>View ▸ Arrange Mode</b> "
+"(Ctrl+E) swaps to the thumbnail grid and back."
+msgstr ""
+
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Reading shows the document <i>as edited</i>: rotations, crops, deletions and"
+" reordering are all applied, so what you read is what you would get if you "
+"saved. Page-editing commands are disabled while reading — bookmarks are the "
+"exception, and are edited here and nowhere else."
+msgstr ""
+
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"The page you are on follows you between the two modes. Switching to read "
+"mode opens at the page selected in the grid, the first of them if several "
+"are selected; switching back scrolls the grid to the page you were reading, "
+"without disturbing what you had selected. With nothing selected, reading "
+"resumes where you left off — your place in each document is remembered "
+"between visits."
+msgstr ""
+
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"The toolbar shows which page you are on and how many there are; type a "
+"number into it to jump there, or use <b>Ctrl+G</b>."
+msgstr ""
+
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>View ▸ Continuous Scroll</b> is on by default; turning it off shows one "
+"page at a time. <b>View ▸ Facing Pages</b> puts two pages side by side, the "
+"way a book falls open. Both settings are remembered."
+msgstr ""
+
+#: pdfarranger_qt/dialogs.py
+msgid "Moving around a document"
+msgstr ""
+
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"One rule for the arrow keys: <b>the modifier decides what moves</b>. Nothing"
+" scrolls the view, Option (Alt) moves the text cursor, Shift extends the "
+"selection, Command (Ctrl) jumps to an edge, and Fn — Page Up, Page Down, "
+"Home and End — jumps further. None of it changes according to whether a text"
+" cursor happens to be on the page."
+msgstr ""
+
+#: pdfarranger_qt/dialogs.py
+msgid "Keys"
+msgstr ""
+
+#: pdfarranger_qt/dialogs.py
+msgid "Continuous"
+msgstr ""
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/viewer.py
+msgid "One page at a time"
+msgstr "Eine Seite auf einmal"
+
+#: pdfarranger_qt/dialogs.py
+msgid "scroll one line"
+msgstr ""
+
+#: pdfarranger_qt/dialogs.py
+msgid "top of the previous / next page"
+msgstr ""
+
+#: pdfarranger_qt/dialogs.py
+msgid "previous / next page"
+msgstr ""
+
+#: pdfarranger_qt/dialogs.py
+msgid "scroll one screen"
+msgstr ""
+
+#: pdfarranger_qt/dialogs.py
+msgid "start / end of the document"
+msgstr ""
+
+#: pdfarranger_qt/dialogs.py
+msgid "move the text cursor, by character or line"
+msgstr ""
+
+#: pdfarranger_qt/dialogs.py
+msgid "extend the selection, by character or line"
+msgstr ""
+
+#: pdfarranger_qt/dialogs.py
+msgid "move the text cursor one word"
+msgstr ""
+
+#: pdfarranger_qt/dialogs.py
+msgid "extend the selection one word"
+msgstr ""
+
+#: pdfarranger_qt/dialogs.py
+msgid "cursor to the start / end of the line"
+msgstr ""
+
+#: pdfarranger_qt/dialogs.py
+msgid "cursor to the start / end of the document"
+msgstr ""
+
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Add Shift to a Command or Option combination to extend the selection instead"
+" of moving — <b>Shift+Command+→</b> selects to the end of the line. Adding "
+"Option works by the word rather than the character. On Windows and Linux, "
+"read Command as Ctrl and Option as Alt; the table is the same everywhere."
+msgstr ""
+
+#: pdfarranger_qt/dialogs.py
+msgid "Selecting and copying text"
+msgstr ""
+
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Drag across the page to select text, across page boundaries if you keep "
+"going. <b>Double-click</b> selects a word. <b>Ctrl/Cmd+C</b> copies, "
+"<b>Ctrl/Cmd+A</b> selects the text of the page you are on, and <b>Esc</b> "
+"clears the selection. The same commands are on the right-click menu."
+msgstr ""
+
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>Shift+click</b> extends an existing selection to where you clicked. The "
+"end you are moving grows out to a whole word, because a single click is an "
+"imprecise way to point at one character; the end you started from stays "
+"exactly where you put it. Dragging selects by character throughout, since "
+"you can watch it and stop where you like."
+msgstr ""
+
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Clicking on text leaves a blinking <b>text cursor</b>. That is what "
+"Shift+arrow extends from, and what the Option and Command combinations above"
+" move. It stays where you put it — scrolling, paging and clicking off the "
+"page all leave it alone — until you press Esc or open another document."
+msgstr ""
+
+#: pdfarranger_qt/dialogs.py
+msgid "Following links"
+msgstr ""
+
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Click a link to follow it. Links to a page in the same document jump there; "
+"links to the web open in your browser. Hovering over one shows where it "
+"goes, which is worth reading before you click: many links in a PDF are not "
+"written by its author at all but inferred from the text, so what a link "
+"points at is not always what the words appear to say."
+msgstr ""
+
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Only ordinary web and mail links are handed to the system — http, https, "
+"mailto and ftp. A document is a file that arrived from somewhere, and "
+"anything else it asks to open is refused and reported rather than acted on."
+msgstr ""
+
+#: pdfarranger_qt/dialogs.py
+msgid "Right-clicking a link offers <b>Open Link</b> and <b>Copy Link Address</b>."
+msgstr ""
+
+#: pdfarranger_qt/dialogs.py
+msgid "Bookmarks"
+msgstr ""
+
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"The sidebar shows the document's bookmarks. Click one to jump to it. "
+"Everything below is on the sidebar's right-click menu, and every command can"
+" be undone."
+msgstr ""
+
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>Add Bookmark Here</b> makes one pointing at the page you are reading, "
+"named after whatever text you have selected — so select a heading, then add."
+" With nothing selected it is named after the page. <b>Add Child Bookmark "
+"Here</b> does the same, nested under the entry you clicked."
+msgstr ""
+
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>Rename</b> edits the title in place. <b>Re-home to This Page</b> points "
+"an existing bookmark at the page you are on, keeping its title. "
+"<b>Delete</b> removes an entry and <i>promotes</i> its children into its "
+"place; <b>Delete with Children</b> removes the whole branch."
+msgstr ""
+
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Drag entries within the sidebar to re-nest or reorder them. <b>Expand All "
+"Children</b> and <b>Collapse All Children</b> open or shut a whole branch at"
+" once."
+msgstr ""
+
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>Style</b> sets a bookmark bold or italic, or gives it a colour, as the "
+"tree shows."
+msgstr ""
+
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"A bookmark whose page has been deleted is <b>greyed out</b> rather than "
+"removed: its title may still be worth keeping, and you can point it "
+"somewhere else with Re-home. Undoing the deletion reconnects it. <b>Delete "
+"Dangling Bookmarks</b> clears them all out; it leaves alone any entry that "
+"points nowhere on purpose, which is a legitimate way to write a heading."
+msgstr ""
+
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Bookmark edits are part of the document and are written when you save, along"
+" with each entry's colour and style and which branches are left open. The "
+"one thing that cannot be saved is a bookmark with no page: there is no way "
+"to record “points at a page that is gone”, so it comes back as a heading "
+"with its title intact."
+msgstr ""
+
+#: pdfarranger_qt/dialogs.py
+msgid "Arranging pages"
+msgstr ""
+
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Drag pages to reorder them. Hold <b>Ctrl</b> while dropping to copy instead "
+"of move."
+msgstr ""
+
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Drag pages onto another window of the application to copy them there, or use"
+" ordinary copy and paste."
+msgstr ""
+
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>Paste As Odd/Even Pages</b> interleaves the clipboard with the document —"
+" this is how two single-sided scans of a double-sided original are "
+"recombined. If the second scan came off a duplex feeder it will be in "
+"reverse order; use <b>Arrange ▸ Reverse Order</b> on it first."
+msgstr ""
+
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"To move pages a long way, use <b>Move to Start</b>, <b>Move to End</b> or "
+"<b>Move to Page…</b> rather than dragging — in a long document the far end "
+"is a great deal of scrolling away. They are on the Edit menu and on the "
+"right-click menu, and <b>Move to Page…</b> asks for the number the page "
+"should <i>become</i>."
+msgstr ""
+
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Prefer these to cut and paste for moving. A pasted page is a <i>new</i> page"
+" as far as the document is concerned, so any bookmarks pointing at the "
+"original are left behind with nowhere to go. Moving keeps the page itself, "
+"and its bookmarks come with it."
+msgstr ""
+
+#: pdfarranger_qt/dialogs.py
+msgid "Stamping and tiling"
+msgstr ""
+
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>Page ▸ Add Page Numbers…</b> and <b>Page ▸ Add Watermark…</b> draw text "
+"onto the selected pages. Both add a <i>layer</i> rather than rewriting the "
+"page, so both can be undone and neither touches the file you opened."
+msgstr ""
+
+#: pdfarranger_qt/dialogs.py
+#, python-brace-format
+msgid ""
+"Page numbers follow the arrangement, not the source document: they are "
+"numbered in the order the pages are in now. <code>{n}</code> in the format "
+"is the page number and <code>{total}</code> the number of pages, so "
+"<code>Page {n} of {total}</code> does what it looks like."
+msgstr ""
+
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>Arrange ▸ Pages per Sheet…</b> tiles several pages onto one, in reading "
+"order — the printer's <i>N-up</i>. The sheet turns sideways when that lets "
+"the pages come out larger, which is why two-up gives a landscape sheet and "
+"four-up does not."
+msgstr ""
+
+#: pdfarranger_qt/dialogs.py
+msgid "Saving a document"
+msgstr ""
+
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>Optimize for the web</b> in Preferences lays the saved file out so a "
+"browser can show the first page before the rest has arrived. <b>Compress</b>"
+" repacks its streams and objects; how much that saves depends entirely on "
+"the file, and one full of photographs will barely move."
+msgstr ""
+
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>File ▸ Remove All Metadata</b> is a switch, like Password: turn it on and"
+" the next save writes a document with no title, no author and no record of "
+"what produced it. Edit Properties greys out while it is on, because there "
+"would be nothing to edit."
+msgstr ""
+
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>File ▸ Viewer Preferences…</b> is how the saved document asks a reader to"
+" open it — with the bookmarks showing, two pages at a time, and so on. "
+"Readers are free to ignore all of it. The settings are read from the file "
+"you opened, so a document that already had them keeps them."
+msgstr ""
+
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>File ▸ Repair Document…</b> rebuilds a damaged PDF. It works on a file "
+"you pick rather than the one on screen, because the file worth repairing is "
+"usually one this application cannot open properly either. It reports what it"
+" found before writing anything."
+msgstr ""
+
+#: pdfarranger_qt/dialogs.py
+msgid "Mouse"
+msgstr ""
+
+#: pdfarranger_qt/dialogs.py
+msgid "<b>Ctrl + scroll</b> — zoom"
+msgstr ""
+
+#: pdfarranger_qt/dialogs.py
+msgid "<b>Shift + scroll</b> — scroll sideways"
+msgstr ""
+
+#: pdfarranger_qt/dialogs.py
+msgid "<b>Alt + scroll</b> — scroll exactly one row"
+msgstr ""
+
+#: pdfarranger_qt/dialogs.py
+msgid "<b>Double-click</b> — fit the page to the window, and back"
+msgstr ""
+
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>Click and drag</b> on empty space — rubber-band select; keep scrolling to"
+" extend it"
+msgstr ""
+
+#: pdfarranger_qt/dialogs.py
+msgid "Moving around the grid"
+msgstr ""
+
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>Arrow keys</b> move between pages, <b>Page Up</b> and <b>Page Down</b> "
+"move a screenful at a time, and <b>Home</b> and <b>End</b> jump to the first"
+" and last page. Hold <b>Shift</b> with any of them to extend the selection."
+msgstr ""
+
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>Fit One Page</b> (F) scales so a whole page fits in the window and shows "
+"one page per row — use it to work on a single page at a time. <b>Fit "
+"Multiple Pages</b> (Shift+M) uses the same scale but lets as many pages sit "
+"side by side as the window takes. <b>Fit Width</b> (Shift+F) fills the "
+"window across instead, which shows the page wider but taller than the "
+"window. Double-clicking the grid toggles Fit One Page on and off."
+msgstr ""
+
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"With pages selected, all three fit the selection rather than the whole "
+"document."
+msgstr ""
+
+#: pdfarranger_qt/dialogs.py
+msgid "Finding text"
+msgstr ""
+
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>Find</b> selects the pages that contain the phrase and boxes each hit on "
+"the thumbnail, so you can see where on the page it is. The boxes clear as "
+"soon as you change the document, since the pages they were drawn for may "
+"have moved."
+msgstr ""
+
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Every shortcut can be changed in <b>Edit ▸ Preferences ▸ Keyboard "
+"shortcuts</b>, where they are listed under the menu each one belongs to."
+msgstr ""
+
+#: pdfarranger_qt/dialogs.py
+msgid "Passwords"
+msgstr ""
+
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Opening an encrypted document asks for its password, which is remembered "
+"until the document is closed."
+msgstr ""
+
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>File ▸ Password</b> encrypts the document when it is next saved. It is a "
+"switch: turn it on and you are asked for a password, turn it off and the "
+"next save is unencrypted. The password is never written to your settings, so"
+" it applies to this session only — and if you forget it, the file cannot be "
+"recovered."
+msgstr ""
+
+#: pdfarranger_qt/dialogs.py
+msgid "Files"
+msgstr ""
+
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Settings are stored by Qt in the per-user location for this platform; on "
+"Windows that is the registry under "
+"<code>HKEY_CURRENT_USER\\Software\\pdfarranger</code>. There is no "
+"configuration file to edit by hand."
+msgstr ""
+
+#: pdfarranger_qt/dialogs.py
+msgid "Credits"
+msgstr ""
+
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"PDF Arranger Qt is a PySide6 port of PDF Arranger, which is itself derived "
+"from PDF-Shuffler. It is a separate project and not affiliated with either."
+msgstr ""
+
+#: pdfarranger_qt/dialogs.py
+msgid "Original authors: Konstantinos Poulios, Jerome Robert."
+msgstr ""
+
+#: pdfarranger_qt/dialogs.py
+msgid "Licensed under the GNU General Public License version 3 or later."
+msgstr ""
+
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+msgid "User Guide"
+msgstr ""
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Insert pages from another PDF or an image"
+msgstr ""
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Needs pages copied from a document"
+msgstr ""
+
+#: pdfarranger_qt/mainwindow.py
 msgid "_New Window"
 msgstr "_Neues Fenster"
 
-#: pdfarranger/config.py:319 pdfarranger/metadata.py:217
-#: pdfarranger/pageutils.py:328 pdfarranger/pdfarranger.py:3165
-msgid "_OK"
-msgstr "_Ok"
-
-#: pdfarranger/pdfarranger.py:1426 data/menu.ui:24
+#: pdfarranger_qt/mainwindow.py
 msgid "_Open"
 msgstr "_Öffnen"
 
-#: data/menu.ui:182 data/menu.ui:478
-msgid "_Page Size…"
-msgstr "_Seitengröße …"
+#: pdfarranger_qt/mainwindow.py
+msgid "_Import"
+msgstr "_Importieren"
 
-#: data/menu.ui:91
-msgid "_Print…"
-msgstr "_Drucken …"
-
-#: pdfarranger/pdfarranger.py:1285 data/menu.ui:343
-msgid "_Quit"
-msgstr "Been_den"
-
-#: data/menu.ui:102
-msgid "_Redo"
-msgstr "_Wiederholen"
-
-#: pdfarranger/pageutils.py:1012
-msgid "_Revert"
-msgstr "_Rückgängig machen"
-
-#: data/menu.ui:177 data/menu.ui:473
-msgid "_Rotate Right"
-msgstr "Nach _rechts drehen"
-
-#: pdfarranger/pdfarranger.py:1238 pdfarranger/pdfarranger.py:1359
-#: data/menu.ui:42
+#: pdfarranger_qt/mainwindow.py
 msgid "_Save"
 msgstr "_Speichern"
 
-#: data/menu.ui:231 data/menu.ui:421
-msgid "_Select"
-msgstr "Aus_wählen"
+#: pdfarranger_qt/mainwindow.py
+msgid "Save _As…"
+msgstr "Speichern _unter …"
 
-#: data/menu.ui:224 data/menu.ui:520
-msgid "_Split (unimposition)"
-msgstr "_Aufteilen"
+#: pdfarranger_qt/mainwindow.py
+msgid "E_xport Selection to a Single File…"
+msgstr "Auswahl in eine Datei e_xportieren…"
 
-#: data/menu.ui:206 data/menu.ui:502
-msgid "_Split Pages…"
-msgstr "_Seiten teilen…"
+#: pdfarranger_qt/mainwindow.py
+msgid "_Close"
+msgstr "_Schließen"
 
-#: data/menu.ui:98
+#: pdfarranger_qt/mainwindow.py
+msgid "_Quit"
+msgstr "Been_den"
+
+#: pdfarranger_qt/mainwindow.py
 msgid "_Undo"
 msgstr "_Rückgängig"
 
-#: data/menu.ui:276
+#: pdfarranger_qt/mainwindow.py
+msgid "_Redo"
+msgstr "_Wiederholen"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Select _All"
+msgstr "_Alles auswählen"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Invert Selection"
+msgstr "Auswahl _umkehren"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Delete"
+msgstr "_Entfernen"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Duplicate"
+msgstr ""
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Rotate _Left"
+msgstr "Nach _links drehen"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Rotate Right"
+msgstr "Nach _rechts drehen"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Zoom _In"
+msgstr "Ver_größern"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Zoom _Out"
+msgstr "Ver_kleinern"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Reset Zoom"
+msgstr ""
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Project on GitHub"
+msgstr ""
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_About"
+msgstr "Über _PDF Arranger"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Cu_t"
+msgstr "_Ausschneiden"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Copy"
+msgstr "_Kopieren"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Paste _After"
+msgstr "Einfügen _nach"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Paste _Before"
+msgstr "Einfügen _vor"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Paste As _Odd Pages"
+msgstr "Als _ungerade Seiten einfügen"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Paste As _Even Pages"
+msgstr "Als _gerade Seiten einfügen"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Deselect All"
+msgstr "Auswahl au_fheben"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Select _Odd Pages"
+msgstr "_Ungerade Seiten auswählen"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Select _Even Pages"
+msgstr "_Gerade Seiten auswählen"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "All From _Same File"
+msgstr "Alle der _gleichen Datei"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Same Page _Format"
+msgstr "Gleiches Seiten_format"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Move to Start"
+msgstr ""
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Move to End"
+msgstr ""
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Move to Page…"
+msgstr ""
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Reverse Order"
+msgstr ""
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Swap Odd/Even"
+msgstr ""
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Split (unimposition)"
+msgstr "_Aufteilen"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Export _All Pages to Individual Files…"
+msgstr "_Alle Seiten in Einzeldateien exportieren…"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Export Selection to _Individual Files…"
+msgstr "Auswahl in E_inzeldateien exportieren…"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Crop Margins…"
+msgstr "Ränder _beschneiden …"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Hide Margins…"
+msgstr "_Ränder verbergen …"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Page Size…"
+msgstr "_Seitengröße …"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Insert Blan_k Page…"
+msgstr "_Leere Seite einfügen …"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Split Pages…"
+msgstr "_Seiten teilen…"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Merge Pages…"
+msgstr "Seiten _zusammenfügen …"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Generate (imposition)"
+msgstr "_Erzeugen"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Pages per S_heet…"
+msgstr "Seiten pro _Blatt…"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Add Page N_umbers…"
+msgstr ""
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Add _Watermark…"
+msgstr "_Wasserzeichen hinzufügen…"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Pass_word"
+msgstr ""
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Edit _Properties"
+msgstr "Eige_nschaften ändern"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Viewer Preferences…"
+msgstr "_Anzeigeeinstellungen…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Remove All _Metadata"
+msgstr "Alle _Metadaten entfernen"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Repair Document…"
+msgstr "Dokument _reparieren…"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Crop White Borders"
+msgstr "Weiße Ränder beschneiden"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Export Selection to _PNG Images…"
+msgstr "Auswahl als _PNG Bilddateien exportieren…"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Export Selection to _JPG Images…"
+msgstr "Auswahl als _JPG Bilddateien exportieren…"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Export Selection to _Rasterized PDF (png)…"
+msgstr "Auswahl als ge_rastertes PDF (PNG) exportieren…"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Export Selection to _Rasterized PDF (jpg)…"
+msgstr "Auswahl als ge_rastertes PDF (JPG) exportieren…"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Copy Text"
+msgstr ""
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Copy _Image"
+msgstr "_Bild kopieren"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Explode into Images"
+msgstr "In Bilder aufteilen"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Print…"
+msgstr "_Drucken …"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Find…"
+msgstr "_Suchen…"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Find Next"
+msgstr "Nächsten suchen"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Find Previous"
+msgstr "Vorherigen suchen"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Find All"
+msgstr "Alle suchen"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Select _Range"
+msgstr "_Bereich auswählen"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Paste As O_verlay…"
+msgstr "Als _Overlay einfügen …"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Paste As _Underlay…"
+msgstr "Als _Hintergrund einfügen …"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Fit _One Page"
+msgstr ""
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Fit _Multiple Pages"
+msgstr ""
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Fit Width"
+msgstr ""
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Arrange Mode"
+msgstr ""
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Facing Pages"
+msgstr ""
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Continuous Scroll"
+msgstr ""
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Next Page"
+msgstr ""
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Previous Page"
+msgstr ""
+
+#: pdfarranger_qt/mainwindow.py
+msgid "First Page"
+msgstr ""
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Last Page"
+msgstr ""
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Go to Page…"
+msgstr ""
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Fullscreen"
+msgstr ""
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_File"
+msgstr ""
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Open Recent"
+msgstr ""
+
+#: pdfarranger_qt/mainwindow.py
+msgid "E_xport"
+msgstr "E_xportieren"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Edit"
+msgstr "_Bearbeiten"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Past_e Special"
+msgstr "Spezielles Ein_fügen"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Page"
+msgstr ""
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Extract"
+msgstr "_Extrahieren"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Arrange"
+msgstr ""
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Select"
+msgstr "Aus_wählen"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Booklet"
+msgstr "Broschüre"
+
+#: pdfarranger_qt/mainwindow.py
 msgid "_View"
 msgstr "_Ansicht"
 
-#: pdfarranger/pageutils.py:143 pdfarranger/pageutils.py:149
-#: pdfarranger/pageutils.py:468 pdfarranger/pageutils.py:518
-#: pdfarranger/pdfarranger.py:3240
-msgid "mm"
-msgstr "mm"
+#: pdfarranger_qt/mainwindow.py
+msgid "_Help"
+msgstr ""
 
-#: pdfarranger/core.py:730
-msgid "page"
-msgstr "Seite"
+#: pdfarranger_qt/mainwindow.py
+msgid "Read"
+msgstr ""
 
-#: pdfarranger/pdfarranger.py:1071
-msgid "untitled"
-msgstr "unbenannt"
+#: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "_Undo %s"
+msgstr ""
+
+#: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "_Redo %s"
+msgstr ""
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "%d page selected"
+msgid_plural "%d pages selected"
+msgstr[0] "%d Seite ausgewählt"
+msgstr[1] "%d Seiten ausgewählt"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Untitled"
+msgstr ""
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Password required"
+msgstr "Passwort wird benötigt"
+
+#: pdfarranger_qt/mainwindow.py
+#, python-brace-format
+msgid "The document “{}” is locked and requires a password before it can be opened."
+msgstr ""
+"Das Dokument »{}« ist gesperrt und ein Passwort wird benötigt, um es zu "
+"öffnen."
+
+#: pdfarranger_qt/mainwindow.py
+msgid "The password will be remembered until you close PDF Arranger."
+msgstr "Das Passwort wird gespeichert, bis PDF Arranger geschlossen wird."
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Importing…"
+msgstr ""
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Cancel"
+msgstr ""
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Import"
+msgstr "Importieren"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "No recent files"
+msgstr ""
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Clear Menu"
+msgstr ""
+
+#: pdfarranger_qt/mainwindow.py
+msgid "This file is no longer there:"
+msgstr ""
+
+#: pdfarranger_qt/mainwindow.py
+msgid "This document cannot be read."
+msgstr ""
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Go to Page"
+msgstr ""
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Page number:"
+msgstr ""
+
+#: pdfarranger_qt/mainwindow.py
+msgid "No document"
+msgstr ""
+
+#: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "%d page"
+msgid_plural "%d pages"
+msgstr[0] ""
+msgstr[1] ""
+
+#: pdfarranger_qt/mainwindow.py
+#, python-brace-format
+msgid "of {}"
+msgstr ""
+
+#: pdfarranger_qt/mainwindow.py
+msgid "The document will not be encrypted."
+msgstr ""
+
+#: pdfarranger_qt/mainwindow.py
+msgid "The document will be encrypted when it is saved."
+msgstr ""
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Could not open a new window."
+msgstr ""
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Open"
+msgstr "Öffnen"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Save As…"
+msgstr "Speichern unter …"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Export…"
+msgstr "Exportieren…"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "There is nothing to save."
+msgstr ""
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Could not save:"
+msgstr ""
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Saved"
+msgstr ""
+
+#: pdfarranger_qt/mainwindow.py
+msgid "This document has unsaved changes."
+msgstr ""
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Save before continuing?"
+msgstr ""
+
+#: pdfarranger_qt/mainwindow.py pdfarranger_qt/reader.py
+msgid "Delete"
+msgstr ""
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Cut"
+msgstr ""
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Paste"
+msgstr ""
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Move to Page"
+msgstr ""
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Move"
+msgstr ""
+
+#: pdfarranger_qt/mainwindow.py
+msgid "The page selection is not contiguous. Cannot unimpose."
+msgstr "Seitenauswahl ist nicht fortlaufend. Kann nicht aufgeteilt werden."
+
+#: pdfarranger_qt/mainwindow.py
+msgid "All pages must have the same size."
+msgstr "Alle Seiten müssen die gleiche Größe haben."
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Split Booklet"
+msgstr ""
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Overwrite existing files?"
+msgstr ""
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Blank page"
+msgstr ""
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Copy the pages you want to merge in first."
+msgstr ""
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Generate Booklet"
+msgstr ""
+
+#: pdfarranger_qt/mainwindow.py
+msgid "The page selection is not contiguous."
+msgstr ""
+
+#: pdfarranger_qt/mainwindow.py
+msgid "All metadata will be removed when the document is saved."
+msgstr ""
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Metadata will be kept."
+msgstr ""
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Repair Document…"
+msgstr ""
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Write a rebuilt copy?"
+msgstr ""
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Save Repaired Document"
+msgstr ""
+
+#: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "%d image written"
+msgid_plural "%d images written"
+msgstr[0] ""
+msgstr[1] ""
+
+#: pdfarranger_qt/mainwindow.py
+msgid "The page has no text."
+msgstr ""
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Copied"
+msgstr ""
+
+#: pdfarranger_qt/mainwindow.py
+msgid "The page has no image."
+msgstr ""
+
+#: pdfarranger_qt/mainwindow.py
+msgid "The page has several images. Use \"Explode into Images\" first.\""
+msgstr "Die Seite hat mehrere Bilder. Verwenden Sie zunächst »In Bilder aufteilen«."
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Explode into Images"
+msgstr ""
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Printing…"
+msgstr "Drucken…"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Finishing…"
+msgstr ""
+
+#: pdfarranger_qt/mainwindow.py
+msgid "The printer driver is processing the job."
+msgstr ""
+
+#: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "%d page printed"
+msgid_plural "%d pages printed"
+msgstr[0] ""
+msgstr[1] ""
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Find"
+msgstr ""
+
+#: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "%d page matches"
+msgid_plural "%d pages match"
+msgstr[0] ""
+msgstr[1] ""
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Duplicate"
+msgstr ""
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Rotate"
+msgstr ""
+
+#: pdfarranger_qt/metadata.py
+msgid "Title"
+msgstr "Titel"
+
+#: pdfarranger_qt/metadata.py
+msgid "Subject"
+msgstr "Thema"
+
+#: pdfarranger_qt/metadata.py
+msgid "Keywords"
+msgstr "Schlagworte"
+
+#: pdfarranger_qt/metadata.py
+msgid "Producer"
+msgstr "Hersteller"
+
+#: pdfarranger_qt/metadata.py
+msgid "Creator"
+msgstr "Ersteller"
+
+#: pdfarranger_qt/metadata.py
+msgid "Creator tool"
+msgstr "Erstellungswerkzeug"
+
+#: pdfarranger_qt/metadata.py
+msgid "Created"
+msgstr "Erstellt"
+
+#: pdfarranger_qt/metadata.py
+msgid "Modified"
+msgstr "Geändert"
+
+#: pdfarranger_qt/nup.py
+msgid "2 pages per sheet"
+msgstr ""
+
+#: pdfarranger_qt/nup.py
+msgid "4 pages per sheet"
+msgstr ""
+
+#: pdfarranger_qt/nup.py
+msgid "6 pages per sheet"
+msgstr ""
+
+#: pdfarranger_qt/nup.py
+msgid "8 pages per sheet"
+msgstr ""
+
+#: pdfarranger_qt/nup.py
+msgid "9 pages per sheet"
+msgstr ""
+
+#: pdfarranger_qt/nup.py
+msgid "16 pages per sheet"
+msgstr ""
+
+#: pdfarranger_qt/reader.py
+msgid "Bookmark Colour"
+msgstr ""
+
+#: pdfarranger_qt/reader.py
+msgid "Add Bookmark Here"
+msgstr ""
+
+#: pdfarranger_qt/reader.py
+msgid "Add Child Bookmark Here"
+msgstr ""
+
+#: pdfarranger_qt/reader.py
+msgid "Re-home to This Page"
+msgstr ""
+
+#: pdfarranger_qt/reader.py
+msgid "Rename"
+msgstr ""
+
+#: pdfarranger_qt/reader.py
+msgid "Style"
+msgstr ""
+
+#: pdfarranger_qt/reader.py
+msgid "Colour…"
+msgstr ""
+
+#: pdfarranger_qt/reader.py
+msgid "Default Colour"
+msgstr ""
+
+#: pdfarranger_qt/reader.py
+msgid "Expand All Children"
+msgstr ""
+
+#: pdfarranger_qt/reader.py
+msgid "Collapse All Children"
+msgstr ""
+
+#: pdfarranger_qt/reader.py
+msgid "Delete with Children"
+msgstr ""
+
+#: pdfarranger_qt/reader.py
+msgid "Delete Dangling Bookmarks"
+msgstr ""
+
+#: pdfarranger_qt/reader.py
+msgid "Nothing to read."
+msgstr ""
+
+#: pdfarranger_qt/reader.py
+#, python-brace-format
+msgid "Page {} of {}"
+msgstr ""
+
+#: pdfarranger_qt/reader.py
+msgid "Move Bookmark"
+msgstr ""
+
+#: pdfarranger_qt/reader.py
+msgid "This bookmark's page is no longer in the document"
+msgstr ""
+
+#: pdfarranger_qt/reader.py
+msgid "This bookmark does not point at a page"
+msgstr ""
+
+#: pdfarranger_qt/reader.py
+msgid "Rename Bookmark"
+msgstr ""
+
+#: pdfarranger_qt/reader.py
+msgid "Add Child Bookmark"
+msgstr ""
+
+#: pdfarranger_qt/reader.py
+msgid "Add Bookmark"
+msgstr ""
+
+#: pdfarranger_qt/reader.py
+msgid "Bookmark Style"
+msgstr ""
+
+#: pdfarranger_qt/reader.py
+msgid "Re-home Bookmark"
+msgstr ""
+
+#: pdfarranger_qt/reader.py
+msgid "Delete Bookmark"
+msgstr ""
+
+#: pdfarranger_qt/reader.py
+msgid "Delete Bookmark and Children"
+msgstr ""
+
+#: pdfarranger_qt/repair.py
+msgid "This file cannot be read, even with recovery."
+msgstr ""
+
+#: pdfarranger_qt/repair.py
+msgid "No damage found; the file reads cleanly."
+msgstr ""
+
+#: pdfarranger_qt/repair.py
+msgid "Damaged, and recoverable."
+msgstr ""
+
+#: pdfarranger_qt/repair.py
+msgid "The file cannot be read."
+msgstr ""
+
+#: pdfarranger_qt/stamp.py
+msgid "Top left"
+msgstr ""
+
+#: pdfarranger_qt/stamp.py
+msgid "Top centre"
+msgstr ""
+
+#: pdfarranger_qt/stamp.py
+msgid "Top right"
+msgstr ""
+
+#: pdfarranger_qt/stamp.py
+msgid "Bottom left"
+msgstr ""
+
+#: pdfarranger_qt/stamp.py
+msgid "Bottom centre"
+msgstr ""
+
+#: pdfarranger_qt/stamp.py
+msgid "Bottom right"
+msgstr ""
+
+# machine translation, unreviewed
+#: pdfarranger_qt/viewer.py
+msgid "Viewer default"
+msgstr "Standard des Betrachters"
+
+#: pdfarranger_qt/viewer.py
+msgid "No side panel"
+msgstr ""
+
+# machine translation, unreviewed
+#: pdfarranger_qt/viewer.py
+msgid "Bookmarks panel"
+msgstr "Lesezeichenleiste"
+
+#: pdfarranger_qt/viewer.py
+msgid "Page thumbnails"
+msgstr ""
+
+# machine translation, unreviewed
+#: pdfarranger_qt/viewer.py
+msgid "Continuous scroll"
+msgstr "Fortlaufend blättern"
+
+#: pdfarranger_qt/viewer.py
+msgid "Two pages, odd on the left"
+msgstr ""
+
+#: pdfarranger_qt/viewer.py
+msgid "Two pages, odd on the right"
+msgstr ""
+
+#: pdfarranger_qt/viewer.py
+msgid "Facing pages, odd on the left"
+msgstr ""
+
+#: pdfarranger_qt/viewer.py
+msgid "Facing pages, odd on the right"
+msgstr ""
+
+#: pdfarranger_qt/viewer.py
+msgid "Hide the viewer's toolbar"
+msgstr ""
+
+#: pdfarranger_qt/viewer.py
+msgid "Hide the viewer's menu bar"
+msgstr ""
+
+#: pdfarranger_qt/viewer.py
+msgid "Centre the window on screen"
+msgstr ""
+
+#: pdfarranger_qt/viewer.py
+msgid "Show the title rather than the filename"
+msgstr ""
+
+#~ msgid "#Col"
+#~ msgstr "Spalte"
+
+#~ msgid "#Row"
+#~ msgstr "Zeile"
+
+#~ msgid "%"
+#~ msgstr "%"
+
+#~ msgid "% of height"
+#~ msgstr "% der Höhe"
+
+#~ msgid "% of width"
+#~ msgstr "% der Breite"
+
+#~ msgid "%s is a tool for rearranging and modifying PDF files."
+#~ msgstr "%s ist ein Werkzeug zum Neuordnen und Ändern von PDF-Dateien."
+
+#~ msgid "(Libhandy missing)"
+#~ msgstr "(Libhandy fehlt)"
+
+#~ msgid "(Requires restart)"
+#~ msgstr "(Erfordert Neustart)"
+
+#~ msgid "A file named \"%s\" already exists. Do you want to replace it?"
+#~ msgstr ""
+#~ "Eine Datei mit dem Namen »%s« "
+#~ "existiert bereits. Möchten Sie diese "
+#~ "ersetzen?"
+
+#~ msgid "All"
+#~ msgstr "Alles"
+
+#~ msgid "All files"
+#~ msgstr "Alle Dateien"
+
+#~ msgid "All supported files"
+#~ msgstr "Alle unterstützten Dateien"
+
+#~ msgid "Bottom to Top"
+#~ msgstr "Unten nach oben"
+
+#~ msgid "Clipboard image"
+#~ msgstr "Zwischenablage-Bild"
+
+#~ msgid "Copy _Text"
+#~ msgstr "_Text kopieren"
+
+#~ msgid ""
+#~ "Cropping/hiding does not remove any content"
+#~ " from the PDF file, it only hides"
+#~ " it."
+#~ msgstr ""
+#~ "Durch Beschneiden/Verbergen wird kein Inhalt "
+#~ "aus der PDF-Datei entfernt, er wird"
+#~ " nur verborgen."
+
+#~ msgid "Despite the warnings the document(s) should have no visible issues."
+#~ msgstr ""
+#~ "Trotz der Warnungen sollte(n) das/die "
+#~ "Dokument(e) keine sichtbaren Probleme aufweisen."
+
+#~ msgid "Discard changes and close?"
+#~ msgstr "Änderungen verwerfen und schließen?"
+
+#~ msgid "Discard changes and quit?"
+#~ msgstr "Änderungen verwerfen und beenden?"
+
+#~ msgid "Do not show this dialog again."
+#~ msgstr "Diesen Dialog nicht mehr anzeigen."
+
+#~ msgid "Do_n’t Save"
+#~ msgstr "_Nicht speichern"
+
+#~ msgid "Don't show warnings when saving again."
+#~ msgstr "Beim erneuten Speichern keine Warnungen anzeigen."
+
+#~ msgid "Dupl_icate"
+#~ msgstr "_Duplizieren"
+
+#~ msgid "Equal column width"
+#~ msgstr "Gleiche Spaltenbreite"
+
+#~ msgid "Equal row height"
+#~ msgstr "Gleiche Zeilenhöhe"
+
+#~ msgid "Exploding into images…"
+#~ msgstr "In Einzelbilder umwandeln…"
+
+#~ msgid "File(s) to open"
+#~ msgstr "Zu öffnende Datei(en)"
+
+#~ msgid "Find _All"
+#~ msgstr "_Alle suchen"
+
+#~ msgid "Find _Next"
+#~ msgstr "_Nächsten suchen"
+
+#~ msgid "Find _Previous"
+#~ msgstr "_Vorherigen suchen"
+
+#~ msgid "Fit to Full Page"
+#~ msgstr "An ganze Seite anpassen"
+
+#~ msgid "Fit to Printable Area"
+#~ msgstr "An Druckbereich anpassen"
+
+#~ msgid "For more info see"
+#~ msgstr "Weitere Informationen finden Sie im"
+
+#~ msgid "For more options see:"
+#~ msgstr "Weitere Optionen in der Konfigurationsdatei:"
+
+#~ msgid "Full_screen"
+#~ msgstr "Voll_bild"
+
+#~ msgid "GNU General Public License (GPL) Version 3."
+#~ msgstr "GNU General Public License (GPL) Version 3."
+
+#~ msgid "Height in %"
+#~ msgstr "Höhe in %"
+
+#~ msgid "Horizontal offset"
+#~ msgstr "Horizontale Verschiebung"
+
+#~ msgid "Img2pdf missing."
+#~ msgstr "Img2pdf nicht vorhanden"
+
+#~ msgid "Img2pdf support missing."
+#~ msgstr "Img2pdf Unterstützung nicht vorhanden."
+
+#~ msgid "Import…"
+#~ msgstr "Importieren …"
+
+#~ msgid "Invalid date format. Input discarded."
+#~ msgstr "Ungültiges Datumsformat. Eingabe verworfen."
+
+#~ msgid "JPEG images"
+#~ msgstr "JPEG-Dateien"
+
+#~ msgid "Left to Right"
+#~ msgstr "Links nach rechts"
+
+#~ msgid "Main Menu"
+#~ msgstr "Hauptmenü"
+
+#~ msgid "Maintainers and contributors"
+#~ msgstr "Hauptentwickler und Mitwirkende"
+
+#~ msgid "Margin"
+#~ msgstr "Seitenrand"
+
+#~ msgid "Merged page size:"
+#~ msgstr "Größe der zusammengefügten Seiten:"
+
+#~ msgid "Non-uniform page size - using max size"
+#~ msgstr "Uneinheitliche Seitengröße - die größte Seite ist maßgeblich"
+
+#~ msgid "None"
+#~ msgstr "Keine"
+
+#~ msgid "Note"
+#~ msgstr "Hinweis"
+
+#~ msgid "Note the limitations:"
+#~ msgstr "Beachten Sie die Einschränkungen:"
+
+#~ msgid "Open…"
+#~ msgstr "Öffnen…"
+
+#~ msgid "Optimize"
+#~ msgstr "Optimieren"
+
+#~ msgid "Outlines and links can be preserved only in certain cases."
+#~ msgstr ""
+#~ "Inhaltsverzeichnisse und Verweise könnnen nur "
+#~ "in bestimmten Fällen erhalten werden."
+
+#~ msgid ""
+#~ "PDF Arranger is a small python-gtk"
+#~ " application, which helps the user to"
+#~ " merge or split pdf documents and "
+#~ "rotate, crop and rearrange their pages "
+#~ "using an interactive and intuitive "
+#~ "graphical interface. It is a frontend "
+#~ "for pikepdf."
+#~ msgstr ""
+#~ "PDF Arranger ist eine kleine Python-"
+#~ "GTK-Anwendung, die dem Benutzer hilft, "
+#~ "PDF-Dokumente zusammenzuführen oder aufzuteilen "
+#~ "und ihre Seiten mit Hilfe einer "
+#~ "interaktiven und intuitiven grafischen Oberfläche"
+#~ " zu drehen, zuzuschneiden und neu "
+#~ "anzuordnen. Es ist ein Frontend für "
+#~ "Pikepdf."
+
+#~ msgid "PDF document is damaged"
+#~ msgstr "PDF-Dokument ist beschädigt"
+
+#~ msgid "PDF files"
+#~ msgstr "PDF-Dateien"
+
+#~ msgid "PNG images"
+#~ msgstr "PNG-Dateien"
+
+#~ msgid "Page Handling"
+#~ msgstr "Seitenhandhabung"
+
+#~ msgid "Page Order"
+#~ msgstr "Sortierung"
+
+#~ msgid "Page Size:"
+#~ msgstr "Seitengröße:"
+
+#~ msgid "Pasted data not valid. Aborting paste."
+#~ msgstr "Eingefügte Daten sind ungültig. Einfügen wird abgebrochen."
+
+#~ msgid "Pre_ferences"
+#~ msgstr "_Einstellungen"
+
+#~ msgid "Print the version of PDF Arranger and exit"
+#~ msgstr "PDF Arranger Version anzeigen und beenden"
+
+#~ msgid "Property"
+#~ msgstr "Eigenschaft"
+
+#~ msgid "Re_verse Order"
+#~ msgstr "Rei_henfolge umkehren"
+
+#~ msgid "Rendering Preview…"
+#~ msgstr "Vorschau erstellen…"
+
+#~ msgid "Rendering…"
+#~ msgstr "Vorschau erstellen…"
+
+#~ msgid "Replace"
+#~ msgstr "Ersetzen"
+
+#~ msgid "Retain document-level information of the first opened file"
+#~ msgstr "Dokumentinformationen der zuerst geöffneten Datei beibehalten"
+
+#~ msgid "Right to Left"
+#~ msgstr "Rechts nach links"
+
+#~ msgid "Rotate Left"
+#~ msgstr "Nach links drehen"
+
+#~ msgid "Rotate Right"
+#~ msgstr "Nach rechts drehen"
+
+#~ msgid "Running on %s"
+#~ msgstr "Betriebssystem: %s"
+
+#~ msgid "Save"
+#~ msgstr "Speichern"
+
+#~ msgid "Save As"
+#~ msgstr "Speichern unter"
+
+#~ msgid "Save changes before closing?"
+#~ msgstr "Änderungen vor dem Schließen speichern?"
+
+#~ msgid "Save changes before quitting?"
+#~ msgstr "Änderungen vor dem Beenden speichern?"
+
+#~ msgid "Save changes to “{}” before closing?"
+#~ msgstr "Änderungen an »{}« vor dem Schließen speichern?"
+
+#~ msgid "Save changes to “{}” before quitting?"
+#~ msgstr "Änderungen an »{}« vor dem Beenden speichern?"
+
+#~ msgid "Saving failed"
+#~ msgstr "Speichern fehlgeschlagen"
+
+#~ msgid "Saving produced some warnings"
+#~ msgstr "Speichern führte zu einigen Warnungen"
+
+#~ msgid "Saving…"
+#~ msgstr "Speichern…"
+
+#~ msgid "Scale mode:"
+#~ msgstr "Skalierung:"
+
+#~ msgid "Selected pages: "
+#~ msgstr "Ausgewählte Seiten: "
+
+#~ msgid "Show values"
+#~ msgstr "Werte anzeigen"
+
+#~ msgid "Software versions:"
+#~ msgstr "Softwareversionen:"
+
+#~ msgid "Supported image files"
+#~ msgstr "Unterstützte Bilddateien"
+
+#~ msgid "Top to Bottom"
+#~ msgstr "Oben nach unten"
+
+#~ msgid "User Manual"
+#~ msgstr "Benutzerhandbuch"
+
+#~ msgid "Value"
+#~ msgstr "Wert"
+
+#~ msgid "Vertical offset"
+#~ msgstr "Vertikale Verschiebung"
+
+#~ msgid "Width in %"
+#~ msgstr "Breite in %"
+
+#~ msgid "Your changes will be lost if you don’t save them."
+#~ msgstr "Änderungen gehen verloren, wenn sie nicht gespeichert werden."
+
+#~ msgid "Zoom In"
+#~ msgstr "Vergrößern"
+
+#~ msgid "Zoom Out"
+#~ msgstr "Verkleinern"
+
+#~ msgid "Zoom _Fit"
+#~ msgstr "Zoom _einpassen"
+
+#~ msgid "_Apply"
+#~ msgstr "An_wenden"
+
+#~ msgid "_Cancel"
+#~ msgstr "_Abbrechen"
+
+#~ msgid "_Find"
+#~ msgstr "_Suchen"
+
+#~ msgid "_OK"
+#~ msgstr "_Ok"
+
+#~ msgid "_Revert"
+#~ msgstr "_Rückgängig machen"
+
+#~ msgid "page"
+#~ msgstr "Seite"
+
+#~ msgid "untitled"
+#~ msgstr "unbenannt"
+
