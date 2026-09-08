@@ -1,833 +1,2710 @@
 # Slovenian translation for pdfarranger.
-# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# Copyright (C) 2023 THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the pdfarranger package.
 # Janez G <janezgac@gmail.com>, 2024.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: pdfarranger\n"
+"Project-Id-Version:  pdfarranger\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-02-24 20:19+0100\n"
+"POT-Creation-Date: 2026-09-07 19:17+0000\n"
 "PO-Revision-Date: 2023-06-06 13:27+0200\n"
 "Last-Translator: Janez G <janezgac@gmail.com>\n"
-"Language-Team: \n"
 "Language: sl_SI\n"
-"MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=UTF-8\n"
-"Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 3.0\n"
+"Language-Team: \n"
 "Plural-Forms: nplurals=4; plural=(n%100==1 ? 1 : n%100==2 ? 2 : n%100==3 || "
 "n%100==4 ? 3 : 0);\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: pdfarranger-qt tools/merge_translations.py\n"
+"Generated-By: Babel 2.18.0\n"
 
-#: pdfarranger/splitter.py:87
-msgid "#Col"
-msgstr "Št. stolpcev"
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py pdfarranger_qt/reader.py
+#, python-brace-format
+msgid "Page {}"
+msgstr "Stran {}"
 
-#: pdfarranger/splitter.py:87
-msgid "#Row"
-msgstr "Št. vrstic"
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Open Link"
+msgstr "Odpri povezavo"
 
-#: pdfarranger/pageutils.py:127 pdfarranger/pageutils.py:453
-#: pdfarranger/pageutils.py:455
-msgid "%"
-msgstr "%"
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Copy Link Address"
+msgstr "Kopiraj naslov povezave"
 
-#: pdfarranger/pageutils.py:176
-#, python-format
-msgid "% of height"
-msgstr "% višine"
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+#, python-brace-format
+msgid "Go to {}"
+msgstr "Pojdi na {}"
 
-#: pdfarranger/pageutils.py:176
-#, python-format
-msgid "% of width"
-msgstr "% širine"
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Follow Link"
+msgstr "Sledi povezavi"
 
-#: pdfarranger/pdfarranger.py:2764
-#, python-format
-msgid "%s is a tool for rearranging and modifying PDF files."
-msgstr "%s je orodje za prerazporejanje in spreminjanje datotek PDF."
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py pdfarranger_qt/mainwindow.py
+msgid "Copy"
+msgstr "Kopiraj"
 
-#: pdfarranger/config.py:262
-msgid "(Libhandy missing)"
-msgstr "(manjka Libhandy)"
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Select All"
+msgstr "Izberi vse"
 
-#: pdfarranger/config.py:254
-msgid "(Requires restart)"
-msgstr "(Potreben pozagon)"
-
-#: pdfarranger/pdfarranger.py:1144
-#, python-format
-msgid "A file named \"%s\" already exists. Do you want to replace it?"
-msgstr "Datoteka z imenom \"%s\" že obstaja. Ali jo želite nadomestiti?"
-
-#: data/menu.ui:227 data/menu.ui:391
-msgid "All From _Same File"
-msgstr "V_se iz iste datoteke"
-
-#: pdfarranger/pdfarranger.py:518
-msgid "All files"
-msgstr "Vse datoteke"
-
-#: pdfarranger/pdfarranger.py:470
-msgid "All pages must have the same size."
-msgstr "Vse strani morajo biti enako velike."
-
-#: pdfarranger/pdfarranger.py:506
-msgid "All supported files"
-msgstr "Vse podprte datoteke"
-
-#: pdfarranger/exporter.py:563
-msgid "Auto Rotate"
-msgstr ""
-
-#: pdfarranger/pageutils.py:154
-msgid "Bottom"
-msgstr "Spodaj"
-
-#: pdfarranger/pageutils.py:386
-msgid "Bottom to Top"
-msgstr "Od spodaj do vrha"
-
-#: pdfarranger/core.py:569
-msgid "Clipboard image"
-msgstr "Slika iz medpomnilnika"
-
-#: pdfarranger/pageutils.py:369 pdfarranger/splitter.py:60
-msgid "Columns"
-msgstr "Stolpci"
-
-#: data/menu.ui:141 data/menu.ui:354
-msgid "Copy _Image"
-msgstr "Kop_iraj sliko"
-
-#: data/menu.ui:146 data/menu.ui:359
-msgid "Copy _Text"
-msgstr "Kopiraj _besedilo"
-
-#: pdfarranger/metadata.py:49
-msgid "Created"
-msgstr "Ustvarjeno"
-
-#: pdfarranger/metadata.py:47
-msgid "Creator"
-msgstr "Ustvarjalec"
-
-#: pdfarranger/metadata.py:48
-msgid "Creator tool"
-msgstr "Orodje ustvarjalca"
-
-#: pdfarranger/pageutils.py:846
-msgid "Crop Margins"
-msgstr "Obreži robove"
-
-#: data/menu.ui:174 data/menu.ui:432
-msgid "Crop White Borders"
-msgstr "Obreži bele robove"
-
-#: pdfarranger/pageutils.py:166 pdfarranger/pdfarranger.py:2730
-msgid ""
-"Cropping/hiding does not remove any content from the PDF file, it only hides "
-"it."
-msgstr ""
-"Z obrezovanjem/zakrivanjem ne izgubite vsebine PDF datoteke, temveč jo le "
-"skrijete"
-
-#: data/menu.ui:94 data/menu.ui:302
-msgid "Cu_t"
-msgstr "Iz_reži"
-
-#: pdfarranger/pdfarranger.py:1258
-msgid "Despite the warnings the document(s) should have no visible issues."
-msgstr "Kljub opozorilom naj dokumenti ne bi imeli vidnih težav."
-
-#: pdfarranger/pdfarranger.py:993
-msgid "Discard changes and close?"
-msgstr "Želite zavreči spremembe in zapreti?"
-
-#: pdfarranger/pdfarranger.py:1030
-msgid "Discard changes and quit?"
-msgstr "Želite zavreči spremembe in zaustaviti program?"
-
-#: pdfarranger/pdfarranger.py:2737
-msgid "Do not show this dialog again."
-msgstr "Ne prikazuj več tega pogovornega okna."
-
-#: pdfarranger/pdfarranger.py:984
-msgid "Do_n’t Save"
-msgstr "_Ne shrani"
-
-#: pdfarranger/pdfarranger.py:1265
-msgid "Don't show warnings when saving again."
-msgstr "Med shranjevanjem ne prikazuj več opozoril."
-
-#: data/menu.ui:178 data/menu.ui:436
-msgid "Dupl_icate"
-msgstr "Po_dvoji"
-
-#: data/menu.ui:52 data/menu.ui:462
-msgid "E_xport"
-msgstr "Iz_vozi"
-
-#: data/menu.ui:55 data/menu.ui:465
-msgid "E_xport Selection to a Single File…"
-msgstr "Iz_vozi izbrano v eno datoteko …"
-
-#: data/menu.ui:266
-msgid "Edit _Properties"
-msgstr "Uredi _lastnosti"
-
-#: pdfarranger/metadata.py:202
-msgid "Edit properties"
-msgstr "Uredi lastnosti"
-
-#: pdfarranger/splitter.py:62
-msgid "Equal column width"
-msgstr "Enotna širina stolpcev"
-
-#: pdfarranger/splitter.py:62
-msgid "Equal row height"
-msgstr "Enotna višina vrstic"
-
-#: pdfarranger/pdfarranger.py:1792
-msgid "Exploding into images…"
-msgstr "Razstrelitev na slike …"
-
-#: data/menu.ui:60 data/menu.ui:470
-msgid "Export Selection to _Individual Files…"
-msgstr "Izvozi izbrano v _ločene datoteke …"
-
-#: data/menu.ui:65 data/menu.ui:475
-msgid "Export _All Pages to Individual Files…"
-msgstr "Izvozi v_se strani v ločene datoteke …"
-
-#: pdfarranger/pdfarranger.py:1102
-msgid "Export…"
-msgstr "Izvozi …"
-
-#: pdfarranger/core.py:571 pdfarranger/pdfarranger.py:1512
-msgid "File is neither pdf nor image"
-msgstr "Datoteka ni niti PDF, niti slika"
-
-#: pdfarranger/pdfarranger.py:300
-msgid "File(s) to open"
-msgstr "Datoteke za odpiranje"
-
-#: pdfarranger/exporter.py:561
-msgid "Fit to Full Page"
-msgstr ""
-
-#: pdfarranger/exporter.py:560
-msgid "Fit to Printable Area"
-msgstr ""
-
-#: pdfarranger/pdfarranger.py:2734
-msgid "For more info see"
-msgstr ""
-
-#: pdfarranger/config.py:271
-msgid "For more options see:"
-msgstr "Poglejte več možnosti:"
-
-#: data/menu.ui:259
-msgid "Full_screen"
-msgstr "Celoza_slonski način"
-
-#: pdfarranger/pdfarranger.py:2778
-msgid "GNU General Public License (GPL) Version 3."
-msgstr "Splošno GNU dovoljenje, različica 3."
-
-#: data/menu.ui:198 data/menu.ui:456
-msgid "Generate Booklet"
-msgstr "Ustvari knjižico"
-
-#: pdfarranger/pageutils.py:248 pdfarranger/pageutils.py:252
-#: pdfarranger/pageutils.py:334
-msgid "Height"
-msgstr "Višina"
-
-#: pdfarranger/splitter.py:88
-msgid "Height in %"
-msgstr "Višina v %"
-
-#: pdfarranger/pageutils.py:846
-msgid "Hide Margins"
-msgstr "Skrij robove"
-
-#: pdfarranger/pageutils.py:381
-msgid "Horizontal"
-msgstr "Vodoravno"
-
-#: pdfarranger/splitter.py:61
-msgid "Horizontal Splits"
-msgstr "Vodoravne delitve"
-
-#: pdfarranger/pageutils.py:452
-msgid "Horizontal offset"
-msgstr "Vodoravni odmik"
-
-#: pdfarranger/core.py:560
+#: pdfarranger_qt/core.py pdfarranger_qt/mainwindow.py
 msgid "Image files are only supported with img2pdf"
 msgstr "Slikovne datoteke so podprte le za img2pdf"
 
-#: pdfarranger/core.py:566
-msgid "Image format is not supported by img2pdf"
-msgstr "img2pdf ne podpira zapisa slike"
-
-#: pdfarranger/pdfarranger.py:1789
-msgid "Img2pdf missing."
-msgstr "Img2pdf manjka"
-
-#: data/pdfarranger.ui:58
-msgid "Import"
-msgstr "Uvozi"
-
-#: pdfarranger/pdfarranger.py:1335
-msgid "Import…"
-msgstr "Uvozi …"
-
-#: data/menu.ui:194 data/menu.ui:452
-msgid "Insert Blan_k Page…"
-msgstr "Vstavi pra_zno stran …"
-
-#: pdfarranger/pageutils.py:331
-msgid "Insert Blank Page"
-msgstr "Vstavi prazno stran"
-
-#: pdfarranger/metadata.py:173
-msgid "Invalid date format. Input discarded."
-msgstr "Neveljavna oblika datuma. Vnos prezrt."
-
-#: pdfarranger/pdfarranger.py:2767
-#, python-format
-msgid "It uses libqpdf %s, pikepdf %s, GTK %s and Python %s."
-msgstr "Program uporablja libqpdf %s, pikepdf %s, GTK %s in Python %s."
-
-#: pdfarranger/metadata.py:45
-msgid "Keywords"
-msgstr "Ključniki"
-
-#: pdfarranger/config.py:252
-msgid "Language"
-msgstr "Jezik"
-
-#: pdfarranger/pageutils.py:154
-msgid "Left"
-msgstr "Levo"
-
-#: pdfarranger/pageutils.py:383
-msgid "Left to Right"
-msgstr "Z leve proti desni"
-
-#: data/pdfarranger.ui:122
-msgid "Main Menu"
-msgstr "Glavni izbirnik"
-
-#: pdfarranger/pdfarranger.py:2773
-msgid "Maintainers and contributors"
-msgstr "Vzdrževalci in prispevkarji"
-
-#: pdfarranger/pageutils.py:367
-msgid "Margin"
-msgstr "Robovi"
-
-#: pdfarranger/pageutils.py:353
-msgid "Merge Pages"
-msgstr "Združi strani"
-
-#: pdfarranger/pageutils.py:418
-msgid "Merged page size:"
-msgstr "Velikost združenih strani:"
-
-#: pdfarranger/metadata.py:50
-msgid "Modified"
-msgstr "Spremenjeno"
-
-#: pdfarranger/pageutils.py:398
-msgid "Non-uniform page size - using max size"
-msgstr "Različne velikosti strani - uporabljena bo največja"
-
-#: pdfarranger/exporter.py:559
-msgid "None"
-msgstr ""
-
-#: pdfarranger/pdfarranger.py:2723
-msgid "Note"
-msgstr ""
-
-#: pdfarranger/pdfarranger.py:2729
-msgid "Note the limitations:"
-msgstr ""
-
-#: data/pdfarranger.ui:37
-msgid "Open"
-msgstr "Odpri"
-
-#: pdfarranger/pdfarranger.py:1200
-msgid "Open…"
-msgstr "Odpri …"
-
-#: pdfarranger/pdfarranger.py:2731
-msgid "Outlines and links can be preserved only in certain cases."
-msgstr ""
-
-#: pdfarranger/pageutils.py:899
-msgid "Overlay"
-msgstr "Naplastitev"
-
-#: pdfarranger/pdfarranger.py:281
-msgid ""
-"PDF Arranger is a small python-gtk application, which helps the user to "
-"merge or split pdf documents and rotate, crop and rearrange their pages "
-"using an interactive and intuitive graphical interface. It is a frontend for "
-"pikepdf."
-msgstr ""
-"PDF Arranger je majhen python-gtk program, ki pomaga uporabniku združiti ali "
-"razcepiti pdf dokumente ter zasukati, obrezati in prerazporediti njihove "
-"strani s pomočjo sodejnega uporabniškega vmesnika. Gre za obličje programa "
-"pikepdf."
-
-#: pdfarranger/pdfarranger.py:1506
-msgid "PDF document is damaged"
-msgstr "PDF dokument je okvarjen"
-
-#: pdfarranger/pdfarranger.py:510
-msgid "PDF files"
-msgstr "PDF datoteke"
-
-#: pdfarranger/exporter.py:599
-msgid "Page Handling"
-msgstr ""
-
-#: pdfarranger/pageutils.py:394
-msgid "Page Order"
-msgstr "Zaporedje strani"
-
-#: pdfarranger/pdfarranger.py:2801
-msgid "Page Size:"
-msgstr "Velikost strani:"
-
-#: pdfarranger/pageutils.py:243
-msgid "Page size"
-msgstr "Velikost strani"
-
-#: pdfarranger/core.py:457
-msgid "Password"
-msgstr "Geslo"
-
-#: pdfarranger/core.py:435
-msgid "Password required"
-msgstr "Potrebno je geslo"
-
-#: data/menu.ui:107 data/menu.ui:315
-msgid "Past_e Special"
-msgstr "Pos_ebno lepljenje"
-
-#: data/menu.ui:124 data/menu.ui:333
-msgid "Paste As O_verlay…"
-msgstr "Prilepi _v ospredje …"
-
-#: data/menu.ui:119 data/menu.ui:328
-msgid "Paste As _Even Pages"
-msgstr "Prilepi kot _sode strani"
-
-#: data/menu.ui:114 data/menu.ui:323
-msgid "Paste As _Odd Pages"
-msgstr "Prilepi kot _lihe strani"
-
-#: data/menu.ui:129 data/menu.ui:338
-msgid "Paste As _Underlay…"
-msgstr "Prilepi v oza_dje …"
-
-#: data/menu.ui:102 data/menu.ui:310
-msgid "Paste _After"
-msgstr "Prilepi _za"
-
-#: data/menu.ui:109 data/menu.ui:318
-msgid "Paste _Before"
-msgstr "Prilepi _pred"
-
-#: pdfarranger/pdfarranger.py:1636
-msgid "Pasted data not valid. Aborting paste."
-msgstr "Prilepljeni podatki niso veljavni. Lepljenje opuščeno."
-
-#: data/menu.ui:272
-msgid "Pre_ferences"
-msgstr "P_rednastavitve"
-
-#: pdfarranger/config.py:242
-msgid "Preferences"
-msgstr "Prednastavitve"
-
-#: pdfarranger/pdfarranger.py:292
-msgid "Print the version of PDF Arranger and exit"
-msgstr "Natisni različico PDF Arrangerja in ga zaustavi"
-
-#: pdfarranger/config.py:267
-msgid "Printing"
-msgstr ""
-
-#: pdfarranger/exporter.py:579
-msgid "Printing…"
-msgstr "Tiskanje …"
-
-#: pdfarranger/metadata.py:46
-msgid "Producer"
-msgstr "Narejen v programu"
-
-#: pdfarranger/metadata.py:216
-msgid "Property"
-msgstr "Lastnost"
-
-#: data/menu.ui:182 data/menu.ui:440
-msgid "Re_verse Order"
-msgstr "O_brni zaporedje"
-
-#: pdfarranger/pageutils.py:250
-msgid "Relative"
-msgstr "Odnosno"
-
-#: pdfarranger/exporter.py:617
-msgid "Rendering Preview…"
-msgstr "Izrisovanje predogleda …"
-
-#: pdfarranger/pdfarranger.py:746
-msgid "Rendering…"
-msgstr "Izrisovanje …"
-
-#: pdfarranger/pdfarranger.py:1146
-msgid "Replace"
-msgstr "Zamenjaj"
-
-#: pdfarranger/pageutils.py:154
-msgid "Right"
-msgstr "Desno"
-
-#: pdfarranger/pageutils.py:384
-msgid "Right to Left"
-msgstr "Z desne proti levi"
-
-#: data/pdfarranger.ui:203
-msgid "Rotate Left"
-msgstr "Zasukaj levo"
-
-#: data/pdfarranger.ui:227
-msgid "Rotate Right"
-msgstr "Zasukaj desno"
-
-#: data/menu.ui:152 data/menu.ui:410
-msgid "Rotate _Left"
-msgstr "Zasukaj _levo"
-
-#: pdfarranger/pageutils.py:370 pdfarranger/splitter.py:60
-msgid "Rows"
-msgstr "Vrstice"
-
-#: data/menu.ui:232 data/menu.ui:396
-msgid "Same Page _Format"
-msgstr "Enaka _oblika strani"
-
-#: data/pdfarranger.ui:78
-msgid "Save"
-msgstr "Shrani"
-
-#: data/pdfarranger.ui:97
-msgid "Save As"
-msgstr "Shrani kot"
-
-#: pdfarranger/pdfarranger.py:1102
-msgid "Save As…"
-msgstr "Shrani kot …"
-
-#: data/menu.ui:47
-msgid "Save _As…"
-msgstr "Shr_ani kot …"
-
-#: pdfarranger/pdfarranger.py:1002
-msgid "Save changes before closing?"
-msgstr "Ali želite pred zaprtjem shraniti spremembe?"
-
-#: pdfarranger/pdfarranger.py:1039
-msgid "Save changes before quitting?"
-msgstr "Ali želite pred izhodom iz programa shraniti spremembe?"
-
-#: pdfarranger/pdfarranger.py:999
-msgid "Save changes to “{}” before closing?"
-msgstr "Ali želite pred zaprtjem shraniti spremembe v „{}”?"
-
-#: pdfarranger/pdfarranger.py:1036
-msgid "Save changes to “{}” before quitting?"
-msgstr "Ali želite pred izhodom iz programa shraniti spremembe v „{}”?"
-
-#: pdfarranger/pdfarranger.py:1257
-msgid "Saving produced some warnings"
-msgstr "Med shranjevanjem se je pojavilo nekaj opozoril"
-
-#: pdfarranger/pdfarranger.py:1296
-msgid "Saving…"
-msgstr "Shranjevanje …"
-
-#: pdfarranger/pageutils.py:121
-msgid "Scale factor"
-msgstr "Povečava"
-
-#: pdfarranger/exporter.py:557
-msgid "Scale mode:"
-msgstr ""
-
-#: data/menu.ui:207 data/menu.ui:371
-msgid "Select _All"
-msgstr "Izberi _vse"
-
-#: data/menu.ui:222 data/menu.ui:386
-msgid "Select _Even Pages"
-msgstr "Izberi _sode strani"
-
-#: data/menu.ui:217 data/menu.ui:381
-msgid "Select _Odd Pages"
-msgstr "Izberi _lihe strani"
-
-#: pdfarranger/pdfarranger.py:2796
-msgid "Selected pages: "
-msgstr "Izbrane strani: "
-
-#: pdfarranger/pageutils.py:548
-msgid "Show values"
-msgstr "Prikaži vrednosti"
-
-#: pdfarranger/splitter.py:26
-msgid "Split Pages"
-msgstr "Razdeli strani"
-
-#: pdfarranger/metadata.py:44
-msgid "Subject"
-msgstr "Predmet"
-
-#: pdfarranger/pdfarranger.py:523
-msgid "Supported image files"
-msgstr "Podprte slikovne datoteke"
-
-#: pdfarranger/config.py:282 pdfarranger/config.py:290
-msgid "System setting"
-msgstr "Sistemske nastavitve"
-
-#: pdfarranger/core.py:447
-msgid ""
-"The document “{}” is locked and requires a password before it can be opened."
-msgstr "Dokument „{}” je zaklenjen. Za odprtje morate vpisati geslo."
-
-#: pdfarranger/pdfarranger.py:1765
-msgid "The page has several images. Use \"Explode into Images\" first.\""
-msgstr "Na strani je več slik. Uporabite najprej \"Raztreli na slike\". "
-
-#: pdfarranger/core.py:446
-msgid "The password will be remembered until you close PDF Arranger."
-msgstr "Geslo bo pomnjeno do zaprtja PDF urejevalnika Arranger."
-
-#: pdfarranger/config.py:260
-msgid "Theme"
-msgstr "Tema"
-
-#: pdfarranger/metadata.py:43
-msgid "Title"
-msgstr "Naslov"
-
-#: pdfarranger/pageutils.py:154
-msgid "Top"
-msgstr "Zgoraj"
-
-#: pdfarranger/pageutils.py:385
-msgid "Top to Bottom"
-msgstr "Od zgoraj navzdol"
-
-#: pdfarranger/pageutils.py:899
-msgid "Underlay"
-msgstr "Podloži"
-
-#: pdfarranger/core.py:544 pdfarranger/pdfarranger.py:1502
+# machine translation, unreviewed
+#: pdfarranger_qt/core.py
+msgid "File not found"
+msgstr "Datoteke ni mogoče najti"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/core.py
+msgid "Invalid file format"
+msgstr "Neveljavna oblika datoteke"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/core.py
+msgid "Data not yet available"
+msgstr "Podatki še niso na voljo"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/core.py
+msgid "Unsupported security scheme"
+msgstr "Nepodprta varnostna shema"
+
+#: pdfarranger_qt/core.py
 msgid "Unknown file format"
 msgstr "Neznan datotečni zapis"
 
-#: pdfarranger/pdfarranger.py:2735
-msgid "User Manual"
-msgstr ""
+#: pdfarranger_qt/core.py
+msgid "Image format is not supported by img2pdf"
+msgstr "img2pdf ne podpira zapisa slike"
 
-#: pdfarranger/metadata.py:216
-msgid "Value"
-msgstr "Vrednost"
+#: pdfarranger_qt/core.py
+msgid "File is neither pdf nor image"
+msgstr "Datoteka ni niti PDF, niti slika"
 
-#: pdfarranger/pageutils.py:382
-msgid "Vertical"
-msgstr "Pokončno"
+# machine translation, unreviewed
+#: pdfarranger_qt/core.py
+msgid "Cannot open document"
+msgstr "Dokumenta ni mogoče odpreti"
 
-#: pdfarranger/splitter.py:61
-msgid "Vertical Splits"
-msgstr "Navpična delitev"
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Paper size"
+msgstr "Velikost papirja"
 
-#: pdfarranger/pageutils.py:454
-msgid "Vertical offset"
-msgstr "Navpični odmik"
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Custom"
+msgstr "Po meri"
 
-#: pdfarranger/pageutils.py:247 pdfarranger/pageutils.py:251
-#: pdfarranger/pageutils.py:333
-msgid "Width"
-msgstr "Širina"
-
-#: pdfarranger/splitter.py:88
-msgid "Width in %"
-msgstr "Širina v %"
-
-#: pdfarranger/pdfarranger.py:983
-msgid "Your changes will be lost if you don’t save them."
-msgstr "Če ne shranite vaših sprememb, bodo izgubljene."
-
-#: data/pdfarranger.ui:144
-msgid "Zoom In"
-msgstr "Približaj"
-
-#: data/pdfarranger.ui:167
-msgid "Zoom Out"
-msgstr "Oddalji"
-
-#: data/menu.ui:255
-msgid "Zoom _Fit"
-msgstr "_Prilegajoča povečava"
-
-#: data/menu.ui:247
-msgid "Zoom _In"
-msgstr "Pr_ibližaj"
-
-#: data/menu.ui:251
-msgid "Zoom _Out"
-msgstr "_Oddalji"
-
-#: data/menu.ui:278
-msgid "_About"
-msgstr "_O programu"
-
-#: pdfarranger/pageutils.py:856
-msgid "_Apply"
-msgstr "_Uporabi"
-
-#: pdfarranger/config.py:246 pdfarranger/pageutils.py:227
-#: pdfarranger/pdfarranger.py:975 pdfarranger/pdfarranger.py:984
-#: pdfarranger/pdfarranger.py:1108 pdfarranger/pdfarranger.py:1158
-msgid "_Cancel"
-msgstr "_Prekliči"
-
-#: pdfarranger/pdfarranger.py:994 data/menu.ui:284
-msgid "_Close"
-msgstr "_Zapri"
-
-#: data/menu.ui:98 data/menu.ui:306
-msgid "_Copy"
-msgstr "_Kopiraj"
-
-#: data/menu.ui:166 data/menu.ui:424
-msgid "_Crop Margins…"
-msgstr ""
-
-#: data/menu.ui:90 data/menu.ui:298
-msgid "_Delete"
-msgstr "Iz_briši"
-
-#: data/menu.ui:212 data/menu.ui:376
-msgid "_Deselect All"
-msgstr "O_dizberi vse"
-
-#: data/menu.ui:87
-msgid "_Edit"
-msgstr "Ur_edi"
-
-#: data/menu.ui:137 data/menu.ui:350
-msgid "_Explode into Images"
-msgstr "Raztreli na slike"
-
-#: data/menu.ui:135 data/menu.ui:347
-msgid "_Extract"
-msgstr "Izvleci"
-
-#: data/menu.ui:170 data/menu.ui:428
-msgid "_Hide Margins…"
-msgstr "S_krij robove"
-
-#: data/menu.ui:30
-msgid "_Import"
-msgstr "_Uvozi"
-
-#: data/menu.ui:237 data/menu.ui:401
-msgid "_Invert Selection"
-msgstr "_Obrni izbor"
-
-#: data/menu.ui:190 data/menu.ui:448
-msgid "_Merge Pages…"
-msgstr "_Združi strani …"
-
-#: data/menu.ui:36
-msgid "_New Window"
-msgstr "_Novo okno"
-
-#: pdfarranger/config.py:247 pdfarranger/pageutils.py:228
-msgid "_OK"
-msgstr "V _redu"
-
-#: pdfarranger/pdfarranger.py:1157 data/menu.ui:24
-msgid "_Open"
-msgstr "_Odpri"
-
-#: data/menu.ui:162 data/menu.ui:420
-msgid "_Page Size…"
-msgstr "_Velikost strani"
-
-#: data/menu.ui:71
-msgid "_Print…"
-msgstr "Na_tisni …"
-
-#: pdfarranger/pdfarranger.py:1031 data/menu.ui:290
-msgid "_Quit"
-msgstr "_Izhod"
-
-#: data/menu.ui:82
-msgid "_Redo"
-msgstr "_Ponovi"
-
-#: pdfarranger/pageutils.py:856
-msgid "_Revert"
-msgstr "P_ovrni"
-
-#: data/menu.ui:157 data/menu.ui:415
-msgid "_Rotate Right"
-msgstr "Zasukaj _desno"
-
-#: pdfarranger/pdfarranger.py:984 pdfarranger/pdfarranger.py:1107
-#: data/menu.ui:42
-msgid "_Save"
-msgstr "_Shrani"
-
-#: data/menu.ui:204 data/menu.ui:368
-msgid "_Select"
-msgstr "_Izberi"
-
-#: data/menu.ui:186 data/menu.ui:444
-msgid "_Split Pages…"
-msgstr "_Razcepi strani …"
-
-#: data/menu.ui:78
-msgid "_Undo"
-msgstr "Razvel_javi"
-
-#: data/menu.ui:244
-msgid "_View"
-msgstr "_Pogled"
-
-#: pdfarranger/pageutils.py:144 pdfarranger/pageutils.py:368
-#: pdfarranger/pageutils.py:418
+#: pdfarranger_qt/dialogs.py
 msgid "mm"
 msgstr "mm"
 
-#: pdfarranger/core.py:326
-msgid "page"
-msgstr "stran"
+#: pdfarranger_qt/dialogs.py
+msgid "Width"
+msgstr "Širina"
 
-#: pdfarranger/pdfarranger.py:825
-msgid "untitled"
-msgstr "nenaslovljen"
+#: pdfarranger_qt/dialogs.py
+msgid "Height"
+msgstr "Višina"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Keep aspect ratio"
+msgstr "Ohrani razmerje stranic"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Portrait"
+msgstr "Pokončno"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Landscape"
+msgstr "Ležeče"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Orientation"
+msgstr "Usmerjenost"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Range Select"
+msgstr "Izbor obsega"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Select range of pages: "
+msgstr "Izberi obseg strani: "
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Use a comma to separate page numbers, a dash to select a range of pages. \n"
+"e.g. : \"1,3,5-7,9\""
+msgstr ""
+"Številke strani loči z vejico, obseg strani pa izberi s pomišljajem. \n"
+"npr.: \"1,3,5-7,9\""
+
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+msgid "Insert Blank Page"
+msgstr "Vstavi prazno stran"
+
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+msgid "Page size"
+msgstr "Velikost strani"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Fit to paper"
+msgstr "Prilagodi papirju"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Relative"
+msgstr "Odnosno"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Scale"
+msgstr "Umeri"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Scale & Add margins"
+msgstr "Umeri in dodaj robove"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Crop & Add margins"
+msgstr "Obreži in dodaj robove"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Fit mode"
+msgstr "Način prilagoditve"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Scale factor"
+msgstr "Povečava"
+
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+msgid "Hide Margins"
+msgstr "Skrij robove"
+
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+msgid "Crop Margins"
+msgstr "Obreži robove"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Left"
+msgstr "Levo"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Right"
+msgstr "Desno"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Top"
+msgstr "Zgoraj"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Bottom"
+msgstr "Spodaj"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Margins"
+msgstr "Robovi"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Same for all sides"
+msgstr "Enako na vseh straneh"
+
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+msgid "Split Pages"
+msgstr "Razdeli strani"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Vertical Splits"
+msgstr "Navpična delitev"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Horizontal Splits"
+msgstr "Vodoravne delitve"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+msgid "Pages per Sheet"
+msgstr "Strani na list"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Automatic"
+msgstr "Samodejno"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Automatic turns the sheet sideways when that lets the pages come out larger."
+msgstr "Samodejno obrne list počez, kadar strani tako izidejo večje."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Empty space left around each page."
+msgstr "Prazen prostor okoli vsake strani."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Layout"
+msgstr "Postavitev"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Columns"
+msgstr "Stolpci"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Rows"
+msgstr "Vrstice"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Sheet"
+msgstr "List"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Gap"
+msgstr "Razmik"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Appearance"
+msgstr "Videz"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/reader.py
+msgid "Bold"
+msgstr "Krepko"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/reader.py
+msgid "Italic"
+msgstr "Ležeče"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Font"
+msgstr "Pisava"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Size"
+msgstr "Velikost"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Colour"
+msgstr "Barva"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Opacity"
+msgstr "Prekrivnost"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Position"
+msgstr "Položaj"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Angle"
+msgstr "Kot"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+msgid "Add Page Numbers"
+msgstr "Dodaj številke strani"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+#, python-format
+msgid "%s is replaced by the page number, %s by the number of pages."
+msgstr "%s se nadomesti s številko strani, %s s številom strani."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Leave the first page unnumbered"
+msgstr "Pusti prvo stran neoštevilčeno"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "It is still counted; a title page just does not carry a number."
+msgstr "Še vedno se šteje; naslovnica preprosto ne nosi številke."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Format"
+msgstr "Oblika"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Start at"
+msgstr "Začni pri"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Numbering"
+msgstr "Oštevilčenje"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+msgid "Add Watermark"
+msgstr "Dodaj vodni žig"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "DRAFT"
+msgstr "OSNUTEK"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Text"
+msgstr "Besedilo"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Watermark"
+msgstr "Vodni žig"
+
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+msgid "Merge Pages"
+msgstr "Združi strani"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Overlay"
+msgstr "Naplastitev"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Underlay"
+msgstr "Podloži"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/stamp.py
+msgid "Centre"
+msgstr "Sredinsko"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Middle"
+msgstr "Na sredini"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Horizontal"
+msgstr "Vodoravno"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Vertical"
+msgstr "Pokončno"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Edit properties"
+msgstr "Uredi lastnosti"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "System"
+msgstr "Sistem"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Light"
+msgstr "Svetla"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Dark"
+msgstr "Temna"
+
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+msgid "Preferences"
+msgstr "Prednastavitve"
+
+#: pdfarranger_qt/dialogs.py
+msgid "System setting"
+msgstr "Sistemske nastavitve"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Language"
+msgstr "Jezik"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Theme"
+msgstr "Tema"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "General"
+msgstr "Splošno"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Fit to page"
+msgstr "Prilagodi strani"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Actual size"
+msgstr "Dejanska velikost"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Auto Rotate"
+msgstr "Samodejno zasukaj"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Pages are rasterised at this resolution before being sent to the printer. "
+"Lower it if printing is slow: the printer driver has less to process."
+msgstr ""
+"Strani se v tej ločljivosti rastrirajo, preden se pošljejo na tiskalnik. "
+"Znižaj jo, če je tiskanje počasno: gonilnik tiskalnika ima tedaj manj dela."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Scale mode"
+msgstr "Način umerjanja"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Pixels/inch:"
+msgstr "Slikovnih pik/palec:"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Printing"
+msgstr "Tiskanje"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Preserve document information from the first file opened"
+msgstr "Ohrani podatke o dokumentu iz prve odprte datoteke"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "When checked: use document properties from the first file opened."
+msgstr "Ko je označeno: uporabi lastnosti dokumenta iz prve odprte datoteke."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "When unchecked: merge bookmarks from all documents."
+msgstr "Ko ni označeno: združi zaznamke iz vseh dokumentov."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Optimize for the web (linearize)"
+msgstr "Optimiraj za splet (lineariziraj)"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Lay the file out so a browser can show page one before the rest has "
+"downloaded."
+msgstr ""
+"Razporedi datoteko tako, da brskalnik lahko pokaže prvo stran, preden se "
+"prenese ostalo."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Compress"
+msgstr "Stisni"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Recompress the file's streams and pack its objects together."
+msgstr "Znova stisni tokove datoteke in stlači njene predmete skupaj."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"How much this saves depends on the file: one full of already-compressed "
+"images will barely shrink."
+msgstr ""
+"Koliko se s tem prihrani, je odvisno od datoteke: datoteka, polna že "
+"stisnjenih slik, se bo komaj skrčila."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Saving/exporting to single file"
+msgstr "Shranjevanje/izvoz v eno datoteko"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Greyscale"
+msgstr "Sivine"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Image Export"
+msgstr "Izvoz slik"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Keyboard shortcuts"
+msgstr "Tipkovne bližnjice"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Viewer Preferences"
+msgstr "Nastavitve pregledovalnika"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Open showing:"
+msgstr "Odpri s prikazom:"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Page layout:"
+msgstr "Postavitev strani:"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "On opening"
+msgstr "Ob odpiranju"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Window"
+msgstr "Okno"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Readers are free to ignore all of this."
+msgstr "Bralniki lahko vse to prezrejo."
+
+#: pdfarranger_qt/dialogs.py
+msgid "Password"
+msgstr "Geslo"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Confirm password"
+msgstr "Potrdi geslo"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Enter a password, or cancel to leave the document unencrypted."
+msgstr "Vnesi geslo ali prekliči, da dokument ostane nešifriran."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "The passwords do not match."
+msgstr "Gesli se ne ujemata."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Reset"
+msgstr "Ponastavi"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Description"
+msgstr "Opis"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"PDF Arranger merges, splits, rearranges, rotates and crops PDF documents. "
+"Everything happens in memory against the pages you can see; nothing is "
+"written until you save."
+msgstr ""
+"PDF Arranger združuje, deli, prerazporeja, suka in obrezuje dokumente PDF. "
+"Vse se dogaja v pomnilniku, na straneh, ki jih vidiš; nič se ne zapiše, "
+"dokler ne shraniš."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"It is a front end for pikepdf. Page content is never rewritten — only page "
+"order, geometry and composition."
+msgstr ""
+"To je vmesnik nad pikepdf. Vsebina strani se nikoli ne prepiše — le vrstni "
+"red strani, geometrija in sestava."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Command line"
+msgstr "Ukazna vrstica"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Files given on the command line are opened as one document. "
+"<code>--version</code> prints the version and exits."
+msgstr ""
+"Datoteke, navedene v ukazni vrstici, se odprejo kot en dokument. "
+"<code>--version</code> izpiše različico in konča."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+msgid "Reading"
+msgstr "Branje"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"The application opens in <b>read mode</b>: a continuous page view for "
+"reading the document rather than rearranging it. <b>View ▸ Arrange Mode</b> "
+"(Ctrl+E) swaps to the thumbnail grid and back."
+msgstr ""
+"Program se odpre v <b>načinu branja</b>: zveznem prikazu strani za branje "
+"dokumenta in ne za njegovo prerazporejanje. <b>Pogled ▸ Način "
+"razporejanja</b> (Ctrl+E) preklopi na mrežo sličic in nazaj."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Reading shows the document <i>as edited</i>: rotations, crops, deletions and"
+" reordering are all applied, so what you read is what you would get if you "
+"saved. Page-editing commands are disabled while reading — bookmarks are the "
+"exception, and are edited here and nowhere else."
+msgstr ""
+"Branje kaže dokument <i>tak, kot je urejen</i>: sukanja, obrezi, brisanja in"
+" prerazporeditve so vsi uveljavljeni, zato je to, kar bereš, tisto, kar bi "
+"dobil ob shranjevanju. Ukazi za urejanje strani so med branjem onemogočeni —"
+" izjema so zaznamki, ki se urejajo tu in nikjer drugje."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"The page you are on follows you between the two modes. Switching to read "
+"mode opens at the page selected in the grid, the first of them if several "
+"are selected; switching back scrolls the grid to the page you were reading, "
+"without disturbing what you had selected. With nothing selected, reading "
+"resumes where you left off — your place in each document is remembered "
+"between visits."
+msgstr ""
+"Stran, na kateri si, ti sledi med obema načinoma. Preklop v način branja "
+"odpre stran, izbrano v mreži, prvo od njih, če jih je izbranih več; preklop "
+"nazaj pomakne mrežo na stran, ki si jo bral, ne da bi motil tvoj izbor. Brez"
+" izbora se branje nadaljuje tam, kjer si končal — tvoje mesto v vsakem "
+"dokumentu se med obiski zapomni."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"The toolbar shows which page you are on and how many there are; type a "
+"number into it to jump there, or use <b>Ctrl+G</b>."
+msgstr ""
+"Orodna vrstica kaže, na kateri strani si in koliko jih je; vanjo vpiši "
+"številko, da skočiš tja, ali uporabi <b>Ctrl+G</b>."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>View ▸ Continuous Scroll</b> is on by default; turning it off shows one "
+"page at a time. <b>View ▸ Facing Pages</b> puts two pages side by side, the "
+"way a book falls open. Both settings are remembered."
+msgstr ""
+"<b>Pogled ▸ Zvezno drsenje</b> je privzeto vklopljeno; če ga izklopiš, se "
+"kaže ena stran naenkrat. <b>Pogled ▸ Dvojna stran</b> postavi dve strani "
+"drugo ob drugo, tako kot se odpre knjiga. Obe nastavitvi se zapomnita."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Moving around a document"
+msgstr "Premikanje po dokumentu"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"One rule for the arrow keys: <b>the modifier decides what moves</b>. Nothing"
+" scrolls the view, Option (Alt) moves the text cursor, Shift extends the "
+"selection, Command (Ctrl) jumps to an edge, and Fn — Page Up, Page Down, "
+"Home and End — jumps further. None of it changes according to whether a text"
+" cursor happens to be on the page."
+msgstr ""
+"Eno pravilo za smerne tipke: <b>kaj se premakne, odloči spremenilka</b>. "
+"Nobena pomika pogled, Option (Alt) premika besedilno kazalko, Shift razširja"
+" izbor, Command (Ctrl) skoči na rob, Fn — Page Up, Page Down, Home in End — "
+"pa skoči dlje. Nič od tega se ne spremeni glede na to, ali je na strani "
+"slučajno besedilna kazalka."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Keys"
+msgstr "Tipke"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Continuous"
+msgstr "Zvezno"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/viewer.py
+msgid "One page at a time"
+msgstr "Ena stran naenkrat"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "scroll one line"
+msgstr "pomakni za eno vrstico"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "top of the previous / next page"
+msgstr "vrh prejšnje / naslednje strani"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "previous / next page"
+msgstr "prejšnja / naslednja stran"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "scroll one screen"
+msgstr "pomakni za en zaslon"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "start / end of the document"
+msgstr "začetek / konec dokumenta"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "move the text cursor, by character or line"
+msgstr "premakni besedilno kazalko, po znaku ali vrstici"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "extend the selection, by character or line"
+msgstr "razširi izbor, po znaku ali vrstici"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "move the text cursor one word"
+msgstr "premakni besedilno kazalko za eno besedo"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "extend the selection one word"
+msgstr "razširi izbor za eno besedo"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "cursor to the start / end of the line"
+msgstr "kazalka na začetek / konec vrstice"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "cursor to the start / end of the document"
+msgstr "kazalka na začetek / konec dokumenta"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Add Shift to a Command or Option combination to extend the selection instead"
+" of moving — <b>Shift+Command+→</b> selects to the end of the line. Adding "
+"Option works by the word rather than the character. On Windows and Linux, "
+"read Command as Ctrl and Option as Alt; the table is the same everywhere."
+msgstr ""
+"Kombinaciji s Commandom ali Optionom dodaj Shift, da izbor razširiš namesto "
+"premakneš — <b>Shift+Command+→</b> izbere do konca vrstice. Dodani Option "
+"deluje po besedah namesto po znakih. V sistemih Windows in Linux beri "
+"Command kot Ctrl in Option kot Alt; razpredelnica je povsod enaka."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Selecting and copying text"
+msgstr "Izbiranje in kopiranje besedila"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Drag across the page to select text, across page boundaries if you keep "
+"going. <b>Double-click</b> selects a word. <b>Ctrl/Cmd+C</b> copies, "
+"<b>Ctrl/Cmd+A</b> selects the text of the page you are on, and <b>Esc</b> "
+"clears the selection. The same commands are on the right-click menu."
+msgstr ""
+"Povleci čez stran, da izbereš besedilo, čez meje strani, če nadaljuješ. "
+"<b>Dvoklik</b> izbere besedo. <b>Ctrl/Cmd+C</b> kopira, <b>Ctrl/Cmd+A</b> "
+"izbere besedilo strani, na kateri si, <b>Esc</b> pa počisti izbor. Isti "
+"ukazi so v meniju desnega klika."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>Shift+click</b> extends an existing selection to where you clicked. The "
+"end you are moving grows out to a whole word, because a single click is an "
+"imprecise way to point at one character; the end you started from stays "
+"exactly where you put it. Dragging selects by character throughout, since "
+"you can watch it and stop where you like."
+msgstr ""
+"<b>Shift+klik</b> razširi obstoječi izbor do mesta, kamor si kliknil. Konec,"
+" ki ga premikaš, zraste do cele besede, ker je en sam klik nenatančen način "
+"kazanja na en znak; konec, pri katerem si začel, ostane natanko tam, kamor "
+"si ga postavil. Vlečenje ves čas izbira po znakih, saj mu lahko slediš in se"
+" ustaviš, kjer želiš."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Clicking on text leaves a blinking <b>text cursor</b>. That is what "
+"Shift+arrow extends from, and what the Option and Command combinations above"
+" move. It stays where you put it — scrolling, paging and clicking off the "
+"page all leave it alone — until you press Esc or open another document."
+msgstr ""
+"Klik v besedilo pusti utripajočo <b>besedilno kazalko</b>. Od nje "
+"Shift+smerna tipka razširja izbor, njo pa premikajo zgornje kombinacije z "
+"Optionom in Commandom. Ostane tam, kamor si jo postavil — drsenje, listanje "
+"in klik zunaj strani je ne premaknejo — dokler ne pritisneš Esc ali ne "
+"odpreš drugega dokumenta."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Following links"
+msgstr "Sledenje povezavam"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Click a link to follow it. Links to a page in the same document jump there; "
+"links to the web open in your browser. Hovering over one shows where it "
+"goes, which is worth reading before you click: many links in a PDF are not "
+"written by its author at all but inferred from the text, so what a link "
+"points at is not always what the words appear to say."
+msgstr ""
+"Klikni povezavo, da ji slediš. Povezave na stran v istem dokumentu skočijo "
+"tja; povezave na splet se odprejo v tvojem brskalniku. Če se z miško ustaviš"
+" nad njo, pokaže, kam vodi, in to je vredno prebrati, preden klikneš: mnogih"
+" povezav v dokumentu PDF ni napisal avtor, temveč so izpeljane iz besedila, "
+"zato tisto, na kar povezava kaže, ni vedno tisto, kar se zdi, da besede "
+"pravijo."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Only ordinary web and mail links are handed to the system — http, https, "
+"mailto and ftp. A document is a file that arrived from somewhere, and "
+"anything else it asks to open is refused and reported rather than acted on."
+msgstr ""
+"Sistemu se predajo le običajne spletne in poštne povezave — http, https, "
+"mailto in ftp. Dokument je datoteka, ki je od nekod prišla, in vse drugo, "
+"kar želi odpreti, se zavrne in sporoči, namesto da bi se izvedlo."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Right-clicking a link offers <b>Open Link</b> and <b>Copy Link Address</b>."
+msgstr ""
+"Desni klik na povezavo ponudi <b>Odpri povezavo</b> in <b>Kopiraj naslov "
+"povezave</b>."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Bookmarks"
+msgstr "Zaznamki"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"The sidebar shows the document's bookmarks. Click one to jump to it. "
+"Everything below is on the sidebar's right-click menu, and every command can"
+" be undone."
+msgstr ""
+"Stranski pult kaže zaznamke dokumenta. Klikni enega, da skočiš nanj. Vse "
+"spodaj je v meniju desnega klika stranskega pulta, vsak ukaz pa je mogoče "
+"razveljaviti."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>Add Bookmark Here</b> makes one pointing at the page you are reading, "
+"named after whatever text you have selected — so select a heading, then add."
+" With nothing selected it is named after the page. <b>Add Child Bookmark "
+"Here</b> does the same, nested under the entry you clicked."
+msgstr ""
+"<b>Dodaj zaznamek sem</b> ustvari zaznamek, ki kaže na stran, ki jo bereš, "
+"poimenovan po besedilu, ki ga imaš izbranega — izberi torej naslov in nato "
+"dodaj. Brez izbora se poimenuje po strani. <b>Dodaj podrejeni zaznamek "
+"sem</b> stori isto, ugnezdeno pod vnosom, na katerega si kliknil."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>Rename</b> edits the title in place. <b>Re-home to This Page</b> points "
+"an existing bookmark at the page you are on, keeping its title. "
+"<b>Delete</b> removes an entry and <i>promotes</i> its children into its "
+"place; <b>Delete with Children</b> removes the whole branch."
+msgstr ""
+"<b>Preimenuj</b> uredi naslov na mestu. <b>Preusmeri na to stran</b> "
+"obstoječi zaznamek usmeri na stran, na kateri si, in ohrani naslov. "
+"<b>Izbriši</b> odstrani vnos in njegove podrejene <i>povzdigne</i> na "
+"njegovo mesto; <b>Izbriši s podrejenimi</b> odstrani celotno vejo."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Drag entries within the sidebar to re-nest or reorder them. <b>Expand All "
+"Children</b> and <b>Collapse All Children</b> open or shut a whole branch at"
+" once."
+msgstr ""
+"Vnose vleci znotraj stranskega pulta, da jih drugače ugnezdiš ali "
+"prerazporediš. <b>Razširi vse podrejene</b> in <b>Strni vse podrejene</b> "
+"naenkrat odpreta ali zapreta celotno vejo."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>Style</b> sets a bookmark bold or italic, or gives it a colour, as the "
+"tree shows."
+msgstr "<b>Slog</b> naredi zaznamek krepek ali ležeč ali mu da barvo, kot kaže drevo."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"A bookmark whose page has been deleted is <b>greyed out</b> rather than "
+"removed: its title may still be worth keeping, and you can point it "
+"somewhere else with Re-home. Undoing the deletion reconnects it. <b>Delete "
+"Dangling Bookmarks</b> clears them all out; it leaves alone any entry that "
+"points nowhere on purpose, which is a legitimate way to write a heading."
+msgstr ""
+"Zaznamek, čigar stran je bila izbrisana, <b>posivi</b>, namesto da bi bil "
+"odstranjen: njegov naslov je morda še vedno vreden ohranitve, lahko pa ga "
+"preusmeriš drugam. Razveljavitev brisanja ga znova poveže. <b>Izbriši viseče"
+" zaznamke</b> jih vse pospravi; pusti pri miru vsak vnos, ki namenoma ne "
+"kaže nikamor, kar je povsem legitimen način pisanja naslova."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Bookmark edits are part of the document and are written when you save, along"
+" with each entry's colour and style and which branches are left open. The "
+"one thing that cannot be saved is a bookmark with no page: there is no way "
+"to record “points at a page that is gone”, so it comes back as a heading "
+"with its title intact."
+msgstr ""
+"Urejanja zaznamkov so del dokumenta in se zapišejo ob shranjevanju, skupaj z"
+" barvo in slogom vsakega vnosa ter s tem, katere veje ostanejo odprte. "
+"Edino, česar ni mogoče shraniti, je zaznamek brez strani: ni načina, da bi "
+"zapisali „kaže na stran, ki je ni več”, zato se vrne kot naslov z "
+"nedotaknjenim imenom."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Arranging pages"
+msgstr "Razporejanje strani"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Drag pages to reorder them. Hold <b>Ctrl</b> while dropping to copy instead "
+"of move."
+msgstr ""
+"Strani vleci, da spremeniš njihov vrstni red. Ob spuščanju drži <b>Ctrl</b>,"
+" da kopiraš namesto premakneš."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Drag pages onto another window of the application to copy them there, or use"
+" ordinary copy and paste."
+msgstr ""
+"Strani povleci na drugo okno programa, da jih kopiraš tja, ali uporabi "
+"običajno kopiraj in prilepi."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>Paste As Odd/Even Pages</b> interleaves the clipboard with the document —"
+" this is how two single-sided scans of a double-sided original are "
+"recombined. If the second scan came off a duplex feeder it will be in "
+"reverse order; use <b>Arrange ▸ Reverse Order</b> on it first."
+msgstr ""
+"<b>Prilepi kot lihe/sode strani</b> prepleta odložišče z dokumentom — tako "
+"se dva enostranska optična prebrisa dvostranskega izvirnika spet združita. "
+"Če je drugi prebris prišel iz obojestranskega podajalnika, bo v obratnem "
+"vrstnem redu; nanj najprej uporabi <b>Razporedi ▸ Obrni vrstni red</b>."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"To move pages a long way, use <b>Move to Start</b>, <b>Move to End</b> or "
+"<b>Move to Page…</b> rather than dragging — in a long document the far end "
+"is a great deal of scrolling away. They are on the Edit menu and on the "
+"right-click menu, and <b>Move to Page…</b> asks for the number the page "
+"should <i>become</i>."
+msgstr ""
+"Za premikanje strani daleč uporabi <b>Premakni na začetek</b>, <b>Premakni "
+"na konec</b> ali <b>Premakni na stran…</b> namesto vlečenja — v dolgem "
+"dokumentu je drugi konec zelo daleč. So v meniju Uredi in v meniju desnega "
+"klika, <b>Premakni na stran…</b> pa vpraša za številko, ki naj stran "
+"<i>postane</i>."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Prefer these to cut and paste for moving. A pasted page is a <i>new</i> page"
+" as far as the document is concerned, so any bookmarks pointing at the "
+"original are left behind with nowhere to go. Moving keeps the page itself, "
+"and its bookmarks come with it."
+msgstr ""
+"Pri premikanju daj tem prednost pred izreži in prilepi. Prilepljena stran je"
+" z vidika dokumenta <i>nova</i> stran, zato zaznamki, ki so kazali na "
+"izvirno, ostanejo brez cilja. Premikanje ohrani stran samo, njeni zaznamki "
+"pa gredo z njo."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Stamping and tiling"
+msgstr "Žigosanje in zlaganje"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>Page ▸ Add Page Numbers…</b> and <b>Page ▸ Add Watermark…</b> draw text "
+"onto the selected pages. Both add a <i>layer</i> rather than rewriting the "
+"page, so both can be undone and neither touches the file you opened."
+msgstr ""
+"<b>Stran ▸ Dodaj številke strani…</b> in <b>Stran ▸ Dodaj vodni žig…</b> "
+"narišeta besedilo na izbrane strani. Oba dodata <i>plast</i>, namesto da bi "
+"prepisala stran, zato je oba mogoče razveljaviti in nobeden se ne dotakne "
+"datoteke, ki si jo odprl."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+#, python-brace-format
+msgid ""
+"Page numbers follow the arrangement, not the source document: they are "
+"numbered in the order the pages are in now. <code>{n}</code> in the format "
+"is the page number and <code>{total}</code> the number of pages, so "
+"<code>Page {n} of {total}</code> does what it looks like."
+msgstr ""
+"Številke strani sledijo razporeditvi, ne izvornemu dokumentu: oštevilčene so"
+" v vrstnem redu, v katerem so strani zdaj. <code>{n}</code> v obliki je "
+"številka strani in <code>{total}</code> število strani, zato <code>Stran {n}"
+" od {total}</code> stori to, kar je videti."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>Arrange ▸ Pages per Sheet…</b> tiles several pages onto one, in reading "
+"order — the printer's <i>N-up</i>. The sheet turns sideways when that lets "
+"the pages come out larger, which is why two-up gives a landscape sheet and "
+"four-up does not."
+msgstr ""
+"<b>Razporedi ▸ Strani na list…</b> zloži več strani na eno, v bralnem "
+"vrstnem redu — tiskarski <i>N-up</i>. List se obrne počez, kadar strani tako"
+" izidejo večje, in zato dve na list dasta ležeč list, štiri na list pa ne."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Saving a document"
+msgstr "Shranjevanje dokumenta"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>Optimize for the web</b> in Preferences lays the saved file out so a "
+"browser can show the first page before the rest has arrived. <b>Compress</b>"
+" repacks its streams and objects; how much that saves depends entirely on "
+"the file, and one full of photographs will barely move."
+msgstr ""
+"<b>Optimiraj za splet</b> v Nastavitvah razporedi shranjeno datoteko tako, "
+"da brskalnik lahko pokaže prvo stran, preden prispe ostalo. <b>Stisni</b> "
+"znova zloži njene tokove in predmete; koliko se s tem prihrani, je odvisno "
+"izključno od datoteke, datoteka, polna fotografij, pa se komaj premakne."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>File ▸ Remove All Metadata</b> is a switch, like Password: turn it on and"
+" the next save writes a document with no title, no author and no record of "
+"what produced it. Edit Properties greys out while it is on, because there "
+"would be nothing to edit."
+msgstr ""
+"<b>Datoteka ▸ Odstrani vse metapodatke</b> je stikalo, prav tako kot Geslo: "
+"vklopi ga in naslednje shranjevanje zapiše dokument brez naslova, brez "
+"avtorja in brez sledi o tem, kaj ga je izdelalo. Uredi lastnosti posivi, "
+"dokler je vklopljeno, ker tedaj ne bi bilo česa urejati."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>File ▸ Viewer Preferences…</b> is how the saved document asks a reader to"
+" open it — with the bookmarks showing, two pages at a time, and so on. "
+"Readers are free to ignore all of it. The settings are read from the file "
+"you opened, so a document that already had them keeps them."
+msgstr ""
+"<b>Datoteka ▸ Nastavitve pregledovalnika…</b> je način, kako shranjeni "
+"dokument prosi bralnika, naj ga odpre — z vidnimi zaznamki, po dve strani "
+"naenkrat in tako naprej. Bralniki lahko vse to prezrejo. Nastavitve se "
+"preberejo iz datoteke, ki si jo odprl, zato dokument, ki jih je že imel, jih"
+" obdrži."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>File ▸ Repair Document…</b> rebuilds a damaged PDF. It works on a file "
+"you pick rather than the one on screen, because the file worth repairing is "
+"usually one this application cannot open properly either. It reports what it"
+" found before writing anything."
+msgstr ""
+"<b>Datoteka ▸ Popravi dokument…</b> obnovi poškodovan PDF. Deluje na "
+"datoteki, ki jo izbereš, in ne na tisti na zaslonu, ker je datoteka, ki jo "
+"je vredno popraviti, običajno taka, ki je tudi ta program ne odpre pravilno."
+" Preden karkoli zapiše, sporoči, kaj je našel."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Mouse"
+msgstr "Miška"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "<b>Ctrl + scroll</b> — zoom"
+msgstr "<b>Ctrl + drsenje</b> — povečava"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "<b>Shift + scroll</b> — scroll sideways"
+msgstr "<b>Shift + drsenje</b> — drsenje vstran"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "<b>Alt + scroll</b> — scroll exactly one row"
+msgstr "<b>Alt + drsenje</b> — drsenje natanko za eno vrsto"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "<b>Double-click</b> — fit the page to the window, and back"
+msgstr "<b>Dvoklik</b> — prilagodi stran oknu, in nazaj"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>Click and drag</b> on empty space — rubber-band select; keep scrolling to"
+" extend it"
+msgstr ""
+"<b>Klikni in povleci</b> po praznem prostoru — izbor z okvirjem; drsi "
+"naprej, da ga razširiš"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Moving around the grid"
+msgstr "Premikanje po mreži"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>Arrow keys</b> move between pages, <b>Page Up</b> and <b>Page Down</b> "
+"move a screenful at a time, and <b>Home</b> and <b>End</b> jump to the first"
+" and last page. Hold <b>Shift</b> with any of them to extend the selection."
+msgstr ""
+"<b>Smerne tipke</b> se premikajo med stranmi, <b>Page Up</b> in <b>Page "
+"Down</b> za cel zaslon, <b>Home</b> in <b>End</b> pa skočita na prvo in "
+"zadnjo stran. Ob katerikoli od njih drži <b>Shift</b>, da razširiš izbor."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>Fit One Page</b> (F) scales so a whole page fits in the window and shows "
+"one page per row — use it to work on a single page at a time. <b>Fit "
+"Multiple Pages</b> (Shift+M) uses the same scale but lets as many pages sit "
+"side by side as the window takes. <b>Fit Width</b> (Shift+F) fills the "
+"window across instead, which shows the page wider but taller than the "
+"window. Double-clicking the grid toggles Fit One Page on and off."
+msgstr ""
+"<b>Prilagodi eno stran</b> (F) umeri tako, da cela stran gre v okno, in "
+"pokaže eno stran na vrsto — uporabi to, ko delaš z eno stranjo naenkrat. "
+"<b>Prilagodi več strani</b> (Shift+M) uporabi isto merilo, a pusti drugo ob "
+"drugi toliko strani, kolikor jih okno sprejme. <b>Prilagodi širini</b> "
+"(Shift+F) namesto tega zapolni okno po širini, zaradi česar je stran širša, "
+"a višja od okna. Dvoklik po mreži vklopi in izklopi Prilagodi eno stran."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"With pages selected, all three fit the selection rather than the whole "
+"document."
+msgstr "Ko so strani izbrane, vse tri prilagodijo izbor namesto celotnega dokumenta."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Finding text"
+msgstr "Iskanje besedila"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>Find</b> selects the pages that contain the phrase and boxes each hit on "
+"the thumbnail, so you can see where on the page it is. The boxes clear as "
+"soon as you change the document, since the pages they were drawn for may "
+"have moved."
+msgstr ""
+"<b>Najdi</b> izbere strani, ki vsebujejo izraz, in vsak zadetek uokviri na "
+"sličici, da vidiš, kje na strani je. Okviri izginejo takoj, ko spremeniš "
+"dokument, saj so se strani, za katere so bili narisani, morda premaknile."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Every shortcut can be changed in <b>Edit ▸ Preferences ▸ Keyboard "
+"shortcuts</b>, where they are listed under the menu each one belongs to."
+msgstr ""
+"Vsako bližnjico je mogoče spremeniti v <b>Uredi ▸ Nastavitve ▸ Tipkovne "
+"bližnjice</b>, kjer so navedene pod menijem, ki mu vsaka pripada."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Passwords"
+msgstr "Gesla"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Opening an encrypted document asks for its password, which is remembered "
+"until the document is closed."
+msgstr ""
+"Odpiranje šifriranega dokumenta zahteva njegovo geslo, ki se zapomni, dokler"
+" dokumenta ne zapreš."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>File ▸ Password</b> encrypts the document when it is next saved. It is a "
+"switch: turn it on and you are asked for a password, turn it off and the "
+"next save is unencrypted. The password is never written to your settings, so"
+" it applies to this session only — and if you forget it, the file cannot be "
+"recovered."
+msgstr ""
+"<b>Datoteka ▸ Geslo</b> šifrira dokument ob naslednjem shranjevanju. To je "
+"stikalo: vklopi ga in vprašan boš za geslo, izklopi ga in naslednje "
+"shranjevanje bo nešifrirano. Geslo se nikoli ne zapiše v tvoje nastavitve, "
+"zato velja le za to sejo — in če ga pozabiš, datoteke ni mogoče obnoviti."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Files"
+msgstr "Datoteke"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Settings are stored by Qt in the per-user location for this platform; on "
+"Windows that is the registry under "
+"<code>HKEY_CURRENT_USER\\Software\\pdfarranger</code>. There is no "
+"configuration file to edit by hand."
+msgstr ""
+"Nastavitve Qt shrani na mesto, namenjeno posameznemu uporabniku na tem "
+"sistemu; v sistemu Windows je to register pod "
+"<code>HKEY_CURRENT_USER\\Software\\pdfarranger</code>. Nastavitvene "
+"datoteke, ki bi jo urejal na roko, ni."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Credits"
+msgstr "Zahvale"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"PDF Arranger Qt is a PySide6 port of PDF Arranger, which is itself derived "
+"from PDF-Shuffler. It is a separate project and not affiliated with either."
+msgstr ""
+"PDF Arranger Qt je predelava PDF Arrangerja v PySide6, ta pa sam izhaja iz "
+"PDF-Shufflerja. To je ločen projekt in ni povezan z nobenim od njiju."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Original authors: Konstantinos Poulios, Jerome Robert."
+msgstr "Izvirni avtorji: Konstantinos Poulios, Jerome Robert."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Licensed under the GNU General Public License version 3 or later."
+msgstr "Izdano pod GNU General Public License različice 3 ali novejše."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+msgid "User Guide"
+msgstr "Uporabniški priročnik"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Insert pages from another PDF or an image"
+msgstr "Vstavi strani iz drugega dokumenta PDF ali iz slike"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Needs pages copied from a document"
+msgstr "Zahteva strani, kopirane iz dokumenta"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_New Window"
+msgstr "_Novo okno"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Open"
+msgstr "_Odpri"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Import"
+msgstr "_Uvozi"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Save"
+msgstr "_Shrani"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Save _As…"
+msgstr "Shr_ani kot …"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "E_xport Selection to a Single File…"
+msgstr "Iz_vozi izbrano v eno datoteko …"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Close"
+msgstr "_Zapri"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Quit"
+msgstr "_Izhod"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Undo"
+msgstr "Razvel_javi"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Redo"
+msgstr "_Ponovi"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Select _All"
+msgstr "Izberi _vse"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Invert Selection"
+msgstr "_Obrni izbor"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Delete"
+msgstr "Iz_briši"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Duplicate"
+msgstr "Podvo_ji"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Rotate _Left"
+msgstr "Zasukaj _levo"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Rotate Right"
+msgstr "Zasukaj _desno"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Zoom _In"
+msgstr "Pr_ibližaj"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Zoom _Out"
+msgstr "_Oddalji"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Reset Zoom"
+msgstr "Pona_stavi povečavo"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Project on GitHub"
+msgstr "Projekt na GitHubu"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_About"
+msgstr "_O programu"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Cu_t"
+msgstr "Iz_reži"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Copy"
+msgstr "_Kopiraj"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Paste _After"
+msgstr "Prilepi _za"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Paste _Before"
+msgstr "Prilepi _pred"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Paste As _Odd Pages"
+msgstr "Prilepi kot _lihe strani"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Paste As _Even Pages"
+msgstr "Prilepi kot _sode strani"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Deselect All"
+msgstr "O_dizberi vse"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Select _Odd Pages"
+msgstr "Izberi _lihe strani"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Select _Even Pages"
+msgstr "Izberi _sode strani"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "All From _Same File"
+msgstr "V_se iz iste datoteke"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Same Page _Format"
+msgstr "Enaka _oblika strani"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Move to Start"
+msgstr "Premakni na začetek"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Move to End"
+msgstr "Premakni na konec"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Move to Page…"
+msgstr "Premakni na stran…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Reverse Order"
+msgstr "Obrni vrstni red"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Swap Odd/Even"
+msgstr "Zamenjaj lihe/sode"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Split (unimposition)"
+msgstr "_Razdeli (razlaganje)"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Export _All Pages to Individual Files…"
+msgstr "Izvozi v_se strani v ločene datoteke …"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Export Selection to _Individual Files…"
+msgstr "Izvozi izbrano v _ločene datoteke …"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Crop Margins…"
+msgstr "Obreži _robove…"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Hide Margins…"
+msgstr "S_krij robove"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Page Size…"
+msgstr "_Velikost strani"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Insert Blan_k Page…"
+msgstr "Vstavi pra_zno stran …"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Split Pages…"
+msgstr "_Razcepi strani …"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Merge Pages…"
+msgstr "_Združi strani …"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Generate (imposition)"
+msgstr "_Ustvari (zlaganje)"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Pages per S_heet…"
+msgstr "Strani na _list…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Add Page N_umbers…"
+msgstr "Dodaj _številke strani…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Add _Watermark…"
+msgstr "Dodaj vodni ži_g…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Pass_word"
+msgstr "_Geslo"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Edit _Properties"
+msgstr "Uredi _lastnosti"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Viewer Preferences…"
+msgstr "Nastavitve pregle_dovalnika…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Remove All _Metadata"
+msgstr "Odstrani vse _metapodatke"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Repair Document…"
+msgstr "Po_pravi dokument…"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Crop White Borders"
+msgstr "Obreži bele robove"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Export Selection to _PNG Images…"
+msgstr "Izvozi izbor v slike _PNG…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Export Selection to _JPG Images…"
+msgstr "Izvozi izbor v slike _JPG…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Export Selection to _Rasterized PDF (png)…"
+msgstr "Izvozi izbor v _rastrski PDF (png)…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Export Selection to _Rasterized PDF (jpg)…"
+msgstr "Izvozi izbor v rastrski PD_F (jpg)…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Copy Text"
+msgstr "Kopiraj besedilo"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Copy _Image"
+msgstr "Kop_iraj sliko"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Explode into Images"
+msgstr "Raztreli na slike"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Print…"
+msgstr "Na_tisni …"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Find…"
+msgstr "_Najdi…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Find Next"
+msgstr "Najdi naslednje"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Find Previous"
+msgstr "Najdi prejšnje"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Find All"
+msgstr "Najdi vse"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Select _Range"
+msgstr "Izberi obse_g"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Paste As O_verlay…"
+msgstr "Prilepi _v ospredje …"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Paste As _Underlay…"
+msgstr "Prilepi v oza_dje …"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Fit _One Page"
+msgstr "Prilagodi _eno stran"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Fit _Multiple Pages"
+msgstr "Prilagodi _več strani"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Fit Width"
+msgstr "Prilagodi širini"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Arrange Mode"
+msgstr "Način razporejanja"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Facing Pages"
+msgstr "Dvojna stran"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Continuous Scroll"
+msgstr "Zvezno drsenje"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Next Page"
+msgstr "Naslednja stran"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Previous Page"
+msgstr "Prejšnja stran"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "First Page"
+msgstr "Prva stran"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Last Page"
+msgstr "Zadnja stran"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Go to Page…"
+msgstr "Pojdi na stran…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Fullscreen"
+msgstr "Celozaslonsko"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_File"
+msgstr "_Datoteka"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Open Recent"
+msgstr "Odpri nedavno"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "E_xport"
+msgstr "Iz_vozi"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Edit"
+msgstr "Ur_edi"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Past_e Special"
+msgstr "Pos_ebno lepljenje"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Page"
+msgstr "_Stran"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Extract"
+msgstr "Izvleci"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Arrange"
+msgstr "Razporedi"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Select"
+msgstr "_Izberi"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Booklet"
+msgstr "_Knjižica"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_View"
+msgstr "_Pogled"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Help"
+msgstr "Po_moč"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Read"
+msgstr "Beri"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "_Undo %s"
+msgstr "Razvel_javi %s"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "_Redo %s"
+msgstr "_Ponovi %s"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "%d page selected"
+msgid_plural "%d pages selected"
+msgstr[0] "Izbrana %d stran"
+msgstr[1] "Izbrani %d strani"
+msgstr[2] "Izbrane %d strani"
+msgstr[3] "Izbranih %d strani"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Untitled"
+msgstr "Brez naslova"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Password required"
+msgstr "Potrebno je geslo"
+
+#: pdfarranger_qt/mainwindow.py
+#, python-brace-format
+msgid "The document “{}” is locked and requires a password before it can be opened."
+msgstr "Dokument „{}” je zaklenjen. Za odprtje morate vpisati geslo."
+
+#: pdfarranger_qt/mainwindow.py
+msgid "The password will be remembered until you close PDF Arranger."
+msgstr "Geslo bo pomnjeno do zaprtja PDF urejevalnika Arranger."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Importing…"
+msgstr "Uvažanje…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Cancel"
+msgstr "Prekliči"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Import"
+msgstr "Uvozi"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "No recent files"
+msgstr "Ni nedavnih datotek"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Clear Menu"
+msgstr "Počisti meni"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "This file is no longer there:"
+msgstr "Te datoteke ni več tam:"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "This document cannot be read."
+msgstr "Tega dokumenta ni mogoče prebrati."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Go to Page"
+msgstr "Pojdi na stran"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Page number:"
+msgstr "Številka strani:"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "No document"
+msgstr "Ni dokumenta"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "%d page"
+msgid_plural "%d pages"
+msgstr[0] "%d stran"
+msgstr[1] "%d strani"
+msgstr[2] "%d strani"
+msgstr[3] "%d strani"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-brace-format
+msgid "of {}"
+msgstr "od {}"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "The document will not be encrypted."
+msgstr "Dokument ne bo šifriran."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "The document will be encrypted when it is saved."
+msgstr "Dokument bo šifriran ob shranjevanju."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Could not open a new window."
+msgstr "Novega okna ni bilo mogoče odpreti."
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Open"
+msgstr "Odpri"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Save As…"
+msgstr "Shrani kot …"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Export…"
+msgstr "Izvozi …"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "There is nothing to save."
+msgstr "Ni ničesar za shraniti."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Could not save:"
+msgstr "Ni bilo mogoče shraniti:"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Saved"
+msgstr "Shranjeno"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "This document has unsaved changes."
+msgstr "Ta dokument ima neshranjene spremembe."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Save before continuing?"
+msgstr "Shranim pred nadaljevanjem?"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py pdfarranger_qt/reader.py
+msgid "Delete"
+msgstr "Izbriši"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Cut"
+msgstr "Izreži"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Paste"
+msgstr "Prilepi"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Move to Page"
+msgstr "Premakni na stran"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Move"
+msgstr "Premakni"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "The page selection is not contiguous. Cannot unimpose."
+msgstr "Izbor strani ni strnjen. Razlaganje ni mogoče."
+
+#: pdfarranger_qt/mainwindow.py
+msgid "All pages must have the same size."
+msgstr "Vse strani morajo biti enako velike."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Split Booklet"
+msgstr "Razdeli knjižico"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Overwrite existing files?"
+msgstr "Prepišem obstoječe datoteke?"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Blank page"
+msgstr "Prazna stran"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Copy the pages you want to merge in first."
+msgstr "Najprej kopiraj strani, ki jih želiš združiti."
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Generate Booklet"
+msgstr "Ustvari knjižico"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "The page selection is not contiguous."
+msgstr "Izbor strani ni strnjen."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "All metadata will be removed when the document is saved."
+msgstr "Vsi metapodatki bodo odstranjeni ob shranjevanju dokumenta."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Metadata will be kept."
+msgstr "Metapodatki bodo ohranjeni."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Repair Document…"
+msgstr "Popravi dokument…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Write a rebuilt copy?"
+msgstr "Zapišem obnovljeno kopijo?"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Save Repaired Document"
+msgstr "Shrani popravljeni dokument"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "%d image written"
+msgid_plural "%d images written"
+msgstr[0] "Zapisana %d slika"
+msgstr[1] "Zapisani %d sliki"
+msgstr[2] "Zapisane %d slike"
+msgstr[3] "Zapisanih %d slik"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "The page has no text."
+msgstr "Stran nima besedila."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Copied"
+msgstr "Kopirano"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "The page has no image."
+msgstr "Stran nima slike."
+
+#: pdfarranger_qt/mainwindow.py
+msgid "The page has several images. Use \"Explode into Images\" first.\""
+msgstr "Na strani je več slik. Uporabite najprej \"Raztreli na slike\". "
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Explode into Images"
+msgstr "Razstavi v slike"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Printing…"
+msgstr "Tiskanje …"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Finishing…"
+msgstr "Zaključevanje…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "The printer driver is processing the job."
+msgstr "Gonilnik tiskalnika obdeluje posel."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "%d page printed"
+msgid_plural "%d pages printed"
+msgstr[0] "Natisnjena %d stran"
+msgstr[1] "Natisnjeni %d strani"
+msgstr[2] "Natisnjene %d strani"
+msgstr[3] "Natisnjenih %d strani"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Find"
+msgstr "Najdi"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "%d page matches"
+msgid_plural "%d pages match"
+msgstr[0] "%d stran se ujema"
+msgstr[1] "%d strani se ujemata"
+msgstr[2] "%d strani se ujemajo"
+msgstr[3] "%d strani se ujema"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Duplicate"
+msgstr "Podvoji"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Rotate"
+msgstr "Zasukaj"
+
+#: pdfarranger_qt/metadata.py
+msgid "Title"
+msgstr "Naslov"
+
+#: pdfarranger_qt/metadata.py
+msgid "Subject"
+msgstr "Predmet"
+
+#: pdfarranger_qt/metadata.py
+msgid "Keywords"
+msgstr "Ključniki"
+
+#: pdfarranger_qt/metadata.py
+msgid "Producer"
+msgstr "Narejen v programu"
+
+#: pdfarranger_qt/metadata.py
+msgid "Creator"
+msgstr "Ustvarjalec"
+
+#: pdfarranger_qt/metadata.py
+msgid "Creator tool"
+msgstr "Orodje ustvarjalca"
+
+#: pdfarranger_qt/metadata.py
+msgid "Created"
+msgstr "Ustvarjeno"
+
+#: pdfarranger_qt/metadata.py
+msgid "Modified"
+msgstr "Spremenjeno"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/nup.py
+msgid "2 pages per sheet"
+msgstr "2 strani na list"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/nup.py
+msgid "4 pages per sheet"
+msgstr "4 strani na list"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/nup.py
+msgid "6 pages per sheet"
+msgstr "6 strani na list"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/nup.py
+msgid "8 pages per sheet"
+msgstr "8 strani na list"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/nup.py
+msgid "9 pages per sheet"
+msgstr "9 strani na list"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/nup.py
+msgid "16 pages per sheet"
+msgstr "16 strani na list"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Bookmark Colour"
+msgstr "Barva zaznamka"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Add Bookmark Here"
+msgstr "Dodaj zaznamek sem"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Add Child Bookmark Here"
+msgstr "Dodaj podrejeni zaznamek sem"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Re-home to This Page"
+msgstr "Preusmeri na to stran"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Rename"
+msgstr "Preimenuj"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Style"
+msgstr "Slog"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Colour…"
+msgstr "Barva…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Default Colour"
+msgstr "Privzeta barva"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Expand All Children"
+msgstr "Razširi vse podrejene"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Collapse All Children"
+msgstr "Strni vse podrejene"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Delete with Children"
+msgstr "Izbriši s podrejenimi"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Delete Dangling Bookmarks"
+msgstr "Izbriši viseče zaznamke"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Nothing to read."
+msgstr "Ni ničesar za branje."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+#, python-brace-format
+msgid "Page {} of {}"
+msgstr "Stran {} od {}"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Move Bookmark"
+msgstr "Premakni zaznamek"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "This bookmark's page is no longer in the document"
+msgstr "Strani tega zaznamka ni več v dokumentu"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "This bookmark does not point at a page"
+msgstr "Ta zaznamek ne kaže na nobeno stran"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Rename Bookmark"
+msgstr "Preimenuj zaznamek"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Add Child Bookmark"
+msgstr "Dodaj podrejeni zaznamek"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Add Bookmark"
+msgstr "Dodaj zaznamek"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Bookmark Style"
+msgstr "Slog zaznamka"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Re-home Bookmark"
+msgstr "Preusmeri zaznamek"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Delete Bookmark"
+msgstr "Izbriši zaznamek"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Delete Bookmark and Children"
+msgstr "Izbriši zaznamek in podrejene"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/repair.py
+msgid "This file cannot be read, even with recovery."
+msgstr "Te datoteke ni mogoče prebrati, niti z obnovitvijo."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/repair.py
+msgid "No damage found; the file reads cleanly."
+msgstr "Poškodb ni; datoteka se bere brez težav."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/repair.py
+msgid "Damaged, and recoverable."
+msgstr "Poškodovana, in jo je mogoče obnoviti."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/repair.py
+msgid "The file cannot be read."
+msgstr "Datoteke ni mogoče prebrati."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/stamp.py
+msgid "Top left"
+msgstr "Zgoraj levo"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/stamp.py
+msgid "Top centre"
+msgstr "Zgoraj na sredini"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/stamp.py
+msgid "Top right"
+msgstr "Zgoraj desno"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/stamp.py
+msgid "Bottom left"
+msgstr "Spodaj levo"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/stamp.py
+msgid "Bottom centre"
+msgstr "Spodaj na sredini"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/stamp.py
+msgid "Bottom right"
+msgstr "Spodaj desno"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/viewer.py
+msgid "Viewer default"
+msgstr "Privzeto v pregledovalniku"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/viewer.py
+msgid "No side panel"
+msgstr "Brez stranskega pulta"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/viewer.py
+msgid "Bookmarks panel"
+msgstr "Pult zaznamkov"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/viewer.py
+msgid "Page thumbnails"
+msgstr "Sličice strani"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/viewer.py
+msgid "Continuous scroll"
+msgstr "Zvezno drsenje"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/viewer.py
+msgid "Two pages, odd on the left"
+msgstr "Dve strani, lihe na levi"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/viewer.py
+msgid "Two pages, odd on the right"
+msgstr "Dve strani, lihe na desni"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/viewer.py
+msgid "Facing pages, odd on the left"
+msgstr "Dvojna stran, lihe na levi"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/viewer.py
+msgid "Facing pages, odd on the right"
+msgstr "Dvojna stran, lihe na desni"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/viewer.py
+msgid "Hide the viewer's toolbar"
+msgstr "Skrij orodno vrstico pregledovalnika"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/viewer.py
+msgid "Hide the viewer's menu bar"
+msgstr "Skrij menijsko vrstico pregledovalnika"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/viewer.py
+msgid "Centre the window on screen"
+msgstr "Postavi okno na sredino zaslona"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/viewer.py
+msgid "Show the title rather than the filename"
+msgstr "Pokaži naslov namesto imena datoteke"
+
+#~ msgid "#Col"
+#~ msgstr "Št. stolpcev"
+
+#~ msgid "#Row"
+#~ msgstr "Št. vrstic"
+
+#~ msgid "%"
+#~ msgstr "%"
+
+#~ msgid "% of height"
+#~ msgstr "% višine"
+
+#~ msgid "% of width"
+#~ msgstr "% širine"
+
+#~ msgid "%s is a tool for rearranging and modifying PDF files."
+#~ msgstr "%s je orodje za prerazporejanje in spreminjanje datotek PDF."
+
+#~ msgid "(Libhandy missing)"
+#~ msgstr "(manjka Libhandy)"
+
+#~ msgid "(Requires restart)"
+#~ msgstr "(Potreben pozagon)"
+
+#~ msgid "A file named \"%s\" already exists. Do you want to replace it?"
+#~ msgstr "Datoteka z imenom \"%s\" že obstaja. Ali jo želite nadomestiti?"
+
+#~ msgid "All files"
+#~ msgstr "Vse datoteke"
+
+#~ msgid "All supported files"
+#~ msgstr "Vse podprte datoteke"
+
+#~ msgid "Bottom to Top"
+#~ msgstr "Od spodaj do vrha"
+
+#~ msgid "Clipboard image"
+#~ msgstr "Slika iz medpomnilnika"
+
+#~ msgid "Copy _Text"
+#~ msgstr "Kopiraj _besedilo"
+
+#~ msgid ""
+#~ "Cropping/hiding does not remove any content"
+#~ " from the PDF file, it only hides"
+#~ " it."
+#~ msgstr ""
+#~ "Z obrezovanjem/zakrivanjem ne izgubite vsebine"
+#~ " PDF datoteke, temveč jo le skrijete"
+
+#~ msgid "Despite the warnings the document(s) should have no visible issues."
+#~ msgstr "Kljub opozorilom naj dokumenti ne bi imeli vidnih težav."
+
+#~ msgid "Discard changes and close?"
+#~ msgstr "Želite zavreči spremembe in zapreti?"
+
+#~ msgid "Discard changes and quit?"
+#~ msgstr "Želite zavreči spremembe in zaustaviti program?"
+
+#~ msgid "Do not show this dialog again."
+#~ msgstr "Ne prikazuj več tega pogovornega okna."
+
+#~ msgid "Do_n’t Save"
+#~ msgstr "_Ne shrani"
+
+#~ msgid "Don't show warnings when saving again."
+#~ msgstr "Med shranjevanjem ne prikazuj več opozoril."
+
+#~ msgid "Dupl_icate"
+#~ msgstr "Po_dvoji"
+
+#~ msgid "Equal column width"
+#~ msgstr "Enotna širina stolpcev"
+
+#~ msgid "Equal row height"
+#~ msgstr "Enotna višina vrstic"
+
+#~ msgid "Exploding into images…"
+#~ msgstr "Razstrelitev na slike …"
+
+#~ msgid "File(s) to open"
+#~ msgstr "Datoteke za odpiranje"
+
+#~ msgid "Fit to Full Page"
+#~ msgstr ""
+
+#~ msgid "Fit to Printable Area"
+#~ msgstr ""
+
+#~ msgid "For more info see"
+#~ msgstr ""
+
+#~ msgid "For more options see:"
+#~ msgstr "Poglejte več možnosti:"
+
+#~ msgid "Full_screen"
+#~ msgstr "Celoza_slonski način"
+
+#~ msgid "GNU General Public License (GPL) Version 3."
+#~ msgstr "Splošno GNU dovoljenje, različica 3."
+
+#~ msgid "Height in %"
+#~ msgstr "Višina v %"
+
+#~ msgid "Horizontal offset"
+#~ msgstr "Vodoravni odmik"
+
+#~ msgid "Img2pdf missing."
+#~ msgstr "Img2pdf manjka"
+
+#~ msgid "Import…"
+#~ msgstr "Uvozi …"
+
+#~ msgid "Invalid date format. Input discarded."
+#~ msgstr "Neveljavna oblika datuma. Vnos prezrt."
+
+#~ msgid "It uses libqpdf %s, pikepdf %s, GTK %s and Python %s."
+#~ msgstr "Program uporablja libqpdf %s, pikepdf %s, GTK %s in Python %s."
+
+#~ msgid "Left to Right"
+#~ msgstr "Z leve proti desni"
+
+#~ msgid "Main Menu"
+#~ msgstr "Glavni izbirnik"
+
+#~ msgid "Maintainers and contributors"
+#~ msgstr "Vzdrževalci in prispevkarji"
+
+#~ msgid "Margin"
+#~ msgstr "Robovi"
+
+#~ msgid "Merged page size:"
+#~ msgstr "Velikost združenih strani:"
+
+#~ msgid "Non-uniform page size - using max size"
+#~ msgstr "Različne velikosti strani - uporabljena bo največja"
+
+#~ msgid "None"
+#~ msgstr ""
+
+#~ msgid "Note"
+#~ msgstr ""
+
+#~ msgid "Note the limitations:"
+#~ msgstr ""
+
+#~ msgid "Open…"
+#~ msgstr "Odpri …"
+
+#~ msgid "Outlines and links can be preserved only in certain cases."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "PDF Arranger is a small python-gtk"
+#~ " application, which helps the user to"
+#~ " merge or split pdf documents and "
+#~ "rotate, crop and rearrange their pages "
+#~ "using an interactive and intuitive "
+#~ "graphical interface. It is a frontend "
+#~ "for pikepdf."
+#~ msgstr ""
+#~ "PDF Arranger je majhen python-gtk "
+#~ "program, ki pomaga uporabniku združiti ali"
+#~ " razcepiti pdf dokumente ter zasukati, "
+#~ "obrezati in prerazporediti njihove strani s"
+#~ " pomočjo sodejnega uporabniškega vmesnika. Gre"
+#~ " za obličje programa pikepdf."
+
+#~ msgid "PDF document is damaged"
+#~ msgstr "PDF dokument je okvarjen"
+
+#~ msgid "PDF files"
+#~ msgstr "PDF datoteke"
+
+#~ msgid "Page Handling"
+#~ msgstr ""
+
+#~ msgid "Page Order"
+#~ msgstr "Zaporedje strani"
+
+#~ msgid "Page Size:"
+#~ msgstr "Velikost strani:"
+
+#~ msgid "Pasted data not valid. Aborting paste."
+#~ msgstr "Prilepljeni podatki niso veljavni. Lepljenje opuščeno."
+
+#~ msgid "Pre_ferences"
+#~ msgstr "P_rednastavitve"
+
+#~ msgid "Print the version of PDF Arranger and exit"
+#~ msgstr "Natisni različico PDF Arrangerja in ga zaustavi"
+
+#~ msgid "Property"
+#~ msgstr "Lastnost"
+
+#~ msgid "Re_verse Order"
+#~ msgstr "O_brni zaporedje"
+
+#~ msgid "Rendering Preview…"
+#~ msgstr "Izrisovanje predogleda …"
+
+#~ msgid "Rendering…"
+#~ msgstr "Izrisovanje …"
+
+#~ msgid "Replace"
+#~ msgstr "Zamenjaj"
+
+#~ msgid "Right to Left"
+#~ msgstr "Z desne proti levi"
+
+#~ msgid "Rotate Left"
+#~ msgstr "Zasukaj levo"
+
+#~ msgid "Rotate Right"
+#~ msgstr "Zasukaj desno"
+
+#~ msgid "Save"
+#~ msgstr "Shrani"
+
+#~ msgid "Save As"
+#~ msgstr "Shrani kot"
+
+#~ msgid "Save changes before closing?"
+#~ msgstr "Ali želite pred zaprtjem shraniti spremembe?"
+
+#~ msgid "Save changes before quitting?"
+#~ msgstr "Ali želite pred izhodom iz programa shraniti spremembe?"
+
+#~ msgid "Save changes to “{}” before closing?"
+#~ msgstr "Ali želite pred zaprtjem shraniti spremembe v „{}”?"
+
+#~ msgid "Save changes to “{}” before quitting?"
+#~ msgstr "Ali želite pred izhodom iz programa shraniti spremembe v „{}”?"
+
+#~ msgid "Saving produced some warnings"
+#~ msgstr "Med shranjevanjem se je pojavilo nekaj opozoril"
+
+#~ msgid "Saving…"
+#~ msgstr "Shranjevanje …"
+
+#~ msgid "Scale mode:"
+#~ msgstr ""
+
+#~ msgid "Selected pages: "
+#~ msgstr "Izbrane strani: "
+
+#~ msgid "Show values"
+#~ msgstr "Prikaži vrednosti"
+
+#~ msgid "Supported image files"
+#~ msgstr "Podprte slikovne datoteke"
+
+#~ msgid "Top to Bottom"
+#~ msgstr "Od zgoraj navzdol"
+
+#~ msgid "User Manual"
+#~ msgstr ""
+
+#~ msgid "Value"
+#~ msgstr "Vrednost"
+
+#~ msgid "Vertical offset"
+#~ msgstr "Navpični odmik"
+
+#~ msgid "Width in %"
+#~ msgstr "Širina v %"
+
+#~ msgid "Your changes will be lost if you don’t save them."
+#~ msgstr "Če ne shranite vaših sprememb, bodo izgubljene."
+
+#~ msgid "Zoom In"
+#~ msgstr "Približaj"
+
+#~ msgid "Zoom Out"
+#~ msgstr "Oddalji"
+
+#~ msgid "Zoom _Fit"
+#~ msgstr "_Prilegajoča povečava"
+
+#~ msgid "_Apply"
+#~ msgstr "_Uporabi"
+
+#~ msgid "_Cancel"
+#~ msgstr "_Prekliči"
+
+#~ msgid "_OK"
+#~ msgstr "V _redu"
+
+#~ msgid "_Revert"
+#~ msgstr "P_ovrni"
+
+#~ msgid "page"
+#~ msgstr "stran"
+
+#~ msgid "untitled"
+#~ msgstr "nenaslovljen"
+

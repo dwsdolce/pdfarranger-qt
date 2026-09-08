@@ -1,829 +1,2712 @@
+
 msgid ""
 msgstr ""
-"Project-Id-Version: pdfarranger\n"
+"Project-Id-Version:  pdfarranger\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-02-24 20:19+0100\n"
+"POT-Creation-Date: 2026-09-07 19:17+0000\n"
 "PO-Revision-Date: 2023-07-10 15:37+0000\n"
 "Last-Translator: PavelZ\n"
+"Language: cs_CZ\n"
 "Language-Team: Czech (Czech Republic)\n"
-"Language: cs-CZ\n"
+"Plural-Forms: nplurals=3; plural=( n == 1 ) ? 0 : ( n >= 2 && n <= 4 ) ? 1 :"
+" 2;\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=( n == 1 ) ? 0 : ( n >= 2 && n <= 4 ) ? 1 : "
-"2;\n"
-"\n"
-"X-Loco-Source-Locale: cs_CZ\n"
-"X-Loco-Parser: loco_parse_po\n"
-"X-Generator: Loco https://localise.biz/\n"
+"X-Generator: pdfarranger-qt tools/merge_translations.py\n"
+"Generated-By: Babel 2.18.0\n"
 
-#: pdfarranger/splitter.py:87
-msgid "#Col"
-msgstr "#Sloupec"
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py pdfarranger_qt/reader.py
+#, python-brace-format
+msgid "Page {}"
+msgstr "Stránka {}"
 
-#: pdfarranger/splitter.py:87
-msgid "#Row"
-msgstr "#Řádek"
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Open Link"
+msgstr "Otevřít odkaz"
 
-#: pdfarranger/pageutils.py:127 pdfarranger/pageutils.py:453
-#: pdfarranger/pageutils.py:455
-msgid "%"
-msgstr "%"
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Copy Link Address"
+msgstr "Kopírovat adresu odkazu"
 
-#: pdfarranger/pageutils.py:176
-#, python-format
-msgid "% of height"
-msgstr ""
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+#, python-brace-format
+msgid "Go to {}"
+msgstr "Přejít na {}"
 
-#: pdfarranger/pageutils.py:176
-#, python-format
-msgid "% of width"
-msgstr ""
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Follow Link"
+msgstr "Následovat odkaz"
 
-#: pdfarranger/pdfarranger.py:2764
-#, python-format
-msgid "%s is a tool for rearranging and modifying PDF files."
-msgstr "%s je nástroj na přeskupování a úpravy PDF dokumentů."
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py pdfarranger_qt/mainwindow.py
+msgid "Copy"
+msgstr "Kopírovat"
 
-#: pdfarranger/config.py:262
-msgid "(Libhandy missing)"
-msgstr "(chybějící Libhandy)"
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Select All"
+msgstr "Vybrat vše"
 
-#: pdfarranger/config.py:254
-msgid "(Requires restart)"
-msgstr "(vyžadován restart)"
-
-#: pdfarranger/pdfarranger.py:1144
-#, python-format
-msgid "A file named \"%s\" already exists. Do you want to replace it?"
-msgstr "Soubor s názvem \"%s\" již existuje. Chcete ho nahradit?"
-
-#: data/menu.ui:227 data/menu.ui:391
-msgid "All From _Same File"
-msgstr "Vše ze _stejného souboru"
-
-#: pdfarranger/pdfarranger.py:518
-msgid "All files"
-msgstr "Všechny soubory"
-
-#: pdfarranger/pdfarranger.py:470
-msgid "All pages must have the same size."
-msgstr "Všechny stránky musí mít stejný rozměr"
-
-#: pdfarranger/pdfarranger.py:506
-msgid "All supported files"
-msgstr "Všechny podporované soubory"
-
-#: pdfarranger/exporter.py:563
-msgid "Auto Rotate"
-msgstr ""
-
-#: pdfarranger/pageutils.py:154
-msgid "Bottom"
-msgstr "Dolní"
-
-#: pdfarranger/pageutils.py:386
-msgid "Bottom to Top"
-msgstr "Zespodu nahoru"
-
-#: pdfarranger/core.py:569
-msgid "Clipboard image"
-msgstr "Obrázek ve schránce"
-
-#: pdfarranger/pageutils.py:369 pdfarranger/splitter.py:60
-msgid "Columns"
-msgstr "Sloupce"
-
-#: data/menu.ui:141 data/menu.ui:354
-msgid "Copy _Image"
-msgstr ""
-
-#: data/menu.ui:146 data/menu.ui:359
-msgid "Copy _Text"
-msgstr ""
-
-#: pdfarranger/metadata.py:49
-msgid "Created"
-msgstr "Vytvořeno"
-
-#: pdfarranger/metadata.py:47
-msgid "Creator"
-msgstr "Autor"
-
-#: pdfarranger/metadata.py:48
-msgid "Creator tool"
-msgstr "Vytvořeno nástrojem"
-
-#: pdfarranger/pageutils.py:846
-msgid "Crop Margins"
-msgstr "Oříznout okraje"
-
-#: data/menu.ui:174 data/menu.ui:432
-msgid "Crop White Borders"
-msgstr "Oříznout bílé okra_je"
-
-#: pdfarranger/pageutils.py:166 pdfarranger/pdfarranger.py:2730
-msgid ""
-"Cropping/hiding does not remove any content from the PDF file, it only hides "
-"it."
-msgstr ""
-
-#: data/menu.ui:94 data/menu.ui:302
-msgid "Cu_t"
-msgstr "_Vyjmout"
-
-#: pdfarranger/pdfarranger.py:1258
-msgid "Despite the warnings the document(s) should have no visible issues."
-msgstr "Navzdory varováním by dokument neměl mít viditelné problémy."
-
-#: pdfarranger/pdfarranger.py:993
-msgid "Discard changes and close?"
-msgstr "Zahodit změny a zavřít?"
-
-#: pdfarranger/pdfarranger.py:1030
-msgid "Discard changes and quit?"
-msgstr "Zahodit změny a ukončit?"
-
-#: pdfarranger/pdfarranger.py:2737
-msgid "Do not show this dialog again."
-msgstr "Tento dialog znovu nezobrazovat."
-
-#: pdfarranger/pdfarranger.py:984
-msgid "Do_n’t Save"
-msgstr "_Neukládat"
-
-#: pdfarranger/pdfarranger.py:1265
-msgid "Don't show warnings when saving again."
-msgstr "Varování při ukládání znovu nezobrazovat."
-
-#: data/menu.ui:178 data/menu.ui:436
-msgid "Dupl_icate"
-msgstr "_Duplikovat"
-
-#: data/menu.ui:52 data/menu.ui:462
-msgid "E_xport"
-msgstr "E_xportovat"
-
-#: data/menu.ui:55 data/menu.ui:465
-msgid "E_xport Selection to a Single File…"
-msgstr "E_xportovat výběr do jediného souboru…"
-
-#: data/menu.ui:266
-msgid "Edit _Properties"
-msgstr "Upravit _vlastnosti"
-
-#: pdfarranger/metadata.py:202
-msgid "Edit properties"
-msgstr "Upravit vlastnosti"
-
-#: pdfarranger/splitter.py:62
-msgid "Equal column width"
-msgstr "Stejná šířka sloupců"
-
-#: pdfarranger/splitter.py:62
-msgid "Equal row height"
-msgstr "Stejná výška řádků"
-
-#: pdfarranger/pdfarranger.py:1792
-msgid "Exploding into images…"
-msgstr ""
-
-#: data/menu.ui:60 data/menu.ui:470
-msgid "Export Selection to _Individual Files…"
-msgstr "Exportovat výběr do _samostatných souborů…"
-
-#: data/menu.ui:65 data/menu.ui:475
-msgid "Export _All Pages to Individual Files…"
-msgstr "Exportovat _všechny stránky do samostatných souborů…"
-
-#: pdfarranger/pdfarranger.py:1102
-msgid "Export…"
-msgstr "Export…"
-
-#: pdfarranger/core.py:571 pdfarranger/pdfarranger.py:1512
-msgid "File is neither pdf nor image"
-msgstr "Soubor není ani PDF dokument ani obrázek"
-
-#: pdfarranger/pdfarranger.py:300
-msgid "File(s) to open"
-msgstr "Soubor(y) k otevření"
-
-#: pdfarranger/exporter.py:561
-msgid "Fit to Full Page"
-msgstr ""
-
-#: pdfarranger/exporter.py:560
-msgid "Fit to Printable Area"
-msgstr ""
-
-#: pdfarranger/pdfarranger.py:2734
-msgid "For more info see"
-msgstr ""
-
-#: pdfarranger/config.py:271
-msgid "For more options see:"
-msgstr "Pro další možnosti viz"
-
-#: data/menu.ui:259
-msgid "Full_screen"
-msgstr "_Celá obrazovka"
-
-#: pdfarranger/pdfarranger.py:2778
-msgid "GNU General Public License (GPL) Version 3."
-msgstr "GNU General Public License (GPL) verze 3."
-
-#: data/menu.ui:198 data/menu.ui:456
-msgid "Generate Booklet"
-msgstr "Vytvořit brožuru"
-
-#: pdfarranger/pageutils.py:248 pdfarranger/pageutils.py:252
-#: pdfarranger/pageutils.py:334
-msgid "Height"
-msgstr "Výška"
-
-#: pdfarranger/splitter.py:88
-msgid "Height in %"
-msgstr "Výška v %"
-
-#: pdfarranger/pageutils.py:846
-msgid "Hide Margins"
-msgstr ""
-
-#: pdfarranger/pageutils.py:381
-msgid "Horizontal"
-msgstr "Vodorovně"
-
-#: pdfarranger/splitter.py:61
-msgid "Horizontal Splits"
-msgstr "Vodorovné rozdělení"
-
-#: pdfarranger/pageutils.py:452
-msgid "Horizontal offset"
-msgstr "Vodorovný posun"
-
-#: pdfarranger/core.py:560
+#: pdfarranger_qt/core.py pdfarranger_qt/mainwindow.py
 msgid "Image files are only supported with img2pdf"
 msgstr "Soubory s obrázky jsou podporovány pouze s programem img2pdf"
 
-#: pdfarranger/core.py:566
-msgid "Image format is not supported by img2pdf"
-msgstr "Formát obrázku není podporován programem img2pdf"
-
-#: pdfarranger/pdfarranger.py:1789
-msgid "Img2pdf missing."
-msgstr ""
-
-#: data/pdfarranger.ui:58
-msgid "Import"
-msgstr "Importovat"
-
-#: pdfarranger/pdfarranger.py:1335
-msgid "Import…"
-msgstr "Import…"
-
-#: data/menu.ui:194 data/menu.ui:452
-msgid "Insert Blan_k Page…"
-msgstr "Vložit prázdn_ou stránku…"
-
-#: pdfarranger/pageutils.py:331
-msgid "Insert Blank Page"
-msgstr "Vložit prázdnou stránku"
-
-#: pdfarranger/metadata.py:173
-msgid "Invalid date format. Input discarded."
-msgstr "Neplatný formát data. Vstup byl zahozen."
-
-#: pdfarranger/pdfarranger.py:2767
-#, python-format
-msgid "It uses libqpdf %s, pikepdf %s, GTK %s and Python %s."
-msgstr "Používá libqpdf %s, pikepdf %s, GTK %s and Python %s."
-
-#: pdfarranger/metadata.py:45
-msgid "Keywords"
-msgstr "Klíčová slova"
-
-#: pdfarranger/config.py:252
-msgid "Language"
-msgstr "Jazyk"
-
-#: pdfarranger/pageutils.py:154
-msgid "Left"
-msgstr "Levý"
-
-#: pdfarranger/pageutils.py:383
-msgid "Left to Right"
-msgstr "Zleva do prava"
-
-#: data/pdfarranger.ui:122
-msgid "Main Menu"
-msgstr "Hlavní nabídka"
-
-#: pdfarranger/pdfarranger.py:2773
-msgid "Maintainers and contributors"
-msgstr "Správci a přispěvatelé"
-
-#: pdfarranger/pageutils.py:367
-msgid "Margin"
-msgstr "Okraj"
-
-#: pdfarranger/pageutils.py:353
-msgid "Merge Pages"
-msgstr "Sloučit stránky"
-
-#: pdfarranger/pageutils.py:418
-msgid "Merged page size:"
-msgstr "Velikost sloučené stránky:"
-
-#: pdfarranger/metadata.py:50
-msgid "Modified"
-msgstr "Změněno"
-
-#: pdfarranger/pageutils.py:398
-msgid "Non-uniform page size - using max size"
-msgstr "Nejednotná velikost stránky – pomocí maximální velikosti"
-
-#: pdfarranger/exporter.py:559
-msgid "None"
-msgstr ""
-
-#: pdfarranger/pdfarranger.py:2723
-msgid "Note"
-msgstr ""
-
-#: pdfarranger/pdfarranger.py:2729
-msgid "Note the limitations:"
-msgstr ""
-
-#: data/pdfarranger.ui:37
-msgid "Open"
-msgstr "Otevřít"
-
-#: pdfarranger/pdfarranger.py:1200
-msgid "Open…"
-msgstr "Otevřít…"
-
-#: pdfarranger/pdfarranger.py:2731
-msgid "Outlines and links can be preserved only in certain cases."
-msgstr ""
-
-#: pdfarranger/pageutils.py:899
-msgid "Overlay"
-msgstr "Překrytí"
-
-#: pdfarranger/pdfarranger.py:281
-msgid ""
-"PDF Arranger is a small python-gtk application, which helps the user to "
-"merge or split pdf documents and rotate, crop and rearrange their pages "
-"using an interactive and intuitive graphical interface. It is a frontend for "
-"pikepdf."
-msgstr ""
-"PDF Arranger je malá pyhon-gtk aplikace, která pomáhá uživatelům slučovat "
-"nebo rozdělovat PDF dokumenty a otáčet, ořezávat nebo přeskupovat jejich "
-"stránky za použití interaktivního a intuitivního uživatelského rozhraní. "
-"Jedná se o frontend pro knihovnu pikepdf."
-
-#: pdfarranger/pdfarranger.py:1506
-msgid "PDF document is damaged"
-msgstr "PDF dokument je poškozený"
-
-#: pdfarranger/pdfarranger.py:510
-msgid "PDF files"
-msgstr "Soubory PDF"
-
-#: pdfarranger/exporter.py:599
-msgid "Page Handling"
-msgstr ""
-
-#: pdfarranger/pageutils.py:394
-msgid "Page Order"
-msgstr "Pořadí stránek"
-
-#: pdfarranger/pdfarranger.py:2801
-msgid "Page Size:"
-msgstr "Velikost stránky:"
-
-#: pdfarranger/pageutils.py:243
-msgid "Page size"
-msgstr ""
-
-#: pdfarranger/core.py:457
-msgid "Password"
-msgstr "Heslo"
-
-#: pdfarranger/core.py:435
-msgid "Password required"
-msgstr "Je vyžadováno heslo"
-
-#: data/menu.ui:107 data/menu.ui:315
-msgid "Past_e Special"
-msgstr "Vložit _jinak"
-
-#: data/menu.ui:124 data/menu.ui:333
-msgid "Paste As O_verlay…"
-msgstr "Vložit jako překr_ytí…"
-
-#: data/menu.ui:119 data/menu.ui:328
-msgid "Paste As _Even Pages"
-msgstr "Vložit jako s_udé stránky"
-
-#: data/menu.ui:114 data/menu.ui:323
-msgid "Paste As _Odd Pages"
-msgstr "Vložit jako l_iché stránky"
-
-#: data/menu.ui:129 data/menu.ui:338
-msgid "Paste As _Underlay…"
-msgstr "Vložit jako podkr_eslení…"
-
-#: data/menu.ui:102 data/menu.ui:310
-msgid "Paste _After"
-msgstr "Vložit z_a"
-
-#: data/menu.ui:109 data/menu.ui:318
-msgid "Paste _Before"
-msgstr "Vložit př_ed"
-
-#: pdfarranger/pdfarranger.py:1636
-msgid "Pasted data not valid. Aborting paste."
-msgstr "Vkládaná data jsou neplatná. Vkládání bylo přerušeno."
-
-#: data/menu.ui:272
-msgid "Pre_ferences"
-msgstr "Předvolb_y"
-
-#: pdfarranger/config.py:242
-msgid "Preferences"
-msgstr "Předvolby"
-
-#: pdfarranger/pdfarranger.py:292
-msgid "Print the version of PDF Arranger and exit"
-msgstr "Vypsat verzi programu PDF Arranger a skončit"
-
-#: pdfarranger/config.py:267
-msgid "Printing"
-msgstr ""
-
-#: pdfarranger/exporter.py:579
-msgid "Printing…"
-msgstr "Tisk…"
-
-#: pdfarranger/metadata.py:46
-msgid "Producer"
-msgstr "Producent"
-
-#: pdfarranger/metadata.py:216
-msgid "Property"
-msgstr "Vlastnost"
-
-#: data/menu.ui:182 data/menu.ui:440
-msgid "Re_verse Order"
-msgstr "O_brácené pořadí"
-
-#: pdfarranger/pageutils.py:250
-msgid "Relative"
-msgstr "Relativní"
-
-#: pdfarranger/exporter.py:617
-msgid "Rendering Preview…"
-msgstr "Vykreslování náhledu…"
-
-#: pdfarranger/pdfarranger.py:746
-msgid "Rendering…"
-msgstr "Vykreslování…"
-
-#: pdfarranger/pdfarranger.py:1146
-msgid "Replace"
-msgstr "Nahradit"
-
-#: pdfarranger/pageutils.py:154
-msgid "Right"
-msgstr "Pravý"
-
-#: pdfarranger/pageutils.py:384
-msgid "Right to Left"
-msgstr "Zprava doleva"
-
-#: data/pdfarranger.ui:203
-msgid "Rotate Left"
-msgstr "Otočit doleva"
-
-#: data/pdfarranger.ui:227
-msgid "Rotate Right"
-msgstr "Otočit doprava"
-
-#: data/menu.ui:152 data/menu.ui:410
-msgid "Rotate _Left"
-msgstr "Otočit do_leva"
-
-#: pdfarranger/pageutils.py:370 pdfarranger/splitter.py:60
-msgid "Rows"
-msgstr "Řádky"
-
-#: data/menu.ui:232 data/menu.ui:396
-msgid "Same Page _Format"
-msgstr "Stejný _formát stránky"
-
-#: data/pdfarranger.ui:78
-msgid "Save"
-msgstr "Uložit"
-
-#: data/pdfarranger.ui:97
-msgid "Save As"
-msgstr "Uložit jako"
-
-#: pdfarranger/pdfarranger.py:1102
-msgid "Save As…"
-msgstr "Uložit jako…"
-
-#: data/menu.ui:47
-msgid "Save _As…"
-msgstr "Uložit _jako"
-
-#: pdfarranger/pdfarranger.py:1002
-msgid "Save changes before closing?"
-msgstr "Uložit změny před zavřením?"
-
-#: pdfarranger/pdfarranger.py:1039
-msgid "Save changes before quitting?"
-msgstr "Uložit změny před ukončením?"
-
-#: pdfarranger/pdfarranger.py:999
-msgid "Save changes to “{}” before closing?"
-msgstr "Uložit změny do “{}” před zavřením?"
-
-#: pdfarranger/pdfarranger.py:1036
-msgid "Save changes to “{}” before quitting?"
-msgstr "Uložit změny do “{}” před ukončením?"
-
-#: pdfarranger/pdfarranger.py:1257
-msgid "Saving produced some warnings"
-msgstr "Ukládání vyvolalo nějaká varování"
-
-#: pdfarranger/pdfarranger.py:1296
-msgid "Saving…"
-msgstr "Ukládání…"
-
-#: pdfarranger/pageutils.py:121
-msgid "Scale factor"
-msgstr "Měřítko"
-
-#: pdfarranger/exporter.py:557
-msgid "Scale mode:"
-msgstr ""
-
-#: data/menu.ui:207 data/menu.ui:371
-msgid "Select _All"
-msgstr "Vybrat v_še"
-
-#: data/menu.ui:222 data/menu.ui:386
-msgid "Select _Even Pages"
-msgstr "Vybrat sud_é stránky"
-
-#: data/menu.ui:217 data/menu.ui:381
-msgid "Select _Odd Pages"
-msgstr "Vybrat lic_hé stránky"
-
-#: pdfarranger/pdfarranger.py:2796
-msgid "Selected pages: "
-msgstr "Vybrané stránky: "
-
-#: pdfarranger/pageutils.py:548
-msgid "Show values"
-msgstr ""
-
-#: pdfarranger/splitter.py:26
-msgid "Split Pages"
-msgstr "Rozdělit stránky"
-
-#: pdfarranger/metadata.py:44
-msgid "Subject"
-msgstr "Předmět"
-
-#: pdfarranger/pdfarranger.py:523
-msgid "Supported image files"
-msgstr "Podporované soubory s obrázky"
-
-#: pdfarranger/config.py:282 pdfarranger/config.py:290
-msgid "System setting"
-msgstr "Systémová nastavení"
-
-#: pdfarranger/core.py:447
-msgid ""
-"The document “{}” is locked and requires a password before it can be opened."
-msgstr "Dokument “{}” je uzamčen a je vyžadováno heslo pro jeho otevření."
-
-#: pdfarranger/pdfarranger.py:1765
-msgid "The page has several images. Use \"Explode into Images\" first.\""
-msgstr ""
-
-#: pdfarranger/core.py:446
-msgid "The password will be remembered until you close PDF Arranger."
-msgstr "Heslo bude zapamatováno, dokud neukončíte program PDF Arranger."
-
-#: pdfarranger/config.py:260
-msgid "Theme"
-msgstr "Téma"
-
-#: pdfarranger/metadata.py:43
-msgid "Title"
-msgstr "Název"
-
-#: pdfarranger/pageutils.py:154
-msgid "Top"
-msgstr "Horní"
-
-#: pdfarranger/pageutils.py:385
-msgid "Top to Bottom"
-msgstr "Shora dolů"
-
-#: pdfarranger/pageutils.py:899
-msgid "Underlay"
-msgstr "Podkreslení"
-
-#: pdfarranger/core.py:544 pdfarranger/pdfarranger.py:1502
+# machine translation, unreviewed
+#: pdfarranger_qt/core.py
+msgid "File not found"
+msgstr "Soubor nenalezen"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/core.py
+msgid "Invalid file format"
+msgstr "Neplatný formát souboru"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/core.py
+msgid "Data not yet available"
+msgstr "Data zatím nejsou k dispozici"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/core.py
+msgid "Unsupported security scheme"
+msgstr "Nepodporované zabezpečení"
+
+#: pdfarranger_qt/core.py
 msgid "Unknown file format"
 msgstr "Neznámý formát souboru"
 
-#: pdfarranger/pdfarranger.py:2735
-msgid "User Manual"
-msgstr ""
+#: pdfarranger_qt/core.py
+msgid "Image format is not supported by img2pdf"
+msgstr "Formát obrázku není podporován programem img2pdf"
 
-#: pdfarranger/metadata.py:216
-msgid "Value"
-msgstr "Hodnota"
+#: pdfarranger_qt/core.py
+msgid "File is neither pdf nor image"
+msgstr "Soubor není ani PDF dokument ani obrázek"
 
-#: pdfarranger/pageutils.py:382
-msgid "Vertical"
-msgstr "Svisle"
+# machine translation, unreviewed
+#: pdfarranger_qt/core.py
+msgid "Cannot open document"
+msgstr "Nelze otevřít dokument"
 
-#: pdfarranger/splitter.py:61
-msgid "Vertical Splits"
-msgstr "Svislé rozdělení"
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Paper size"
+msgstr "Velikost papíru"
 
-#: pdfarranger/pageutils.py:454
-msgid "Vertical offset"
-msgstr "Svislý posun"
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Custom"
+msgstr "Vlastní"
 
-#: pdfarranger/pageutils.py:247 pdfarranger/pageutils.py:251
-#: pdfarranger/pageutils.py:333
-msgid "Width"
-msgstr "Šířka"
-
-#: pdfarranger/splitter.py:88
-msgid "Width in %"
-msgstr "Šířka v %"
-
-#: pdfarranger/pdfarranger.py:983
-msgid "Your changes will be lost if you don’t save them."
-msgstr "Provedené změny budou ztraceny, pokud je neuložíte."
-
-#: data/pdfarranger.ui:144
-msgid "Zoom In"
-msgstr "Přiblížit"
-
-#: data/pdfarranger.ui:167
-msgid "Zoom Out"
-msgstr "Oddálit"
-
-#: data/menu.ui:255
-msgid "Zoom _Fit"
-msgstr "Přizpůsobit _velikost"
-
-#: data/menu.ui:247
-msgid "Zoom _In"
-msgstr "Při_blížit"
-
-#: data/menu.ui:251
-msgid "Zoom _Out"
-msgstr "O_ddálit"
-
-#: data/menu.ui:278
-msgid "_About"
-msgstr "_O programu"
-
-#: pdfarranger/pageutils.py:856
-msgid "_Apply"
-msgstr ""
-
-#: pdfarranger/config.py:246 pdfarranger/pageutils.py:227
-#: pdfarranger/pdfarranger.py:975 pdfarranger/pdfarranger.py:984
-#: pdfarranger/pdfarranger.py:1108 pdfarranger/pdfarranger.py:1158
-msgid "_Cancel"
-msgstr "_Zrušit"
-
-#: pdfarranger/pdfarranger.py:994 data/menu.ui:284
-msgid "_Close"
-msgstr "Za_vřít"
-
-#: data/menu.ui:98 data/menu.ui:306
-msgid "_Copy"
-msgstr "_Kopírovat"
-
-#: data/menu.ui:166 data/menu.ui:424
-msgid "_Crop Margins…"
-msgstr ""
-
-#: data/menu.ui:90 data/menu.ui:298
-msgid "_Delete"
-msgstr "_Smazat"
-
-#: data/menu.ui:212 data/menu.ui:376
-msgid "_Deselect All"
-msgstr "Zr_ušit výběr"
-
-#: data/menu.ui:87
-msgid "_Edit"
-msgstr "Up_ravit"
-
-#: data/menu.ui:137 data/menu.ui:350
-msgid "_Explode into Images"
-msgstr ""
-
-#: data/menu.ui:135 data/menu.ui:347
-msgid "_Extract"
-msgstr ""
-
-#: data/menu.ui:170 data/menu.ui:428
-msgid "_Hide Margins…"
-msgstr ""
-
-#: data/menu.ui:30
-msgid "_Import"
-msgstr "_Importovat"
-
-#: data/menu.ui:237 data/menu.ui:401
-msgid "_Invert Selection"
-msgstr "P_řevrátit výběr"
-
-#: data/menu.ui:190 data/menu.ui:448
-msgid "_Merge Pages…"
-msgstr "S_loučit stránky…"
-
-#: data/menu.ui:36
-msgid "_New Window"
-msgstr "_Nové okno"
-
-#: pdfarranger/config.py:247 pdfarranger/pageutils.py:228
-msgid "_OK"
-msgstr "_OK"
-
-#: pdfarranger/pdfarranger.py:1157 data/menu.ui:24
-msgid "_Open"
-msgstr "_Otevřít"
-
-#: data/menu.ui:162 data/menu.ui:420
-msgid "_Page Size…"
-msgstr ""
-
-#: data/menu.ui:71
-msgid "_Print…"
-msgstr "Vy_tisknout…"
-
-#: pdfarranger/pdfarranger.py:1031 data/menu.ui:290
-msgid "_Quit"
-msgstr "U_končit"
-
-#: data/menu.ui:82
-msgid "_Redo"
-msgstr "Z_novu"
-
-#: pdfarranger/pageutils.py:856
-msgid "_Revert"
-msgstr ""
-
-#: data/menu.ui:157 data/menu.ui:415
-msgid "_Rotate Right"
-msgstr "Otočit do_prava"
-
-#: pdfarranger/pdfarranger.py:984 pdfarranger/pdfarranger.py:1107
-#: data/menu.ui:42
-msgid "_Save"
-msgstr "_Uložit"
-
-#: data/menu.ui:204 data/menu.ui:368
-msgid "_Select"
-msgstr "Vybra_t"
-
-#: data/menu.ui:186 data/menu.ui:444
-msgid "_Split Pages…"
-msgstr "_Rozdělit stránky…"
-
-#: data/menu.ui:78
-msgid "_Undo"
-msgstr "_Zpět"
-
-#: data/menu.ui:244
-msgid "_View"
-msgstr "_Zobrazit"
-
-#: pdfarranger/pageutils.py:144 pdfarranger/pageutils.py:368
-#: pdfarranger/pageutils.py:418
+#: pdfarranger_qt/dialogs.py
 msgid "mm"
 msgstr "mm"
 
-#: pdfarranger/core.py:326
-msgid "page"
-msgstr "stránka"
+#: pdfarranger_qt/dialogs.py
+msgid "Width"
+msgstr "Šířka"
 
-#: pdfarranger/pdfarranger.py:825
-msgid "untitled"
-msgstr "nepojmenovaný"
+#: pdfarranger_qt/dialogs.py
+msgid "Height"
+msgstr "Výška"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Keep aspect ratio"
+msgstr "Zachovat poměr stran"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Portrait"
+msgstr "Na výšku"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Landscape"
+msgstr "Na šířku"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Orientation"
+msgstr "Orientace"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Range Select"
+msgstr "Výběr rozsahu"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Select range of pages: "
+msgstr "Vyberte rozsah stránek: "
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Use a comma to separate page numbers, a dash to select a range of pages. \n"
+"e.g. : \"1,3,5-7,9\""
+msgstr ""
+"Čísla stránek oddělte čárkou, rozsah stránek vyberte pomlčkou. \n"
+"např.: \"1,3,5-7,9\""
+
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+msgid "Insert Blank Page"
+msgstr "Vložit prázdnou stránku"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+msgid "Page size"
+msgstr "Velikost stránky"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Fit to paper"
+msgstr "Přizpůsobit papíru"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Relative"
+msgstr "Relativní"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Scale"
+msgstr "Změnit měřítko"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Scale & Add margins"
+msgstr "Změnit měřítko a přidat okraje"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Crop & Add margins"
+msgstr "Oříznout a přidat okraje"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Fit mode"
+msgstr "Režim přizpůsobení"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Scale factor"
+msgstr "Měřítko"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+msgid "Hide Margins"
+msgstr "Skrýt okraje"
+
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+msgid "Crop Margins"
+msgstr "Oříznout okraje"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Left"
+msgstr "Levý"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Right"
+msgstr "Pravý"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Top"
+msgstr "Horní"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Bottom"
+msgstr "Dolní"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Margins"
+msgstr "Okraje"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Same for all sides"
+msgstr "Stejné pro všechny strany"
+
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+msgid "Split Pages"
+msgstr "Rozdělit stránky"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Vertical Splits"
+msgstr "Svislé rozdělení"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Horizontal Splits"
+msgstr "Vodorovné rozdělení"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+msgid "Pages per Sheet"
+msgstr "Stránek na list"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Automatic"
+msgstr "Automaticky"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Automatic turns the sheet sideways when that lets the pages come out larger."
+msgstr "Automatika otočí list na šířku, pokud tím stránky vyjdou větší."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Empty space left around each page."
+msgstr "Prázdné místo kolem každé stránky."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Layout"
+msgstr "Rozvržení"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Columns"
+msgstr "Sloupce"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Rows"
+msgstr "Řádky"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Sheet"
+msgstr "List"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Gap"
+msgstr "Mezera"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Appearance"
+msgstr "Vzhled"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/reader.py
+msgid "Bold"
+msgstr "Tučné"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/reader.py
+msgid "Italic"
+msgstr "Kurzíva"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Font"
+msgstr "Písmo"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Size"
+msgstr "Velikost"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Colour"
+msgstr "Barva"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Opacity"
+msgstr "Krytí"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Position"
+msgstr "Umístění"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Angle"
+msgstr "Úhel"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+msgid "Add Page Numbers"
+msgstr "Přidat čísla stránek"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+#, python-format
+msgid "%s is replaced by the page number, %s by the number of pages."
+msgstr "%s bude nahrazeno číslem stránky, %s počtem stránek."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Leave the first page unnumbered"
+msgstr "Nechat první stránku bez čísla"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "It is still counted; a title page just does not carry a number."
+msgstr "Stále se počítá; titulní stránka jen nenese číslo."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Format"
+msgstr "Formát"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Start at"
+msgstr "Začít od"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Numbering"
+msgstr "Číslování"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+msgid "Add Watermark"
+msgstr "Přidat vodoznak"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "DRAFT"
+msgstr "NÁVRH"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Text"
+msgstr "Text"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Watermark"
+msgstr "Vodoznak"
+
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+msgid "Merge Pages"
+msgstr "Sloučit stránky"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Overlay"
+msgstr "Překrytí"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Underlay"
+msgstr "Podkreslení"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/stamp.py
+msgid "Centre"
+msgstr "Na střed"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Middle"
+msgstr "Uprostřed"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Horizontal"
+msgstr "Vodorovně"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Vertical"
+msgstr "Svisle"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Edit properties"
+msgstr "Upravit vlastnosti"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "System"
+msgstr "Systém"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Light"
+msgstr "Světlý"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Dark"
+msgstr "Tmavý"
+
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+msgid "Preferences"
+msgstr "Předvolby"
+
+#: pdfarranger_qt/dialogs.py
+msgid "System setting"
+msgstr "Systémová nastavení"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Language"
+msgstr "Jazyk"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Theme"
+msgstr "Téma"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "General"
+msgstr "Obecné"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Fit to page"
+msgstr "Přizpůsobit stránce"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Actual size"
+msgstr "Skutečná velikost"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Auto Rotate"
+msgstr "Automaticky otáčet"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Pages are rasterised at this resolution before being sent to the printer. "
+"Lower it if printing is slow: the printer driver has less to process."
+msgstr ""
+"Stránky se v tomto rozlišení rastrují, než se odešlou na tiskárnu. Snižte "
+"ho, pokud je tisk pomalý: ovladač tiskárny toho pak má méně ke zpracování."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Scale mode"
+msgstr "Režim měřítka"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Pixels/inch:"
+msgstr "Pixelů/palec:"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Printing"
+msgstr "Tisk"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Preserve document information from the first file opened"
+msgstr "Zachovat informace o dokumentu z prvního otevřeného souboru"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "When checked: use document properties from the first file opened."
+msgstr "Zaškrtnuto: použít vlastnosti dokumentu z prvního otevřeného souboru."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "When unchecked: merge bookmarks from all documents."
+msgstr "Nezaškrtnuto: sloučit záložky ze všech dokumentů."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Optimize for the web (linearize)"
+msgstr "Optimalizovat pro web (linearizovat)"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Lay the file out so a browser can show page one before the rest has "
+"downloaded."
+msgstr ""
+"Uspořádat soubor tak, aby prohlížeč mohl zobrazit první stránku dřív, než se"
+" stáhne zbytek."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Compress"
+msgstr "Komprimovat"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Recompress the file's streams and pack its objects together."
+msgstr "Znovu zkomprimovat datové proudy souboru a sbalit jeho objekty."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"How much this saves depends on the file: one full of already-compressed "
+"images will barely shrink."
+msgstr ""
+"Kolik se tím ušetří, závisí na souboru: soubor plný již zkomprimovaných "
+"obrázků se skoro nezmenší."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Saving/exporting to single file"
+msgstr "Ukládání/export do jednoho souboru"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Greyscale"
+msgstr "Odstíny šedi"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Image Export"
+msgstr "Export obrázků"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Keyboard shortcuts"
+msgstr "Klávesové zkratky"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Viewer Preferences"
+msgstr "Předvolby prohlížeče"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Open showing:"
+msgstr "Otevřít se zobrazením:"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Page layout:"
+msgstr "Rozvržení stránky:"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "On opening"
+msgstr "Při otevření"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Window"
+msgstr "Okno"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Readers are free to ignore all of this."
+msgstr "Čtenáři to všechno mohou ignorovat."
+
+#: pdfarranger_qt/dialogs.py
+msgid "Password"
+msgstr "Heslo"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Confirm password"
+msgstr "Potvrdit heslo"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Enter a password, or cancel to leave the document unencrypted."
+msgstr "Zadejte heslo, nebo zrušte a nechte dokument nezašifrovaný."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "The passwords do not match."
+msgstr "Hesla se neshodují."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Reset"
+msgstr "Obnovit"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Description"
+msgstr "Popis"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"PDF Arranger merges, splits, rearranges, rotates and crops PDF documents. "
+"Everything happens in memory against the pages you can see; nothing is "
+"written until you save."
+msgstr ""
+"PDF Arranger slučuje, dělí, přeskupuje, otáčí a ořezává dokumenty PDF. Vše "
+"se děje v paměti nad stránkami, které vidíte; nic se nezapíše, dokud "
+"neuložíte."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"It is a front end for pikepdf. Page content is never rewritten — only page "
+"order, geometry and composition."
+msgstr ""
+"Je to nadstavba nad pikepdf. Obsah stránek se nikdy nepřepisuje — jen pořadí"
+" stránek, geometrie a složení."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Command line"
+msgstr "Příkazová řádka"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Files given on the command line are opened as one document. "
+"<code>--version</code> prints the version and exits."
+msgstr ""
+"Soubory zadané na příkazové řádce se otevřou jako jeden dokument. "
+"<code>--version</code> vypíše verzi a skončí."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+msgid "Reading"
+msgstr "Čtení"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"The application opens in <b>read mode</b>: a continuous page view for "
+"reading the document rather than rearranging it. <b>View ▸ Arrange Mode</b> "
+"(Ctrl+E) swaps to the thumbnail grid and back."
+msgstr ""
+"Aplikace se otevírá v <b>režimu čtení</b>: souvislém zobrazení stránek "
+"určeném ke čtení dokumentu, ne k jeho přeskupování. <b>Zobrazit ▸ Režim "
+"uspořádání</b> (Ctrl+E) přepne na mřížku náhledů a zpět."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Reading shows the document <i>as edited</i>: rotations, crops, deletions and"
+" reordering are all applied, so what you read is what you would get if you "
+"saved. Page-editing commands are disabled while reading — bookmarks are the "
+"exception, and are edited here and nowhere else."
+msgstr ""
+"Čtení zobrazuje dokument <i>tak, jak byl upraven</i>: otočení, ořezy, mazání"
+" i přeskupení jsou všechna uplatněná, takže co čtete, je to, co byste "
+"dostali při uložení. Příkazy pro úpravu stránek jsou při čtení vypnuté — "
+"výjimkou jsou záložky, které se upravují tady a nikde jinde."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"The page you are on follows you between the two modes. Switching to read "
+"mode opens at the page selected in the grid, the first of them if several "
+"are selected; switching back scrolls the grid to the page you were reading, "
+"without disturbing what you had selected. With nothing selected, reading "
+"resumes where you left off — your place in each document is remembered "
+"between visits."
+msgstr ""
+"Stránka, na které jste, vás provází mezi oběma režimy. Přepnutí do režimu "
+"čtení otevře stránku vybranou v mřížce, první z nich, pokud je jich vybráno "
+"víc; přepnutí zpět posune mřížku na stránku, kterou jste četli, aniž by "
+"narušilo váš výběr. Bez výběru čtení pokračuje tam, kde jste skončili — vaše"
+" místo v každém dokumentu se mezi návštěvami pamatuje."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"The toolbar shows which page you are on and how many there are; type a "
+"number into it to jump there, or use <b>Ctrl+G</b>."
+msgstr ""
+"Panel nástrojů ukazuje, na které stránce jste a kolik jich je; napište do "
+"něj číslo, abyste na ni skočili, nebo použijte <b>Ctrl+G</b>."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>View ▸ Continuous Scroll</b> is on by default; turning it off shows one "
+"page at a time. <b>View ▸ Facing Pages</b> puts two pages side by side, the "
+"way a book falls open. Both settings are remembered."
+msgstr ""
+"<b>Zobrazit ▸ Souvislé posouvání</b> je ve výchozím stavu zapnuté; po "
+"vypnutí se zobrazuje jedna stránka po druhé. <b>Zobrazit ▸ Dvojstrana</b> "
+"položí dvě stránky vedle sebe, jak se otevře kniha. Obě nastavení se "
+"pamatují."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Moving around a document"
+msgstr "Pohyb v dokumentu"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"One rule for the arrow keys: <b>the modifier decides what moves</b>. Nothing"
+" scrolls the view, Option (Alt) moves the text cursor, Shift extends the "
+"selection, Command (Ctrl) jumps to an edge, and Fn — Page Up, Page Down, "
+"Home and End — jumps further. None of it changes according to whether a text"
+" cursor happens to be on the page."
+msgstr ""
+"Jedno pravidlo pro šipky: <b>o tom, co se pohne, rozhoduje modifikátor</b>. "
+"Žádný posouvá zobrazení, Option (Alt) posouvá textový kurzor, Shift "
+"rozšiřuje výběr, Command (Ctrl) skáče na okraj a Fn — Page Up, Page Down, "
+"Home a End — skáče dál. Nic z toho se nemění podle toho, jestli na stránce "
+"zrovna je textový kurzor."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Keys"
+msgstr "Klávesy"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Continuous"
+msgstr "Souvislé"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/viewer.py
+msgid "One page at a time"
+msgstr "Jedna stránka po druhé"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "scroll one line"
+msgstr "posunout o řádek"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "top of the previous / next page"
+msgstr "začátek předchozí / následující stránky"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "previous / next page"
+msgstr "předchozí / následující stránka"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "scroll one screen"
+msgstr "posunout o obrazovku"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "start / end of the document"
+msgstr "začátek / konec dokumentu"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "move the text cursor, by character or line"
+msgstr "posunout textový kurzor po znacích nebo řádcích"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "extend the selection, by character or line"
+msgstr "rozšířit výběr po znacích nebo řádcích"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "move the text cursor one word"
+msgstr "posunout textový kurzor o slovo"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "extend the selection one word"
+msgstr "rozšířit výběr o slovo"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "cursor to the start / end of the line"
+msgstr "kurzor na začátek / konec řádku"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "cursor to the start / end of the document"
+msgstr "kurzor na začátek / konec dokumentu"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Add Shift to a Command or Option combination to extend the selection instead"
+" of moving — <b>Shift+Command+→</b> selects to the end of the line. Adding "
+"Option works by the word rather than the character. On Windows and Linux, "
+"read Command as Ctrl and Option as Alt; the table is the same everywhere."
+msgstr ""
+"Přidejte Shift ke kombinaci s Command nebo Option, abyste místo posunu "
+"rozšířili výběr — <b>Shift+Command+→</b> vybere až na konec řádku. Přidání "
+"Option pracuje po slovech místo po znacích. Ve Windows a Linuxu čtěte "
+"Command jako Ctrl a Option jako Alt; tabulka je všude stejná."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Selecting and copying text"
+msgstr "Výběr a kopírování textu"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Drag across the page to select text, across page boundaries if you keep "
+"going. <b>Double-click</b> selects a word. <b>Ctrl/Cmd+C</b> copies, "
+"<b>Ctrl/Cmd+A</b> selects the text of the page you are on, and <b>Esc</b> "
+"clears the selection. The same commands are on the right-click menu."
+msgstr ""
+"Táhněte přes stránku, abyste vybrali text, přes hranice stránek, pokud "
+"budete pokračovat. <b>Dvojklik</b> vybere slovo. <b>Ctrl/Cmd+C</b> kopíruje,"
+" <b>Ctrl/Cmd+A</b> vybere text stránky, na které jste, a <b>Esc</b> výběr "
+"zruší. Tytéž příkazy jsou v nabídce pravého tlačítka."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>Shift+click</b> extends an existing selection to where you clicked. The "
+"end you are moving grows out to a whole word, because a single click is an "
+"imprecise way to point at one character; the end you started from stays "
+"exactly where you put it. Dragging selects by character throughout, since "
+"you can watch it and stop where you like."
+msgstr ""
+"<b>Shift+klik</b> rozšíří stávající výběr až tam, kam jste klikli. Konec, "
+"kterým pohybujete, se roztáhne na celé slovo, protože jeden klik je nepřesný"
+" způsob, jak ukázat na jeden znak; konec, od kterého jste začali, zůstane "
+"přesně tam, kam jste ho položili. Tažení vybírá po znacích po celou dobu, "
+"protože je můžete sledovat a zastavit, kde chcete."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Clicking on text leaves a blinking <b>text cursor</b>. That is what "
+"Shift+arrow extends from, and what the Option and Command combinations above"
+" move. It stays where you put it — scrolling, paging and clicking off the "
+"page all leave it alone — until you press Esc or open another document."
+msgstr ""
+"Kliknutí do textu zanechá blikající <b>textový kurzor</b>. Od něj "
+"Shift+šipka rozšiřuje výběr a jím pohybují kombinace s Option a Command "
+"výše. Zůstane tam, kam jste ho položili — posouvání, listování ani klik mimo"
+" stránku s ním nepohnou — dokud nestisknete Esc nebo neotevřete jiný "
+"dokument."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Following links"
+msgstr "Následování odkazů"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Click a link to follow it. Links to a page in the same document jump there; "
+"links to the web open in your browser. Hovering over one shows where it "
+"goes, which is worth reading before you click: many links in a PDF are not "
+"written by its author at all but inferred from the text, so what a link "
+"points at is not always what the words appear to say."
+msgstr ""
+"Kliknutím na odkaz jej následujete. Odkazy na stránku téhož dokumentu skočí "
+"na ni; odkazy na web se otevřou ve vašem prohlížeči. Najetí na odkaz ukáže, "
+"kam vede, a stojí za to si to přečíst dřív, než kliknete: mnoho odkazů v PDF"
+" nepsal autor, ale byly odvozeny z textu, takže to, kam odkaz míří, nemusí "
+"být to, co slova zdánlivě říkají."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Only ordinary web and mail links are handed to the system — http, https, "
+"mailto and ftp. A document is a file that arrived from somewhere, and "
+"anything else it asks to open is refused and reported rather than acted on."
+msgstr ""
+"Systému se předávají jen běžné webové a poštovní odkazy — http, https, "
+"mailto a ftp. Dokument je soubor, který odněkud přišel, a cokoli jiného, co "
+"chce otevřít, se odmítne a nahlásí, místo aby se provedlo."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Right-clicking a link offers <b>Open Link</b> and <b>Copy Link Address</b>."
+msgstr ""
+"Kliknutí pravým tlačítkem na odkaz nabízí <b>Otevřít odkaz</b> a "
+"<b>Kopírovat adresu odkazu</b>."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Bookmarks"
+msgstr "Záložky"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"The sidebar shows the document's bookmarks. Click one to jump to it. "
+"Everything below is on the sidebar's right-click menu, and every command can"
+" be undone."
+msgstr ""
+"Postranní panel ukazuje záložky dokumentu. Kliknutím na některou na ni "
+"skočíte. Vše níže je v nabídce pravého tlačítka postranního panelu a každý "
+"příkaz lze vrátit zpět."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>Add Bookmark Here</b> makes one pointing at the page you are reading, "
+"named after whatever text you have selected — so select a heading, then add."
+" With nothing selected it is named after the page. <b>Add Child Bookmark "
+"Here</b> does the same, nested under the entry you clicked."
+msgstr ""
+"<b>Přidat záložku sem</b> vytvoří záložku mířící na stránku, kterou čtete, "
+"pojmenovanou podle textu, který máte vybraný — vyberte tedy nadpis a pak "
+"přidejte. Bez výběru se pojmenuje podle stránky. <b>Přidat podřízenou "
+"záložku sem</b> udělá totéž, vnořeně pod položkou, na kterou jste klikli."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>Rename</b> edits the title in place. <b>Re-home to This Page</b> points "
+"an existing bookmark at the page you are on, keeping its title. "
+"<b>Delete</b> removes an entry and <i>promotes</i> its children into its "
+"place; <b>Delete with Children</b> removes the whole branch."
+msgstr ""
+"<b>Přejmenovat</b> upraví název na místě. <b>Přesměrovat na tuto stránku</b>"
+" nechá stávající záložku mířit na stránku, na které jste, a název ponechá. "
+"<b>Smazat</b> odebere položku a její podřízené <i>povýší</i> na její místo; "
+"<b>Smazat s podřízenými</b> odebere celou větev."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Drag entries within the sidebar to re-nest or reorder them. <b>Expand All "
+"Children</b> and <b>Collapse All Children</b> open or shut a whole branch at"
+" once."
+msgstr ""
+"Přetažením položek uvnitř postranního panelu je přeskupíte nebo jinak "
+"vnoříte. <b>Rozbalit všechny podřízené</b> a <b>Sbalit všechny podřízené</b>"
+" otevřou nebo zavřou celou větev najednou."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>Style</b> sets a bookmark bold or italic, or gives it a colour, as the "
+"tree shows."
+msgstr ""
+"<b>Styl</b> nastaví záložku tučně nebo kurzívou, případně jí dá barvu, jak "
+"strom ukazuje."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"A bookmark whose page has been deleted is <b>greyed out</b> rather than "
+"removed: its title may still be worth keeping, and you can point it "
+"somewhere else with Re-home. Undoing the deletion reconnects it. <b>Delete "
+"Dangling Bookmarks</b> clears them all out; it leaves alone any entry that "
+"points nowhere on purpose, which is a legitimate way to write a heading."
+msgstr ""
+"Záložka, jejíž stránka byla smazána, se <b>zešedne</b>, místo aby zmizela: "
+"její název může stále stát za zachování a můžete ji přesměrovat jinam. "
+"Vrácení smazání ji zase připojí. <b>Smazat osiřelé záložky</b> je všechny "
+"vyčistí; nechá být každou položku, která záměrně nemíří nikam, což je "
+"legitimní způsob, jak napsat nadpis."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Bookmark edits are part of the document and are written when you save, along"
+" with each entry's colour and style and which branches are left open. The "
+"one thing that cannot be saved is a bookmark with no page: there is no way "
+"to record “points at a page that is gone”, so it comes back as a heading "
+"with its title intact."
+msgstr ""
+"Úpravy záložek jsou součástí dokumentu a zapisují se při uložení, spolu s "
+"barvou a stylem každé položky a s tím, které větve zůstanou otevřené. "
+"Jediné, co uložit nelze, je záložka bez stránky: neexistuje způsob, jak "
+"zaznamenat „míří na stránku, která už není“, takže se vrátí jako nadpis s "
+"nedotčeným názvem."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Arranging pages"
+msgstr "Uspořádání stránek"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Drag pages to reorder them. Hold <b>Ctrl</b> while dropping to copy instead "
+"of move."
+msgstr ""
+"Přetažením stránek změníte jejich pořadí. Podržte při puštění <b>Ctrl</b>, "
+"chcete-li kopírovat místo přesunu."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Drag pages onto another window of the application to copy them there, or use"
+" ordinary copy and paste."
+msgstr ""
+"Přetáhněte stránky na jiné okno aplikace, chcete-li je tam zkopírovat, nebo "
+"použijte běžné kopírování a vkládání."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>Paste As Odd/Even Pages</b> interleaves the clipboard with the document —"
+" this is how two single-sided scans of a double-sided original are "
+"recombined. If the second scan came off a duplex feeder it will be in "
+"reverse order; use <b>Arrange ▸ Reverse Order</b> on it first."
+msgstr ""
+"<b>Vložit jako liché/sudé stránky</b> proloží schránku s dokumentem — takto "
+"se znovu spojí dva jednostranné skeny oboustranné předlohy. Pokud druhý sken"
+" vyšel z duplexního podavače, bude v obráceném pořadí; použijte na něj "
+"nejdřív <b>Uspořádat ▸ Obrátit pořadí</b>."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"To move pages a long way, use <b>Move to Start</b>, <b>Move to End</b> or "
+"<b>Move to Page…</b> rather than dragging — in a long document the far end "
+"is a great deal of scrolling away. They are on the Edit menu and on the "
+"right-click menu, and <b>Move to Page…</b> asks for the number the page "
+"should <i>become</i>."
+msgstr ""
+"Chcete-li přesunout stránky daleko, použijte <b>Přesunout na začátek</b>, "
+"<b>Přesunout na konec</b> nebo <b>Přesunout na stránku…</b> místo tažení — v"
+" dlouhém dokumentu je druhý konec pěkně daleko. Najdete je v nabídce Upravit"
+" a v nabídce pravého tlačítka a <b>Přesunout na stránku…</b> se ptá na "
+"číslo, kterým se stránka má <i>stát</i>."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Prefer these to cut and paste for moving. A pasted page is a <i>new</i> page"
+" as far as the document is concerned, so any bookmarks pointing at the "
+"original are left behind with nowhere to go. Moving keeps the page itself, "
+"and its bookmarks come with it."
+msgstr ""
+"Při přesouvání dejte přednost jim před vyjmutím a vložením. Vložená stránka "
+"je z pohledu dokumentu <i>nová</i> stránka, takže záložky mířící na původní "
+"zůstanou bez cíle. Přesun zachová samotnou stránku a její záložky jdou s ní."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Stamping and tiling"
+msgstr "Razítkování a skládání"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>Page ▸ Add Page Numbers…</b> and <b>Page ▸ Add Watermark…</b> draw text "
+"onto the selected pages. Both add a <i>layer</i> rather than rewriting the "
+"page, so both can be undone and neither touches the file you opened."
+msgstr ""
+"<b>Stránka ▸ Přidat čísla stránek…</b> a <b>Stránka ▸ Přidat vodoznak…</b> "
+"kreslí text na vybrané stránky. Obojí přidává <i>vrstvu</i>, místo aby "
+"stránku přepisovalo, takže obojí lze vrátit zpět a ani jedno se nedotkne "
+"souboru, který jste otevřeli."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+#, python-brace-format
+msgid ""
+"Page numbers follow the arrangement, not the source document: they are "
+"numbered in the order the pages are in now. <code>{n}</code> in the format "
+"is the page number and <code>{total}</code> the number of pages, so "
+"<code>Page {n} of {total}</code> does what it looks like."
+msgstr ""
+"Čísla stránek se řídí uspořádáním, ne zdrojovým dokumentem: číslují se v "
+"pořadí, ve kterém stránky teď jsou. <code>{n}</code> ve formátu je číslo "
+"stránky a <code>{total}</code> počet stránek, takže <code>Stránka {n} z "
+"{total}</code> dělá to, co vypadá."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>Arrange ▸ Pages per Sheet…</b> tiles several pages onto one, in reading "
+"order — the printer's <i>N-up</i>. The sheet turns sideways when that lets "
+"the pages come out larger, which is why two-up gives a landscape sheet and "
+"four-up does not."
+msgstr ""
+"<b>Uspořádat ▸ Stránek na list…</b> poskládá několik stránek na jednu, ve "
+"čtecím pořadí — tiskařský <i>N-up</i>. List se otočí na šířku, když tím "
+"stránky vyjdou větší, a proto dvě na list dají list na šířku a čtyři na list"
+" ne."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Saving a document"
+msgstr "Uložení dokumentu"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>Optimize for the web</b> in Preferences lays the saved file out so a "
+"browser can show the first page before the rest has arrived. <b>Compress</b>"
+" repacks its streams and objects; how much that saves depends entirely on "
+"the file, and one full of photographs will barely move."
+msgstr ""
+"<b>Optimalizovat pro web</b> v Předvolbách uspořádá uložený soubor tak, aby "
+"prohlížeč mohl zobrazit první stránku dřív, než dorazí zbytek. "
+"<b>Komprimovat</b> znovu sbalí jeho datové proudy a objekty; kolik se tím "
+"ušetří, závisí zcela na souboru, a soubor plný fotografií se skoro nehne."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>File ▸ Remove All Metadata</b> is a switch, like Password: turn it on and"
+" the next save writes a document with no title, no author and no record of "
+"what produced it. Edit Properties greys out while it is on, because there "
+"would be nothing to edit."
+msgstr ""
+"<b>Soubor ▸ Odstranit všechna metadata</b> je vypínač, stejně jako Heslo: "
+"zapněte ho a příští uložení zapíše dokument bez názvu, bez autora a bez "
+"záznamu o tom, co ho vytvořilo. Upravit vlastnosti zešedne, dokud je "
+"zapnutý, protože by nebylo co upravovat."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>File ▸ Viewer Preferences…</b> is how the saved document asks a reader to"
+" open it — with the bookmarks showing, two pages at a time, and so on. "
+"Readers are free to ignore all of it. The settings are read from the file "
+"you opened, so a document that already had them keeps them."
+msgstr ""
+"<b>Soubor ▸ Předvolby prohlížeče…</b> je způsob, jak uložený dokument žádá "
+"čtenáře, aby ho otevřel — se zobrazenými záložkami, po dvou stránkách a tak "
+"dále. Čtenáři to všechno mohou ignorovat. Nastavení se čtou ze souboru, "
+"který jste otevřeli, takže dokument, který je už měl, si je ponechá."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>File ▸ Repair Document…</b> rebuilds a damaged PDF. It works on a file "
+"you pick rather than the one on screen, because the file worth repairing is "
+"usually one this application cannot open properly either. It reports what it"
+" found before writing anything."
+msgstr ""
+"<b>Soubor ▸ Opravit dokument…</b> znovu sestaví poškozené PDF. Pracuje se "
+"souborem, který vyberete, ne s tím na obrazovce, protože soubor, který stojí"
+" za opravu, je obvykle takový, který ani tato aplikace pořádně neotevře. Než"
+" cokoli zapíše, oznámí, co našla."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Mouse"
+msgstr "Myš"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "<b>Ctrl + scroll</b> — zoom"
+msgstr "<b>Ctrl + kolečko</b> — přiblížení"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "<b>Shift + scroll</b> — scroll sideways"
+msgstr "<b>Shift + kolečko</b> — posun do stran"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "<b>Alt + scroll</b> — scroll exactly one row"
+msgstr "<b>Alt + kolečko</b> — posun přesně o jednu řadu"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "<b>Double-click</b> — fit the page to the window, and back"
+msgstr "<b>Dvojklik</b> — přizpůsobit stránku oknu, a zpět"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>Click and drag</b> on empty space — rubber-band select; keep scrolling to"
+" extend it"
+msgstr ""
+"<b>Klik a tažení</b> na prázdném místě — výběr gumovým rámečkem; posouvejte "
+"dál, chcete-li jej rozšířit"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Moving around the grid"
+msgstr "Pohyb v mřížce"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>Arrow keys</b> move between pages, <b>Page Up</b> and <b>Page Down</b> "
+"move a screenful at a time, and <b>Home</b> and <b>End</b> jump to the first"
+" and last page. Hold <b>Shift</b> with any of them to extend the selection."
+msgstr ""
+"<b>Šipky</b> se pohybují mezi stránkami, <b>Page Up</b> a <b>Page Down</b> "
+"po obrazovkách a <b>Home</b> a <b>End</b> skáčou na první a poslední "
+"stránku. Podržte s kteroukoli z nich <b>Shift</b>, chcete-li rozšířit výběr."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>Fit One Page</b> (F) scales so a whole page fits in the window and shows "
+"one page per row — use it to work on a single page at a time. <b>Fit "
+"Multiple Pages</b> (Shift+M) uses the same scale but lets as many pages sit "
+"side by side as the window takes. <b>Fit Width</b> (Shift+F) fills the "
+"window across instead, which shows the page wider but taller than the "
+"window. Double-clicking the grid toggles Fit One Page on and off."
+msgstr ""
+"<b>Přizpůsobit jednu stránku</b> (F) zmenší nebo zvětší tak, aby se do okna "
+"vešla celá stránka, a zobrazí jednu stránku na řádek — použijte ji, když "
+"pracujete s jednou stránkou. <b>Přizpůsobit více stránek</b> (Shift+M) "
+"používá stejné měřítko, ale nechá vedle sebe tolik stránek, kolik se do okna"
+" vejde. <b>Přizpůsobit šířce</b> (Shift+F) vyplní okno na šířku, což stránku"
+" ukáže širší, ale vyšší než okno. Dvojklik do mřížky Přizpůsobit jednu "
+"stránku zapíná a vypíná."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"With pages selected, all three fit the selection rather than the whole "
+"document."
+msgstr ""
+"Když jsou vybrané stránky, všechny tři se přizpůsobí výběru místo celého "
+"dokumentu."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Finding text"
+msgstr "Hledání textu"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>Find</b> selects the pages that contain the phrase and boxes each hit on "
+"the thumbnail, so you can see where on the page it is. The boxes clear as "
+"soon as you change the document, since the pages they were drawn for may "
+"have moved."
+msgstr ""
+"<b>Najít</b> vybere stránky obsahující daný výraz a každý nález orámuje v "
+"náhledu, abyste viděli, kde na stránce je. Rámečky zmizí, jakmile dokument "
+"změníte, protože stránky, pro které byly nakresleny, se mohly přesunout."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Every shortcut can be changed in <b>Edit ▸ Preferences ▸ Keyboard "
+"shortcuts</b>, where they are listed under the menu each one belongs to."
+msgstr ""
+"Každou zkratku lze změnit v <b>Upravit ▸ Předvolby ▸ Klávesové zkratky</b>, "
+"kde jsou vypsané pod nabídkou, do které patří."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Passwords"
+msgstr "Hesla"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Opening an encrypted document asks for its password, which is remembered "
+"until the document is closed."
+msgstr ""
+"Otevření zašifrovaného dokumentu si vyžádá jeho heslo, které se pamatuje, "
+"dokud se dokument nezavře."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>File ▸ Password</b> encrypts the document when it is next saved. It is a "
+"switch: turn it on and you are asked for a password, turn it off and the "
+"next save is unencrypted. The password is never written to your settings, so"
+" it applies to this session only — and if you forget it, the file cannot be "
+"recovered."
+msgstr ""
+"<b>Soubor ▸ Heslo</b> zašifruje dokument při příštím uložení. Je to vypínač:"
+" zapněte ho a budete požádáni o heslo, vypněte ho a příští uložení bude "
+"nezašifrované. Heslo se nikdy nezapisuje do vašeho nastavení, takže platí "
+"jen pro toto sezení — a když ho zapomenete, soubor už nepůjde obnovit."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Files"
+msgstr "Soubory"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Settings are stored by Qt in the per-user location for this platform; on "
+"Windows that is the registry under "
+"<code>HKEY_CURRENT_USER\\Software\\pdfarranger</code>. There is no "
+"configuration file to edit by hand."
+msgstr ""
+"Nastavení ukládá Qt do umístění vyhrazeného jednotlivému uživateli na této "
+"platformě; ve Windows je to registr pod "
+"<code>HKEY_CURRENT_USER\\Software\\pdfarranger</code>. Žádný konfigurační "
+"soubor k ruční úpravě neexistuje."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Credits"
+msgstr "Poděkování"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"PDF Arranger Qt is a PySide6 port of PDF Arranger, which is itself derived "
+"from PDF-Shuffler. It is a separate project and not affiliated with either."
+msgstr ""
+"PDF Arranger Qt je port PDF Arrangeru do PySide6 a PDF Arranger sám vychází "
+"z PDF-Shuffleru. Je to samostatný projekt a není spojen ani s jedním z nich."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Original authors: Konstantinos Poulios, Jerome Robert."
+msgstr "Původní autoři: Konstantinos Poulios, Jerome Robert."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Licensed under the GNU General Public License version 3 or later."
+msgstr "Licencováno pod GNU General Public License verze 3 nebo novější."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+msgid "User Guide"
+msgstr "Uživatelská příručka"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Insert pages from another PDF or an image"
+msgstr "Vložit stránky z jiného PDF nebo z obrázku"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Needs pages copied from a document"
+msgstr "Vyžaduje stránky zkopírované z dokumentu"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_New Window"
+msgstr "_Nové okno"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Open"
+msgstr "_Otevřít"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Import"
+msgstr "_Importovat"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Save"
+msgstr "_Uložit"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Save _As…"
+msgstr "Uložit _jako"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "E_xport Selection to a Single File…"
+msgstr "E_xportovat výběr do jediného souboru…"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Close"
+msgstr "Za_vřít"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Quit"
+msgstr "U_končit"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Undo"
+msgstr "_Zpět"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Redo"
+msgstr "Z_novu"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Select _All"
+msgstr "Vybrat v_še"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Invert Selection"
+msgstr "P_řevrátit výběr"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Delete"
+msgstr "_Smazat"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Duplicate"
+msgstr "_Duplikovat"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Rotate _Left"
+msgstr "Otočit do_leva"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Rotate Right"
+msgstr "Otočit do_prava"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Zoom _In"
+msgstr "Při_blížit"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Zoom _Out"
+msgstr "O_ddálit"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Reset Zoom"
+msgstr "_Obnovit přiblížení"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Project on GitHub"
+msgstr "Projekt na GitHubu"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_About"
+msgstr "_O programu"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Cu_t"
+msgstr "_Vyjmout"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Copy"
+msgstr "_Kopírovat"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Paste _After"
+msgstr "Vložit z_a"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Paste _Before"
+msgstr "Vložit př_ed"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Paste As _Odd Pages"
+msgstr "Vložit jako l_iché stránky"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Paste As _Even Pages"
+msgstr "Vložit jako s_udé stránky"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Deselect All"
+msgstr "Zr_ušit výběr"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Select _Odd Pages"
+msgstr "Vybrat lic_hé stránky"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Select _Even Pages"
+msgstr "Vybrat sud_é stránky"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "All From _Same File"
+msgstr "Vše ze _stejného souboru"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Same Page _Format"
+msgstr "Stejný _formát stránky"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Move to Start"
+msgstr "Přesunout na začátek"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Move to End"
+msgstr "Přesunout na konec"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Move to Page…"
+msgstr "Přesunout na stránku…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Reverse Order"
+msgstr "Obrátit pořadí"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Swap Odd/Even"
+msgstr "Prohodit liché/sudé"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Split (unimposition)"
+msgstr "_Rozdělit (rozložení)"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Export _All Pages to Individual Files…"
+msgstr "Exportovat _všechny stránky do samostatných souborů…"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Export Selection to _Individual Files…"
+msgstr "Exportovat výběr do _samostatných souborů…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Crop Margins…"
+msgstr "Oříznout o_kraje…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Hide Margins…"
+msgstr "Skrý_t okraje…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Page Size…"
+msgstr "Velikost stránk_y…"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Insert Blan_k Page…"
+msgstr "Vložit prázdn_ou stránku…"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Split Pages…"
+msgstr "_Rozdělit stránky…"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Merge Pages…"
+msgstr "S_loučit stránky…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Generate (imposition)"
+msgstr "_Vytvořit (vyřazení)"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Pages per S_heet…"
+msgstr "Stránek na lis_t…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Add Page N_umbers…"
+msgstr "Přidat čísla strán_ek…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Add _Watermark…"
+msgstr "Přidat _vodoznak…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Pass_word"
+msgstr "_Heslo"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Edit _Properties"
+msgstr "Upravit _vlastnosti"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Viewer Preferences…"
+msgstr "Předvolby prohlíž_eče…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Remove All _Metadata"
+msgstr "Odstranit všechna _metadata"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Repair Document…"
+msgstr "O_pravit dokument…"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Crop White Borders"
+msgstr "Oříznout bílé okra_je"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Export Selection to _PNG Images…"
+msgstr "Exportovat výběr do obrázků _PNG…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Export Selection to _JPG Images…"
+msgstr "Exportovat výběr do obrázků _JPG…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Export Selection to _Rasterized PDF (png)…"
+msgstr "Exportovat výběr do _rastrového PDF (png)…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Export Selection to _Rasterized PDF (jpg)…"
+msgstr "Exportovat výběr do rastrového PD_F (jpg)…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Copy Text"
+msgstr "Kopírovat text"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Copy _Image"
+msgstr "Kopírovat _obrázek"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Explode into Images"
+msgstr "_Rozložit na obrázky"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Print…"
+msgstr "Vy_tisknout…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Find…"
+msgstr "Na_jít…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Find Next"
+msgstr "Najít další"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Find Previous"
+msgstr "Najít předchozí"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Find All"
+msgstr "Najít vše"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Select _Range"
+msgstr "Vybrat _rozsah"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Paste As O_verlay…"
+msgstr "Vložit jako překr_ytí…"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Paste As _Underlay…"
+msgstr "Vložit jako podkr_eslení…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Fit _One Page"
+msgstr "Přizpůsobit _jednu stránku"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Fit _Multiple Pages"
+msgstr "Přizpůsobit _více stránek"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Fit Width"
+msgstr "Přizpůsobit šířce"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Arrange Mode"
+msgstr "Režim uspořádání"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Facing Pages"
+msgstr "Dvojstrana"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Continuous Scroll"
+msgstr "Souvislé posouvání"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Next Page"
+msgstr "Následující stránka"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Previous Page"
+msgstr "Předchozí stránka"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "First Page"
+msgstr "První stránka"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Last Page"
+msgstr "Poslední stránka"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Go to Page…"
+msgstr "Přejít na stránku…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Fullscreen"
+msgstr "Celá obrazovka"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_File"
+msgstr "_Soubor"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Open Recent"
+msgstr "Otevřít nedávné"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "E_xport"
+msgstr "E_xportovat"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Edit"
+msgstr "Up_ravit"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Past_e Special"
+msgstr "Vložit _jinak"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Page"
+msgstr "_Stránka"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Extract"
+msgstr "_Extrahovat"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Arrange"
+msgstr "Uspořádat"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Select"
+msgstr "Vybra_t"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Booklet"
+msgstr "_Brožura"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_View"
+msgstr "_Zobrazit"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Help"
+msgstr "_Nápověda"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Read"
+msgstr "Číst"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "_Undo %s"
+msgstr "_Zpět %s"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "_Redo %s"
+msgstr "Z_novu %s"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "%d page selected"
+msgid_plural "%d pages selected"
+msgstr[0] "%d stránka vybrána"
+msgstr[1] "%d stránky vybrány"
+msgstr[2] "%d stránek vybráno"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Untitled"
+msgstr "Bez názvu"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Password required"
+msgstr "Je vyžadováno heslo"
+
+#: pdfarranger_qt/mainwindow.py
+#, python-brace-format
+msgid "The document “{}” is locked and requires a password before it can be opened."
+msgstr "Dokument “{}” je uzamčen a je vyžadováno heslo pro jeho otevření."
+
+#: pdfarranger_qt/mainwindow.py
+msgid "The password will be remembered until you close PDF Arranger."
+msgstr "Heslo bude zapamatováno, dokud neukončíte program PDF Arranger."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Importing…"
+msgstr "Importuje se…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Cancel"
+msgstr "Zrušit"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Import"
+msgstr "Importovat"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "No recent files"
+msgstr "Žádné nedávné soubory"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Clear Menu"
+msgstr "Vymazat nabídku"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "This file is no longer there:"
+msgstr "Tento soubor už tam není:"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "This document cannot be read."
+msgstr "Tento dokument nelze přečíst."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Go to Page"
+msgstr "Přejít na stránku"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Page number:"
+msgstr "Číslo stránky:"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "No document"
+msgstr "Žádný dokument"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "%d page"
+msgid_plural "%d pages"
+msgstr[0] "%d stránka"
+msgstr[1] "%d stránky"
+msgstr[2] "%d stránek"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-brace-format
+msgid "of {}"
+msgstr "z {}"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "The document will not be encrypted."
+msgstr "Dokument nebude zašifrován."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "The document will be encrypted when it is saved."
+msgstr "Dokument bude při uložení zašifrován."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Could not open a new window."
+msgstr "Nepodařilo se otevřít nové okno."
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Open"
+msgstr "Otevřít"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Save As…"
+msgstr "Uložit jako…"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Export…"
+msgstr "Export…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "There is nothing to save."
+msgstr "Není co uložit."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Could not save:"
+msgstr "Nepodařilo se uložit:"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Saved"
+msgstr "Uloženo"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "This document has unsaved changes."
+msgstr "Tento dokument má neuložené změny."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Save before continuing?"
+msgstr "Uložit před pokračováním?"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py pdfarranger_qt/reader.py
+msgid "Delete"
+msgstr "Smazat"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Cut"
+msgstr "Vyjmout"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Paste"
+msgstr "Vložit"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Move to Page"
+msgstr "Přesunout na stránku"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Move"
+msgstr "Přesunout"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "The page selection is not contiguous. Cannot unimpose."
+msgstr "Výběr stránek není souvislý. Nelze rozložit."
+
+#: pdfarranger_qt/mainwindow.py
+msgid "All pages must have the same size."
+msgstr "Všechny stránky musí mít stejný rozměr"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Split Booklet"
+msgstr "Rozdělit brožuru"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Overwrite existing files?"
+msgstr "Přepsat existující soubory?"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Blank page"
+msgstr "Prázdná stránka"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Copy the pages you want to merge in first."
+msgstr "Nejprve zkopírujte stránky, které chcete sloučit."
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Generate Booklet"
+msgstr "Vytvořit brožuru"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "The page selection is not contiguous."
+msgstr "Výběr stránek není souvislý."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "All metadata will be removed when the document is saved."
+msgstr "Při uložení dokumentu budou odstraněna všechna metadata."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Metadata will be kept."
+msgstr "Metadata budou zachována."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Repair Document…"
+msgstr "Opravit dokument…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Write a rebuilt copy?"
+msgstr "Zapsat obnovenou kopii?"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Save Repaired Document"
+msgstr "Uložit opravený dokument"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "%d image written"
+msgid_plural "%d images written"
+msgstr[0] "%d obrázek zapsán"
+msgstr[1] "%d obrázky zapsány"
+msgstr[2] "%d obrázků zapsáno"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "The page has no text."
+msgstr "Stránka neobsahuje žádný text."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Copied"
+msgstr "Zkopírováno"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "The page has no image."
+msgstr "Stránka neobsahuje žádný obrázek."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "The page has several images. Use \"Explode into Images\" first.\""
+msgstr "Stránka obsahuje více obrázků. Nejprve použijte „Rozložit na obrázky“.\""
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Explode into Images"
+msgstr "Rozložit na obrázky"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Printing…"
+msgstr "Tisk…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Finishing…"
+msgstr "Dokončuje se…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "The printer driver is processing the job."
+msgstr "Ovladač tiskárny zpracovává úlohu."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "%d page printed"
+msgid_plural "%d pages printed"
+msgstr[0] "%d stránka vytištěna"
+msgstr[1] "%d stránky vytištěny"
+msgstr[2] "%d stránek vytištěno"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Find"
+msgstr "Najít"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "%d page matches"
+msgid_plural "%d pages match"
+msgstr[0] "%d stránka odpovídá"
+msgstr[1] "%d stránky odpovídají"
+msgstr[2] "%d stránek odpovídá"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Duplicate"
+msgstr "Duplikovat"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Rotate"
+msgstr "Otočit"
+
+#: pdfarranger_qt/metadata.py
+msgid "Title"
+msgstr "Název"
+
+#: pdfarranger_qt/metadata.py
+msgid "Subject"
+msgstr "Předmět"
+
+#: pdfarranger_qt/metadata.py
+msgid "Keywords"
+msgstr "Klíčová slova"
+
+#: pdfarranger_qt/metadata.py
+msgid "Producer"
+msgstr "Producent"
+
+#: pdfarranger_qt/metadata.py
+msgid "Creator"
+msgstr "Autor"
+
+#: pdfarranger_qt/metadata.py
+msgid "Creator tool"
+msgstr "Vytvořeno nástrojem"
+
+#: pdfarranger_qt/metadata.py
+msgid "Created"
+msgstr "Vytvořeno"
+
+#: pdfarranger_qt/metadata.py
+msgid "Modified"
+msgstr "Změněno"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/nup.py
+msgid "2 pages per sheet"
+msgstr "2 stránky na list"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/nup.py
+msgid "4 pages per sheet"
+msgstr "4 stránky na list"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/nup.py
+msgid "6 pages per sheet"
+msgstr "6 stránek na list"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/nup.py
+msgid "8 pages per sheet"
+msgstr "8 stránek na list"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/nup.py
+msgid "9 pages per sheet"
+msgstr "9 stránek na list"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/nup.py
+msgid "16 pages per sheet"
+msgstr "16 stránek na list"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Bookmark Colour"
+msgstr "Barva záložky"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Add Bookmark Here"
+msgstr "Přidat záložku sem"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Add Child Bookmark Here"
+msgstr "Přidat podřízenou záložku sem"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Re-home to This Page"
+msgstr "Přesměrovat na tuto stránku"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Rename"
+msgstr "Přejmenovat"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Style"
+msgstr "Styl"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Colour…"
+msgstr "Barva…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Default Colour"
+msgstr "Výchozí barva"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Expand All Children"
+msgstr "Rozbalit všechny podřízené"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Collapse All Children"
+msgstr "Sbalit všechny podřízené"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Delete with Children"
+msgstr "Smazat s podřízenými"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Delete Dangling Bookmarks"
+msgstr "Smazat osiřelé záložky"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Nothing to read."
+msgstr "Není co číst."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+#, python-brace-format
+msgid "Page {} of {}"
+msgstr "Stránka {} z {}"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Move Bookmark"
+msgstr "Přesunout záložku"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "This bookmark's page is no longer in the document"
+msgstr "Stránka této záložky už v dokumentu není"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "This bookmark does not point at a page"
+msgstr "Tato záložka neukazuje na žádnou stránku"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Rename Bookmark"
+msgstr "Přejmenovat záložku"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Add Child Bookmark"
+msgstr "Přidat podřízenou záložku"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Add Bookmark"
+msgstr "Přidat záložku"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Bookmark Style"
+msgstr "Styl záložky"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Re-home Bookmark"
+msgstr "Přesměrovat záložku"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Delete Bookmark"
+msgstr "Smazat záložku"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Delete Bookmark and Children"
+msgstr "Smazat záložku a podřízené"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/repair.py
+msgid "This file cannot be read, even with recovery."
+msgstr "Tento soubor nelze přečíst, ani s obnovou."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/repair.py
+msgid "No damage found; the file reads cleanly."
+msgstr "Nenalezeno žádné poškození; soubor se čte bez potíží."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/repair.py
+msgid "Damaged, and recoverable."
+msgstr "Poškozený, a obnovitelný."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/repair.py
+msgid "The file cannot be read."
+msgstr "Soubor nelze přečíst."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/stamp.py
+msgid "Top left"
+msgstr "Vlevo nahoře"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/stamp.py
+msgid "Top centre"
+msgstr "Nahoře uprostřed"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/stamp.py
+msgid "Top right"
+msgstr "Vpravo nahoře"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/stamp.py
+msgid "Bottom left"
+msgstr "Vlevo dole"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/stamp.py
+msgid "Bottom centre"
+msgstr "Dole uprostřed"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/stamp.py
+msgid "Bottom right"
+msgstr "Vpravo dole"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/viewer.py
+msgid "Viewer default"
+msgstr "Výchozí nastavení prohlížeče"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/viewer.py
+msgid "No side panel"
+msgstr "Žádný postranní panel"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/viewer.py
+msgid "Bookmarks panel"
+msgstr "Panel záložek"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/viewer.py
+msgid "Page thumbnails"
+msgstr "Náhledy stránek"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/viewer.py
+msgid "Continuous scroll"
+msgstr "Souvislé posouvání"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/viewer.py
+msgid "Two pages, odd on the left"
+msgstr "Dvě stránky, liché vlevo"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/viewer.py
+msgid "Two pages, odd on the right"
+msgstr "Dvě stránky, liché vpravo"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/viewer.py
+msgid "Facing pages, odd on the left"
+msgstr "Dvojstrana, liché vlevo"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/viewer.py
+msgid "Facing pages, odd on the right"
+msgstr "Dvojstrana, liché vpravo"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/viewer.py
+msgid "Hide the viewer's toolbar"
+msgstr "Skrýt panel nástrojů prohlížeče"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/viewer.py
+msgid "Hide the viewer's menu bar"
+msgstr "Skrýt nabídku prohlížeče"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/viewer.py
+msgid "Centre the window on screen"
+msgstr "Vycentrovat okno na obrazovce"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/viewer.py
+msgid "Show the title rather than the filename"
+msgstr "Zobrazit název místo jména souboru"
+
+#~ msgid "#Col"
+#~ msgstr "#Sloupec"
+
+#~ msgid "#Row"
+#~ msgstr "#Řádek"
+
+#~ msgid "%"
+#~ msgstr "%"
+
+#~ msgid "% of height"
+#~ msgstr ""
+
+#~ msgid "% of width"
+#~ msgstr ""
+
+#~ msgid "%s is a tool for rearranging and modifying PDF files."
+#~ msgstr "%s je nástroj na přeskupování a úpravy PDF dokumentů."
+
+#~ msgid "(Libhandy missing)"
+#~ msgstr "(chybějící Libhandy)"
+
+#~ msgid "(Requires restart)"
+#~ msgstr "(vyžadován restart)"
+
+#~ msgid "A file named \"%s\" already exists. Do you want to replace it?"
+#~ msgstr "Soubor s názvem \"%s\" již existuje. Chcete ho nahradit?"
+
+#~ msgid "All files"
+#~ msgstr "Všechny soubory"
+
+#~ msgid "All supported files"
+#~ msgstr "Všechny podporované soubory"
+
+#~ msgid "Bottom to Top"
+#~ msgstr "Zespodu nahoru"
+
+#~ msgid "Clipboard image"
+#~ msgstr "Obrázek ve schránce"
+
+#~ msgid "Copy _Text"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Cropping/hiding does not remove any content"
+#~ " from the PDF file, it only hides"
+#~ " it."
+#~ msgstr ""
+
+#~ msgid "Despite the warnings the document(s) should have no visible issues."
+#~ msgstr "Navzdory varováním by dokument neměl mít viditelné problémy."
+
+#~ msgid "Discard changes and close?"
+#~ msgstr "Zahodit změny a zavřít?"
+
+#~ msgid "Discard changes and quit?"
+#~ msgstr "Zahodit změny a ukončit?"
+
+#~ msgid "Do not show this dialog again."
+#~ msgstr "Tento dialog znovu nezobrazovat."
+
+#~ msgid "Do_n’t Save"
+#~ msgstr "_Neukládat"
+
+#~ msgid "Don't show warnings when saving again."
+#~ msgstr "Varování při ukládání znovu nezobrazovat."
+
+#~ msgid "Dupl_icate"
+#~ msgstr "_Duplikovat"
+
+#~ msgid "Equal column width"
+#~ msgstr "Stejná šířka sloupců"
+
+#~ msgid "Equal row height"
+#~ msgstr "Stejná výška řádků"
+
+#~ msgid "Exploding into images…"
+#~ msgstr ""
+
+#~ msgid "File(s) to open"
+#~ msgstr "Soubor(y) k otevření"
+
+#~ msgid "Fit to Full Page"
+#~ msgstr ""
+
+#~ msgid "Fit to Printable Area"
+#~ msgstr ""
+
+#~ msgid "For more info see"
+#~ msgstr ""
+
+#~ msgid "For more options see:"
+#~ msgstr "Pro další možnosti viz"
+
+#~ msgid "Full_screen"
+#~ msgstr "_Celá obrazovka"
+
+#~ msgid "GNU General Public License (GPL) Version 3."
+#~ msgstr "GNU General Public License (GPL) verze 3."
+
+#~ msgid "Height in %"
+#~ msgstr "Výška v %"
+
+#~ msgid "Horizontal offset"
+#~ msgstr "Vodorovný posun"
+
+#~ msgid "Img2pdf missing."
+#~ msgstr ""
+
+#~ msgid "Import…"
+#~ msgstr "Import…"
+
+#~ msgid "Invalid date format. Input discarded."
+#~ msgstr "Neplatný formát data. Vstup byl zahozen."
+
+#~ msgid "It uses libqpdf %s, pikepdf %s, GTK %s and Python %s."
+#~ msgstr "Používá libqpdf %s, pikepdf %s, GTK %s and Python %s."
+
+#~ msgid "Left to Right"
+#~ msgstr "Zleva do prava"
+
+#~ msgid "Main Menu"
+#~ msgstr "Hlavní nabídka"
+
+#~ msgid "Maintainers and contributors"
+#~ msgstr "Správci a přispěvatelé"
+
+#~ msgid "Margin"
+#~ msgstr "Okraj"
+
+#~ msgid "Merged page size:"
+#~ msgstr "Velikost sloučené stránky:"
+
+#~ msgid "Non-uniform page size - using max size"
+#~ msgstr "Nejednotná velikost stránky – pomocí maximální velikosti"
+
+#~ msgid "None"
+#~ msgstr ""
+
+#~ msgid "Note"
+#~ msgstr ""
+
+#~ msgid "Note the limitations:"
+#~ msgstr ""
+
+#~ msgid "Open…"
+#~ msgstr "Otevřít…"
+
+#~ msgid "Outlines and links can be preserved only in certain cases."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "PDF Arranger is a small python-gtk"
+#~ " application, which helps the user to"
+#~ " merge or split pdf documents and "
+#~ "rotate, crop and rearrange their pages "
+#~ "using an interactive and intuitive "
+#~ "graphical interface. It is a frontend "
+#~ "for pikepdf."
+#~ msgstr ""
+#~ "PDF Arranger je malá pyhon-gtk "
+#~ "aplikace, která pomáhá uživatelům slučovat "
+#~ "nebo rozdělovat PDF dokumenty a otáčet, "
+#~ "ořezávat nebo přeskupovat jejich stránky za"
+#~ " použití interaktivního a intuitivního "
+#~ "uživatelského rozhraní. Jedná se o frontend"
+#~ " pro knihovnu pikepdf."
+
+#~ msgid "PDF document is damaged"
+#~ msgstr "PDF dokument je poškozený"
+
+#~ msgid "PDF files"
+#~ msgstr "Soubory PDF"
+
+#~ msgid "Page Handling"
+#~ msgstr ""
+
+#~ msgid "Page Order"
+#~ msgstr "Pořadí stránek"
+
+#~ msgid "Page Size:"
+#~ msgstr "Velikost stránky:"
+
+#~ msgid "Pasted data not valid. Aborting paste."
+#~ msgstr "Vkládaná data jsou neplatná. Vkládání bylo přerušeno."
+
+#~ msgid "Pre_ferences"
+#~ msgstr "Předvolb_y"
+
+#~ msgid "Print the version of PDF Arranger and exit"
+#~ msgstr "Vypsat verzi programu PDF Arranger a skončit"
+
+#~ msgid "Property"
+#~ msgstr "Vlastnost"
+
+#~ msgid "Re_verse Order"
+#~ msgstr "O_brácené pořadí"
+
+#~ msgid "Rendering Preview…"
+#~ msgstr "Vykreslování náhledu…"
+
+#~ msgid "Rendering…"
+#~ msgstr "Vykreslování…"
+
+#~ msgid "Replace"
+#~ msgstr "Nahradit"
+
+#~ msgid "Right to Left"
+#~ msgstr "Zprava doleva"
+
+#~ msgid "Rotate Left"
+#~ msgstr "Otočit doleva"
+
+#~ msgid "Rotate Right"
+#~ msgstr "Otočit doprava"
+
+#~ msgid "Save"
+#~ msgstr "Uložit"
+
+#~ msgid "Save As"
+#~ msgstr "Uložit jako"
+
+#~ msgid "Save changes before closing?"
+#~ msgstr "Uložit změny před zavřením?"
+
+#~ msgid "Save changes before quitting?"
+#~ msgstr "Uložit změny před ukončením?"
+
+#~ msgid "Save changes to “{}” before closing?"
+#~ msgstr "Uložit změny do “{}” před zavřením?"
+
+#~ msgid "Save changes to “{}” before quitting?"
+#~ msgstr "Uložit změny do “{}” před ukončením?"
+
+#~ msgid "Saving produced some warnings"
+#~ msgstr "Ukládání vyvolalo nějaká varování"
+
+#~ msgid "Saving…"
+#~ msgstr "Ukládání…"
+
+#~ msgid "Scale mode:"
+#~ msgstr ""
+
+#~ msgid "Selected pages: "
+#~ msgstr "Vybrané stránky: "
+
+#~ msgid "Show values"
+#~ msgstr ""
+
+#~ msgid "Supported image files"
+#~ msgstr "Podporované soubory s obrázky"
+
+#~ msgid "Top to Bottom"
+#~ msgstr "Shora dolů"
+
+#~ msgid "User Manual"
+#~ msgstr ""
+
+#~ msgid "Value"
+#~ msgstr "Hodnota"
+
+#~ msgid "Vertical offset"
+#~ msgstr "Svislý posun"
+
+#~ msgid "Width in %"
+#~ msgstr "Šířka v %"
+
+#~ msgid "Your changes will be lost if you don’t save them."
+#~ msgstr "Provedené změny budou ztraceny, pokud je neuložíte."
+
+#~ msgid "Zoom In"
+#~ msgstr "Přiblížit"
+
+#~ msgid "Zoom Out"
+#~ msgstr "Oddálit"
+
+#~ msgid "Zoom _Fit"
+#~ msgstr "Přizpůsobit _velikost"
+
+#~ msgid "_Apply"
+#~ msgstr ""
+
+#~ msgid "_Cancel"
+#~ msgstr "_Zrušit"
+
+#~ msgid "_OK"
+#~ msgstr "_OK"
+
+#~ msgid "_Revert"
+#~ msgstr ""
+
+#~ msgid "page"
+#~ msgstr "stránka"
+
+#~ msgid "untitled"
+#~ msgstr "nepojmenovaný"
+
