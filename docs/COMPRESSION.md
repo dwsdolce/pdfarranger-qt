@@ -197,14 +197,53 @@ setting. The corollary is that the existing checkbox should be renamed to what
 it does — *Recompress streams and pack objects* — and the word *Compress* left
 for the command that earns it.
 
-**Applied to the document, or to the output?** Modifying the in-memory pages
-puts it on the undo stack, which is where a destructive operation belongs and
-is how the user sees what happened before committing. It also means a
-re-encode on every subsequent save unless the result is cached. Applying it at
-save time is simpler and matches Export ▸ Rasterized PDF, but leaves the user
-looking at pages that are not what will be written. **Recommendation:** apply
-to the document, undoable, so that "I can see it got worse" and "I can undo it"
-are the same gesture.
+**Where the change lands — decided: a new temporary document.** The re-encoded
+pages are written to a fresh temp PDF, registered through
+`DocumentSet.get_doc`, and each affected page has its `nfile` and `copyname`
+repointed at it. This is what `stamp.py`, `nup.py`, `booklet.py` and
+`layers.py` already do with generated content, and it is the only one of the
+three plausible designs that is honestly undoable.
+
+The reason it has to be that one is not obvious, and the obvious
+implementation is a trap:
+
+- **At save time**, inside `export_doc`. Costs no temp space and matches
+  Export ▸ Rasterized PDF, but leaves the user looking at thumbnails that are
+  not what gets written, and puts a lossy operation somewhere undo cannot see
+  it at all.
+- **In the document, in place** — open the page's `copyname`, rewrite its
+  image XObjects, save it back. **This silently breaks undo.** A snapshot is a
+  shallow copy of every `Page`, and a `Page` is a *reference* into one of
+  `DocumentSet`'s immutable temporary files plus a handful of numbers; no
+  snapshot holds a single pixel. Every state on the stack, before and after,
+  names that same path. Undo would faithfully restore page order, rotations
+  and crops while the images stayed degraded — with the menu still offering
+  "Undo Compress". For a lossy operation that is the worst failure available,
+  and it is the version that gets written first.
+- **In the document, as a new temporary document.** The snapshot's old
+  `copyname` still names a file that is still there, so undo restores the
+  pixels because it restores the reference. Chosen.
+
+What it costs: **the original temporary file stays on disk for as long as any
+undo state references it.** Compressing a 200 MB scan means both copies live
+in the per-window temporary directory until the history is cleared. Disk
+rather than memory, in a directory that is cleaned on exit — but it is real,
+and it is the one argument the save-time design has going for it.
+
+The gain is that "I can see it got worse" and "I can undo it" become the same
+gesture, which is the whole reason a destructive operation is allowed near
+this application at all.
+
+Two details that fall out of the choice. **One new document per affected
+source, with page indices preserved** — pages the user did not select are
+copied across untouched — so `npage` needs no remapping and a partial
+selection stays possible. And read mode shows the result either way: compress
+a whole document and nothing else is edited, so `source_if_unmodified` still
+recognises a 1:1 view and hands the reader the new temporary file directly;
+compress part of one and the pages now span two documents, so the reader falls
+back to exporting the edited list, as it does after any other edit. Both paths
+show the compressed images, which is what someone checking the result is
+looking for.
 
 **Never make it bigger, and never make it worse for nothing.** Two rules the
 implementation must carry, because the measurements show both failing
