@@ -16,13 +16,16 @@
 
 """Page numbers and watermarks -- the two users of the text primitive.
 
-A caveat that shapes every test here: the offscreen Qt platform the suite runs
-under has an **empty font database**, so drawn text comes out as the empty box
-a missing glyph produces. Those boxes are drawn where the glyphs would be, so
-*position* and *presence* are measurable exactly as usual; whether the result
-is real, selectable text is not, and the tests that ask are guarded by
-`stamp.has_fonts()` so they run wherever fonts exist and skip where they do
-not. Saying so beats a suite that quietly proves less than it appears to.
+A caveat that used to shape every test here: the offscreen Qt platform does not
+use the platform's own font system, it replaces it -- so on Windows
+`QFontDatabase.families()` came back empty and every string drew as the box a
+missing glyph produces. Position was measurable; *is this real text* was not.
+`conftest.py` now points `QT_QPA_FONTDIR` at the Fonts directory under
+`%SystemRoot%`, so these run everywhere.
+
+The `stamp.has_fonts()` guard stays on the two that assert selectable text. It
+is no longer skipping anything here, but a platform with no fonts is exactly
+where those two would fail for a reason that has nothing to do with stamping.
 """
 
 import os

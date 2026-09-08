@@ -37,12 +37,13 @@ mojibake. QPdfWriter has the metrics and the font already, embeds a subset of
 whatever was used, and takes Unicode. Resolution is fixed at 72 dpi so that one
 Qt logical unit is one PDF point and no conversion is needed anywhere.
 
-One consequence worth knowing before reading the tests: the **offscreen**
-platform Qt runs under during testing has no font database at all --
-``QFontDatabase.families()`` is empty -- so text comes out as the boxes a
-missing glyph draws, as paths rather than as text. The boxes land where the
-glyphs would, so position is still measurable; whether the result is real,
-extractable text is not, and `has_fonts()` says which world the caller is in.
+One consequence worth knowing: the **offscreen** Qt platform does not use the
+system's font machinery, it replaces it, and its own fallback reads only what
+``QT_QPA_FONTDIR`` names. On Linux the generic Unix path finds fontconfig and
+needs no help; on Windows nothing looks anywhere, so
+``QFontDatabase.families()`` is empty and text comes out as the boxes a missing
+glyph draws -- paths rather than text. `has_fonts()` says which world the
+caller is in.
 """
 
 import dataclasses

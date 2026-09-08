@@ -38,6 +38,21 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 # Must precede QApplication: Qt reads it at construction.
 os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
 
+# The offscreen plugin does not use the platform's own font system -- it
+# replaces it. Its fallback is a FreeType database that reads whatever
+# QT_QPA_FONTDIR names, and on Linux the generic Unix path finds fontconfig
+# instead, which needs no help. On Windows nothing looks anywhere, so
+# QFontDatabase.families() comes back empty and every string draws as the box a
+# missing glyph produces -- which is why the two tests asserting that a stamp is
+# real, selectable text could only ever run on Linux.
+#
+# %SystemRoot% rather than C:\Windows: the directory is standard, its drive is
+# not, and SystemRoot is the supported way to ask.
+if sys.platform == "win32" and not os.environ.get("QT_QPA_FONTDIR"):
+    _fonts = os.path.join(os.environ.get("SystemRoot", r"C:\Windows"), "Fonts")
+    if os.path.isdir(_fonts):
+        os.environ["QT_QPA_FONTDIR"] = _fonts
+
 from PySide6.QtCore import QSettings  # noqa: E402
 from PySide6.QtWidgets import QApplication, QMessageBox  # noqa: E402
 
