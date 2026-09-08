@@ -24,6 +24,11 @@ dependencies = [
     "PySide6>=6.8",
     "pikepdf>=8.0",
     "img2pdf>=0.4.2",
+    # Never imported by name: it arrives as the return type of
+    # `pikepdf.PdfImage.as_pil_image()`, which Extract Images already saves to
+    # disk. Declared because that is a runtime requirement whatever it looks
+    # like, and because compression will use it directly.
+    "Pillow>=10.0",
     "python-dateutil>=2.8",
     "packaging>=23.0",
 ]

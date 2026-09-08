@@ -196,7 +196,9 @@ def export_rasterised_pdf(pages: Sequence[Page], files, path: str,
         if image.isNull():
             continue
         buffer = io.BytesIO()
-        # Round-trip through Pillow so img2pdf sees a format it understands.
+        # Encode with Qt so img2pdf sees a format it understands. Not Pillow:
+        # the image is already a QImage, and handing Qt's own encoder a QImage
+        # avoids a conversion that would buy nothing.
         _save_qimage(image, buffer, image_format)
         blobs.append(buffer.getvalue())
         sizes.append(page.size_in_points())

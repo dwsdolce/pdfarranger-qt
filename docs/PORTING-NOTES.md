@@ -639,6 +639,9 @@ tractable. `core.py` and `exporter.py` had the lowest GTK density.
 
 - **pikepdf** is the PDF backend and stays. Toolkit-agnostic.
 - **img2pdf** optional, for image import. Also `python-dateutil`, `packaging`.
+- **Pillow** required, and easy to miss: nothing imports it by name. It arrives
+  as the return type of `pikepdf.PdfImage.as_pil_image()`, which Extract Images
+  saves to disk, so it has always been a runtime requirement.
 - **QtPdf** (`QPdfDocument`, PDFium) for rendering.
 ### Model
 

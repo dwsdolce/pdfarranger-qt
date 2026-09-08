@@ -47,8 +47,8 @@ which is itself derived from PDF-Shuffler. The PDF work is done by
 
 ### 2. System dependencies
 
-None. Qt, pikepdf and img2pdf all ship as wheels — there is no GTK, no PyGObject, no
-poppler and no system package to install on any platform.
+None. Qt, pikepdf, img2pdf and Pillow all ship as wheels — there is no GTK, no
+PyGObject, no poppler and no system package to install on any platform.
 
 ### 3. Create a virtual environment (recommended)
 

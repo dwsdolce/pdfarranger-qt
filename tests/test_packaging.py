@@ -35,7 +35,13 @@ class TestPackaging(unittest.TestCase):
     def test_declares_every_runtime_import(self):
         data = self.pyproject()
         names = " ".join(data["project"]["dependencies"]).lower()
-        for package in ("pyside6", "pikepdf", "img2pdf", "python-dateutil", "packaging"):
+        # Pillow is in the list despite no `import PIL` anywhere: it reaches
+        # the code as the return type of `pikepdf.PdfImage.as_pil_image()`,
+        # which Extract Images calls and then saves. A dependency that is only
+        # ever touched through another library's return value is exactly the
+        # kind this check exists to catch, and it went undeclared for months.
+        for package in ("pyside6", "pikepdf", "img2pdf", "pillow",
+                        "python-dateutil", "packaging"):
             self.assertIn(package, names, f"{package} is imported but not declared")
 
     def test_entry_point_resolves(self):
