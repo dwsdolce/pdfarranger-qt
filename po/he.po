@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-07 19:17+0000\n"
+"POT-Creation-Date: 2026-09-08 16:18+0000\n"
 "PO-Revision-Date: 2023-06-12 11:22+0300\n"
 "Last-Translator: Yaron Shahrabani <sh.yaron@gmail.com>\n"
 "Language: he\n"
@@ -19,6 +19,10 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: pdfarranger-qt tools/merge_translations.py\n"
 "Generated-By: Babel 2.18.0\n"
+
+#: pdfarranger_qt/app.py pdfarranger_qt/mainwindow.py
+msgid "_Save"
+msgstr "_שמירה"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py pdfarranger_qt/reader.py
@@ -1273,6 +1277,16 @@ msgstr ""
 
 # machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>File ▸ Unlock</b> goes the other way: open the document with its "
+"password, choose Unlock, and the next save writes it without one. It is only"
+" available when there is encryption to remove."
+msgstr ""
+"<b>קובץ ▸ שחרור</b> עושה את ההפך: פתחו את המסמך עם הססמה שלו, בחרו שחרור, "
+"והשמירה הבאה תכתוב אותו בלעדיה. זמין רק כשיש הצפנה להסיר."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
 msgid "Files"
 msgstr "קבצים"
 
@@ -1338,10 +1352,6 @@ msgstr "_פתיחה"
 #: pdfarranger_qt/mainwindow.py
 msgid "_Import"
 msgstr "יי_בוא"
-
-#: pdfarranger_qt/mainwindow.py
-msgid "_Save"
-msgstr "_שמירה"
 
 #: pdfarranger_qt/mainwindow.py
 msgid "Save _As…"
@@ -1547,6 +1557,11 @@ msgstr "_הוספת סימן מים…"
 #: pdfarranger_qt/mainwindow.py
 msgid "Pass_word"
 msgstr "ססמ_ה"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Unlock"
+msgstr "_שחרור"
 
 #: pdfarranger_qt/mainwindow.py
 msgid "Edit _Properties"
@@ -1877,6 +1892,11 @@ msgstr "המסמך לא יוצפן."
 #: pdfarranger_qt/mainwindow.py
 msgid "The document will be encrypted when it is saved."
 msgstr "המסמך יוצפן בעת השמירה."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "The password will be removed when the document is saved."
+msgstr "הססמה תוסר בעת שמירת המסמך."
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py

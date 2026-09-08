@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PDF Arranger 1.9.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-07 19:17+0000\n"
+"POT-Creation-Date: 2026-09-08 16:18+0000\n"
 "PO-Revision-Date: 2023-06-12 10:30+0300\n"
 "Last-Translator: Manussos Pulinakis "
 "<38626261+manussos@users.noreply.github.com>\n"
@@ -23,6 +23,10 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: pdfarranger-qt tools/merge_translations.py\n"
 "Generated-By: Babel 2.18.0\n"
+
+#: pdfarranger_qt/app.py pdfarranger_qt/mainwindow.py
+msgid "_Save"
+msgstr "Αποθήκευ_ση"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py pdfarranger_qt/reader.py
@@ -1344,6 +1348,17 @@ msgstr ""
 
 # machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>File ▸ Unlock</b> goes the other way: open the document with its "
+"password, choose Unlock, and the next save writes it without one. It is only"
+" available when there is encryption to remove."
+msgstr ""
+"<b>Αρχείο ▸ Ξεκλείδωμα</b> κάνει το αντίστροφο: ανοίξτε το έγγραφο με τον "
+"κωδικό του, επιλέξτε Ξεκλείδωμα, και η επόμενη αποθήκευση το γράφει χωρίς. "
+"Διαθέσιμο μόνο όταν υπάρχει κρυπτογράφηση προς αφαίρεση."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
 msgid "Files"
 msgstr "Αρχεία"
 
@@ -1411,10 +1426,6 @@ msgstr "Άν_οιγμα"
 #: pdfarranger_qt/mainwindow.py
 msgid "_Import"
 msgstr "Ε_ισαγωγή"
-
-#: pdfarranger_qt/mainwindow.py
-msgid "_Save"
-msgstr "Αποθήκευ_ση"
 
 #: pdfarranger_qt/mainwindow.py
 msgid "Save _As…"
@@ -1620,6 +1631,11 @@ msgstr "Προσθήκη _υδατογραφήματος…"
 #: pdfarranger_qt/mainwindow.py
 msgid "Pass_word"
 msgstr "Κω_δικός"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Unlock"
+msgstr "_Ξεκλείδωμα"
 
 #: pdfarranger_qt/mainwindow.py
 msgid "Edit _Properties"
@@ -1946,6 +1962,11 @@ msgstr "Το έγγραφο δεν θα κρυπτογραφηθεί."
 #: pdfarranger_qt/mainwindow.py
 msgid "The document will be encrypted when it is saved."
 msgstr "Το έγγραφο θα κρυπτογραφηθεί κατά την αποθήκευση."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "The password will be removed when the document is saved."
+msgstr "Ο κωδικός θα αφαιρεθεί κατά την αποθήκευση του εγγράφου."
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py

@@ -8,17 +8,21 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-07 19:17+0000\n"
+"POT-Creation-Date: 2026-09-08 16:18+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: hu\n"
+"Language-Team: hu <LL@li.org>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: pdfarranger-qt tools/merge_translations.py\n"
 "Generated-By: Babel 2.18.0\n"
+
+#: pdfarranger_qt/app.py pdfarranger_qt/mainwindow.py
+msgid "_Save"
+msgstr "_Mentés"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py pdfarranger_qt/reader.py
@@ -1325,6 +1329,18 @@ msgstr ""
 
 # machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>File ▸ Unlock</b> goes the other way: open the document with its "
+"password, choose Unlock, and the next save writes it without one. It is only"
+" available when there is encryption to remove."
+msgstr ""
+"<b>Fájl ▸ Feloldás</b> az ellenkező irányba működik: nyissa meg a "
+"dokumentumot a jelszavával, válassza a Feloldást, és a következő mentés "
+"jelszó nélkül írja ki. Csak akkor érhető el, ha van eltávolítható "
+"titkosítás."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
 msgid "Files"
 msgstr "Fájlok"
 
@@ -1391,10 +1407,6 @@ msgstr "_Megnyitás…"
 #: pdfarranger_qt/mainwindow.py
 msgid "_Import"
 msgstr "_Importálás…"
-
-#: pdfarranger_qt/mainwindow.py
-msgid "_Save"
-msgstr "_Mentés"
 
 #: pdfarranger_qt/mainwindow.py
 msgid "Save _As…"
@@ -1597,6 +1609,11 @@ msgstr "Vízjel hozzáadás_a…"
 #: pdfarranger_qt/mainwindow.py
 msgid "Pass_word"
 msgstr "Jels_zó"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Unlock"
+msgstr "_Feloldás"
 
 #: pdfarranger_qt/mainwindow.py
 msgid "Edit _Properties"
@@ -1920,6 +1937,11 @@ msgstr "A dokumentum nem lesz titkosítva."
 #: pdfarranger_qt/mainwindow.py
 msgid "The document will be encrypted when it is saved."
 msgstr "A dokumentum mentéskor titkosítva lesz."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "The password will be removed when the document is saved."
+msgstr "A jelszó eltávolításra kerül a dokumentum mentésekor."
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py

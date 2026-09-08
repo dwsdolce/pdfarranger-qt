@@ -727,6 +727,44 @@ class TestPhase4Parity(unittest.TestCase):
         with pikepdf.open(out) as pdf:      # no password required
             self.assertEqual(len(pdf.pages), 2)
 
+    # -- Unlock --------------------------------------------------------------
+
+    def test_unlock_is_offered_only_when_there_is_encryption_to_remove(self):
+        """Enabled on a plain document it would promise a no-op.
+
+        The fixture this window is built from is not encrypted, so the command
+        starts unavailable; setting an output password is the other way a save
+        would change the encryption.
+        """
+        self.win._refresh_state()
+        self.assertFalse(self.win.act_unlock.isEnabled())
+
+        self.win.output_password = "s3cret"
+        self.win._refresh_state()
+        self.assertTrue(self.win.act_unlock.isEnabled())
+
+    def test_unlock_clears_the_password_and_the_toggle(self):
+        """It has to leave the toggle agreeing with it, or the menu lies."""
+        self.win.act_password.setChecked(True)
+        self.win.output_password = "s3cret"
+
+        self.win.unlock()
+
+        self.assertIsNone(self.win.output_password)
+        self.assertFalse(self.win.act_password.isChecked())
+
+    def test_unlock_then_save_writes_a_file_that_opens_without_a_password(self):
+        """The claim the menu entry makes, checked against the bytes."""
+        import pikepdf
+
+        self.win.output_password = "s3cret"
+        self.win.unlock()
+
+        out = temp_path("unlocked.pdf")
+        self.assertTrue(self.win._write([out], self.win.model.pages))
+        with pikepdf.open(out) as pdf:      # no password argument
+            self.assertEqual(len(pdf.pages), 2)
+
     # -- Rasterised PDF (jpg) ------------------------------------------------
 
     def test_rasterised_pdf_offers_both_formats(self):

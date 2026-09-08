@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-07 19:17+0000\n"
+"POT-Creation-Date: 2026-09-08 16:18+0000\n"
 "PO-Revision-Date: 2024-03-20 17:20+0800\n"
 "Last-Translator: 錢政維 <e.cwchien@gmail.com>\n"
 "Language: zh_TW\n"
@@ -21,9 +21,12 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Poedit-SourceCharset: utf-8\n"
 "X-Generator: pdfarranger-qt tools/merge_translations.py\n"
 "Generated-By: Babel 2.18.0\n"
+
+#: pdfarranger_qt/app.py pdfarranger_qt/mainwindow.py
+msgid "_Save"
+msgstr "儲存(_S)"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py pdfarranger_qt/reader.py
@@ -1193,6 +1196,14 @@ msgstr ""
 
 # machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>File ▸ Unlock</b> goes the other way: open the document with its "
+"password, choose Unlock, and the next save writes it without one. It is only"
+" available when there is encryption to remove."
+msgstr "<b>檔案 ▸ 解鎖</b>方向相反：用密碼開啟文件，選擇解鎖，下一次儲存就會寫出不帶密碼的檔案。只有在確實有加密可移除時才可用。"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
 msgid "Files"
 msgstr "檔案"
 
@@ -1257,10 +1268,6 @@ msgstr "開啟舊檔(_O)"
 #: pdfarranger_qt/mainwindow.py
 msgid "_Import"
 msgstr "匯入(_I)"
-
-#: pdfarranger_qt/mainwindow.py
-msgid "_Save"
-msgstr "儲存(_S)"
 
 #: pdfarranger_qt/mainwindow.py
 msgid "Save _As…"
@@ -1463,6 +1470,11 @@ msgstr "加入浮水印…(_W)"
 #: pdfarranger_qt/mainwindow.py
 msgid "Pass_word"
 msgstr "密碼(_W)"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Unlock"
+msgstr "解鎖(_U)"
 
 #: pdfarranger_qt/mainwindow.py
 msgid "Edit _Properties"
@@ -1784,6 +1796,11 @@ msgstr "文件不會被加密。"
 #: pdfarranger_qt/mainwindow.py
 msgid "The document will be encrypted when it is saved."
 msgstr "文件會在儲存時加密。"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "The password will be removed when the document is saved."
+msgstr "儲存文件時將移除密碼。"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py

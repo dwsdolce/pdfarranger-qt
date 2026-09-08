@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  pdfarranger\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-07 19:17+0000\n"
+"POT-Creation-Date: 2026-09-08 16:18+0000\n"
 "PO-Revision-Date: 2023-06-06 13:27+0200\n"
 "Last-Translator: Milo Ivir <mail@milotype.de>\n"
 "Language: hr\n"
@@ -19,6 +19,10 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: pdfarranger-qt tools/merge_translations.py\n"
 "Generated-By: Babel 2.18.0\n"
+
+#: pdfarranger_qt/app.py pdfarranger_qt/mainwindow.py
+msgid "_Save"
+msgstr "_Spremi"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py pdfarranger_qt/reader.py
@@ -1312,6 +1316,17 @@ msgstr ""
 
 # machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>File ▸ Unlock</b> goes the other way: open the document with its "
+"password, choose Unlock, and the next save writes it without one. It is only"
+" available when there is encryption to remove."
+msgstr ""
+"<b>Datoteka ▸ Otključaj</b> ide u drugom smjeru: otvori dokument njegovom "
+"lozinkom, odaberi Otključaj i sljedeće spremanje zapisuje ga bez nje. "
+"Dostupno samo kad ima šifriranja za uklanjanje."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
 msgid "Files"
 msgstr "Datoteke"
 
@@ -1378,10 +1393,6 @@ msgstr "_Otvori"
 #: pdfarranger_qt/mainwindow.py
 msgid "_Import"
 msgstr "_Uvezi"
-
-#: pdfarranger_qt/mainwindow.py
-msgid "_Save"
-msgstr "_Spremi"
 
 #: pdfarranger_qt/mainwindow.py
 msgid "Save _As…"
@@ -1587,6 +1598,11 @@ msgstr "Dodaj _vodeni žig…"
 #: pdfarranger_qt/mainwindow.py
 msgid "Pass_word"
 msgstr "_Lozinka"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Unlock"
+msgstr "O_tključaj"
 
 #: pdfarranger_qt/mainwindow.py
 msgid "Edit _Properties"
@@ -1915,6 +1931,11 @@ msgstr "Dokument neće biti šifriran."
 #: pdfarranger_qt/mainwindow.py
 msgid "The document will be encrypted when it is saved."
 msgstr "Dokument će biti šifriran pri spremanju."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "The password will be removed when the document is saved."
+msgstr "Lozinka će biti uklonjena pri spremanju dokumenta."
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py

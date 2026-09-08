@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-07 19:17+0000\n"
+"POT-Creation-Date: 2026-09-08 16:18+0000\n"
 "PO-Revision-Date: 2025-09-28 16:51+0000\n"
 "Last-Translator: Sveinn í Felli <sv1@fellsnet.is>\n"
 "Language: is\n"
@@ -19,6 +19,10 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: pdfarranger-qt tools/merge_translations.py\n"
 "Generated-By: Babel 2.18.0\n"
+
+#: pdfarranger_qt/app.py pdfarranger_qt/mainwindow.py
+msgid "_Save"
+msgstr "Vi_sta"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py pdfarranger_qt/reader.py
@@ -1294,6 +1298,17 @@ msgstr ""
 
 # machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>File ▸ Unlock</b> goes the other way: open the document with its "
+"password, choose Unlock, and the next save writes it without one. It is only"
+" available when there is encryption to remove."
+msgstr ""
+"<b>Skrá ▸ Aflæsa</b> fer í hina áttina: opnaðu skjalið með lykilorðinu, "
+"veldu Aflæsa, og næsta vistun skrifar það án þess. Aðeins í boði þegar það "
+"er dulritun til að fjarlægja."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
 msgid "Files"
 msgstr "Skrár"
 
@@ -1360,10 +1375,6 @@ msgstr "_Opna"
 #: pdfarranger_qt/mainwindow.py
 msgid "_Import"
 msgstr "Flytja _inn"
-
-#: pdfarranger_qt/mainwindow.py
-msgid "_Save"
-msgstr "Vi_sta"
 
 #: pdfarranger_qt/mainwindow.py
 msgid "Save _As…"
@@ -1566,6 +1577,11 @@ msgstr "Bæta við vatns_merki…"
 #: pdfarranger_qt/mainwindow.py
 msgid "Pass_word"
 msgstr "L_ykilorð"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Unlock"
+msgstr "A_flæsa"
 
 #: pdfarranger_qt/mainwindow.py
 msgid "Edit _Properties"
@@ -1887,6 +1903,11 @@ msgstr "Skjalið verður ekki dulritað."
 #: pdfarranger_qt/mainwindow.py
 msgid "The document will be encrypted when it is saved."
 msgstr "Skjalið verður dulritað þegar það er vistað."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "The password will be removed when the document is saved."
+msgstr "Lykilorðið verður fjarlægt þegar skjalið er vistað."
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py

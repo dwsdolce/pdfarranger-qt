@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  pdfarranger\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-07 19:17+0000\n"
+"POT-Creation-Date: 2026-09-08 16:18+0000\n"
 "PO-Revision-Date: 2024-03-24 19:16+0200\n"
 "Last-Translator: \n"
 "Language: fi\n"
@@ -18,6 +18,10 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: pdfarranger-qt tools/merge_translations.py\n"
 "Generated-By: Babel 2.18.0\n"
+
+#: pdfarranger_qt/app.py pdfarranger_qt/mainwindow.py
+msgid "_Save"
+msgstr "T_allenna"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py pdfarranger_qt/reader.py
@@ -1316,6 +1320,17 @@ msgstr ""
 
 # machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>File ▸ Unlock</b> goes the other way: open the document with its "
+"password, choose Unlock, and the next save writes it without one. It is only"
+" available when there is encryption to remove."
+msgstr ""
+"<b>Tiedosto ▸ Poista suojaus</b> toimii toiseen suuntaan: avaa asiakirja "
+"salasanalla, valitse Poista suojaus, ja seuraava tallennus kirjoittaa sen "
+"ilman. Käytettävissä vain, kun poistettavaa salausta on."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
 msgid "Files"
 msgstr "Tiedostot"
 
@@ -1384,10 +1399,6 @@ msgstr "_Avaa"
 #: pdfarranger_qt/mainwindow.py
 msgid "_Import"
 msgstr "_Tuo"
-
-#: pdfarranger_qt/mainwindow.py
-msgid "_Save"
-msgstr "T_allenna"
 
 #: pdfarranger_qt/mainwindow.py
 msgid "Save _As…"
@@ -1590,6 +1601,11 @@ msgstr "Lisää _vesileima…"
 #: pdfarranger_qt/mainwindow.py
 msgid "Pass_word"
 msgstr "Sa_lasana"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Unlock"
+msgstr "_Poista suojaus"
 
 #: pdfarranger_qt/mainwindow.py
 msgid "Edit _Properties"
@@ -1913,6 +1929,11 @@ msgstr "Asiakirjaa ei salata."
 #: pdfarranger_qt/mainwindow.py
 msgid "The document will be encrypted when it is saved."
 msgstr "Asiakirja salataan tallennettaessa."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "The password will be removed when the document is saved."
+msgstr "Salasana poistetaan, kun asiakirja tallennetaan."
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py

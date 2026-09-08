@@ -13,7 +13,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-07 19:17+0000\n"
+"POT-Creation-Date: 2026-09-08 16:18+0000\n"
 "PO-Revision-Date: 2024-02-24 20:47+0100\n"
 "Last-Translator: Jérôme Robert <jeromerobert@gmx.com>\n"
 "Language: fr\n"
@@ -22,9 +22,12 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Poedit-SourceCharset: utf-8\n"
 "X-Generator: pdfarranger-qt tools/merge_translations.py\n"
 "Generated-By: Babel 2.18.0\n"
+
+#: pdfarranger_qt/app.py pdfarranger_qt/mainwindow.py
+msgid "_Save"
+msgstr "_Enregistrer"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py pdfarranger_qt/reader.py
@@ -1328,6 +1331,17 @@ msgstr ""
 
 # machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>File ▸ Unlock</b> goes the other way: open the document with its "
+"password, choose Unlock, and the next save writes it without one. It is only"
+" available when there is encryption to remove."
+msgstr ""
+"<b>Fichier ▸ Déverrouiller</b> fait l'inverse : ouvrez le document avec son "
+"mot de passe, choisissez Déverrouiller, et le prochain enregistrement "
+"l'écrit sans. Disponible uniquement s'il y a un chiffrement à retirer."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
 msgid "Files"
 msgstr "Fichiers"
 
@@ -1395,10 +1409,6 @@ msgstr "_Ouvrir"
 #: pdfarranger_qt/mainwindow.py
 msgid "_Import"
 msgstr "_Importer"
-
-#: pdfarranger_qt/mainwindow.py
-msgid "_Save"
-msgstr "_Enregistrer"
 
 #: pdfarranger_qt/mainwindow.py
 msgid "Save _As…"
@@ -1601,6 +1611,11 @@ msgstr "Ajouter un _filigrane…"
 #: pdfarranger_qt/mainwindow.py
 msgid "Pass_word"
 msgstr "Mot de _passe"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Unlock"
+msgstr "_Déverrouiller"
 
 #: pdfarranger_qt/mainwindow.py
 msgid "Edit _Properties"
@@ -1926,6 +1941,11 @@ msgstr "Le document ne sera pas chiffré."
 #: pdfarranger_qt/mainwindow.py
 msgid "The document will be encrypted when it is saved."
 msgstr "Le document sera chiffré lors de l'enregistrement."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "The password will be removed when the document is saved."
+msgstr "Le mot de passe sera supprimé à l'enregistrement."
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py

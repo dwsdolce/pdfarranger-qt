@@ -468,6 +468,8 @@ class MainWindow(QMainWindow):
         self.act_password = self._action("Pass_word")
         self.act_password.setCheckable(True)
         self.act_password.triggered.connect(self.set_password)
+        self.act_unlock = self._action("_Unlock")
+        self.act_unlock.triggered.connect(self.unlock)
 
         self.act_properties = self._action("Edit _Properties")
         self.act_properties.setShortcut(QKeySequence("Alt+Return"))
@@ -671,6 +673,7 @@ class MainWindow(QMainWindow):
         m.addAction(self.act_viewer_prefs)
         m.addAction(self.act_strip_metadata)
         m.addAction(self.act_password)
+        m.addAction(self.act_unlock)
         m.addSeparator()
         m.addAction(self.act_repair)
         m.addSeparator()
@@ -897,7 +900,7 @@ class MainWindow(QMainWindow):
         in every language but English.
         """
         never_edits = {"File", "View", "Help"}  # roles, never titles
-        writes_in_file = {self.act_import, self.act_password,
+        writes_in_file = {self.act_import, self.act_password, self.act_unlock,
                           self.act_viewer_prefs, self.act_strip_metadata}
         out = []
         for title, actions in self._shortcut_groups():
@@ -942,6 +945,12 @@ class MainWindow(QMainWindow):
         # them thrown away is a contradiction; the checkbox says which wins.
         self.act_properties.setEnabled(
             has_pages and not self.act_strip_metadata.isChecked())
+        # Offered only when there is encryption to remove. Always enabled it
+        # would claim to do something on every plain document and then do
+        # nothing, which is the discoverability problem again with the sign
+        # flipped.
+        self.act_unlock.setEnabled(
+            has_pages and (self.is_encrypted() or bool(self.output_password)))
         self.act_undo.setEnabled(self.model.undo.can_undo)
         self.act_redo.setEnabled(self.model.undo.can_redo)
         undo_label = self.model.undo.undo_label()
@@ -1460,6 +1469,34 @@ class MainWindow(QMainWindow):
         self._mark_modified()
         self.statusBar().showMessage(
             _("The document will be encrypted when it is saved."), 4000)
+
+    def is_encrypted(self) -> bool:
+        """Whether anything on screen came out of an encrypted file.
+
+        A document's password is empty unless one was needed to open it, so
+        this is also the answer to "would saving change the encryption".
+        """
+        return any(doc.password for doc in self.docs.docs)
+
+    def unlock(self):
+        """Drop the encryption, so the next save writes a plain document.
+
+        The capability was already there and did nothing to announce itself:
+        the password toggle starts unchecked, so opening an encrypted file and
+        saving it has always produced an unencrypted one. That is a poor way
+        to learn what a program has done to your document -- silently, and
+        only if you thought to check.
+
+        So this is a named command that does the same thing, out loud. PDF24
+        calls the equivalent "Unlock PDF" and people look for the word; the
+        toggle is only findable by somebody who already suspects encryption is
+        a property of the file rather than a command.
+        """
+        self.act_password.setChecked(False)
+        self.output_password = None
+        self._mark_modified()
+        self.statusBar().showMessage(
+            _("The password will be removed when the document is saved."), 6000)
 
     def holds(self, path: str) -> bool:
         """Whether this window is already showing that file.

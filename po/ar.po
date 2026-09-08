@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-07 19:17+0000\n"
+"POT-Creation-Date: 2026-09-08 16:18+0000\n"
 "PO-Revision-Date: 2024-09-05 17:05+0300\n"
 "Last-Translator: Abdullah Albaroty <albaroty@gmail.com>\n"
 "Language: ar\n"
@@ -20,6 +20,10 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: pdfarranger-qt tools/merge_translations.py\n"
 "Generated-By: Babel 2.18.0\n"
+
+#: pdfarranger_qt/app.py pdfarranger_qt/mainwindow.py
+msgid "_Save"
+msgstr "ا_حفظ"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py pdfarranger_qt/reader.py
@@ -1275,6 +1279,17 @@ msgstr ""
 
 # machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>File ▸ Unlock</b> goes the other way: open the document with its "
+"password, choose Unlock, and the next save writes it without one. It is only"
+" available when there is encryption to remove."
+msgstr ""
+"<b>ملف ▸ ألغِ القفل</b> يفعل العكس: افتح المستند بكلمة سره، واختر ألغِ "
+"القفل، وسيكتبه الحفظ التالي بلا كلمة سر. لا يتاح إلا حين يكون هناك تعمية "
+"لإزالتها."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
 msgid "Files"
 msgstr "الملفات"
 
@@ -1340,10 +1355,6 @@ msgstr "_فتح"
 #: pdfarranger_qt/mainwindow.py
 msgid "_Import"
 msgstr "ا_ستورد"
-
-#: pdfarranger_qt/mainwindow.py
-msgid "_Save"
-msgstr "ا_حفظ"
 
 #: pdfarranger_qt/mainwindow.py
 msgid "Save _As…"
@@ -1546,6 +1557,11 @@ msgstr "أضف _علامة مائية…"
 #: pdfarranger_qt/mainwindow.py
 msgid "Pass_word"
 msgstr "_كلمة السر"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Unlock"
+msgstr "ألغِ القف_ل"
 
 #: pdfarranger_qt/mainwindow.py
 msgid "Edit _Properties"
@@ -1879,6 +1895,11 @@ msgstr "لن يُعمّى المستند."
 #: pdfarranger_qt/mainwindow.py
 msgid "The document will be encrypted when it is saved."
 msgstr "سيُعمّى المستند عند حفظه."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "The password will be removed when the document is saved."
+msgstr "ستُزال كلمة السر عند حفظ المستند."
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py

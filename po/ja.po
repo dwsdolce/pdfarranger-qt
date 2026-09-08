@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-07 19:17+0000\n"
+"POT-Creation-Date: 2026-09-08 16:18+0000\n"
 "PO-Revision-Date: 2022-09-01 00:40+0900\n"
 "Last-Translator: sicklylife <translation@sicklylife.jp>\n"
 "Language: ja\n"
@@ -20,6 +20,10 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: pdfarranger-qt tools/merge_translations.py\n"
 "Generated-By: Babel 2.18.0\n"
+
+#: pdfarranger_qt/app.py pdfarranger_qt/mainwindow.py
+msgid "_Save"
+msgstr "保存(_S)"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py pdfarranger_qt/reader.py
@@ -1219,6 +1223,16 @@ msgstr ""
 
 # machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>File ▸ Unlock</b> goes the other way: open the document with its "
+"password, choose Unlock, and the next save writes it without one. It is only"
+" available when there is encryption to remove."
+msgstr ""
+"<b>ファイル ▸ "
+"ロック解除</b>は逆方向です。パスワードで文書を開き、ロック解除を選ぶと、次の保存はパスワードなしで書き出されます。取り除く暗号化があるときだけ使えます。"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
 msgid "Files"
 msgstr "ファイル"
 
@@ -1284,10 +1298,6 @@ msgstr "開く(_O)"
 #: pdfarranger_qt/mainwindow.py
 msgid "_Import"
 msgstr "インポート(_I)"
-
-#: pdfarranger_qt/mainwindow.py
-msgid "_Save"
-msgstr "保存(_S)"
 
 #: pdfarranger_qt/mainwindow.py
 msgid "Save _As…"
@@ -1494,6 +1504,11 @@ msgstr "透かしを追加…(_W)"
 #: pdfarranger_qt/mainwindow.py
 msgid "Pass_word"
 msgstr "パスワード(_W)"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Unlock"
+msgstr "ロック解除(_U)"
 
 #: pdfarranger_qt/mainwindow.py
 msgid "Edit _Properties"
@@ -1821,6 +1836,11 @@ msgstr "文書は暗号化されません。"
 #: pdfarranger_qt/mainwindow.py
 msgid "The document will be encrypted when it is saved."
 msgstr "文書は保存時に暗号化されます。"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "The password will be removed when the document is saved."
+msgstr "文書を保存するときにパスワードが削除されます。"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py

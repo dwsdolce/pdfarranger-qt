@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-07 19:17+0000\n"
+"POT-Creation-Date: 2026-09-08 16:18+0000\n"
 "PO-Revision-Date: 2025-12-15 00:59+0700\n"
 "Last-Translator: Loc Huynh <https://github.com/hthienloc>\n"
 "Language: vi\n"
@@ -17,6 +17,10 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: pdfarranger-qt tools/merge_translations.py\n"
 "Generated-By: Babel 2.18.0\n"
+
+#: pdfarranger_qt/app.py pdfarranger_qt/mainwindow.py
+msgid "_Save"
+msgstr "_Cứu"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py pdfarranger_qt/reader.py
@@ -1281,6 +1285,17 @@ msgstr ""
 
 # machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>File ▸ Unlock</b> goes the other way: open the document with its "
+"password, choose Unlock, and the next save writes it without one. It is only"
+" available when there is encryption to remove."
+msgstr ""
+"<b>Tập tin ▸ Mở khóa</b> làm điều ngược lại: mở tài liệu bằng mật khẩu của "
+"nó, chọn Mở khóa, và lần lưu kế tiếp sẽ ghi nó mà không có mật khẩu. Chỉ "
+"dùng được khi có mã hóa để bỏ."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
 msgid "Files"
 msgstr "Tập tin"
 
@@ -1348,10 +1363,6 @@ msgstr "_Mở"
 #: pdfarranger_qt/mainwindow.py
 msgid "_Import"
 msgstr "_Nhập"
-
-#: pdfarranger_qt/mainwindow.py
-msgid "_Save"
-msgstr "_Cứu"
 
 #: pdfarranger_qt/mainwindow.py
 msgid "Save _As…"
@@ -1554,6 +1565,11 @@ msgstr "Thêm _hình mờ…"
 #: pdfarranger_qt/mainwindow.py
 msgid "Pass_word"
 msgstr "Mật _khẩu"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Unlock"
+msgstr "Mở k_hóa"
 
 #: pdfarranger_qt/mainwindow.py
 msgid "Edit _Properties"
@@ -1873,6 +1889,11 @@ msgstr "Tài liệu sẽ không được mã hóa."
 #: pdfarranger_qt/mainwindow.py
 msgid "The document will be encrypted when it is saved."
 msgstr "Tài liệu sẽ được mã hóa khi lưu."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "The password will be removed when the document is saved."
+msgstr "Mật khẩu sẽ bị bỏ khi lưu tài liệu."
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py

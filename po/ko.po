@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pdfarranger - Korean\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-07 19:17+0000\n"
+"POT-Creation-Date: 2026-09-08 16:18+0000\n"
 "PO-Revision-Date: 2026-05-25 00:41+0900\n"
 "Last-Translator: VenusGirl <venusgirl@outlook.com>\n"
 "Language: ko\n"
@@ -18,6 +18,10 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: pdfarranger-qt tools/merge_translations.py\n"
 "Generated-By: Babel 2.18.0\n"
+
+#: pdfarranger_qt/app.py pdfarranger_qt/mainwindow.py
+msgid "_Save"
+msgstr "저장(_S)"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py pdfarranger_qt/reader.py
@@ -1211,6 +1215,16 @@ msgstr ""
 
 # machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>File ▸ Unlock</b> goes the other way: open the document with its "
+"password, choose Unlock, and the next save writes it without one. It is only"
+" available when there is encryption to remove."
+msgstr ""
+"<b>파일 ▸ 잠금 해제</b>는 반대 방향입니다. 암호로 문서를 열고 잠금 해제를 고르면 다음 저장은 암호 없이 씁니다. 제거할 "
+"암호화가 있을 때만 쓸 수 있습니다."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
 msgid "Files"
 msgstr "파일"
 
@@ -1276,10 +1290,6 @@ msgstr "열기(_O)"
 #: pdfarranger_qt/mainwindow.py
 msgid "_Import"
 msgstr "가져오기(_I)"
-
-#: pdfarranger_qt/mainwindow.py
-msgid "_Save"
-msgstr "저장(_S)"
 
 #: pdfarranger_qt/mainwindow.py
 msgid "Save _As…"
@@ -1479,6 +1489,11 @@ msgstr "워터마크 추가…(_W)"
 #: pdfarranger_qt/mainwindow.py
 msgid "Pass_word"
 msgstr "암호(_W)"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Unlock"
+msgstr "잠금 해제(_U)"
 
 #: pdfarranger_qt/mainwindow.py
 msgid "Edit _Properties"
@@ -1788,6 +1803,11 @@ msgstr "문서는 암호화되지 않습니다."
 #: pdfarranger_qt/mainwindow.py
 msgid "The document will be encrypted when it is saved."
 msgstr "저장할 때 문서가 암호화됩니다."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "The password will be removed when the document is saved."
+msgstr "문서를 저장할 때 암호가 제거됩니다."
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py

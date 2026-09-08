@@ -15,7 +15,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  pdfarranger\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-07 19:17+0000\n"
+"POT-Creation-Date: 2026-09-08 16:18+0000\n"
 "PO-Revision-Date: 2025-07-09 08:35+0200\n"
 "Last-Translator: Sebastian Scherch\n"
 "Language: de\n"
@@ -26,6 +26,10 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: pdfarranger-qt tools/merge_translations.py\n"
 "Generated-By: Babel 2.18.0\n"
+
+#: pdfarranger_qt/app.py pdfarranger_qt/mainwindow.py
+msgid "_Save"
+msgstr "_Speichern"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py pdfarranger_qt/reader.py
@@ -1320,6 +1324,18 @@ msgstr ""
 
 # machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>File ▸ Unlock</b> goes the other way: open the document with its "
+"password, choose Unlock, and the next save writes it without one. It is only"
+" available when there is encryption to remove."
+msgstr ""
+"<b>Datei ▸ Entsperren</b> geht in die andere Richtung: Öffnen Sie das "
+"Dokument mit seinem Passwort, wählen Sie Entsperren, und die nächste "
+"Speicherung schreibt es ohne. Verfügbar nur, wenn es eine Verschlüsselung zu"
+" entfernen gibt."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
 msgid "Files"
 msgstr "Dateien"
 
@@ -1387,10 +1403,6 @@ msgstr "_Öffnen"
 #: pdfarranger_qt/mainwindow.py
 msgid "_Import"
 msgstr "_Importieren"
-
-#: pdfarranger_qt/mainwindow.py
-msgid "_Save"
-msgstr "_Speichern"
 
 #: pdfarranger_qt/mainwindow.py
 msgid "Save _As…"
@@ -1591,6 +1603,11 @@ msgstr "_Wasserzeichen hinzufügen…"
 #: pdfarranger_qt/mainwindow.py
 msgid "Pass_word"
 msgstr "Pass_wort"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Unlock"
+msgstr "_Entsperren"
 
 #: pdfarranger_qt/mainwindow.py
 msgid "Edit _Properties"
@@ -1906,6 +1923,11 @@ msgstr "Das Dokument wird nicht verschlüsselt."
 #: pdfarranger_qt/mainwindow.py
 msgid "The document will be encrypted when it is saved."
 msgstr "Das Dokument wird beim Speichern verschlüsselt."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "The password will be removed when the document is saved."
+msgstr "Das Passwort wird beim Speichern entfernt."
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py

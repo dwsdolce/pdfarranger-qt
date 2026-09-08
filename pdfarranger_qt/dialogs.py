@@ -1403,6 +1403,10 @@ def help_sections():
               "password is never written to your settings, so it applies to "
               "this session only — and if you forget it, the file cannot be "
               "recovered."),
+            _("<b>File ▸ Unlock</b> goes the other way: open the document with "
+              "its password, choose Unlock, and the next save writes it "
+              "without one. It is only available when there is encryption to "
+              "remove."),
         ]),
         (_("Files"), [
             _("Settings are stored by Qt in the per-user location for this "

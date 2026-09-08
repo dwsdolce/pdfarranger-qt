@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-07 19:17+0000\n"
+"POT-Creation-Date: 2026-09-08 16:18+0000\n"
 "PO-Revision-Date: 2023-06-08 10:00+0700\n"
 "Last-Translator: Abdul Munif Hanafi <amunifhanafi@gmail.com>\n"
 "Language: id\n"
@@ -20,6 +20,10 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: pdfarranger-qt tools/merge_translations.py\n"
 "Generated-By: Babel 2.18.0\n"
+
+#: pdfarranger_qt/app.py pdfarranger_qt/mainwindow.py
+msgid "_Save"
+msgstr "_Simpan"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py pdfarranger_qt/reader.py
@@ -1331,6 +1335,17 @@ msgstr ""
 
 # machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>File ▸ Unlock</b> goes the other way: open the document with its "
+"password, choose Unlock, and the next save writes it without one. It is only"
+" available when there is encryption to remove."
+msgstr ""
+"<b>Berkas ▸ Buka Kunci</b> melakukan kebalikannya: buka dokumen dengan kata "
+"sandinya, pilih Buka Kunci, dan penyimpanan berikutnya menulisnya tanpa kata"
+" sandi. Hanya tersedia bila ada enkripsi untuk dihapus."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
 msgid "Files"
 msgstr "Berkas"
 
@@ -1398,10 +1413,6 @@ msgstr "Buk_a"
 #: pdfarranger_qt/mainwindow.py
 msgid "_Import"
 msgstr "_Impor"
-
-#: pdfarranger_qt/mainwindow.py
-msgid "_Save"
-msgstr "_Simpan"
 
 #: pdfarranger_qt/mainwindow.py
 msgid "Save _As…"
@@ -1607,6 +1618,11 @@ msgstr "Tambah Tanda _Air…"
 #: pdfarranger_qt/mainwindow.py
 msgid "Pass_word"
 msgstr "Kata _Sandi"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Unlock"
+msgstr "Buka _Kunci"
 
 #: pdfarranger_qt/mainwindow.py
 msgid "Edit _Properties"
@@ -1933,6 +1949,11 @@ msgstr "Dokumen tidak akan dienkripsi."
 #: pdfarranger_qt/mainwindow.py
 msgid "The document will be encrypted when it is saved."
 msgstr "Dokumen akan dienkripsi saat disimpan."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "The password will be removed when the document is saved."
+msgstr "Kata sandi akan dihapus saat dokumen disimpan."
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py

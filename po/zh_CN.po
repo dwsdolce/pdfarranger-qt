@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PDF Arranger 1.14.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-07 19:17+0000\n"
+"POT-Creation-Date: 2026-09-08 16:18+0000\n"
 "PO-Revision-Date: 2026-06-02 17:09+0800\n"
 "Last-Translator: Puqns67 <me@puqns67.icu>\n"
 "Language: zh_CN\n"
@@ -22,6 +22,10 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: pdfarranger-qt tools/merge_translations.py\n"
 "Generated-By: Babel 2.18.0\n"
+
+#: pdfarranger_qt/app.py pdfarranger_qt/mainwindow.py
+msgid "_Save"
+msgstr "保存（_S）"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py pdfarranger_qt/reader.py
@@ -1170,6 +1174,14 @@ msgstr ""
 
 # machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>File ▸ Unlock</b> goes the other way: open the document with its "
+"password, choose Unlock, and the next save writes it without one. It is only"
+" available when there is encryption to remove."
+msgstr "<b>文件 ▸ 解锁</b>方向相反：用密码打开文档，选择解锁，下一次保存就会写出不带密码的文件。只有在确实有加密可移除时才可用。"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
 msgid "Files"
 msgstr "文件"
 
@@ -1234,10 +1246,6 @@ msgstr "打开（_O）"
 #: pdfarranger_qt/mainwindow.py
 msgid "_Import"
 msgstr "导入（_I）"
-
-#: pdfarranger_qt/mainwindow.py
-msgid "_Save"
-msgstr "保存（_S）"
 
 #: pdfarranger_qt/mainwindow.py
 msgid "Save _As…"
@@ -1437,6 +1445,11 @@ msgstr "添加水印…（_W）"
 #: pdfarranger_qt/mainwindow.py
 msgid "Pass_word"
 msgstr "密码（_W）"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Unlock"
+msgstr "解锁（_U）"
 
 #: pdfarranger_qt/mainwindow.py
 msgid "Edit _Properties"
@@ -1746,6 +1759,11 @@ msgstr "文档将不会被加密。"
 #: pdfarranger_qt/mainwindow.py
 msgid "The document will be encrypted when it is saved."
 msgstr "文档将在保存时被加密。"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "The password will be removed when the document is saved."
+msgstr "保存文档时将移除密码。"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
