@@ -2,7 +2,8 @@
 # Copyright (C) 2008-2017 Konstantinos Poulios
 # This file is part of PDF Arranger which is released under the GNU General
 # Public License version 3 or later.
-# See file COPYING or go to <http://www.gnu.org/licenses/> for full license details.
+# See file COPYING or go to <http://www.gnu.org/licenses/> for full license
+# details.
 # Translators:
 # Dean Lee <xslidian@gmail.com>, 2011, 2014.
 # Puqns67 <me@puqns67.icu>, 2026.
@@ -10,793 +11,142 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PDF Arranger 1.14.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-02 18:48+0800\n"
+"POT-Creation-Date: 2026-09-07 19:17+0000\n"
 "PO-Revision-Date: 2026-06-02 17:09+0800\n"
 "Last-Translator: Puqns67 <me@puqns67.icu>\n"
-"Language-Team: \n"
 "Language: zh_CN\n"
-"MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=UTF-8\n"
-"Content-Transfer-Encoding: 8bit\n"
+"Language-Team: \n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-
-#: pdfarranger/splitter.py:87
-msgid "#Col"
-msgstr "#列"
-
-#: pdfarranger/splitter.py:87
-msgid "#Row"
-msgstr "#行"
-
-#: pdfarranger/pageutils.py:128 pdfarranger/pageutils.py:555
-#: pdfarranger/pageutils.py:557
-msgid "%"
-msgstr "%"
-
-#: pdfarranger/pageutils.py:278
-#, python-format
-msgid "% of height"
-msgstr "% 高度"
-
-#: pdfarranger/pageutils.py:278
-#, python-format
-msgid "% of width"
-msgstr "% 宽度"
-
-#: pdfarranger/pdfarranger.py:3237
-#, python-format
-msgid "%s is a tool for rearranging and modifying PDF files."
-msgstr "%s 是用于重新排列和修改 PDF 文件的工具。"
-
-#: pdfarranger/config.py:342
-msgid "(Libhandy missing)"
-msgstr "（运行库 libhandy 缺失）"
-
-#: pdfarranger/config.py:334
-msgid "(Requires restart)"
-msgstr "（需要重启）"
-
-#: pdfarranger/pdfarranger.py:1417
-#, python-format
-msgid "A file named \"%s\" already exists. Do you want to replace it?"
-msgstr "文件“%s”已存在。你想要替换它吗？"
-
-#: pdfarranger/search.py:42
-msgid "All"
-msgstr "所有"
-
-#: data/menu.ui:258 data/menu.ui:454
-msgid "All From _Same File"
-msgstr "选择来自同一文件的所有页面（_S）"
-
-#: pdfarranger/pdfarranger.py:730
-msgid "All files"
-msgstr "所有文件类型"
-
-#: pdfarranger/pdfarranger.py:519 pdfarranger/pdfarranger.py:598
-msgid "All pages must have the same size."
-msgstr "所有页面必须具有相同的大小。"
-
-#: pdfarranger/pdfarranger.py:701
-msgid "All supported files"
-msgstr "所有支持的文件"
-
-#: pdfarranger/exporter.py:526
-msgid "Auto Rotate"
-msgstr "自动旋转"
-
-#: pdfarranger/pageutils.py:256
-msgid "Bottom"
-msgstr "下"
-
-#: pdfarranger/pageutils.py:488
-msgid "Bottom to Top"
-msgstr "从下至上"
-
-#: pdfarranger/core.py:599
-msgid "Clipboard image"
-msgstr "剪贴板图像"
-
-#: pdfarranger/pageutils.py:471 pdfarranger/splitter.py:60
-msgid "Columns"
-msgstr "列"
-
-#: data/menu.ui:161 data/menu.ui:417
-msgid "Copy _Image"
-msgstr "复制图像（_I）"
-
-#: data/menu.ui:166 data/menu.ui:422
-msgid "Copy _Text"
-msgstr "复制文本（_T）"
-
-#: pdfarranger/metadata.py:49
-msgid "Created"
-msgstr "已创建"
-
-#: pdfarranger/metadata.py:47
-msgid "Creator"
-msgstr "创建者"
-
-#: pdfarranger/metadata.py:48
-msgid "Creator tool"
-msgstr "创建者工具"
-
-#: pdfarranger/pageutils.py:353
-msgid "Crop & Add margins"
-msgstr "裁剪并添加边缘"
-
-#: pdfarranger/pageutils.py:1004
-msgid "Crop Margins"
-msgstr "裁剪边缘"
-
-#: data/menu.ui:194 data/menu.ui:500
-msgid "Crop White Borders"
-msgstr "裁剪白色边框"
-
-#: pdfarranger/pageutils.py:268 pdfarranger/pdfarranger.py:3211
-msgid ""
-"Cropping/hiding does not remove any content from the PDF file, it only hides "
-"it."
-msgstr "裁剪/隐藏操作不会从 PDF 文件中删除任何内容，它只是将内容隐藏起来。"
-
-#: data/menu.ui:114 data/menu.ui:365
-msgid "Cu_t"
-msgstr "剪切（_T）"
-
-#: pdfarranger/pageutils.py:142
-msgid "Custom"
-msgstr "自定义"
-
-#: pdfarranger/pdfarranger.py:1542
-msgid "Despite the warnings the document(s) should have no visible issues."
-msgstr "尽管有警告，但文档应该没有明显的问题。"
-
-#: pdfarranger/pdfarranger.py:1251
-msgid "Discard changes and close?"
-msgstr "放弃更改并关闭？"
-
-#: pdfarranger/pdfarranger.py:1288
-msgid "Discard changes and quit?"
-msgstr "放弃更改并退出？"
-
-#: pdfarranger/pdfarranger.py:3218
-msgid "Do not show this dialog again."
-msgstr "不要再显示此对话框。"
-
-#: pdfarranger/pdfarranger.py:1242
-msgid "Do_n’t Save"
-msgstr "不保存（_N）"
-
-#: pdfarranger/pdfarranger.py:1549
-msgid "Don't show warnings when saving again."
-msgstr "再次保存时不显示警告。"
-
-#: data/menu.ui:198 data/menu.ui:504
-msgid "Dupl_icate"
-msgstr "重复（_I）"
-
-#: data/menu.ui:52 data/menu.ui:541
-msgid "E_xport"
-msgstr "导出（_X）"
-
-#: data/menu.ui:55 data/menu.ui:544
-msgid "E_xport Selection to a Single File…"
-msgstr "导出所选页面至单个文件…（_X）"
-
-#: data/menu.ui:329
-msgid "Edit _Properties"
-msgstr "编辑属性（_P）"
-
-#: pdfarranger/metadata.py:213
-msgid "Edit properties"
-msgstr "编辑属性"
-
-#: pdfarranger/splitter.py:62
-msgid "Equal column width"
-msgstr "列宽相等"
-
-#: pdfarranger/splitter.py:62
-msgid "Equal row height"
-msgstr "行高相等"
-
-#: pdfarranger/pdfarranger.py:2126
-msgid "Exploding into images…"
-msgstr "拆分为图片…"
-
-#: data/menu.ui:60 data/menu.ui:549
-msgid "Export Selection to _Individual Files…"
-msgstr "导出所选页面为独立文件…（_I）"
-
-#: data/menu.ui:74 data/menu.ui:563
-msgid "Export Selection to _JPG Images…"
-msgstr "导出所选页面为 JPG 图片…（_J）"
-
-#: data/menu.ui:69 data/menu.ui:558
-msgid "Export Selection to _PNG Images…"
-msgstr "导出所选页面为 PNG 图片…（_P）"
-
-#: data/menu.ui:84 data/menu.ui:573
-msgid "Export Selection to _Rasterized PDF (jpg)…"
-msgstr "格栅化所选页面为 JPG 图片并导出为 PDF…（_R）"
-
-#: data/menu.ui:79 data/menu.ui:568
-msgid "Export Selection to _Rasterized PDF (png)…"
-msgstr "格栅化所选页面为 PNG 图片并导出为 PDF…（_R）"
-
-#: data/menu.ui:65 data/menu.ui:554
-msgid "Export _All Pages to Individual Files…"
-msgstr "导出所有页面为独立文件…（_A）"
-
-#: pdfarranger/pdfarranger.py:1358
-msgid "Export…"
-msgstr "导出…"
-
-#: pdfarranger/core.py:601 pdfarranger/pdfarranger.py:1817
-msgid "File is neither pdf nor image"
-msgstr "文件既不是 PDF 也不是图像"
-
-#: pdfarranger/pdfarranger.py:342
-msgid "File(s) to open"
-msgstr "要打开的文件"
-
-#: pdfarranger/search.py:43
-msgid "Find All"
-msgstr "查找全部"
-
-#: pdfarranger/search.py:38
-msgid "Find Next"
-msgstr "查找下一个"
-
-#: pdfarranger/search.py:33
-msgid "Find Previous"
-msgstr "查找上一个"
-
-#: data/menu.ui:322
-msgid "Find _All"
-msgstr "查找全部（_A）"
-
-#: data/menu.ui:318
-msgid "Find _Next"
-msgstr "查找下一个（_N）"
-
-#: data/menu.ui:314
-msgid "Find _Previous"
-msgstr "查找上一个（_P）"
-
-#: data/menu.ui:296
-msgid "Fit _Multiple Pages"
-msgstr "填充多页（_M）"
-
-#: data/menu.ui:291
-msgid "Fit _One Page"
-msgstr "填充单页（_O）"
-
-#: pdfarranger/pageutils.py:349
-msgid "Fit mode"
-msgstr "填充模式"
-
-#: pdfarranger/exporter.py:524
-msgid "Fit to Full Page"
-msgstr "填充至整页"
-
-#: pdfarranger/exporter.py:523
-msgid "Fit to Printable Area"
-msgstr "填充至可打印区域"
-
-#: pdfarranger/pageutils.py:358
-msgid "Fit to paper"
-msgstr "填充至纸张大小"
-
-#: pdfarranger/pdfarranger.py:3215
-msgid "For more info see"
-msgstr "为获取更多信息请看"
-
-#: pdfarranger/config.py:382
-msgid "For more options see:"
-msgstr "更多可配置项可见于："
-
-#: data/menu.ui:301
-msgid "Full_screen"
-msgstr "全屏（_S）"
-
-#: pdfarranger/pdfarranger.py:3259
-msgid "GNU General Public License (GPL) Version 3."
-msgstr "GNU 通用公共许可证（GPL）第 3 版。"
-
-#: pdfarranger/config.py:377
-msgid "Greyscale"
-msgstr "仅保留灰度"
-
-#: pdfarranger/pageutils.py:157
-msgid "Height"
-msgstr "高度"
-
-#: pdfarranger/splitter.py:88
-msgid "Height in %"
-msgstr "高度 %"
-
-#: pdfarranger/pageutils.py:1004
-msgid "Hide Margins"
-msgstr "隐藏边缘"
-
-#: pdfarranger/pageutils.py:483
-msgid "Horizontal"
-msgstr "水平"
-
-#: pdfarranger/splitter.py:61
-msgid "Horizontal Splits"
-msgstr "水平拆分"
-
-#: pdfarranger/pageutils.py:554
-msgid "Horizontal offset"
-msgstr "水平偏移"
-
-#: pdfarranger/config.py:366
-msgid "Image Export"
-msgstr "导出图片"
-
-#: pdfarranger/core.py:589
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: pdfarranger-qt tools/merge_translations.py\n"
+"Generated-By: Babel 2.18.0\n"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py pdfarranger_qt/reader.py
+#, python-brace-format
+msgid "Page {}"
+msgstr "第 {} 页"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Open Link"
+msgstr "打开链接"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Copy Link Address"
+msgstr "复制链接地址"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+#, python-brace-format
+msgid "Go to {}"
+msgstr "转到 {}"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Follow Link"
+msgstr "跟随链接"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py pdfarranger_qt/mainwindow.py
+msgid "Copy"
+msgstr "复制"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Select All"
+msgstr "全选"
+
+#: pdfarranger_qt/core.py pdfarranger_qt/mainwindow.py
 msgid "Image files are only supported with img2pdf"
 msgstr "图像文件支持依赖于 Img2pdf"
 
-#: pdfarranger/core.py:596
-msgid "Image format is not supported by img2pdf"
-msgstr "Img2pdf 不支持此图片格式"
-
-#: pdfarranger/pdfarranger.py:2123
-msgid "Img2pdf missing."
-msgstr "Img2pdf 依赖缺失。"
-
-#: pdfarranger/pdfarranger.py:1621
-msgid "Img2pdf support missing."
-msgstr "Img2pdf 支持缺失。"
-
-#: data/pdfarranger.ui:58
-msgid "Import"
-msgstr "导入"
-
-#: pdfarranger/pdfarranger.py:1631
-msgid "Import…"
-msgstr "导入…"
-
-#: data/menu.ui:218 data/menu.ui:524
-msgid "Insert Blan_k Page…"
-msgstr "插入空白页面…（_K）"
-
-#: pdfarranger/pageutils.py:437
-msgid "Insert Blank Page"
-msgstr "插入空白页面"
-
-#: pdfarranger/metadata.py:184
-msgid "Invalid date format. Input discarded."
-msgstr "输入的日期格式无效。"
-
-#: pdfarranger/pdfarranger.py:721
-msgid "JPEG images"
-msgstr "JPEG 图片"
-
-#: pdfarranger/metadata.py:45
-msgid "Keywords"
-msgstr "关键词"
-
-#: pdfarranger/pageutils.py:166
-msgid "Landscape"
-msgstr "横向"
-
-#: pdfarranger/config.py:332
-msgid "Language"
-msgstr "语言"
-
-#: pdfarranger/pageutils.py:256
-msgid "Left"
-msgstr "左"
-
-#: pdfarranger/pageutils.py:485
-msgid "Left to Right"
-msgstr "从左至右"
-
-#: data/pdfarranger.ui:122
-msgid "Main Menu"
-msgstr "主菜单"
-
-#: pdfarranger/pdfarranger.py:3254
-msgid "Maintainers and contributors"
-msgstr "维护者和贡献者"
-
-#: pdfarranger/pageutils.py:469
-msgid "Margin"
-msgstr "边缘"
-
-#: pdfarranger/pageutils.py:455
-msgid "Merge Pages"
-msgstr "合并页面"
-
-#: pdfarranger/pageutils.py:520
-msgid "Merged page size:"
-msgstr "合并后的页面大小："
-
-#: pdfarranger/metadata.py:50
-msgid "Modified"
-msgstr "已修改"
-
-#: pdfarranger/pageutils.py:500
-msgid "Non-uniform page size - using max size"
-msgstr "页面大小不统一（使用最大尺寸）"
-
-#: pdfarranger/exporter.py:522
-msgid "None"
-msgstr "无"
-
-#: pdfarranger/pdfarranger.py:3204
-msgid "Note"
-msgstr "注意"
-
-#: pdfarranger/pdfarranger.py:3210
-msgid "Note the limitations:"
-msgstr "请注意以下限制："
-
-#: data/pdfarranger.ui:37
-msgid "Open"
-msgstr "打开"
-
-#: pdfarranger/pdfarranger.py:1473
-msgid "Open…"
-msgstr "打开…"
-
-#: pdfarranger/config.py:374
-msgid "Optimize"
-msgstr "优化图像"
-
-#: pdfarranger/pageutils.py:164
-msgid "Orientation"
-msgstr "方向"
-
-#: pdfarranger/pdfarranger.py:3212
-msgid "Outlines and links can be preserved only in certain cases."
-msgstr "仅在某些情况下才能保留大纲和链接。"
-
-#: pdfarranger/pageutils.py:1057
-msgid "Overlay"
-msgstr "粘贴在页面之上"
-
-#: pdfarranger/pdfarranger.py:323
-msgid ""
-"PDF Arranger is a small python-gtk application, which helps the user to "
-"merge or split pdf documents and rotate, crop and rearrange their pages "
-"using an interactive and intuitive graphical interface. It is a frontend for "
-"pikepdf."
-msgstr ""
-"PDF Arranger 是一个轻量的 python-gtk 应用程序，它可以帮助用户交互式地使用直观"
-"的图形界面来处理多个 PDF 文档，包括合并、拆分、旋转、裁剪、重排等功能。它是 "
-"pikepdf 的前端。"
-
-#: pdfarranger/pdfarranger.py:1811
-msgid "PDF document is damaged"
-msgstr "PDF 文件已损坏"
-
-#: pdfarranger/pdfarranger.py:705
-msgid "PDF files"
-msgstr "PDF 文件"
-
-#: pdfarranger/pdfarranger.py:713
-msgid "PNG images"
-msgstr "PNG 图片"
-
-#: pdfarranger/exporter.py:577
-msgid "Page Handling"
-msgstr "页面处理"
-
-#: pdfarranger/pageutils.py:496
-msgid "Page Order"
-msgstr "页面顺序"
-
-#: pdfarranger/pdfarranger.py:3282
-msgid "Page Size:"
-msgstr "页面大小："
-
-#: pdfarranger/pageutils.py:345
-msgid "Page size"
-msgstr "页面大小"
-
-#: pdfarranger/pageutils.py:139
-msgid "Paper size"
-msgstr "纸张大小"
-
-#: pdfarranger/core.py:474
-msgid "Password"
-msgstr "密码"
-
-#: pdfarranger/core.py:452
-msgid "Password required"
-msgstr "需要密码"
-
-#: data/menu.ui:127 data/menu.ui:378
-msgid "Past_e Special"
-msgstr "特殊粘贴（_E）"
-
-#: data/menu.ui:144 data/menu.ui:396
-msgid "Paste As O_verlay…"
-msgstr "粘贴在当前页面之上…（_V）"
-
-#: data/menu.ui:139 data/menu.ui:391
-msgid "Paste As _Even Pages"
-msgstr "粘贴在为偶数页（_E）"
-
-#: data/menu.ui:134 data/menu.ui:386
-msgid "Paste As _Odd Pages"
-msgstr "粘贴在为奇数页（_O）"
-
-#: data/menu.ui:149 data/menu.ui:401
-msgid "Paste As _Underlay…"
-msgstr "粘贴在当前页面之下…（_U）"
-
-#: data/menu.ui:122 data/menu.ui:373
-msgid "Paste _After"
-msgstr "粘贴在当前页面之后（_A）"
-
-#: data/menu.ui:129 data/menu.ui:381
-msgid "Paste _Before"
-msgstr "粘贴在当前页面之前（_B）"
-
-#: pdfarranger/pdfarranger.py:1971
-msgid "Pasted data not valid. Aborting paste."
-msgstr "粘贴的数据无效。中止粘贴。"
-
-#: pdfarranger/config.py:368
-msgid "Pixels/inch:"
-msgstr "像素/英寸："
-
-#: pdfarranger/pageutils.py:165
-msgid "Portrait"
-msgstr "纵向"
-
-#: data/menu.ui:335
-msgid "Pre_ferences"
-msgstr "首选项（_F）"
-
-#: pdfarranger/config.py:322
-msgid "Preferences"
-msgstr "首选项"
-
-#: pdfarranger/config.py:354
-msgid "Preserve document information from the first file opened"
-msgstr "保留从首个打开的文件中获取的文档信息"
-
-#: pdfarranger/pdfarranger.py:334
-msgid "Print the version of PDF Arranger and exit"
-msgstr "打印 PDF Arranger 的版本并退出"
-
-#: pdfarranger/config.py:347
-msgid "Printing"
-msgstr "打印"
-
-#: pdfarranger/exporter.py:558
-msgid "Printing…"
-msgstr "正在打印…"
-
-#: pdfarranger/metadata.py:46
-msgid "Producer"
-msgstr "制作者"
-
-#: pdfarranger/metadata.py:227
-msgid "Property"
-msgstr "属性"
-
-#: pdfarranger/pageutils.py:1124
-msgid "Range Select"
-msgstr "范围选择"
-
-#: data/menu.ui:202 data/menu.ui:508
-msgid "Re_verse Order"
-msgstr "顺序反转（_V）"
-
-#: pdfarranger/pageutils.py:359
-msgid "Relative"
-msgstr "相对于当前页面大小"
-
-#: pdfarranger/exporter.py:595
-msgid "Rendering Preview…"
-msgstr "渲染预览…"
-
-#: pdfarranger/pdfarranger.py:993
-msgid "Rendering…"
-msgstr "正在渲染…"
-
-#: pdfarranger/pdfarranger.py:1419
-msgid "Replace"
-msgstr "替换"
-
-#: pdfarranger/pageutils.py:256
-msgid "Right"
-msgstr "右"
-
-#: pdfarranger/pageutils.py:486
-msgid "Right to Left"
-msgstr "从左至右"
-
-#: data/pdfarranger.ui:203
-msgid "Rotate Left"
-msgstr "向左旋转"
-
-#: data/pdfarranger.ui:227
-msgid "Rotate Right"
-msgstr "向右旋转"
-
-#: data/menu.ui:172 data/menu.ui:478
-msgid "Rotate _Left"
-msgstr "向左旋转（_L）"
-
-#: pdfarranger/pageutils.py:472 pdfarranger/splitter.py:60
-msgid "Rows"
-msgstr "行"
-
-#: pdfarranger/pdfarranger.py:3249
-#, python-format
-msgid "Running on %s"
-msgstr "运行于 %s"
-
-#: data/menu.ui:263 data/menu.ui:459
-msgid "Same Page _Format"
-msgstr "相同页面格式（_F）"
-
-#: data/pdfarranger.ui:78
-msgid "Save"
-msgstr "保存"
-
-#: data/pdfarranger.ui:97
-msgid "Save As"
-msgstr "另存为"
-
-#: pdfarranger/pdfarranger.py:1358
-msgid "Save As…"
-msgstr "另存为…"
-
-#: data/menu.ui:47
-msgid "Save _As…"
-msgstr "另存为…（_A）"
-
-#: pdfarranger/pdfarranger.py:1260
-msgid "Save changes before closing?"
-msgstr "关闭前保存更改？"
-
-#: pdfarranger/pdfarranger.py:1297
-msgid "Save changes before quitting?"
-msgstr "退出前保存更改？"
-
-#: pdfarranger/pdfarranger.py:1257
-msgid "Save changes to “{}” before closing?"
-msgstr "在关闭之前保存对“{}”的更改？"
-
-#: pdfarranger/pdfarranger.py:1294
-msgid "Save changes to “{}” before quitting?"
-msgstr "退出前保存对“{}”的更改？"
-
-#: pdfarranger/pdfarranger.py:1567
-msgid "Saving failed"
-msgstr "保存失败"
-
-#: pdfarranger/pdfarranger.py:1541
-msgid "Saving produced some warnings"
-msgstr "保存时产生了一些警告"
-
-#: pdfarranger/config.py:352
-msgid "Saving/exporting to single file"
-msgstr "保存/导出至单个文件"
-
-#: pdfarranger/pdfarranger.py:1584
-msgid "Saving…"
-msgstr "正在保存…"
-
-#: pdfarranger/pageutils.py:351
-msgid "Scale"
-msgstr "缩放"
-
-#: pdfarranger/pageutils.py:352
-msgid "Scale & Add margins"
-msgstr "缩放并添加边缘"
-
-#: pdfarranger/pageutils.py:122
-msgid "Scale factor"
-msgstr "缩放因子"
-
-#: pdfarranger/exporter.py:520
-msgid "Scale mode:"
-msgstr "缩放模式："
-
-#: data/menu.ui:238 data/menu.ui:434
-msgid "Select _All"
-msgstr "全选（_A）"
-
-#: data/menu.ui:253 data/menu.ui:449
-msgid "Select _Even Pages"
-msgstr "选择偶数页面（_E）"
-
-#: data/menu.ui:248 data/menu.ui:444
-msgid "Select _Odd Pages"
-msgstr "选择奇数页面（_O）"
-
-#: data/menu.ui:273 data/menu.ui:469
-msgid "Select _Range"
-msgstr "按范围选择页面（_R）"
-
-#: pdfarranger/pageutils.py:1133
-msgid "Select range of pages: "
-msgstr "按范围选择页面："
-
-#: pdfarranger/pdfarranger.py:3277
-msgid "Selected pages: "
-msgstr "已选页面："
-
-#: pdfarranger/pageutils.py:701
-msgid "Show values"
-msgstr "显示数值"
-
-#: pdfarranger/pdfarranger.py:3240
-msgid "Software versions:"
-msgstr "软件版本："
-
-#: pdfarranger/splitter.py:26
-msgid "Split Pages"
-msgstr "拆分页面"
-
-#: pdfarranger/metadata.py:44
-msgid "Subject"
-msgstr "主题"
-
-#: pdfarranger/pdfarranger.py:735
-msgid "Supported image files"
-msgstr "支持的图像文件"
-
-#: data/menu.ui:206 data/menu.ui:512
-msgid "Swap Odd/Even"
-msgstr "交换奇数页与偶数页"
-
-#: pdfarranger/config.py:388 pdfarranger/config.py:397
-msgid "System setting"
-msgstr "系统设置"
-
-#: pdfarranger/core.py:464
-msgid ""
-"The document “{}” is locked and requires a password before it can be opened."
-msgstr "文档“{}”被锁定，需要密码才能打开。"
-
-#: pdfarranger/pdfarranger.py:2099
-msgid "The page has several images. Use \"Explode into Images\" first.\""
-msgstr "此页面含有多个图像，请先使用“提取图像”。"
-
-#: pdfarranger/pdfarranger.py:586
-msgid "The page selection is not contiguous. Cannot unimpose."
-msgstr "选择的页面不连续。无法拆版。"
-
-#: pdfarranger/core.py:463
-msgid "The password will be remembered until you close PDF Arranger."
-msgstr "密码将被记住，直到您关闭 PDF Arranger。"
-
-#: pdfarranger/config.py:340
-msgid "Theme"
-msgstr "主题"
-
-#: pdfarranger/metadata.py:43
-msgid "Title"
-msgstr "标题"
-
-#: pdfarranger/pageutils.py:256
-msgid "Top"
-msgstr "上"
-
-#: pdfarranger/pageutils.py:487
-msgid "Top to Bottom"
-msgstr "从上至下"
-
-#: pdfarranger/pageutils.py:1057
-msgid "Underlay"
-msgstr "粘贴在页面之下"
-
-#: pdfarranger/core.py:573 pdfarranger/pdfarranger.py:1807
+# machine translation, unreviewed
+#: pdfarranger_qt/core.py
+msgid "File not found"
+msgstr "找不到文件"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/core.py
+msgid "Invalid file format"
+msgstr "文件格式无效"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/core.py
+msgid "Data not yet available"
+msgstr "数据尚不可用"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/core.py
+msgid "Unsupported security scheme"
+msgstr "不支持的安全方案"
+
+#: pdfarranger_qt/core.py
 msgid "Unknown file format"
 msgstr "未知文件格式"
 
-#: pdfarranger/pageutils.py:1140
+#: pdfarranger_qt/core.py
+msgid "Image format is not supported by img2pdf"
+msgstr "Img2pdf 不支持此图片格式"
+
+#: pdfarranger_qt/core.py
+msgid "File is neither pdf nor image"
+msgstr "文件既不是 PDF 也不是图像"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/core.py
+msgid "Cannot open document"
+msgstr "无法打开文档"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Paper size"
+msgstr "纸张大小"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Custom"
+msgstr "自定义"
+
+#: pdfarranger_qt/dialogs.py
+msgid "mm"
+msgstr "mm"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Width"
+msgstr "宽度"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Height"
+msgstr "高度"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Keep aspect ratio"
+msgstr "保持长宽比"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Portrait"
+msgstr "纵向"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Landscape"
+msgstr "横向"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Orientation"
+msgstr "方向"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Range Select"
+msgstr "范围选择"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Select range of pages: "
+msgstr "按范围选择页面："
+
+#: pdfarranger_qt/dialogs.py
 msgid ""
 "Use a comma to separate page numbers, a dash to select a range of pages. \n"
 "e.g. : \"1,3,5-7,9\""
@@ -804,215 +154,2420 @@ msgstr ""
 "使用逗号分隔页面，用连接符指定页面范围。\n"
 "例如：1,3,5-7,9"
 
-#: pdfarranger/pdfarranger.py:3216
-msgid "User Manual"
-msgstr "用户手册"
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+msgid "Insert Blank Page"
+msgstr "插入空白页面"
 
-#: pdfarranger/metadata.py:227
-msgid "Value"
-msgstr "值"
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+msgid "Page size"
+msgstr "页面大小"
 
-#: pdfarranger/pageutils.py:484
-msgid "Vertical"
-msgstr "纵向"
+#: pdfarranger_qt/dialogs.py
+msgid "Fit to paper"
+msgstr "填充至纸张大小"
 
-#: pdfarranger/splitter.py:61
+#: pdfarranger_qt/dialogs.py
+msgid "Relative"
+msgstr "相对于当前页面大小"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Scale"
+msgstr "缩放"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Scale & Add margins"
+msgstr "缩放并添加边缘"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Crop & Add margins"
+msgstr "裁剪并添加边缘"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Fit mode"
+msgstr "填充模式"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Scale factor"
+msgstr "缩放因子"
+
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+msgid "Hide Margins"
+msgstr "隐藏边缘"
+
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+msgid "Crop Margins"
+msgstr "裁剪边缘"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Left"
+msgstr "左"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Right"
+msgstr "右"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Top"
+msgstr "上"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Bottom"
+msgstr "下"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Margins"
+msgstr "页边距"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Same for all sides"
+msgstr "各边相同"
+
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+msgid "Split Pages"
+msgstr "拆分页面"
+
+#: pdfarranger_qt/dialogs.py
 msgid "Vertical Splits"
 msgstr "垂直拆分"
 
-#: pdfarranger/pageutils.py:556
-msgid "Vertical offset"
-msgstr "垂直偏移"
+#: pdfarranger_qt/dialogs.py
+msgid "Horizontal Splits"
+msgstr "水平拆分"
 
-#: pdfarranger/config.py:357
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+msgid "Pages per Sheet"
+msgstr "每张纸页数"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Automatic"
+msgstr "自动"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Automatic turns the sheet sideways when that lets the pages come out larger."
+msgstr "当横放能让页面更大时，自动模式会把纸张横过来。"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Empty space left around each page."
+msgstr "每页周围留出的空白。"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Layout"
+msgstr "布局"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Columns"
+msgstr "列"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Rows"
+msgstr "行"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Sheet"
+msgstr "纸张"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Gap"
+msgstr "间距"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Appearance"
+msgstr "外观"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/reader.py
+msgid "Bold"
+msgstr "粗体"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/reader.py
+msgid "Italic"
+msgstr "斜体"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Font"
+msgstr "字体"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Size"
+msgstr "大小"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Colour"
+msgstr "颜色"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Opacity"
+msgstr "不透明度"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Position"
+msgstr "位置"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Angle"
+msgstr "角度"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+msgid "Add Page Numbers"
+msgstr "添加页码"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+#, python-format
+msgid "%s is replaced by the page number, %s by the number of pages."
+msgstr "%s 会被替换为页码，%s 会被替换为总页数。"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Leave the first page unnumbered"
+msgstr "首页不编号"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "It is still counted; a title page just does not carry a number."
+msgstr "它仍然计入总数；只是扉页不带页码。"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Format"
+msgstr "格式"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Start at"
+msgstr "起始于"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Numbering"
+msgstr "编号"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+msgid "Add Watermark"
+msgstr "添加水印"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "DRAFT"
+msgstr "草稿"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Text"
+msgstr "文本"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Watermark"
+msgstr "水印"
+
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+msgid "Merge Pages"
+msgstr "合并页面"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Overlay"
+msgstr "粘贴在页面之上"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Underlay"
+msgstr "粘贴在页面之下"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/stamp.py
+msgid "Centre"
+msgstr "居中"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Middle"
+msgstr "中部"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Horizontal"
+msgstr "水平"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Vertical"
+msgstr "纵向"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Edit properties"
+msgstr "编辑属性"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "System"
+msgstr "系统"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Light"
+msgstr "浅色"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Dark"
+msgstr "深色"
+
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+msgid "Preferences"
+msgstr "首选项"
+
+#: pdfarranger_qt/dialogs.py
+msgid "System setting"
+msgstr "系统设置"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Language"
+msgstr "语言"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Theme"
+msgstr "主题"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "General"
+msgstr "常规"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Fit to page"
+msgstr "适合页面"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Actual size"
+msgstr "实际大小"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Auto Rotate"
+msgstr "自动旋转"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Pages are rasterised at this resolution before being sent to the printer. "
+"Lower it if printing is slow: the printer driver has less to process."
+msgstr "页面在送往打印机之前会按此分辨率栅格化。如果打印很慢，就把它调低：打印机驱动程序要处理的内容会变少。"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Scale mode"
+msgstr "缩放模式"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Pixels/inch:"
+msgstr "像素/英寸："
+
+#: pdfarranger_qt/dialogs.py
+msgid "Printing"
+msgstr "打印"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Preserve document information from the first file opened"
+msgstr "保留从首个打开的文件中获取的文档信息"
+
+#: pdfarranger_qt/dialogs.py
 msgid "When checked: use document properties from the first file opened."
 msgstr "勾选时：使用首个被打开的文档中的文档属性。"
 
-#: pdfarranger/config.py:358
+#: pdfarranger_qt/dialogs.py
 msgid "When unchecked: merge bookmarks from all documents."
 msgstr "未勾选时：合并所有文档中的书签。"
 
-#: pdfarranger/pageutils.py:150
-msgid "Width"
-msgstr "宽度"
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Optimize for the web (linearize)"
+msgstr "针对网络优化（线性化）"
 
-#: pdfarranger/splitter.py:88
-msgid "Width in %"
-msgstr "宽度 %"
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Lay the file out so a browser can show page one before the rest has "
+"downloaded."
+msgstr "调整文件布局，使浏览器能在其余部分下载完成前显示第一页。"
 
-#: pdfarranger/pdfarranger.py:1241
-msgid "Your changes will be lost if you don’t save them."
-msgstr "如果您不保存，您的更改将会丢失。"
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Compress"
+msgstr "压缩"
 
-#: data/pdfarranger.ui:144
-msgid "Zoom In"
-msgstr "放大"
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Recompress the file's streams and pack its objects together."
+msgstr "重新压缩文件的数据流，并把对象打包在一起。"
 
-#: data/pdfarranger.ui:167
-msgid "Zoom Out"
-msgstr "缩小"
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"How much this saves depends on the file: one full of already-compressed "
+"images will barely shrink."
+msgstr "能省多少取决于文件：一个满是已压缩图像的文件几乎不会变小。"
 
-#: data/menu.ui:283
-msgid "Zoom _In"
-msgstr "放大（_I）"
+#: pdfarranger_qt/dialogs.py
+msgid "Saving/exporting to single file"
+msgstr "保存/导出至单个文件"
 
-#: data/menu.ui:287
-msgid "Zoom _Out"
-msgstr "缩小（_O）"
+#: pdfarranger_qt/dialogs.py
+msgid "Greyscale"
+msgstr "仅保留灰度"
 
-#: data/menu.ui:341
-msgid "_About"
-msgstr "关于（_A）"
+#: pdfarranger_qt/dialogs.py
+msgid "Image Export"
+msgstr "导出图片"
 
-#: pdfarranger/pageutils.py:1014
-msgid "_Apply"
-msgstr "应用（_A）"
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Keyboard shortcuts"
+msgstr "键盘快捷键"
 
-#: data/menu.ui:222 data/menu.ui:528
-msgid "_Booklet"
-msgstr "小册子（_B）"
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Viewer Preferences"
+msgstr "阅读器首选项"
 
-#: pdfarranger/config.py:326 pdfarranger/core.py:456
-#: pdfarranger/metadata.py:216 pdfarranger/pageutils.py:329
-#: pdfarranger/pdfarranger.py:1233 pdfarranger/pdfarranger.py:1242
-#: pdfarranger/pdfarranger.py:1364 pdfarranger/pdfarranger.py:1431
-#: pdfarranger/splitter.py:30
-msgid "_Cancel"
-msgstr "取消（_C）"
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Open showing:"
+msgstr "打开时显示："
 
-#: pdfarranger/pdfarranger.py:1252 data/menu.ui:347
-msgid "_Close"
-msgstr "关闭（_C）"
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Page layout:"
+msgstr "页面布局："
 
-#: data/menu.ui:118 data/menu.ui:369
-msgid "_Copy"
-msgstr "复制（_C）"
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "On opening"
+msgstr "打开时"
 
-#: data/menu.ui:186 data/menu.ui:492
-msgid "_Crop Margins…"
-msgstr "裁剪边缘…（_C）"
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Window"
+msgstr "窗口"
 
-#: data/menu.ui:110 data/menu.ui:361
-msgid "_Delete"
-msgstr "删除（_D）"
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Readers are free to ignore all of this."
+msgstr "阅读器可以忽略这一切。"
 
-#: data/menu.ui:243 data/menu.ui:439
-msgid "_Deselect All"
-msgstr "取消全选（_D）"
+#: pdfarranger_qt/dialogs.py
+msgid "Password"
+msgstr "密码"
 
-#: data/menu.ui:107
-msgid "_Edit"
-msgstr "编辑（_E）"
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Confirm password"
+msgstr "确认密码"
 
-#: data/menu.ui:157 data/menu.ui:413
-msgid "_Explode into Images"
-msgstr "提取图像（_E）"
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Enter a password, or cancel to leave the document unencrypted."
+msgstr "请输入密码，或取消以让文档保持未加密。"
 
-#: data/menu.ui:155 data/menu.ui:410
-msgid "_Extract"
-msgstr "提取（_E）"
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "The passwords do not match."
+msgstr "两次输入的密码不一致。"
 
-#: data/menu.ui:307
-msgid "_Find"
-msgstr "查找（_F）"
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Reset"
+msgstr "重置"
 
-#: data/menu.ui:310
-msgid "_Find…"
-msgstr "查找…（_F）"
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Description"
+msgstr "描述"
 
-#: data/menu.ui:224 data/menu.ui:530
-msgid "_Generate (imposition)"
-msgstr "生成（拼接）（_G）"
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"PDF Arranger merges, splits, rearranges, rotates and crops PDF documents. "
+"Everything happens in memory against the pages you can see; nothing is "
+"written until you save."
+msgstr "PDF Arranger 用来合并、拆分、重排、旋转和裁剪 PDF 文档。一切都在内存中针对你所看到的页面进行；在你保存之前不会写出任何内容。"
 
-#: data/menu.ui:190 data/menu.ui:496
-msgid "_Hide Margins…"
-msgstr "隐藏边缘…（_H）"
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"It is a front end for pikepdf. Page content is never rewritten — only page "
+"order, geometry and composition."
+msgstr "它是 pikepdf 的前端。页面内容从不被重写 — 变的只有页面顺序、几何形状和组合方式。"
 
-#: data/menu.ui:30
-msgid "_Import"
-msgstr "导入（_I）"
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Command line"
+msgstr "命令行"
 
-#: data/menu.ui:268 data/menu.ui:464
-msgid "_Invert Selection"
-msgstr "反选当前选区（_I）"
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Files given on the command line are opened as one document. "
+"<code>--version</code> prints the version and exits."
+msgstr "命令行上给出的文件会作为一个文档打开。<code>--version</code> 打印版本号并退出。"
 
-#: data/menu.ui:214 data/menu.ui:520
-msgid "_Merge Pages…"
-msgstr "合并页面…（_M）"
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+msgid "Reading"
+msgstr "阅读"
 
-#: data/menu.ui:36
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"The application opens in <b>read mode</b>: a continuous page view for "
+"reading the document rather than rearranging it. <b>View ▸ Arrange Mode</b> "
+"(Ctrl+E) swaps to the thumbnail grid and back."
+msgstr ""
+"应用程序以<b>阅读模式</b>启动：这是一种连续页面视图，用来阅读文档而不是重排它。<b>查看 ▸ "
+"整理模式</b>（Ctrl+E）可切换到缩略图网格并切回。"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Reading shows the document <i>as edited</i>: rotations, crops, deletions and"
+" reordering are all applied, so what you read is what you would get if you "
+"saved. Page-editing commands are disabled while reading — bookmarks are the "
+"exception, and are edited here and nowhere else."
+msgstr ""
+"阅读显示的是<i>编辑之后</i>的文档：旋转、裁剪、删除和重排全部已经生效，所以你读到的就是保存后会得到的。阅读时页面编辑命令处于禁用状态 — "
+"书签是例外，它们只能在这里编辑。"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"The page you are on follows you between the two modes. Switching to read "
+"mode opens at the page selected in the grid, the first of them if several "
+"are selected; switching back scrolls the grid to the page you were reading, "
+"without disturbing what you had selected. With nothing selected, reading "
+"resumes where you left off — your place in each document is remembered "
+"between visits."
+msgstr ""
+"你所在的页面会随你在两种模式之间切换。切到阅读模式时会打开网格中选中的页面，若选中多页则打开第一页；切回时网格会滚动到你正在阅读的页面，而不打乱你原先的选择。若没有任何选择，阅读会从你上次停下的地方继续"
+" — 你在每个文档中的位置会在两次访问之间记住。"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"The toolbar shows which page you are on and how many there are; type a "
+"number into it to jump there, or use <b>Ctrl+G</b>."
+msgstr "工具栏显示你在第几页以及共有多少页；在其中输入页码即可跳转，或使用 <b>Ctrl+G</b>。"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>View ▸ Continuous Scroll</b> is on by default; turning it off shows one "
+"page at a time. <b>View ▸ Facing Pages</b> puts two pages side by side, the "
+"way a book falls open. Both settings are remembered."
+msgstr "<b>查看 ▸ 连续滚动</b>默认开启；关掉它就每次显示一页。<b>查看 ▸ 对开页</b>把两页并排放置，就像书翻开的样子。两项设置都会被记住。"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Moving around a document"
+msgstr "在文档中移动"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"One rule for the arrow keys: <b>the modifier decides what moves</b>. Nothing"
+" scrolls the view, Option (Alt) moves the text cursor, Shift extends the "
+"selection, Command (Ctrl) jumps to an edge, and Fn — Page Up, Page Down, "
+"Home and End — jumps further. None of it changes according to whether a text"
+" cursor happens to be on the page."
+msgstr ""
+"方向键只有一条规则：<b>由修饰键决定移动的是什么</b>。不加修饰键滚动视图，Option（Alt）移动文本光标，Shift "
+"扩展选择，Command（Ctrl）跳到边缘，而 Fn — Page Up、Page Down、Home 和 End — "
+"跳得更远。这一切都不会因为页面上碰巧有没有文本光标而改变。"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Keys"
+msgstr "按键"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Continuous"
+msgstr "连续"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/viewer.py
+msgid "One page at a time"
+msgstr "每次一页"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "scroll one line"
+msgstr "滚动一行"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "top of the previous / next page"
+msgstr "上一页 / 下一页的顶部"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "previous / next page"
+msgstr "上一页 / 下一页"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "scroll one screen"
+msgstr "滚动一屏"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "start / end of the document"
+msgstr "文档的开头 / 结尾"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "move the text cursor, by character or line"
+msgstr "按字符或按行移动文本光标"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "extend the selection, by character or line"
+msgstr "按字符或按行扩展选择"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "move the text cursor one word"
+msgstr "将文本光标移动一个词"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "extend the selection one word"
+msgstr "将选择扩展一个词"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "cursor to the start / end of the line"
+msgstr "光标移到行首 / 行尾"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "cursor to the start / end of the document"
+msgstr "光标移到文档开头 / 结尾"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Add Shift to a Command or Option combination to extend the selection instead"
+" of moving — <b>Shift+Command+→</b> selects to the end of the line. Adding "
+"Option works by the word rather than the character. On Windows and Linux, "
+"read Command as Ctrl and Option as Alt; the table is the same everywhere."
+msgstr ""
+"在 Command 或 Option 组合上再加 Shift，就会扩展选择而不是移动 — <b>Shift+Command+→</b> 选到行尾。加上 "
+"Option 则按词而不是按字符。在 Windows 和 Linux 上，把 Command 读作 Ctrl、Option 读作 "
+"Alt；这张表在哪里都一样。"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Selecting and copying text"
+msgstr "选择并复制文本"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Drag across the page to select text, across page boundaries if you keep "
+"going. <b>Double-click</b> selects a word. <b>Ctrl/Cmd+C</b> copies, "
+"<b>Ctrl/Cmd+A</b> selects the text of the page you are on, and <b>Esc</b> "
+"clears the selection. The same commands are on the right-click menu."
+msgstr ""
+"在页面上拖动即可选择文本，一直拖下去还能跨越页面边界。<b>双击</b>选中一个词。<b>Ctrl/Cmd+C</b> "
+"复制，<b>Ctrl/Cmd+A</b> 选中你所在页面的文本，<b>Esc</b> 清除选择。右键菜单里有同样的命令。"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>Shift+click</b> extends an existing selection to where you clicked. The "
+"end you are moving grows out to a whole word, because a single click is an "
+"imprecise way to point at one character; the end you started from stays "
+"exactly where you put it. Dragging selects by character throughout, since "
+"you can watch it and stop where you like."
+msgstr "<b>Shift+单击</b>把已有的选择扩展到你单击的位置。你移动的那一端会扩展成一个完整的词，因为单击一下并不是指向单个字符的精确方式；你起始的那一端则原地不动。拖动则全程按字符选择，因为你看得见它，想在哪里停就在哪里停。"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Clicking on text leaves a blinking <b>text cursor</b>. That is what "
+"Shift+arrow extends from, and what the Option and Command combinations above"
+" move. It stays where you put it — scrolling, paging and clicking off the "
+"page all leave it alone — until you press Esc or open another document."
+msgstr ""
+"在文本上单击会留下一个闪烁的<b>文本光标</b>。Shift+方向键就是从它开始扩展的，上面那些 Option 和 Command "
+"组合移动的也是它。它会停在你放置的地方 — 滚动、翻页以及在页面外单击都不会动它 — 直到你按 Esc 或打开另一个文档。"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Following links"
+msgstr "跟随链接"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Click a link to follow it. Links to a page in the same document jump there; "
+"links to the web open in your browser. Hovering over one shows where it "
+"goes, which is worth reading before you click: many links in a PDF are not "
+"written by its author at all but inferred from the text, so what a link "
+"points at is not always what the words appear to say."
+msgstr ""
+"单击链接即可跟随。指向同一文档中某页的链接会跳转过去；指向网络的链接会在你的浏览器中打开。把指针悬停在链接上会显示它的去向，单击前值得先读一下：PDF "
+"中许多链接根本不是作者写的，而是从文本中推断出来的，所以链接指向的地方未必就是文字看上去所说的。"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Only ordinary web and mail links are handed to the system — http, https, "
+"mailto and ftp. A document is a file that arrived from somewhere, and "
+"anything else it asks to open is refused and reported rather than acted on."
+msgstr ""
+"只有普通的网页和邮件链接会交给系统 — http、https、mailto 和 "
+"ftp。文档是从别处来的文件，它请求打开的其他任何东西都会被拒绝并报告，而不是照做。"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Right-clicking a link offers <b>Open Link</b> and <b>Copy Link Address</b>."
+msgstr "右键单击链接会提供<b>打开链接</b>和<b>复制链接地址</b>。"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Bookmarks"
+msgstr "书签"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"The sidebar shows the document's bookmarks. Click one to jump to it. "
+"Everything below is on the sidebar's right-click menu, and every command can"
+" be undone."
+msgstr "侧边栏显示文档的书签。单击其中一个即可跳转。下面这些都在侧边栏的右键菜单里，而且每条命令都可以撤销。"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>Add Bookmark Here</b> makes one pointing at the page you are reading, "
+"named after whatever text you have selected — so select a heading, then add."
+" With nothing selected it is named after the page. <b>Add Child Bookmark "
+"Here</b> does the same, nested under the entry you clicked."
+msgstr ""
+"<b>在此添加书签</b>会创建一个指向你正在阅读那一页的书签，并以你所选的文本命名 — "
+"所以先选中一个标题，再添加。若没有选择，则以页面命名。<b>在此添加子书签</b>做同样的事，只是嵌套在你单击的那一项下面。"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>Rename</b> edits the title in place. <b>Re-home to This Page</b> points "
+"an existing bookmark at the page you are on, keeping its title. "
+"<b>Delete</b> removes an entry and <i>promotes</i> its children into its "
+"place; <b>Delete with Children</b> removes the whole branch."
+msgstr "<b>重命名</b>就地编辑标题。<b>改指向此页</b>让已有的书签指向你所在的页面，同时保留它的标题。<b>删除</b>移除某一项并把它的子项<i>提升</i>到它的位置；<b>连同子项一起删除</b>则移除整个分支。"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Drag entries within the sidebar to re-nest or reorder them. <b>Expand All "
+"Children</b> and <b>Collapse All Children</b> open or shut a whole branch at"
+" once."
+msgstr "在侧边栏内拖动条目即可重新嵌套或重新排序。<b>展开全部子项</b>和<b>折叠全部子项</b>可一次打开或关闭整个分支。"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>Style</b> sets a bookmark bold or italic, or gives it a colour, as the "
+"tree shows."
+msgstr "<b>样式</b>把书签设为粗体或斜体，或者给它一种颜色，就像树中显示的那样。"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"A bookmark whose page has been deleted is <b>greyed out</b> rather than "
+"removed: its title may still be worth keeping, and you can point it "
+"somewhere else with Re-home. Undoing the deletion reconnects it. <b>Delete "
+"Dangling Bookmarks</b> clears them all out; it leaves alone any entry that "
+"points nowhere on purpose, which is a legitimate way to write a heading."
+msgstr "页面已被删除的书签会<b>变灰</b>而不是被移除：它的标题也许仍然值得保留，你可以用改指把它指到别处。撤销删除会重新连上它。<b>删除悬空书签</b>会把它们全部清掉；它不会动那些故意不指向任何地方的条目，因为那是写标题的正当方式。"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Bookmark edits are part of the document and are written when you save, along"
+" with each entry's colour and style and which branches are left open. The "
+"one thing that cannot be saved is a bookmark with no page: there is no way "
+"to record “points at a page that is gone”, so it comes back as a heading "
+"with its title intact."
+msgstr "书签的改动是文档的一部分，会在你保存时写出，连同每一项的颜色、样式以及哪些分支保持展开。唯一无法保存的是没有页面的书签：没有办法记录“指向一个已经不在的页面”，所以它会作为一个标题回来，名称完好无损。"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Arranging pages"
+msgstr "整理页面"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Drag pages to reorder them. Hold <b>Ctrl</b> while dropping to copy instead "
+"of move."
+msgstr "拖动页面即可重新排序。放下时按住 <b>Ctrl</b> 则是复制而不是移动。"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Drag pages onto another window of the application to copy them there, or use"
+" ordinary copy and paste."
+msgstr "把页面拖到本程序的另一个窗口上即可复制过去，或者使用普通的复制和粘贴。"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>Paste As Odd/Even Pages</b> interleaves the clipboard with the document —"
+" this is how two single-sided scans of a double-sided original are "
+"recombined. If the second scan came off a duplex feeder it will be in "
+"reverse order; use <b>Arrange ▸ Reverse Order</b> on it first."
+msgstr ""
+"<b>粘贴为奇数页／偶数页</b>会把剪贴板与文档交错穿插 — "
+"双面原件的两次单面扫描就是这样重新合并的。如果第二次扫描来自双面进纸器，顺序会是反的；先对它用<b>整理 ▸ 反转顺序</b>。"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"To move pages a long way, use <b>Move to Start</b>, <b>Move to End</b> or "
+"<b>Move to Page…</b> rather than dragging — in a long document the far end "
+"is a great deal of scrolling away. They are on the Edit menu and on the "
+"right-click menu, and <b>Move to Page…</b> asks for the number the page "
+"should <i>become</i>."
+msgstr ""
+"要把页面移到很远的地方，请用<b>移到开头</b>、<b>移到末尾</b>或<b>移到指定页…</b>，而不要拖动 — "
+"在长文档里另一端要滚动很久才到。它们在编辑菜单和右键菜单里，而<b>移到指定页…</b>问的是这一页应当<i>变成</i>第几页。"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Prefer these to cut and paste for moving. A pasted page is a <i>new</i> page"
+" as far as the document is concerned, so any bookmarks pointing at the "
+"original are left behind with nowhere to go. Moving keeps the page itself, "
+"and its bookmarks come with it."
+msgstr "移动时优先用它们，而不是剪切和粘贴。粘贴进来的页面在文档看来是一个<i>新</i>页面，所以原本指向它的书签会被丢在后面无处可去。移动保留页面本身，它的书签也随之而来。"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Stamping and tiling"
+msgstr "加盖与拼版"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>Page ▸ Add Page Numbers…</b> and <b>Page ▸ Add Watermark…</b> draw text "
+"onto the selected pages. Both add a <i>layer</i> rather than rewriting the "
+"page, so both can be undone and neither touches the file you opened."
+msgstr ""
+"<b>页面 ▸ 添加页码…</b>和<b>页面 ▸ "
+"添加水印…</b>会在选中的页面上绘制文本。两者都是添加一个<i>图层</i>而不是重写页面，所以两者都可以撤销，也都不会动你打开的那个文件。"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+#, python-brace-format
+msgid ""
+"Page numbers follow the arrangement, not the source document: they are "
+"numbered in the order the pages are in now. <code>{n}</code> in the format "
+"is the page number and <code>{total}</code> the number of pages, so "
+"<code>Page {n} of {total}</code> does what it looks like."
+msgstr ""
+"页码跟随当前的排列，而不是源文档：它们按页面现在的顺序编号。格式中的 <code>{n}</code> 是页码，<code>{total}</code>"
+" 是总页数，所以 <code>第 {n} 页，共 {total} 页</code> 就是它看上去的意思。"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>Arrange ▸ Pages per Sheet…</b> tiles several pages onto one, in reading "
+"order — the printer's <i>N-up</i>. The sheet turns sideways when that lets "
+"the pages come out larger, which is why two-up gives a landscape sheet and "
+"four-up does not."
+msgstr ""
+"<b>整理 ▸ 每张纸页数…</b>按阅读顺序把若干页拼到一页上 — 也就是印刷上的 "
+"<i>N-up</i>。当横放能让页面更大时纸张会横过来，所以两页一张会得到横向的纸，而四页一张不会。"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Saving a document"
+msgstr "保存文档"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>Optimize for the web</b> in Preferences lays the saved file out so a "
+"browser can show the first page before the rest has arrived. <b>Compress</b>"
+" repacks its streams and objects; how much that saves depends entirely on "
+"the file, and one full of photographs will barely move."
+msgstr "首选项中的<b>针对网络优化</b>会调整保存后文件的布局，使浏览器能在其余部分到达之前显示第一页。<b>压缩</b>会重新打包它的数据流和对象；能省多少完全取决于文件，满是照片的文件几乎纹丝不动。"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>File ▸ Remove All Metadata</b> is a switch, like Password: turn it on and"
+" the next save writes a document with no title, no author and no record of "
+"what produced it. Edit Properties greys out while it is on, because there "
+"would be nothing to edit."
+msgstr ""
+"<b>文件 ▸ "
+"移除全部元数据</b>是一个开关，和密码一样：打开它，下一次保存写出的文档就没有标题、没有作者，也没有关于是什么生成了它的记录。它开着的时候编辑属性会变灰，因为那时没有什么可编辑的。"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>File ▸ Viewer Preferences…</b> is how the saved document asks a reader to"
+" open it — with the bookmarks showing, two pages at a time, and so on. "
+"Readers are free to ignore all of it. The settings are read from the file "
+"you opened, so a document that already had them keeps them."
+msgstr ""
+"<b>文件 ▸ 阅读器首选项…</b>是保存后的文档请求阅读器如何打开自己的方式 — "
+"显示书签、一次两页，诸如此类。阅读器可以完全忽略这些。这些设置读自你打开的文件，所以本来就带着它们的文档会保留下来。"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>File ▸ Repair Document…</b> rebuilds a damaged PDF. It works on a file "
+"you pick rather than the one on screen, because the file worth repairing is "
+"usually one this application cannot open properly either. It reports what it"
+" found before writing anything."
+msgstr ""
+"<b>文件 ▸ 修复文档…</b>会重建损坏的 "
+"PDF。它处理的是你挑选的文件而不是屏幕上的那个，因为值得修复的文件通常也是本程序打不开的那个。在写出任何内容之前，它会先报告发现了什么。"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Mouse"
+msgstr "鼠标"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "<b>Ctrl + scroll</b> — zoom"
+msgstr "<b>Ctrl + 滚轮</b> — 缩放"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "<b>Shift + scroll</b> — scroll sideways"
+msgstr "<b>Shift + 滚轮</b> — 横向滚动"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "<b>Alt + scroll</b> — scroll exactly one row"
+msgstr "<b>Alt + 滚轮</b> — 正好滚动一行"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "<b>Double-click</b> — fit the page to the window, and back"
+msgstr "<b>双击</b> — 让页面适合窗口，再切回"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>Click and drag</b> on empty space — rubber-band select; keep scrolling to"
+" extend it"
+msgstr "在空白处<b>单击并拖动</b> — 框选；继续滚动可以把范围扩大"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Moving around the grid"
+msgstr "在网格中移动"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>Arrow keys</b> move between pages, <b>Page Up</b> and <b>Page Down</b> "
+"move a screenful at a time, and <b>Home</b> and <b>End</b> jump to the first"
+" and last page. Hold <b>Shift</b> with any of them to extend the selection."
+msgstr ""
+"<b>方向键</b>在页面之间移动，<b>Page Up</b> 和 <b>Page Down</b> 每次移动一屏，<b>Home</b> 和 "
+"<b>End</b> 跳到第一页和最后一页。按住 <b>Shift</b> 再用它们中的任何一个即可扩展选择。"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>Fit One Page</b> (F) scales so a whole page fits in the window and shows "
+"one page per row — use it to work on a single page at a time. <b>Fit "
+"Multiple Pages</b> (Shift+M) uses the same scale but lets as many pages sit "
+"side by side as the window takes. <b>Fit Width</b> (Shift+F) fills the "
+"window across instead, which shows the page wider but taller than the "
+"window. Double-clicking the grid toggles Fit One Page on and off."
+msgstr ""
+"<b>适合单页</b>（F）会缩放到整页刚好放进窗口，并且每行显示一页 — "
+"一次处理一页时用它。<b>适合多页</b>（Shift+M）用同样的比例，但让窗口能容下多少页就并排放多少页。<b>适合宽度</b>（Shift+F）则横向填满窗口，这会让页面更宽但高过窗口。在网格上双击可以开关适合单页。"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"With pages selected, all three fit the selection rather than the whole "
+"document."
+msgstr "选中页面后，这三者都会适配所选内容而非整个文档。"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Finding text"
+msgstr "查找文本"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>Find</b> selects the pages that contain the phrase and boxes each hit on "
+"the thumbnail, so you can see where on the page it is. The boxes clear as "
+"soon as you change the document, since the pages they were drawn for may "
+"have moved."
+msgstr "<b>查找</b>会选中包含该词组的页面，并在缩略图上把每个命中处框出来，让你看到它在页面上的位置。一旦你改动文档，这些框就会消失，因为它们所对应的页面可能已经移动了。"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Every shortcut can be changed in <b>Edit ▸ Preferences ▸ Keyboard "
+"shortcuts</b>, where they are listed under the menu each one belongs to."
+msgstr "每个快捷键都可以在<b>编辑 ▸ 首选项 ▸ 键盘快捷键</b>中更改，那里按各自所属的菜单分组列出。"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Passwords"
+msgstr "密码"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Opening an encrypted document asks for its password, which is remembered "
+"until the document is closed."
+msgstr "打开加密文档会要求输入密码，该密码会一直记住，直到文档关闭。"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>File ▸ Password</b> encrypts the document when it is next saved. It is a "
+"switch: turn it on and you are asked for a password, turn it off and the "
+"next save is unencrypted. The password is never written to your settings, so"
+" it applies to this session only — and if you forget it, the file cannot be "
+"recovered."
+msgstr ""
+"<b>文件 ▸ "
+"密码</b>会在下次保存时加密文档。这是一个开关：打开它就会向你索要密码，关掉它下次保存就不加密。密码绝不会写入你的设置，因此只对本次会话有效 — "
+"而且一旦忘记，文件就无法找回。"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Files"
+msgstr "文件"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Settings are stored by Qt in the per-user location for this platform; on "
+"Windows that is the registry under "
+"<code>HKEY_CURRENT_USER\\Software\\pdfarranger</code>. There is no "
+"configuration file to edit by hand."
+msgstr ""
+"设置由 Qt 存放在本平台的每用户位置；在 Windows 上是注册表的 "
+"<code>HKEY_CURRENT_USER\\Software\\pdfarranger</code> 下。没有可供手工编辑的配置文件。"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Credits"
+msgstr "鸣谢"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"PDF Arranger Qt is a PySide6 port of PDF Arranger, which is itself derived "
+"from PDF-Shuffler. It is a separate project and not affiliated with either."
+msgstr ""
+"PDF Arranger Qt 是 PDF Arranger 的 PySide6 移植，而后者本身源自 PDF-"
+"Shuffler。它是一个独立项目，与两者都没有从属关系。"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Original authors: Konstantinos Poulios, Jerome Robert."
+msgstr "原作者：Konstantinos Poulios、Jerome Robert。"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Licensed under the GNU General Public License version 3 or later."
+msgstr "以 GNU General Public License 第 3 版或更高版本授权。"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+msgid "User Guide"
+msgstr "用户指南"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Insert pages from another PDF or an image"
+msgstr "从另一个 PDF 或图像插入页面"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Needs pages copied from a document"
+msgstr "需要从文档中复制的页面"
+
+#: pdfarranger_qt/mainwindow.py
 msgid "_New Window"
 msgstr "新建窗口（_N）"
 
-#: pdfarranger/config.py:327 pdfarranger/core.py:458
-#: pdfarranger/metadata.py:217 pdfarranger/pageutils.py:330
-#: pdfarranger/pdfarranger.py:3207 pdfarranger/splitter.py:32
-msgid "_OK"
-msgstr "确定（_O）"
-
-#: pdfarranger/pdfarranger.py:1430 data/menu.ui:24
+#: pdfarranger_qt/mainwindow.py
 msgid "_Open"
 msgstr "打开（_O）"
 
-#: data/menu.ui:182 data/menu.ui:488
-msgid "_Page Size…"
-msgstr "页面大小…（_P）"
+#: pdfarranger_qt/mainwindow.py
+msgid "_Import"
+msgstr "导入（_I）"
 
-#: data/menu.ui:91
-msgid "_Print…"
-msgstr "打印…（_P）"
-
-#: pdfarranger/pdfarranger.py:1289 data/menu.ui:353
-msgid "_Quit"
-msgstr "退出（_Q）"
-
-#: data/menu.ui:102
-msgid "_Redo"
-msgstr "重做（_R）"
-
-#: pdfarranger/pageutils.py:1014
-msgid "_Revert"
-msgstr "撤销（_R）"
-
-#: data/menu.ui:177 data/menu.ui:483
-msgid "_Rotate Right"
-msgstr "向右旋转（_R）"
-
-#: pdfarranger/pdfarranger.py:1242 pdfarranger/pdfarranger.py:1363
-#: data/menu.ui:42
+#: pdfarranger_qt/mainwindow.py
 msgid "_Save"
 msgstr "保存（_S）"
 
-#: data/menu.ui:235 data/menu.ui:431
-msgid "_Select"
-msgstr "选择（_S）"
+#: pdfarranger_qt/mainwindow.py
+msgid "Save _As…"
+msgstr "另存为…（_A）"
 
-#: data/menu.ui:228 data/menu.ui:534
-msgid "_Split (unimposition)"
-msgstr "拆分（拆版）（_S）"
+#: pdfarranger_qt/mainwindow.py
+msgid "E_xport Selection to a Single File…"
+msgstr "导出所选页面至单个文件…（_X）"
 
-#: data/menu.ui:210 data/menu.ui:516
-msgid "_Split Pages…"
-msgstr "拆分页面…（_S）"
+#: pdfarranger_qt/mainwindow.py
+msgid "_Close"
+msgstr "关闭（_C）"
 
-#: data/menu.ui:98
+#: pdfarranger_qt/mainwindow.py
+msgid "_Quit"
+msgstr "退出（_Q）"
+
+#: pdfarranger_qt/mainwindow.py
 msgid "_Undo"
 msgstr "撤销（_U）"
 
-#: data/menu.ui:280
+#: pdfarranger_qt/mainwindow.py
+msgid "_Redo"
+msgstr "重做（_R）"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Select _All"
+msgstr "全选（_A）"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Invert Selection"
+msgstr "反选当前选区（_I）"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Delete"
+msgstr "删除（_D）"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Duplicate"
+msgstr "生成副本（_D）"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Rotate _Left"
+msgstr "向左旋转（_L）"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Rotate Right"
+msgstr "向右旋转（_R）"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Zoom _In"
+msgstr "放大（_I）"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Zoom _Out"
+msgstr "缩小（_O）"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Reset Zoom"
+msgstr "重置缩放（_R）"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Project on GitHub"
+msgstr "GitHub 上的项目"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_About"
+msgstr "关于（_A）"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Cu_t"
+msgstr "剪切（_T）"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Copy"
+msgstr "复制（_C）"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Paste _After"
+msgstr "粘贴在当前页面之后（_A）"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Paste _Before"
+msgstr "粘贴在当前页面之前（_B）"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Paste As _Odd Pages"
+msgstr "粘贴在为奇数页（_O）"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Paste As _Even Pages"
+msgstr "粘贴在为偶数页（_E）"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Deselect All"
+msgstr "取消全选（_D）"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Select _Odd Pages"
+msgstr "选择奇数页面（_O）"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Select _Even Pages"
+msgstr "选择偶数页面（_E）"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "All From _Same File"
+msgstr "选择来自同一文件的所有页面（_S）"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Same Page _Format"
+msgstr "相同页面格式（_F）"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Move to Start"
+msgstr "移到开头"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Move to End"
+msgstr "移到末尾"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Move to Page…"
+msgstr "移到指定页…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Reverse Order"
+msgstr "反转顺序"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Swap Odd/Even"
+msgstr "交换奇数页与偶数页"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Split (unimposition)"
+msgstr "拆分（拆版）（_S）"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Export _All Pages to Individual Files…"
+msgstr "导出所有页面为独立文件…（_A）"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Export Selection to _Individual Files…"
+msgstr "导出所选页面为独立文件…（_I）"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Crop Margins…"
+msgstr "裁剪边缘…（_C）"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Hide Margins…"
+msgstr "隐藏边缘…（_H）"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Page Size…"
+msgstr "页面大小…（_P）"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Insert Blan_k Page…"
+msgstr "插入空白页面…（_K）"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Split Pages…"
+msgstr "拆分页面…（_S）"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Merge Pages…"
+msgstr "合并页面…（_M）"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Generate (imposition)"
+msgstr "生成（拼接）（_G）"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Pages per S_heet…"
+msgstr "每张纸页数…（_H）"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Add Page N_umbers…"
+msgstr "添加页码…（_U）"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Add _Watermark…"
+msgstr "添加水印…（_W）"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Pass_word"
+msgstr "密码（_W）"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Edit _Properties"
+msgstr "编辑属性（_P）"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Viewer Preferences…"
+msgstr "阅读器首选项…（_V）"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Remove All _Metadata"
+msgstr "移除全部元数据（_M）"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Repair Document…"
+msgstr "修复文档…（_R）"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Crop White Borders"
+msgstr "裁剪白色边框"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Export Selection to _PNG Images…"
+msgstr "导出所选页面为 PNG 图片…（_P）"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Export Selection to _JPG Images…"
+msgstr "导出所选页面为 JPG 图片…（_J）"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Export Selection to _Rasterized PDF (png)…"
+msgstr "格栅化所选页面为 PNG 图片并导出为 PDF…（_R）"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Export Selection to _Rasterized PDF (jpg)…"
+msgstr "格栅化所选页面为 JPG 图片并导出为 PDF…（_R）"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Copy Text"
+msgstr "复制文本"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Copy _Image"
+msgstr "复制图像（_I）"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Explode into Images"
+msgstr "提取图像（_E）"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Print…"
+msgstr "打印…（_P）"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Find…"
+msgstr "查找…（_F）"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Find Next"
+msgstr "查找下一个"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Find Previous"
+msgstr "查找上一个"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Find All"
+msgstr "查找全部"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Select _Range"
+msgstr "按范围选择页面（_R）"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Paste As O_verlay…"
+msgstr "粘贴在当前页面之上…（_V）"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Paste As _Underlay…"
+msgstr "粘贴在当前页面之下…（_U）"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Fit _One Page"
+msgstr "填充单页（_O）"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Fit _Multiple Pages"
+msgstr "填充多页（_M）"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Fit Width"
+msgstr "适合宽度"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Arrange Mode"
+msgstr "整理模式"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Facing Pages"
+msgstr "对开页"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Continuous Scroll"
+msgstr "连续滚动"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Next Page"
+msgstr "下一页"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Previous Page"
+msgstr "上一页"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "First Page"
+msgstr "第一页"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Last Page"
+msgstr "最后一页"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Go to Page…"
+msgstr "转到指定页…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Fullscreen"
+msgstr "全屏"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_File"
+msgstr "文件（_F）"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Open Recent"
+msgstr "打开最近使用的"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "E_xport"
+msgstr "导出（_X）"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Edit"
+msgstr "编辑（_E）"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Past_e Special"
+msgstr "特殊粘贴（_E）"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Page"
+msgstr "页面（_P）"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Extract"
+msgstr "提取（_E）"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Arrange"
+msgstr "整理"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Select"
+msgstr "选择（_S）"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Booklet"
+msgstr "小册子（_B）"
+
+#: pdfarranger_qt/mainwindow.py
 msgid "_View"
 msgstr "查看（_V）"
 
-#: pdfarranger/pageutils.py:155 pdfarranger/pageutils.py:162
-#: pdfarranger/pageutils.py:470 pdfarranger/pageutils.py:520
-#: pdfarranger/pdfarranger.py:3282
-msgid "mm"
-msgstr "mm"
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Help"
+msgstr "帮助（_H）"
 
-#: pdfarranger/core.py:730
-msgid "page"
-msgstr "页面"
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Read"
+msgstr "阅读"
 
-#: pdfarranger/pdfarranger.py:1073
-msgid "untitled"
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "_Undo %s"
+msgstr "撤销 %s（_U）"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "_Redo %s"
+msgstr "重做 %s（_R）"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "%d page selected"
+msgid_plural "%d pages selected"
+msgstr[0] "已选择 %d 页"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Untitled"
 msgstr "未命名"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Password required"
+msgstr "需要密码"
+
+#: pdfarranger_qt/mainwindow.py
+#, python-brace-format
+msgid "The document “{}” is locked and requires a password before it can be opened."
+msgstr "文档“{}”被锁定，需要密码才能打开。"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "The password will be remembered until you close PDF Arranger."
+msgstr "密码将被记住，直到您关闭 PDF Arranger。"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Importing…"
+msgstr "正在导入…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Cancel"
+msgstr "取消"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Import"
+msgstr "导入"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "No recent files"
+msgstr "没有最近使用的文件"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Clear Menu"
+msgstr "清除菜单"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "This file is no longer there:"
+msgstr "此文件已不在那里："
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "This document cannot be read."
+msgstr "无法读取此文档。"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Go to Page"
+msgstr "转到指定页"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Page number:"
+msgstr "页码："
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "No document"
+msgstr "没有文档"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "%d page"
+msgid_plural "%d pages"
+msgstr[0] "%d 页"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-brace-format
+msgid "of {}"
+msgstr "／{}"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "The document will not be encrypted."
+msgstr "文档将不会被加密。"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "The document will be encrypted when it is saved."
+msgstr "文档将在保存时被加密。"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Could not open a new window."
+msgstr "无法打开新窗口。"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Open"
+msgstr "打开"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Save As…"
+msgstr "另存为…"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Export…"
+msgstr "导出…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "There is nothing to save."
+msgstr "没有可保存的内容。"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Could not save:"
+msgstr "无法保存："
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Saved"
+msgstr "已保存"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "This document has unsaved changes."
+msgstr "此文档有未保存的更改。"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Save before continuing?"
+msgstr "继续前先保存吗？"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py pdfarranger_qt/reader.py
+msgid "Delete"
+msgstr "删除"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Cut"
+msgstr "剪切"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Paste"
+msgstr "粘贴"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Move to Page"
+msgstr "移到指定页"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Move"
+msgstr "移动"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "The page selection is not contiguous. Cannot unimpose."
+msgstr "选择的页面不连续。无法拆版。"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "All pages must have the same size."
+msgstr "所有页面必须具有相同的大小。"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Split Booklet"
+msgstr "拆分小册子"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Overwrite existing files?"
+msgstr "覆盖已存在的文件吗？"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Blank page"
+msgstr "空白页"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Copy the pages you want to merge in first."
+msgstr "请先复制要合并的页面。"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Generate Booklet"
+msgstr "生成小册子"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "The page selection is not contiguous."
+msgstr "所选页面不连续。"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "All metadata will be removed when the document is saved."
+msgstr "保存文档时将移除全部元数据。"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Metadata will be kept."
+msgstr "元数据将被保留。"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Repair Document…"
+msgstr "修复文档…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Write a rebuilt copy?"
+msgstr "写出重建后的副本吗？"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Save Repaired Document"
+msgstr "保存修复后的文档"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "%d image written"
+msgid_plural "%d images written"
+msgstr[0] "已写出 %d 幅图像"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "The page has no text."
+msgstr "该页没有文本。"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Copied"
+msgstr "已复制"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "The page has no image."
+msgstr "该页没有图像。"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "The page has several images. Use \"Explode into Images\" first.\""
+msgstr "此页面含有多个图像，请先使用“提取图像”。"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Explode into Images"
+msgstr "拆分为图像"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Printing…"
+msgstr "正在打印…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Finishing…"
+msgstr "正在收尾…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "The printer driver is processing the job."
+msgstr "打印机驱动程序正在处理该作业。"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "%d page printed"
+msgid_plural "%d pages printed"
+msgstr[0] "已打印 %d 页"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Find"
+msgstr "查找"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "%d page matches"
+msgid_plural "%d pages match"
+msgstr[0] "%d 页匹配"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Duplicate"
+msgstr "生成副本"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Rotate"
+msgstr "旋转"
+
+#: pdfarranger_qt/metadata.py
+msgid "Title"
+msgstr "标题"
+
+#: pdfarranger_qt/metadata.py
+msgid "Subject"
+msgstr "主题"
+
+#: pdfarranger_qt/metadata.py
+msgid "Keywords"
+msgstr "关键词"
+
+#: pdfarranger_qt/metadata.py
+msgid "Producer"
+msgstr "制作者"
+
+#: pdfarranger_qt/metadata.py
+msgid "Creator"
+msgstr "创建者"
+
+#: pdfarranger_qt/metadata.py
+msgid "Creator tool"
+msgstr "创建者工具"
+
+#: pdfarranger_qt/metadata.py
+msgid "Created"
+msgstr "已创建"
+
+#: pdfarranger_qt/metadata.py
+msgid "Modified"
+msgstr "已修改"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/nup.py
+msgid "2 pages per sheet"
+msgstr "每张纸 2 页"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/nup.py
+msgid "4 pages per sheet"
+msgstr "每张纸 4 页"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/nup.py
+msgid "6 pages per sheet"
+msgstr "每张纸 6 页"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/nup.py
+msgid "8 pages per sheet"
+msgstr "每张纸 8 页"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/nup.py
+msgid "9 pages per sheet"
+msgstr "每张纸 9 页"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/nup.py
+msgid "16 pages per sheet"
+msgstr "每张纸 16 页"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Bookmark Colour"
+msgstr "书签颜色"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Add Bookmark Here"
+msgstr "在此添加书签"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Add Child Bookmark Here"
+msgstr "在此添加子书签"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Re-home to This Page"
+msgstr "改指向此页"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Rename"
+msgstr "重命名"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Style"
+msgstr "样式"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Colour…"
+msgstr "颜色…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Default Colour"
+msgstr "默认颜色"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Expand All Children"
+msgstr "展开全部子项"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Collapse All Children"
+msgstr "折叠全部子项"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Delete with Children"
+msgstr "连同子项一起删除"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Delete Dangling Bookmarks"
+msgstr "删除悬空书签"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Nothing to read."
+msgstr "没有可阅读的内容。"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+#, python-brace-format
+msgid "Page {} of {}"
+msgstr "第 {} 页，共 {} 页"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Move Bookmark"
+msgstr "移动书签"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "This bookmark's page is no longer in the document"
+msgstr "此书签所指的页面已不在文档中"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "This bookmark does not point at a page"
+msgstr "此书签未指向任何页面"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Rename Bookmark"
+msgstr "重命名书签"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Add Child Bookmark"
+msgstr "添加子书签"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Add Bookmark"
+msgstr "添加书签"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Bookmark Style"
+msgstr "书签样式"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Re-home Bookmark"
+msgstr "改指书签"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Delete Bookmark"
+msgstr "删除书签"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Delete Bookmark and Children"
+msgstr "删除书签及其子项"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/repair.py
+msgid "This file cannot be read, even with recovery."
+msgstr "即使使用恢复也无法读取此文件。"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/repair.py
+msgid "No damage found; the file reads cleanly."
+msgstr "未发现损坏；文件读取正常。"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/repair.py
+msgid "Damaged, and recoverable."
+msgstr "已损坏，可恢复。"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/repair.py
+msgid "The file cannot be read."
+msgstr "无法读取该文件。"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/stamp.py
+msgid "Top left"
+msgstr "左上"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/stamp.py
+msgid "Top centre"
+msgstr "上中"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/stamp.py
+msgid "Top right"
+msgstr "右上"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/stamp.py
+msgid "Bottom left"
+msgstr "左下"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/stamp.py
+msgid "Bottom centre"
+msgstr "下中"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/stamp.py
+msgid "Bottom right"
+msgstr "右下"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/viewer.py
+msgid "Viewer default"
+msgstr "阅读器默认"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/viewer.py
+msgid "No side panel"
+msgstr "无侧边栏"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/viewer.py
+msgid "Bookmarks panel"
+msgstr "书签面板"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/viewer.py
+msgid "Page thumbnails"
+msgstr "页面缩略图"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/viewer.py
+msgid "Continuous scroll"
+msgstr "连续滚动"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/viewer.py
+msgid "Two pages, odd on the left"
+msgstr "双页，奇数页在左"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/viewer.py
+msgid "Two pages, odd on the right"
+msgstr "双页，奇数页在右"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/viewer.py
+msgid "Facing pages, odd on the left"
+msgstr "对开页，奇数页在左"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/viewer.py
+msgid "Facing pages, odd on the right"
+msgstr "对开页，奇数页在右"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/viewer.py
+msgid "Hide the viewer's toolbar"
+msgstr "隐藏阅读器的工具栏"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/viewer.py
+msgid "Hide the viewer's menu bar"
+msgstr "隐藏阅读器的菜单栏"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/viewer.py
+msgid "Centre the window on screen"
+msgstr "让窗口在屏幕上居中"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/viewer.py
+msgid "Show the title rather than the filename"
+msgstr "显示标题而非文件名"
+
+#~ msgid "#Col"
+#~ msgstr "#列"
+
+#~ msgid "#Row"
+#~ msgstr "#行"
+
+#~ msgid "%"
+#~ msgstr "%"
+
+#~ msgid "% of height"
+#~ msgstr "% 高度"
+
+#~ msgid "% of width"
+#~ msgstr "% 宽度"
+
+#~ msgid "%s is a tool for rearranging and modifying PDF files."
+#~ msgstr "%s 是用于重新排列和修改 PDF 文件的工具。"
+
+#~ msgid "(Libhandy missing)"
+#~ msgstr "（运行库 libhandy 缺失）"
+
+#~ msgid "(Requires restart)"
+#~ msgstr "（需要重启）"
+
+#~ msgid "A file named \"%s\" already exists. Do you want to replace it?"
+#~ msgstr "文件“%s”已存在。你想要替换它吗？"
+
+#~ msgid "All"
+#~ msgstr "所有"
+
+#~ msgid "All files"
+#~ msgstr "所有文件类型"
+
+#~ msgid "All supported files"
+#~ msgstr "所有支持的文件"
+
+#~ msgid "Bottom to Top"
+#~ msgstr "从下至上"
+
+#~ msgid "Clipboard image"
+#~ msgstr "剪贴板图像"
+
+#~ msgid "Copy _Text"
+#~ msgstr "复制文本（_T）"
+
+#~ msgid ""
+#~ "Cropping/hiding does not remove any content"
+#~ " from the PDF file, it only hides"
+#~ " it."
+#~ msgstr "裁剪/隐藏操作不会从 PDF 文件中删除任何内容，它只是将内容隐藏起来。"
+
+#~ msgid "Despite the warnings the document(s) should have no visible issues."
+#~ msgstr "尽管有警告，但文档应该没有明显的问题。"
+
+#~ msgid "Discard changes and close?"
+#~ msgstr "放弃更改并关闭？"
+
+#~ msgid "Discard changes and quit?"
+#~ msgstr "放弃更改并退出？"
+
+#~ msgid "Do not show this dialog again."
+#~ msgstr "不要再显示此对话框。"
+
+#~ msgid "Do_n’t Save"
+#~ msgstr "不保存（_N）"
+
+#~ msgid "Don't show warnings when saving again."
+#~ msgstr "再次保存时不显示警告。"
+
+#~ msgid "Dupl_icate"
+#~ msgstr "重复（_I）"
+
+#~ msgid "Equal column width"
+#~ msgstr "列宽相等"
+
+#~ msgid "Equal row height"
+#~ msgstr "行高相等"
+
+#~ msgid "Exploding into images…"
+#~ msgstr "拆分为图片…"
+
+#~ msgid "File(s) to open"
+#~ msgstr "要打开的文件"
+
+#~ msgid "Find _All"
+#~ msgstr "查找全部（_A）"
+
+#~ msgid "Find _Next"
+#~ msgstr "查找下一个（_N）"
+
+#~ msgid "Find _Previous"
+#~ msgstr "查找上一个（_P）"
+
+#~ msgid "Fit to Full Page"
+#~ msgstr "填充至整页"
+
+#~ msgid "Fit to Printable Area"
+#~ msgstr "填充至可打印区域"
+
+#~ msgid "For more info see"
+#~ msgstr "为获取更多信息请看"
+
+#~ msgid "For more options see:"
+#~ msgstr "更多可配置项可见于："
+
+#~ msgid "Full_screen"
+#~ msgstr "全屏（_S）"
+
+#~ msgid "GNU General Public License (GPL) Version 3."
+#~ msgstr "GNU 通用公共许可证（GPL）第 3 版。"
+
+#~ msgid "Height in %"
+#~ msgstr "高度 %"
+
+#~ msgid "Horizontal offset"
+#~ msgstr "水平偏移"
+
+#~ msgid "Img2pdf missing."
+#~ msgstr "Img2pdf 依赖缺失。"
+
+#~ msgid "Img2pdf support missing."
+#~ msgstr "Img2pdf 支持缺失。"
+
+#~ msgid "Import…"
+#~ msgstr "导入…"
+
+#~ msgid "Invalid date format. Input discarded."
+#~ msgstr "输入的日期格式无效。"
+
+#~ msgid "JPEG images"
+#~ msgstr "JPEG 图片"
+
+#~ msgid "Left to Right"
+#~ msgstr "从左至右"
+
+#~ msgid "Main Menu"
+#~ msgstr "主菜单"
+
+#~ msgid "Maintainers and contributors"
+#~ msgstr "维护者和贡献者"
+
+#~ msgid "Margin"
+#~ msgstr "边缘"
+
+#~ msgid "Merged page size:"
+#~ msgstr "合并后的页面大小："
+
+#~ msgid "Non-uniform page size - using max size"
+#~ msgstr "页面大小不统一（使用最大尺寸）"
+
+#~ msgid "None"
+#~ msgstr "无"
+
+#~ msgid "Note"
+#~ msgstr "注意"
+
+#~ msgid "Note the limitations:"
+#~ msgstr "请注意以下限制："
+
+#~ msgid "Open…"
+#~ msgstr "打开…"
+
+#~ msgid "Optimize"
+#~ msgstr "优化图像"
+
+#~ msgid "Outlines and links can be preserved only in certain cases."
+#~ msgstr "仅在某些情况下才能保留大纲和链接。"
+
+#~ msgid ""
+#~ "PDF Arranger is a small python-gtk"
+#~ " application, which helps the user to"
+#~ " merge or split pdf documents and "
+#~ "rotate, crop and rearrange their pages "
+#~ "using an interactive and intuitive "
+#~ "graphical interface. It is a frontend "
+#~ "for pikepdf."
+#~ msgstr ""
+#~ "PDF Arranger 是一个轻量的 python-gtk "
+#~ "应用程序，它可以帮助用户交互式地使用直观的图形界面来处理多个 PDF 文档，包括合并、拆分、旋转、裁剪、重排等功能。它是"
+#~ " pikepdf 的前端。"
+
+#~ msgid "PDF document is damaged"
+#~ msgstr "PDF 文件已损坏"
+
+#~ msgid "PDF files"
+#~ msgstr "PDF 文件"
+
+#~ msgid "PNG images"
+#~ msgstr "PNG 图片"
+
+#~ msgid "Page Handling"
+#~ msgstr "页面处理"
+
+#~ msgid "Page Order"
+#~ msgstr "页面顺序"
+
+#~ msgid "Page Size:"
+#~ msgstr "页面大小："
+
+#~ msgid "Pasted data not valid. Aborting paste."
+#~ msgstr "粘贴的数据无效。中止粘贴。"
+
+#~ msgid "Pre_ferences"
+#~ msgstr "首选项（_F）"
+
+#~ msgid "Print the version of PDF Arranger and exit"
+#~ msgstr "打印 PDF Arranger 的版本并退出"
+
+#~ msgid "Property"
+#~ msgstr "属性"
+
+#~ msgid "Re_verse Order"
+#~ msgstr "顺序反转（_V）"
+
+#~ msgid "Rendering Preview…"
+#~ msgstr "渲染预览…"
+
+#~ msgid "Rendering…"
+#~ msgstr "正在渲染…"
+
+#~ msgid "Replace"
+#~ msgstr "替换"
+
+#~ msgid "Right to Left"
+#~ msgstr "从左至右"
+
+#~ msgid "Rotate Left"
+#~ msgstr "向左旋转"
+
+#~ msgid "Rotate Right"
+#~ msgstr "向右旋转"
+
+#~ msgid "Running on %s"
+#~ msgstr "运行于 %s"
+
+#~ msgid "Save"
+#~ msgstr "保存"
+
+#~ msgid "Save As"
+#~ msgstr "另存为"
+
+#~ msgid "Save changes before closing?"
+#~ msgstr "关闭前保存更改？"
+
+#~ msgid "Save changes before quitting?"
+#~ msgstr "退出前保存更改？"
+
+#~ msgid "Save changes to “{}” before closing?"
+#~ msgstr "在关闭之前保存对“{}”的更改？"
+
+#~ msgid "Save changes to “{}” before quitting?"
+#~ msgstr "退出前保存对“{}”的更改？"
+
+#~ msgid "Saving failed"
+#~ msgstr "保存失败"
+
+#~ msgid "Saving produced some warnings"
+#~ msgstr "保存时产生了一些警告"
+
+#~ msgid "Saving…"
+#~ msgstr "正在保存…"
+
+#~ msgid "Scale mode:"
+#~ msgstr "缩放模式："
+
+#~ msgid "Selected pages: "
+#~ msgstr "已选页面："
+
+#~ msgid "Show values"
+#~ msgstr "显示数值"
+
+#~ msgid "Software versions:"
+#~ msgstr "软件版本："
+
+#~ msgid "Supported image files"
+#~ msgstr "支持的图像文件"
+
+#~ msgid "Top to Bottom"
+#~ msgstr "从上至下"
+
+#~ msgid "User Manual"
+#~ msgstr "用户手册"
+
+#~ msgid "Value"
+#~ msgstr "值"
+
+#~ msgid "Vertical offset"
+#~ msgstr "垂直偏移"
+
+#~ msgid "Width in %"
+#~ msgstr "宽度 %"
+
+#~ msgid "Your changes will be lost if you don’t save them."
+#~ msgstr "如果您不保存，您的更改将会丢失。"
+
+#~ msgid "Zoom In"
+#~ msgstr "放大"
+
+#~ msgid "Zoom Out"
+#~ msgstr "缩小"
+
+#~ msgid "_Apply"
+#~ msgstr "应用（_A）"
+
+#~ msgid "_Cancel"
+#~ msgstr "取消（_C）"
+
+#~ msgid "_Find"
+#~ msgstr "查找（_F）"
+
+#~ msgid "_OK"
+#~ msgstr "确定（_O）"
+
+#~ msgid "_Revert"
+#~ msgstr "撤销（_R）"
+
+#~ msgid "page"
+#~ msgstr "页面"
+
+#~ msgid "untitled"
+#~ msgstr "未命名"
+
