@@ -7,826 +7,2734 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: \n"
+"Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-02-24 20:19+0100\n"
+"POT-Creation-Date: 2026-09-07 19:17+0000\n"
 "PO-Revision-Date: 2023-06-08 10:00+0700\n"
 "Last-Translator: Abdul Munif Hanafi <amunifhanafi@gmail.com>\n"
-"Language-Team: \n"
 "Language: id\n"
+"Language-Team: \n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"X-Generator: pdfarranger-qt tools/merge_translations.py\n"
+"Generated-By: Babel 2.18.0\n"
 
-#: pdfarranger/splitter.py:87
-msgid "#Col"
-msgstr "#Kolom"
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py pdfarranger_qt/reader.py
+#, python-brace-format
+msgid "Page {}"
+msgstr "Halaman {}"
 
-#: pdfarranger/splitter.py:87
-msgid "#Row"
-msgstr "#Baris"
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Open Link"
+msgstr "Buka Tautan"
 
-#: pdfarranger/pageutils.py:127 pdfarranger/pageutils.py:453
-#: pdfarranger/pageutils.py:455
-msgid "%"
-msgstr "%"
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Copy Link Address"
+msgstr "Salin Alamat Tautan"
 
-#: pdfarranger/pageutils.py:176
-#, python-format
-msgid "% of height"
-msgstr "% dari tinggi"
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+#, python-brace-format
+msgid "Go to {}"
+msgstr "Ke {}"
 
-#: pdfarranger/pageutils.py:176
-#, python-format
-msgid "% of width"
-msgstr "% dari lebar"
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Follow Link"
+msgstr "Ikuti Tautan"
 
-#: pdfarranger/pdfarranger.py:2764
-#, python-format
-msgid "%s is a tool for rearranging and modifying PDF files."
-msgstr "%s adalah alat untuk menyusun dan memodifikasi file PDF"
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py pdfarranger_qt/mainwindow.py
+msgid "Copy"
+msgstr "Salin"
 
-#: pdfarranger/config.py:262
-msgid "(Libhandy missing)"
-msgstr "(Libhandy tidak ditemukan)"
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Select All"
+msgstr "Pilih Semua"
 
-#: pdfarranger/config.py:254
-msgid "(Requires restart)"
-msgstr "(Mulai ulang diperlukan)"
-
-#: pdfarranger/pdfarranger.py:1144
-#, python-format
-msgid "A file named \"%s\" already exists. Do you want to replace it?"
-msgstr "File dengan nama \"%s\" sudah ada. Apakah Anda ingin menggantinya?"
-
-#: data/menu.ui:227 data/menu.ui:391
-msgid "All From _Same File"
-msgstr "Semua dari Berkas yang _Sama"
-
-#: pdfarranger/pdfarranger.py:518
-msgid "All files"
-msgstr "Semua File"
-
-#: pdfarranger/pdfarranger.py:470
-msgid "All pages must have the same size."
-msgstr "Semua halaman harus memiliki ukuran yang sama"
-
-#: pdfarranger/pdfarranger.py:506
-msgid "All supported files"
-msgstr "Semua file yang didukung"
-
-#: pdfarranger/exporter.py:563
-msgid "Auto Rotate"
-msgstr ""
-
-#: pdfarranger/pageutils.py:154
-msgid "Bottom"
-msgstr "Bawah"
-
-#: pdfarranger/pageutils.py:386
-msgid "Bottom to Top"
-msgstr "Bawah ke Atas"
-
-#: pdfarranger/core.py:569
-msgid "Clipboard image"
-msgstr "Gambar papan klip"
-
-#: pdfarranger/pageutils.py:369 pdfarranger/splitter.py:60
-msgid "Columns"
-msgstr "Kolom"
-
-#: data/menu.ui:141 data/menu.ui:354
-msgid "Copy _Image"
-msgstr ""
-
-#: data/menu.ui:146 data/menu.ui:359
-msgid "Copy _Text"
-msgstr ""
-
-#: pdfarranger/metadata.py:49
-msgid "Created"
-msgstr "Dibuat"
-
-#: pdfarranger/metadata.py:47
-msgid "Creator"
-msgstr "Pencipta"
-
-#: pdfarranger/metadata.py:48
-msgid "Creator tool"
-msgstr "Alat pencipta"
-
-#: pdfarranger/pageutils.py:846
-msgid "Crop Margins"
-msgstr "Margin Pangkas"
-
-#: data/menu.ui:174 data/menu.ui:432
-msgid "Crop White Borders"
-msgstr "Potong Tepian Berwarna Putih"
-
-#: pdfarranger/pageutils.py:166 pdfarranger/pdfarranger.py:2730
-msgid ""
-"Cropping/hiding does not remove any content from the PDF file, it only hides "
-"it."
-msgstr ""
-
-#: data/menu.ui:94 data/menu.ui:302
-msgid "Cu_t"
-msgstr "_Potong"
-
-#: pdfarranger/pdfarranger.py:1258
-msgid "Despite the warnings the document(s) should have no visible issues."
-msgstr ""
-"Meskipun ada peringatan, dokumen seharusnya tidak memiliki masalah yang "
-"terlihat."
-
-#: pdfarranger/pdfarranger.py:993
-msgid "Discard changes and close?"
-msgstr "Buang perubahan dan tutup?"
-
-#: pdfarranger/pdfarranger.py:1030
-msgid "Discard changes and quit?"
-msgstr "Buang perubahan dan keluar?"
-
-#: pdfarranger/pdfarranger.py:2737
-msgid "Do not show this dialog again."
-msgstr "Jangan munculkan dialog ini lagi."
-
-#: pdfarranger/pdfarranger.py:984
-msgid "Do_n’t Save"
-msgstr "Ja_ngan Simpan"
-
-#: pdfarranger/pdfarranger.py:1265
-msgid "Don't show warnings when saving again."
-msgstr "Jangan tampilkan peringatan lagi saat menyimpan. "
-
-#: data/menu.ui:178 data/menu.ui:436
-msgid "Dupl_icate"
-msgstr "Gan_dakan"
-
-#: data/menu.ui:52 data/menu.ui:462
-msgid "E_xport"
-msgstr "E_kspor"
-
-#: data/menu.ui:55 data/menu.ui:465
-msgid "E_xport Selection to a Single File…"
-msgstr "_Ekspor Terpilih ke Sebuah Berkas Tunggal…"
-
-#: data/menu.ui:266
-msgid "Edit _Properties"
-msgstr "Sunting Prop_erti"
-
-#: pdfarranger/metadata.py:202
-msgid "Edit properties"
-msgstr "Ubah properti"
-
-#: pdfarranger/splitter.py:62
-msgid "Equal column width"
-msgstr "Lebar kolom yang sama"
-
-#: pdfarranger/splitter.py:62
-msgid "Equal row height"
-msgstr "Lebar baris yang sama"
-
-#: pdfarranger/pdfarranger.py:1792
-msgid "Exploding into images…"
-msgstr ""
-
-#: data/menu.ui:60 data/menu.ui:470
-msgid "Export Selection to _Individual Files…"
-msgstr "Ekspor Terpilih ke _Masing-masing Berkas…"
-
-#: data/menu.ui:65 data/menu.ui:475
-msgid "Export _All Pages to Individual Files…"
-msgstr "Ekspor Semu_a Halaman menjadi Masing-masing Berkas…"
-
-#: pdfarranger/pdfarranger.py:1102
-msgid "Export…"
-msgstr "Ekspor…"
-
-#: pdfarranger/core.py:571 pdfarranger/pdfarranger.py:1512
-msgid "File is neither pdf nor image"
-msgstr "File bukan dalam format pdf ataupun gambar"
-
-#: pdfarranger/pdfarranger.py:300
-msgid "File(s) to open"
-msgstr "File yang akan dibuka"
-
-#: pdfarranger/exporter.py:561
-msgid "Fit to Full Page"
-msgstr ""
-
-#: pdfarranger/exporter.py:560
-msgid "Fit to Printable Area"
-msgstr ""
-
-#: pdfarranger/pdfarranger.py:2734
-msgid "For more info see"
-msgstr ""
-
-#: pdfarranger/config.py:271
-msgid "For more options see:"
-msgstr "Untuk opsi lebih lanjut, lihat:"
-
-#: data/menu.ui:259
-msgid "Full_screen"
-msgstr "Layar_penuh"
-
-#: pdfarranger/pdfarranger.py:2778
-msgid "GNU General Public License (GPL) Version 3."
-msgstr "Lisensi Publik Umum GNU (GNU General Public License/GPL) Versi 3."
-
-#: data/menu.ui:198 data/menu.ui:456
-msgid "Generate Booklet"
-msgstr "Membuat Buku Saku"
-
-#: pdfarranger/pageutils.py:248 pdfarranger/pageutils.py:252
-#: pdfarranger/pageutils.py:334
-msgid "Height"
-msgstr "Tinggi"
-
-#: pdfarranger/splitter.py:88
-msgid "Height in %"
-msgstr "Tinggi dalam %"
-
-#: pdfarranger/pageutils.py:846
-msgid "Hide Margins"
-msgstr ""
-
-#: pdfarranger/pageutils.py:381
-msgid "Horizontal"
-msgstr "Horizontal"
-
-#: pdfarranger/splitter.py:61
-msgid "Horizontal Splits"
-msgstr "Pemisahan Horizontal."
-
-#: pdfarranger/pageutils.py:452
-msgid "Horizontal offset"
-msgstr "Offset horizontal"
-
-#: pdfarranger/core.py:560
+#: pdfarranger_qt/core.py pdfarranger_qt/mainwindow.py
 msgid "Image files are only supported with img2pdf"
 msgstr "File gambar hanya didukung dengan img2pdf."
 
-#: pdfarranger/core.py:566
-msgid "Image format is not supported by img2pdf"
-msgstr "File gambar tidak didukung dengan img2pdf"
-
-#: pdfarranger/pdfarranger.py:1789
-msgid "Img2pdf missing."
-msgstr ""
-
-#: data/pdfarranger.ui:58
-msgid "Import"
-msgstr "Impor"
-
-#: pdfarranger/pdfarranger.py:1335
-msgid "Import…"
-msgstr "Impor…"
-
-#: data/menu.ui:194 data/menu.ui:452
-msgid "Insert Blan_k Page…"
-msgstr "Sisipkan Halaman _Kosong…"
-
-#: pdfarranger/pageutils.py:331
-msgid "Insert Blank Page"
-msgstr "Sisipkan Halaman Kosong"
-
-#: pdfarranger/metadata.py:173
-msgid "Invalid date format. Input discarded."
-msgstr "Format tanggal tidak valid. Input dibatalkan."
-
-#: pdfarranger/pdfarranger.py:2767
-#, python-format
-msgid "It uses libqpdf %s, pikepdf %s, GTK %s and Python %s."
-msgstr "Ini menggunakan libqpdf %s, pikepdf %s, GTK %s, dan Python %s."
-
-#: pdfarranger/metadata.py:45
-msgid "Keywords"
-msgstr "Kata kunci"
-
-#: pdfarranger/config.py:252
-msgid "Language"
-msgstr "Bahasa"
-
-#: pdfarranger/pageutils.py:154
-msgid "Left"
-msgstr "Kiri"
-
-#: pdfarranger/pageutils.py:383
-msgid "Left to Right"
-msgstr "Kiri ke Kanan"
-
-#: data/pdfarranger.ui:122
-msgid "Main Menu"
-msgstr "Menu Utama"
-
-#: pdfarranger/pdfarranger.py:2773
-msgid "Maintainers and contributors"
-msgstr "Maintainers and contributors"
-
-#: pdfarranger/pageutils.py:367
-msgid "Margin"
-msgstr "Margin"
-
-#: pdfarranger/pageutils.py:353
-msgid "Merge Pages"
-msgstr "Gabungkan Halaman"
-
-#: pdfarranger/pageutils.py:418
-msgid "Merged page size:"
-msgstr "Ukuran halaman yang digabungkan: "
-
-#: pdfarranger/metadata.py:50
-msgid "Modified"
-msgstr "Diubah"
-
-#: pdfarranger/pageutils.py:398
-msgid "Non-uniform page size - using max size"
-msgstr "Ukuran halaman yang tidak seragam - menggunakan ukuran maksimum."
-
-#: pdfarranger/exporter.py:559
-msgid "None"
-msgstr ""
-
-#: pdfarranger/pdfarranger.py:2723
-msgid "Note"
-msgstr ""
-
-#: pdfarranger/pdfarranger.py:2729
-msgid "Note the limitations:"
-msgstr ""
-
-#: data/pdfarranger.ui:37
-msgid "Open"
-msgstr "Buka"
-
-#: pdfarranger/pdfarranger.py:1200
-msgid "Open…"
-msgstr "Buka…"
-
-#: pdfarranger/pdfarranger.py:2731
-msgid "Outlines and links can be preserved only in certain cases."
-msgstr ""
-
-#: pdfarranger/pageutils.py:899
-msgid "Overlay"
-msgstr ""
-
-#: pdfarranger/pdfarranger.py:281
-msgid ""
-"PDF Arranger is a small python-gtk application, which helps the user to "
-"merge or split pdf documents and rotate, crop and rearrange their pages "
-"using an interactive and intuitive graphical interface. It is a frontend for "
-"pikepdf."
-msgstr ""
-"PDF Arranger adalah aplikasi Python-GTK kecil yang membantu pengguna untuk "
-"menggabungkan atau membagi dokumen PDF serta memutar, memotong, dan menyusun "
-"ulang halaman-halaman PDF menggunakan antarmuka grafis interaktif dan "
-"intuitif. Ini adalah antarmuka pengguna untuk pikepdf."
-
-#: pdfarranger/pdfarranger.py:1506
-msgid "PDF document is damaged"
-msgstr "Dokumen PDF rusak"
-
-#: pdfarranger/pdfarranger.py:510
-msgid "PDF files"
-msgstr "File PDF"
-
-#: pdfarranger/exporter.py:599
-msgid "Page Handling"
-msgstr ""
-
-#: pdfarranger/pageutils.py:394
-msgid "Page Order"
-msgstr "Susunan Halaman"
-
-#: pdfarranger/pdfarranger.py:2801
-msgid "Page Size:"
-msgstr "Ukuran Halaman:"
-
-#: pdfarranger/pageutils.py:243
-msgid "Page size"
-msgstr ""
-
-#: pdfarranger/core.py:457
-msgid "Password"
-msgstr "Kata Sandi"
-
-#: pdfarranger/core.py:435
-msgid "Password required"
-msgstr "Kata Sandi diperlukan"
-
-#: data/menu.ui:107 data/menu.ui:315
-msgid "Past_e Special"
-msgstr "Temp_el Spesial"
-
-#: data/menu.ui:124 data/menu.ui:333
-msgid "Paste As O_verlay…"
-msgstr "Tempel Sebagai O_verlay…"
-
-#: data/menu.ui:119 data/menu.ui:328
-msgid "Paste As _Even Pages"
-msgstr "Tempel Sebagai Halaman _Genap"
-
-#: data/menu.ui:114 data/menu.ui:323
-msgid "Paste As _Odd Pages"
-msgstr "Tempel Sebagai Halaman _Ganjil"
-
-#: data/menu.ui:129 data/menu.ui:338
-msgid "Paste As _Underlay…"
-msgstr "Tempel Sebagai _Underlay…"
-
-#: data/menu.ui:102 data/menu.ui:310
-msgid "Paste _After"
-msgstr "Tempel _Setelah"
-
-#: data/menu.ui:109 data/menu.ui:318
-msgid "Paste _Before"
-msgstr "Tempel _Sebelum"
-
-#: pdfarranger/pdfarranger.py:1636
-msgid "Pasted data not valid. Aborting paste."
-msgstr "Data yang ditempelkan tidak valid. Membatalkan tempel."
-
-#: data/menu.ui:272
-msgid "Pre_ferences"
-msgstr "Pre_ferensi"
-
-#: pdfarranger/config.py:242
-msgid "Preferences"
-msgstr "Preferensi"
-
-#: pdfarranger/pdfarranger.py:292
-msgid "Print the version of PDF Arranger and exit"
-msgstr "Cetak versi PDF Arranger dan keluar"
-
-#: pdfarranger/config.py:267
-msgid "Printing"
-msgstr ""
-
-#: pdfarranger/exporter.py:579
-msgid "Printing…"
-msgstr "Mencetak"
-
-#: pdfarranger/metadata.py:46
-msgid "Producer"
-msgstr "Produsen"
-
-#: pdfarranger/metadata.py:216
-msgid "Property"
-msgstr "Properti"
-
-#: data/menu.ui:182 data/menu.ui:440
-msgid "Re_verse Order"
-msgstr "Ba_likkan Urutan"
-
-#: pdfarranger/pageutils.py:250
-msgid "Relative"
-msgstr "Relatif"
-
-#: pdfarranger/exporter.py:617
-msgid "Rendering Preview…"
-msgstr "Pratinjau Rendering…"
-
-#: pdfarranger/pdfarranger.py:746
-msgid "Rendering…"
-msgstr "Rendering…"
-
-#: pdfarranger/pdfarranger.py:1146
-msgid "Replace"
-msgstr "Ganti"
-
-#: pdfarranger/pageutils.py:154
-msgid "Right"
-msgstr "Kanan"
-
-#: pdfarranger/pageutils.py:384
-msgid "Right to Left"
-msgstr "Kanan ke Kiri"
-
-#: data/pdfarranger.ui:203
-msgid "Rotate Left"
-msgstr "Rotasi ke Kiri"
-
-#: data/pdfarranger.ui:227
-msgid "Rotate Right"
-msgstr "Rotasi ke Kanan"
-
-#: data/menu.ui:152 data/menu.ui:410
-msgid "Rotate _Left"
-msgstr "Rotasi ke _Kiri"
-
-#: pdfarranger/pageutils.py:370 pdfarranger/splitter.py:60
-msgid "Rows"
-msgstr "Baris"
-
-#: data/menu.ui:232 data/menu.ui:396
-msgid "Same Page _Format"
-msgstr "_Format Halaman yang Sama"
-
-#: data/pdfarranger.ui:78
-msgid "Save"
-msgstr "Simpan"
-
-#: data/pdfarranger.ui:97
-msgid "Save As"
-msgstr "Simpan Sebagai"
-
-#: pdfarranger/pdfarranger.py:1102
-msgid "Save As…"
-msgstr "Simpan Sebagai…"
-
-#: data/menu.ui:47
-msgid "Save _As…"
-msgstr "Simpan _Sebagai…"
-
-#: pdfarranger/pdfarranger.py:1002
-msgid "Save changes before closing?"
-msgstr "Simpan perubahan sebelum menutup?"
-
-#: pdfarranger/pdfarranger.py:1039
-msgid "Save changes before quitting?"
-msgstr "Simpan perubahan sebelum keluar?"
-
-#: pdfarranger/pdfarranger.py:999
-msgid "Save changes to “{}” before closing?"
-msgstr "Simpan perubahan ke “{}” sebelum menutup?"
-
-#: pdfarranger/pdfarranger.py:1036
-msgid "Save changes to “{}” before quitting?"
-msgstr "Simpan perubahan ke “{}” sebelum keluar?"
-
-#: pdfarranger/pdfarranger.py:1257
-msgid "Saving produced some warnings"
-msgstr "Menyimpan dapat menghasilkan beberapa peringatan"
-
-#: pdfarranger/pdfarranger.py:1296
-msgid "Saving…"
-msgstr "Menyimpan…"
-
-#: pdfarranger/pageutils.py:121
-msgid "Scale factor"
-msgstr "Faktor Skala"
-
-#: pdfarranger/exporter.py:557
-msgid "Scale mode:"
-msgstr ""
-
-#: data/menu.ui:207 data/menu.ui:371
-msgid "Select _All"
-msgstr "Pilih _Semua"
-
-#: data/menu.ui:222 data/menu.ui:386
-msgid "Select _Even Pages"
-msgstr "Pilih Halaman _Genap"
-
-#: data/menu.ui:217 data/menu.ui:381
-msgid "Select _Odd Pages"
-msgstr "Pilih Halaman _Ganjil"
-
-#: pdfarranger/pdfarranger.py:2796
-msgid "Selected pages: "
-msgstr "Halaman yang dipilih: "
-
-#: pdfarranger/pageutils.py:548
-msgid "Show values"
-msgstr ""
-
-#: pdfarranger/splitter.py:26
-msgid "Split Pages"
-msgstr "Pisahkan Halaman"
-
-#: pdfarranger/metadata.py:44
-msgid "Subject"
-msgstr "Subjek"
-
-#: pdfarranger/pdfarranger.py:523
-msgid "Supported image files"
-msgstr "File gambar yang didukung"
-
-#: pdfarranger/config.py:282 pdfarranger/config.py:290
-msgid "System setting"
-msgstr "Setelan sistem"
-
-#: pdfarranger/core.py:447
-msgid ""
-"The document “{}” is locked and requires a password before it can be opened."
-msgstr "Dokumen “{}” terkunci dan memerlukan password sebelum bisa dibuka."
-
-#: pdfarranger/pdfarranger.py:1765
-msgid "The page has several images. Use \"Explode into Images\" first.\""
-msgstr ""
-
-#: pdfarranger/core.py:446
-msgid "The password will be remembered until you close PDF Arranger."
-msgstr "Password akan diingat sampai Anda menutup PDF Arranger."
-
-#: pdfarranger/config.py:260
-msgid "Theme"
-msgstr "Tema"
-
-#: pdfarranger/metadata.py:43
-msgid "Title"
-msgstr "Judul"
-
-#: pdfarranger/pageutils.py:154
-msgid "Top"
-msgstr "Atas"
-
-#: pdfarranger/pageutils.py:385
-msgid "Top to Bottom"
-msgstr "Atas ke Bawah"
-
-#: pdfarranger/pageutils.py:899
-msgid "Underlay"
-msgstr ""
-
-#: pdfarranger/core.py:544 pdfarranger/pdfarranger.py:1502
+# machine translation, unreviewed
+#: pdfarranger_qt/core.py
+msgid "File not found"
+msgstr "Berkas tidak ditemukan"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/core.py
+msgid "Invalid file format"
+msgstr "Format berkas tidak sah"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/core.py
+msgid "Data not yet available"
+msgstr "Data belum tersedia"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/core.py
+msgid "Unsupported security scheme"
+msgstr "Skema keamanan tidak didukung"
+
+#: pdfarranger_qt/core.py
 msgid "Unknown file format"
 msgstr "Format file tidak dikenali"
 
-#: pdfarranger/pdfarranger.py:2735
-msgid "User Manual"
-msgstr ""
+#: pdfarranger_qt/core.py
+msgid "Image format is not supported by img2pdf"
+msgstr "File gambar tidak didukung dengan img2pdf"
 
-#: pdfarranger/metadata.py:216
-msgid "Value"
-msgstr "Nilai"
+#: pdfarranger_qt/core.py
+msgid "File is neither pdf nor image"
+msgstr "File bukan dalam format pdf ataupun gambar"
 
-#: pdfarranger/pageutils.py:382
-msgid "Vertical"
-msgstr "Vertikal"
+# machine translation, unreviewed
+#: pdfarranger_qt/core.py
+msgid "Cannot open document"
+msgstr "Tidak dapat membuka dokumen"
 
-#: pdfarranger/splitter.py:61
-msgid "Vertical Splits"
-msgstr "Pemisahan Vertikal"
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Paper size"
+msgstr "Ukuran kertas"
 
-#: pdfarranger/pageutils.py:454
-msgid "Vertical offset"
-msgstr "Offset vertikal"
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Custom"
+msgstr "Ubahan"
 
-#: pdfarranger/pageutils.py:247 pdfarranger/pageutils.py:251
-#: pdfarranger/pageutils.py:333
-msgid "Width"
-msgstr "Lebar"
-
-#: pdfarranger/splitter.py:88
-msgid "Width in %"
-msgstr "Lebar dalam %"
-
-#: pdfarranger/pdfarranger.py:983
-msgid "Your changes will be lost if you don’t save them."
-msgstr "Perubahan Anda akan hilang jika Anda tidak menyimpannya."
-
-#: data/pdfarranger.ui:144
-msgid "Zoom In"
-msgstr "Zoom Perbesar"
-
-#: data/pdfarranger.ui:167
-msgid "Zoom Out"
-msgstr "Zoom Perkecil"
-
-#: data/menu.ui:255
-msgid "Zoom _Fit"
-msgstr "_Sesuaikan Zoom"
-
-#: data/menu.ui:247
-msgid "Zoom _In"
-msgstr "Zoom _Perbesar"
-
-#: data/menu.ui:251
-msgid "Zoom _Out"
-msgstr "Zoom _Perkecil"
-
-#: data/menu.ui:278
-msgid "_About"
-msgstr "Tent_ang"
-
-#: pdfarranger/pageutils.py:856
-msgid "_Apply"
-msgstr ""
-
-#: pdfarranger/config.py:246 pdfarranger/pageutils.py:227
-#: pdfarranger/pdfarranger.py:975 pdfarranger/pdfarranger.py:984
-#: pdfarranger/pdfarranger.py:1108 pdfarranger/pdfarranger.py:1158
-msgid "_Cancel"
-msgstr "_Batalkan"
-
-#: pdfarranger/pdfarranger.py:994 data/menu.ui:284
-msgid "_Close"
-msgstr "_Tutup"
-
-#: data/menu.ui:98 data/menu.ui:306
-msgid "_Copy"
-msgstr "_Salin"
-
-#: data/menu.ui:166 data/menu.ui:424
-msgid "_Crop Margins…"
-msgstr ""
-
-#: data/menu.ui:90 data/menu.ui:298
-msgid "_Delete"
-msgstr "_Hapus"
-
-#: data/menu.ui:212 data/menu.ui:376
-msgid "_Deselect All"
-msgstr "_Batal Pilih Semua"
-
-#: data/menu.ui:87
-msgid "_Edit"
-msgstr "_Sunting"
-
-#: data/menu.ui:137 data/menu.ui:350
-msgid "_Explode into Images"
-msgstr ""
-
-#: data/menu.ui:135 data/menu.ui:347
-msgid "_Extract"
-msgstr ""
-
-#: data/menu.ui:170 data/menu.ui:428
-msgid "_Hide Margins…"
-msgstr ""
-
-#: data/menu.ui:30
-msgid "_Import"
-msgstr "_Impor"
-
-#: data/menu.ui:237 data/menu.ui:401
-msgid "_Invert Selection"
-msgstr "Pi_lih Sebaliknya"
-
-#: data/menu.ui:190 data/menu.ui:448
-msgid "_Merge Pages…"
-msgstr "_Gabungkan Halaman…"
-
-#: data/menu.ui:36
-msgid "_New Window"
-msgstr "Je_ndela Baru"
-
-#: pdfarranger/config.py:247 pdfarranger/pageutils.py:228
-msgid "_OK"
-msgstr "_OKE"
-
-#: pdfarranger/pdfarranger.py:1157 data/menu.ui:24
-msgid "_Open"
-msgstr "Buk_a"
-
-#: data/menu.ui:162 data/menu.ui:420
-msgid "_Page Size…"
-msgstr ""
-
-#: data/menu.ui:71
-msgid "_Print…"
-msgstr "_Cetak…"
-
-#: pdfarranger/pdfarranger.py:1031 data/menu.ui:290
-msgid "_Quit"
-msgstr "Kelua_r"
-
-#: data/menu.ui:82
-msgid "_Redo"
-msgstr "_Mengulangi Tindakan Terakhir"
-
-#: pdfarranger/pageutils.py:856
-msgid "_Revert"
-msgstr ""
-
-#: data/menu.ui:157 data/menu.ui:415
-msgid "_Rotate Right"
-msgstr "Putar ke K_anan"
-
-#: pdfarranger/pdfarranger.py:984 pdfarranger/pdfarranger.py:1107
-#: data/menu.ui:42
-msgid "_Save"
-msgstr "_Simpan"
-
-#: data/menu.ui:204 data/menu.ui:368
-msgid "_Select"
-msgstr "Pili_h"
-
-#: data/menu.ui:186 data/menu.ui:444
-msgid "_Split Pages…"
-msgstr "Pe_cah Halaman…"
-
-#: data/menu.ui:78
-msgid "_Undo"
-msgstr "_Batalkan Tindakan Terakhir"
-
-#: data/menu.ui:244
-msgid "_View"
-msgstr "_Lihat"
-
-#: pdfarranger/pageutils.py:144 pdfarranger/pageutils.py:368
-#: pdfarranger/pageutils.py:418
+#: pdfarranger_qt/dialogs.py
 msgid "mm"
 msgstr "mm"
 
-#: pdfarranger/core.py:326
-msgid "page"
-msgstr "halaman"
+#: pdfarranger_qt/dialogs.py
+msgid "Width"
+msgstr "Lebar"
 
-#: pdfarranger/pdfarranger.py:825
-msgid "untitled"
-msgstr "tanpa judul"
+#: pdfarranger_qt/dialogs.py
+msgid "Height"
+msgstr "Tinggi"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Keep aspect ratio"
+msgstr "Pertahankan rasio aspek"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Portrait"
+msgstr "Tegak"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Landscape"
+msgstr "Mendatar"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Orientation"
+msgstr "Orientasi"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Range Select"
+msgstr "Pilih Rentang"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Select range of pages: "
+msgstr "Pilih rentang halaman: "
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Use a comma to separate page numbers, a dash to select a range of pages. \n"
+"e.g. : \"1,3,5-7,9\""
+msgstr ""
+"Pisahkan nomor halaman dengan koma, dan pilih rentang halaman dengan tanda "
+"hubung. \n"
+"mis.: \"1,3,5-7,9\""
+
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+msgid "Insert Blank Page"
+msgstr "Sisipkan Halaman Kosong"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+msgid "Page size"
+msgstr "Ukuran halaman"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Fit to paper"
+msgstr "Paskan ke kertas"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Relative"
+msgstr "Relatif"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Scale"
+msgstr "Skala"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Scale & Add margins"
+msgstr "Skalakan & Tambah margin"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Crop & Add margins"
+msgstr "Pangkas & Tambah margin"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Fit mode"
+msgstr "Mode paskan"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Scale factor"
+msgstr "Faktor Skala"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+msgid "Hide Margins"
+msgstr "Sembunyikan Margin"
+
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+msgid "Crop Margins"
+msgstr "Margin Pangkas"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Left"
+msgstr "Kiri"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Right"
+msgstr "Kanan"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Top"
+msgstr "Atas"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Bottom"
+msgstr "Bawah"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Margins"
+msgstr "Margin"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Same for all sides"
+msgstr "Sama untuk semua sisi"
+
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+msgid "Split Pages"
+msgstr "Pisahkan Halaman"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Vertical Splits"
+msgstr "Pemisahan Vertikal"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Horizontal Splits"
+msgstr "Pemisahan Horizontal."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+msgid "Pages per Sheet"
+msgstr "Halaman per Lembar"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Automatic"
+msgstr "Otomatis"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Automatic turns the sheet sideways when that lets the pages come out larger."
+msgstr ""
+"Mode otomatis memutar lembar ke samping bila dengan begitu halaman jadi "
+"lebih besar."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Empty space left around each page."
+msgstr "Ruang kosong yang disisakan di sekeliling tiap halaman."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Layout"
+msgstr "Tata letak"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Columns"
+msgstr "Kolom"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Rows"
+msgstr "Baris"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Sheet"
+msgstr "Lembar"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Gap"
+msgstr "Sela"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Appearance"
+msgstr "Tampilan"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/reader.py
+msgid "Bold"
+msgstr "Tebal"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/reader.py
+msgid "Italic"
+msgstr "Miring"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Font"
+msgstr "Fonta"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Size"
+msgstr "Ukuran"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Colour"
+msgstr "Warna"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Opacity"
+msgstr "Kelegapan"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Position"
+msgstr "Posisi"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Angle"
+msgstr "Sudut"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+msgid "Add Page Numbers"
+msgstr "Tambah Nomor Halaman"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+#, python-format
+msgid "%s is replaced by the page number, %s by the number of pages."
+msgstr "%s diganti dengan nomor halaman, %s dengan jumlah halaman."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Leave the first page unnumbered"
+msgstr "Biarkan halaman pertama tanpa nomor"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "It is still counted; a title page just does not carry a number."
+msgstr "Ia tetap ikut dihitung; halaman judul hanya tidak memuat nomor."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Format"
+msgstr "Format"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Start at"
+msgstr "Mulai dari"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Numbering"
+msgstr "Penomoran"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+msgid "Add Watermark"
+msgstr "Tambah Tanda Air"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "DRAFT"
+msgstr "KONSEP"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Text"
+msgstr "Teks"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Watermark"
+msgstr "Tanda air"
+
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+msgid "Merge Pages"
+msgstr "Gabungkan Halaman"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Overlay"
+msgstr "Lapisan atas"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Underlay"
+msgstr "Lapisan bawah"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/stamp.py
+msgid "Centre"
+msgstr "Tengah"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Middle"
+msgstr "Pertengahan"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Horizontal"
+msgstr "Horizontal"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Vertical"
+msgstr "Vertikal"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Edit properties"
+msgstr "Ubah properti"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "System"
+msgstr "Sistem"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Light"
+msgstr "Terang"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Dark"
+msgstr "Gelap"
+
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+msgid "Preferences"
+msgstr "Preferensi"
+
+#: pdfarranger_qt/dialogs.py
+msgid "System setting"
+msgstr "Setelan sistem"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Language"
+msgstr "Bahasa"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Theme"
+msgstr "Tema"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "General"
+msgstr "Umum"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Fit to page"
+msgstr "Paskan ke halaman"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Actual size"
+msgstr "Ukuran sebenarnya"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Auto Rotate"
+msgstr "Putar Otomatis"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Pages are rasterised at this resolution before being sent to the printer. "
+"Lower it if printing is slow: the printer driver has less to process."
+msgstr ""
+"Halaman diraster pada resolusi ini sebelum dikirim ke pencetak. Turunkan "
+"bila pencetakan lambat: penggerak pencetak jadi punya lebih sedikit yang "
+"harus diproses."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Scale mode"
+msgstr "Mode skala"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Pixels/inch:"
+msgstr "Piksel/inci:"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Printing"
+msgstr "Pencetakan"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Preserve document information from the first file opened"
+msgstr "Pertahankan informasi dokumen dari berkas yang pertama dibuka"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "When checked: use document properties from the first file opened."
+msgstr "Bila dicentang: pakai properti dokumen dari berkas yang pertama dibuka."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "When unchecked: merge bookmarks from all documents."
+msgstr "Bila tidak dicentang: gabungkan penanda dari semua dokumen."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Optimize for the web (linearize)"
+msgstr "Optimalkan untuk web (linearisasi)"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Lay the file out so a browser can show page one before the rest has "
+"downloaded."
+msgstr ""
+"Tata berkas agar peramban dapat menampilkan halaman pertama sebelum sisanya "
+"terunduh."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Compress"
+msgstr "Mampatkan"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Recompress the file's streams and pack its objects together."
+msgstr "Mampatkan ulang aliran berkas dan kemas objeknya menjadi satu."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"How much this saves depends on the file: one full of already-compressed "
+"images will barely shrink."
+msgstr ""
+"Berapa banyak yang dihemat bergantung pada berkasnya: berkas yang penuh "
+"gambar termampat tidak akan menyusut berarti."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Saving/exporting to single file"
+msgstr "Menyimpan/mengekspor ke satu berkas"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Greyscale"
+msgstr "Skala abu-abu"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Image Export"
+msgstr "Ekspor Gambar"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Keyboard shortcuts"
+msgstr "Pintasan papan tik"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Viewer Preferences"
+msgstr "Preferensi Penampil"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Open showing:"
+msgstr "Buka dengan menampilkan:"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Page layout:"
+msgstr "Tata letak halaman:"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "On opening"
+msgstr "Saat dibuka"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Window"
+msgstr "Jendela"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Readers are free to ignore all of this."
+msgstr "Penampil bebas mengabaikan semua ini."
+
+#: pdfarranger_qt/dialogs.py
+msgid "Password"
+msgstr "Kata Sandi"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Confirm password"
+msgstr "Konfirmasi kata sandi"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Enter a password, or cancel to leave the document unencrypted."
+msgstr "Masukkan kata sandi, atau batalkan agar dokumen tetap tanpa enkripsi."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "The passwords do not match."
+msgstr "Kata sandi tidak cocok."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Reset"
+msgstr "Atur ulang"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Description"
+msgstr "Deskripsi"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"PDF Arranger merges, splits, rearranges, rotates and crops PDF documents. "
+"Everything happens in memory against the pages you can see; nothing is "
+"written until you save."
+msgstr ""
+"PDF Arranger menggabungkan, memisah, menata ulang, memutar, dan memangkas "
+"dokumen PDF. Semuanya terjadi di memori pada halaman yang Anda lihat; tidak "
+"ada yang ditulis sampai Anda menyimpan."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"It is a front end for pikepdf. Page content is never rewritten — only page "
+"order, geometry and composition."
+msgstr ""
+"Ia adalah antarmuka bagi pikepdf. Isi halaman tidak pernah ditulis ulang — "
+"hanya urutan halaman, geometri, dan susunannya."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Command line"
+msgstr "Baris perintah"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Files given on the command line are opened as one document. "
+"<code>--version</code> prints the version and exits."
+msgstr ""
+"Berkas yang diberikan di baris perintah dibuka sebagai satu dokumen. "
+"<code>--version</code> mencetak versi lalu keluar."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+msgid "Reading"
+msgstr "Membaca"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"The application opens in <b>read mode</b>: a continuous page view for "
+"reading the document rather than rearranging it. <b>View ▸ Arrange Mode</b> "
+"(Ctrl+E) swaps to the thumbnail grid and back."
+msgstr ""
+"Aplikasi terbuka dalam <b>mode baca</b>: tampilan halaman sinambung untuk "
+"membaca dokumen alih-alih menata ulangnya. <b>Lihat ▸ Mode Penataan</b> "
+"(Ctrl+E) beralih ke kisi miniatur dan kembali."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Reading shows the document <i>as edited</i>: rotations, crops, deletions and"
+" reordering are all applied, so what you read is what you would get if you "
+"saved. Page-editing commands are disabled while reading — bookmarks are the "
+"exception, and are edited here and nowhere else."
+msgstr ""
+"Membaca menampilkan dokumen <i>sebagaimana telah disunting</i>: putaran, "
+"pangkasan, penghapusan, dan penataan ulang semuanya sudah diterapkan, jadi "
+"yang Anda baca adalah yang akan Anda dapatkan bila menyimpan. Perintah "
+"penyuntingan halaman dinonaktifkan selama membaca — penanda adalah "
+"perkecualian, dan hanya disunting di sini."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"The page you are on follows you between the two modes. Switching to read "
+"mode opens at the page selected in the grid, the first of them if several "
+"are selected; switching back scrolls the grid to the page you were reading, "
+"without disturbing what you had selected. With nothing selected, reading "
+"resumes where you left off — your place in each document is remembered "
+"between visits."
+msgstr ""
+"Halaman tempat Anda berada mengikuti Anda di antara kedua mode. Beralih ke "
+"mode baca membuka pada halaman yang terpilih di kisi, yang pertama bila "
+"terpilih beberapa; beralih kembali menggulir kisi ke halaman yang sedang "
+"Anda baca, tanpa mengganggu pilihan Anda. Tanpa pilihan apa pun, membaca "
+"dilanjutkan dari tempat Anda berhenti — posisi Anda di tiap dokumen diingat "
+"antar kunjungan."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"The toolbar shows which page you are on and how many there are; type a "
+"number into it to jump there, or use <b>Ctrl+G</b>."
+msgstr ""
+"Bilah alat menunjukkan Anda ada di halaman berapa dan ada berapa halaman; "
+"ketikkan sebuah angka di sana untuk melompat, atau pakai <b>Ctrl+G</b>."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>View ▸ Continuous Scroll</b> is on by default; turning it off shows one "
+"page at a time. <b>View ▸ Facing Pages</b> puts two pages side by side, the "
+"way a book falls open. Both settings are remembered."
+msgstr ""
+"<b>Lihat ▸ Guliran Sinambung</b> menyala secara baku; mematikannya "
+"menampilkan satu halaman sekali. <b>Lihat ▸ Halaman Berhadapan</b> menaruh "
+"dua halaman berdampingan, seperti buku yang terbuka. Kedua pengaturan "
+"diingat."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Moving around a document"
+msgstr "Berpindah di dalam dokumen"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"One rule for the arrow keys: <b>the modifier decides what moves</b>. Nothing"
+" scrolls the view, Option (Alt) moves the text cursor, Shift extends the "
+"selection, Command (Ctrl) jumps to an edge, and Fn — Page Up, Page Down, "
+"Home and End — jumps further. None of it changes according to whether a text"
+" cursor happens to be on the page."
+msgstr ""
+"Satu aturan untuk tombol panah: <b>pengubahlah yang menentukan apa yang "
+"bergerak</b>. Tanpa pengubah menggulir tampilan, Option (Alt) memindahkan "
+"kursor teks, Shift memperluas pilihan, Command (Ctrl) melompat ke tepi, dan "
+"Fn — Page Up, Page Down, Home, dan End — melompat lebih jauh. Tak satu pun "
+"berubah menurut ada tidaknya kursor teks di halaman."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Keys"
+msgstr "Tombol"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Continuous"
+msgstr "Sinambung"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/viewer.py
+msgid "One page at a time"
+msgstr "Satu halaman sekali"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "scroll one line"
+msgstr "gulir satu baris"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "top of the previous / next page"
+msgstr "puncak halaman sebelumnya / berikutnya"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "previous / next page"
+msgstr "halaman sebelumnya / berikutnya"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "scroll one screen"
+msgstr "gulir satu layar"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "start / end of the document"
+msgstr "awal / akhir dokumen"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "move the text cursor, by character or line"
+msgstr "pindahkan kursor teks, per karakter atau baris"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "extend the selection, by character or line"
+msgstr "perluas pilihan, per karakter atau baris"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "move the text cursor one word"
+msgstr "pindahkan kursor teks satu kata"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "extend the selection one word"
+msgstr "perluas pilihan satu kata"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "cursor to the start / end of the line"
+msgstr "kursor ke awal / akhir baris"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "cursor to the start / end of the document"
+msgstr "kursor ke awal / akhir dokumen"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Add Shift to a Command or Option combination to extend the selection instead"
+" of moving — <b>Shift+Command+→</b> selects to the end of the line. Adding "
+"Option works by the word rather than the character. On Windows and Linux, "
+"read Command as Ctrl and Option as Alt; the table is the same everywhere."
+msgstr ""
+"Tambahkan Shift pada kombinasi Command atau Option untuk memperluas pilihan "
+"alih-alih memindah — <b>Shift+Command+→</b> memilih sampai akhir baris. "
+"Menambahkan Option membuatnya bekerja per kata alih-alih per karakter. Di "
+"Windows dan Linux, baca Command sebagai Ctrl dan Option sebagai Alt; "
+"tabelnya sama di mana-mana."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Selecting and copying text"
+msgstr "Memilih dan menyalin teks"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Drag across the page to select text, across page boundaries if you keep "
+"going. <b>Double-click</b> selects a word. <b>Ctrl/Cmd+C</b> copies, "
+"<b>Ctrl/Cmd+A</b> selects the text of the page you are on, and <b>Esc</b> "
+"clears the selection. The same commands are on the right-click menu."
+msgstr ""
+"Seret melintasi halaman untuk memilih teks, melintasi batas halaman pula "
+"bila Anda teruskan. <b>Klik ganda</b> memilih satu kata. <b>Ctrl/Cmd+C</b> "
+"menyalin, <b>Ctrl/Cmd+A</b> memilih teks halaman tempat Anda berada, dan "
+"<b>Esc</b> membersihkan pilihan. Perintah yang sama ada di menu klik kanan."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>Shift+click</b> extends an existing selection to where you clicked. The "
+"end you are moving grows out to a whole word, because a single click is an "
+"imprecise way to point at one character; the end you started from stays "
+"exactly where you put it. Dragging selects by character throughout, since "
+"you can watch it and stop where you like."
+msgstr ""
+"<b>Shift+klik</b> memperluas pilihan yang ada sampai ke tempat Anda "
+"mengeklik. Ujung yang Anda gerakkan tumbuh sampai satu kata utuh, karena "
+"satu klik adalah cara yang tidak presisi untuk menunjuk satu karakter; ujung"
+" tempat Anda mulai tetap persis di tempat Anda menaruhnya. Menyeret memilih "
+"per karakter sepanjang jalan, karena Anda bisa mengikutinya dan berhenti di "
+"mana saja."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Clicking on text leaves a blinking <b>text cursor</b>. That is what "
+"Shift+arrow extends from, and what the Option and Command combinations above"
+" move. It stays where you put it — scrolling, paging and clicking off the "
+"page all leave it alone — until you press Esc or open another document."
+msgstr ""
+"Mengeklik teks meninggalkan <b>kursor teks</b> yang berkedip. Dari situlah "
+"Shift+panah memperluas, dan itulah yang digerakkan oleh kombinasi Option dan"
+" Command di atas. Ia tetap di tempat Anda menaruhnya — menggulir, berpindah "
+"halaman, dan mengeklik di luar halaman semuanya membiarkannya — sampai Anda "
+"menekan Esc atau membuka dokumen lain."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Following links"
+msgstr "Mengikuti tautan"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Click a link to follow it. Links to a page in the same document jump there; "
+"links to the web open in your browser. Hovering over one shows where it "
+"goes, which is worth reading before you click: many links in a PDF are not "
+"written by its author at all but inferred from the text, so what a link "
+"points at is not always what the words appear to say."
+msgstr ""
+"Klik sebuah tautan untuk mengikutinya. Tautan ke halaman di dokumen yang "
+"sama melompat ke sana; tautan ke web terbuka di peramban Anda. Menyorotinya "
+"menampilkan ke mana ia menuju, dan itu layak dibaca sebelum Anda mengeklik: "
+"banyak tautan dalam PDF sama sekali bukan ditulis penulisnya melainkan "
+"disimpulkan dari teks, jadi yang ditunjuk sebuah tautan tidak selalu seperti"
+" yang tampak dikatakan kata-katanya."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Only ordinary web and mail links are handed to the system — http, https, "
+"mailto and ftp. A document is a file that arrived from somewhere, and "
+"anything else it asks to open is refused and reported rather than acted on."
+msgstr ""
+"Hanya tautan web dan surel biasa yang diserahkan ke sistem — http, https, "
+"mailto, dan ftp. Dokumen adalah berkas yang datang dari suatu tempat, dan "
+"apa pun selain itu yang ia minta untuk dibuka akan ditolak dan dilaporkan "
+"alih-alih dijalankan."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Right-clicking a link offers <b>Open Link</b> and <b>Copy Link Address</b>."
+msgstr ""
+"Mengeklik kanan sebuah tautan menawarkan <b>Buka Tautan</b> dan <b>Salin "
+"Alamat Tautan</b>."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Bookmarks"
+msgstr "Penanda"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"The sidebar shows the document's bookmarks. Click one to jump to it. "
+"Everything below is on the sidebar's right-click menu, and every command can"
+" be undone."
+msgstr ""
+"Panel samping menampilkan penanda dokumen. Klik salah satunya untuk melompat"
+" ke sana. Semua yang di bawah ini ada di menu klik kanan panel samping, dan "
+"setiap perintah dapat dibatalkan."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>Add Bookmark Here</b> makes one pointing at the page you are reading, "
+"named after whatever text you have selected — so select a heading, then add."
+" With nothing selected it is named after the page. <b>Add Child Bookmark "
+"Here</b> does the same, nested under the entry you clicked."
+msgstr ""
+"<b>Tambah Penanda di Sini</b> membuat satu penanda yang menunjuk ke halaman "
+"yang sedang Anda baca, dinamai menurut teks yang Anda pilih — jadi pilihlah "
+"sebuah judul, lalu tambahkan. Tanpa pilihan, ia dinamai menurut halaman. "
+"<b>Tambah Penanda Anak di Sini</b> melakukan hal yang sama, tersarang di "
+"bawah entri yang Anda klik."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>Rename</b> edits the title in place. <b>Re-home to This Page</b> points "
+"an existing bookmark at the page you are on, keeping its title. "
+"<b>Delete</b> removes an entry and <i>promotes</i> its children into its "
+"place; <b>Delete with Children</b> removes the whole branch."
+msgstr ""
+"<b>Ubah Nama</b> menyunting judul di tempat. <b>Arahkan Ulang ke Halaman "
+"Ini</b> membuat penanda yang sudah ada menunjuk ke halaman tempat Anda "
+"berada, dengan judulnya tetap. <b>Hapus</b> membuang sebuah entri dan "
+"<i>menaikkan</i> anak-anaknya ke tempatnya; <b>Hapus beserta Anak</b> "
+"membuang seluruh cabang."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Drag entries within the sidebar to re-nest or reorder them. <b>Expand All "
+"Children</b> and <b>Collapse All Children</b> open or shut a whole branch at"
+" once."
+msgstr ""
+"Seret entri di dalam panel samping untuk menyarangkan ulang atau menata "
+"ulangnya. <b>Bentangkan Semua Anak</b> dan <b>Lipat Semua Anak</b> membuka "
+"atau menutup satu cabang penuh sekaligus."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>Style</b> sets a bookmark bold or italic, or gives it a colour, as the "
+"tree shows."
+msgstr ""
+"<b>Gaya</b> membuat sebuah penanda tebal atau miring, atau memberinya warna,"
+" seperti yang ditampilkan pohonnya."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"A bookmark whose page has been deleted is <b>greyed out</b> rather than "
+"removed: its title may still be worth keeping, and you can point it "
+"somewhere else with Re-home. Undoing the deletion reconnects it. <b>Delete "
+"Dangling Bookmarks</b> clears them all out; it leaves alone any entry that "
+"points nowhere on purpose, which is a legitimate way to write a heading."
+msgstr ""
+"Penanda yang halamannya telah dihapus menjadi <b>kelabu</b> alih-alih "
+"dibuang: judulnya barangkali masih layak disimpan, dan Anda bisa "
+"mengarahkannya ke tempat lain. Membatalkan penghapusan menyambungkannya "
+"kembali. <b>Hapus Penanda Menggantung</b> membersihkan semuanya; ia "
+"membiarkan setiap entri yang memang sengaja tidak menunjuk ke mana pun, "
+"karena itu cara yang sah untuk menulis sebuah judul."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Bookmark edits are part of the document and are written when you save, along"
+" with each entry's colour and style and which branches are left open. The "
+"one thing that cannot be saved is a bookmark with no page: there is no way "
+"to record “points at a page that is gone”, so it comes back as a heading "
+"with its title intact."
+msgstr ""
+"Suntingan penanda adalah bagian dari dokumen dan ditulis saat Anda "
+"menyimpan, bersama warna dan gaya tiap entri serta cabang mana yang "
+"dibiarkan terbuka. Satu-satunya yang tidak bisa disimpan adalah penanda "
+"tanpa halaman: tidak ada cara mencatat \"menunjuk ke halaman yang sudah "
+"tiada\", jadi ia kembali sebagai judul dengan namanya utuh."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Arranging pages"
+msgstr "Menata halaman"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Drag pages to reorder them. Hold <b>Ctrl</b> while dropping to copy instead "
+"of move."
+msgstr ""
+"Seret halaman untuk menata ulangnya. Tahan <b>Ctrl</b> sewaktu menjatuhkan "
+"untuk menyalin alih-alih memindah."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Drag pages onto another window of the application to copy them there, or use"
+" ordinary copy and paste."
+msgstr ""
+"Seret halaman ke jendela lain aplikasi ini untuk menyalinnya ke sana, atau "
+"pakai salin dan tempel biasa."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>Paste As Odd/Even Pages</b> interleaves the clipboard with the document —"
+" this is how two single-sided scans of a double-sided original are "
+"recombined. If the second scan came off a duplex feeder it will be in "
+"reverse order; use <b>Arrange ▸ Reverse Order</b> on it first."
+msgstr ""
+"<b>Tempel Sebagai Halaman Ganjil/Genap</b> menyelang-nyelingkan papan klip "
+"dengan dokumen — beginilah dua pindaian satu sisi dari sebuah asli dua sisi "
+"digabungkan kembali. Bila pindaian kedua keluar dari pengumpan dupleks, "
+"urutannya akan terbalik; pakai <b>Tata ▸ Balik Urutan</b> padanya lebih "
+"dulu."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"To move pages a long way, use <b>Move to Start</b>, <b>Move to End</b> or "
+"<b>Move to Page…</b> rather than dragging — in a long document the far end "
+"is a great deal of scrolling away. They are on the Edit menu and on the "
+"right-click menu, and <b>Move to Page…</b> asks for the number the page "
+"should <i>become</i>."
+msgstr ""
+"Untuk memindahkan halaman jauh-jauh, pakai <b>Pindah ke Awal</b>, <b>Pindah "
+"ke Akhir</b>, atau <b>Pindah ke Halaman…</b> alih-alih menyeret — dalam "
+"dokumen panjang, ujung yang satunya berjarak amat banyak guliran. Semuanya "
+"ada di menu Sunting dan di menu klik kanan, dan <b>Pindah ke Halaman…</b> "
+"menanyakan nomor yang seharusnya <i>menjadi</i> halaman itu."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Prefer these to cut and paste for moving. A pasted page is a <i>new</i> page"
+" as far as the document is concerned, so any bookmarks pointing at the "
+"original are left behind with nowhere to go. Moving keeps the page itself, "
+"and its bookmarks come with it."
+msgstr ""
+"Utamakan itu daripada potong dan tempel untuk memindah. Halaman yang "
+"ditempel, sejauh menyangkut dokumen, adalah halaman <i>baru</i>, jadi "
+"penanda mana pun yang menunjuk ke aslinya tertinggal tanpa tujuan. Memindah "
+"mempertahankan halamannya sendiri, dan penandanya ikut serta."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Stamping and tiling"
+msgstr "Mencap dan menyusun"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>Page ▸ Add Page Numbers…</b> and <b>Page ▸ Add Watermark…</b> draw text "
+"onto the selected pages. Both add a <i>layer</i> rather than rewriting the "
+"page, so both can be undone and neither touches the file you opened."
+msgstr ""
+"<b>Halaman ▸ Tambah Nomor Halaman…</b> dan <b>Halaman ▸ Tambah Tanda "
+"Air…</b> menggambar teks pada halaman yang terpilih. Keduanya menambahkan "
+"sebuah <i>lapisan</i> alih-alih menulis ulang halaman, jadi keduanya dapat "
+"dibatalkan dan tak satu pun menyentuh berkas yang Anda buka."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+#, python-brace-format
+msgid ""
+"Page numbers follow the arrangement, not the source document: they are "
+"numbered in the order the pages are in now. <code>{n}</code> in the format "
+"is the page number and <code>{total}</code> the number of pages, so "
+"<code>Page {n} of {total}</code> does what it looks like."
+msgstr ""
+"Nomor halaman mengikuti penataan, bukan dokumen sumber: penomorannya sesuai "
+"urutan halaman saat ini. <code>{n}</code> dalam format adalah nomor halaman "
+"dan <code>{total}</code> adalah jumlah halaman, jadi <code>Halaman {n} dari "
+"{total}</code> melakukan persis seperti tampaknya."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>Arrange ▸ Pages per Sheet…</b> tiles several pages onto one, in reading "
+"order — the printer's <i>N-up</i>. The sheet turns sideways when that lets "
+"the pages come out larger, which is why two-up gives a landscape sheet and "
+"four-up does not."
+msgstr ""
+"<b>Tata ▸ Halaman per Lembar…</b> menyusun beberapa halaman ke satu lembar, "
+"dalam urutan baca — <i>N-up</i>-nya percetakan. Lembar diputar ke samping "
+"bila dengan begitu halaman jadi lebih besar, itulah sebabnya dua per lembar "
+"memberi lembar mendatar sedangkan empat per lembar tidak."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Saving a document"
+msgstr "Menyimpan dokumen"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>Optimize for the web</b> in Preferences lays the saved file out so a "
+"browser can show the first page before the rest has arrived. <b>Compress</b>"
+" repacks its streams and objects; how much that saves depends entirely on "
+"the file, and one full of photographs will barely move."
+msgstr ""
+"<b>Optimalkan untuk web</b> di Preferensi menata berkas tersimpan agar "
+"peramban dapat menampilkan halaman pertama sebelum sisanya tiba. "
+"<b>Mampatkan</b> mengemas ulang aliran dan objeknya; berapa banyak yang "
+"dihemat sepenuhnya bergantung pada berkasnya, dan berkas yang penuh foto "
+"nyaris tak bergeming."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>File ▸ Remove All Metadata</b> is a switch, like Password: turn it on and"
+" the next save writes a document with no title, no author and no record of "
+"what produced it. Edit Properties greys out while it is on, because there "
+"would be nothing to edit."
+msgstr ""
+"<b>Berkas ▸ Hapus Semua Metadata</b> adalah sakelar, sama seperti Kata "
+"Sandi: nyalakan dan penyimpanan berikutnya menulis dokumen tanpa judul, "
+"tanpa penulis, dan tanpa catatan tentang apa yang menghasilkannya. Sunting "
+"Properti menjadi kelabu selama ia menyala, karena tak akan ada yang bisa "
+"disunting."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>File ▸ Viewer Preferences…</b> is how the saved document asks a reader to"
+" open it — with the bookmarks showing, two pages at a time, and so on. "
+"Readers are free to ignore all of it. The settings are read from the file "
+"you opened, so a document that already had them keeps them."
+msgstr ""
+"<b>Berkas ▸ Preferensi Penampil…</b> adalah cara dokumen tersimpan meminta "
+"pembacanya membuka ia — dengan penanda tampak, dua halaman sekali, dan "
+"seterusnya. Penampil bebas mengabaikan semuanya. Pengaturannya dibaca dari "
+"berkas yang Anda buka, jadi dokumen yang sudah memilikinya akan tetap "
+"membawanya."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>File ▸ Repair Document…</b> rebuilds a damaged PDF. It works on a file "
+"you pick rather than the one on screen, because the file worth repairing is "
+"usually one this application cannot open properly either. It reports what it"
+" found before writing anything."
+msgstr ""
+"<b>Berkas ▸ Perbaiki Dokumen…</b> membangun ulang PDF yang rusak. Ia bekerja"
+" pada berkas yang Anda pilih alih-alih yang di layar, karena berkas yang "
+"layak diperbaiki biasanya justru yang tak bisa dibuka dengan benar oleh "
+"aplikasi ini pula. Ia melaporkan apa yang ditemukan sebelum menulis apa pun."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Mouse"
+msgstr "Tetikus"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "<b>Ctrl + scroll</b> — zoom"
+msgstr "<b>Ctrl + gulir</b> — zoom"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "<b>Shift + scroll</b> — scroll sideways"
+msgstr "<b>Shift + gulir</b> — gulir ke samping"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "<b>Alt + scroll</b> — scroll exactly one row"
+msgstr "<b>Alt + gulir</b> — gulir tepat satu baris"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "<b>Double-click</b> — fit the page to the window, and back"
+msgstr "<b>Klik ganda</b> — paskan halaman ke jendela, lalu kembali"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>Click and drag</b> on empty space — rubber-band select; keep scrolling to"
+" extend it"
+msgstr ""
+"<b>Klik dan seret</b> pada ruang kosong — pemilihan kotak; teruskan "
+"menggulir untuk memperluasnya"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Moving around the grid"
+msgstr "Berpindah di dalam kisi"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>Arrow keys</b> move between pages, <b>Page Up</b> and <b>Page Down</b> "
+"move a screenful at a time, and <b>Home</b> and <b>End</b> jump to the first"
+" and last page. Hold <b>Shift</b> with any of them to extend the selection."
+msgstr ""
+"<b>Tombol panah</b> berpindah antar halaman, <b>Page Up</b> dan <b>Page "
+"Down</b> berpindah satu layar sekali, dan <b>Home</b> serta <b>End</b> "
+"melompat ke halaman pertama dan terakhir. Tahan <b>Shift</b> bersama salah "
+"satunya untuk memperluas pilihan."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>Fit One Page</b> (F) scales so a whole page fits in the window and shows "
+"one page per row — use it to work on a single page at a time. <b>Fit "
+"Multiple Pages</b> (Shift+M) uses the same scale but lets as many pages sit "
+"side by side as the window takes. <b>Fit Width</b> (Shift+F) fills the "
+"window across instead, which shows the page wider but taller than the "
+"window. Double-clicking the grid toggles Fit One Page on and off."
+msgstr ""
+"<b>Paskan Satu Halaman</b> (F) menyekala agar satu halaman utuh muat di "
+"jendela dan menampilkan satu halaman per baris — pakailah untuk mengerjakan "
+"satu halaman sekali. <b>Paskan Banyak Halaman</b> (Shift+M) memakai skala "
+"yang sama tetapi membiarkan sebanyak mungkin halaman berjajar sesuai muatan "
+"jendela. <b>Paskan Lebar</b> (Shift+F) sebagai gantinya memenuhi jendela "
+"secara melintang, yang membuat halaman lebih lebar tetapi lebih tinggi "
+"daripada jendela. Klik ganda pada kisi menyalakan dan mematikan Paskan Satu "
+"Halaman."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"With pages selected, all three fit the selection rather than the whole "
+"document."
+msgstr ""
+"Bila ada halaman terpilih, ketiganya memaskan pilihan alih-alih seluruh "
+"dokumen."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Finding text"
+msgstr "Mencari teks"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>Find</b> selects the pages that contain the phrase and boxes each hit on "
+"the thumbnail, so you can see where on the page it is. The boxes clear as "
+"soon as you change the document, since the pages they were drawn for may "
+"have moved."
+msgstr ""
+"<b>Cari</b> memilih halaman yang memuat frasa itu dan mengotaki tiap "
+"kecocokan pada miniaturnya, sehingga Anda bisa melihat di mana letaknya pada"
+" halaman. Kotaknya hilang begitu Anda mengubah dokumen, sebab halaman yang "
+"menjadi acuan gambarnya bisa saja sudah berpindah."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Every shortcut can be changed in <b>Edit ▸ Preferences ▸ Keyboard "
+"shortcuts</b>, where they are listed under the menu each one belongs to."
+msgstr ""
+"Setiap pintasan dapat diubah di <b>Sunting ▸ Preferensi ▸ Pintasan papan "
+"tik</b>, tempat semuanya didaftar di bawah menu tempat masing-masing "
+"bernaung."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Passwords"
+msgstr "Kata sandi"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Opening an encrypted document asks for its password, which is remembered "
+"until the document is closed."
+msgstr ""
+"Membuka dokumen terenkripsi akan menanyakan kata sandinya, yang diingat "
+"sampai dokumen ditutup."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>File ▸ Password</b> encrypts the document when it is next saved. It is a "
+"switch: turn it on and you are asked for a password, turn it off and the "
+"next save is unencrypted. The password is never written to your settings, so"
+" it applies to this session only — and if you forget it, the file cannot be "
+"recovered."
+msgstr ""
+"<b>Berkas ▸ Kata Sandi</b> mengenkripsi dokumen pada penyimpanan berikutnya."
+" Ia sebuah sakelar: nyalakan dan Anda dimintai kata sandi, matikan dan "
+"penyimpanan berikutnya tanpa enkripsi. Kata sandi tidak pernah ditulis ke "
+"pengaturan Anda, jadi ia hanya berlaku untuk sesi ini — dan bila Anda lupa, "
+"berkasnya tidak dapat dipulihkan."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Files"
+msgstr "Berkas"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Settings are stored by Qt in the per-user location for this platform; on "
+"Windows that is the registry under "
+"<code>HKEY_CURRENT_USER\\Software\\pdfarranger</code>. There is no "
+"configuration file to edit by hand."
+msgstr ""
+"Pengaturan disimpan oleh Qt di lokasi per pengguna untuk platform ini; di "
+"Windows itu adalah registri di bawah "
+"<code>HKEY_CURRENT_USER\\Software\\pdfarranger</code>. Tidak ada berkas "
+"konfigurasi untuk disunting dengan tangan."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Credits"
+msgstr "Penghargaan"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"PDF Arranger Qt is a PySide6 port of PDF Arranger, which is itself derived "
+"from PDF-Shuffler. It is a separate project and not affiliated with either."
+msgstr ""
+"PDF Arranger Qt adalah pemorporan PySide6 dari PDF Arranger, yang sendirinya"
+" diturunkan dari PDF-Shuffler. Ia proyek terpisah dan tidak berafiliasi "
+"dengan keduanya."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Original authors: Konstantinos Poulios, Jerome Robert."
+msgstr "Penulis asli: Konstantinos Poulios, Jerome Robert."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Licensed under the GNU General Public License version 3 or later."
+msgstr "Dilisensikan di bawah GNU General Public License versi 3 atau setelahnya."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+msgid "User Guide"
+msgstr "Panduan Pengguna"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Insert pages from another PDF or an image"
+msgstr "Sisipkan halaman dari PDF lain atau dari sebuah gambar"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Needs pages copied from a document"
+msgstr "Memerlukan halaman yang disalin dari sebuah dokumen"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_New Window"
+msgstr "Je_ndela Baru"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Open"
+msgstr "Buk_a"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Import"
+msgstr "_Impor"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Save"
+msgstr "_Simpan"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Save _As…"
+msgstr "Simpan _Sebagai…"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "E_xport Selection to a Single File…"
+msgstr "_Ekspor Terpilih ke Sebuah Berkas Tunggal…"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Close"
+msgstr "_Tutup"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Quit"
+msgstr "Kelua_r"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Undo"
+msgstr "_Batalkan Tindakan Terakhir"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Redo"
+msgstr "_Mengulangi Tindakan Terakhir"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Select _All"
+msgstr "Pilih _Semua"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Invert Selection"
+msgstr "Pi_lih Sebaliknya"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Delete"
+msgstr "_Hapus"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Duplicate"
+msgstr "_Duplikat"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Rotate _Left"
+msgstr "Rotasi ke _Kiri"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Rotate Right"
+msgstr "Putar ke K_anan"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Zoom _In"
+msgstr "Zoom _Perbesar"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Zoom _Out"
+msgstr "Zoom _Perkecil"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Reset Zoom"
+msgstr "Atur _Ulang Zoom"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Project on GitHub"
+msgstr "Proyek di GitHub"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_About"
+msgstr "Tent_ang"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Cu_t"
+msgstr "_Potong"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Copy"
+msgstr "_Salin"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Paste _After"
+msgstr "Tempel _Setelah"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Paste _Before"
+msgstr "Tempel _Sebelum"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Paste As _Odd Pages"
+msgstr "Tempel Sebagai Halaman _Ganjil"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Paste As _Even Pages"
+msgstr "Tempel Sebagai Halaman _Genap"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Deselect All"
+msgstr "_Batal Pilih Semua"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Select _Odd Pages"
+msgstr "Pilih Halaman _Ganjil"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Select _Even Pages"
+msgstr "Pilih Halaman _Genap"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "All From _Same File"
+msgstr "Semua dari Berkas yang _Sama"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Same Page _Format"
+msgstr "_Format Halaman yang Sama"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Move to Start"
+msgstr "Pindah ke Awal"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Move to End"
+msgstr "Pindah ke Akhir"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Move to Page…"
+msgstr "Pindah ke Halaman…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Reverse Order"
+msgstr "Balik Urutan"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Swap Odd/Even"
+msgstr "Tukar Ganjil/Genap"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Split (unimposition)"
+msgstr "_Pisah (urai imposisi)"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Export _All Pages to Individual Files…"
+msgstr "Ekspor Semu_a Halaman menjadi Masing-masing Berkas…"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Export Selection to _Individual Files…"
+msgstr "Ekspor Terpilih ke _Masing-masing Berkas…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Crop Margins…"
+msgstr "Pangkas _Margin…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Hide Margins…"
+msgstr "Sem_bunyikan Margin…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Page Size…"
+msgstr "U_kuran Halaman…"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Insert Blan_k Page…"
+msgstr "Sisipkan Halaman _Kosong…"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Split Pages…"
+msgstr "Pe_cah Halaman…"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Merge Pages…"
+msgstr "_Gabungkan Halaman…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Generate (imposition)"
+msgstr "_Hasilkan (imposisi)"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Pages per S_heet…"
+msgstr "Halaman per Lem_bar…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Add Page N_umbers…"
+msgstr "Tambah N_omor Halaman…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Add _Watermark…"
+msgstr "Tambah Tanda _Air…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Pass_word"
+msgstr "Kata _Sandi"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Edit _Properties"
+msgstr "Sunting Prop_erti"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Viewer Preferences…"
+msgstr "Preferensi Penam_pil…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Remove All _Metadata"
+msgstr "Hapus Semua _Metadata…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Repair Document…"
+msgstr "_Perbaiki Dokumen…"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Crop White Borders"
+msgstr "Potong Tepian Berwarna Putih"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Export Selection to _PNG Images…"
+msgstr "Ekspor Pilihan ke Gambar _PNG…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Export Selection to _JPG Images…"
+msgstr "Ekspor Pilihan ke Gambar _JPG…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Export Selection to _Rasterized PDF (png)…"
+msgstr "Ekspor Pilihan ke PDF _Raster (png)…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Export Selection to _Rasterized PDF (jpg)…"
+msgstr "Ekspor Pilihan ke PDF Raster (_jpg)…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Copy Text"
+msgstr "Salin Teks"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Copy _Image"
+msgstr "Salin _Gambar"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Explode into Images"
+msgstr "_Uraikan menjadi Gambar"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Print…"
+msgstr "_Cetak…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Find…"
+msgstr "_Cari…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Find Next"
+msgstr "Cari Berikutnya"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Find Previous"
+msgstr "Cari Sebelumnya"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Find All"
+msgstr "Cari Semua"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Select _Range"
+msgstr "Pilih _Rentang"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Paste As O_verlay…"
+msgstr "Tempel Sebagai O_verlay…"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Paste As _Underlay…"
+msgstr "Tempel Sebagai _Underlay…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Fit _One Page"
+msgstr "Paskan _Satu Halaman"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Fit _Multiple Pages"
+msgstr "Paskan _Banyak Halaman"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Fit Width"
+msgstr "Paskan Lebar"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Arrange Mode"
+msgstr "Mode Penataan"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Facing Pages"
+msgstr "Halaman Berhadapan"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Continuous Scroll"
+msgstr "Guliran Sinambung"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Next Page"
+msgstr "Halaman Berikutnya"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Previous Page"
+msgstr "Halaman Sebelumnya"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "First Page"
+msgstr "Halaman Pertama"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Last Page"
+msgstr "Halaman Terakhir"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Go to Page…"
+msgstr "Ke Halaman…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Fullscreen"
+msgstr "Layar Penuh"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_File"
+msgstr "_Berkas"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Open Recent"
+msgstr "Buka Baru-baru Ini"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "E_xport"
+msgstr "E_kspor"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Edit"
+msgstr "_Sunting"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Past_e Special"
+msgstr "Temp_el Spesial"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Page"
+msgstr "_Halaman"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Extract"
+msgstr "_Ekstrak"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Arrange"
+msgstr "Tata"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Select"
+msgstr "Pili_h"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Booklet"
+msgstr "_Buklet"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_View"
+msgstr "_Lihat"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Help"
+msgstr "Ba_ntuan"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Read"
+msgstr "Baca"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "_Undo %s"
+msgstr "_Batalkan %s"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "_Redo %s"
+msgstr "_Ulangi %s"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "%d page selected"
+msgid_plural "%d pages selected"
+msgstr[0] "%d halaman dipilih"
+msgstr[1] "%d halaman dipilih"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Untitled"
+msgstr "Tanpa judul"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Password required"
+msgstr "Kata Sandi diperlukan"
+
+#: pdfarranger_qt/mainwindow.py
+#, python-brace-format
+msgid "The document “{}” is locked and requires a password before it can be opened."
+msgstr "Dokumen “{}” terkunci dan memerlukan password sebelum bisa dibuka."
+
+#: pdfarranger_qt/mainwindow.py
+msgid "The password will be remembered until you close PDF Arranger."
+msgstr "Password akan diingat sampai Anda menutup PDF Arranger."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Importing…"
+msgstr "Mengimpor…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Cancel"
+msgstr "Batal"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Import"
+msgstr "Impor"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "No recent files"
+msgstr "Tidak ada berkas baru-baru ini"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Clear Menu"
+msgstr "Bersihkan Menu"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "This file is no longer there:"
+msgstr "Berkas ini tidak lagi ada di sana:"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "This document cannot be read."
+msgstr "Dokumen ini tidak dapat dibaca."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Go to Page"
+msgstr "Ke Halaman"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Page number:"
+msgstr "Nomor halaman:"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "No document"
+msgstr "Tidak ada dokumen"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "%d page"
+msgid_plural "%d pages"
+msgstr[0] "%d halaman"
+msgstr[1] "%d halaman"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-brace-format
+msgid "of {}"
+msgstr "dari {}"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "The document will not be encrypted."
+msgstr "Dokumen tidak akan dienkripsi."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "The document will be encrypted when it is saved."
+msgstr "Dokumen akan dienkripsi saat disimpan."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Could not open a new window."
+msgstr "Tidak dapat membuka jendela baru."
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Open"
+msgstr "Buka"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Save As…"
+msgstr "Simpan Sebagai…"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Export…"
+msgstr "Ekspor…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "There is nothing to save."
+msgstr "Tidak ada yang perlu disimpan."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Could not save:"
+msgstr "Tidak dapat menyimpan:"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Saved"
+msgstr "Tersimpan"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "This document has unsaved changes."
+msgstr "Dokumen ini punya perubahan yang belum disimpan."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Save before continuing?"
+msgstr "Simpan sebelum melanjutkan?"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py pdfarranger_qt/reader.py
+msgid "Delete"
+msgstr "Hapus"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Cut"
+msgstr "Potong"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Paste"
+msgstr "Tempel"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Move to Page"
+msgstr "Pindah ke Halaman"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Move"
+msgstr "Pindah"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "The page selection is not contiguous. Cannot unimpose."
+msgstr "Pilihan halaman tidak berurutan. Tidak dapat mengurai imposisi."
+
+#: pdfarranger_qt/mainwindow.py
+msgid "All pages must have the same size."
+msgstr "Semua halaman harus memiliki ukuran yang sama"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Split Booklet"
+msgstr "Pisah Buklet"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Overwrite existing files?"
+msgstr "Timpa berkas yang sudah ada?"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Blank page"
+msgstr "Halaman kosong"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Copy the pages you want to merge in first."
+msgstr "Salin dulu halaman yang ingin Anda gabungkan."
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Generate Booklet"
+msgstr "Membuat Buku Saku"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "The page selection is not contiguous."
+msgstr "Pilihan halaman tidak berurutan."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "All metadata will be removed when the document is saved."
+msgstr "Semua metadata akan dihapus saat dokumen disimpan."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Metadata will be kept."
+msgstr "Metadata akan dipertahankan."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Repair Document…"
+msgstr "Perbaiki Dokumen…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Write a rebuilt copy?"
+msgstr "Tulis salinan hasil bangun ulang?"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Save Repaired Document"
+msgstr "Simpan Dokumen yang Diperbaiki"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "%d image written"
+msgid_plural "%d images written"
+msgstr[0] "%d gambar ditulis"
+msgstr[1] "%d gambar ditulis"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "The page has no text."
+msgstr "Halaman ini tidak punya teks."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Copied"
+msgstr "Tersalin"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "The page has no image."
+msgstr "Halaman ini tidak punya gambar."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "The page has several images. Use \"Explode into Images\" first.\""
+msgstr "Halaman ini punya beberapa gambar. Pakai dulu \"Uraikan menjadi Gambar\".\""
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Explode into Images"
+msgstr "Uraikan menjadi Gambar"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Printing…"
+msgstr "Mencetak"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Finishing…"
+msgstr "Menyelesaikan…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "The printer driver is processing the job."
+msgstr "Penggerak pencetak sedang memproses tugas."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "%d page printed"
+msgid_plural "%d pages printed"
+msgstr[0] "%d halaman dicetak"
+msgstr[1] "%d halaman dicetak"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Find"
+msgstr "Cari"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "%d page matches"
+msgid_plural "%d pages match"
+msgstr[0] "%d halaman cocok"
+msgstr[1] "%d halaman cocok"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Duplicate"
+msgstr "Duplikat"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Rotate"
+msgstr "Putar"
+
+#: pdfarranger_qt/metadata.py
+msgid "Title"
+msgstr "Judul"
+
+#: pdfarranger_qt/metadata.py
+msgid "Subject"
+msgstr "Subjek"
+
+#: pdfarranger_qt/metadata.py
+msgid "Keywords"
+msgstr "Kata kunci"
+
+#: pdfarranger_qt/metadata.py
+msgid "Producer"
+msgstr "Produsen"
+
+#: pdfarranger_qt/metadata.py
+msgid "Creator"
+msgstr "Pencipta"
+
+#: pdfarranger_qt/metadata.py
+msgid "Creator tool"
+msgstr "Alat pencipta"
+
+#: pdfarranger_qt/metadata.py
+msgid "Created"
+msgstr "Dibuat"
+
+#: pdfarranger_qt/metadata.py
+msgid "Modified"
+msgstr "Diubah"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/nup.py
+msgid "2 pages per sheet"
+msgstr "2 halaman per lembar"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/nup.py
+msgid "4 pages per sheet"
+msgstr "4 halaman per lembar"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/nup.py
+msgid "6 pages per sheet"
+msgstr "6 halaman per lembar"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/nup.py
+msgid "8 pages per sheet"
+msgstr "8 halaman per lembar"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/nup.py
+msgid "9 pages per sheet"
+msgstr "9 halaman per lembar"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/nup.py
+msgid "16 pages per sheet"
+msgstr "16 halaman per lembar"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Bookmark Colour"
+msgstr "Warna Penanda"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Add Bookmark Here"
+msgstr "Tambah Penanda di Sini"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Add Child Bookmark Here"
+msgstr "Tambah Penanda Anak di Sini"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Re-home to This Page"
+msgstr "Arahkan Ulang ke Halaman Ini"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Rename"
+msgstr "Ubah Nama"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Style"
+msgstr "Gaya"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Colour…"
+msgstr "Warna…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Default Colour"
+msgstr "Warna Baku"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Expand All Children"
+msgstr "Bentangkan Semua Anak"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Collapse All Children"
+msgstr "Lipat Semua Anak"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Delete with Children"
+msgstr "Hapus beserta Anak"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Delete Dangling Bookmarks"
+msgstr "Hapus Penanda Menggantung"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Nothing to read."
+msgstr "Tidak ada yang bisa dibaca."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+#, python-brace-format
+msgid "Page {} of {}"
+msgstr "Halaman {} dari {}"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Move Bookmark"
+msgstr "Pindahkan Penanda"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "This bookmark's page is no longer in the document"
+msgstr "Halaman penanda ini tidak lagi ada di dokumen"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "This bookmark does not point at a page"
+msgstr "Penanda ini tidak menunjuk ke halaman mana pun"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Rename Bookmark"
+msgstr "Ubah Nama Penanda"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Add Child Bookmark"
+msgstr "Tambah Penanda Anak"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Add Bookmark"
+msgstr "Tambah Penanda"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Bookmark Style"
+msgstr "Gaya Penanda"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Re-home Bookmark"
+msgstr "Arahkan Ulang Penanda"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Delete Bookmark"
+msgstr "Hapus Penanda"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Delete Bookmark and Children"
+msgstr "Hapus Penanda beserta Anak"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/repair.py
+msgid "This file cannot be read, even with recovery."
+msgstr "Berkas ini tidak dapat dibaca, bahkan dengan pemulihan."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/repair.py
+msgid "No damage found; the file reads cleanly."
+msgstr "Tidak ditemukan kerusakan; berkas terbaca dengan bersih."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/repair.py
+msgid "Damaged, and recoverable."
+msgstr "Rusak, dan dapat dipulihkan."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/repair.py
+msgid "The file cannot be read."
+msgstr "Berkas tidak dapat dibaca."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/stamp.py
+msgid "Top left"
+msgstr "Kiri atas"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/stamp.py
+msgid "Top centre"
+msgstr "Tengah atas"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/stamp.py
+msgid "Top right"
+msgstr "Kanan atas"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/stamp.py
+msgid "Bottom left"
+msgstr "Kiri bawah"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/stamp.py
+msgid "Bottom centre"
+msgstr "Tengah bawah"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/stamp.py
+msgid "Bottom right"
+msgstr "Kanan bawah"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/viewer.py
+msgid "Viewer default"
+msgstr "Baku penampil"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/viewer.py
+msgid "No side panel"
+msgstr "Tanpa panel samping"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/viewer.py
+msgid "Bookmarks panel"
+msgstr "Panel penanda"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/viewer.py
+msgid "Page thumbnails"
+msgstr "Miniatur halaman"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/viewer.py
+msgid "Continuous scroll"
+msgstr "Guliran sinambung"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/viewer.py
+msgid "Two pages, odd on the left"
+msgstr "Dua halaman, ganjil di kiri"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/viewer.py
+msgid "Two pages, odd on the right"
+msgstr "Dua halaman, ganjil di kanan"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/viewer.py
+msgid "Facing pages, odd on the left"
+msgstr "Halaman berhadapan, ganjil di kiri"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/viewer.py
+msgid "Facing pages, odd on the right"
+msgstr "Halaman berhadapan, ganjil di kanan"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/viewer.py
+msgid "Hide the viewer's toolbar"
+msgstr "Sembunyikan bilah alat penampil"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/viewer.py
+msgid "Hide the viewer's menu bar"
+msgstr "Sembunyikan bilah menu penampil"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/viewer.py
+msgid "Centre the window on screen"
+msgstr "Tengahkan jendela di layar"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/viewer.py
+msgid "Show the title rather than the filename"
+msgstr "Tampilkan judul alih-alih nama berkas"
+
+#~ msgid "#Col"
+#~ msgstr "#Kolom"
+
+#~ msgid "#Row"
+#~ msgstr "#Baris"
+
+#~ msgid "%"
+#~ msgstr "%"
+
+#~ msgid "% of height"
+#~ msgstr "% dari tinggi"
+
+#~ msgid "% of width"
+#~ msgstr "% dari lebar"
+
+#~ msgid "%s is a tool for rearranging and modifying PDF files."
+#~ msgstr "%s adalah alat untuk menyusun dan memodifikasi file PDF"
+
+#~ msgid "(Libhandy missing)"
+#~ msgstr "(Libhandy tidak ditemukan)"
+
+#~ msgid "(Requires restart)"
+#~ msgstr "(Mulai ulang diperlukan)"
+
+#~ msgid "A file named \"%s\" already exists. Do you want to replace it?"
+#~ msgstr "File dengan nama \"%s\" sudah ada. Apakah Anda ingin menggantinya?"
+
+#~ msgid "All files"
+#~ msgstr "Semua File"
+
+#~ msgid "All supported files"
+#~ msgstr "Semua file yang didukung"
+
+#~ msgid "Bottom to Top"
+#~ msgstr "Bawah ke Atas"
+
+#~ msgid "Clipboard image"
+#~ msgstr "Gambar papan klip"
+
+#~ msgid "Copy _Text"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Cropping/hiding does not remove any content"
+#~ " from the PDF file, it only hides"
+#~ " it."
+#~ msgstr ""
+
+#~ msgid "Despite the warnings the document(s) should have no visible issues."
+#~ msgstr ""
+#~ "Meskipun ada peringatan, dokumen seharusnya "
+#~ "tidak memiliki masalah yang terlihat."
+
+#~ msgid "Discard changes and close?"
+#~ msgstr "Buang perubahan dan tutup?"
+
+#~ msgid "Discard changes and quit?"
+#~ msgstr "Buang perubahan dan keluar?"
+
+#~ msgid "Do not show this dialog again."
+#~ msgstr "Jangan munculkan dialog ini lagi."
+
+#~ msgid "Do_n’t Save"
+#~ msgstr "Ja_ngan Simpan"
+
+#~ msgid "Don't show warnings when saving again."
+#~ msgstr "Jangan tampilkan peringatan lagi saat menyimpan. "
+
+#~ msgid "Dupl_icate"
+#~ msgstr "Gan_dakan"
+
+#~ msgid "Equal column width"
+#~ msgstr "Lebar kolom yang sama"
+
+#~ msgid "Equal row height"
+#~ msgstr "Lebar baris yang sama"
+
+#~ msgid "Exploding into images…"
+#~ msgstr ""
+
+#~ msgid "File(s) to open"
+#~ msgstr "File yang akan dibuka"
+
+#~ msgid "Fit to Full Page"
+#~ msgstr ""
+
+#~ msgid "Fit to Printable Area"
+#~ msgstr ""
+
+#~ msgid "For more info see"
+#~ msgstr ""
+
+#~ msgid "For more options see:"
+#~ msgstr "Untuk opsi lebih lanjut, lihat:"
+
+#~ msgid "Full_screen"
+#~ msgstr "Layar_penuh"
+
+#~ msgid "GNU General Public License (GPL) Version 3."
+#~ msgstr "Lisensi Publik Umum GNU (GNU General Public License/GPL) Versi 3."
+
+#~ msgid "Height in %"
+#~ msgstr "Tinggi dalam %"
+
+#~ msgid "Horizontal offset"
+#~ msgstr "Offset horizontal"
+
+#~ msgid "Img2pdf missing."
+#~ msgstr ""
+
+#~ msgid "Import…"
+#~ msgstr "Impor…"
+
+#~ msgid "Invalid date format. Input discarded."
+#~ msgstr "Format tanggal tidak valid. Input dibatalkan."
+
+#~ msgid "It uses libqpdf %s, pikepdf %s, GTK %s and Python %s."
+#~ msgstr "Ini menggunakan libqpdf %s, pikepdf %s, GTK %s, dan Python %s."
+
+#~ msgid "Left to Right"
+#~ msgstr "Kiri ke Kanan"
+
+#~ msgid "Main Menu"
+#~ msgstr "Menu Utama"
+
+#~ msgid "Maintainers and contributors"
+#~ msgstr "Maintainers and contributors"
+
+#~ msgid "Margin"
+#~ msgstr "Margin"
+
+#~ msgid "Merged page size:"
+#~ msgstr "Ukuran halaman yang digabungkan: "
+
+#~ msgid "Non-uniform page size - using max size"
+#~ msgstr "Ukuran halaman yang tidak seragam - menggunakan ukuran maksimum."
+
+#~ msgid "None"
+#~ msgstr ""
+
+#~ msgid "Note"
+#~ msgstr ""
+
+#~ msgid "Note the limitations:"
+#~ msgstr ""
+
+#~ msgid "Open…"
+#~ msgstr "Buka…"
+
+#~ msgid "Outlines and links can be preserved only in certain cases."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "PDF Arranger is a small python-gtk"
+#~ " application, which helps the user to"
+#~ " merge or split pdf documents and "
+#~ "rotate, crop and rearrange their pages "
+#~ "using an interactive and intuitive "
+#~ "graphical interface. It is a frontend "
+#~ "for pikepdf."
+#~ msgstr ""
+#~ "PDF Arranger adalah aplikasi Python-GTK "
+#~ "kecil yang membantu pengguna untuk "
+#~ "menggabungkan atau membagi dokumen PDF "
+#~ "serta memutar, memotong, dan menyusun ulang"
+#~ " halaman-halaman PDF menggunakan antarmuka "
+#~ "grafis interaktif dan intuitif. Ini adalah"
+#~ " antarmuka pengguna untuk pikepdf."
+
+#~ msgid "PDF document is damaged"
+#~ msgstr "Dokumen PDF rusak"
+
+#~ msgid "PDF files"
+#~ msgstr "File PDF"
+
+#~ msgid "Page Handling"
+#~ msgstr ""
+
+#~ msgid "Page Order"
+#~ msgstr "Susunan Halaman"
+
+#~ msgid "Page Size:"
+#~ msgstr "Ukuran Halaman:"
+
+#~ msgid "Pasted data not valid. Aborting paste."
+#~ msgstr "Data yang ditempelkan tidak valid. Membatalkan tempel."
+
+#~ msgid "Pre_ferences"
+#~ msgstr "Pre_ferensi"
+
+#~ msgid "Print the version of PDF Arranger and exit"
+#~ msgstr "Cetak versi PDF Arranger dan keluar"
+
+#~ msgid "Property"
+#~ msgstr "Properti"
+
+#~ msgid "Re_verse Order"
+#~ msgstr "Ba_likkan Urutan"
+
+#~ msgid "Rendering Preview…"
+#~ msgstr "Pratinjau Rendering…"
+
+#~ msgid "Rendering…"
+#~ msgstr "Rendering…"
+
+#~ msgid "Replace"
+#~ msgstr "Ganti"
+
+#~ msgid "Right to Left"
+#~ msgstr "Kanan ke Kiri"
+
+#~ msgid "Rotate Left"
+#~ msgstr "Rotasi ke Kiri"
+
+#~ msgid "Rotate Right"
+#~ msgstr "Rotasi ke Kanan"
+
+#~ msgid "Save"
+#~ msgstr "Simpan"
+
+#~ msgid "Save As"
+#~ msgstr "Simpan Sebagai"
+
+#~ msgid "Save changes before closing?"
+#~ msgstr "Simpan perubahan sebelum menutup?"
+
+#~ msgid "Save changes before quitting?"
+#~ msgstr "Simpan perubahan sebelum keluar?"
+
+#~ msgid "Save changes to “{}” before closing?"
+#~ msgstr "Simpan perubahan ke “{}” sebelum menutup?"
+
+#~ msgid "Save changes to “{}” before quitting?"
+#~ msgstr "Simpan perubahan ke “{}” sebelum keluar?"
+
+#~ msgid "Saving produced some warnings"
+#~ msgstr "Menyimpan dapat menghasilkan beberapa peringatan"
+
+#~ msgid "Saving…"
+#~ msgstr "Menyimpan…"
+
+#~ msgid "Scale mode:"
+#~ msgstr ""
+
+#~ msgid "Selected pages: "
+#~ msgstr "Halaman yang dipilih: "
+
+#~ msgid "Show values"
+#~ msgstr ""
+
+#~ msgid "Supported image files"
+#~ msgstr "File gambar yang didukung"
+
+#~ msgid "Top to Bottom"
+#~ msgstr "Atas ke Bawah"
+
+#~ msgid "User Manual"
+#~ msgstr ""
+
+#~ msgid "Value"
+#~ msgstr "Nilai"
+
+#~ msgid "Vertical offset"
+#~ msgstr "Offset vertikal"
+
+#~ msgid "Width in %"
+#~ msgstr "Lebar dalam %"
+
+#~ msgid "Your changes will be lost if you don’t save them."
+#~ msgstr "Perubahan Anda akan hilang jika Anda tidak menyimpannya."
+
+#~ msgid "Zoom In"
+#~ msgstr "Zoom Perbesar"
+
+#~ msgid "Zoom Out"
+#~ msgstr "Zoom Perkecil"
+
+#~ msgid "Zoom _Fit"
+#~ msgstr "_Sesuaikan Zoom"
+
+#~ msgid "_Apply"
+#~ msgstr ""
+
+#~ msgid "_Cancel"
+#~ msgstr "_Batalkan"
+
+#~ msgid "_OK"
+#~ msgstr "_OKE"
+
+#~ msgid "_Revert"
+#~ msgstr ""
+
+#~ msgid "page"
+#~ msgstr "halaman"
+
+#~ msgid "untitled"
+#~ msgstr "tanpa judul"
+
