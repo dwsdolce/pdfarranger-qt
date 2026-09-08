@@ -141,6 +141,40 @@ and is one object. Re-encoding it on each visit produced a worst-pixel
 difference of **23/255** against a single pass — visible banding in flat
 areas, for eight times the work and no fewer bytes.
 
+### Where the bytes actually are
+
+Acrobat's *Audit Space Usage* question, asked of the 1,590-page handbook
+before and after compressing it. Every stream counted once by object number,
+against the category its own dictionary declares:
+
+| | as published | compressed |
+|---|---|---|
+| page content streams | 96.6 MB — 37.8% | **81.1 MB — 57.2%** |
+| images | 150.2 MB — 58.7% | 54.1 MB — 38.2% |
+| fonts | 3.9 MB — 1.5% | 3.9 MB — 2.7% |
+| object streams, metadata, forms, other | 4.9 MB | 2.7 MB |
+
+Two things fall out of it, and neither was obvious beforehand.
+
+**Compression moves the problem rather than finishing it.** Images were the
+majority of that book and are now the minority; what remains is 81 MB of page
+content streams, 51 KB a page. That is not text — it is the schematics. A
+technical handbook is full of circuit diagrams drawn as vectors, and vector
+content is the one thing a page arranger has no business re-encoding. So the
+honest answer for this document, having taken 41.8% off it, is that there is
+very little left to take.
+
+**The cheap half is not always cheap.** Recompressing streams took content
+from 96.6 MB to 81.1 MB — 15.5 MB, on a file where the measurement that opens
+this document predicted almost nothing. That book was carrying a great deal of
+loosely compressed vector data, which is exactly the case the option was
+written for and exactly the case that never shows up on a scan.
+
+This is also the argument for the report being part of the feature rather than
+a nicety. "Your 8 MB is 7.9 MB of JPEG" and "your 151 MB is 81 MB of vector
+drawings" are the same question answered, and only one of them means *run this
+again with a lower setting*.
+
 ### What a pass costs
 
 Eight pages at 300 ppi, halved and re-encoded, by resampling method:
@@ -294,8 +328,11 @@ images and leaving most of the document alone.
   wrong for the content — and the same document holds thousands of 1036×4
   rules where JPEG turns 29 bytes into 759.
 
-Together they take the first 400 pages of that book from 17.7 MB of images to
-5.7 MB, **68% smaller**, in six seconds.
+Together, on the whole book: **34,390 images, 141.4 MB down to 45.5 MB, 68%
+smaller** — and the file itself from 260,688 KB to 151,712 KB, **41.8% off**.
+19,759 images were re-encoded and 14,631 left alone, which sums to exactly the
+34,390 the survey counted before any work began. The first 400 pages,
+measured on their own beforehand, predicted 68% to the percentage point.
 
 **Widen before resampling.** Pillow silently forces nearest-neighbour for
 `P` and `1` images, because there is no meaningful average of two palette
