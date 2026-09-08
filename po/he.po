@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-08 18:41+0000\n"
+"POT-Creation-Date: 2026-09-08 19:53+0000\n"
 "PO-Revision-Date: 2023-06-12 11:22+0300\n"
 "Last-Translator: Yaron Shahrabani <sh.yaron@gmail.com>\n"
 "Language: he\n"
@@ -2105,6 +2105,16 @@ msgstr "בעמודים הנבחרים אין תמונות לכיווץ."
 #: pdfarranger_qt/mainwindow.py
 msgid "Compressing…"
 msgstr "מתבצע כיווץ…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Measuring the images…"
+msgstr "התמונות נמדדות…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Writing the compressed document…"
+msgstr "המסמך המכווץ נכתב…"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py

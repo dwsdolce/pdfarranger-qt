@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pdfarranger master\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-08 18:41+0000\n"
+"POT-Creation-Date: 2026-09-08 19:53+0000\n"
 "PO-Revision-Date: 2026-01-04 02:52+0100\n"
 "Last-Translator: Massimo Pissarello <mapi68@gmail.com>\n"
 "Language: it\n"
@@ -2121,6 +2121,16 @@ msgstr "Le pagine selezionate non contengono immagini da comprimere."
 #: pdfarranger_qt/mainwindow.py
 msgid "Compressing…"
 msgstr "Compressione…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Measuring the images…"
+msgstr "Misurazione delle immagini…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Writing the compressed document…"
+msgstr "Scrittura del documento compresso…"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py

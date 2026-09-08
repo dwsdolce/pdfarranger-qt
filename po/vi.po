@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-08 18:41+0000\n"
+"POT-Creation-Date: 2026-09-08 19:53+0000\n"
 "PO-Revision-Date: 2025-12-15 00:59+0700\n"
 "Last-Translator: Loc Huynh <https://github.com/hthienloc>\n"
 "Language: vi\n"
@@ -2105,6 +2105,16 @@ msgstr "Các trang đã chọn không có hình ảnh nào để nén."
 #: pdfarranger_qt/mainwindow.py
 msgid "Compressing…"
 msgstr "Đang nén…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Measuring the images…"
+msgstr "Đang đo các hình ảnh…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Writing the compressed document…"
+msgstr "Đang ghi tài liệu đã nén…"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py

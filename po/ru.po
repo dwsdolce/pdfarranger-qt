@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pdfarranger master\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-08 18:41+0000\n"
+"POT-Creation-Date: 2026-09-08 19:53+0000\n"
 "PO-Revision-Date: 2026-09-04 09:59+0000\n"
 "Last-Translator: Lumenman <28367232+Lumenman@users.noreply.github.com>\n"
 "Language: ru\n"
@@ -1953,6 +1953,16 @@ msgstr "На выбранных страницах нет изображений
 #: pdfarranger_qt/mainwindow.py
 msgid "Compressing…"
 msgstr "Сжатие…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Measuring the images…"
+msgstr "Измерение изображений…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Writing the compressed document…"
+msgstr "Запись сжатого документа…"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py

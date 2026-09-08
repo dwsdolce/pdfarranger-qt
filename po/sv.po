@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  pdfarranger\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-08 18:41+0000\n"
+"POT-Creation-Date: 2026-09-08 19:53+0000\n"
 "PO-Revision-Date: 2026-05-24 07:36+0300\n"
 "Last-Translator: kbengs\n"
 "Language: sv\n"
@@ -2101,6 +2101,16 @@ msgstr "De markerade sidorna innehåller inga bilder att komprimera."
 #: pdfarranger_qt/mainwindow.py
 msgid "Compressing…"
 msgstr "Komprimerar…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Measuring the images…"
+msgstr "Mäter bilderna…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Writing the compressed document…"
+msgstr "Skriver det komprimerade dokumentet…"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py

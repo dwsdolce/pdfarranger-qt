@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  pdfarranger\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-08 18:41+0000\n"
+"POT-Creation-Date: 2026-09-08 19:53+0000\n"
 "PO-Revision-Date: 2024-03-24 19:16+0200\n"
 "Last-Translator: \n"
 "Language: fi\n"
@@ -2143,6 +2143,16 @@ msgstr "Valituilla sivuilla ei ole pakattavia kuvia."
 #: pdfarranger_qt/mainwindow.py
 msgid "Compressing…"
 msgstr "Pakataan…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Measuring the images…"
+msgstr "Mitataan kuvia…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Writing the compressed document…"
+msgstr "Kirjoitetaan pakattua asiakirjaa…"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py

@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PDF-Shuffler 0.7\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-08 18:41+0000\n"
+"POT-Creation-Date: 2026-09-08 19:53+0000\n"
 "PO-Revision-Date: 2025-05-26 10:43+0200\n"
 "Last-Translator: Heimen Stoffels <vistausss@fastmail.com>\n"
 "Language: nl\n"
@@ -2147,6 +2147,16 @@ msgstr "De geselecteerde pagina’s bevatten geen afbeeldingen om te comprimeren
 #: pdfarranger_qt/mainwindow.py
 msgid "Compressing…"
 msgstr "Bezig met comprimeren…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Measuring the images…"
+msgstr "Bezig met meten van afbeeldingen…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Writing the compressed document…"
+msgstr "Bezig met schrijven van het gecomprimeerde document…"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py

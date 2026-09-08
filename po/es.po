@@ -14,7 +14,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  pdfarranger\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-08 18:41+0000\n"
+"POT-Creation-Date: 2026-09-08 19:53+0000\n"
 "PO-Revision-Date: 2026-04-03 11:36-0300\n"
 "Last-Translator: Óscar Fernández Díaz <oscfdezdz@tuta.io>\n"
 "Language: es\n"
@@ -2121,6 +2121,16 @@ msgstr "Las páginas seleccionadas no contienen imágenes que comprimir."
 #: pdfarranger_qt/mainwindow.py
 msgid "Compressing…"
 msgstr "Comprimiendo…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Measuring the images…"
+msgstr "Midiendo las imágenes…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Writing the compressed document…"
+msgstr "Escribiendo el documento comprimido…"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py

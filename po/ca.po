@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-08 18:41+0000\n"
+"POT-Creation-Date: 2026-09-08 19:53+0000\n"
 "PO-Revision-Date: 2022-10-03 23:44+0200\n"
 "Last-Translator: Ícar N. S. <icar.nin@protonmail.com>\n"
 "Language: ca\n"
@@ -2169,6 +2169,16 @@ msgstr "Les pàgines seleccionades no contenen cap imatge per comprimir."
 #: pdfarranger_qt/mainwindow.py
 msgid "Compressing…"
 msgstr "S’estan comprimint…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Measuring the images…"
+msgstr "S’estan mesurant les imatges…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Writing the compressed document…"
+msgstr "S’està escrivint el document comprimit…"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py

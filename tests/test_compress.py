@@ -751,13 +751,32 @@ class TestWhereTheResultLands(QtDocumentTestCase):
         self.balanced(self.pages[:1])
         self.assertIsNone(self.docs.source_if_unmodified(self.pages))
 
-    def test_progress_is_told_how_much_there_is_to_do(self):
+    def test_progress_is_told_which_half_of_the_work_is_running(self):
+        """Both halves report: measuring the images is the slow one on a book."""
         seen = []
         compress.apply(self.pages, self.docs,
                        compress.PRESETS[compress.BALANCED],
-                       progress=lambda done, total: seen.append((done, total)))
-        # Three pages of one document, so one pass over three images.
-        self.assertEqual(seen, [(0, 3), (1, 3), (2, 3)])
+                       progress=lambda phase, done, total:
+                           seen.append((phase, done, total)))
+        scanning = [row for row in seen if row[0] == compress.SCANNING]
+        encoding = [row for row in seen if row[0] == compress.ENCODING]
+        # Three pages to measure, then the three images they hold to encode.
+        self.assertEqual(scanning, [(compress.SCANNING, n, 3) for n in range(3)])
+        self.assertEqual(encoding, [(compress.ENCODING, n, 3) for n in range(3)])
+
+    def test_a_scan_that_is_stopped_stops_before_any_encoding(self):
+        seen = []
+
+        def watch(phase, done, total):
+            seen.append(phase)
+            return phase != compress.SCANNING or done < 1
+
+        result = compress.apply(self.pages, self.docs,
+                                compress.PRESETS[compress.BALANCED],
+                                progress=watch)
+        self.assertTrue(result.stopped)
+        self.assertNotIn(compress.ENCODING, seen)
+        self.assertEqual(result.images, 0)
 
     def test_cancelling_leaves_the_document_alone(self):
         """Half a document compressed is not a state to leave somebody in."""
@@ -767,7 +786,8 @@ class TestWhereTheResultLands(QtDocumentTestCase):
 
         result = compress.apply(self.pages, self.docs,
                                 compress.PRESETS[compress.BALANCED],
-                                progress=lambda done, total: done < 1)
+                                progress=lambda phase, done, total:
+                                    phase != compress.ENCODING or done < 1)
 
         self.assertTrue(result.stopped)
         self.assertEqual(len(self.docs.docs), was)

@@ -90,6 +90,12 @@ ENCODABLE = ("RGB", "L", "1")
 #: Preset names.
 SCREEN, BALANCED, PRINT = "screen", "balanced", "print"
 
+#: The two halves of the work, told apart so a caller can say which is
+#: happening. They take wildly different times on different documents: a book
+#: of many small images is nearly all scanning, a handful of full-page scans
+#: nearly all encoding.
+SCANNING, ENCODING, WRITING = "scanning", "encoding", "writing"
+
 
 @dataclass(frozen=True)
 class Settings:
@@ -308,6 +314,16 @@ def images_of(page) -> Dict[str, pikepdf.Object]:
 
 
 def _stream_length(obj) -> int:
+    """How many bytes this stream occupies, from `/Length` where possible.
+
+    Reading the raw bytes to measure them means pulling every image in the
+    document off disk: on a 1,590-page book with 34,390 images that is 141 MB
+    of I/O to answer a question the dictionary already answers.
+    """
+    try:
+        return int(obj.Length)
+    except Exception:
+        pass
     try:
         return len(obj.read_raw_bytes())
     except Exception:
@@ -431,6 +447,42 @@ def _skip_reason(obj, pdf_image) -> Optional[str]:
     return None
 
 
+def _target_pixels(width: int, drawn: Tuple[float, float],
+                   settings: Settings) -> Optional[int]:
+    """The width this image should come out at, or None to leave it.
+
+    Answered from the stored pixel width and the painted size, so that an
+    image already below the target never has to be decoded to find that out.
+    """
+    if settings.ppi is None or not drawn or drawn[0] <= 0:
+        return None
+    current = effective_ppi(width, drawn[0])
+    threshold = settings.threshold
+    if threshold is not None and current <= threshold:
+        return None
+    if settings.ppi >= current:
+        return None
+    return max(1, round(width * settings.ppi / current))
+
+
+def _may_be_bilevel(obj, pdf_image) -> bool:
+    """Whether Group 4 is worth decoding this image to consider.
+
+    One bit deep says so outright. Eight-bit grey might be line art in
+    disguise -- the case Group 4 turns 1.98 MB into 0.52 MB -- and only a
+    decode can tell, so grey is admitted and colour is not. An image already
+    stored as Group 4 has nowhere better to go.
+    """
+    if "/CCITTFaxDecode" in raw_filters(obj):
+        return False
+    if pdf_image.bits_per_component == 1:
+        return True
+    try:
+        return pdf_image.mode in ("L", "1")
+    except Exception:
+        return False
+
+
 def _target_size(image: Image.Image, drawn: Tuple[float, float],
                  settings: Settings) -> Optional[Tuple[int, int]]:
     """The pixel size this image should come out at, or None to leave it."""
@@ -452,7 +504,8 @@ def _target_size(image: Image.Image, drawn: Tuple[float, float],
 
 def compress(pdf: pikepdf.Pdf, settings: Settings = Settings(),
              pages: Optional[Iterable[int]] = None,
-             progress: Optional[Callable[[int, int], bool]] = None) -> Result:
+             progress: Optional[Callable[[str, int, int], bool]] = None
+             ) -> Result:
     """Re-encode the images in ``pdf``, in place, and say what happened.
 
     ``pages`` is a list of zero-based page numbers, or None for all of them.
@@ -460,30 +513,39 @@ def compress(pdf: pikepdf.Pdf, settings: Settings = Settings(),
     ``objgen``, because doing it per page re-encodes the same picture eight
     times for eight pages and costs 23/255 of avoidable generational loss.
 
-    ``progress`` is called with ``(done, total)`` before each image and may
-    return False to stop early; a 200-page scan is 22 seconds of work whatever
-    the resampling method, so the caller needs somewhere to put a dialog.
+    ``progress`` is called as ``(phase, done, total)`` and may return False to
+    stop. **Both** phases report, and that is not decoration: finding out how
+    large each image is painted means parsing every page's content stream, and
+    on a 1,590-page book that is 155 seconds before a single image has been
+    touched. Reporting only the second phase leaves the window saying "Not
+    Responding" for two and a half minutes with nothing drawn, because a
+    progress dialog that never gets its first value is never shown.
     """
     result = Result()
     numbers = _page_numbers(pdf, pages)
 
     where: Dict[Tuple[int, int], Tuple[float, float]] = {}
-    for number in numbers:
-        for objgen, size in placements(pdf.pages[number]).items():
+    todo = []
+    done = set()
+    for index, number in enumerate(numbers):
+        if progress is not None and progress(SCANNING, index, len(numbers)) is False:
+            result.stopped = True
+            return result
+        page = pdf.pages[number]
+        images = images_of(page)
+        if not images:
+            continue        # nothing to place, so nothing to parse it for
+        for objgen, size in placements(page).items():
             previous = where.get(objgen, (0.0, 0.0))
             where[objgen] = (max(previous[0], size[0]),
                              max(previous[1], size[1]))
-
-    todo = []
-    done = set()
-    for number in numbers:
-        for obj in images_of(pdf.pages[number]).values():
+        for obj in images.values():
             if obj.objgen not in done:
                 done.add(obj.objgen)
                 todo.append(obj)
 
     for index, obj in enumerate(todo):
-        if progress is not None and progress(index, len(todo)) is False:
+        if progress is not None and progress(ENCODING, index, len(todo)) is False:
             result.stopped = True
             break
         result.outcomes.append(_one(obj, where.get(obj.objgen), settings))
@@ -517,6 +579,19 @@ def _one(obj, drawn: Optional[Tuple[float, float]],
     if not drawn or drawn[0] <= 0:
         # Never painted, so there is no resolution to judge it against.
         outcome.reason = NOT_PLACED
+        return outcome
+
+    # Decide from the dictionary before decoding anything. A document can hold
+    # tens of thousands of small images -- 34,390 in a 1,590-page handbook --
+    # and decoding every one of them to discover it is already smaller than
+    # the target is most of the cost of the whole operation.
+    # Only when a resolution was actually asked for: with ppi None every image
+    # is re-encoded where it stands, which is the 40%-for-free case and must
+    # not be skipped for having nothing to shrink.
+    wanted = _target_pixels(pdf_image.width, drawn, settings)
+    if (settings.ppi is not None and wanted is None
+            and not _may_be_bilevel(obj, pdf_image)):
+        outcome.reason = BELOW_TARGET
         return outcome
 
     try:
@@ -674,11 +749,22 @@ def apply(pages: Sequence[Page], docs: DocumentSet,
                 return total
             if not result.changed:
                 continue        # nothing to point at a new file for
+            # Announced, because it is not instant and it is the last thing
+            # that happens: writing a 141 MB book with every stream
+            # recompressed takes long enough that a bar frozen at its last
+            # image reads as a hang. Not cancellable -- the pages are already
+            # re-encoded in memory, and there is nothing to gain by throwing
+            # the work away at the door.
+            if progress is not None:
+                progress(WRITING, 0, 1)
             handle, path = tempfile.mkstemp(suffix=".pdf", dir=docs.tmp_dir)
             os.close(handle)
             pdf.save(path, **SaveOptions(compress=True).save_kwargs())
 
         # Already inside tmp_dir, so `PDFDoc` adopts it rather than copying.
+        # Also not instant: it reopens the file to read every page's size.
+        if progress is not None:
+            progress(WRITING, 1, 1)
         _doc, new_nfile, _created = docs.get_doc(path)
         _repoint(group, doc.copyname, new_nfile,
                  docs.docs[new_nfile - 1].copyname)

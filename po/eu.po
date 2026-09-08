@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-08 18:41+0000\n"
+"POT-Creation-Date: 2026-09-08 19:53+0000\n"
 "PO-Revision-Date: 2023-01-19 20:27+0100\n"
 "Last-Translator: alexgabi\n"
 "Language: eu\n"
@@ -2168,6 +2168,16 @@ msgstr "Hautatutako orrialdeek ez dute konprimitzeko irudirik."
 #: pdfarranger_qt/mainwindow.py
 msgid "Compressing…"
 msgstr "Konprimitzen…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Measuring the images…"
+msgstr "Irudiak neurtzen…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Writing the compressed document…"
+msgstr "Konprimitutako dokumentua idazten…"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py

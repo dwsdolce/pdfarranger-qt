@@ -2211,8 +2211,32 @@ class MainWindow(QMainWindow):
         progress = QProgressDialog(_("Compressing…"), _("Cancel"), 0, images, self)
         progress.setWindowModality(Qt.WindowModal)
         progress.setMinimumDuration(0)
+        # Reaching the maximum otherwise dismisses the dialog by itself, which
+        # is exactly when the second phase starts.
+        progress.setAutoClose(False)
+        progress.setAutoReset(False)
+        # Shown before any work begins. A progress dialog that waits for its
+        # first setValue is not drawn at all, and the scan can take minutes on
+        # a large book -- which reads as the window having hung.
+        progress.setValue(0)
+        QApplication.processEvents()
 
-        def tick(done, total):
+        phase = None
+
+        def tick(now, done, total):
+            nonlocal phase
+            if now != phase:
+                phase = now
+                progress.setLabelText({
+                    compress.SCANNING: _("Measuring the images…"),
+                    compress.ENCODING: _("Compressing…"),
+                    compress.WRITING: _("Writing the compressed document…"),
+                }[now])
+                if now == compress.WRITING:
+                    # One uninterruptible call into pikepdf, then another into
+                    # QtPdf. Offering Cancel here would be a button that does
+                    # nothing until the work it claims to stop has finished.
+                    progress.setCancelButton(None)
             progress.setMaximum(total)
             progress.setValue(done)
             QApplication.processEvents()

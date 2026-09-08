@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PDF-Shuffler 0.7\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-08 18:41+0000\n"
+"POT-Creation-Date: 2026-09-08 19:53+0000\n"
 "PO-Revision-Date: 2021-12-30 17:13+0100\n"
 "Last-Translator: Toratora <darex7@o2.pl>\n"
 "Language: pl_PL\n"
@@ -2188,6 +2188,16 @@ msgstr "Zaznaczone strony nie zawierają obrazów do skompresowania."
 #: pdfarranger_qt/mainwindow.py
 msgid "Compressing…"
 msgstr "Kompresowanie…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Measuring the images…"
+msgstr "Mierzenie obrazów…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Writing the compressed document…"
+msgstr "Zapisywanie skompresowanego dokumentu…"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py

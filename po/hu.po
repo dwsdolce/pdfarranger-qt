@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-08 18:41+0000\n"
+"POT-Creation-Date: 2026-09-08 19:53+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: hu\n"
@@ -2151,6 +2151,16 @@ msgstr "A kijelölt oldalak nem tartalmaznak tömöríthető képet."
 #: pdfarranger_qt/mainwindow.py
 msgid "Compressing…"
 msgstr "Tömörítés…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Measuring the images…"
+msgstr "Képek felmérése…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Writing the compressed document…"
+msgstr "A tömörített dokumentum írása…"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py

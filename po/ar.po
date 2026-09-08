@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-08 18:41+0000\n"
+"POT-Creation-Date: 2026-09-08 19:53+0000\n"
 "PO-Revision-Date: 2024-09-05 17:05+0300\n"
 "Last-Translator: Abdullah Albaroty <albaroty@gmail.com>\n"
 "Language: ar\n"
@@ -2105,6 +2105,16 @@ msgstr "الصفحات المختارة لا تحوي صورًا لضغطها."
 #: pdfarranger_qt/mainwindow.py
 msgid "Compressing…"
 msgstr "يضغط…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Measuring the images…"
+msgstr "يقيس الصور…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Writing the compressed document…"
+msgstr "يكتب المستند المضغوط…"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
