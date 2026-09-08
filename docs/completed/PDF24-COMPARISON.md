@@ -1,20 +1,21 @@
 # PDF24 comparison
 
-[The port's goal](PORTING-NOTES.md) names dissatisfaction with **PDF24 Toolbox**
+[The port's goal](../PORTING-NOTES.md) names dissatisfaction with **PDF24 Toolbox**
 as the reason this project exists, so its tool list is the fairest external
 yardstick there is. This is the score against it, and the work that came out of
-it. The scope reasoning itself is [D21](DECISIONS.md).
+it. The scope reasoning itself is [D21](../DECISIONS.md).
 
-**Complete apart from [Issue #8](https://github.com/dwsdolce/pdfarranger-qt/issues/8).**
+**Complete.**
 
 Scored against the live menus on 2026-09-07: **17 of its 37 tools are already here**,
 four more are cheap, three are real work worth doing, and thirteen are things a
 page arranger should not be.
 
-Everything from that list judged worth having is built, with one exception that
-is marked `[~]` rather than `[x]`: **Compress** is two features wearing one
-name, and only the cheap half exists. Image downsampling — what people usually
-mean by the word — is [Issue #8](https://github.com/dwsdolce/pdfarranger-qt/issues/8).
+Everything from that list judged worth having is now built. The last one to
+land was **Compress**, which turned out to be two features wearing one name:
+the cheap half had shipped under the word people use for the other half. Both
+exist now — see [COMPRESSION.md](COMPRESSION.md) — and the renaming of the
+first is as much of the fix as the building of the second.
 
 **Already covered.** Organize · Merge · Split · Extract pages · Remove pages ·
 Rotate · Sort · Crop · Change page size · Images to PDF · PDF to images ·
@@ -58,21 +59,23 @@ different job.
       neither and neither is possible. A *PDF* watermark is already Paste As
       Overlay; it is the text case that is missing. `stamp.py` builds it with
       **QPdfWriter** rather than by hand-writing a content stream — see
-      [FINDINGS.md](FINDINGS.md), *Drawing text onto a page* — and
+      [FINDINGS.md](../FINDINGS.md), *Drawing text onto a page* — and
       both commands are one `Style` apart. A stamp is a generated one-page PDF
       composited as an overlay, so it is undoable and the source file is never
       touched
-- [~] **Compress** — *partly*, and the box says so.
-      Written as `[x]` at first with the caveat below it, which is precisely how
-      it came to be believed finished: a checkbox holds one bit and "half done"
-      does not fit in it. The rest is
-      [Issue #8](https://github.com/dwsdolce/pdfarranger-qt/issues/8).
+- [x] **Compress** — both halves, at last.
+      Written as `[x]` at first with a caveat below it, which is precisely how
+      it came to be believed finished: a checkbox holds one bit and "half
+      done" does not fit in it, so it spent a while as `[~]` instead. That is
+      the more useful lesson of this document.
 
-      The trivial half is done. `compress_streams` plus object streams,
-      a Preferences checkbox beside Web optimize. Gains little on a file full of
-      already-compressed images, which is why the label promises nothing.
-      Image **downsampling** — what people usually mean by the word — is still
-      open, and is where the effort is. The feature set, the numbers behind it
+      The cheap half was always there — `compress_streams` plus object
+      streams, now honestly labelled *Recompress streams and pack objects*.
+      The half people mean is Page ▸ Compress Images: downsampling against a
+      painted-size threshold, CCITT Group 4 for bilevel pages, CMYK and
+      indexed handled in their own terms, a report and an audit of where the
+      bytes went. Measured on a 1,590-page handbook: 34,390 images, 141.4 MB
+      to 45.5 MB, the file itself 41.8% smaller. The feature set, the numbers
       and the trade-offs are [COMPRESSION.md](COMPRESSION.md)
 
 **Out of scope (D21).** Convert to/from PDF · Create invoice · Create job

@@ -727,7 +727,7 @@ ever.
 A bilevel page as CCITT Group 4 is 0.52 MB at its full 300 ppi against 1.98 MB
 for the same page downsampled to 144 ppi and stored as JPEG — four times
 smaller with nothing thrown away, which makes it the largest single win in
-[COMPRESSION.md](COMPRESSION.md). Pillow has no PDF-shaped Group 4 encoder,
+[COMPRESSION.md](completed/COMPRESSION.md). Pillow has no PDF-shaped Group 4 encoder,
 but the libtiff inside it does, and the strip of a single-strip TIFF *is* the
 `CCITTFaxDecode` payload. So the encoder is: save a TIFF to memory, read
 `StripOffsets` and `StripByteCounts`, hand the bytes to pikepdf.

@@ -22,8 +22,8 @@ belongs when you come to add to it.
 
 | File | State |
 |---|---|
-| [PDF24-COMPARISON.md](PDF24-COMPARISON.md) | **Complete but for image downsampling** ([Issue #8](https://github.com/dwsdolce/pdfarranger-qt/issues/8)). Scored against PDF24 Toolbox's tool list; seven features built. |
-| [COMPRESSION.md](COMPRESSION.md) | **Open** — [Issue #8](https://github.com/dwsdolce/pdfarranger-qt/issues/8). What the option does today, what PDF24, Acrobat and Ghostscript offer, and the measurements that set the defaults. |
+| [completed/PDF24-COMPARISON.md](completed/PDF24-COMPARISON.md) | **Complete** — every tool from PDF24's list judged worth having is built. Scored against its live menus; eight features came out of it. |
+| [completed/COMPRESSION.md](completed/COMPRESSION.md) | **Complete** — [Issue #8](https://github.com/dwsdolce/pdfarranger-qt/issues/8) is closed. What PDF24, Acrobat and Ghostscript offer, the measurements that set the defaults, and what compressing a real 1,590-page book actually did. |
 | [completed/I18N.md](completed/I18N.md) | **Complete** — the [Internationalisation milestone](https://github.com/dwsdolce/pdfarranger-qt/milestone/1) is closed. The translated interface that was not one, and what filling 33 catalogues took. |
 
 ## Where to put a new thing

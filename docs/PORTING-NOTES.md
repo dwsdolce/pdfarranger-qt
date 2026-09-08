@@ -43,7 +43,7 @@ credit the original project.
   *reading* it, not only rearranging it. See D14–D17.
 
 Everything still unported is Tier 1 or Tier 3. Nothing remaining requires content
-editing. [PDF24-COMPARISON.md](PDF24-COMPARISON.md) scores this boundary
+editing. [PDF24-COMPARISON.md](completed/PDF24-COMPARISON.md) scores this boundary
 against PDF24's own tool list, since that
 application is the reason given below for starting; D21 records what of it is in
 and what is out.

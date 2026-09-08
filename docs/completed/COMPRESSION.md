@@ -1,15 +1,18 @@
 # Compression
 
-**Open work: [Issue #8](https://github.com/dwsdolce/pdfarranger-qt/issues/8).**
-This is the feature set that issue should build, the numbers behind it, and the
-trade-offs that decide the defaults. Scope reasoning for the surrounding work
-is [D21](DECISIONS.md); the score that raised it is
+**Complete** — [Issue #8](https://github.com/dwsdolce/pdfarranger-qt/issues/8)
+is closed. This is the feature set that issue built, the numbers behind it,
+and the trade-offs that decided the defaults. Scope reasoning for the
+surrounding work is [D21](../DECISIONS.md); where a compressed page lands is
+[D25](../DECISIONS.md); the score that raised it is
 [PDF24-COMPARISON.md](PDF24-COMPARISON.md).
 
 Everything below was measured on this machine with pikepdf 10.11 and Pillow
-12.3, on synthetic corpora built to be typical rather than flattering: eight
-letter pages of rendered text on off-white paper at 300 ppi, which is what a
-scanner or a phone hands you.
+12.3. The defaults come from synthetic corpora built to be typical rather than
+flattering — eight letter pages of rendered text on off-white paper at 300
+ppi, which is what a scanner or a phone hands you — and the results at the end
+come from a real 1,590-page technical handbook, which behaved nothing like the
+corpora and is the reason CMYK and indexed images are supported at all.
 
 ## The word means two different things
 
@@ -195,11 +198,15 @@ progress dialog either way. Always Lanczos, and spend the knob elsewhere.
 A dialog with four fields, a preset row, and a report.
 
 **Presets**, because most people want a level rather than a specification:
-*Screen* (100 ppi, q60), *Balanced* (150 ppi, q75), *Print* (300 ppi, q90,
-quality-only — no downsampling). The names say the destination, not the
-strength, so the choice can be made without knowing what a ppi is.
+*Screen* (100 ppi, q60), *Balanced* (150 ppi, q75), *Print* (quality 90 with
+the resolution left alone — the 40%-for-free row above). The names say the
+destination, not the strength, so the choice can be made without knowing what
+a ppi is.
 
-**Fields**, revealed under *Custom*:
+**Fields**, always visible, with the preset falling back to *Custom* the
+moment one is edited. Hiding them behind a Custom mode was the first plan;
+this is what the N-up dialog already does, and it lets somebody see what a
+preset actually means rather than only its name:
 
 - **Target resolution**, in ppi. Default 150.
 - **Only images above**, in ppi. Default 1.5x the target. This is the
@@ -243,7 +250,7 @@ setting. The corollary is that the existing checkbox should be renamed to what
 it does — *Recompress streams and pack objects* — and the word *Compress* left
 for the command that earns it.
 
-**Where the change lands — [D25](DECISIONS.md): a new temporary document.** The re-encoded
+**Where the change lands — [D25](../DECISIONS.md): a new temporary document.** The re-encoded
 pages are written to a fresh temp PDF, registered through
 `DocumentSet.get_doc`, and each affected page has its `nfile` and `copyname`
 repointed at it. This is what `stamp.py`, `nup.py`, `booklet.py` and
@@ -370,5 +377,5 @@ word *raster*.
 Font un-embedding, which breaks documents on machines that lack the font.
 Transparency flattening, which is a prepress operation. Discarding form fields
 or annotations, which is data loss dressed as compression. OCR, which is
-[D21](DECISIONS.md) out of scope. All four are in Acrobat's Optimizer and none
+[D21](../DECISIONS.md) out of scope. All four are in Acrobat's Optimizer and none
 belongs in a page arranger.
