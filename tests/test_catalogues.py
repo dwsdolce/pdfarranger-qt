@@ -30,7 +30,7 @@ became ratchets instead:
 - **markup** — 31 translated entries carry a tag, 0 disagree. Hard failure.
 - **plural forms** — every plural entry already has the count its locale
   declares. Hard failure.
-- **mnemonics kept** — 101 of 2272 are dropped, in 15 of the 33 languages;
+- **mnemonics kept** — 98 of 2312 are dropped, in 14 of the 33 languages;
   Catalan loses 38 of 46. Upstream's translations, and adding an accelerator to
   Catalan is a translation decision rather than a repair. Ratchet.
 - **mnemonics unique within a menu** — every language collides, *including
@@ -69,19 +69,19 @@ TAG = re.compile(r"<[a-zA-Z/][^>]*>")
 
 #: Dropped accelerators per language, as of 2026-09-07. May fall, must not rise.
 MNEMONICS_LOST = {
-    "ar": 3, "ca": 38, "ca@valencia": 21, "da": 2, "de": 2,
-    "es": 13, "eu": 5, "he": 1, "hu": 1, "ka": 3,
+    "ar": 1, "ca": 38, "ca@valencia": 21, "da": 2, "de": 2,
+    "es": 13, "eu": 5, "hu": 1, "ka": 3,
     "nl": 2, "pl_PL": 6, "sl": 2, "uk": 1, "zh_TW": 1,
 }
 
 #: Within-menu accelerator collisions per language, as of 2026-09-07. English
 #: is in here because English collides too -- this is not a translation fault.
 CLASHES = {
-    "ar": 3, "ca": 2, "ca@valencia": 2, "cs": 2, "da": 2, "de": 10,
+    "ar": 2, "ca": 2, "ca@valencia": 2, "cs": 2, "da": 2, "de": 10,
     "el": 2, "en": 5, "es": 5, "eu": 8, "fi": 6, "fr": 4,
-    "he": 4, "hr": 3, "hu": 3, "id": 11, "is": 3, "it": 7,
+    "he": 3, "hr": 3, "hu": 3, "id": 11, "is": 3, "it": 7,
     "ja": 5, "ka": 4, "ko": 4, "nl": 6, "oc": 11, "pl_PL": 2,
-    "pt_BR": 7, "pt_PT": 5, "ru": 5, "sl": 2, "sv": 4, "tr": 9,
+    "pt_BR": 7, "pt_PT": 5, "ru": 5, "sl": 2, "sv": 4, "tr": 8,
     "uk": 5, "vi": 12, "zh_CN": 5, "zh_TW": 5,
 }
 
@@ -509,20 +509,24 @@ class TestNoWordMixesTwoScripts(CatalogueTestCase):
 
     Whole strings mix scripts all the time and must: `PDF`, `Ctrl+G` and `GNU
     General Public License` appear in every catalogue. So the rule is per
-    *word*, where mixing is essentially never deliberate.
+    *word* -- but only across the three alphabets that share letterforms.
 
-    The exception is real rather than a workaround. Korean attaches its
-    particles straight onto a Latin loanword -- `Arranger는`, `pikepdf의` --
-    and Japanese runs kanji, hiragana and katakana together. Latin beside CJK
-    is how those languages are written.
+    **Latin, Cyrillic and Greek are the confusable set.** `a o e p x` are drawn
+    the same in all three, so a word mixing two of them is a typo essentially
+    every time. Nothing else is confusable with anything: no Arabic letter can
+    be mistaken for a Latin one, and no Hebrew letter for a Greek one.
+
+    That distinction is what makes the check usable, because plenty of
+    languages join a foreign word to a native particle with no space at all --
+    Arabic writes `وPage` and `لـPDF`, Korean writes `Arranger는`, Japanese
+    runs kanji into kana. A rule that flagged any mix would have called all of
+    those defects; the first draft did, and the Arabic catalogue is what
+    proved it wrong.
     """
 
-    #: Japanese and Korean are one writing system for this purpose.
-    FAMILIES = {"HAN": "CJK", "HIRAGANA": "CJK", "KATAKANA": "CJK",
-                "HANGUL": "CJK"}
-
-    #: Latin next to CJK in one word is Korean and Japanese orthography.
-    ALLOWED = frozenset([frozenset({"LATIN", "CJK"})])
+    #: The alphabets that share letterforms. Anything outside this is safe to
+    #: sit inside a word with anything else.
+    CONFUSABLE = frozenset({"LATIN", "CYRILLIC", "GREEK"})
 
     SCRIPTS = ("LATIN", "CYRILLIC", "GREEK", "HEBREW", "ARABIC", "HAN",
                "HIRAGANA", "KATAKANA", "HANGUL", "GEORGIAN", "ARMENIAN")
@@ -538,28 +542,44 @@ class TestNoWordMixesTwoScripts(CatalogueTestCase):
         name = unicodedata.name(character, "")
         for script in self.SCRIPTS:
             if name.startswith(script):
-                return self.FAMILIES.get(script, script)
+                return script
         return None
 
     def mixed_words(self, text):
         found = []
         for word in self.WORD.findall(text):
             scripts = {s for s in map(self.script_of, word) if s}
-            if len(scripts) > 1 and frozenset(scripts) not in self.ALLOWED:
-                found.append((word, sorted(scripts)))
+            confusable = sorted(scripts & self.CONFUSABLE)
+            if len(confusable) > 1:
+                found.append((word, confusable))
         return found
 
     def test_the_detector_fires_on_a_known_homoglyph(self):
         """Without this, a check measuring nothing would pass forever."""
-        self.assertEqual(self.mixed_words("% o\u0442 \u0432\u044b\u0441\u043e\u0442\u044b"),
-                         [("o\u0442", ["CYRILLIC", "LATIN"])],
+        cyrillic_o = "% oт высоты"
+        self.assertEqual(self.mixed_words(cyrillic_o),
+                         [("oт", ["CYRILLIC", "LATIN"])],
                          "the Latin o that was really in ru.po")
-        self.assertEqual(self.mixed_words("Izbri\u0161i vis\u0435\u0107e"),
-                         [("vis\u0435\u0107e", ["CYRILLIC", "LATIN"])])
-        # And does not fire on the things that legitimately mix.
-        self.assertEqual(self.mixed_words("Arranger\ub294 pikepdf\uc758"), [])
-        self.assertEqual(self.mixed_words("PDF Arranger, Ctrl+G"), [])
-        self.assertEqual(self.mixed_words("HKEY_CURRENT_USER"), [])
+        self.assertEqual(self.mixed_words("Izbriši visеće"),
+                         [("visеće", ["CYRILLIC", "LATIN"])],
+                         "the Cyrillic e that nearly reached hr.po")
+        self.assertEqual(self.mixed_words("μίaς"),
+                         [("μίaς", ["GREEK", "LATIN"])],
+                         "a Latin a in a Greek word")
+
+    def test_it_does_not_fire_on_a_language_that_joins_words(self):
+        """The exceptions are orthography, and there are more than one.
+
+        Every one of these was written by hand into a catalogue in this
+        repository, and a rule that rejected any mixed word rejected them all.
+        """
+        for text in ("Arranger는 pikepdf의",       # Korean particles
+                     "وPage وHome وEnd",   # Arabic wa-
+                     "لـPDF",                    # Arabic li-
+                     "PDF Arranger, Ctrl+G",
+                     "HKEY_CURRENT_USER"):
+            with self.subTest(text=text):
+                self.assertEqual(self.mixed_words(text), [])
 
     def test_no_translation_mixes_scripts_inside_one_word(self):
         for language in self.languages:
@@ -577,5 +597,5 @@ class TestNoWordMixesTwoScripts(CatalogueTestCase):
                         with self.subTest(language=language):
                             self.fail(
                                 f"{language}: {found} in {form!r} -- one word "
-                                f"drawn from two writing systems, which is "
-                                f"almost always a homoglyph typo")
+                                f"drawn from two alphabets that share "
+                                f"letterforms, which is a homoglyph typo")
