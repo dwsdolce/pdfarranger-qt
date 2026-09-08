@@ -245,6 +245,13 @@ back to exporting the edited list, as it does after any other edit. Both paths
 show the compressed images, which is what someone checking the result is
 looking for.
 
+**Cancelling leaves the document entirely alone**, rather than compressed as
+far as it got. Half a document lossy and half not is a state nobody asked for
+and cannot be undone selectively, and refusing it costs nothing here: the work
+exists only in memory until a new temporary document is written, so a cancel
+is simply a decision not to write one. It follows from the choice above — the
+save-time design would have had no such moment to stop at.
+
 **Never make it bigger, and never make it worse for nothing.** Two rules the
 implementation must carry, because the measurements show both failing
 naturally: skip any image already at or below the target resolution, and if the

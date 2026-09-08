@@ -49,11 +49,15 @@ Compress" restoring page order while the images stayed degraded.
 
 import io
 import math
+import os
+import tempfile
 from dataclasses import dataclass, field
-from typing import Dict, Iterable, List, Optional, Sequence, Tuple
+from typing import Callable, Dict, Iterable, List, Optional, Sequence, Tuple
 
 import pikepdf
 from PIL import Image
+
+from .core import DocumentSet, Page
 
 #: The one resampling filter, per the measurement above.
 RESAMPLE = Image.LANCZOS
@@ -143,6 +147,11 @@ class Outcome:
 @dataclass
 class Result:
     outcomes: List[Outcome] = field(default_factory=list)
+    #: The caller's progress callback asked to stop. Nothing is applied when
+    #: this is set: a cancelled compression leaves the document alone rather
+    #: than half done, because "some of your pages are now lossy" is not a
+    #: state anybody asked for.
+    stopped: bool = False
 
     @property
     def images(self) -> int:
@@ -442,13 +451,18 @@ def _target_size(image: Image.Image, drawn: Tuple[float, float],
 
 
 def compress(pdf: pikepdf.Pdf, settings: Settings = Settings(),
-             pages: Optional[Iterable[int]] = None) -> Result:
+             pages: Optional[Iterable[int]] = None,
+             progress: Optional[Callable[[int, int], bool]] = None) -> Result:
     """Re-encode the images in ``pdf``, in place, and say what happened.
 
     ``pages`` is a list of zero-based page numbers, or None for all of them.
     Images shared between pages are done once: they are deduplicated by
     ``objgen``, because doing it per page re-encodes the same picture eight
     times for eight pages and costs 23/255 of avoidable generational loss.
+
+    ``progress`` is called with ``(done, total)`` before each image and may
+    return False to stop early; a 200-page scan is 22 seconds of work whatever
+    the resampling method, so the caller needs somewhere to put a dialog.
     """
     result = Result()
     numbers = _page_numbers(pdf, pages)
@@ -460,13 +474,19 @@ def compress(pdf: pikepdf.Pdf, settings: Settings = Settings(),
             where[objgen] = (max(previous[0], size[0]),
                              max(previous[1], size[1]))
 
+    todo = []
     done = set()
     for number in numbers:
         for obj in images_of(pdf.pages[number]).values():
-            if obj.objgen in done:
-                continue
-            done.add(obj.objgen)
-            result.outcomes.append(_one(obj, where.get(obj.objgen), settings))
+            if obj.objgen not in done:
+                done.add(obj.objgen)
+                todo.append(obj)
+
+    for index, obj in enumerate(todo):
+        if progress is not None and progress(index, len(todo)) is False:
+            result.stopped = True
+            break
+        result.outcomes.append(_one(obj, where.get(obj.objgen), settings))
     return result
 
 
@@ -597,6 +617,87 @@ def _write(obj, data: bytes, encoding, image: Image.Image):
             obj.ColorSpace = pikepdf.Name.DeviceRGB
     if "/Decode" in obj:
         del obj["/Decode"]
+
+
+# ------------------------------------------------------- the page list (D25)
+
+
+def apply(pages: Sequence[Page], docs: DocumentSet,
+          settings: Settings = Settings(),
+          progress: Optional[Callable[[int, int], bool]] = None) -> Result:
+    """Compress the images ``pages`` use, and point those pages at the result.
+
+    The re-encoded pages go into a **new** temporary document, registered with
+    the document set, and each page has its ``nfile`` and ``copyname`` moved to
+    it. That is not bookkeeping: an undo snapshot is a shallow copy of `Page`
+    objects, and a `Page` is a reference into an immutable temporary file plus
+    a handful of numbers, so it holds no pixels. Rewriting the images inside
+    the file a page already points at would leave every state on the undo
+    stack naming that same path -- Undo would restore page order, rotation and
+    crop while the images stayed degraded, with the menu still offering "Undo
+    Compress". Writing a new file and moving the reference is what makes undo
+    restore the pixels, and it is what `stamp`, `nup`, `booklet` and `layers`
+    already do with content they generate.
+
+    The cost is disk: the original stays for as long as an undo state names
+    it, so this is two copies in the temporary directory until the history is
+    cleared.
+
+    One new document per source document, page indices preserved -- pages the
+    caller did not pass are copied across untouched -- so ``npage`` needs no
+    remapping and compressing part of a document works.
+
+    Mutates ``pages`` in place, like `stamp.apply`. The caller commits an undo
+    state first.
+    """
+    from .export import SaveOptions  # heavy, and only needed here
+
+    total = Result()
+    by_source: Dict[int, List[Page]] = {}
+    for page in pages:
+        by_source.setdefault(page.nfile, []).append(page)
+
+    for nfile, group in sorted(by_source.items()):
+        if not 0 < nfile <= len(docs.docs):
+            continue
+        doc = docs.docs[nfile - 1]
+        wanted = sorted({page.npage - 1 for page in group})
+        with pikepdf.open(doc.copyname, password=doc.password) as pdf:
+            result = compress(pdf, settings, pages=wanted, progress=progress)
+            total.outcomes.extend(result.outcomes)
+            if result.stopped:
+                # Cancelled: write nothing and move nothing, here or for any
+                # document after this one. Half a document compressed is not
+                # a state to leave somebody in, and it is only avoidable
+                # because the work so far exists in memory rather than on disk.
+                total.stopped = True
+                return total
+            if not result.changed:
+                continue        # nothing to point at a new file for
+            handle, path = tempfile.mkstemp(suffix=".pdf", dir=docs.tmp_dir)
+            os.close(handle)
+            pdf.save(path, **SaveOptions(compress=True).save_kwargs())
+
+        # Already inside tmp_dir, so `PDFDoc` adopts it rather than copying.
+        _doc, new_nfile, _created = docs.get_doc(path)
+        _repoint(group, doc.copyname, new_nfile,
+                 docs.docs[new_nfile - 1].copyname)
+    return total
+
+
+def _repoint(pages: Iterable[Page], old: str, nfile: int, copyname: str):
+    """Move pages, and any layers drawn from the same file, to the new one.
+
+    A layer is a reference of the same shape, so one left behind would keep
+    painting the uncompressed original on top of the compressed page.
+    """
+    for page in pages:
+        page.nfile = nfile
+        page.copyname = copyname
+        for layer in page.layerpages:
+            if layer.copyname == old:
+                layer.nfile = nfile
+                layer.copyname = copyname
 
 
 def _colourspace_components(obj) -> int:

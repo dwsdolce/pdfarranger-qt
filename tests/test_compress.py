@@ -24,12 +24,15 @@ measured on.
 """
 
 import io
+import os
 import unittest
 
 import pikepdf
 from PIL import Image, ImageDraw
+from support import TEST_PDF, QtDocumentTestCase, temp_path
 
 from pdfarranger_qt import compress
+from pdfarranger_qt.core import OVERLAY, Sides
 
 LETTER = (612.0, 792.0)
 
@@ -612,6 +615,164 @@ class TestTheResultAddsUp(unittest.TestCase):
         result = compress.compress(pdf)
         self.assertEqual(result.images, 0)
         self.assertEqual(result.fraction, 0.0)
+
+
+class TestWhereTheResultLands(QtDocumentTestCase):
+    """D25: a new temporary document, with the pages moved to it.
+
+    The test that matters here is the undo one. It fails against the obvious
+    implementation -- rewriting the images inside the file the page already
+    points at -- because a snapshot holds page references and no pixels, so
+    Undo would restore order and rotation over degraded images.
+    """
+
+    def setUp(self):
+        super().setUp()
+        self.scan = temp_path("scan.pdf")
+        with pikepdf.Pdf.new() as pdf:
+            full_page_scan(pdf, pages=3)
+            pdf.save(self.scan)
+        self.model.set_pages(self.docs.add_file(self.scan))
+        self.pages = self.model.pages
+
+    def image_bytes(self, copyname, number=1):
+        with pikepdf.open(copyname) as pdf:
+            page = pdf.pages[number - 1]
+            obj = next(iter(compress.images_of(page).values()))
+            return bytes(obj.read_raw_bytes())
+
+    def balanced(self, pages=None):
+        return compress.apply(pages if pages is not None else self.pages,
+                              self.docs, compress.PRESETS[compress.BALANCED])
+
+    def test_the_pages_move_to_a_document_that_did_not_exist_before(self):
+        was = len(self.docs.docs)
+        before = {page.copyname for page in self.pages}
+        result = self.balanced()
+        self.assertEqual(len(self.docs.docs), was + 1)
+        self.assertEqual(result.changed, 3)
+        now = {page.copyname for page in self.pages}
+        self.assertEqual(len(now), 1)
+        self.assertFalse(now & before)
+        self.assertTrue(os.path.exists(next(iter(now))))
+        self.assertEqual({page.nfile for page in self.pages},
+                         {len(self.docs.docs)})
+
+    def test_the_new_document_is_smaller_and_still_opens(self):
+        old = self.pages[0].copyname
+        self.balanced()
+        new = self.pages[0].copyname
+        self.assertLess(os.path.getsize(new), os.path.getsize(old) * 0.6)
+        with pikepdf.open(new) as pdf:
+            self.assertEqual(len(pdf.pages), 3)
+
+    def test_undo_restores_the_pixels(self):
+        """The whole reason for D25, and it fails against an in-place rewrite."""
+        original = self.image_bytes(self.pages[0].copyname)
+        self.model.undo.commit("Compress")
+        self.balanced()
+        self.assertNotEqual(self.image_bytes(self.pages[0].copyname), original)
+
+        self.model.undo.undo()
+
+        self.assertEqual(self.image_bytes(self.model.pages[0].copyname),
+                         original)
+
+    def test_the_file_undo_needs_is_still_on_disk(self):
+        """Nothing may delete the original while a snapshot names it."""
+        old = self.pages[0].copyname
+        self.balanced()
+        self.assertTrue(os.path.exists(old))
+        self.assertNotEqual(old, self.pages[0].copyname)
+
+    def test_redo_puts_the_compressed_pages_back(self):
+        self.model.undo.commit("Compress")
+        self.balanced()
+        compressed = self.pages[0].copyname
+        self.model.undo.undo()
+        self.model.undo.redo()
+        self.assertEqual(self.model.pages[0].copyname, compressed)
+
+    def test_only_the_pages_given_are_moved(self):
+        """Page indices are preserved, so a partial selection needs no remap."""
+        old = self.pages[0].copyname
+        self.balanced(self.pages[:1])
+        self.assertNotEqual(self.pages[0].copyname, old)
+        self.assertEqual(self.pages[1].copyname, old)
+        self.assertEqual(self.pages[2].copyname, old)
+        self.assertEqual(self.pages[0].npage, 1)
+        with pikepdf.open(self.pages[0].copyname) as pdf:
+            self.assertEqual(len(pdf.pages), 3)
+
+    def test_the_pages_left_behind_keep_their_own_images(self):
+        untouched = self.image_bytes(self.pages[1].copyname, 2)
+        self.balanced(self.pages[:1])
+        self.assertEqual(self.image_bytes(self.pages[1].copyname, 2),
+                         untouched)
+
+    def test_a_document_with_nothing_to_compress_gains_no_file(self):
+        """The two-page vector document loaded by the base class."""
+        was = len(self.docs.docs)
+        vector = self.docs.add_file(TEST_PDF)
+        result = compress.apply(vector, self.docs,
+                                compress.PRESETS[compress.BALANCED])
+        self.assertEqual(result.images, 0)
+        self.assertEqual(len(self.docs.docs), was)
+
+    def test_a_layer_from_the_same_file_moves_with_its_page(self):
+        """A layer left behind would paint the original over the new page."""
+        page = self.pages[0]
+        page.layerpages.append(self.docs.make_layerpage(
+            page.copyname, 2, 0, 1.0, OVERLAY, Sides(), Sides()))
+        old = page.copyname
+        self.balanced(self.pages)
+        self.assertNotEqual(page.copyname, old)
+        self.assertEqual(page.layerpages[0].copyname, page.copyname)
+        self.assertEqual(page.layerpages[0].nfile, page.nfile)
+        self.assertEqual(page.layerpages[0].npage, 2)
+
+    def test_a_layer_from_elsewhere_is_left_where_it_is(self):
+        page = self.pages[0]
+        elsewhere = self.docs.docs[0].copyname      # the vector document
+        page.layerpages.append(self.docs.make_layerpage(
+            elsewhere, 1, 0, 1.0, OVERLAY, Sides(), Sides()))
+        self.balanced(self.pages)
+        self.assertEqual(page.layerpages[0].copyname, elsewhere)
+
+    def test_read_mode_still_takes_the_shortcut(self):
+        """A whole document compressed is still a 1:1 view of one file."""
+        self.balanced()
+        found = self.docs.source_if_unmodified(self.pages)
+        self.assertIsNotNone(found)
+        self.assertEqual(found[0], self.pages[0].copyname)
+
+    def test_a_partial_compress_sends_read_mode_the_long_way_round(self):
+        """Two documents now, so the export path takes over, as after any edit."""
+        self.balanced(self.pages[:1])
+        self.assertIsNone(self.docs.source_if_unmodified(self.pages))
+
+    def test_progress_is_told_how_much_there_is_to_do(self):
+        seen = []
+        compress.apply(self.pages, self.docs,
+                       compress.PRESETS[compress.BALANCED],
+                       progress=lambda done, total: seen.append((done, total)))
+        # Three pages of one document, so one pass over three images.
+        self.assertEqual(seen, [(0, 3), (1, 3), (2, 3)])
+
+    def test_cancelling_leaves_the_document_alone(self):
+        """Half a document compressed is not a state to leave somebody in."""
+        was = len(self.docs.docs)
+        before = [page.copyname for page in self.pages]
+        original = self.image_bytes(self.pages[0].copyname)
+
+        result = compress.apply(self.pages, self.docs,
+                                compress.PRESETS[compress.BALANCED],
+                                progress=lambda done, total: done < 1)
+
+        self.assertTrue(result.stopped)
+        self.assertEqual(len(self.docs.docs), was)
+        self.assertEqual([page.copyname for page in self.pages], before)
+        self.assertEqual(self.image_bytes(self.pages[0].copyname), original)
 
 
 if __name__ == "__main__":
