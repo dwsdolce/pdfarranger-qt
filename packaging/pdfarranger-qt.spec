@@ -88,7 +88,14 @@ if os.name == "nt":
         kids=[
             StringFileInfo([StringTable("040904B0", [
                 StringStruct("CompanyName", "Dolce Sfogato"),
-                StringStruct("FileDescription",
+                # The application's *name*, not what it does. Windows shows
+                # this string in the "Open with" menu, in Task Manager and as
+                # the Description on the Properties tab, so a sentence here
+                # puts "Merge, split, rearrange, rotate and crop PDF
+                # documents" where every other entry says "Acrobat" or
+                # "Notepad". The sentence belongs in Comments.
+                StringStruct("FileDescription", "PDF Arranger Qt"),
+                StringStruct("Comments",
                              "Merge, split, rearrange, rotate and crop PDF documents"),
                 StringStruct("FileVersion", package_version),
                 StringStruct("InternalName", "pdfarranger-qt"),

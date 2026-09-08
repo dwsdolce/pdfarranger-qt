@@ -64,6 +64,33 @@ class TestPackaging(unittest.TestCase):
             names = " ".join(extras[group]).lower()
             self.assertIn("pyinstaller", names, f"the {group} extra cannot build")
 
+    def packaging_file(self, name):
+        path = os.path.join(os.path.dirname(HERE), "packaging", name)
+        with open(path, encoding="utf-8") as handle:
+            return handle.read()
+
+    def test_windows_calls_the_application_by_its_name(self):
+        """FileDescription is a name, not a sentence.
+
+        Windows shows it in the "Open with" menu, in Task Manager and as the
+        Description on the Properties tab, beside entries like "Acrobat" and
+        "Notepad". It once held "Merge, split, rearrange, rotate and crop PDF
+        documents", which is what the "Open with" menu then offered.
+        """
+        from pdfarranger_qt import APP_NAME
+
+        spec = self.packaging_file("pdfarranger-qt.spec")
+        self.assertIn(f'StringStruct("FileDescription", "{APP_NAME}")', spec)
+
+    def test_the_open_with_entry_is_named_too(self):
+        """Explorer prefers FriendlyAppName, and falls back to the exe's."""
+        from pdfarranger_qt import APP_NAME
+
+        setup = self.packaging_file("pdfarranger-qt.iss")
+        self.assertIn(f'#define MyAppName "{APP_NAME}"', setup)
+        self.assertEqual(setup.count('ValueName: "FriendlyAppName"'), 2,
+                         "both the ProgId and the exe need naming")
+
     def test_babel_is_declared(self):
         """tools/build_mo.py imports it, and the build scripts run that first."""
         extras = self.pyproject()["project"]["optional-dependencies"]
