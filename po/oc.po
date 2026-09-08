@@ -1,788 +1,148 @@
 # Occitan translation file
-# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# Copyright (C) 2026 THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
 # Quentin PAGÈS, 2023.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: \n"
+"Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-12-21 10:45+0200\n"
+"POT-Creation-Date: 2026-09-07 19:17+0000\n"
 "PO-Revision-Date: 2026-02-15 15:16+0100\n"
 "Last-Translator: Quentin PAGÈS\n"
-"Language-Team: \n"
 "Language: oc\n"
-"MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=UTF-8\n"
-"Content-Transfer-Encoding: 8bit\n"
+"Language-Team: \n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
-"X-Generator: Poedit 3.8\n"
-
-#: pdfarranger/splitter.py:87
-msgid "#Col"
-msgstr "#Col"
-
-#: pdfarranger/splitter.py:87
-msgid "#Row"
-msgstr "#Linha"
-
-#: pdfarranger/pageutils.py:128 pdfarranger/pageutils.py:553
-#: pdfarranger/pageutils.py:555
-msgid "%"
-msgstr "%"
-
-#: pdfarranger/pageutils.py:276
-#, python-format
-msgid "% of height"
-msgstr "% de la nautor"
-
-#: pdfarranger/pageutils.py:276
-#, python-format
-msgid "% of width"
-msgstr "% de la largor"
-
-#: pdfarranger/pdfarranger.py:3152
-#, python-format
-msgid "%s is a tool for rearranging and modifying PDF files."
-msgstr "%s es una aisina per reorganizar e modificar los fichièrs PDF."
-
-#: pdfarranger/config.py:296
-msgid "(Libhandy missing)"
-msgstr "(Libhandy mancanta)"
-
-#: pdfarranger/config.py:288
-msgid "(Requires restart)"
-msgstr "(Reaviada necessària)"
-
-#: pdfarranger/pdfarranger.py:1402
-#, python-format
-msgid "A file named \"%s\" already exists. Do you want to replace it?"
-msgstr "Un fichièr nomenat « %s » existís ja. Lo volètz remplaçar ?"
-
-#: pdfarranger/search.py:42
-msgid "All"
-msgstr "Tot"
-
-#: data/menu.ui:254 data/menu.ui:444
-msgid "All From _Same File"
-msgstr "Totas del _meteis fichièr"
-
-#: pdfarranger/pdfarranger.py:721
-msgid "All files"
-msgstr "Totes los fichièrs"
-
-#: pdfarranger/pdfarranger.py:510 pdfarranger/pdfarranger.py:589
-msgid "All pages must have the same size."
-msgstr "Totes las paginas devon aver la meteissa talha."
-
-#: pdfarranger/pdfarranger.py:692
-msgid "All supported files"
-msgstr "Totes los fichièrs preses en carga"
-
-#: pdfarranger/exporter.py:522
-msgid "Auto Rotate"
-msgstr "Rotacion auto"
-
-#: pdfarranger/pageutils.py:254
-msgid "Bottom"
-msgstr "En bas"
-
-#: pdfarranger/pageutils.py:486
-msgid "Bottom to Top"
-msgstr "D'aval cap amont"
-
-#: pdfarranger/core.py:592
-msgid "Clipboard image"
-msgstr "Imatge del quichapapièr"
-
-#: pdfarranger/pageutils.py:469 pdfarranger/splitter.py:60
-msgid "Columns"
-msgstr "Colomnas"
-
-#: data/menu.ui:161 data/menu.ui:407
-msgid "Copy _Image"
-msgstr "Copiar l'_imatge"
-
-#: data/menu.ui:166 data/menu.ui:412
-msgid "Copy _Text"
-msgstr "Copiar lo _tèxte"
-
-#: pdfarranger/metadata.py:49
-msgid "Created"
-msgstr "Creacion"
-
-#: pdfarranger/metadata.py:47
-msgid "Creator"
-msgstr "Creator"
-
-#: pdfarranger/metadata.py:48
-msgid "Creator tool"
-msgstr "Logicial de creacion"
-
-#: pdfarranger/pageutils.py:351
-msgid "Crop & Add margins"
-msgstr "Talhar e apondre de marges"
-
-#: pdfarranger/pageutils.py:1002
-msgid "Crop Margins"
-msgstr "Talhar los marges"
-
-#: data/menu.ui:194 data/menu.ui:490
-msgid "Crop White Borders"
-msgstr "Talhar las bordaduras blancas"
-
-#: pdfarranger/pageutils.py:266 pdfarranger/pdfarranger.py:3118
-msgid ""
-"Cropping/hiding does not remove any content from the PDF file, it only hides "
-"it."
-msgstr ""
-"Copiar o amagar suprimisson pas cap de contengut del fichièr PDF, lo "
-"rescondon solament."
-
-#: data/menu.ui:114 data/menu.ui:355
-msgid "Cu_t"
-msgstr "_Copar"
-
-#: pdfarranger/pageutils.py:154
-msgid "Custom"
-msgstr "Personalizar"
-
-#: pdfarranger/pdfarranger.py:1525
-msgid "Despite the warnings the document(s) should have no visible issues."
-msgstr ""
-"En defòra dels avertiments lo(s) document(s) deurián pas aver de problèmas "
-"visibles."
-
-#: pdfarranger/pdfarranger.py:1236
-msgid "Discard changes and close?"
-msgstr "Abandonar las modificacion e tampar ?"
-
-#: pdfarranger/pdfarranger.py:1273
-msgid "Discard changes and quit?"
-msgstr "Abandonar las modificacions e quitar ?"
-
-#: pdfarranger/pdfarranger.py:3125
-msgid "Do not show this dialog again."
-msgstr "Afichar pas mai aquesta fenèstra."
-
-#: pdfarranger/pdfarranger.py:1227
-msgid "Do_n’t Save"
-msgstr "E_nregistrar pas"
-
-#: pdfarranger/pdfarranger.py:1532
-msgid "Don't show warnings when saving again."
-msgstr "Mostrar pas mai d’avertiments en enregistrant."
-
-#: data/menu.ui:198 data/menu.ui:494
-msgid "Dupl_icate"
-msgstr "Dupl_icar"
-
-#: data/menu.ui:52 data/menu.ui:527
-msgid "E_xport"
-msgstr "E_xportar"
-
-#: data/menu.ui:55 data/menu.ui:530
-msgid "E_xport Selection to a Single File…"
-msgstr "E_xportar la seleccion dins un unic fichièr…"
-
-#: data/menu.ui:319
-msgid "Edit _Properties"
-msgstr "Modificar las _proprietats"
-
-#: pdfarranger/metadata.py:213
-msgid "Edit properties"
-msgstr "Modificar las proprietats"
-
-#: pdfarranger/splitter.py:62
-msgid "Equal column width"
-msgstr "Egal a la largor de colomna"
-
-#: pdfarranger/splitter.py:62
-msgid "Equal row height"
-msgstr "Egal a la nautor de la linha"
-
-#: pdfarranger/pdfarranger.py:2094
-msgid "Exploding into images…"
-msgstr "Devesir en imatges…"
-
-#: data/menu.ui:60 data/menu.ui:535
-msgid "Export Selection to _Individual Files…"
-msgstr "Exportar la seleccion dins de fichièrs _individuals…"
-
-#: data/menu.ui:74 data/menu.ui:549
-msgid "Export Selection to _JPG Images…"
-msgstr "Exportar la seleccion en imatges _JPG…"
-
-#: data/menu.ui:69 data/menu.ui:544
-msgid "Export Selection to _PNG Images…"
-msgstr "Exportar la seleccion en imatges _PNG…"
-
-#: data/menu.ui:84 data/menu.ui:559
-msgid "Export Selection to _Rasterized PDF (jpg)…"
-msgstr "Exportar la seleccion en PDF _rasterizat (jpg)…"
-
-#: data/menu.ui:79 data/menu.ui:554
-msgid "Export Selection to _Rasterized PDF (png)…"
-msgstr "Exportar la seleccion en PDF _rasterizat (png)…"
-
-#: data/menu.ui:65 data/menu.ui:540
-msgid "Export _All Pages to Individual Files…"
-msgstr "Exportar _totas las paginas dins de fichièrs _individuals…"
-
-#: pdfarranger/pdfarranger.py:1343
-msgid "Export…"
-msgstr "Exportar…"
-
-#: pdfarranger/core.py:594 pdfarranger/pdfarranger.py:1788
-msgid "File is neither pdf nor image"
-msgstr "Lo fichièr es pas un pdf nimai un imatge"
-
-#: pdfarranger/pdfarranger.py:334
-msgid "File(s) to open"
-msgstr "Fichièr(s) de dobrir"
-
-#: pdfarranger/search.py:43
-msgid "Find All"
-msgstr "Recercar tot"
-
-#: pdfarranger/search.py:38
-msgid "Find Next"
-msgstr "Recercar lo seguent"
-
-#: pdfarranger/search.py:33
-msgid "Find Previous"
-msgstr "Recercar lo precedent"
-
-#: data/menu.ui:312
-msgid "Find _All"
-msgstr "_Tot recercar"
-
-#: data/menu.ui:308
-msgid "Find _Next"
-msgstr "Recercar lo _seguent"
-
-#: data/menu.ui:304
-msgid "Find _Previous"
-msgstr "Recercar lo _precedent"
-
-#: pdfarranger/pageutils.py:347
-msgid "Fit mode"
-msgstr "Mòde adaptatiu"
-
-#: pdfarranger/exporter.py:520
-msgid "Fit to Full Page"
-msgstr "Adaptar a la pagina complèta"
-
-#: pdfarranger/exporter.py:519
-msgid "Fit to Printable Area"
-msgstr "Adaptar a la zòna imprimibla"
-
-#: pdfarranger/pageutils.py:356
-msgid "Fit to paper"
-msgstr "Adaptar al papièr"
-
-#: pdfarranger/pdfarranger.py:3122
-msgid "For more info see"
-msgstr "Per mai d’informacions veire"
-
-#: pdfarranger/config.py:332
-msgid "For more options see:"
-msgstr "Per mai d’opcions vejatz :"
-
-#: data/menu.ui:291
-msgid "Full_screen"
-msgstr "Ecran _complèt"
-
-#: pdfarranger/pdfarranger.py:3168
-msgid "GNU General Public License (GPL) Version 3."
-msgstr "Licéncia publica generala GNU (GPL) version 3."
-
-#: pdfarranger/config.py:327
-msgid "Greyscale"
-msgstr "Nivèls de gris"
-
-#: pdfarranger/pageutils.py:145
-msgid "Height"
-msgstr "Nautor"
-
-#: pdfarranger/splitter.py:88
-msgid "Height in %"
-msgstr "Nautor en %"
-
-#: pdfarranger/pageutils.py:1002
-msgid "Hide Margins"
-msgstr "Amagar los marges"
-
-#: pdfarranger/pageutils.py:481
-msgid "Horizontal"
-msgstr "Orizontal"
-
-#: pdfarranger/splitter.py:61
-msgid "Horizontal Splits"
-msgstr "Partison orizontal"
-
-#: pdfarranger/pageutils.py:552
-msgid "Horizontal offset"
-msgstr "Descalatge orizontal"
-
-#: pdfarranger/config.py:316
-msgid "Image Export"
-msgstr "Expòrt d'imatge"
-
-#: pdfarranger/core.py:583
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: pdfarranger-qt tools/merge_translations.py\n"
+"Generated-By: Babel 2.18.0\n"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py pdfarranger_qt/reader.py
+#, python-brace-format
+msgid "Page {}"
+msgstr "Pagina {}"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Open Link"
+msgstr "Dobrir lo ligam"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Copy Link Address"
+msgstr "Copiar l'adreça del ligam"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+#, python-brace-format
+msgid "Go to {}"
+msgstr "Anar a {}"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Follow Link"
+msgstr "Seguir lo ligam"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py pdfarranger_qt/mainwindow.py
+msgid "Copy"
+msgstr "Copiar"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Select All"
+msgstr "Tot seleccionar"
+
+#: pdfarranger_qt/core.py pdfarranger_qt/mainwindow.py
 msgid "Image files are only supported with img2pdf"
 msgstr "Los fichièrs imatge son solament preses en carga amb img2pdf"
 
-#: pdfarranger/core.py:589
-msgid "Image format is not supported by img2pdf"
-msgstr "Lo format d’imatge pas pres en carga per img2pdf"
-
-#: pdfarranger/pdfarranger.py:2091
-msgid "Img2pdf missing."
-msgstr "Img2pdf mancant."
-
-#: pdfarranger/pdfarranger.py:1600
-msgid "Img2pdf support missing."
-msgstr "Presa en carga de Img2pdf mancanta."
-
-#: data/pdfarranger.ui:58
-msgid "Import"
-msgstr "Importar"
-
-#: pdfarranger/pdfarranger.py:1610
-msgid "Import…"
-msgstr "Importacion…"
-
-#: data/menu.ui:214 data/menu.ui:510
-msgid "Insert Blan_k Page…"
-msgstr "Inserir una pagina _voida…"
-
-#: pdfarranger/pageutils.py:435
-msgid "Insert Blank Page"
-msgstr "Inserir una pagina voida"
-
-#: pdfarranger/metadata.py:184
-msgid "Invalid date format. Input discarded."
-msgstr "Format de data invalid. Entrada ignorada."
-
-#: pdfarranger/pdfarranger.py:3155
-#, python-format
-msgid "It uses libqpdf %s, pikepdf %s, GTK %s and Python %s."
-msgstr "Utiliza libqpdf %s, pikepdf %s, GTK %s e Python %s."
-
-#: pdfarranger/pdfarranger.py:712
-msgid "JPEG images"
-msgstr "Imatges JPEG"
-
-#: pdfarranger/metadata.py:45
-msgid "Keywords"
-msgstr "Mots clau"
-
-#: pdfarranger/pageutils.py:164
-msgid "Landscape"
-msgstr "Paisatge"
-
-#: pdfarranger/config.py:286
-msgid "Language"
-msgstr "Lenga "
-
-#: pdfarranger/pageutils.py:254
-msgid "Left"
-msgstr "Esquèrra"
-
-#: pdfarranger/pageutils.py:483
-msgid "Left to Right"
-msgstr "D’esquèrra a drecha"
-
-#: data/pdfarranger.ui:122
-msgid "Main Menu"
-msgstr "Menú principal"
-
-#: pdfarranger/pdfarranger.py:3163
-msgid "Maintainers and contributors"
-msgstr "Manteneires e contributors"
-
-#: pdfarranger/pageutils.py:467
-msgid "Margin"
-msgstr "Marge"
-
-#: pdfarranger/pageutils.py:453
-msgid "Merge Pages"
-msgstr "Marge de las paginas"
-
-#: pdfarranger/pageutils.py:518
-msgid "Merged page size:"
-msgstr "Talha de las paginas amb marge :"
-
-#: pdfarranger/metadata.py:50
-msgid "Modified"
-msgstr "Modificacion"
-
-#: pdfarranger/pageutils.py:498
-msgid "Non-uniform page size - using max size"
-msgstr "Talha de pagina non unifòrma - utilizacion de la talha max"
-
-#: pdfarranger/exporter.py:518
-msgid "None"
-msgstr "Pas cap"
-
-#: pdfarranger/pdfarranger.py:3111
-msgid "Note"
-msgstr "Nòta"
-
-#: pdfarranger/pdfarranger.py:3117
-msgid "Note the limitations:"
-msgstr "Notatz las limitacions :"
-
-#: data/pdfarranger.ui:37
-msgid "Open"
-msgstr "Dobrir"
-
-#: pdfarranger/pdfarranger.py:1458
-msgid "Open…"
-msgstr "Dobrir…"
-
-#: pdfarranger/config.py:324
-msgid "Optimize"
-msgstr "Optimizar"
-
-#: pdfarranger/pageutils.py:162
-msgid "Orientation"
-msgstr "Orientacion"
-
-#: pdfarranger/pdfarranger.py:3119
-msgid "Outlines and links can be preserved only in certain cases."
-msgstr "Se pòdon servar los contorns e los ligam sonque dins cèrts cases."
-
-#: pdfarranger/pageutils.py:1055
-msgid "Overlay"
-msgstr "Superposicion"
-
-#: pdfarranger/pdfarranger.py:315
-msgid ""
-"PDF Arranger is a small python-gtk application, which helps the user to "
-"merge or split pdf documents and rotate, crop and rearrange their pages "
-"using an interactive and intuitive graphical interface. It is a frontend for "
-"pikepdf."
-msgstr ""
-"PDF Arranger es una pichona aplicacion python-gtk qu’ajuda l’utilizaire a "
-"fusionar o copar de documents pdf e tanben los virar, talhar e reorganizar "
-"en utilizant una interfàcia interactiva e intuitiva. Es un frontend per "
-"pikepdf."
-
-#: pdfarranger/pdfarranger.py:1782
-msgid "PDF document is damaged"
-msgstr "Lo document PDF es damatjat"
-
-#: pdfarranger/pdfarranger.py:696
-msgid "PDF files"
-msgstr "Fichièrs PDF"
-
-#: pdfarranger/pdfarranger.py:704
-msgid "PNG images"
-msgstr "Imatges PNG"
-
-#: pdfarranger/exporter.py:573
-msgid "Page Handling"
-msgstr "Gestion de las paginas"
-
-#: pdfarranger/pageutils.py:494
-msgid "Page Order"
-msgstr "Òrdre de las paginas"
-
-#: pdfarranger/pageutils.py:343
-msgid "Page size"
-msgstr "Talha de la pagina"
-
-#: pdfarranger/pageutils.py:151
-msgid "Paper size"
-msgstr "Talha de papièr"
-
-#: pdfarranger/core.py:470
-msgid "Password"
-msgstr "Senhal"
-
-#: pdfarranger/core.py:448
-msgid "Password required"
-msgstr "Senhal requesit"
-
-#: data/menu.ui:127 data/menu.ui:368
-msgid "Past_e Special"
-msgstr "Emp_egament especial"
-
-#: data/menu.ui:144 data/menu.ui:386
-msgid "Paste As O_verlay…"
-msgstr "Pegar coma s_uperposicion…"
-
-#: data/menu.ui:139 data/menu.ui:381
-msgid "Paste As _Even Pages"
-msgstr "Pegar coma paginas _paras"
-
-#: data/menu.ui:134 data/menu.ui:376
-msgid "Paste As _Odd Pages"
-msgstr "Pegar coma paginas _imparas"
-
-#: data/menu.ui:149 data/menu.ui:391
-msgid "Paste As _Underlay…"
-msgstr "Pegar coma j_os jaç…"
-
-#: data/menu.ui:122 data/menu.ui:363
-msgid "Paste _After"
-msgstr "Pegar _aprèp"
-
-#: data/menu.ui:129 data/menu.ui:371
-msgid "Paste _Before"
-msgstr "Pegar _avant"
-
-#: pdfarranger/pdfarranger.py:1938
-msgid "Pasted data not valid. Aborting paste."
-msgstr "Donadas pegadas invalidas. Abandon de l’empegament."
-
-#: pdfarranger/config.py:318
-msgid "Pixels/inch:"
-msgstr "Pixèls/poce :"
-
-#: pdfarranger/pageutils.py:163
-msgid "Portrait"
-msgstr "Retrach"
-
-#: data/menu.ui:325
-msgid "Pre_ferences"
-msgstr "Pre_feréncias"
-
-#: pdfarranger/config.py:276
-msgid "Preferences"
-msgstr "Preferéncias"
-
-#: pdfarranger/pdfarranger.py:326
-msgid "Print the version of PDF Arranger and exit"
-msgstr "Afichar la version de PDF Arranger e quitar"
-
-#: pdfarranger/config.py:301
-msgid "Printing"
-msgstr "Impression"
-
-#: pdfarranger/exporter.py:554
-msgid "Printing…"
-msgstr "Impression…"
-
-#: pdfarranger/metadata.py:46
-msgid "Producer"
-msgstr "Productor"
-
-#: pdfarranger/metadata.py:227
-msgid "Property"
-msgstr "Proprietat"
-
-#: pdfarranger/pageutils.py:1122
-msgid "Range Select"
-msgstr "Seleccionar una plaja"
-
-#: data/menu.ui:202 data/menu.ui:498
-msgid "Re_verse Order"
-msgstr "In_versar l'òrdre"
-
-#: pdfarranger/pageutils.py:357
-msgid "Relative"
-msgstr "Relativa"
-
-#: pdfarranger/exporter.py:591
-msgid "Rendering Preview…"
-msgstr "Generacion de l’apercebut…"
-
-#: pdfarranger/pdfarranger.py:982
-msgid "Rendering…"
-msgstr "Rendut en cors…"
-
-#: pdfarranger/pdfarranger.py:1404
-msgid "Replace"
-msgstr "Remplaçar"
-
-#: pdfarranger/config.py:308
-msgid "Retain document-level information of the first opened file"
-msgstr ""
-"Conservar las informacions al nivèl del document del primièr fichièr dobèrt"
-
-#: pdfarranger/pageutils.py:254
-msgid "Right"
-msgstr "Drecha"
-
-#: pdfarranger/pageutils.py:484
-msgid "Right to Left"
-msgstr "De drecha a esquèrra"
-
-#: data/pdfarranger.ui:203
-msgid "Rotate Left"
-msgstr "Pivotar cap a esquèrra"
-
-#: data/pdfarranger.ui:227
-msgid "Rotate Right"
-msgstr "Pivotar cap a drecha"
-
-#: data/menu.ui:172 data/menu.ui:468
-msgid "Rotate _Left"
-msgstr "Pivotar cap a es_quèrra"
-
-#: pdfarranger/pageutils.py:470 pdfarranger/splitter.py:60
-msgid "Rows"
-msgstr "Linhas"
-
-#: pdfarranger/pdfarranger.py:3158
-#, python-format
-msgid "Running on %s"
-msgstr "En execucion sus %s"
-
-#: data/menu.ui:259 data/menu.ui:449
-msgid "Same Page _Format"
-msgstr "Meteis _format de pagina"
-
-#: data/pdfarranger.ui:78
-msgid "Save"
-msgstr "Enregistrar"
-
-#: data/pdfarranger.ui:97
-msgid "Save As"
-msgstr "Enregistrar jos"
-
-#: pdfarranger/pdfarranger.py:1343
-msgid "Save As…"
-msgstr "Enregistrar jos…"
-
-#: data/menu.ui:47
-msgid "Save _As…"
-msgstr "Enregistrar _jos…"
-
-#: pdfarranger/pdfarranger.py:1245
-msgid "Save changes before closing?"
-msgstr "Enregistrar las modificacions abans de tampar ?"
-
-#: pdfarranger/pdfarranger.py:1282
-msgid "Save changes before quitting?"
-msgstr "Enregistrar las modificacions abans de tampar ?"
-
-#: pdfarranger/pdfarranger.py:1242
-msgid "Save changes to “{}” before closing?"
-msgstr "Enregistrar las modificacions de « {} » abans de tampar ?"
-
-#: pdfarranger/pdfarranger.py:1279
-msgid "Save changes to “{}” before quitting?"
-msgstr "Enregistrar las modificacions de « {} » abans de tampar ?"
-
-#: pdfarranger/pdfarranger.py:1524
-msgid "Saving produced some warnings"
-msgstr "L’enregistrament a portat d’unes avertiments"
-
-#: pdfarranger/config.py:306
-msgid "Saving/exporting to single file"
-msgstr "Salvagardar/exportar dins un fichièr unic"
-
-#: pdfarranger/pdfarranger.py:1563
-msgid "Saving…"
-msgstr "Enregistrament…"
-
-#: pdfarranger/pageutils.py:349
-msgid "Scale"
-msgstr "Escala"
-
-#: pdfarranger/pageutils.py:350
-msgid "Scale & Add margins"
-msgstr "Dimensionar e apondre de marges"
-
-#: pdfarranger/pageutils.py:122
-msgid "Scale factor"
-msgstr "Factor d'escala"
-
-#: pdfarranger/exporter.py:516
-msgid "Scale mode:"
-msgstr "Mòde de mesa a l’escala :"
-
-#: data/menu.ui:234 data/menu.ui:424
-msgid "Select _All"
-msgstr "_Tot seleccionar"
-
-#: data/menu.ui:249 data/menu.ui:439
-msgid "Select _Even Pages"
-msgstr "Seleccionar las paginas _paras"
-
-#: data/menu.ui:244 data/menu.ui:434
-msgid "Select _Odd Pages"
-msgstr "Seleccionar las paginas _imparas"
-
-#: data/menu.ui:269 data/menu.ui:459
-msgid "Select _Range"
-msgstr "Seleccionar la _plaja"
-
-#: pdfarranger/pageutils.py:1131
-msgid "Select range of pages: "
-msgstr "Seleccionar una plaja de pagina : "
-
-#: pdfarranger/pdfarranger.py:3186
-msgid "Selected pages: "
-msgstr "Paginas seleccionadas : "
-
-#: pdfarranger/pageutils.py:699
-msgid "Show values"
-msgstr "Afichar las valors"
-
-#: pdfarranger/splitter.py:26
-msgid "Split Pages"
-msgstr "Devesir paginas"
-
-#: pdfarranger/metadata.py:44
-msgid "Subject"
-msgstr "Subjècte"
-
-#: pdfarranger/pdfarranger.py:726
-msgid "Supported image files"
-msgstr "Fichièrs imatge preses en carga"
-
-#: pdfarranger/config.py:343 pdfarranger/config.py:351
-msgid "System setting"
-msgstr "Paramètres sistèma"
-
-#: pdfarranger/core.py:460
-msgid ""
-"The document “{}” is locked and requires a password before it can be opened."
-msgstr "Lo document « {} » es verrolhat e requerís un senhal per se dobrir."
-
-#: pdfarranger/pdfarranger.py:2067
-msgid "The page has several images. Use \"Explode into Images\" first.\""
-msgstr ""
-"La pagina a mai d’una pagina. Utilizatz d’en primièr « Devesir en imatges »."
-
-#: pdfarranger/pdfarranger.py:577
-msgid "The page selection is not contiguous. Cannot unimpose."
-msgstr "La seleccion de la pagina es pas continua. Impossible d’imprimir pas."
-
-#: pdfarranger/core.py:459
-msgid "The password will be remembered until you close PDF Arranger."
-msgstr "S’enregistrarà lo senhal fins que tampetz PDF Arranger."
-
-#: pdfarranger/config.py:294
-msgid "Theme"
-msgstr "Tèma"
-
-#: pdfarranger/metadata.py:43
-msgid "Title"
-msgstr "Títol"
-
-#: pdfarranger/pageutils.py:254
-msgid "Top"
-msgstr "Ennaut"
-
-#: pdfarranger/pageutils.py:485
-msgid "Top to Bottom"
-msgstr "D'amont cap aval"
-
-#: pdfarranger/pageutils.py:1055
-msgid "Underlay"
-msgstr "Jos jaç"
-
-#: pdfarranger/core.py:567 pdfarranger/pdfarranger.py:1778
+# machine translation, unreviewed
+#: pdfarranger_qt/core.py
+msgid "File not found"
+msgstr "Fichièr pas trobat"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/core.py
+msgid "Invalid file format"
+msgstr "Format de fichièr invalid"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/core.py
+msgid "Data not yet available"
+msgstr "Donadas pas encara disponiblas"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/core.py
+msgid "Unsupported security scheme"
+msgstr "Esquèma de seguretat pas gerit"
+
+#: pdfarranger_qt/core.py
 msgid "Unknown file format"
 msgstr "Format de fichièr desconegut"
 
-#: pdfarranger/pageutils.py:1138
+#: pdfarranger_qt/core.py
+msgid "Image format is not supported by img2pdf"
+msgstr "Lo format d’imatge pas pres en carga per img2pdf"
+
+#: pdfarranger_qt/core.py
+msgid "File is neither pdf nor image"
+msgstr "Lo fichièr es pas un pdf nimai un imatge"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/core.py
+msgid "Cannot open document"
+msgstr "Impossible de dobrir lo document"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Paper size"
+msgstr "Talha de papièr"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Custom"
+msgstr "Personalizar"
+
+#: pdfarranger_qt/dialogs.py
+msgid "mm"
+msgstr "mm"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Width"
+msgstr "Largor"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Height"
+msgstr "Nautor"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Keep aspect ratio"
+msgstr "Servar las proporcions"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Portrait"
+msgstr "Retrach"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Landscape"
+msgstr "Paisatge"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Orientation"
+msgstr "Orientacion"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Range Select"
+msgstr "Seleccionar una plaja"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Select range of pages: "
+msgstr "Seleccionar una plaja de pagina : "
+
+#: pdfarranger_qt/dialogs.py
 msgid ""
 "Use a comma to separate page numbers, a dash to select a range of pages. \n"
 "e.g. : \"1,3,5-7,9\""
@@ -791,214 +151,2584 @@ msgstr ""
 "seleccionar una plaja de pagina.\n"
 "ex. : « 1,3,5-7,9 »"
 
-#: pdfarranger/pdfarranger.py:3123
-msgid "User Manual"
-msgstr "Manual de l'utilizaire"
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+msgid "Insert Blank Page"
+msgstr "Inserir una pagina voida"
 
-#: pdfarranger/metadata.py:227
-msgid "Value"
-msgstr "Valor"
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+msgid "Page size"
+msgstr "Talha de la pagina"
 
-#: pdfarranger/pageutils.py:482
-msgid "Vertical"
-msgstr "Vertical"
+#: pdfarranger_qt/dialogs.py
+msgid "Fit to paper"
+msgstr "Adaptar al papièr"
 
-#: pdfarranger/splitter.py:61
+#: pdfarranger_qt/dialogs.py
+msgid "Relative"
+msgstr "Relativa"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Scale"
+msgstr "Escala"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Scale & Add margins"
+msgstr "Dimensionar e apondre de marges"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Crop & Add margins"
+msgstr "Talhar e apondre de marges"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Fit mode"
+msgstr "Mòde adaptatiu"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Scale factor"
+msgstr "Factor d'escala"
+
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+msgid "Hide Margins"
+msgstr "Amagar los marges"
+
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+msgid "Crop Margins"
+msgstr "Talhar los marges"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Left"
+msgstr "Esquèrra"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Right"
+msgstr "Drecha"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Top"
+msgstr "Ennaut"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Bottom"
+msgstr "En bas"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Margins"
+msgstr "Marges"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Same for all sides"
+msgstr "Parièr per totes los costats"
+
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+msgid "Split Pages"
+msgstr "Devesir paginas"
+
+#: pdfarranger_qt/dialogs.py
 msgid "Vertical Splits"
 msgstr "Partison vertical"
 
-#: pdfarranger/pageutils.py:554
-msgid "Vertical offset"
-msgstr "Descalatge vertical"
+#: pdfarranger_qt/dialogs.py
+msgid "Horizontal Splits"
+msgstr "Partison orizontal"
 
-#: pdfarranger/pageutils.py:139
-msgid "Width"
-msgstr "Largor"
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+msgid "Pages per Sheet"
+msgstr "Paginas per fuèlh"
 
-#: pdfarranger/splitter.py:88
-msgid "Width in %"
-msgstr "Largor en %"
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Automatic"
+msgstr "Automatic"
 
-#: pdfarranger/pdfarranger.py:1226
-msgid "Your changes will be lost if you don’t save them."
-msgstr "Vòstras modificacions seràn perdudas se las enregistratz pas."
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Automatic turns the sheet sideways when that lets the pages come out larger."
+msgstr ""
+"L'automatic vira lo fuèlh de costat quand aquò fa sortir las paginas mai "
+"grandas."
 
-#: data/pdfarranger.ui:144
-msgid "Zoom In"
-msgstr "Agrandir"
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Empty space left around each page."
+msgstr "Espaci void daissat a l'entorn de cada pagina."
 
-#: data/pdfarranger.ui:167
-msgid "Zoom Out"
-msgstr "Redusir"
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Layout"
+msgstr "Disposicion"
 
-#: data/menu.ui:287
-msgid "Zoom _Fit"
-msgstr "_Adaptar"
+#: pdfarranger_qt/dialogs.py
+msgid "Columns"
+msgstr "Colomnas"
 
-#: data/menu.ui:279
-msgid "Zoom _In"
-msgstr "Agran_dir"
+#: pdfarranger_qt/dialogs.py
+msgid "Rows"
+msgstr "Linhas"
 
-#: data/menu.ui:283
-msgid "Zoom _Out"
-msgstr "_Reduire"
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Sheet"
+msgstr "Fuèlh"
 
-#: data/menu.ui:331
-msgid "_About"
-msgstr "_A prepaus"
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Gap"
+msgstr "Espaci"
 
-#: pdfarranger/pageutils.py:1012
-msgid "_Apply"
-msgstr "_Aplicar"
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Appearance"
+msgstr "Aparéncia"
 
-#: data/menu.ui:218 data/menu.ui:514
-msgid "_Booklet"
-msgstr "_Libret"
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/reader.py
+msgid "Bold"
+msgstr "Gras"
 
-#: pdfarranger/config.py:280 pdfarranger/metadata.py:216
-#: pdfarranger/pageutils.py:327 pdfarranger/pdfarranger.py:1218
-#: pdfarranger/pdfarranger.py:1227 pdfarranger/pdfarranger.py:1349
-#: pdfarranger/pdfarranger.py:1416
-msgid "_Cancel"
-msgstr "_Anullar"
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/reader.py
+msgid "Italic"
+msgstr "Italic"
 
-#: pdfarranger/pdfarranger.py:1237 data/menu.ui:337
-msgid "_Close"
-msgstr "_Tampar"
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Font"
+msgstr "Poliça"
 
-#: data/menu.ui:118 data/menu.ui:359
-msgid "_Copy"
-msgstr "_Copiar"
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Size"
+msgstr "Talha"
 
-#: data/menu.ui:186 data/menu.ui:482
-msgid "_Crop Margins…"
-msgstr "_Talhar los marges…"
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Colour"
+msgstr "Color"
 
-#: data/menu.ui:110 data/menu.ui:351
-msgid "_Delete"
-msgstr "_Suprimir"
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Opacity"
+msgstr "Opacitat"
 
-#: data/menu.ui:239 data/menu.ui:429
-msgid "_Deselect All"
-msgstr "_Tot deseleccionar"
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Position"
+msgstr "Posicion"
 
-#: data/menu.ui:107
-msgid "_Edit"
-msgstr "_Editar"
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Angle"
+msgstr "Angle"
 
-#: data/menu.ui:157 data/menu.ui:403
-msgid "_Explode into Images"
-msgstr "_Devesir en imatges"
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+msgid "Add Page Numbers"
+msgstr "Apondre de numèros de pagina"
 
-#: data/menu.ui:155 data/menu.ui:400
-msgid "_Extract"
-msgstr "_Extraire"
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+#, python-format
+msgid "%s is replaced by the page number, %s by the number of pages."
+msgstr "%s es remplaçat pel numèro de pagina, %s pel nombre de paginas."
 
-#: data/menu.ui:297
-msgid "_Find"
-msgstr "_Recercar"
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Leave the first page unnumbered"
+msgstr "Daissar la primièra pagina sens numèro"
 
-#: data/menu.ui:300
-msgid "_Find…"
-msgstr "_Recercar…"
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "It is still counted; a title page just does not carry a number."
+msgstr "Es totjorn comptada; una pagina de títol pòrta pas de numèro, res mai."
 
-#: data/menu.ui:220 data/menu.ui:516
-msgid "_Generate (imposition)"
-msgstr "_Generar (imposicion)"
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Format"
+msgstr "Format"
 
-#: data/menu.ui:190 data/menu.ui:486
-msgid "_Hide Margins…"
-msgstr "_Amagar los marges…"
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Start at"
+msgstr "Començar a"
 
-#: data/menu.ui:30
-msgid "_Import"
-msgstr "_Importar"
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Numbering"
+msgstr "Numerotacion"
 
-#: data/menu.ui:264 data/menu.ui:454
-msgid "_Invert Selection"
-msgstr "_Inversar la seleccion"
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+msgid "Add Watermark"
+msgstr "Apondre una filigrana"
 
-#: data/menu.ui:210 data/menu.ui:506
-msgid "_Merge Pages…"
-msgstr "_Marge de las paginas…"
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "DRAFT"
+msgstr "ESBÒÇ"
 
-#: data/menu.ui:36
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Text"
+msgstr "Tèxte"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Watermark"
+msgstr "Filigrana"
+
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+msgid "Merge Pages"
+msgstr "Marge de las paginas"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Overlay"
+msgstr "Superposicion"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Underlay"
+msgstr "Jos jaç"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/stamp.py
+msgid "Centre"
+msgstr "Centre"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Middle"
+msgstr "Mitan"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Horizontal"
+msgstr "Orizontal"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Vertical"
+msgstr "Vertical"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Edit properties"
+msgstr "Modificar las proprietats"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "System"
+msgstr "Sistèma"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Light"
+msgstr "Clar"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Dark"
+msgstr "Escur"
+
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+msgid "Preferences"
+msgstr "Preferéncias"
+
+#: pdfarranger_qt/dialogs.py
+msgid "System setting"
+msgstr "Paramètres sistèma"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Language"
+msgstr "Lenga "
+
+#: pdfarranger_qt/dialogs.py
+msgid "Theme"
+msgstr "Tèma"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "General"
+msgstr "General"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Fit to page"
+msgstr "Ajustar a la pagina"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Actual size"
+msgstr "Talha reala"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Auto Rotate"
+msgstr "Rotacion auto"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Pages are rasterised at this resolution before being sent to the printer. "
+"Lower it if printing is slow: the printer driver has less to process."
+msgstr ""
+"Las paginas son raterizadas a aquesta resolucion abans d'èsser mandadas a "
+"l'imprimenta. Baissatz-la se l'impression es lenta : lo pilòt de "
+"l'imprimenta aurà mens a tractar."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Scale mode"
+msgstr "Mòde d'escala"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Pixels/inch:"
+msgstr "Pixèls/poce :"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Printing"
+msgstr "Impression"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Preserve document information from the first file opened"
+msgstr "Servar las informacions del document del primièr fichièr dobèrt"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "When checked: use document properties from the first file opened."
+msgstr "Se marcat: utilizar las proprietats del document del primièr fichièr dobèrt."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "When unchecked: merge bookmarks from all documents."
+msgstr "Se pas marcat: fusionar los marcapaginas de totes los documents."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Optimize for the web (linearize)"
+msgstr "Optimizar pel web (linearizar)"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Lay the file out so a browser can show page one before the rest has "
+"downloaded."
+msgstr ""
+"Dispausar lo fichièr per qu'un navegador pòsca mostrar la primièra pagina "
+"abans que la rèsta siá telecargada."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Compress"
+msgstr "Compressar"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Recompress the file's streams and pack its objects together."
+msgstr "Tornar compressar los fluxes del fichièr e empaquetar sos objèctes ensemble."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"How much this saves depends on the file: one full of already-compressed "
+"images will barely shrink."
+msgstr ""
+"Çò qu'aquò estalvia depend del fichièr : un fichièr plen d'imatges ja "
+"compressats se reduirà pas gaire."
+
+#: pdfarranger_qt/dialogs.py
+msgid "Saving/exporting to single file"
+msgstr "Salvagardar/exportar dins un fichièr unic"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Greyscale"
+msgstr "Nivèls de gris"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Image Export"
+msgstr "Expòrt d'imatge"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Keyboard shortcuts"
+msgstr "Acorchis de clavièr"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Viewer Preferences"
+msgstr "Preferéncias del visualizador"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Open showing:"
+msgstr "Dobrir en mostrant :"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Page layout:"
+msgstr "Disposicion de la pagina :"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "On opening"
+msgstr "A la dobertura"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Window"
+msgstr "Fenèstra"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Readers are free to ignore all of this."
+msgstr "Los lectors an lo drech d'ignorar tot aquò."
+
+#: pdfarranger_qt/dialogs.py
+msgid "Password"
+msgstr "Senhal"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Confirm password"
+msgstr "Confirmar lo senhal"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Enter a password, or cancel to leave the document unencrypted."
+msgstr "Picatz un senhal, o anullatz per daissar lo document pas chifrat."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "The passwords do not match."
+msgstr "Los senhals correspondon pas."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Reset"
+msgstr "Reinicializar"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Description"
+msgstr "Descripcion"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"PDF Arranger merges, splits, rearranges, rotates and crops PDF documents. "
+"Everything happens in memory against the pages you can see; nothing is "
+"written until you save."
+msgstr ""
+"PDF Arranger fusiona, devesís, reorganiza, vira e retalha de documents PDF. "
+"Tot se passa en memòria sus las paginas que vesètz ; res es pas escrich fins"
+" que enregistretz."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"It is a front end for pikepdf. Page content is never rewritten — only page "
+"order, geometry and composition."
+msgstr ""
+"Es una interfàcia per pikepdf. Lo contengut de las paginas es pas jamai "
+"reescrich — solament l'òrdre de las paginas, la geometria e la composicion."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Command line"
+msgstr "Linha de comanda"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Files given on the command line are opened as one document. "
+"<code>--version</code> prints the version and exits."
+msgstr ""
+"Los fichièrs balhats sus la linha de comanda son dobèrts coma un sol "
+"document. <code>--version</code> aficha la version e quita."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+msgid "Reading"
+msgstr "Lectura"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"The application opens in <b>read mode</b>: a continuous page view for "
+"reading the document rather than rearranging it. <b>View ▸ Arrange Mode</b> "
+"(Ctrl+E) swaps to the thumbnail grid and back."
+msgstr ""
+"L'aplicacion se dobrís en <b>mòde lectura</b> : un afichatge contunh de las "
+"paginas per legir lo document puslèu que per lo reorganizar. <b>Afichatge ▸ "
+"Mòde d'ordenament</b> (Ctrl+E) bascula cap a la grasilha de miniaturas e "
+"tòrna."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Reading shows the document <i>as edited</i>: rotations, crops, deletions and"
+" reordering are all applied, so what you read is what you would get if you "
+"saved. Page-editing commands are disabled while reading — bookmarks are the "
+"exception, and are edited here and nowhere else."
+msgstr ""
+"La lectura mòstra lo document <i>tal coma es estat modificat</i> : "
+"rotacions, retalhs, supressions e reorganizacions son totes aplicats, doncas"
+" çò que legissètz es çò qu'auriatz s'enregistravatz. Las comandas de "
+"modificacion de las paginas son desactivadas pendent la lectura — los "
+"marcapaginas son l'excepcion, e se modifican aicí e enluòc mai."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"The page you are on follows you between the two modes. Switching to read "
+"mode opens at the page selected in the grid, the first of them if several "
+"are selected; switching back scrolls the grid to the page you were reading, "
+"without disturbing what you had selected. With nothing selected, reading "
+"resumes where you left off — your place in each document is remembered "
+"between visits."
+msgstr ""
+"La pagina ont sètz vos seguís entre los dos mòdes. Bascular en mòde lectura "
+"dobrís a la pagina seleccionada dins la grasilha, la primièra se n'i a "
+"mantunas ; tornar bascular fa desfilar la grasilha fins a la pagina que "
+"legissiatz, sens tocar çò qu'aviatz seleccionat. Sens seleccion, la lectura "
+"reprend ont l'aviatz daissada — vòstre endrech dins cada document es "
+"memorizat entre las visitas."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"The toolbar shows which page you are on and how many there are; type a "
+"number into it to jump there, or use <b>Ctrl+G</b>."
+msgstr ""
+"La barra d'aisinas mòstra sus quina pagina sètz e quantas n'i a ; picatz-i "
+"un numèro per i sautar, o utilizatz <b>Ctrl+G</b>."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>View ▸ Continuous Scroll</b> is on by default; turning it off shows one "
+"page at a time. <b>View ▸ Facing Pages</b> puts two pages side by side, the "
+"way a book falls open. Both settings are remembered."
+msgstr ""
+"<b>Afichatge ▸ Desfilament contunh</b> es activat per defaut ; lo desactivar"
+" aficha una pagina a l'encòp. <b>Afichatge ▸ Paginas en fàcia</b> met doas "
+"paginas costat a costat, coma un libre que se dobrís. Los dos reglatges son "
+"memorizats."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Moving around a document"
+msgstr "Se desplaçar dins un document"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"One rule for the arrow keys: <b>the modifier decides what moves</b>. Nothing"
+" scrolls the view, Option (Alt) moves the text cursor, Shift extends the "
+"selection, Command (Ctrl) jumps to an edge, and Fn — Page Up, Page Down, "
+"Home and End — jumps further. None of it changes according to whether a text"
+" cursor happens to be on the page."
+msgstr ""
+"Una sola règla per las tòcas de direccion : <b>lo modificador decidís çò que"
+" se bolega</b>. Cap fa desfilar l'afichatge, Option (Alt) desplaça lo cursor"
+" de tèxte, Maj espandís la seleccion, Command (Ctrl) sauta a un bòrd, e Fn —"
+" Pag prec., Pag seg., Origina e Fin — sauta mai luènh. Res d'aquò càmbia pas"
+" segon qu'i aja o non un cursor de tèxte sus la pagina."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Keys"
+msgstr "Tòcas"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Continuous"
+msgstr "Contunh"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/viewer.py
+msgid "One page at a time"
+msgstr "Una pagina a l'encòp"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "scroll one line"
+msgstr "far desfilar d'una linha"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "top of the previous / next page"
+msgstr "naut de la pagina precedenta / seguenta"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "previous / next page"
+msgstr "pagina precedenta / seguenta"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "scroll one screen"
+msgstr "far desfilar d'un ecran"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "start / end of the document"
+msgstr "començament / fin del document"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "move the text cursor, by character or line"
+msgstr "desplaçar lo cursor de tèxte, per caractèr o per linha"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "extend the selection, by character or line"
+msgstr "espandir la seleccion, per caractèr o per linha"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "move the text cursor one word"
+msgstr "desplaçar lo cursor de tèxte d'un mot"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "extend the selection one word"
+msgstr "espandir la seleccion d'un mot"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "cursor to the start / end of the line"
+msgstr "cursor al començament / a la fin de la linha"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "cursor to the start / end of the document"
+msgstr "cursor al començament / a la fin del document"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Add Shift to a Command or Option combination to extend the selection instead"
+" of moving — <b>Shift+Command+→</b> selects to the end of the line. Adding "
+"Option works by the word rather than the character. On Windows and Linux, "
+"read Command as Ctrl and Option as Alt; the table is the same everywhere."
+msgstr ""
+"Apondètz Maj a una combinason amb Command o Option per espandir la seleccion"
+" puslèu que de vos desplaçar — <b>Maj+Command+→</b> selecciona fins a la fin"
+" de la linha. Apondre Option fa trabalhar per mots puslèu que per caractèrs."
+" Sus Windows e Linux, legissètz Command coma Ctrl e Option coma Alt ; la "
+"taula es la meteissa pertot."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Selecting and copying text"
+msgstr "Seleccionar e copiar de tèxte"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Drag across the page to select text, across page boundaries if you keep "
+"going. <b>Double-click</b> selects a word. <b>Ctrl/Cmd+C</b> copies, "
+"<b>Ctrl/Cmd+A</b> selects the text of the page you are on, and <b>Esc</b> "
+"clears the selection. The same commands are on the right-click menu."
+msgstr ""
+"Lisatz sus la pagina per seleccionar de tèxte, e a travèrs las bòrnas de las"
+" paginas se contunhatz. Lo <b>doble clic</b> selecciona un mot. "
+"<b>Ctrl/Cmd+C</b> còpia, <b>Ctrl/Cmd+A</b> selecciona lo tèxte de la pagina "
+"ont sètz, e <b>Escap</b> escafa la seleccion. Las meteissas comandas son "
+"dins lo menú del clic drech."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>Shift+click</b> extends an existing selection to where you clicked. The "
+"end you are moving grows out to a whole word, because a single click is an "
+"imprecise way to point at one character; the end you started from stays "
+"exactly where you put it. Dragging selects by character throughout, since "
+"you can watch it and stop where you like."
+msgstr ""
+"<b>Maj+clic</b> espandís una seleccion existenta fins a ont avètz clicat. Lo"
+" cap que desplaçatz crèis fins a un mot entièr, perque un sol clic es un "
+"biais imprecís de puntar un caractèr ; lo cap d'ont sètz partit demòra "
+"exactament ont l'avètz pausat. Lisar selecciona per caractèrs tot del long, "
+"perque lo podètz seguir e vos arrestar ont volètz."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Clicking on text leaves a blinking <b>text cursor</b>. That is what "
+"Shift+arrow extends from, and what the Option and Command combinations above"
+" move. It stays where you put it — scrolling, paging and clicking off the "
+"page all leave it alone — until you press Esc or open another document."
+msgstr ""
+"Clicar sul tèxte daissa un <b>cursor de tèxte</b> que clineja. Es d'aquí que"
+" Maj+sageta espandís, e es el que las combinasons Option e Command çai-sus "
+"desplaçan. Demòra ont l'avètz pausat — lo desfilament, lo cambiament de "
+"pagina e un clic fòra de la pagina lo tòcan pas — fins que quichetz Escap o "
+"dobriscatz un autre document."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Following links"
+msgstr "Seguir los ligams"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Click a link to follow it. Links to a page in the same document jump there; "
+"links to the web open in your browser. Hovering over one shows where it "
+"goes, which is worth reading before you click: many links in a PDF are not "
+"written by its author at all but inferred from the text, so what a link "
+"points at is not always what the words appear to say."
+msgstr ""
+"Clicatz un ligam per lo seguir. Los ligams cap a una pagina del meteis "
+"document i sautan ; los ligams cap al web se dobrisson dins vòstre "
+"navegador. Passar dessús mòstra ont mena, e aquò val la pena d'èsser legit "
+"abans de clicar : fòrça ligams dins un PDF son pas escriches per l'autor mas"
+" deduches del tèxte, doncas çò que punta un ligam es pas totjorn çò que los "
+"mots semblan dire."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Only ordinary web and mail links are handed to the system — http, https, "
+"mailto and ftp. A document is a file that arrived from somewhere, and "
+"anything else it asks to open is refused and reported rather than acted on."
+msgstr ""
+"Sols los ligams web e de corrièl abituals son transmeses al sistèma — http, "
+"https, mailto e ftp. Un document es un fichièr vengut de qualque part, e tot"
+" çò mai que demanda de dobrir es refusat e senhalat puslèu que d'èsser "
+"executat."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Right-clicking a link offers <b>Open Link</b> and <b>Copy Link Address</b>."
+msgstr ""
+"Un clic drech sus un ligam prepausa <b>Dobrir lo ligam</b> e <b>Copiar "
+"l'adreça del ligam</b>."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Bookmarks"
+msgstr "Marcapaginas"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"The sidebar shows the document's bookmarks. Click one to jump to it. "
+"Everything below is on the sidebar's right-click menu, and every command can"
+" be undone."
+msgstr ""
+"Lo panèl lateral mòstra los marcapaginas del document. Clicatz-ne un per i "
+"sautar. Tot çò que seguís es dins lo menú del clic drech del panèl lateral, "
+"e cada comanda se pòt anullar."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>Add Bookmark Here</b> makes one pointing at the page you are reading, "
+"named after whatever text you have selected — so select a heading, then add."
+" With nothing selected it is named after the page. <b>Add Child Bookmark "
+"Here</b> does the same, nested under the entry you clicked."
+msgstr ""
+"<b>Apondre un marcapaginas aicí</b> ne crèa un que punta sus la pagina que "
+"legissètz, nomenat segon lo tèxte qu'avètz seleccionat — seleccionatz doncas"
+" un títol, puèi apondètz. Sens seleccion es nomenat segon la pagina. "
+"<b>Apondre un marcapaginas filh aicí</b> fa parièr, imbricat jos l'entrada "
+"qu'avètz clicada."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>Rename</b> edits the title in place. <b>Re-home to This Page</b> points "
+"an existing bookmark at the page you are on, keeping its title. "
+"<b>Delete</b> removes an entry and <i>promotes</i> its children into its "
+"place; <b>Delete with Children</b> removes the whole branch."
+msgstr ""
+"<b>Renomenar</b> modifica lo títol sul pic. <b>Tornar puntar sus aquesta "
+"pagina</b> fa puntar un marcapaginas existent sus la pagina ont sètz, en "
+"gardant son títol. <b>Suprimir</b> lèva una entrada e <i>promòu</i> sos "
+"filhs a sa plaça ; <b>Suprimir amb los filhs</b> lèva tota la branca."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Drag entries within the sidebar to re-nest or reorder them. <b>Expand All "
+"Children</b> and <b>Collapse All Children</b> open or shut a whole branch at"
+" once."
+msgstr ""
+"Lisatz d'entradas dins lo panèl lateral per las tornar imbricar o reordenar."
+" <b>Desplegar totes los filhs</b> e <b>Plegar totes los filhs</b> dobrisson "
+"o barran tota una branca d'un còp."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>Style</b> sets a bookmark bold or italic, or gives it a colour, as the "
+"tree shows."
+msgstr ""
+"<b>Estil</b> met un marcapaginas en gras o en italic, o li balha una color, "
+"coma l'arbre o mòstra."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"A bookmark whose page has been deleted is <b>greyed out</b> rather than "
+"removed: its title may still be worth keeping, and you can point it "
+"somewhere else with Re-home. Undoing the deletion reconnects it. <b>Delete "
+"Dangling Bookmarks</b> clears them all out; it leaves alone any entry that "
+"points nowhere on purpose, which is a legitimate way to write a heading."
+msgstr ""
+"Un marcapaginas que sa pagina es estada suprimida es <b>grisat</b> puslèu "
+"que levat : son títol pòt encara valer la pena, e lo podètz tornar puntar "
+"endacòm mai. Anullar la supression lo torna connectar. <b>Suprimir los "
+"marcapaginas penjolats</b> los netèja totes ; daissa tranquilla tota entrada"
+" que punta enluòc a prepaus, çò qu'es un biais legitim d'escriure un títol."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Bookmark edits are part of the document and are written when you save, along"
+" with each entry's colour and style and which branches are left open. The "
+"one thing that cannot be saved is a bookmark with no page: there is no way "
+"to record “points at a page that is gone”, so it comes back as a heading "
+"with its title intact."
+msgstr ""
+"Las modificacions dels marcapaginas fan part del document e son escrichas "
+"quand enregistratz, amb la color e l'estil de cada entrada e quinas brancas "
+"demòran dobèrtas. La sola causa que se pòt pas enregistrar es un "
+"marcapaginas sens pagina : i a pas cap de biais de notar « punta sus una "
+"pagina qu'es pas mai aquí », doncas torna coma un títol amb son nom intacte."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Arranging pages"
+msgstr "Ordenar las paginas"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Drag pages to reorder them. Hold <b>Ctrl</b> while dropping to copy instead "
+"of move."
+msgstr ""
+"Lisatz las paginas per las reordenar. Manténer <b>Ctrl</b> en las daissant "
+"anar còpia puslèu que de desplaçar."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Drag pages onto another window of the application to copy them there, or use"
+" ordinary copy and paste."
+msgstr ""
+"Lisatz de paginas sus una autra fenèstra de l'aplicacion per las i copiar, o"
+" utilizatz lo copiar-pegar abitual."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>Paste As Odd/Even Pages</b> interleaves the clipboard with the document —"
+" this is how two single-sided scans of a double-sided original are "
+"recombined. If the second scan came off a duplex feeder it will be in "
+"reverse order; use <b>Arrange ▸ Reverse Order</b> on it first."
+msgstr ""
+"<b>Pegar coma paginas imparas/parras</b> entrelaça lo quichapapièrs amb lo "
+"document — atal se tornan amassar dos numerizacions d'un sol costat d'un "
+"original recto-verso. Se la segonda numerizacion es sortida d'un alimentador"
+" recto-verso serà en òrdre invèrs ; utilizatz-i d'en primièr <b>Ordenar ▸ "
+"Inversar l'òrdre</b>."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"To move pages a long way, use <b>Move to Start</b>, <b>Move to End</b> or "
+"<b>Move to Page…</b> rather than dragging — in a long document the far end "
+"is a great deal of scrolling away. They are on the Edit menu and on the "
+"right-click menu, and <b>Move to Page…</b> asks for the number the page "
+"should <i>become</i>."
+msgstr ""
+"Per desplaçar de paginas luènh, utilizatz <b>Desplaçar al començament</b>, "
+"<b>Desplaçar a la fin</b> o <b>Desplaçar a la pagina…</b> puslèu que de "
+"lisar — dins un document long l'autre cap es a fòrça desfilament. Son dins "
+"lo menú Edicion e dins lo menú del clic drech, e <b>Desplaçar a la "
+"pagina…</b> demanda lo numèro que la pagina deu <i>venir</i>."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Prefer these to cut and paste for moving. A pasted page is a <i>new</i> page"
+" as far as the document is concerned, so any bookmarks pointing at the "
+"original are left behind with nowhere to go. Moving keeps the page itself, "
+"and its bookmarks come with it."
+msgstr ""
+"Per desplaçar, preferissètz-los al talhar-pegar. Una pagina pegada es una "
+"pagina <i>novèla</i> pel document, doncas los marcapaginas que puntavan sus "
+"l'originala demòran enrè sens destinacion. Desplaçar garda la pagina "
+"meteissa, e sos marcapaginas venon amb ela."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Stamping and tiling"
+msgstr "Estampar e assemblar"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>Page ▸ Add Page Numbers…</b> and <b>Page ▸ Add Watermark…</b> draw text "
+"onto the selected pages. Both add a <i>layer</i> rather than rewriting the "
+"page, so both can be undone and neither touches the file you opened."
+msgstr ""
+"<b>Pagina ▸ Apondre de numèros de pagina…</b> e <b>Pagina ▸ Apondre una "
+"filigrana…</b> dessenhan de tèxte sus las paginas seleccionadas. Los dos "
+"apondon una <i>jaça</i> puslèu que de reescriure la pagina, doncas los dos "
+"se pòdon anullar e cap tòca pas lo fichièr qu'avètz dobèrt."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+#, python-brace-format
+msgid ""
+"Page numbers follow the arrangement, not the source document: they are "
+"numbered in the order the pages are in now. <code>{n}</code> in the format "
+"is the page number and <code>{total}</code> the number of pages, so "
+"<code>Page {n} of {total}</code> does what it looks like."
+msgstr ""
+"Los numèros de pagina seguisson l'ordenament, pas lo document d'origina : "
+"son numerotats dins l'òrdre ont las paginas son ara. <code>{n}</code> dins "
+"lo format es lo numèro de pagina e <code>{total}</code> lo nombre de "
+"paginas, doncas <code>Pagina {n} sus {total}</code> fa çò que sembla."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>Arrange ▸ Pages per Sheet…</b> tiles several pages onto one, in reading "
+"order — the printer's <i>N-up</i>. The sheet turns sideways when that lets "
+"the pages come out larger, which is why two-up gives a landscape sheet and "
+"four-up does not."
+msgstr ""
+"<b>Ordenar ▸ Paginas per fuèlh…</b> dispausa mantunas paginas sus una sola, "
+"dins l'òrdre de lectura — lo <i>N-up</i> de l'estampaire. Lo fuèlh vira de "
+"costat quand aquò fa sortir las paginas mai grandas, e es per aquò que doas "
+"per fuèlh donan un fuèlh orizontal e quatre per fuèlh non."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Saving a document"
+msgstr "Enregistrar un document"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>Optimize for the web</b> in Preferences lays the saved file out so a "
+"browser can show the first page before the rest has arrived. <b>Compress</b>"
+" repacks its streams and objects; how much that saves depends entirely on "
+"the file, and one full of photographs will barely move."
+msgstr ""
+"<b>Optimizar pel web</b> dins las Preferéncias dispausa lo fichièr "
+"enregistrat per qu'un navegador pòsca mostrar la primièra pagina abans que "
+"la rèsta siá arribada. <b>Compressar</b> torna empaquetar sos fluxes e "
+"objèctes ; çò qu'aquò estalvia depend entièrament del fichièr, e un fichièr "
+"plen de fotografias se bolega gaireben pas."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>File ▸ Remove All Metadata</b> is a switch, like Password: turn it on and"
+" the next save writes a document with no title, no author and no record of "
+"what produced it. Edit Properties greys out while it is on, because there "
+"would be nothing to edit."
+msgstr ""
+"<b>Fichièr ▸ Suprimir totas las metadonadas</b> es un interruptor, coma lo "
+"Senhal : activatz-lo e l'enregistrament seguent escriurà un document sens "
+"títol, sens autor e sens cap de traça de çò que l'a produch. Modificar las "
+"proprietats es grisat tant qu'es activat, perque i auriá res a modificar."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>File ▸ Viewer Preferences…</b> is how the saved document asks a reader to"
+" open it — with the bookmarks showing, two pages at a time, and so on. "
+"Readers are free to ignore all of it. The settings are read from the file "
+"you opened, so a document that already had them keeps them."
+msgstr ""
+"<b>Fichièr ▸ Preferéncias del visualizador…</b> es lo biais que lo document "
+"enregistrat demanda a un lector de lo dobrir — amb los marcapaginas "
+"visibles, doas paginas a l'encòp, e atal. Los lectors an lo drech d'ignorar "
+"tot aquò. Los reglatges son legits del fichièr qu'avètz dobèrt, doncas un "
+"document que ne dispausava ja los garda."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>File ▸ Repair Document…</b> rebuilds a damaged PDF. It works on a file "
+"you pick rather than the one on screen, because the file worth repairing is "
+"usually one this application cannot open properly either. It reports what it"
+" found before writing anything."
+msgstr ""
+"<b>Fichièr ▸ Reparar lo document…</b> reconstruís un PDF degalhat. Trabalha "
+"sus un fichièr que causissètz e pas sus aquel de l'ecran, perque lo fichièr "
+"que val la pena d'èsser reparat es sovent un qu'aquesta aplicacion pòt pas "
+"dobrir corrèctament tanpauc. Senhala çò qu'a trobat abans d'escriure quicòm "
+"mai."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Mouse"
+msgstr "Mirga"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "<b>Ctrl + scroll</b> — zoom"
+msgstr "<b>Ctrl + desfilament</b> — zoom"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "<b>Shift + scroll</b> — scroll sideways"
+msgstr "<b>Maj + desfilament</b> — desfilament lateral"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "<b>Alt + scroll</b> — scroll exactly one row"
+msgstr "<b>Alt + desfilament</b> — desfilar exactament una linha"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "<b>Double-click</b> — fit the page to the window, and back"
+msgstr "<b>Doble clic</b> — ajustar la pagina a la fenèstra, e tornar"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>Click and drag</b> on empty space — rubber-band select; keep scrolling to"
+" extend it"
+msgstr ""
+"<b>Clicar e lisar</b> sus un espaci void — seleccion per encastre ; "
+"contunhatz de far desfilar per l'espandir"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Moving around the grid"
+msgstr "Se desplaçar dins la grasilha"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>Arrow keys</b> move between pages, <b>Page Up</b> and <b>Page Down</b> "
+"move a screenful at a time, and <b>Home</b> and <b>End</b> jump to the first"
+" and last page. Hold <b>Shift</b> with any of them to extend the selection."
+msgstr ""
+"<b>Las tòcas de direccion</b> se desplaçan entre las paginas, <b>Pag "
+"prec.</b> e <b>Pag seg.</b> se desplaçan d'un ecran a l'encòp, e "
+"<b>Origina</b> e <b>Fin</b> sautan a la primièra e a la darrièra pagina. "
+"Manténer <b>Maj</b> amb una d'elas espandís la seleccion."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>Fit One Page</b> (F) scales so a whole page fits in the window and shows "
+"one page per row — use it to work on a single page at a time. <b>Fit "
+"Multiple Pages</b> (Shift+M) uses the same scale but lets as many pages sit "
+"side by side as the window takes. <b>Fit Width</b> (Shift+F) fills the "
+"window across instead, which shows the page wider but taller than the "
+"window. Double-clicking the grid toggles Fit One Page on and off."
+msgstr ""
+"<b>Ajustar una pagina</b> (F) met a l'escala per qu'una pagina entièra "
+"dintre dins la fenèstra e aficha una pagina per linha — utilizatz-o per "
+"trabalhar sus una pagina a l'encòp. <b>Ajustar mantunas paginas</b> (Maj+M) "
+"utiliza la meteissa escala mas daissa tantas paginas costat a costat que la "
+"fenèstra ne pòt tenir. <b>Ajustar a la largor</b> (Maj+F) emplena puslèu la "
+"fenèstra en largor, çò que mòstra la pagina mai larga mas mai nauta que la "
+"fenèstra. Un doble clic sus la grasilha activa e desactiva Ajustar una "
+"pagina."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"With pages selected, all three fit the selection rather than the whole "
+"document."
+msgstr ""
+"Amb de paginas seleccionadas, totas tres ajustan la seleccion puslèu que tot"
+" lo document."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Finding text"
+msgstr "Recercar de tèxte"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>Find</b> selects the pages that contain the phrase and boxes each hit on "
+"the thumbnail, so you can see where on the page it is. The boxes clear as "
+"soon as you change the document, since the pages they were drawn for may "
+"have moved."
+msgstr ""
+"<b>Recercar</b> selecciona las paginas que contenon l'expression e encastra "
+"cada resultat sus la miniatura, per que vejatz ont es sus la pagina. Los "
+"encastres despareisson tre que modificatz lo document, que las paginas per "
+"las qualas son estats dessenhats pòdon aver bolegat."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Every shortcut can be changed in <b>Edit ▸ Preferences ▸ Keyboard "
+"shortcuts</b>, where they are listed under the menu each one belongs to."
+msgstr ""
+"Cada acorchi se pòt cambiar dins <b>Edicion ▸ Preferéncias ▸ Acorchis de "
+"clavièr</b>, ont son listats jos lo menú al qual cadun aparten."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Passwords"
+msgstr "Senhals"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Opening an encrypted document asks for its password, which is remembered "
+"until the document is closed."
+msgstr ""
+"Dobrir un document chifrat demanda son senhal, qu'es memorizat fins que lo "
+"document siá barrat."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>File ▸ Password</b> encrypts the document when it is next saved. It is a "
+"switch: turn it on and you are asked for a password, turn it off and the "
+"next save is unencrypted. The password is never written to your settings, so"
+" it applies to this session only — and if you forget it, the file cannot be "
+"recovered."
+msgstr ""
+"<b>Fichièr ▸ Senhal</b> chifra lo document al còp d'enregistrament seguent. "
+"Es un interruptor : activatz-lo e vos serà demandat un senhal, desactivatz-"
+"lo e l'enregistrament seguent serà pas chifrat. Lo senhal es pas jamai "
+"escrich dins vòstres reglatges, doncas s'aplica sonque a aquesta session — e"
+" se l'oblidatz, lo fichièr se pòt pas recuperar."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Files"
+msgstr "Fichièrs"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Settings are stored by Qt in the per-user location for this platform; on "
+"Windows that is the registry under "
+"<code>HKEY_CURRENT_USER\\Software\\pdfarranger</code>. There is no "
+"configuration file to edit by hand."
+msgstr ""
+"Los reglatges son enregistrats per Qt a l'emplaçament per utilizaire "
+"d'aquesta plataforma ; sus Windows es lo registre jos "
+"<code>HKEY_CURRENT_USER\\Software\\pdfarranger</code>. I a pas cap de "
+"fichièr de configuracion de modificar a la man."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Credits"
+msgstr "Crèdits"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"PDF Arranger Qt is a PySide6 port of PDF Arranger, which is itself derived "
+"from PDF-Shuffler. It is a separate project and not affiliated with either."
+msgstr ""
+"PDF Arranger Qt es un portatge en PySide6 de PDF Arranger, que el meteis "
+"descend de PDF-Shuffler. Es un projècte separat e es afiliat a cap dels dos."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Original authors: Konstantinos Poulios, Jerome Robert."
+msgstr "Autors d'origina : Konstantinos Poulios, Jerome Robert."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Licensed under the GNU General Public License version 3 or later."
+msgstr "Difusat jos la GNU General Public License version 3 o ulteriora."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+msgid "User Guide"
+msgstr "Guida de l'utilizaire"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Insert pages from another PDF or an image"
+msgstr "Inserir de paginas d'un autre PDF o d'un imatge"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Needs pages copied from a document"
+msgstr "Necessita de paginas copiadas d'un document"
+
+#: pdfarranger_qt/mainwindow.py
 msgid "_New Window"
 msgstr "Fenèstra _novèla"
 
-#: pdfarranger/config.py:281 pdfarranger/metadata.py:217
-#: pdfarranger/pageutils.py:328 pdfarranger/pdfarranger.py:3114
-msgid "_OK"
-msgstr "_D'acòrdi"
-
-#: pdfarranger/pdfarranger.py:1415 data/menu.ui:24
+#: pdfarranger_qt/mainwindow.py
 msgid "_Open"
 msgstr "_Dobrir"
 
-#: data/menu.ui:182 data/menu.ui:478
-msgid "_Page Size…"
-msgstr "_Talha pagina…"
+#: pdfarranger_qt/mainwindow.py
+msgid "_Import"
+msgstr "_Importar"
 
-#: data/menu.ui:91
-msgid "_Print…"
-msgstr "_Imprimir…"
-
-#: pdfarranger/pdfarranger.py:1274 data/menu.ui:343
-msgid "_Quit"
-msgstr "_Quitar"
-
-#: data/menu.ui:102
-msgid "_Redo"
-msgstr "_Restablir"
-
-#: pdfarranger/pageutils.py:1012
-msgid "_Revert"
-msgstr "_Restablir"
-
-#: data/menu.ui:177 data/menu.ui:473
-msgid "_Rotate Right"
-msgstr "Pivotar cap a _drecha"
-
-#: pdfarranger/pdfarranger.py:1227 pdfarranger/pdfarranger.py:1348
-#: data/menu.ui:42
+#: pdfarranger_qt/mainwindow.py
 msgid "_Save"
 msgstr "_Enregistrar"
 
-#: data/menu.ui:231 data/menu.ui:421
-msgid "_Select"
-msgstr "_Seleccionar"
+#: pdfarranger_qt/mainwindow.py
+msgid "Save _As…"
+msgstr "Enregistrar _jos…"
 
-#: data/menu.ui:224 data/menu.ui:520
-msgid "_Split (unimposition)"
-msgstr "_Devesir (non imposicion)"
+#: pdfarranger_qt/mainwindow.py
+msgid "E_xport Selection to a Single File…"
+msgstr "E_xportar la seleccion dins un unic fichièr…"
 
-#: data/menu.ui:206 data/menu.ui:502
-msgid "_Split Pages…"
-msgstr "_Devesir las paginas…"
+#: pdfarranger_qt/mainwindow.py
+msgid "_Close"
+msgstr "_Tampar"
 
-#: data/menu.ui:98
+#: pdfarranger_qt/mainwindow.py
+msgid "_Quit"
+msgstr "_Quitar"
+
+#: pdfarranger_qt/mainwindow.py
 msgid "_Undo"
 msgstr "_Desfar"
 
-#: data/menu.ui:276
+#: pdfarranger_qt/mainwindow.py
+msgid "_Redo"
+msgstr "_Restablir"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Select _All"
+msgstr "_Tot seleccionar"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Invert Selection"
+msgstr "_Inversar la seleccion"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Delete"
+msgstr "_Suprimir"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Duplicate"
+msgstr "D_uplicar"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Rotate _Left"
+msgstr "Pivotar cap a es_quèrra"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Rotate Right"
+msgstr "Pivotar cap a _drecha"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Zoom _In"
+msgstr "Agran_dir"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Zoom _Out"
+msgstr "_Reduire"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Reset Zoom"
+msgstr "Reinicializar lo _zoom"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Project on GitHub"
+msgstr "Lo projècte sus GitHub"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_About"
+msgstr "_A prepaus"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Cu_t"
+msgstr "_Copar"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Copy"
+msgstr "_Copiar"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Paste _After"
+msgstr "Pegar _aprèp"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Paste _Before"
+msgstr "Pegar _avant"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Paste As _Odd Pages"
+msgstr "Pegar coma paginas _imparas"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Paste As _Even Pages"
+msgstr "Pegar coma paginas _paras"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Deselect All"
+msgstr "_Tot deseleccionar"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Select _Odd Pages"
+msgstr "Seleccionar las paginas _imparas"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Select _Even Pages"
+msgstr "Seleccionar las paginas _paras"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "All From _Same File"
+msgstr "Totas del _meteis fichièr"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Same Page _Format"
+msgstr "Meteis _format de pagina"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Move to Start"
+msgstr "Desplaçar al començament"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Move to End"
+msgstr "Desplaçar a la fin"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Move to Page…"
+msgstr "Desplaçar a la pagina…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Reverse Order"
+msgstr "Inversar l'òrdre"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Swap Odd/Even"
+msgstr "Escambiar impars/parras"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Split (unimposition)"
+msgstr "_Devesir (non imposicion)"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Export _All Pages to Individual Files…"
+msgstr "Exportar _totas las paginas dins de fichièrs _individuals…"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Export Selection to _Individual Files…"
+msgstr "Exportar la seleccion dins de fichièrs _individuals…"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Crop Margins…"
+msgstr "_Talhar los marges…"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Hide Margins…"
+msgstr "_Amagar los marges…"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Page Size…"
+msgstr "_Talha pagina…"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Insert Blan_k Page…"
+msgstr "Inserir una pagina _voida…"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Split Pages…"
+msgstr "_Devesir las paginas…"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Merge Pages…"
+msgstr "_Marge de las paginas…"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Generate (imposition)"
+msgstr "_Generar (imposicion)"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Pages per S_heet…"
+msgstr "Paginas per _fuèlh…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Add Page N_umbers…"
+msgstr "Apondre de _numèros de pagina…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Add _Watermark…"
+msgstr "Apondre una _filigrana…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Pass_word"
+msgstr "Sen_hal"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Edit _Properties"
+msgstr "Modificar las _proprietats"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Viewer Preferences…"
+msgstr "Preferéncias del _visualizador…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Remove All _Metadata"
+msgstr "Suprimir totas las _metadonadas"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Repair Document…"
+msgstr "_Reparar lo document…"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Crop White Borders"
+msgstr "Talhar las bordaduras blancas"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Export Selection to _PNG Images…"
+msgstr "Exportar la seleccion en imatges _PNG…"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Export Selection to _JPG Images…"
+msgstr "Exportar la seleccion en imatges _JPG…"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Export Selection to _Rasterized PDF (png)…"
+msgstr "Exportar la seleccion en PDF _rasterizat (png)…"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Export Selection to _Rasterized PDF (jpg)…"
+msgstr "Exportar la seleccion en PDF _rasterizat (jpg)…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Copy Text"
+msgstr "Copiar lo tèxte"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Copy _Image"
+msgstr "Copiar l'_imatge"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Explode into Images"
+msgstr "_Devesir en imatges"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Print…"
+msgstr "_Imprimir…"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Find…"
+msgstr "_Recercar…"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Find Next"
+msgstr "Recercar lo seguent"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Find Previous"
+msgstr "Recercar lo precedent"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Find All"
+msgstr "Recercar tot"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Select _Range"
+msgstr "Seleccionar la _plaja"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Paste As O_verlay…"
+msgstr "Pegar coma s_uperposicion…"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Paste As _Underlay…"
+msgstr "Pegar coma j_os jaç…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Fit _One Page"
+msgstr "Ajustar _una pagina"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Fit _Multiple Pages"
+msgstr "Ajustar _mantunas paginas"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Fit Width"
+msgstr "Ajustar a la largor"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Arrange Mode"
+msgstr "Mòde d'ordenament"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Facing Pages"
+msgstr "Paginas en fàcia"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Continuous Scroll"
+msgstr "Desfilament contunh"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Next Page"
+msgstr "Pagina seguenta"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Previous Page"
+msgstr "Pagina precedenta"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "First Page"
+msgstr "Primièra pagina"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Last Page"
+msgstr "Darrièra pagina"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Go to Page…"
+msgstr "Anar a la pagina…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Fullscreen"
+msgstr "Ecran complet"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_File"
+msgstr "_Fichièr"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Open Recent"
+msgstr "Dobrir un recent"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "E_xport"
+msgstr "E_xportar"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Edit"
+msgstr "_Editar"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Past_e Special"
+msgstr "Emp_egament especial"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Page"
+msgstr "_Pagina"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Extract"
+msgstr "_Extraire"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Arrange"
+msgstr "Ordenar"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Select"
+msgstr "_Seleccionar"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Booklet"
+msgstr "_Libret"
+
+#: pdfarranger_qt/mainwindow.py
 msgid "_View"
 msgstr "_Afichatge"
 
-#: pdfarranger/pageutils.py:143 pdfarranger/pageutils.py:149
-#: pdfarranger/pageutils.py:468 pdfarranger/pageutils.py:518
-msgid "mm"
-msgstr "mm"
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Help"
+msgstr "_Ajuda"
 
-#: pdfarranger/core.py:719
-msgid "page"
-msgstr "pagina"
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Read"
+msgstr "Legir"
 
-#: pdfarranger/pdfarranger.py:1062
-msgid "untitled"
-msgstr "sens títol"
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "_Undo %s"
+msgstr "_Anullar %s"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "_Redo %s"
+msgstr "_Refar %s"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "%d page selected"
+msgid_plural "%d pages selected"
+msgstr[0] "%d pagina seleccionada"
+msgstr[1] "%d paginas seleccionadas"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Untitled"
+msgstr "Sens títol"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Password required"
+msgstr "Senhal requesit"
+
+#: pdfarranger_qt/mainwindow.py
+#, python-brace-format
+msgid "The document “{}” is locked and requires a password before it can be opened."
+msgstr "Lo document « {} » es verrolhat e requerís un senhal per se dobrir."
+
+#: pdfarranger_qt/mainwindow.py
+msgid "The password will be remembered until you close PDF Arranger."
+msgstr "S’enregistrarà lo senhal fins que tampetz PDF Arranger."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Importing…"
+msgstr "Importacion…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Cancel"
+msgstr "Anullar"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Import"
+msgstr "Importar"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "No recent files"
+msgstr "Cap de fichièr recent"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Clear Menu"
+msgstr "Escafar lo menú"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "This file is no longer there:"
+msgstr "Aqueste fichièr i es pas mai :"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "This document cannot be read."
+msgstr "Impossible de legir aqueste document."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Go to Page"
+msgstr "Anar a la pagina"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Page number:"
+msgstr "Numèro de pagina :"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "No document"
+msgstr "Cap de document"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "%d page"
+msgid_plural "%d pages"
+msgstr[0] "%d pagina"
+msgstr[1] "%d paginas"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-brace-format
+msgid "of {}"
+msgstr "sus {}"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "The document will not be encrypted."
+msgstr "Lo document serà pas chifrat."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "The document will be encrypted when it is saved."
+msgstr "Lo document serà chifrat a l'enregistrament."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Could not open a new window."
+msgstr "Impossible de dobrir una fenèstra novèla."
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Open"
+msgstr "Dobrir"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Save As…"
+msgstr "Enregistrar jos…"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Export…"
+msgstr "Exportar…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "There is nothing to save."
+msgstr "I a res a enregistrar."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Could not save:"
+msgstr "Impossible d'enregistrar :"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Saved"
+msgstr "Enregistrat"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "This document has unsaved changes."
+msgstr "Aqueste document a de modificacions pas enregistradas."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Save before continuing?"
+msgstr "Enregistrar abans de contunhar ?"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py pdfarranger_qt/reader.py
+msgid "Delete"
+msgstr "Suprimir"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Cut"
+msgstr "Talhar"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Paste"
+msgstr "Pegar"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Move to Page"
+msgstr "Desplaçar a la pagina"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Move"
+msgstr "Desplaçar"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "The page selection is not contiguous. Cannot unimpose."
+msgstr "La seleccion de la pagina es pas continua. Impossible d’imprimir pas."
+
+#: pdfarranger_qt/mainwindow.py
+msgid "All pages must have the same size."
+msgstr "Totes las paginas devon aver la meteissa talha."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Split Booklet"
+msgstr "Devesir lo librament"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Overwrite existing files?"
+msgstr "Remplaçar los fichièrs existents ?"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Blank page"
+msgstr "Pagina voida"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Copy the pages you want to merge in first."
+msgstr "Copiatz d'en primièr las paginas que volètz fusionar."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Generate Booklet"
+msgstr "Generar un librament"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "The page selection is not contiguous."
+msgstr "La seleccion de paginas es pas contigüa."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "All metadata will be removed when the document is saved."
+msgstr "Totas las metadonadas seràn suprimidas a l'enregistrament del document."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Metadata will be kept."
+msgstr "Las metadonadas seràn servadas."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Repair Document…"
+msgstr "Reparar lo document…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Write a rebuilt copy?"
+msgstr "Escriure una còpia reconstruida ?"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Save Repaired Document"
+msgstr "Enregistrar lo document reparat"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "%d image written"
+msgid_plural "%d images written"
+msgstr[0] "%d imatge escrich"
+msgstr[1] "%d imatges escriches"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "The page has no text."
+msgstr "La pagina a pas de tèxte."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Copied"
+msgstr "Copiat"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "The page has no image."
+msgstr "La pagina a pas d'imatge."
+
+#: pdfarranger_qt/mainwindow.py
+msgid "The page has several images. Use \"Explode into Images\" first.\""
+msgstr "La pagina a mai d’una pagina. Utilizatz d’en primièr « Devesir en imatges »."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Explode into Images"
+msgstr "Descompausar en imatges"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Printing…"
+msgstr "Impression…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Finishing…"
+msgstr "Acabament…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "The printer driver is processing the job."
+msgstr "Lo pilòt de l'imprimenta tracta la prètzfach."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "%d page printed"
+msgid_plural "%d pages printed"
+msgstr[0] "%d pagina imprimida"
+msgstr[1] "%d paginas imprimidas"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Find"
+msgstr "Recercar"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "%d page matches"
+msgid_plural "%d pages match"
+msgstr[0] "%d pagina correspond"
+msgstr[1] "%d paginas correspondon"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Duplicate"
+msgstr "Duplicar"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Rotate"
+msgstr "Virar"
+
+#: pdfarranger_qt/metadata.py
+msgid "Title"
+msgstr "Títol"
+
+#: pdfarranger_qt/metadata.py
+msgid "Subject"
+msgstr "Subjècte"
+
+#: pdfarranger_qt/metadata.py
+msgid "Keywords"
+msgstr "Mots clau"
+
+#: pdfarranger_qt/metadata.py
+msgid "Producer"
+msgstr "Productor"
+
+#: pdfarranger_qt/metadata.py
+msgid "Creator"
+msgstr "Creator"
+
+#: pdfarranger_qt/metadata.py
+msgid "Creator tool"
+msgstr "Logicial de creacion"
+
+#: pdfarranger_qt/metadata.py
+msgid "Created"
+msgstr "Creacion"
+
+#: pdfarranger_qt/metadata.py
+msgid "Modified"
+msgstr "Modificacion"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/nup.py
+msgid "2 pages per sheet"
+msgstr "2 paginas per fuèlh"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/nup.py
+msgid "4 pages per sheet"
+msgstr "4 paginas per fuèlh"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/nup.py
+msgid "6 pages per sheet"
+msgstr "6 paginas per fuèlh"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/nup.py
+msgid "8 pages per sheet"
+msgstr "8 paginas per fuèlh"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/nup.py
+msgid "9 pages per sheet"
+msgstr "9 paginas per fuèlh"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/nup.py
+msgid "16 pages per sheet"
+msgstr "16 paginas per fuèlh"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Bookmark Colour"
+msgstr "Color del marcapaginas"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Add Bookmark Here"
+msgstr "Apondre un marcapaginas aicí"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Add Child Bookmark Here"
+msgstr "Apondre un marcapaginas filh aicí"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Re-home to This Page"
+msgstr "Tornar puntar sus aquesta pagina"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Rename"
+msgstr "Renomenar"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Style"
+msgstr "Estil"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Colour…"
+msgstr "Color…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Default Colour"
+msgstr "Color per defaut"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Expand All Children"
+msgstr "Desplegar totes los filhs"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Collapse All Children"
+msgstr "Plegar totes los filhs"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Delete with Children"
+msgstr "Suprimir amb los filhs"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Delete Dangling Bookmarks"
+msgstr "Suprimir los marcapaginas penjolats"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Nothing to read."
+msgstr "I a res a legir."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+#, python-brace-format
+msgid "Page {} of {}"
+msgstr "Pagina {} sus {}"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Move Bookmark"
+msgstr "Desplaçar lo marcapaginas"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "This bookmark's page is no longer in the document"
+msgstr "La pagina d'aqueste marcapaginas es pas mai dins lo document"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "This bookmark does not point at a page"
+msgstr "Aqueste marcapaginas punta sus cap de pagina"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Rename Bookmark"
+msgstr "Renomenar lo marcapaginas"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Add Child Bookmark"
+msgstr "Apondre un marcapaginas filh"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Add Bookmark"
+msgstr "Apondre un marcapaginas"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Bookmark Style"
+msgstr "Estil del marcapaginas"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Re-home Bookmark"
+msgstr "Tornar puntar lo marcapaginas"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Delete Bookmark"
+msgstr "Suprimir lo marcapaginas"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Delete Bookmark and Children"
+msgstr "Suprimir lo marcapaginas e sos filhs"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/repair.py
+msgid "This file cannot be read, even with recovery."
+msgstr "Aqueste fichièr se pòt pas legir, quitament amb recuperacion."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/repair.py
+msgid "No damage found; the file reads cleanly."
+msgstr "Cap de degalh pas trobat ; lo fichièr se legís sens problèma."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/repair.py
+msgid "Damaged, and recoverable."
+msgstr "Degalhat, e recuperable."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/repair.py
+msgid "The file cannot be read."
+msgstr "Lo fichièr se pòt pas legir."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/stamp.py
+msgid "Top left"
+msgstr "En naut a esquèrra"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/stamp.py
+msgid "Top centre"
+msgstr "En naut al centre"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/stamp.py
+msgid "Top right"
+msgstr "En naut a drecha"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/stamp.py
+msgid "Bottom left"
+msgstr "En bas a esquèrra"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/stamp.py
+msgid "Bottom centre"
+msgstr "En bas al centre"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/stamp.py
+msgid "Bottom right"
+msgstr "En bas a drecha"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/viewer.py
+msgid "Viewer default"
+msgstr "Per defaut del visualizador"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/viewer.py
+msgid "No side panel"
+msgstr "Cap de panèl lateral"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/viewer.py
+msgid "Bookmarks panel"
+msgstr "Panèl dels marcapaginas"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/viewer.py
+msgid "Page thumbnails"
+msgstr "Miniaturas de las paginas"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/viewer.py
+msgid "Continuous scroll"
+msgstr "Desfilament contunh"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/viewer.py
+msgid "Two pages, odd on the left"
+msgstr "Doas paginas, imparas a esquèrra"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/viewer.py
+msgid "Two pages, odd on the right"
+msgstr "Doas paginas, imparas a drecha"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/viewer.py
+msgid "Facing pages, odd on the left"
+msgstr "Paginas en fàcia, imparas a esquèrra"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/viewer.py
+msgid "Facing pages, odd on the right"
+msgstr "Paginas en fàcia, imparas a drecha"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/viewer.py
+msgid "Hide the viewer's toolbar"
+msgstr "Amagar la barra d'aisinas del visualizador"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/viewer.py
+msgid "Hide the viewer's menu bar"
+msgstr "Amagar la barra de menú del visualizador"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/viewer.py
+msgid "Centre the window on screen"
+msgstr "Centrar la fenèstra sus l'ecran"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/viewer.py
+msgid "Show the title rather than the filename"
+msgstr "Mostrar lo títol puslèu que lo nom del fichièr"
 
 #~ msgid "Generate Booklet"
 #~ msgstr "Generar lo Booklet"
 
 #~ msgid "Page Size:"
 #~ msgstr "Talha de la pagina :"
+
+#~ msgid "#Col"
+#~ msgstr "#Col"
+
+#~ msgid "#Row"
+#~ msgstr "#Linha"
+
+#~ msgid "%"
+#~ msgstr "%"
+
+#~ msgid "% of height"
+#~ msgstr "% de la nautor"
+
+#~ msgid "% of width"
+#~ msgstr "% de la largor"
+
+#~ msgid "%s is a tool for rearranging and modifying PDF files."
+#~ msgstr "%s es una aisina per reorganizar e modificar los fichièrs PDF."
+
+#~ msgid "(Libhandy missing)"
+#~ msgstr "(Libhandy mancanta)"
+
+#~ msgid "(Requires restart)"
+#~ msgstr "(Reaviada necessària)"
+
+#~ msgid "A file named \"%s\" already exists. Do you want to replace it?"
+#~ msgstr "Un fichièr nomenat « %s » existís ja. Lo volètz remplaçar ?"
+
+#~ msgid "All"
+#~ msgstr "Tot"
+
+#~ msgid "All files"
+#~ msgstr "Totes los fichièrs"
+
+#~ msgid "All supported files"
+#~ msgstr "Totes los fichièrs preses en carga"
+
+#~ msgid "Bottom to Top"
+#~ msgstr "D'aval cap amont"
+
+#~ msgid "Clipboard image"
+#~ msgstr "Imatge del quichapapièr"
+
+#~ msgid "Copy _Text"
+#~ msgstr "Copiar lo _tèxte"
+
+#~ msgid ""
+#~ "Cropping/hiding does not remove any content"
+#~ " from the PDF file, it only hides"
+#~ " it."
+#~ msgstr ""
+#~ "Copiar o amagar suprimisson pas cap "
+#~ "de contengut del fichièr PDF, lo "
+#~ "rescondon solament."
+
+#~ msgid "Despite the warnings the document(s) should have no visible issues."
+#~ msgstr ""
+#~ "En defòra dels avertiments lo(s) "
+#~ "document(s) deurián pas aver de problèmas"
+#~ " visibles."
+
+#~ msgid "Discard changes and close?"
+#~ msgstr "Abandonar las modificacion e tampar ?"
+
+#~ msgid "Discard changes and quit?"
+#~ msgstr "Abandonar las modificacions e quitar ?"
+
+#~ msgid "Do not show this dialog again."
+#~ msgstr "Afichar pas mai aquesta fenèstra."
+
+#~ msgid "Do_n’t Save"
+#~ msgstr "E_nregistrar pas"
+
+#~ msgid "Don't show warnings when saving again."
+#~ msgstr "Mostrar pas mai d’avertiments en enregistrant."
+
+#~ msgid "Dupl_icate"
+#~ msgstr "Dupl_icar"
+
+#~ msgid "Equal column width"
+#~ msgstr "Egal a la largor de colomna"
+
+#~ msgid "Equal row height"
+#~ msgstr "Egal a la nautor de la linha"
+
+#~ msgid "Exploding into images…"
+#~ msgstr "Devesir en imatges…"
+
+#~ msgid "File(s) to open"
+#~ msgstr "Fichièr(s) de dobrir"
+
+#~ msgid "Find _All"
+#~ msgstr "_Tot recercar"
+
+#~ msgid "Find _Next"
+#~ msgstr "Recercar lo _seguent"
+
+#~ msgid "Find _Previous"
+#~ msgstr "Recercar lo _precedent"
+
+#~ msgid "Fit to Full Page"
+#~ msgstr "Adaptar a la pagina complèta"
+
+#~ msgid "Fit to Printable Area"
+#~ msgstr "Adaptar a la zòna imprimibla"
+
+#~ msgid "For more info see"
+#~ msgstr "Per mai d’informacions veire"
+
+#~ msgid "For more options see:"
+#~ msgstr "Per mai d’opcions vejatz :"
+
+#~ msgid "Full_screen"
+#~ msgstr "Ecran _complèt"
+
+#~ msgid "GNU General Public License (GPL) Version 3."
+#~ msgstr "Licéncia publica generala GNU (GPL) version 3."
+
+#~ msgid "Height in %"
+#~ msgstr "Nautor en %"
+
+#~ msgid "Horizontal offset"
+#~ msgstr "Descalatge orizontal"
+
+#~ msgid "Img2pdf missing."
+#~ msgstr "Img2pdf mancant."
+
+#~ msgid "Img2pdf support missing."
+#~ msgstr "Presa en carga de Img2pdf mancanta."
+
+#~ msgid "Import…"
+#~ msgstr "Importacion…"
+
+#~ msgid "Invalid date format. Input discarded."
+#~ msgstr "Format de data invalid. Entrada ignorada."
+
+#~ msgid "It uses libqpdf %s, pikepdf %s, GTK %s and Python %s."
+#~ msgstr "Utiliza libqpdf %s, pikepdf %s, GTK %s e Python %s."
+
+#~ msgid "JPEG images"
+#~ msgstr "Imatges JPEG"
+
+#~ msgid "Left to Right"
+#~ msgstr "D’esquèrra a drecha"
+
+#~ msgid "Main Menu"
+#~ msgstr "Menú principal"
+
+#~ msgid "Maintainers and contributors"
+#~ msgstr "Manteneires e contributors"
+
+#~ msgid "Margin"
+#~ msgstr "Marge"
+
+#~ msgid "Merged page size:"
+#~ msgstr "Talha de las paginas amb marge :"
+
+#~ msgid "Non-uniform page size - using max size"
+#~ msgstr "Talha de pagina non unifòrma - utilizacion de la talha max"
+
+#~ msgid "None"
+#~ msgstr "Pas cap"
+
+#~ msgid "Note"
+#~ msgstr "Nòta"
+
+#~ msgid "Note the limitations:"
+#~ msgstr "Notatz las limitacions :"
+
+#~ msgid "Open…"
+#~ msgstr "Dobrir…"
+
+#~ msgid "Optimize"
+#~ msgstr "Optimizar"
+
+#~ msgid "Outlines and links can be preserved only in certain cases."
+#~ msgstr "Se pòdon servar los contorns e los ligam sonque dins cèrts cases."
+
+#~ msgid ""
+#~ "PDF Arranger is a small python-gtk"
+#~ " application, which helps the user to"
+#~ " merge or split pdf documents and "
+#~ "rotate, crop and rearrange their pages "
+#~ "using an interactive and intuitive "
+#~ "graphical interface. It is a frontend "
+#~ "for pikepdf."
+#~ msgstr ""
+#~ "PDF Arranger es una pichona aplicacion "
+#~ "python-gtk qu’ajuda l’utilizaire a fusionar"
+#~ " o copar de documents pdf e tanben"
+#~ " los virar, talhar e reorganizar en "
+#~ "utilizant una interfàcia interactiva e "
+#~ "intuitiva. Es un frontend per pikepdf."
+
+#~ msgid "PDF document is damaged"
+#~ msgstr "Lo document PDF es damatjat"
+
+#~ msgid "PDF files"
+#~ msgstr "Fichièrs PDF"
+
+#~ msgid "PNG images"
+#~ msgstr "Imatges PNG"
+
+#~ msgid "Page Handling"
+#~ msgstr "Gestion de las paginas"
+
+#~ msgid "Page Order"
+#~ msgstr "Òrdre de las paginas"
+
+#~ msgid "Pasted data not valid. Aborting paste."
+#~ msgstr "Donadas pegadas invalidas. Abandon de l’empegament."
+
+#~ msgid "Pre_ferences"
+#~ msgstr "Pre_feréncias"
+
+#~ msgid "Print the version of PDF Arranger and exit"
+#~ msgstr "Afichar la version de PDF Arranger e quitar"
+
+#~ msgid "Property"
+#~ msgstr "Proprietat"
+
+#~ msgid "Re_verse Order"
+#~ msgstr "In_versar l'òrdre"
+
+#~ msgid "Rendering Preview…"
+#~ msgstr "Generacion de l’apercebut…"
+
+#~ msgid "Rendering…"
+#~ msgstr "Rendut en cors…"
+
+#~ msgid "Replace"
+#~ msgstr "Remplaçar"
+
+#~ msgid "Retain document-level information of the first opened file"
+#~ msgstr ""
+#~ "Conservar las informacions al nivèl del "
+#~ "document del primièr fichièr dobèrt"
+
+#~ msgid "Right to Left"
+#~ msgstr "De drecha a esquèrra"
+
+#~ msgid "Rotate Left"
+#~ msgstr "Pivotar cap a esquèrra"
+
+#~ msgid "Rotate Right"
+#~ msgstr "Pivotar cap a drecha"
+
+#~ msgid "Running on %s"
+#~ msgstr "En execucion sus %s"
+
+#~ msgid "Save"
+#~ msgstr "Enregistrar"
+
+#~ msgid "Save As"
+#~ msgstr "Enregistrar jos"
+
+#~ msgid "Save changes before closing?"
+#~ msgstr "Enregistrar las modificacions abans de tampar ?"
+
+#~ msgid "Save changes before quitting?"
+#~ msgstr "Enregistrar las modificacions abans de tampar ?"
+
+#~ msgid "Save changes to “{}” before closing?"
+#~ msgstr "Enregistrar las modificacions de « {} » abans de tampar ?"
+
+#~ msgid "Save changes to “{}” before quitting?"
+#~ msgstr "Enregistrar las modificacions de « {} » abans de tampar ?"
+
+#~ msgid "Saving produced some warnings"
+#~ msgstr "L’enregistrament a portat d’unes avertiments"
+
+#~ msgid "Saving…"
+#~ msgstr "Enregistrament…"
+
+#~ msgid "Scale mode:"
+#~ msgstr "Mòde de mesa a l’escala :"
+
+#~ msgid "Selected pages: "
+#~ msgstr "Paginas seleccionadas : "
+
+#~ msgid "Show values"
+#~ msgstr "Afichar las valors"
+
+#~ msgid "Supported image files"
+#~ msgstr "Fichièrs imatge preses en carga"
+
+#~ msgid "Top to Bottom"
+#~ msgstr "D'amont cap aval"
+
+#~ msgid "User Manual"
+#~ msgstr "Manual de l'utilizaire"
+
+#~ msgid "Value"
+#~ msgstr "Valor"
+
+#~ msgid "Vertical offset"
+#~ msgstr "Descalatge vertical"
+
+#~ msgid "Width in %"
+#~ msgstr "Largor en %"
+
+#~ msgid "Your changes will be lost if you don’t save them."
+#~ msgstr "Vòstras modificacions seràn perdudas se las enregistratz pas."
+
+#~ msgid "Zoom In"
+#~ msgstr "Agrandir"
+
+#~ msgid "Zoom Out"
+#~ msgstr "Redusir"
+
+#~ msgid "Zoom _Fit"
+#~ msgstr "_Adaptar"
+
+#~ msgid "_Apply"
+#~ msgstr "_Aplicar"
+
+#~ msgid "_Cancel"
+#~ msgstr "_Anullar"
+
+#~ msgid "_Find"
+#~ msgstr "_Recercar"
+
+#~ msgid "_OK"
+#~ msgstr "_D'acòrdi"
+
+#~ msgid "_Revert"
+#~ msgstr "_Restablir"
+
+#~ msgid "page"
+#~ msgstr "pagina"
+
+#~ msgid "untitled"
+#~ msgstr "sens títol"
+

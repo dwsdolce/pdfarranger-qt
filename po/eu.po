@@ -1,836 +1,2744 @@
 # Basque translation for pdfarranger.
-# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# Copyright (C) 2023 THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the pdfarranger package.
 # This file is an extended version of the PDF-Shuffler translation file
 # released under the GNU General Public License version 3 or later.
-# See file COPYING or go to <http://www.gnu.org/licenses/> for full license details.
+# See file COPYING or go to <http://www.gnu.org/licenses/> for full license
+# details.
 # Original translators:
 # Alexander Gabilondo Urkijo, 2023
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: \n"
+"Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-02-24 20:19+0100\n"
+"POT-Creation-Date: 2026-09-07 19:17+0000\n"
 "PO-Revision-Date: 2023-01-19 20:27+0100\n"
 "Last-Translator: alexgabi\n"
-"Language-Team: Basque\n"
 "Language: eu\n"
-"MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=UTF-8\n"
-"Content-Transfer-Encoding: 8bit\n"
+"Language-Team: Basque\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 3.0.1\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: pdfarranger-qt tools/merge_translations.py\n"
+"Generated-By: Babel 2.18.0\n"
 
-#: pdfarranger/splitter.py:87
-msgid "#Col"
-msgstr "#Zut"
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py pdfarranger_qt/reader.py
+#, python-brace-format
+msgid "Page {}"
+msgstr "{}. orrialdea"
 
-#: pdfarranger/splitter.py:87
-msgid "#Row"
-msgstr "#Err"
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Open Link"
+msgstr "Ireki esteka"
 
-#: pdfarranger/pageutils.py:127 pdfarranger/pageutils.py:453
-#: pdfarranger/pageutils.py:455
-msgid "%"
-msgstr "%"
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Copy Link Address"
+msgstr "Kopiatu estekaren helbidea"
 
-#: pdfarranger/pageutils.py:176
-#, python-format
-msgid "% of height"
-msgstr "altueraren %"
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+#, python-brace-format
+msgid "Go to {}"
+msgstr "Joan hona: {}"
 
-#: pdfarranger/pageutils.py:176
-#, python-format
-msgid "% of width"
-msgstr "zabaleraren %"
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Follow Link"
+msgstr "Jarraitu esteka"
 
-#: pdfarranger/pdfarranger.py:2764
-#, python-format
-msgid "%s is a tool for rearranging and modifying PDF files."
-msgstr "%s PDF fitxategiak berrantolatzeko eta aldatzeko tresna bat da."
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py pdfarranger_qt/mainwindow.py
+msgid "Copy"
+msgstr "Kopiatu"
 
-#: pdfarranger/config.py:262
-msgid "(Libhandy missing)"
-msgstr "(Libhandy falta da)"
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Select All"
+msgstr "Hautatu guztiak"
 
-#: pdfarranger/config.py:254
-msgid "(Requires restart)"
-msgstr "(Berrabiarazi behar da)"
-
-#: pdfarranger/pdfarranger.py:1144
-#, python-format
-msgid "A file named \"%s\" already exists. Do you want to replace it?"
-msgstr "\"%s\" izeneko fitxategi bat badago jada. Ordezkatu nahi duzu?"
-
-#: data/menu.ui:227 data/menu.ui:391
-msgid "All From _Same File"
-msgstr "Fitxategi bereko _guztiak"
-
-#: pdfarranger/pdfarranger.py:518
-msgid "All files"
-msgstr "Fitxategi guztiak"
-
-#: pdfarranger/pdfarranger.py:470
-msgid "All pages must have the same size."
-msgstr "Orrialde guztiek tamaina berdina izan behar dute."
-
-#: pdfarranger/pdfarranger.py:506
-msgid "All supported files"
-msgstr "Onartutako irudi formatuak"
-
-#: pdfarranger/exporter.py:563
-msgid "Auto Rotate"
-msgstr "Biraketa automatikoa"
-
-#: pdfarranger/pageutils.py:154
-msgid "Bottom"
-msgstr "Behean"
-
-#: pdfarranger/pageutils.py:386
-msgid "Bottom to Top"
-msgstr "Behetik gora"
-
-#: pdfarranger/core.py:569
-msgid "Clipboard image"
-msgstr "Arbeleko irudia"
-
-#: pdfarranger/pageutils.py:369 pdfarranger/splitter.py:60
-msgid "Columns"
-msgstr "Zutabeak"
-
-#: data/menu.ui:141 data/menu.ui:354
-msgid "Copy _Image"
-msgstr "Kopiatu _Irudia"
-
-#: data/menu.ui:146 data/menu.ui:359
-msgid "Copy _Text"
-msgstr "Kopiatu _Testua"
-
-#: pdfarranger/metadata.py:49
-msgid "Created"
-msgstr "Sortua"
-
-#: pdfarranger/metadata.py:47
-msgid "Creator"
-msgstr "Sortzailea"
-
-#: pdfarranger/metadata.py:48
-msgid "Creator tool"
-msgstr "Sortzaile tresna"
-
-#: pdfarranger/pageutils.py:846
-msgid "Crop Margins"
-msgstr "Moztu marginak"
-
-#: data/menu.ui:174 data/menu.ui:432
-msgid "Crop White Borders"
-msgstr "Moztu ertz zuriak"
-
-#: pdfarranger/pageutils.py:166 pdfarranger/pdfarranger.py:2730
-msgid ""
-"Cropping/hiding does not remove any content from the PDF file, it only hides "
-"it."
-msgstr "Mozketak/ezkutatzeak ez du PDF fitxategitik edukirik kentzen, "
-"ezkutatzen du soilik"
-
-#: data/menu.ui:94 data/menu.ui:302
-msgid "Cu_t"
-msgstr "_Moztu"
-
-#: pdfarranger/pdfarranger.py:1258
-msgid "Despite the warnings the document(s) should have no visible issues."
-msgstr "Abisuak izan arren dokumentuek ez lukete arazorik izan behar."
-
-#: pdfarranger/pdfarranger.py:993
-msgid "Discard changes and close?"
-msgstr "Aldaketak baztertu eta itxi?"
-
-#: pdfarranger/pdfarranger.py:1030
-msgid "Discard changes and quit?"
-msgstr "Aldaketak baztertu eta irten?"
-
-#: pdfarranger/pdfarranger.py:2737
-msgid "Do not show this dialog again."
-msgstr "Ez erakutsi elkarrizketa hau berriro."
-
-#: pdfarranger/pdfarranger.py:984
-msgid "Do_n’t Save"
-msgstr "E_z gorde"
-
-#: pdfarranger/pdfarranger.py:1265
-msgid "Don't show warnings when saving again."
-msgstr "Ez erakutsi abisurik berriro gordetzean."
-
-#: data/menu.ui:178 data/menu.ui:436
-msgid "Dupl_icate"
-msgstr "B_ikoiztu"
-
-#: data/menu.ui:52 data/menu.ui:462
-msgid "E_xport"
-msgstr "E_sportatu"
-
-#: data/menu.ui:55 data/menu.ui:465
-msgid "E_xport Selection to a Single File…"
-msgstr "E_sportatu aukeraketa fitxategi bakar batera…"
-
-#: data/menu.ui:266
-msgid "Edit _Properties"
-msgstr "Editatu _propietateak"
-
-#: pdfarranger/metadata.py:202
-msgid "Edit properties"
-msgstr "Editatu propietateak"
-
-#: pdfarranger/splitter.py:62
-msgid "Equal column width"
-msgstr "Zutabeen zabalera berdina"
-
-#: pdfarranger/splitter.py:62
-msgid "Equal row height"
-msgstr "Errenkaden altuera berdina"
-
-#: pdfarranger/pdfarranger.py:1792
-msgid "Exploding into images…"
-msgstr "Arakatzen irudietan…"
-
-#: data/menu.ui:60 data/menu.ui:470
-msgid "Export Selection to _Individual Files…"
-msgstr "Esportatu hautapena _banakako fitxategietara…"
-
-#: data/menu.ui:65 data/menu.ui:475
-msgid "Export _All Pages to Individual Files…"
-msgstr "Esportatu _orri guztiak fitxategi indibidualetara…"
-
-#: pdfarranger/pdfarranger.py:1102
-msgid "Export…"
-msgstr "Esportatu…"
-
-#: pdfarranger/core.py:571 pdfarranger/pdfarranger.py:1512
-msgid "File is neither pdf nor image"
-msgstr "Fitxategia ez da ez pdf ez irudia"
-
-#: pdfarranger/pdfarranger.py:300
-msgid "File(s) to open"
-msgstr "Ireki beharreko fitxategia(k)"
-
-#: pdfarranger/exporter.py:561
-msgid "Fit to Full Page"
-msgstr "Doitu orrialde osora"
-
-#: pdfarranger/exporter.py:560
-msgid "Fit to Printable Area"
-msgstr "Doitu area inprimagarrira"
-
-#: pdfarranger/pdfarranger.py:2734
-msgid "For more info see"
-msgstr "Informazio gehaigo hemen"
-
-#: pdfarranger/config.py:271
-msgid "For more options see:"
-msgstr "Aukera gehiagorako, ikusi:"
-
-#: data/menu.ui:259
-msgid "Full_screen"
-msgstr "Pantaila o_soa"
-
-#: pdfarranger/pdfarranger.py:2778
-msgid "GNU General Public License (GPL) Version 3."
-msgstr "GNU General Public License (GPL) 3. bertsioa."
-
-#: data/menu.ui:198 data/menu.ui:456
-msgid "Generate Booklet"
-msgstr "Sortu liburuxka"
-
-#: pdfarranger/pageutils.py:248 pdfarranger/pageutils.py:252
-#: pdfarranger/pageutils.py:334
-msgid "Height"
-msgstr "Altuera"
-
-#: pdfarranger/splitter.py:88
-msgid "Height in %"
-msgstr "Altuera %-tan"
-
-#: pdfarranger/pageutils.py:846
-msgid "Hide Margins"
-msgstr "Ezkutatu marginak"
-
-#: pdfarranger/pageutils.py:381
-msgid "Horizontal"
-msgstr "Horizontala"
-
-#: pdfarranger/splitter.py:61
-msgid "Horizontal Splits"
-msgstr "Zati horizontalak"
-
-#: pdfarranger/pageutils.py:452
-msgid "Horizontal offset"
-msgstr "Desplazamendu horizontala"
-
-#: pdfarranger/core.py:560
+#: pdfarranger_qt/core.py pdfarranger_qt/mainwindow.py
 msgid "Image files are only supported with img2pdf"
 msgstr "Irudi-fitxategiak img2pdf-rekin soilik onartzen dira"
 
-#: pdfarranger/core.py:566
-msgid "Image format is not supported by img2pdf"
-msgstr "Irudi formatua ez du onartzen img2pdf-ek"
-
-#: pdfarranger/pdfarranger.py:1789
-msgid "Img2pdf missing."
-msgstr "Img2pdf falta da"
-
-#: data/pdfarranger.ui:58
-msgid "Import"
-msgstr "Inportatu"
-
-#: pdfarranger/pdfarranger.py:1335
-msgid "Import…"
-msgstr "Inportatu…"
-
-#: data/menu.ui:194 data/menu.ui:452
-msgid "Insert Blan_k Page…"
-msgstr "Txertatu orri _zuria…"
-
-#: pdfarranger/pageutils.py:331
-msgid "Insert Blank Page"
-msgstr "Txertatu orri zuria"
-
-#: pdfarranger/metadata.py:173
-msgid "Invalid date format. Input discarded."
-msgstr "Data-formatu baliogabea. Sarrera baztertu da."
-
-#: pdfarranger/pdfarranger.py:2767
-#, python-format
-msgid "It uses libqpdf %s, pikepdf %s, GTK %s and Python %s."
-msgstr "Erabiltzen du libqpdf %s, pikepdf %s, GTK %s eta Python %s."
-
-#: pdfarranger/metadata.py:45
-msgid "Keywords"
-msgstr "Gako-hitzak"
-
-#: pdfarranger/config.py:252
-msgid "Language"
-msgstr "Hizkuntza"
-
-#: pdfarranger/pageutils.py:154
-msgid "Left"
-msgstr "Ezkerra"
-
-#: pdfarranger/pageutils.py:383
-msgid "Left to Right"
-msgstr "Ezkerretik eskuinera"
-
-#: data/pdfarranger.ui:122
-msgid "Main Menu"
-msgstr "Menu nagusia"
-
-#: pdfarranger/pdfarranger.py:2773
-msgid "Maintainers and contributors"
-msgstr "Laguntzaileak eta babesleak"
-
-#: pdfarranger/pageutils.py:367
-msgid "Margin"
-msgstr "Marjina"
-
-#: pdfarranger/pageutils.py:353
-msgid "Merge Pages"
-msgstr "Batu orriak"
-
-#: pdfarranger/pageutils.py:418
-msgid "Merged page size:"
-msgstr "Batutako orriaren tamaina:"
-
-#: pdfarranger/metadata.py:50
-msgid "Modified"
-msgstr "Aldatua"
-
-#: pdfarranger/pageutils.py:398
-msgid "Non-uniform page size - using max size"
-msgstr "Orrialdearen tamaina ez-uniformea ​​- gehienezko tamaina erabiliz"
-
-#: pdfarranger/exporter.py:559
-msgid "None"
-msgstr "Bat ere ez"
-
-#: pdfarranger/pdfarranger.py:2723
-msgid "Note"
-msgstr "Oharra"
-
-#: pdfarranger/pdfarranger.py:2729
-msgid "Note the limitations:"
-msgstr "Kontuan izan mugak:"
-
-#: data/pdfarranger.ui:37
-msgid "Open"
-msgstr "Ireki"
-
-#: pdfarranger/pdfarranger.py:1200
-msgid "Open…"
-msgstr "Ireki…"
-
-#: pdfarranger/pdfarranger.py:2731
-msgid "Outlines and links can be preserved only in certain cases."
-msgstr "Eskemak eta estekak kasu jakin batzuetan soilik gorde daitezke."
-
-#: pdfarranger/pageutils.py:899
-msgid "Overlay"
-msgstr "Gainjartzea"
-
-#: pdfarranger/pdfarranger.py:281
-msgid ""
-"PDF Arranger is a small python-gtk application, which helps the user to "
-"merge or split pdf documents and rotate, crop and rearrange their pages "
-"using an interactive and intuitive graphical interface. It is a frontend for "
-"pikepdf."
-msgstr ""
-"PDF Arranger python-gtk aplikazio txiki bat da, erabiltzaileari pdf "
-"dokumentuak batu edo zatitzen eta orriak biratu, moztu eta berrantolatzen "
-"laguntzen diona interfaze grafiko interaktibo eta intuitibo bat erabiliz. "
-"Pikepdf-rako interfaze bat da."
-
-#: pdfarranger/pdfarranger.py:1506
-msgid "PDF document is damaged"
-msgstr "PDF dokumentua hondatuta dago"
-
-#: pdfarranger/pdfarranger.py:510
-msgid "PDF files"
-msgstr "PDF fitxategiak"
-
-#: pdfarranger/exporter.py:599
-msgid "Page Handling"
-msgstr "Orriaren maneiua"
-
-#: pdfarranger/pageutils.py:394
-msgid "Page Order"
-msgstr "Orrien ordena"
-
-#: pdfarranger/pdfarranger.py:2801
-msgid "Page Size:"
-msgstr "Orriaren tamaina:"
-
-#: pdfarranger/pageutils.py:243
-msgid "Page size"
-msgstr "Orriaren tamaina"
-
-#: pdfarranger/core.py:457
-msgid "Password"
-msgstr "Pasahitza"
-
-#: pdfarranger/core.py:435
-msgid "Password required"
-msgstr "Pasahitza beharrezkoa da"
-
-#: data/menu.ui:107 data/menu.ui:315
-msgid "Past_e Special"
-msgstr "Itsatsi berezia"
-
-#: data/menu.ui:124 data/menu.ui:333
-msgid "Paste As O_verlay…"
-msgstr "Itsatsi G_ainjartzen..."
-
-#: data/menu.ui:119 data/menu.ui:328
-msgid "Paste As _Even Pages"
-msgstr "Itsatsi orrialde bikoitia gisa"
-
-#: data/menu.ui:114 data/menu.ui:323
-msgid "Paste As _Odd Pages"
-msgstr "Itsatsi orrialde bakoitia gisa"
-
-#: data/menu.ui:129 data/menu.ui:338
-msgid "Paste As _Underlay…"
-msgstr "Itsatsi _azpiko geruza gisa…"
-
-#: data/menu.ui:102 data/menu.ui:310
-msgid "Paste _After"
-msgstr "Itsatsi _ondoren"
-
-#: data/menu.ui:109 data/menu.ui:318
-msgid "Paste _Before"
-msgstr "Itsatsi aurrean"
-
-#: pdfarranger/pdfarranger.py:1636
-msgid "Pasted data not valid. Aborting paste."
-msgstr "Itsatsitako datuak baliogabeak dira. Utzi itsastea."
-
-#: data/menu.ui:272
-msgid "Pre_ferences"
-msgstr "_Hobespenak"
-
-#: pdfarranger/config.py:242
-msgid "Preferences"
-msgstr "Hobespenak"
-
-#: pdfarranger/pdfarranger.py:292
-msgid "Print the version of PDF Arranger and exit"
-msgstr "Inprimatu PDF Arranger-en bertsioa eta irten"
-
-#: pdfarranger/config.py:267
-msgid "Printing"
-msgstr "Inprimatzen"
-
-#: pdfarranger/exporter.py:579
-msgid "Printing…"
-msgstr "Inprimatzen…"
-
-#: pdfarranger/metadata.py:46
-msgid "Producer"
-msgstr "Ekoizlea"
-
-#: pdfarranger/metadata.py:216
-msgid "Property"
-msgstr "Jabetza"
-
-#: data/menu.ui:182 data/menu.ui:440
-msgid "Re_verse Order"
-msgstr "Al_derantzizkatu ordena"
-
-#: pdfarranger/pageutils.py:250
-msgid "Relative"
-msgstr "Erlatiboa"
-
-#: pdfarranger/exporter.py:617
-msgid "Rendering Preview…"
-msgstr "Aurrebista errendatzen…"
-
-#: pdfarranger/pdfarranger.py:746
-msgid "Rendering…"
-msgstr "Errendatzen…"
-
-#: pdfarranger/pdfarranger.py:1146
-msgid "Replace"
-msgstr "Ordeztu"
-
-#: pdfarranger/pageutils.py:154
-msgid "Right"
-msgstr "Eskuina"
-
-#: pdfarranger/pageutils.py:384
-msgid "Right to Left"
-msgstr "Eskuinetik ezkerrera"
-
-#: data/pdfarranger.ui:203
-msgid "Rotate Left"
-msgstr "Biratu ezkerrera"
-
-#: data/pdfarranger.ui:227
-msgid "Rotate Right"
-msgstr "Biratu eskuinera"
-
-#: data/menu.ui:152 data/menu.ui:410
-msgid "Rotate _Left"
-msgstr "Biratu e_zkerrera"
-
-#: pdfarranger/pageutils.py:370 pdfarranger/splitter.py:60
-msgid "Rows"
-msgstr "Errenkadak"
-
-#: data/menu.ui:232 data/menu.ui:396
-msgid "Same Page _Format"
-msgstr "Orrialdeko _formatu bera"
-
-#: data/pdfarranger.ui:78
-msgid "Save"
-msgstr "Gorde"
-
-#: data/pdfarranger.ui:97
-msgid "Save As"
-msgstr "Gorde honela"
-
-#: pdfarranger/pdfarranger.py:1102
-msgid "Save As…"
-msgstr "Gorde honela…"
-
-#: data/menu.ui:47
-msgid "Save _As…"
-msgstr "Gorde _honela…"
-
-#: pdfarranger/pdfarranger.py:1002
-msgid "Save changes before closing?"
-msgstr "Aldaketak itxi aurretik gorde nahi dituzu?"
-
-#: pdfarranger/pdfarranger.py:1039
-msgid "Save changes before quitting?"
-msgstr "Aldaketak irten aurretik gorde nahi dituzu?"
-
-#: pdfarranger/pdfarranger.py:999
-msgid "Save changes to “{}” before closing?"
-msgstr "Aldaketak “{}”-n gorde nahi dituzu itxi aurretik?"
-
-#: pdfarranger/pdfarranger.py:1036
-msgid "Save changes to “{}” before quitting?"
-msgstr "Aldaketak “{}”-n gorde nahi dituzu irten aurretik?"
-
-#: pdfarranger/pdfarranger.py:1257
-msgid "Saving produced some warnings"
-msgstr "Gordetzeak abisu batzuk sortu ditu"
-
-#: pdfarranger/pdfarranger.py:1296
-msgid "Saving…"
-msgstr "Gordetzen…"
-
-#: pdfarranger/pageutils.py:121
-msgid "Scale factor"
-msgstr "Eskala-faktorea"
-
-#: pdfarranger/exporter.py:557
-msgid "Scale mode:"
-msgstr "Eskala modua"
-
-#: data/menu.ui:207 data/menu.ui:371
-msgid "Select _All"
-msgstr "Hautatu _guztiak"
-
-#: data/menu.ui:222 data/menu.ui:386
-msgid "Select _Even Pages"
-msgstr "Hautatu orrialde b_ikoitiak"
-
-#: data/menu.ui:217 data/menu.ui:381
-msgid "Select _Odd Pages"
-msgstr "Hautatu orrialde b_akoitiak"
-
-#: pdfarranger/pdfarranger.py:2796
-msgid "Selected pages: "
-msgstr "Hautatutako orrialdeak: "
-
-#: pdfarranger/pageutils.py:548
-msgid "Show values"
-msgstr "Erakutsi balioak"
-
-#: pdfarranger/splitter.py:26
-msgid "Split Pages"
-msgstr "Zatitu orrialdeak"
-
-#: pdfarranger/metadata.py:44
-msgid "Subject"
-msgstr "Gaia"
-
-#: pdfarranger/pdfarranger.py:523
-msgid "Supported image files"
-msgstr "Onartutako irudi-fitxategiak"
-
-#: pdfarranger/config.py:282 pdfarranger/config.py:290
-msgid "System setting"
-msgstr "Sistemaren ezarpena"
-
-#: pdfarranger/core.py:447
-msgid ""
-"The document “{}” is locked and requires a password before it can be opened."
-msgstr ""
-"“{}” dokumentua blokeatuta dago eta pasahitz bat behar du ireki ahal izateko."
-
-#: pdfarranger/pdfarranger.py:1765
-msgid "The page has several images. Use \"Explode into Images\" first.\""
-msgstr "Orriak hainbat irudi ditu. Erabili \"Arakatu irudietan\" lehenik.\""
-
-#: pdfarranger/core.py:446
-msgid "The password will be remembered until you close PDF Arranger."
-msgstr "Pasahitza gogoratuko da PDF Arranger itxi arte."
-
-#: pdfarranger/config.py:260
-msgid "Theme"
-msgstr "Gaia"
-
-#: pdfarranger/metadata.py:43
-msgid "Title"
-msgstr "Izenburua"
-
-#: pdfarranger/pageutils.py:154
-msgid "Top"
-msgstr "Goian"
-
-#: pdfarranger/pageutils.py:385
-msgid "Top to Bottom"
-msgstr "Goitik behera"
-
-#: pdfarranger/pageutils.py:899
-msgid "Underlay"
-msgstr "Azpian ezarri"
-
-#: pdfarranger/core.py:544 pdfarranger/pdfarranger.py:1502
+# machine translation, unreviewed
+#: pdfarranger_qt/core.py
+msgid "File not found"
+msgstr "Ez da fitxategia aurkitu"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/core.py
+msgid "Invalid file format"
+msgstr "Fitxategi-formatu baliogabea"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/core.py
+msgid "Data not yet available"
+msgstr "Datuak ez daude oraindik erabilgarri"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/core.py
+msgid "Unsupported security scheme"
+msgstr "Onartzen ez den segurtasun-eskema"
+
+#: pdfarranger_qt/core.py
 msgid "Unknown file format"
 msgstr "Fitxategi formatu ezezaguna"
 
-#: pdfarranger/pdfarranger.py:2735
-msgid "User Manual"
-msgstr "Erabiltzailearen eskuliburua"
+#: pdfarranger_qt/core.py
+msgid "Image format is not supported by img2pdf"
+msgstr "Irudi formatua ez du onartzen img2pdf-ek"
 
-#: pdfarranger/metadata.py:216
-msgid "Value"
-msgstr "Balioa"
+#: pdfarranger_qt/core.py
+msgid "File is neither pdf nor image"
+msgstr "Fitxategia ez da ez pdf ez irudia"
 
-#: pdfarranger/pageutils.py:382
-msgid "Vertical"
-msgstr "Bertikala"
+# machine translation, unreviewed
+#: pdfarranger_qt/core.py
+msgid "Cannot open document"
+msgstr "Ezin da dokumentua ireki"
 
-#: pdfarranger/splitter.py:61
-msgid "Vertical Splits"
-msgstr "Zati bertikalak"
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Paper size"
+msgstr "Paperaren tamaina"
 
-#: pdfarranger/pageutils.py:454
-msgid "Vertical offset"
-msgstr "Desplazamendu bertikala"
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Custom"
+msgstr "Pertsonalizatua"
 
-#: pdfarranger/pageutils.py:247 pdfarranger/pageutils.py:251
-#: pdfarranger/pageutils.py:333
-msgid "Width"
-msgstr "Zabalera"
-
-#: pdfarranger/splitter.py:88
-msgid "Width in %"
-msgstr "Zabalera %-tan"
-
-#: pdfarranger/pdfarranger.py:983
-msgid "Your changes will be lost if you don’t save them."
-msgstr "Zure aldaketak galduko dira gordetzen ez badituzu."
-
-#: data/pdfarranger.ui:144
-msgid "Zoom In"
-msgstr "Handiagotu"
-
-#: data/pdfarranger.ui:167
-msgid "Zoom Out"
-msgstr "Txikiagotu"
-
-#: data/menu.ui:255
-msgid "Zoom _Fit"
-msgstr "_Doitu"
-
-#: data/menu.ui:247
-msgid "Zoom _In"
-msgstr "_Handiagotu"
-
-#: data/menu.ui:251
-msgid "Zoom _Out"
-msgstr "_Txikiagotu"
-
-#: data/menu.ui:278
-msgid "_About"
-msgstr "_Honi buruz"
-
-#: pdfarranger/pageutils.py:856
-msgid "_Apply"
-msgstr "_Aplikatu"
-
-#: pdfarranger/config.py:246 pdfarranger/pageutils.py:227
-#: pdfarranger/pdfarranger.py:975 pdfarranger/pdfarranger.py:984
-#: pdfarranger/pdfarranger.py:1108 pdfarranger/pdfarranger.py:1158
-msgid "_Cancel"
-msgstr "_Utzi"
-
-#: pdfarranger/pdfarranger.py:994 data/menu.ui:284
-msgid "_Close"
-msgstr "_Itxi"
-
-#: data/menu.ui:98 data/menu.ui:306
-msgid "_Copy"
-msgstr "_Kopiatu"
-
-#: data/menu.ui:166 data/menu.ui:424
-msgid "_Crop Margins…"
-msgstr "_Moztu marjinak…"
-
-#: data/menu.ui:90 data/menu.ui:298
-msgid "_Delete"
-msgstr "_Ezabatu"
-
-#: data/menu.ui:212 data/menu.ui:376
-msgid "_Deselect All"
-msgstr "_Desautatu guztiak"
-
-#: data/menu.ui:87
-msgid "_Edit"
-msgstr "_Editatu"
-
-#: data/menu.ui:137 data/menu.ui:350
-msgid "_Explode into Images"
-msgstr "_Arakatu irudietan"
-
-#: data/menu.ui:135 data/menu.ui:347
-msgid "_Extract"
-msgstr "_Atera"
-
-#: data/menu.ui:170 data/menu.ui:428
-msgid "_Hide Margins…"
-msgstr "_Ezkutatu marjinak"
-
-#: data/menu.ui:30
-msgid "_Import"
-msgstr "_Inportatu"
-
-#: data/menu.ui:237 data/menu.ui:401
-msgid "_Invert Selection"
-msgstr "_Alderantzikatu hautapena"
-
-#: data/menu.ui:190 data/menu.ui:448
-msgid "_Merge Pages…"
-msgstr "_Batu orriak…"
-
-#: data/menu.ui:36
-msgid "_New Window"
-msgstr "_Leiho berria"
-
-#: pdfarranger/config.py:247 pdfarranger/pageutils.py:228
-msgid "_OK"
-msgstr "Ados"
-
-#: pdfarranger/pdfarranger.py:1157 data/menu.ui:24
-msgid "_Open"
-msgstr "_Ireki"
-
-#: data/menu.ui:162 data/menu.ui:420
-msgid "_Page Size…"
-msgstr "_Orriaren tamaina"
-
-#: data/menu.ui:71
-msgid "_Print…"
-msgstr "_Inprimatu…"
-
-#: pdfarranger/pdfarranger.py:1031 data/menu.ui:290
-msgid "_Quit"
-msgstr "_Irten"
-
-#: data/menu.ui:82
-msgid "_Redo"
-msgstr "_Berregin"
-
-#: pdfarranger/pageutils.py:856
-msgid "_Revert"
-msgstr "_Atzera"
-
-#: data/menu.ui:157 data/menu.ui:415
-msgid "_Rotate Right"
-msgstr "Biratu e_skuinera"
-
-#: pdfarranger/pdfarranger.py:984 pdfarranger/pdfarranger.py:1107
-#: data/menu.ui:42
-msgid "_Save"
-msgstr "_Gorde"
-
-#: data/menu.ui:204 data/menu.ui:368
-msgid "_Select"
-msgstr "_Hautatu"
-
-#: data/menu.ui:186 data/menu.ui:444
-msgid "_Split Pages…"
-msgstr "_Zatitu orrialdeak…"
-
-#: data/menu.ui:78
-msgid "_Undo"
-msgstr "_Desegin"
-
-#: data/menu.ui:244
-msgid "_View"
-msgstr "_Ikusi"
-
-#: pdfarranger/pageutils.py:144 pdfarranger/pageutils.py:368
-#: pdfarranger/pageutils.py:418
+#: pdfarranger_qt/dialogs.py
 msgid "mm"
 msgstr "mm"
 
-#: pdfarranger/core.py:326
-msgid "page"
-msgstr "orrialde"
+#: pdfarranger_qt/dialogs.py
+msgid "Width"
+msgstr "Zabalera"
 
-#: pdfarranger/pdfarranger.py:825
-msgid "untitled"
-msgstr "izenbururik gabe"
+#: pdfarranger_qt/dialogs.py
+msgid "Height"
+msgstr "Altuera"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Keep aspect ratio"
+msgstr "Mantendu proportzioa"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Portrait"
+msgstr "Bertikala"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Landscape"
+msgstr "Horizontala"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Orientation"
+msgstr "Orientazioa"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Range Select"
+msgstr "Barruti-hautapena"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Select range of pages: "
+msgstr "Hautatu orrialde-barrutia: "
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Use a comma to separate page numbers, a dash to select a range of pages. \n"
+"e.g. : \"1,3,5-7,9\""
+msgstr ""
+"Bereizi orrialde-zenbakiak komaz, eta hautatu orrialde-barruti bat "
+"marratxoz. \n"
+"adib.: \"1,3,5-7,9\""
+
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+msgid "Insert Blank Page"
+msgstr "Txertatu orri zuria"
+
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+msgid "Page size"
+msgstr "Orriaren tamaina"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Fit to paper"
+msgstr "Doitu paperera"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Relative"
+msgstr "Erlatiboa"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Scale"
+msgstr "Eskalatu"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Scale & Add margins"
+msgstr "Eskalatu eta gehitu marjinak"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Crop & Add margins"
+msgstr "Moztu eta gehitu marjinak"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Fit mode"
+msgstr "Doitze-modua"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Scale factor"
+msgstr "Eskala-faktorea"
+
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+msgid "Hide Margins"
+msgstr "Ezkutatu marginak"
+
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+msgid "Crop Margins"
+msgstr "Moztu marginak"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Left"
+msgstr "Ezkerra"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Right"
+msgstr "Eskuina"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Top"
+msgstr "Goian"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Bottom"
+msgstr "Behean"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Margins"
+msgstr "Marjinak"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Same for all sides"
+msgstr "Berdina alde guztietan"
+
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+msgid "Split Pages"
+msgstr "Zatitu orrialdeak"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Vertical Splits"
+msgstr "Zati bertikalak"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Horizontal Splits"
+msgstr "Zati horizontalak"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+msgid "Pages per Sheet"
+msgstr "Orrialdeak orriko"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Automatic"
+msgstr "Automatikoa"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Automatic turns the sheet sideways when that lets the pages come out larger."
+msgstr ""
+"Automatikoak orria alboka jartzen du orrialdeak horrela handiago ateratzen "
+"direnean."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Empty space left around each page."
+msgstr "Orrialde bakoitzaren inguruan uzten den hutsunea."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Layout"
+msgstr "Diseinua"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Columns"
+msgstr "Zutabeak"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Rows"
+msgstr "Errenkadak"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Sheet"
+msgstr "Orria"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Gap"
+msgstr "Tartea"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Appearance"
+msgstr "Itxura"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/reader.py
+msgid "Bold"
+msgstr "Lodia"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/reader.py
+msgid "Italic"
+msgstr "Etzana"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Font"
+msgstr "Letra-tipoa"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Size"
+msgstr "Tamaina"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Colour"
+msgstr "Kolorea"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Opacity"
+msgstr "Opakutasuna"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Position"
+msgstr "Kokapena"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Angle"
+msgstr "Angelua"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+msgid "Add Page Numbers"
+msgstr "Gehitu orrialde-zenbakiak"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+#, python-format
+msgid "%s is replaced by the page number, %s by the number of pages."
+msgstr "%s orrialde-zenbakiaz ordezten da, eta %s orrialde-kopuruaz."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Leave the first page unnumbered"
+msgstr "Utzi lehen orrialdea zenbakirik gabe"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "It is still counted; a title page just does not carry a number."
+msgstr ""
+"Zenbatzen jarraitzen du; azaleko orrialdeak ez du zenbakirik eramaten, "
+"besterik ez."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Format"
+msgstr "Formatua"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Start at"
+msgstr "Hasi hemendik"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Numbering"
+msgstr "Zenbakitzea"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+msgid "Add Watermark"
+msgstr "Gehitu ur-marka"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "DRAFT"
+msgstr "ZIRRIBORROA"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Text"
+msgstr "Testua"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Watermark"
+msgstr "Ur-marka"
+
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+msgid "Merge Pages"
+msgstr "Batu orriak"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Overlay"
+msgstr "Gainjartzea"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Underlay"
+msgstr "Azpian ezarri"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/stamp.py
+msgid "Centre"
+msgstr "Erdian"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Middle"
+msgstr "Erdialdean"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Horizontal"
+msgstr "Horizontala"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Vertical"
+msgstr "Bertikala"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Edit properties"
+msgstr "Editatu propietateak"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "System"
+msgstr "Sistema"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Light"
+msgstr "Argia"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Dark"
+msgstr "Iluna"
+
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+msgid "Preferences"
+msgstr "Hobespenak"
+
+#: pdfarranger_qt/dialogs.py
+msgid "System setting"
+msgstr "Sistemaren ezarpena"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Language"
+msgstr "Hizkuntza"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Theme"
+msgstr "Gaia"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "General"
+msgstr "Orokorra"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Fit to page"
+msgstr "Doitu orrialdera"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Actual size"
+msgstr "Benetako tamaina"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Auto Rotate"
+msgstr "Biraketa automatikoa"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Pages are rasterised at this resolution before being sent to the printer. "
+"Lower it if printing is slow: the printer driver has less to process."
+msgstr ""
+"Orrialdeak bereizmen honekin bilbatzen dira inprimagailura bidali aurretik. "
+"Jaitsi ezazu inprimatzea motela bada: inprimagailuaren kontrolatzaileak "
+"gutxiago izango du prozesatzeko."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Scale mode"
+msgstr "Eskala-modua"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Pixels/inch:"
+msgstr "Pixel/hazbete:"
+
+#: pdfarranger_qt/dialogs.py
+msgid "Printing"
+msgstr "Inprimatzen"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Preserve document information from the first file opened"
+msgstr "Mantendu ireki den lehen fitxategiaren dokumentu-informazioa"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "When checked: use document properties from the first file opened."
+msgstr ""
+"Markatuta dagoenean: erabili ireki den lehen fitxategiaren dokumentu-"
+"propietateak."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "When unchecked: merge bookmarks from all documents."
+msgstr "Markatuta ez dagoenean: batu dokumentu guztietako laster-markak."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Optimize for the web (linearize)"
+msgstr "Optimizatu weberako (linealizatu)"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Lay the file out so a browser can show page one before the rest has "
+"downloaded."
+msgstr ""
+"Antolatu fitxategia nabigatzaileak lehen orrialdea erakutsi ahal izan dezan "
+"gainerakoa deskargatu aurretik."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Compress"
+msgstr "Konprimatu"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Recompress the file's streams and pack its objects together."
+msgstr ""
+"Konprimatu berriro fitxategiaren korronteak eta bildu haren objektuak "
+"elkarrekin."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"How much this saves depends on the file: one full of already-compressed "
+"images will barely shrink."
+msgstr ""
+"Zenbat aurrezten den fitxategiaren araberakoa da: dagoeneko konprimatuta "
+"dauden irudiz betetako fitxategi bat ia ez da txikituko."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Saving/exporting to single file"
+msgstr "Fitxategi bakarrera gordetzea/esportatzea"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Greyscale"
+msgstr "Gris-eskala"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Image Export"
+msgstr "Irudien esportazioa"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Keyboard shortcuts"
+msgstr "Teklatuko lasterbideak"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Viewer Preferences"
+msgstr "Ikustailearen hobespenak"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Open showing:"
+msgstr "Ireki hau erakutsiz:"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Page layout:"
+msgstr "Orrialdearen diseinua:"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "On opening"
+msgstr "Irekitzean"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Window"
+msgstr "Leihoa"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Readers are free to ignore all of this."
+msgstr "Irakurleek hau guztia alde batera utz dezakete."
+
+#: pdfarranger_qt/dialogs.py
+msgid "Password"
+msgstr "Pasahitza"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Confirm password"
+msgstr "Berretsi pasahitza"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Enter a password, or cancel to leave the document unencrypted."
+msgstr "Idatzi pasahitz bat, edo utzi bertan behera dokumentua zifratu gabe uzteko."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "The passwords do not match."
+msgstr "Pasahitzak ez datoz bat."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Reset"
+msgstr "Berrezarri"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Description"
+msgstr "Deskribapena"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"PDF Arranger merges, splits, rearranges, rotates and crops PDF documents. "
+"Everything happens in memory against the pages you can see; nothing is "
+"written until you save."
+msgstr ""
+"PDF Arrangerrek PDF dokumentuak batu, zatitu, berrantolatu, biratu eta "
+"mozten ditu. Dena memorian gertatzen da ikusten dituzun orrialdeen gainean; "
+"ez da ezer idazten gorde arte."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"It is a front end for pikepdf. Page content is never rewritten — only page "
+"order, geometry and composition."
+msgstr ""
+"pikepdf-en gaineko interfazea da. Orrialdeen edukia ez da inoiz berridazten "
+"— orrialde-ordena, geometria eta konposizioa besterik ez."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Command line"
+msgstr "Komando-lerroa"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Files given on the command line are opened as one document. "
+"<code>--version</code> prints the version and exits."
+msgstr ""
+"Komando-lerroan emandako fitxategiak dokumentu bakar gisa irekitzen dira. "
+"<code>--version</code> aginduak bertsioa erakusten du eta irteten da."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+msgid "Reading"
+msgstr "Irakurtzea"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"The application opens in <b>read mode</b>: a continuous page view for "
+"reading the document rather than rearranging it. <b>View ▸ Arrange Mode</b> "
+"(Ctrl+E) swaps to the thumbnail grid and back."
+msgstr ""
+"Aplikazioa <b>irakurtzeko moduan</b> irekitzen da: orrialdeen ikuspegi "
+"jarraitu bat, dokumentua berrantolatu beharrean irakurtzeko. <b>Ikusi ▸ "
+"Antolatze-modua</b> (Ctrl+E) miniaturen saretara aldatzen da eta itzultzen."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Reading shows the document <i>as edited</i>: rotations, crops, deletions and"
+" reordering are all applied, so what you read is what you would get if you "
+"saved. Page-editing commands are disabled while reading — bookmarks are the "
+"exception, and are edited here and nowhere else."
+msgstr ""
+"Irakurtzeak dokumentua <i>editatu den moduan</i> erakusten du: biraketak, "
+"mozketak, ezabaketak eta berrantolaketak denak aplikatuta daude, beraz "
+"irakurtzen duzuna gordeko bazenu lortuko zenukeena da. Orrialdeak editatzeko"
+" komandoak desgaituta daude irakurtzen ari zarenean — laster-markak dira "
+"salbuespena, eta hemen editatzen dira eta ez beste inon."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"The page you are on follows you between the two modes. Switching to read "
+"mode opens at the page selected in the grid, the first of them if several "
+"are selected; switching back scrolls the grid to the page you were reading, "
+"without disturbing what you had selected. With nothing selected, reading "
+"resumes where you left off — your place in each document is remembered "
+"between visits."
+msgstr ""
+"Zauden orrialdeak jarraitzen dizu bi moduen artean. Irakurtzeko modura "
+"aldatzeak saretan hautatutako orrialdean irekitzen du, haietako lehenengoan "
+"hainbat hautatuta badaude; itzultzeak saretak irakurtzen ari zinen "
+"orrialderaino korritzen du, hautatuta zenuena ukitu gabe. Ezer hautatu gabe,"
+" irakurketa utzi zenuen lekutik jarraitzen du — dokumentu bakoitzean duzun "
+"tokia gogoratu egiten da bisiten artean."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"The toolbar shows which page you are on and how many there are; type a "
+"number into it to jump there, or use <b>Ctrl+G</b>."
+msgstr ""
+"Tresna-barrak erakusten du zein orrialdetan zauden eta zenbat dauden; idatzi"
+" bertan zenbaki bat hara jauzi egiteko, edo erabili <b>Ctrl+G</b>."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>View ▸ Continuous Scroll</b> is on by default; turning it off shows one "
+"page at a time. <b>View ▸ Facing Pages</b> puts two pages side by side, the "
+"way a book falls open. Both settings are remembered."
+msgstr ""
+"<b>Ikusi ▸ Korritze jarraitua</b> lehenetsita dago aktibatuta; desaktibatuz "
+"gero orrialde bat erakusten da aldiko. <b>Ikusi ▸ Aurrez aurreko "
+"orrialdeak</b> aukerak bi orrialde jartzen ditu ondoz ondo, liburu bat "
+"irekitzen den moduan. Bi ezarpenak gogoratzen dira."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Moving around a document"
+msgstr "Dokumentu batean mugitzea"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"One rule for the arrow keys: <b>the modifier decides what moves</b>. Nothing"
+" scrolls the view, Option (Alt) moves the text cursor, Shift extends the "
+"selection, Command (Ctrl) jumps to an edge, and Fn — Page Up, Page Down, "
+"Home and End — jumps further. None of it changes according to whether a text"
+" cursor happens to be on the page."
+msgstr ""
+"Arau bakarra gezi-teklentzat: <b>zer mugitzen den aldatzaileak erabakitzen "
+"du</b>. Bat ere gabe ikuspegia korritzen da, Option (Alt) teklak testu-"
+"kurtsorea mugitzen du, Maius teklak hautapena zabaltzen du, Command (Ctrl) "
+"teklak ertz batera jauzi egiten du, eta Fn teklak — Page Up, Page Down, Home"
+" eta End — urrunago. Horietako ezer ez da aldatzen orrialdean testu-kurtsore"
+" bat dagoen ala ez."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Keys"
+msgstr "Teklak"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Continuous"
+msgstr "Jarraitua"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/viewer.py
+msgid "One page at a time"
+msgstr "Orrialde bat aldiko"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "scroll one line"
+msgstr "korritu lerro bat"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "top of the previous / next page"
+msgstr "aurreko / hurrengo orrialdearen goiko aldea"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "previous / next page"
+msgstr "aurreko / hurrengo orrialdea"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "scroll one screen"
+msgstr "korritu pantaila bat"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "start / end of the document"
+msgstr "dokumentuaren hasiera / amaiera"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "move the text cursor, by character or line"
+msgstr "mugitu testu-kurtsorea, karakterez edo lerroz"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "extend the selection, by character or line"
+msgstr "zabaldu hautapena, karakterez edo lerroz"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "move the text cursor one word"
+msgstr "mugitu testu-kurtsorea hitz bat"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "extend the selection one word"
+msgstr "zabaldu hautapena hitz bat"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "cursor to the start / end of the line"
+msgstr "kurtsorea lerroaren hasierara / amaierara"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "cursor to the start / end of the document"
+msgstr "kurtsorea dokumentuaren hasierara / amaierara"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Add Shift to a Command or Option combination to extend the selection instead"
+" of moving — <b>Shift+Command+→</b> selects to the end of the line. Adding "
+"Option works by the word rather than the character. On Windows and Linux, "
+"read Command as Ctrl and Option as Alt; the table is the same everywhere."
+msgstr ""
+"Gehitu Maius Command edo Option konbinazio bati hautapena zabaltzeko mugitu "
+"beharrean — <b>Maius+Command+→</b> lerroaren amaieraraino hautatzen du. "
+"Option gehitzeak hitzez hitz egiten du karakterez karaktere beharrean. "
+"Windowsen eta Linuxen, irakurri Command Ctrl gisa eta Option Alt gisa; taula"
+" bera da leku guztietan."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Selecting and copying text"
+msgstr "Testua hautatzea eta kopiatzea"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Drag across the page to select text, across page boundaries if you keep "
+"going. <b>Double-click</b> selects a word. <b>Ctrl/Cmd+C</b> copies, "
+"<b>Ctrl/Cmd+A</b> selects the text of the page you are on, and <b>Esc</b> "
+"clears the selection. The same commands are on the right-click menu."
+msgstr ""
+"Arrastatu orrialdean zehar testua hautatzeko, eta orrialde-mugetatik harago "
+"jarraitzen baduzu. <b>Klik bikoitzak</b> hitz bat hautatzen du. "
+"<b>Ctrl/Cmd+C</b> teklek kopiatu egiten dute, <b>Ctrl/Cmd+A</b> teklek "
+"zauden orrialdeko testua hautatzen dute, eta <b>Esc</b> teklak hautapena "
+"garbitzen du. Komando berak eskuineko botoiaren menuan daude."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>Shift+click</b> extends an existing selection to where you clicked. The "
+"end you are moving grows out to a whole word, because a single click is an "
+"imprecise way to point at one character; the end you started from stays "
+"exactly where you put it. Dragging selects by character throughout, since "
+"you can watch it and stop where you like."
+msgstr ""
+"<b>Maius+klik</b> egiteak lehendik dagoen hautapena klik egin duzun lekura "
+"arte zabaltzen du. Mugitzen ari zaren muturra hitz oso batera hazten da, "
+"klik bakar bat karaktere bakar bat seinalatzeko modu zehaztugabea delako; "
+"hasi zinen muturra jarri zenuen lekuan bertan geratzen da. Arrastatzeak "
+"karakterez karaktere hautatzen du bide osoan, jarraitu eta nahi duzun lekuan"
+" gelditu zaitezkeelako."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Clicking on text leaves a blinking <b>text cursor</b>. That is what "
+"Shift+arrow extends from, and what the Option and Command combinations above"
+" move. It stays where you put it — scrolling, paging and clicking off the "
+"page all leave it alone — until you press Esc or open another document."
+msgstr ""
+"Testuan klik egiteak <b>testu-kurtsore</b> keinukari bat uzten du. Handik "
+"zabaltzen du Maius+gezia teklak, eta hura mugitzen dute goiko Option eta "
+"Command konbinazioek. Jarri zenuen lekuan geratzen da — korritzeak, "
+"orrialdez aldatzeak eta orrialdetik kanpo klik egiteak ez diote ukitzen — "
+"Esc sakatu edo beste dokumentu bat ireki arte."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Following links"
+msgstr "Estekei jarraitzea"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Click a link to follow it. Links to a page in the same document jump there; "
+"links to the web open in your browser. Hovering over one shows where it "
+"goes, which is worth reading before you click: many links in a PDF are not "
+"written by its author at all but inferred from the text, so what a link "
+"points at is not always what the words appear to say."
+msgstr ""
+"Egin klik esteka batean hari jarraitzeko. Dokumentu bereko orrialde baterako"
+" estekek hara jauzi egiten dute; webera doazenak zure nabigatzailean "
+"irekitzen dira. Gainean jartzeak nora doan erakusten du, eta hori irakurtzea"
+" merezi du klik egin aurretik: PDF bateko esteka asko ez ditu egileak "
+"idatzi, testutik ondorioztatu baizik, beraz esteka batek seinalatzen duena "
+"ez da beti hitzek diotela dirudiena."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Only ordinary web and mail links are handed to the system — http, https, "
+"mailto and ftp. A document is a file that arrived from somewhere, and "
+"anything else it asks to open is refused and reported rather than acted on."
+msgstr ""
+"Sistemari web eta posta esteka arruntak baino ez zaizkio ematen — http, "
+"https, mailto eta ftp. Dokumentu bat nonbaitetik etorritako fitxategi bat "
+"da, eta irekitzeko eskatzen duen beste edozer ukatu eta jakinarazi egiten "
+"da, exekutatu beharrean."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Right-clicking a link offers <b>Open Link</b> and <b>Copy Link Address</b>."
+msgstr ""
+"Esteka batean eskuineko botoiaz klik eginez <b>Ireki esteka</b> eta "
+"<b>Kopiatu estekaren helbidea</b> agertzen dira."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Bookmarks"
+msgstr "Laster-markak"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"The sidebar shows the document's bookmarks. Click one to jump to it. "
+"Everything below is on the sidebar's right-click menu, and every command can"
+" be undone."
+msgstr ""
+"Alboko barrak dokumentuaren laster-markak erakusten ditu. Egin klik batean "
+"hara jauzi egiteko. Beheko guztia alboko barraren eskuineko botoiaren menuan"
+" dago, eta komando bakoitza desegin daiteke."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>Add Bookmark Here</b> makes one pointing at the page you are reading, "
+"named after whatever text you have selected — so select a heading, then add."
+" With nothing selected it is named after the page. <b>Add Child Bookmark "
+"Here</b> does the same, nested under the entry you clicked."
+msgstr ""
+"<b>Gehitu laster-marka hemen</b> aukerak irakurtzen ari zaren orrialdea "
+"seinalatzen duen bat sortzen du, hautatuta duzun testuaren arabera "
+"izendatuta — hautatu, beraz, izenburu bat, eta gero gehitu. Ezer hautatu "
+"gabe, orrialdearen arabera izendatzen da. <b>Gehitu laster-marka umea "
+"hemen</b> aukerak gauza bera egiten du, klik egin duzun sarreraren azpian "
+"habiaratuta."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>Rename</b> edits the title in place. <b>Re-home to This Page</b> points "
+"an existing bookmark at the page you are on, keeping its title. "
+"<b>Delete</b> removes an entry and <i>promotes</i> its children into its "
+"place; <b>Delete with Children</b> removes the whole branch."
+msgstr ""
+"<b>Aldatu izena</b> aukerak izenburua bertan editatzen du. <b>Birbideratu "
+"orrialde honetara</b> aukerak lehendik dagoen laster-marka bat zauden "
+"orrialdera seinalarazten du, izenburua mantenduz. <b>Ezabatu</b> aukerak "
+"sarrera bat kentzen du eta haren umeak haren lekura <i>igotzen</i> ditu; "
+"<b>Ezabatu umeekin batera</b> aukerak adar osoa kentzen du."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Drag entries within the sidebar to re-nest or reorder them. <b>Expand All "
+"Children</b> and <b>Collapse All Children</b> open or shut a whole branch at"
+" once."
+msgstr ""
+"Arrastatu sarrerak alboko barraren barruan berriro habiaratzeko edo "
+"berrordenatzeko. <b>Zabaldu ume guztiak</b> eta <b>Tolestu ume guztiak</b> "
+"aukerek adar oso bat irekitzen edo ixten dute aldi berean."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>Style</b> sets a bookmark bold or italic, or gives it a colour, as the "
+"tree shows."
+msgstr ""
+"<b>Estiloa</b> aukerak laster-marka lodi edo etzan jartzen du, edo kolore "
+"bat ematen dio, zuhaitzak erakusten duen moduan."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"A bookmark whose page has been deleted is <b>greyed out</b> rather than "
+"removed: its title may still be worth keeping, and you can point it "
+"somewhere else with Re-home. Undoing the deletion reconnects it. <b>Delete "
+"Dangling Bookmarks</b> clears them all out; it leaves alone any entry that "
+"points nowhere on purpose, which is a legitimate way to write a heading."
+msgstr ""
+"Orrialdea ezabatu zaion laster-marka <b>grisatu</b> egiten da kendu "
+"beharrean: haren izenburuak oraindik merezi lezake gordetzea, eta beste "
+"nonbaitera birbidera dezakezu. Ezabaketa desegiteak berriro lotzen du. "
+"<b>Ezabatu zintzilikako laster-markak</b> aukerak denak garbitzen ditu; "
+"bakean uzten du nahita inora seinalatzen ez duen edozein sarrera, hori "
+"izenburu bat idazteko modu guztiz zilegia baita."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Bookmark edits are part of the document and are written when you save, along"
+" with each entry's colour and style and which branches are left open. The "
+"one thing that cannot be saved is a bookmark with no page: there is no way "
+"to record “points at a page that is gone”, so it comes back as a heading "
+"with its title intact."
+msgstr ""
+"Laster-marken edizioak dokumentuaren parte dira eta gordetzean idazten dira,"
+" sarrera bakoitzaren kolore eta estiloarekin batera eta zein adar geratzen "
+"diren irekita. Gorde ezin den gauza bakarra orrialderik gabeko laster-marka "
+"da: ez dago \"desagertu den orrialde bat seinalatzen du\" idazteko modurik, "
+"beraz izenburu gisa itzultzen da, izena oso-osorik."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Arranging pages"
+msgstr "Orrialdeak antolatzea"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Drag pages to reorder them. Hold <b>Ctrl</b> while dropping to copy instead "
+"of move."
+msgstr ""
+"Arrastatu orrialdeak berrordenatzeko. Eutsi <b>Ctrl</b> teklari askatzean "
+"kopiatzeko mugitu beharrean."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Drag pages onto another window of the application to copy them there, or use"
+" ordinary copy and paste."
+msgstr ""
+"Arrastatu orrialdeak aplikazioaren beste leiho batera hara kopiatzeko, edo "
+"erabili ohiko kopiatu eta itsatsi."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>Paste As Odd/Even Pages</b> interleaves the clipboard with the document —"
+" this is how two single-sided scans of a double-sided original are "
+"recombined. If the second scan came off a duplex feeder it will be in "
+"reverse order; use <b>Arrange ▸ Reverse Order</b> on it first."
+msgstr ""
+"<b>Itsatsi orrialde bakoiti/bikoiti gisa</b> aukerak arbela dokumentuarekin "
+"tartekatzen du — horrela batzen dira berriro alde bakarreko bi eskaneatze, "
+"bi aldeko jatorrizko batenak. Bigarren eskaneatzea alde biko elikagailu "
+"batetik atera bada, alderantzizko ordenan egongo da; erabili hari lehenik "
+"<b>Antolatu ▸ Alderantzikatu ordena</b>."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"To move pages a long way, use <b>Move to Start</b>, <b>Move to End</b> or "
+"<b>Move to Page…</b> rather than dragging — in a long document the far end "
+"is a great deal of scrolling away. They are on the Edit menu and on the "
+"right-click menu, and <b>Move to Page…</b> asks for the number the page "
+"should <i>become</i>."
+msgstr ""
+"Orrialdeak urrutira eramateko, erabili <b>Eraman hasierara</b>, <b>Eraman "
+"amaierara</b> edo <b>Eraman orrialdera…</b> arrastatu beharrean — dokumentu "
+"luze batean beste muturra korritze askora dago. Editatu menuan eta eskuineko"
+" botoiaren menuan daude, eta <b>Eraman orrialdera…</b> aukerak orrialdeak "
+"zein zenbaki <i>izan behar duen</i> galdetzen du."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Prefer these to cut and paste for moving. A pasted page is a <i>new</i> page"
+" as far as the document is concerned, so any bookmarks pointing at the "
+"original are left behind with nowhere to go. Moving keeps the page itself, "
+"and its bookmarks come with it."
+msgstr ""
+"Mugitzeko, nahiago izan itzazu horiek ebaki eta itsatsi baino. Itsatsitako "
+"orrialde bat orrialde <i>berri</i> bat da dokumentuarentzat, beraz "
+"jatorrizkoa seinalatzen zuten laster-markak atzean geratzen dira nora joan "
+"gabe. Mugitzeak orrialdea bera gordetzen du, eta haren laster-markak "
+"berarekin datoz."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Stamping and tiling"
+msgstr "Zigilatzea eta lauzatzea"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>Page ▸ Add Page Numbers…</b> and <b>Page ▸ Add Watermark…</b> draw text "
+"onto the selected pages. Both add a <i>layer</i> rather than rewriting the "
+"page, so both can be undone and neither touches the file you opened."
+msgstr ""
+"<b>Orrialdea ▸ Gehitu orrialde-zenbakiak…</b> eta <b>Orrialdea ▸ Gehitu ur-"
+"marka…</b> aukerek testua marrazten dute hautatutako orrialdeetan. Biek "
+"<i>geruza</i> bat gehitzen dute orrialdea berridatzi beharrean, beraz biak "
+"desegin daitezke eta ez batak ez besteak ez du ukitzen ireki duzun "
+"fitxategia."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+#, python-brace-format
+msgid ""
+"Page numbers follow the arrangement, not the source document: they are "
+"numbered in the order the pages are in now. <code>{n}</code> in the format "
+"is the page number and <code>{total}</code> the number of pages, so "
+"<code>Page {n} of {total}</code> does what it looks like."
+msgstr ""
+"Orrialde-zenbakiek antolaketari jarraitzen diote, ez jatorrizko "
+"dokumentuari: orrialdeak orain dauden ordenan zenbakitzen dira. Formatuko "
+"<code>{n}</code> orrialde-zenbakia da eta <code>{total}</code> orrialde-"
+"kopurua, beraz <code>{n} / {total} orrialdea</code> itxura duena egiten du."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>Arrange ▸ Pages per Sheet…</b> tiles several pages onto one, in reading "
+"order — the printer's <i>N-up</i>. The sheet turns sideways when that lets "
+"the pages come out larger, which is why two-up gives a landscape sheet and "
+"four-up does not."
+msgstr ""
+"<b>Antolatu ▸ Orrialdeak orriko…</b> aukerak hainbat orrialde bakar batean "
+"lauzatzen ditu, irakurtzeko ordenan — inprimategiko <i>N-up</i>. Orria "
+"alboka jartzen da orrialdeak horrela handiago ateratzen direnean, eta "
+"horregatik ematen du bi orrialdek orri horizontal bat eta lauk ez."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Saving a document"
+msgstr "Dokumentu bat gordetzea"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>Optimize for the web</b> in Preferences lays the saved file out so a "
+"browser can show the first page before the rest has arrived. <b>Compress</b>"
+" repacks its streams and objects; how much that saves depends entirely on "
+"the file, and one full of photographs will barely move."
+msgstr ""
+"Hobespenetako <b>Optimizatu weberako</b> aukerak gordetako fitxategia "
+"antolatzen du nabigatzaileak lehen orrialdea erakutsi ahal izan dezan "
+"gainerakoa iritsi aurretik. <b>Konprimatu</b> aukerak haren korronteak eta "
+"objektuak berriro biltzen ditu; zenbat aurrezten den erabat fitxategiaren "
+"araberakoa da, eta argazkiz betetako batek ia ez du mugitzen."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>File ▸ Remove All Metadata</b> is a switch, like Password: turn it on and"
+" the next save writes a document with no title, no author and no record of "
+"what produced it. Edit Properties greys out while it is on, because there "
+"would be nothing to edit."
+msgstr ""
+"<b>Fitxategia ▸ Kendu metadatu guztiak</b> etengailu bat da, Pasahitza "
+"bezalaxe: piztu ezazu eta hurrengo gordetzeak izenbururik, egilerik eta zerk"
+" sortu zuen jasotzen ez duen dokumentu bat idatziko du. Editatu propietateak"
+" grisatuta geratzen da pizturik dagoen bitartean, ez bailegoke ezer "
+"editatzeko."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>File ▸ Viewer Preferences…</b> is how the saved document asks a reader to"
+" open it — with the bookmarks showing, two pages at a time, and so on. "
+"Readers are free to ignore all of it. The settings are read from the file "
+"you opened, so a document that already had them keeps them."
+msgstr ""
+"<b>Fitxategia ▸ Ikustailearen hobespenak…</b> gordetako dokumentuak irakurle"
+" bati nola ireki dezan eskatzeko modua da — laster-markak agerian, bi "
+"orrialde aldiko, eta abar. Irakurleek hori guztia alde batera utz dezakete. "
+"Ezarpenak ireki duzun fitxategitik irakurtzen dira, beraz lehendik zituen "
+"dokumentu batek gorde egiten ditu."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>File ▸ Repair Document…</b> rebuilds a damaged PDF. It works on a file "
+"you pick rather than the one on screen, because the file worth repairing is "
+"usually one this application cannot open properly either. It reports what it"
+" found before writing anything."
+msgstr ""
+"<b>Fitxategia ▸ Konpondu dokumentua…</b> aukerak kaltetutako PDF bat "
+"berreraikitzen du. Zuk aukeratzen duzun fitxategi batean lan egiten du, ez "
+"pantailan dagoenean, konpontzea merezi duen fitxategia normalean aplikazio "
+"honek ere behar bezala ireki ezin duena delako. Zer aurkitu duen "
+"jakinarazten du ezer idatzi aurretik."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Mouse"
+msgstr "Sagua"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "<b>Ctrl + scroll</b> — zoom"
+msgstr "<b>Ctrl + korritu</b> — zooma"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "<b>Shift + scroll</b> — scroll sideways"
+msgstr "<b>Maius + korritu</b> — korritu alboetara"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "<b>Alt + scroll</b> — scroll exactly one row"
+msgstr "<b>Alt + korritu</b> — korritu errenkada bat zehazki"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "<b>Double-click</b> — fit the page to the window, and back"
+msgstr "<b>Klik bikoitza</b> — doitu orrialdea leihora, eta itzuli"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>Click and drag</b> on empty space — rubber-band select; keep scrolling to"
+" extend it"
+msgstr ""
+"<b>Egin klik eta arrastatu</b> leku hutsean — laukiz hautatzea; jarraitu "
+"korritzen zabaltzeko"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Moving around the grid"
+msgstr "Saretan mugitzea"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>Arrow keys</b> move between pages, <b>Page Up</b> and <b>Page Down</b> "
+"move a screenful at a time, and <b>Home</b> and <b>End</b> jump to the first"
+" and last page. Hold <b>Shift</b> with any of them to extend the selection."
+msgstr ""
+"<b>Gezi-teklek</b> orrialdeen artean mugitzen dute, <b>Page Up</b> eta "
+"<b>Page Down</b> teklek pantailakada bat aldiko, eta <b>Home</b> eta "
+"<b>End</b> teklek lehen eta azken orrialdera jauzi egiten dute. Eutsi "
+"<b>Maius</b> teklari haietako edozeinekin hautapena zabaltzeko."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>Fit One Page</b> (F) scales so a whole page fits in the window and shows "
+"one page per row — use it to work on a single page at a time. <b>Fit "
+"Multiple Pages</b> (Shift+M) uses the same scale but lets as many pages sit "
+"side by side as the window takes. <b>Fit Width</b> (Shift+F) fills the "
+"window across instead, which shows the page wider but taller than the "
+"window. Double-clicking the grid toggles Fit One Page on and off."
+msgstr ""
+"<b>Doitu orrialde bat</b> (F) aukerak eskalatzen du orrialde oso bat leihoan"
+" sartzeko eta errenkadako orrialde bat erakusten du — erabili ezazu aldi "
+"berean orrialde bakar batean lan egiteko. <b>Doitu orrialde anitz</b> "
+"(Maius+M) eskala bera erabiltzen du baina leihoak onartzen dituen adina "
+"orrialde uzten ditu ondoz ondo. <b>Doitu zabalerara</b> (Maius+F) leihoa "
+"zeharka betetzen du, eta horrek orrialdea zabalago baina leihoa baino "
+"luzeago erakusten du. Saretan klik bikoitza eginez Doitu orrialde bat piztu "
+"eta itzali egiten da."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"With pages selected, all three fit the selection rather than the whole "
+"document."
+msgstr ""
+"Orrialdeak hautatuta daudenean, hirurek hautapena doitzen dute dokumentu "
+"osoa doitu beharrean."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Finding text"
+msgstr "Testua bilatzea"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>Find</b> selects the pages that contain the phrase and boxes each hit on "
+"the thumbnail, so you can see where on the page it is. The boxes clear as "
+"soon as you change the document, since the pages they were drawn for may "
+"have moved."
+msgstr ""
+"<b>Bilatu</b> aukerak esaldia daukaten orrialdeak hautatzen ditu eta emaitza"
+" bakoitza laukiztatzen du miniaturan, orrialdean non dagoen ikus dezazun. "
+"Laukiak dokumentua aldatu bezain laster desagertzen dira, marraztu "
+"zitzaizkien orrialdeak mugitu egin baitaitezke."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Every shortcut can be changed in <b>Edit ▸ Preferences ▸ Keyboard "
+"shortcuts</b>, where they are listed under the menu each one belongs to."
+msgstr ""
+"Lasterbide bakoitza <b>Editatu ▸ Hobespenak ▸ Teklatuko lasterbideak</b> "
+"atalean alda daiteke, non bakoitza dagokion menuaren azpian zerrendatuta "
+"dagoen."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Passwords"
+msgstr "Pasahitzak"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Opening an encrypted document asks for its password, which is remembered "
+"until the document is closed."
+msgstr ""
+"Zifratutako dokumentu bat irekitzeak haren pasahitza eskatzen du, eta "
+"dokumentua itxi arte gogoratzen da."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"<b>File ▸ Password</b> encrypts the document when it is next saved. It is a "
+"switch: turn it on and you are asked for a password, turn it off and the "
+"next save is unencrypted. The password is never written to your settings, so"
+" it applies to this session only — and if you forget it, the file cannot be "
+"recovered."
+msgstr ""
+"<b>Fitxategia ▸ Pasahitza</b> aukerak dokumentua zifratzen du hurrengoan "
+"gordetzean. Etengailu bat da: piztu ezazu eta pasahitz bat eskatuko zaizu, "
+"itzali ezazu eta hurrengo gordetzea zifratu gabea izango da. Pasahitza ez da"
+" inoiz zure ezarpenetan idazten, beraz saio honetarako baino ez da balio — "
+"eta ahazten baduzu, fitxategia ezin da berreskuratu."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Files"
+msgstr "Fitxategiak"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Settings are stored by Qt in the per-user location for this platform; on "
+"Windows that is the registry under "
+"<code>HKEY_CURRENT_USER\\Software\\pdfarranger</code>. There is no "
+"configuration file to edit by hand."
+msgstr ""
+"Ezarpenak Qt-k gordetzen ditu plataforma honetako erabiltzaile "
+"bakoitzarentzako kokapenean; Windowsen erregistroa da, "
+"<code>HKEY_CURRENT_USER\\Software\\pdfarranger</code> azpian. Ez dago eskuz "
+"editatzeko konfigurazio-fitxategirik."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Credits"
+msgstr "Kredituak"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"PDF Arranger Qt is a PySide6 port of PDF Arranger, which is itself derived "
+"from PDF-Shuffler. It is a separate project and not affiliated with either."
+msgstr ""
+"PDF Arranger Qt PDF Arrangerren PySide6 egokitzapena da, eta PDF Arranger "
+"bera PDF-Shufflerretik dator. Proiektu bereizia da eta ez dago haietako "
+"inorekin lotuta."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Original authors: Konstantinos Poulios, Jerome Robert."
+msgstr "Jatorrizko egileak: Konstantinos Poulios, Jerome Robert."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Licensed under the GNU General Public License version 3 or later."
+msgstr ""
+"GNU General Public License 3. bertsioaren edo berriago baten pean "
+"argitaratua."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+msgid "User Guide"
+msgstr "Erabiltzailearen gida"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Insert pages from another PDF or an image"
+msgstr "Txertatu beste PDF bateko edo irudi bateko orrialdeak"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Needs pages copied from a document"
+msgstr "Dokumentu batetik kopiatutako orrialdeak behar ditu"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_New Window"
+msgstr "_Leiho berria"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Open"
+msgstr "_Ireki"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Import"
+msgstr "_Inportatu"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Save"
+msgstr "_Gorde"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Save _As…"
+msgstr "Gorde _honela…"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "E_xport Selection to a Single File…"
+msgstr "E_sportatu aukeraketa fitxategi bakar batera…"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Close"
+msgstr "_Itxi"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Quit"
+msgstr "_Irten"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Undo"
+msgstr "_Desegin"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Redo"
+msgstr "_Berregin"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Select _All"
+msgstr "Hautatu _guztiak"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Invert Selection"
+msgstr "_Alderantzikatu hautapena"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Delete"
+msgstr "_Ezabatu"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Duplicate"
+msgstr "_Bikoiztu"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Rotate _Left"
+msgstr "Biratu e_zkerrera"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Rotate Right"
+msgstr "Biratu e_skuinera"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Zoom _In"
+msgstr "_Handiagotu"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Zoom _Out"
+msgstr "_Txikiagotu"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Reset Zoom"
+msgstr "Be_rrezarri zooma"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Project on GitHub"
+msgstr "Proiektua GitHuben"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_About"
+msgstr "_Honi buruz"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Cu_t"
+msgstr "_Moztu"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Copy"
+msgstr "_Kopiatu"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Paste _After"
+msgstr "Itsatsi _ondoren"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Paste _Before"
+msgstr "Itsatsi aurrean"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Paste As _Odd Pages"
+msgstr "Itsatsi orrialde bakoitia gisa"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Paste As _Even Pages"
+msgstr "Itsatsi orrialde bikoitia gisa"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Deselect All"
+msgstr "_Desautatu guztiak"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Select _Odd Pages"
+msgstr "Hautatu orrialde b_akoitiak"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Select _Even Pages"
+msgstr "Hautatu orrialde b_ikoitiak"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "All From _Same File"
+msgstr "Fitxategi bereko _guztiak"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Same Page _Format"
+msgstr "Orrialdeko _formatu bera"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Move to Start"
+msgstr "Eraman hasierara"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Move to End"
+msgstr "Eraman amaierara"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Move to Page…"
+msgstr "Eraman orrialdera…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Reverse Order"
+msgstr "Alderantzikatu ordena"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Swap Odd/Even"
+msgstr "Trukatu bakoitiak/bikoitiak"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Split (unimposition)"
+msgstr "_Zatitu (inposizioa kendu)"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Export _All Pages to Individual Files…"
+msgstr "Esportatu _orri guztiak fitxategi indibidualetara…"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Export Selection to _Individual Files…"
+msgstr "Esportatu hautapena _banakako fitxategietara…"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Crop Margins…"
+msgstr "_Moztu marjinak…"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Hide Margins…"
+msgstr "_Ezkutatu marjinak"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Page Size…"
+msgstr "_Orriaren tamaina"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Insert Blan_k Page…"
+msgstr "Txertatu orri _zuria…"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Split Pages…"
+msgstr "_Zatitu orrialdeak…"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Merge Pages…"
+msgstr "_Batu orriak…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Generate (imposition)"
+msgstr "_Sortu (inposizioa)"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Pages per S_heet…"
+msgstr "Orrialdeak _orriko…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Add Page N_umbers…"
+msgstr "Gehitu o_rrialde-zenbakiak…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Add _Watermark…"
+msgstr "Gehitu _ur-marka…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Pass_word"
+msgstr "Pa_sahitza"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Edit _Properties"
+msgstr "Editatu _propietateak"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Viewer Preferences…"
+msgstr "_Ikustailearen hobespenak…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Remove All _Metadata"
+msgstr "Kendu _metadatu guztiak"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Repair Document…"
+msgstr "_Konpondu dokumentua…"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Crop White Borders"
+msgstr "Moztu ertz zuriak"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Export Selection to _PNG Images…"
+msgstr "Esportatu hautapena _PNG irudietara…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Export Selection to _JPG Images…"
+msgstr "Esportatu hautapena _JPG irudietara…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Export Selection to _Rasterized PDF (png)…"
+msgstr "Esportatu hautapena PDF bilba_tura (png)…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Export Selection to _Rasterized PDF (jpg)…"
+msgstr "Esportatu hautapena PDF bilbatura (jp_g)…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Copy Text"
+msgstr "Kopiatu testua"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Copy _Image"
+msgstr "Kopiatu _Irudia"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Explode into Images"
+msgstr "_Arakatu irudietan"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Print…"
+msgstr "_Inprimatu…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Find…"
+msgstr "Bila_tu…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Find Next"
+msgstr "Bilatu hurrengoa"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Find Previous"
+msgstr "Bilatu aurrekoa"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Find All"
+msgstr "Bilatu guztiak"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Select _Range"
+msgstr "Hautatu ba_rrutia"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Paste As O_verlay…"
+msgstr "Itsatsi G_ainjartzen..."
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Paste As _Underlay…"
+msgstr "Itsatsi _azpiko geruza gisa…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Fit _One Page"
+msgstr "Doitu orrialde b_at"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Fit _Multiple Pages"
+msgstr "Doitu orrialde a_nitz"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Fit Width"
+msgstr "Doitu zabalerara"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Arrange Mode"
+msgstr "Antolatze-modua"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Facing Pages"
+msgstr "Aurrez aurreko orrialdeak"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Continuous Scroll"
+msgstr "Korritze jarraitua"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Next Page"
+msgstr "Hurrengo orrialdea"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Previous Page"
+msgstr "Aurreko orrialdea"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "First Page"
+msgstr "Lehen orrialdea"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Last Page"
+msgstr "Azken orrialdea"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Go to Page…"
+msgstr "Joan orrialdera…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Fullscreen"
+msgstr "Pantaila osoa"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_File"
+msgstr "_Fitxategia"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Open Recent"
+msgstr "Ireki azkenak"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "E_xport"
+msgstr "E_sportatu"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Edit"
+msgstr "_Editatu"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Past_e Special"
+msgstr "Itsatsi berezia"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Page"
+msgstr "_Orrialdea"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Extract"
+msgstr "_Atera"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Arrange"
+msgstr "Antolatu"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Select"
+msgstr "_Hautatu"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Booklet"
+msgstr "_Liburuxka"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_View"
+msgstr "_Ikusi"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Help"
+msgstr "_Laguntza"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Read"
+msgstr "Irakurri"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "_Undo %s"
+msgstr "_Desegin %s"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "_Redo %s"
+msgstr "_Berregin %s"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "%d page selected"
+msgid_plural "%d pages selected"
+msgstr[0] "Orrialde %d hautatuta"
+msgstr[1] "%d orrialde hautatuta"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Untitled"
+msgstr "Izenik gabea"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Password required"
+msgstr "Pasahitza beharrezkoa da"
+
+#: pdfarranger_qt/mainwindow.py
+#, python-brace-format
+msgid "The document “{}” is locked and requires a password before it can be opened."
+msgstr "“{}” dokumentua blokeatuta dago eta pasahitz bat behar du ireki ahal izateko."
+
+#: pdfarranger_qt/mainwindow.py
+msgid "The password will be remembered until you close PDF Arranger."
+msgstr "Pasahitza gogoratuko da PDF Arranger itxi arte."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Importing…"
+msgstr "Inportatzen…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Cancel"
+msgstr "Utzi"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Import"
+msgstr "Inportatu"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "No recent files"
+msgstr "Ez dago azken fitxategirik"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Clear Menu"
+msgstr "Garbitu menua"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "This file is no longer there:"
+msgstr "Fitxategi hau ez dago jada hor:"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "This document cannot be read."
+msgstr "Ezin da dokumentu hau irakurri."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Go to Page"
+msgstr "Joan orrialdera"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Page number:"
+msgstr "Orrialde-zenbakia:"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "No document"
+msgstr "Dokumenturik ez"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "%d page"
+msgid_plural "%d pages"
+msgstr[0] "Orrialde %d"
+msgstr[1] "%d orrialde"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-brace-format
+msgid "of {}"
+msgstr "/ {}"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "The document will not be encrypted."
+msgstr "Dokumentua ez da zifratuko."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "The document will be encrypted when it is saved."
+msgstr "Dokumentua gordetzean zifratuko da."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Could not open a new window."
+msgstr "Ezin izan da leiho berri bat ireki."
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Open"
+msgstr "Ireki"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Save As…"
+msgstr "Gorde honela…"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Export…"
+msgstr "Esportatu…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "There is nothing to save."
+msgstr "Ez dago gordetzeko ezer."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Could not save:"
+msgstr "Ezin izan da gorde:"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Saved"
+msgstr "Gordeta"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "This document has unsaved changes."
+msgstr "Dokumentu honek gorde gabeko aldaketak ditu."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Save before continuing?"
+msgstr "Jarraitu aurretik gorde?"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py pdfarranger_qt/reader.py
+msgid "Delete"
+msgstr "Ezabatu"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Cut"
+msgstr "Ebaki"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Paste"
+msgstr "Itsatsi"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Move to Page"
+msgstr "Eraman orrialdera"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Move"
+msgstr "Eraman"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "The page selection is not contiguous. Cannot unimpose."
+msgstr "Orrialde-hautapena ez da jarraitua. Ezin da inposizioa kendu."
+
+#: pdfarranger_qt/mainwindow.py
+msgid "All pages must have the same size."
+msgstr "Orrialde guztiek tamaina berdina izan behar dute."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Split Booklet"
+msgstr "Zatitu liburuxka"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Overwrite existing files?"
+msgstr "Gainidatzi dauden fitxategiak?"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Blank page"
+msgstr "Orrialde hutsa"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Copy the pages you want to merge in first."
+msgstr "Kopiatu lehenik batu nahi dituzun orrialdeak."
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Generate Booklet"
+msgstr "Sortu liburuxka"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "The page selection is not contiguous."
+msgstr "Orrialde-hautapena ez da jarraitua."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "All metadata will be removed when the document is saved."
+msgstr "Metadatu guztiak kenduko dira dokumentua gordetzean."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Metadata will be kept."
+msgstr "Metadatuak mantenduko dira."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Repair Document…"
+msgstr "Konpondu dokumentua…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Write a rebuilt copy?"
+msgstr "Berreraikitako kopia bat idatzi?"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Save Repaired Document"
+msgstr "Gorde konpondutako dokumentua"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "%d image written"
+msgid_plural "%d images written"
+msgstr[0] "Irudi %d idatzita"
+msgstr[1] "%d irudi idatzita"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "The page has no text."
+msgstr "Orrialdeak ez du testurik."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Copied"
+msgstr "Kopiatuta"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "The page has no image."
+msgstr "Orrialdeak ez du irudirik."
+
+#: pdfarranger_qt/mainwindow.py
+msgid "The page has several images. Use \"Explode into Images\" first.\""
+msgstr "Orriak hainbat irudi ditu. Erabili \"Arakatu irudietan\" lehenik.\""
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Explode into Images"
+msgstr "Banatu irudietan"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Printing…"
+msgstr "Inprimatzen…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Finishing…"
+msgstr "Amaitzen…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "The printer driver is processing the job."
+msgstr "Inprimagailuaren kontrolatzailea lana prozesatzen ari da."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "%d page printed"
+msgid_plural "%d pages printed"
+msgstr[0] "Orrialde %d inprimatuta"
+msgstr[1] "%d orrialde inprimatuta"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Find"
+msgstr "Bilatu"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "%d page matches"
+msgid_plural "%d pages match"
+msgstr[0] "Orrialde %d bat dator"
+msgstr[1] "%d orrialde bat datoz"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Duplicate"
+msgstr "Bikoiztu"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Rotate"
+msgstr "Biratu"
+
+#: pdfarranger_qt/metadata.py
+msgid "Title"
+msgstr "Izenburua"
+
+#: pdfarranger_qt/metadata.py
+msgid "Subject"
+msgstr "Gaia"
+
+#: pdfarranger_qt/metadata.py
+msgid "Keywords"
+msgstr "Gako-hitzak"
+
+#: pdfarranger_qt/metadata.py
+msgid "Producer"
+msgstr "Ekoizlea"
+
+#: pdfarranger_qt/metadata.py
+msgid "Creator"
+msgstr "Sortzailea"
+
+#: pdfarranger_qt/metadata.py
+msgid "Creator tool"
+msgstr "Sortzaile tresna"
+
+#: pdfarranger_qt/metadata.py
+msgid "Created"
+msgstr "Sortua"
+
+#: pdfarranger_qt/metadata.py
+msgid "Modified"
+msgstr "Aldatua"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/nup.py
+msgid "2 pages per sheet"
+msgstr "2 orrialde orriko"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/nup.py
+msgid "4 pages per sheet"
+msgstr "4 orrialde orriko"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/nup.py
+msgid "6 pages per sheet"
+msgstr "6 orrialde orriko"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/nup.py
+msgid "8 pages per sheet"
+msgstr "8 orrialde orriko"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/nup.py
+msgid "9 pages per sheet"
+msgstr "9 orrialde orriko"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/nup.py
+msgid "16 pages per sheet"
+msgstr "16 orrialde orriko"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Bookmark Colour"
+msgstr "Laster-markaren kolorea"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Add Bookmark Here"
+msgstr "Gehitu laster-marka hemen"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Add Child Bookmark Here"
+msgstr "Gehitu laster-marka umea hemen"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Re-home to This Page"
+msgstr "Birbideratu orrialde honetara"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Rename"
+msgstr "Aldatu izena"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Style"
+msgstr "Estiloa"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Colour…"
+msgstr "Kolorea…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Default Colour"
+msgstr "Kolore lehenetsia"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Expand All Children"
+msgstr "Zabaldu ume guztiak"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Collapse All Children"
+msgstr "Tolestu ume guztiak"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Delete with Children"
+msgstr "Ezabatu umeekin batera"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Delete Dangling Bookmarks"
+msgstr "Ezabatu zintzilikako laster-markak"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Nothing to read."
+msgstr "Ez dago irakurtzeko ezer."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+#, python-brace-format
+msgid "Page {} of {}"
+msgstr "{} / {} orrialdea"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Move Bookmark"
+msgstr "Eraman laster-marka"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "This bookmark's page is no longer in the document"
+msgstr "Laster-marka honen orrialdea ez dago jada dokumentuan"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "This bookmark does not point at a page"
+msgstr "Laster-marka honek ez du orrialderik seinalatzen"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Rename Bookmark"
+msgstr "Aldatu laster-markaren izena"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Add Child Bookmark"
+msgstr "Gehitu laster-marka umea"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Add Bookmark"
+msgstr "Gehitu laster-marka"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Bookmark Style"
+msgstr "Laster-markaren estiloa"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Re-home Bookmark"
+msgstr "Birbideratu laster-marka"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Delete Bookmark"
+msgstr "Ezabatu laster-marka"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/reader.py
+msgid "Delete Bookmark and Children"
+msgstr "Ezabatu laster-marka eta umeak"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/repair.py
+msgid "This file cannot be read, even with recovery."
+msgstr "Fitxategi hau ezin da irakurri, ezta berreskuratzearekin ere."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/repair.py
+msgid "No damage found; the file reads cleanly."
+msgstr "Ez da kalterik aurkitu; fitxategia arazorik gabe irakurtzen da."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/repair.py
+msgid "Damaged, and recoverable."
+msgstr "Kaltetuta, eta berreskuragarria."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/repair.py
+msgid "The file cannot be read."
+msgstr "Fitxategia ezin da irakurri."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/stamp.py
+msgid "Top left"
+msgstr "Goian ezkerrean"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/stamp.py
+msgid "Top centre"
+msgstr "Goian erdian"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/stamp.py
+msgid "Top right"
+msgstr "Goian eskuinean"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/stamp.py
+msgid "Bottom left"
+msgstr "Behean ezkerrean"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/stamp.py
+msgid "Bottom centre"
+msgstr "Behean erdian"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/stamp.py
+msgid "Bottom right"
+msgstr "Behean eskuinean"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/viewer.py
+msgid "Viewer default"
+msgstr "Ikustailearen lehenetsia"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/viewer.py
+msgid "No side panel"
+msgstr "Alboko panelik ez"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/viewer.py
+msgid "Bookmarks panel"
+msgstr "Laster-marken panela"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/viewer.py
+msgid "Page thumbnails"
+msgstr "Orrialdeen miniaturak"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/viewer.py
+msgid "Continuous scroll"
+msgstr "Korritze jarraitua"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/viewer.py
+msgid "Two pages, odd on the left"
+msgstr "Bi orrialde, bakoitiak ezkerrean"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/viewer.py
+msgid "Two pages, odd on the right"
+msgstr "Bi orrialde, bakoitiak eskuinean"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/viewer.py
+msgid "Facing pages, odd on the left"
+msgstr "Aurrez aurreko orrialdeak, bakoitiak ezkerrean"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/viewer.py
+msgid "Facing pages, odd on the right"
+msgstr "Aurrez aurreko orrialdeak, bakoitiak eskuinean"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/viewer.py
+msgid "Hide the viewer's toolbar"
+msgstr "Ezkutatu ikustailearen tresna-barra"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/viewer.py
+msgid "Hide the viewer's menu bar"
+msgstr "Ezkutatu ikustailearen menu-barra"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/viewer.py
+msgid "Centre the window on screen"
+msgstr "Zentratu leihoa pantailan"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/viewer.py
+msgid "Show the title rather than the filename"
+msgstr "Erakutsi izenburua fitxategi-izenaren ordez"
+
+#~ msgid "#Col"
+#~ msgstr "#Zut"
+
+#~ msgid "#Row"
+#~ msgstr "#Err"
+
+#~ msgid "%"
+#~ msgstr "%"
+
+#~ msgid "% of height"
+#~ msgstr "altueraren %"
+
+#~ msgid "% of width"
+#~ msgstr "zabaleraren %"
+
+#~ msgid "%s is a tool for rearranging and modifying PDF files."
+#~ msgstr "%s PDF fitxategiak berrantolatzeko eta aldatzeko tresna bat da."
+
+#~ msgid "(Libhandy missing)"
+#~ msgstr "(Libhandy falta da)"
+
+#~ msgid "(Requires restart)"
+#~ msgstr "(Berrabiarazi behar da)"
+
+#~ msgid "A file named \"%s\" already exists. Do you want to replace it?"
+#~ msgstr "\"%s\" izeneko fitxategi bat badago jada. Ordezkatu nahi duzu?"
+
+#~ msgid "All files"
+#~ msgstr "Fitxategi guztiak"
+
+#~ msgid "All supported files"
+#~ msgstr "Onartutako irudi formatuak"
+
+#~ msgid "Bottom to Top"
+#~ msgstr "Behetik gora"
+
+#~ msgid "Clipboard image"
+#~ msgstr "Arbeleko irudia"
+
+#~ msgid "Copy _Text"
+#~ msgstr "Kopiatu _Testua"
+
+#~ msgid ""
+#~ "Cropping/hiding does not remove any content"
+#~ " from the PDF file, it only hides"
+#~ " it."
+#~ msgstr ""
+#~ "Mozketak/ezkutatzeak ez du PDF fitxategitik "
+#~ "edukirik kentzen, ezkutatzen du soilik"
+
+#~ msgid "Despite the warnings the document(s) should have no visible issues."
+#~ msgstr "Abisuak izan arren dokumentuek ez lukete arazorik izan behar."
+
+#~ msgid "Discard changes and close?"
+#~ msgstr "Aldaketak baztertu eta itxi?"
+
+#~ msgid "Discard changes and quit?"
+#~ msgstr "Aldaketak baztertu eta irten?"
+
+#~ msgid "Do not show this dialog again."
+#~ msgstr "Ez erakutsi elkarrizketa hau berriro."
+
+#~ msgid "Do_n’t Save"
+#~ msgstr "E_z gorde"
+
+#~ msgid "Don't show warnings when saving again."
+#~ msgstr "Ez erakutsi abisurik berriro gordetzean."
+
+#~ msgid "Dupl_icate"
+#~ msgstr "B_ikoiztu"
+
+#~ msgid "Equal column width"
+#~ msgstr "Zutabeen zabalera berdina"
+
+#~ msgid "Equal row height"
+#~ msgstr "Errenkaden altuera berdina"
+
+#~ msgid "Exploding into images…"
+#~ msgstr "Arakatzen irudietan…"
+
+#~ msgid "File(s) to open"
+#~ msgstr "Ireki beharreko fitxategia(k)"
+
+#~ msgid "Fit to Full Page"
+#~ msgstr "Doitu orrialde osora"
+
+#~ msgid "Fit to Printable Area"
+#~ msgstr "Doitu area inprimagarrira"
+
+#~ msgid "For more info see"
+#~ msgstr "Informazio gehaigo hemen"
+
+#~ msgid "For more options see:"
+#~ msgstr "Aukera gehiagorako, ikusi:"
+
+#~ msgid "Full_screen"
+#~ msgstr "Pantaila o_soa"
+
+#~ msgid "GNU General Public License (GPL) Version 3."
+#~ msgstr "GNU General Public License (GPL) 3. bertsioa."
+
+#~ msgid "Height in %"
+#~ msgstr "Altuera %-tan"
+
+#~ msgid "Horizontal offset"
+#~ msgstr "Desplazamendu horizontala"
+
+#~ msgid "Img2pdf missing."
+#~ msgstr "Img2pdf falta da"
+
+#~ msgid "Import…"
+#~ msgstr "Inportatu…"
+
+#~ msgid "Invalid date format. Input discarded."
+#~ msgstr "Data-formatu baliogabea. Sarrera baztertu da."
+
+#~ msgid "It uses libqpdf %s, pikepdf %s, GTK %s and Python %s."
+#~ msgstr "Erabiltzen du libqpdf %s, pikepdf %s, GTK %s eta Python %s."
+
+#~ msgid "Left to Right"
+#~ msgstr "Ezkerretik eskuinera"
+
+#~ msgid "Main Menu"
+#~ msgstr "Menu nagusia"
+
+#~ msgid "Maintainers and contributors"
+#~ msgstr "Laguntzaileak eta babesleak"
+
+#~ msgid "Margin"
+#~ msgstr "Marjina"
+
+#~ msgid "Merged page size:"
+#~ msgstr "Batutako orriaren tamaina:"
+
+#~ msgid "Non-uniform page size - using max size"
+#~ msgstr "Orrialdearen tamaina ez-uniformea ​​- gehienezko tamaina erabiliz"
+
+#~ msgid "None"
+#~ msgstr "Bat ere ez"
+
+#~ msgid "Note"
+#~ msgstr "Oharra"
+
+#~ msgid "Note the limitations:"
+#~ msgstr "Kontuan izan mugak:"
+
+#~ msgid "Open…"
+#~ msgstr "Ireki…"
+
+#~ msgid "Outlines and links can be preserved only in certain cases."
+#~ msgstr "Eskemak eta estekak kasu jakin batzuetan soilik gorde daitezke."
+
+#~ msgid ""
+#~ "PDF Arranger is a small python-gtk"
+#~ " application, which helps the user to"
+#~ " merge or split pdf documents and "
+#~ "rotate, crop and rearrange their pages "
+#~ "using an interactive and intuitive "
+#~ "graphical interface. It is a frontend "
+#~ "for pikepdf."
+#~ msgstr ""
+#~ "PDF Arranger python-gtk aplikazio txiki "
+#~ "bat da, erabiltzaileari pdf dokumentuak "
+#~ "batu edo zatitzen eta orriak biratu, "
+#~ "moztu eta berrantolatzen laguntzen diona "
+#~ "interfaze grafiko interaktibo eta intuitibo "
+#~ "bat erabiliz. Pikepdf-rako interfaze bat"
+#~ " da."
+
+#~ msgid "PDF document is damaged"
+#~ msgstr "PDF dokumentua hondatuta dago"
+
+#~ msgid "PDF files"
+#~ msgstr "PDF fitxategiak"
+
+#~ msgid "Page Handling"
+#~ msgstr "Orriaren maneiua"
+
+#~ msgid "Page Order"
+#~ msgstr "Orrien ordena"
+
+#~ msgid "Page Size:"
+#~ msgstr "Orriaren tamaina:"
+
+#~ msgid "Pasted data not valid. Aborting paste."
+#~ msgstr "Itsatsitako datuak baliogabeak dira. Utzi itsastea."
+
+#~ msgid "Pre_ferences"
+#~ msgstr "_Hobespenak"
+
+#~ msgid "Print the version of PDF Arranger and exit"
+#~ msgstr "Inprimatu PDF Arranger-en bertsioa eta irten"
+
+#~ msgid "Property"
+#~ msgstr "Jabetza"
+
+#~ msgid "Re_verse Order"
+#~ msgstr "Al_derantzizkatu ordena"
+
+#~ msgid "Rendering Preview…"
+#~ msgstr "Aurrebista errendatzen…"
+
+#~ msgid "Rendering…"
+#~ msgstr "Errendatzen…"
+
+#~ msgid "Replace"
+#~ msgstr "Ordeztu"
+
+#~ msgid "Right to Left"
+#~ msgstr "Eskuinetik ezkerrera"
+
+#~ msgid "Rotate Left"
+#~ msgstr "Biratu ezkerrera"
+
+#~ msgid "Rotate Right"
+#~ msgstr "Biratu eskuinera"
+
+#~ msgid "Save"
+#~ msgstr "Gorde"
+
+#~ msgid "Save As"
+#~ msgstr "Gorde honela"
+
+#~ msgid "Save changes before closing?"
+#~ msgstr "Aldaketak itxi aurretik gorde nahi dituzu?"
+
+#~ msgid "Save changes before quitting?"
+#~ msgstr "Aldaketak irten aurretik gorde nahi dituzu?"
+
+#~ msgid "Save changes to “{}” before closing?"
+#~ msgstr "Aldaketak “{}”-n gorde nahi dituzu itxi aurretik?"
+
+#~ msgid "Save changes to “{}” before quitting?"
+#~ msgstr "Aldaketak “{}”-n gorde nahi dituzu irten aurretik?"
+
+#~ msgid "Saving produced some warnings"
+#~ msgstr "Gordetzeak abisu batzuk sortu ditu"
+
+#~ msgid "Saving…"
+#~ msgstr "Gordetzen…"
+
+#~ msgid "Scale mode:"
+#~ msgstr "Eskala modua"
+
+#~ msgid "Selected pages: "
+#~ msgstr "Hautatutako orrialdeak: "
+
+#~ msgid "Show values"
+#~ msgstr "Erakutsi balioak"
+
+#~ msgid "Supported image files"
+#~ msgstr "Onartutako irudi-fitxategiak"
+
+#~ msgid "Top to Bottom"
+#~ msgstr "Goitik behera"
+
+#~ msgid "User Manual"
+#~ msgstr "Erabiltzailearen eskuliburua"
+
+#~ msgid "Value"
+#~ msgstr "Balioa"
+
+#~ msgid "Vertical offset"
+#~ msgstr "Desplazamendu bertikala"
+
+#~ msgid "Width in %"
+#~ msgstr "Zabalera %-tan"
+
+#~ msgid "Your changes will be lost if you don’t save them."
+#~ msgstr "Zure aldaketak galduko dira gordetzen ez badituzu."
+
+#~ msgid "Zoom In"
+#~ msgstr "Handiagotu"
+
+#~ msgid "Zoom Out"
+#~ msgstr "Txikiagotu"
+
+#~ msgid "Zoom _Fit"
+#~ msgstr "_Doitu"
+
+#~ msgid "_Apply"
+#~ msgstr "_Aplikatu"
+
+#~ msgid "_Cancel"
+#~ msgstr "_Utzi"
+
+#~ msgid "_OK"
+#~ msgstr "Ados"
+
+#~ msgid "_Revert"
+#~ msgstr "_Atzera"
+
+#~ msgid "page"
+#~ msgstr "orrialde"
+
+#~ msgid "untitled"
+#~ msgstr "izenbururik gabe"
+

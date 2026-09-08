@@ -30,7 +30,7 @@ became ratchets instead:
 - **markup** — 31 translated entries carry a tag, 0 disagree. Hard failure.
 - **plural forms** — every plural entry already has the count its locale
   declares. Hard failure.
-- **mnemonics kept** — 90 of 2456 are dropped, in 13 of the 33 languages;
+- **mnemonics kept** — 87 of 2475 are dropped, in 13 of the 33 languages;
   Catalan loses 38 of 46. Upstream's translations, and adding an accelerator to
   Catalan is a translation decision rather than a repair. Ratchet.
 - **mnemonics unique within a menu** — every language collides, *including
@@ -70,7 +70,7 @@ TAG = re.compile(r"<[a-zA-Z/][^>]*>")
 #: Dropped accelerators per language, as of 2026-09-07. May fall, must not rise.
 MNEMONICS_LOST = {
     "ar": 1, "ca": 34, "ca@valencia": 18, "da": 2, "de": 2,
-    "es": 13, "eu": 5, "hu": 1, "ka": 3,
+    "es": 13, "eu": 4, "hu": 1, "ka": 1,
     "nl": 2, "pl_PL": 6, "sl": 2, "uk": 1,
 }
 
@@ -78,9 +78,9 @@ MNEMONICS_LOST = {
 #: is in here because English collides too -- this is not a translation fault.
 CLASHES = {
     "ar": 2, "ca": 0, "ca@valencia": 1, "cs": 2, "da": 2, "de": 10,
-    "el": 2, "en": 5, "es": 5, "eu": 8, "fi": 6, "fr": 4,
+    "el": 2, "en": 5, "es": 5, "eu": 7, "fi": 6, "fr": 4,
     "he": 3, "hr": 3, "hu": 3, "id": 11, "is": 3, "it": 7,
-    "ja": 4, "ka": 4, "ko": 4, "nl": 6, "oc": 11, "pl_PL": 2,
+    "ja": 4, "ka": 4, "ko": 4, "nl": 6, "oc": 10, "pl_PL": 2,
     "pt_BR": 7, "pt_PT": 5, "ru": 5, "sl": 2, "sv": 4, "tr": 8,
     "uk": 5, "vi": 9, "zh_CN": 5, "zh_TW": 4,
 }
