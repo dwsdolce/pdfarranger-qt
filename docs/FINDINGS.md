@@ -722,6 +722,65 @@ alone would have dropped it** — if a future version starts preserving unknown
 headers, that test fails and the repair can be deleted rather than carried for
 ever.
 
+## Two ways to write Group 4 that compress perfectly and decode wrong
+
+A bilevel page as CCITT Group 4 is 0.52 MB at its full 300 ppi against 1.98 MB
+for the same page downsampled to 144 ppi and stored as JPEG — four times
+smaller with nothing thrown away, which makes it the largest single win in
+[COMPRESSION.md](COMPRESSION.md). Pillow has no PDF-shaped Group 4 encoder,
+but the libtiff inside it does, and the strip of a single-strip TIFF *is* the
+`CCITTFaxDecode` payload. So the encoder is: save a TIFF to memory, read
+`StripOffsets` and `StripByteCounts`, hand the bytes to pikepdf.
+
+Both of the following produce a payload that compresses to within a byte of
+the correct one. That is the whole point of writing them down: **the obvious
+test — assert the file got smaller — passes on both.** Only decoding the image
+back and comparing pixels finds either.
+
+**`/BlackIs1` must be true, and the TIFF says otherwise.** Pillow tags its
+Group 4 output `PhotometricInterpretation` 1, *BlackIsZero*, which states that
+a zero sample is black and therefore argues for `BlackIs1` false — the PDF
+default. Measured on a 32×32 image with a black top half: with the flag false
+the top half reads back white and the bottom black; with it true the image
+matches its source. libtiff's fax codec works in the fax convention whatever
+the tag claims. Every page came out a photographic negative, at exactly the
+right file size.
+
+**`RowsPerStrip` must be the full height.** Left to itself libtiff writes
+strips of about 8 KB — five of them for a letter page at 300 ppi, breaking
+every 409 rows — and **each strip restarts the Group 4 coder with a fresh
+reference line**. Concatenated into one payload, the first strip decodes
+perfectly and everything after it is noise. The failing comparison pointed at
+element 521,475 of a 1275-wide image, which is row 409 to the pixel. Passing
+`tiffinfo={278: image.height}` gives one strip, one continuous coding, one
+payload.
+
+## What pikepdf hands over as an image, and what it does not
+
+Three things learned while walking image XObjects, none of them documented
+where you would look for them.
+
+**`Page.get_images()` does not report image masks.** A page painting one
+stencil (`/ImageMask true`) reports zero images. That is the right outcome —
+a stencil is a shape painted in the current fill colour, with no colour of its
+own to re-encode — but it means a guard written against stencils in the
+re-encoder is unreachable through that API and can rot untested. pikepdf 8's
+older `Page.images` did hand them over, which is the only reason the guard is
+still worth keeping.
+
+**`pikepdf.PdfImage(obj)` raises on a JPEG 2000 stream.** So "this is a filter
+we do not handle" cannot be answered from a `PdfImage`; it has to be read off
+`/Filter` on the dictionary first. Get that order wrong and an unsupported but
+perfectly valid image is reported to the user as a decode failure, which tells
+them nothing and implies their file is damaged.
+
+**`PdfImage.as_pil_image()` returns a Pillow image**, and that is how Pillow
+became a runtime dependency of this application without a single `import PIL`
+anywhere in it. Extract Images has been calling `.save()` on those objects
+since it was written. The packaging guard checks a hand-written list of
+package names, so it could never have caught a dependency that arrives as
+somebody else's return type.
+
 ## A note on content streams
 
 Scaling and overlay *do* synthesize a content stream — they wrap the page as a Form
