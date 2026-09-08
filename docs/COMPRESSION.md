@@ -1,0 +1,250 @@
+# Compression
+
+**Open work: [Issue #8](https://github.com/dwsdolce/pdfarranger-qt/issues/8).**
+This is the feature set that issue should build, the numbers behind it, and the
+trade-offs that decide the defaults. Scope reasoning for the surrounding work
+is [D21](DECISIONS.md); the score that raised it is
+[PDF24-COMPARISON.md](PDF24-COMPARISON.md).
+
+Everything below was measured on this machine with pikepdf 10.11 and Pillow
+12.3, on synthetic corpora built to be typical rather than flattering: eight
+letter pages of rendered text on off-white paper at 300 ppi, which is what a
+scanner or a phone hands you.
+
+## The word means two different things
+
+To a user, "compress this PDF" means *make the file smaller*, and the file is
+big because it is full of images. To a PDF library, `compress` means *deflate
+the streams and pack the objects*, which is a different operation on a
+different part of the file. We shipped the second one under the first one's
+name.
+
+## What the option does today
+
+`SaveOptions.compress` sets `compress_streams`, `recompress_flate` and
+`ObjectStreamMode.generate`. Measured:
+
+| Document | As written | Compress ticked | Saved |
+|---|---|---|---|
+| Eight-page 300 ppi colour scan | 8.09 MB | 8.08 MB | **0.0%** |
+| Eight pages of vector text from QPdfWriter | 0.75 MB | 0.75 MB | **0.6%** |
+| The same text, written with streams uncompressed | 3.78 MB | 0.75 MB | **80.2%** |
+| `tests/exporter/outlines.pdf` | 8,901 B | 1,824 B | 79.5% |
+| `tests/exporter/forms.pdf` | 3,620 B | 1,639 B | 54.7% |
+
+Read the first two rows against the last three. The option is not weak; it is
+**a recovery of bytes some other generator left on the table**. When a producer
+wrote its streams uncompressed it wins enormously, and on files with many small
+objects the object stream packing is worth half the size. But almost every PDF
+in circulation already arrives Flate-compressed, and no amount of deflating
+touches a DCTDecode stream. On the documents people actually want compressed
+it recovers nothing, and it is honest about that only in the sense that the
+label promises nothing.
+
+Two conclusions, and they are separable: the existing behaviour is worth
+keeping and worth **renaming**, and the thing it is currently named after still
+has to be built.
+
+## What everyone else offers
+
+**PDF24** — three knobs and a filename suffix, initialised from four registry
+values (`compress.dpi`, `compress.imageQuality`, `compress.colorModel`,
+`compress.saveFileSuffix`): DPI defaulting to 144, image quality 1-100
+defaulting to 75, and a colour model of unchanged, `rgb`, `cmyk` or `gray`.
+That is the entire feature. No presets, no per-image analysis.
+
+**Acrobat** offers it at two levels. One-click *Compress PDF* takes a strength
+and nothing else. *PDF Optimizer* is the workbench: an **Images** panel with
+three independent image classes — colour, greyscale, monochrome — each with a
+resampling method (bicubic, average, subsampling), a target ppi, a
+**threshold** (*downsample to 150 ppi for images above 225 ppi*), a codec
+(JPEG, JPEG2000, ZIP, retain existing) and a quality band; then Fonts
+(un-embedding), Transparency (flattening), Discard Objects, Discard User Data,
+Clean Up — which is roughly our current checkbox in its entirety — and **Audit
+Space Usage**, a report of where the bytes are.
+
+**Ghostscript** exposes four named presets: `/screen` at 72 ppi, `/ebook` at
+150, `/printer` and `/prepress` at 300, the last colour-preserving.
+
+Three products, three shapes: a level, a level plus an escape hatch, and a
+workbench. All three agree on the substance — **target resolution, image
+quality, colour model** — and disagree only on how much of it to show.
+
+## What the numbers say
+
+### Resolution against quality, on a colour scan
+
+Eight pages, 8.09 MB as written. Each cell is the whole file after
+re-encoding every image at that resolution and JPEG quality:
+
+| Target | q90 | q75 | q60 |
+|---|---|---|---|
+| 300 ppi (re-encode only) | 8.08 MB | 5.65 MB | 4.84 MB |
+| 200 ppi | 4.56 MB | 3.14 MB | 2.58 MB |
+| 150 ppi | 2.95 MB | 2.00 MB | 1.62 MB |
+| 144 ppi (PDF24's default) | 2.87 MB | **1.98 MB** | 1.61 MB |
+| 100 ppi | 1.62 MB | 1.12 MB | 0.90 MB |
+| 72 ppi | 0.93 MB | 0.63 MB | 0.51 MB |
+
+The top row is the interesting one: **quality alone, at full resolution, is
+worth 40%**. A user who wants a smaller file but will not accept a softer page
+has an option that costs them no pixels, and neither PDF24 nor a preset ladder
+offers it separately. The rest is the expected quadratic — halving the
+resolution quarters the pixels — and 150 ppi at q75 is where the curve stops
+paying: below it the file shrinks by less than the page degrades.
+
+### Bilevel pages, where JPEG is simply the wrong answer
+
+The same eight pages, treated as line art:
+
+| Encoding | Size | Saved |
+|---|---|---|
+| 300 ppi colour JPEG q90 — as scanners write it | 8.08 MB | — |
+| 300 ppi JPEG q60 | 4.80 MB | 40.6% |
+| 144 ppi JPEG q75 — PDF24's defaults | 1.98 MB | 75.4% |
+| 300 ppi greyscale, Flate only, no downsampling | 2.22 MB | 72.5% |
+| **300 ppi CCITT Group 4, full resolution kept** | **0.52 MB** | **93.6%** |
+| 144 ppi CCITT Group 4 | 0.25 MB | 96.9% |
+
+Group 4 at *full* resolution beats the industry-default downsample by a factor
+of four while throwing away no pixels at all. This is the largest single win
+available anywhere in this document, and it is invisible to a design that has
+one image path. It is also the win most likely to be missed, because the
+document that benefits — a black-and-white scan — looks to a naive walk like an
+ordinary RGB image and gets sent down the JPEG path.
+
+One caveat that cost a measurement to find: Group 4's performance depends
+entirely on the input being **thresholded, not dithered**. Pillow's
+`convert("1")` applies Floyd-Steinberg by default, and the resulting noise
+inflated the same page from 0.52 MB to 4.60 MB — a nine-fold penalty, and the
+first version of this measurement reported it as fact.
+
+### The small-image trap
+
+A 200x80 logo placed at 96 ppi, stored as Flate:
+
+| Treatment | Size |
+|---|---|
+| Left alone | 1,662 B |
+| "Resampled" to 144 ppi, JPEG q75 | 5,868 B |
+| "Resampled" to 300 ppi, JPEG q75 | 12,638 B |
+
+A blind *resample everything to N* makes this **three to seven times bigger**
+and lossy in the same stroke. This is what Acrobat's threshold field exists to
+prevent, and it is not an edge case: business documents are mostly text with a
+logo.
+
+### Images shared between pages
+
+An image referenced by eight pages is visited eight times by a per-page walk
+and is one object. Re-encoding it on each visit produced a worst-pixel
+difference of **23/255** against a single pass — visible banding in flat
+areas, for eight times the work and no fewer bytes.
+
+### What a pass costs
+
+Eight pages at 300 ppi, halved and re-encoded, by resampling method:
+
+| Method | Time | Per page |
+|---|---|---|
+| Lanczos | 0.88 s | 110 ms |
+| Bicubic | 0.69 s | 87 ms |
+| Nearest (subsampling) | 0.28 s | 35 ms |
+
+Acrobat exposes this choice. **We should not.** The gap between the best
+method and the fastest is 75 ms a page, which buys nothing a user would trade
+image quality for; a 200-page scan is 22 seconds either way and needs a
+progress dialog either way. Always Lanczos, and spend the knob elsewhere.
+
+## The feature set worth building
+
+A dialog with four fields, a preset row, and a report.
+
+**Presets**, because most people want a level rather than a specification:
+*Screen* (100 ppi, q60), *Balanced* (150 ppi, q75), *Print* (300 ppi, q90,
+quality-only — no downsampling). The names say the destination, not the
+strength, so the choice can be made without knowing what a ppi is.
+
+**Fields**, revealed under *Custom*:
+
+- **Target resolution**, in ppi. Default 150.
+- **Only images above**, in ppi. Default 1.5x the target. This is the
+  threshold, and it is what keeps the logo intact.
+- **Image quality**, 1-100. Default 75. Usable on its own with resolution set
+  to *unchanged*, which is the 40%-for-free row in the table above.
+- **Colour**: leave alone, or convert to greyscale.
+
+**Bilevel is automatic and not exposed.** An image that is already 1-bit, or
+that is 8-bit but provably two-valued, goes to CCITT Group 4 at its existing
+resolution. Nobody should have to know to ask for the biggest win in the
+feature.
+
+**A report**, before and after: how many images, what they cost now, what they
+will cost. This is Acrobat's *Audit Space Usage* reduced to the one line that
+matters, and it is the cheapest thing in this document. Half of why the
+current checkbox reads as broken is that a user has no way to learn that their
+8 MB is 7.9 MB of JPEG.
+
+## The trade-offs, one at a time
+
+**It is lossy and irreversible, so it cannot be a preference.** Every other
+save option we have — linearize, strip metadata, the password — is a decision
+about how to *write* a file that is still fully present in memory. Ticking a
+box that silently degrades every subsequent save is a different kind of thing,
+and the difference is that you cannot get the pixels back. It belongs on a
+command with a dialog and a stated result, asked each time, not on a sticky
+setting. The corollary is that the existing checkbox should be renamed to what
+it does — *Recompress streams and pack objects* — and the word *Compress* left
+for the command that earns it.
+
+**Applied to the document, or to the output?** Modifying the in-memory pages
+puts it on the undo stack, which is where a destructive operation belongs and
+is how the user sees what happened before committing. It also means a
+re-encode on every subsequent save unless the result is cached. Applying it at
+save time is simpler and matches Export ▸ Rasterized PDF, but leaves the user
+looking at pages that are not what will be written. **Recommendation:** apply
+to the document, undoable, so that "I can see it got worse" and "I can undo it"
+are the same gesture.
+
+**Never make it bigger, and never make it worse for nothing.** Two rules the
+implementation must carry, because the measurements show both failing
+naturally: skip any image already at or below the target resolution, and if the
+re-encoded stream is larger than the original, keep the original. A compressor
+that can enlarge a file is worse than no compressor.
+
+**Greyscale conversion is a real saving and a real risk.** It is the one
+colour-model change worth offering. **CMYK is not** — converting to or from it
+without an ICC path shifts colour in ways a page arranger has no business
+causing, and PDF24 offering it does not make it wise.
+
+**Formats that must be left alone rather than mangled.** JPXDecode, where a
+re-encode needs a JPEG2000 encoder we would rather not depend on;
+`/ImageMask true` stencils, which are tied to the fill colour and are not
+images in the ordinary sense; DeviceN and Separation, which are ink channels
+rather than colour; indexed palettes, where resampling interpolates *palette
+indices* into nonsense unless converted first; and any image with an `/SMask`,
+which either scales with its parent or is left untouched with it. The correct
+behaviour for everything in this list is to skip it and say so in the report,
+not to guess. `pikepdf.PdfImage` exposes `indexed`, `is_device_n`,
+`is_separation`, `image_mask` and `mode` precisely so this can be decided
+rather than assumed.
+
+**Shared images are deduplicated by `objgen`, not by page.** Measured above:
+eight visits, one object, 23/255 of avoidable generational loss.
+
+**Rasterising the page is the wrong tool, and the issue says otherwise.**
+[Issue #8](https://github.com/dwsdolce/pdfarranger-qt/issues/8) notes that "the
+raster machinery is already here", which is true and misleading: `raster.py`
+renders whole *pages*, so using it would convert vector text into pixels —
+turning a crisp 0.75 MB text document into a fuzzy several-megabyte one, the
+exact opposite of the request. This work is a per-image walk over XObject
+resources with `pikepdf.PdfImage` and Pillow. The two share nothing but the
+word *raster*.
+
+## What this is deliberately not
+
+Font un-embedding, which breaks documents on machines that lack the font.
+Transparency flattening, which is a prepress operation. Discarding form fields
+or annotations, which is data loss dressed as compression. OCR, which is
+[D21](DECISIONS.md) out of scope. All four are in Acrobat's Optimizer and none
+belongs in a page arranger.

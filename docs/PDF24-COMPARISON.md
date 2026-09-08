@@ -72,7 +72,8 @@ different job.
       a Preferences checkbox beside Web optimize. Gains little on a file full of
       already-compressed images, which is why the label promises nothing.
       Image **downsampling** — what people usually mean by the word — is still
-      open, and is where the effort is; the raster machinery is already here
+      open, and is where the effort is. The feature set, the numbers behind it
+      and the trade-offs are [COMPRESSION.md](COMPRESSION.md)
 
 **Out of scope (D21).** Convert to/from PDF · Create invoice · Create job
 application · Create fillable form · Annotate · Edit PDF · Sign · Compare · OCR ·
