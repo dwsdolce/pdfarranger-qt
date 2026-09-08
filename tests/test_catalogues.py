@@ -30,7 +30,7 @@ became ratchets instead:
 - **markup** — 31 translated entries carry a tag, 0 disagree. Hard failure.
 - **plural forms** — every plural entry already has the count its locale
   declares. Hard failure.
-- **mnemonics kept** — 106 of 2036 are dropped, in 16 of the 33 languages;
+- **mnemonics kept** — 103 of 2084 are dropped, in 15 of the 33 languages;
   Catalan loses 38 of 46. Upstream's translations, and adding an accelerator to
   Catalan is a translation decision rather than a repair. Ratchet.
 - **mnemonics unique within a menu** — every language collides, *including
@@ -67,22 +67,21 @@ MNEMONIC = re.compile(r"_[A-Za-z]")
 #: may not lose a closing tag or translate a tag name.
 TAG = re.compile(r"<[a-zA-Z/][^>]*>")
 
-#: Dropped accelerators per language, as of 2026-09-08. May fall, must not rise.
+#: Dropped accelerators per language, as of 2026-09-07. May fall, must not rise.
 MNEMONICS_LOST = {
     "ar": 3, "ca": 38, "ca@valencia": 21, "da": 3, "de": 2,
     "es": 13, "eu": 5, "he": 1, "hu": 1, "ka": 3,
-    "nl": 2, "pl_PL": 7, "pt_PT": 1, "sl": 2, "uk": 1,
-    "zh_TW": 1,
+    "nl": 2, "pl_PL": 7, "sl": 2, "uk": 1, "zh_TW": 1,
 }
 
-#: Within-menu accelerator collisions per language, as of 2026-09-08. English
+#: Within-menu accelerator collisions per language, as of 2026-09-07. English
 #: is in here because English collides too -- this is not a translation fault.
 CLASHES = {
     "ar": 3, "ca": 2, "ca@valencia": 2, "cs": 4, "da": 4, "de": 10,
     "el": 3, "en": 5, "es": 5, "eu": 8, "fi": 8, "fr": 4,
-    "he": 4, "hr": 7, "hu": 4, "id": 11, "is": 6, "it": 9,
-    "ja": 5, "ka": 4, "ko": 4, "nl": 8, "oc": 11, "pl_PL": 4,
-    "pt_BR": 8, "pt_PT": 7, "ru": 5, "sl": 5, "sv": 5, "tr": 9,
+    "he": 4, "hr": 7, "hu": 4, "id": 11, "is": 6, "it": 7,
+    "ja": 5, "ka": 4, "ko": 4, "nl": 6, "oc": 11, "pl_PL": 4,
+    "pt_BR": 7, "pt_PT": 5, "ru": 5, "sl": 5, "sv": 5, "tr": 9,
     "uk": 5, "vi": 12, "zh_CN": 5, "zh_TW": 5,
 }
 
@@ -394,3 +393,65 @@ class TestTheCompiledTreeIsCurrent(CatalogueTestCase):
         self.assertEqual(stale, [],
                          "these .po files are newer than their .mo: "
                          "run tools/build_mo.py")
+
+
+class TestThePreferenceOffersWhatExists(CatalogueTestCase):
+    """The Language menu in Preferences, against the catalogues on disk.
+
+    The list is hand-written, so that each language is named the way its own
+    speakers write it rather than the way CLDR does. Hand-written means it
+    drifts, and it had: seven translated languages could not be chosen at all,
+    and three entries pointed at nothing. The worst of them was Polish, which
+    was offered as `pl` while the catalogue is `pl_PL` -- picking it loaded no
+    catalogue and silently left the application in English, with no other way
+    to reach the Polish translation.
+
+    `en` is the exception and is meant to be here: English is the msgid, so
+    selecting it loads nothing and shows the source strings.
+    """
+
+    def offered(self):
+        from pdfarranger_qt.dialogs import _LANGUAGES
+
+        return _LANGUAGES
+
+    def test_every_catalogue_can_be_chosen(self):
+        codes = {code for code, _name in self.offered()}
+        missing = sorted(set(self.languages) - codes)
+        self.assertEqual(missing, [],
+                         "these are translated but cannot be selected in "
+                         "Preferences: " + ", ".join(missing))
+
+    def test_nothing_offered_is_missing_its_catalogue(self):
+        """An entry with no catalogue is a menu item that does nothing."""
+        dead = sorted(code for code, _name in self.offered()
+                      if code != "en" and code not in self.languages)
+        self.assertEqual(dead, [],
+                         "these are offered but have no catalogue: "
+                         + ", ".join(dead))
+
+    def test_no_code_or_name_appears_twice(self):
+        codes = [code for code, _name in self.offered()]
+        names = [name for _code, name in self.offered()]
+        self.assertEqual(sorted(codes), sorted(set(codes)), "duplicate code")
+        self.assertEqual(sorted(names), sorted(set(names)), "duplicate name")
+
+    def test_choosing_each_one_actually_loads_it(self):
+        """The check `pl` would have failed: a code that resolves to nothing.
+
+        Comparing the two lists is not enough on its own -- it says the strings
+        match, not that gettext can find a catalogue under that name.
+        """
+        if not os.path.isdir(os.path.join(ROOT, "build", "mo")):
+            self.skipTest("catalogues not compiled (run tools/build_mo.py)")
+        from pdfarranger_qt import i18n
+
+        try:
+            for code, _name in self.offered():
+                if code == "en":
+                    continue
+                with self.subTest(language=code):
+                    self.assertEqual(i18n.setup(code), code,
+                                     f"{code} is offered but loads nothing")
+        finally:
+            i18n.setup(None)

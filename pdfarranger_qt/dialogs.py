@@ -1450,15 +1450,32 @@ class HelpDialog(QDialog):
         return "\n".join(parts)
 
 
-#: Languages with a catalogue in po/, for the Language preference.
+#: The Language preference, one entry per catalogue in ``po/`` plus English.
+#:
+#: Written out rather than derived, because a name belongs to the people who
+#: use it: CLDR calls pt_BR "português (Brasil)" and this project calls it
+#: "Português do Brasil". The cost of choosing them is that the list drifts --
+#: it once offered a Polish that loaded nothing, because the code here was
+#: ``pl`` and the catalogue is ``pl_PL``, and it omitted seven languages that
+#: had been translated. ``TestThePreferenceOffersWhatExists`` is what keeps it
+#: honest; there is no need to read the directory to know what is in it.
+#:
+#: English has no catalogue and needs none -- it is the msgid, and selecting it
+#: loads nothing and shows the source strings.
 _LANGUAGES = [
-    ("ar", "العربية"), ("ca", "Català"), ("cs", "Čeština"), ("da", "Dansk"),
-    ("de", "Deutsch"), ("el", "Ελληνικά"), ("en", "English"), ("es", "Español"),
-    ("fa", "فارسی"), ("fi", "Suomi"), ("fr", "Français"), ("he", "עברית"),
-    ("hr", "Hrvatski"), ("hu", "Magyar"), ("id", "Indonesia"), ("it", "Italiano"),
-    ("ja", "日本語"), ("ko", "한국어"), ("nl", "Nederlands"), ("pl", "Polski"),
-    ("pt_BR", "Português do Brasil"), ("ro", "Română"), ("ru", "Русский"),
-    ("sl", "Slovenščina"), ("sv", "Svenska"), ("tr", "Türkçe"),
-    ("uk", "Українська"), ("vi", "Tiếng Việt"), ("zh_CN", "简体中文"),
+    ("ar", "العربية"), ("ca", "Català"),
+    ("ca@valencia", "Català (valencià)"), ("cs", "Čeština"),
+    ("da", "Dansk"), ("de", "Deutsch"), ("el", "Ελληνικά"),
+    ("en", "English"), ("es", "Español"), ("eu", "Euskara"),
+    ("fi", "Suomi"), ("fr", "Français"), ("he", "עברית"),
+    ("hr", "Hrvatski"), ("hu", "Magyar"), ("id", "Indonesia"),
+    ("is", "Íslenska"), ("it", "Italiano"), ("ja", "日本語"),
+    ("ka", "ქართული"), ("ko", "한국어"),
+    ("nl", "Nederlands"), ("oc", "Occitan"), ("pl_PL", "Polski"),
+    ("pt_BR", "Português do Brasil"), ("pt_PT", "Português"),
+    ("ru", "Русский"), ("sl", "Slovenščina"),
+    ("sv", "Svenska"), ("tr", "Türkçe"),
+    ("uk", "Українська"),
+    ("vi", "Tiếng Việt"), ("zh_CN", "简体中文"),
     ("zh_TW", "繁體中文"),
 ]
