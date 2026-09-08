@@ -267,13 +267,42 @@ causing, and PDF24 offering it does not make it wise.
 re-encode needs a JPEG2000 encoder we would rather not depend on;
 `/ImageMask true` stencils, which are tied to the fill colour and are not
 images in the ordinary sense; DeviceN and Separation, which are ink channels
-rather than colour; indexed palettes, where resampling interpolates *palette
-indices* into nonsense unless converted first; and any image with an `/SMask`,
-which either scales with its parent or is left untouched with it. The correct
-behaviour for everything in this list is to skip it and say so in the report,
-not to guess. `pikepdf.PdfImage` exposes `indexed`, `is_device_n`,
-`is_separation`, `image_mask` and `mode` precisely so this can be decided
-rather than assumed.
+rather than colour; and any image with an `/SMask`, which either scales with
+its parent or is left untouched with it. The correct behaviour for everything
+in this list is to skip it and say so in the report, not to guess.
+`pikepdf.PdfImage` exposes `indexed`, `is_device_n`, `is_separation`,
+`image_mask` and `mode` precisely so this can be decided rather than assumed.
+
+**CMYK and indexed images were on that list, and came off it by
+measurement.** A 1,590-page technical handbook turned out to be four-fifths
+those two — 2,031 CMYK JPEGs, 961 indexed palettes and 671 CMYK Flate images
+in its first 400 pages — so skipping them meant touching 527 of its 34,390
+images and leaving most of the document alone.
+
+- **CMYK is re-encoded as CMYK**, so no colour space is converted and no ICC
+  path is needed. The hazard was that Adobe stores CMYK JPEGs inverted, which
+  fails as a colour negative rather than as an error, so ten images from that
+  book were decoded, re-encoded and compared: worst channel drift 12 to 16 of
+  255 at quality 90, mean under 1. Ordinary JPEG quantisation. An inversion
+  would have read about 255. This is not the same thing as *converting* to
+  CMYK, which stays out for the reason above.
+- **Indexed images go back as indexed**, re-quantised and deflated, never as
+  JPEG. They are nearly always diagrams, rules and flat colour, and JPEG rings
+  around a hard edge. Measured on that book: a 1053×705 diagram 189,423 →
+  129,739 bytes as a palette against 27,656 as JPEG, and a 945×1234 one
+  112,897 → 23,973 against 8,814. JPEG is three to five times smaller and
+  wrong for the content — and the same document holds thousands of 1036×4
+  rules where JPEG turns 29 bytes into 759.
+
+Together they take the first 400 pages of that book from 17.7 MB of images to
+5.7 MB, **68% smaller**, in six seconds.
+
+**Widen before resampling.** Pillow silently forces nearest-neighbour for
+`P` and `1` images, because there is no meaningful average of two palette
+indices — halfway between index 7 and index 9 is index 8, an unrelated
+colour. Resizing one directly looks like it worked and quietly returns
+nearest-neighbour, so an indexed image is converted to RGB first and a bilevel
+one to grey, and only then resampled.
 
 **Shared images are deduplicated by `objgen`, not by page.** Measured above:
 eight visits, one object, 23/255 of avoidable generational loss.

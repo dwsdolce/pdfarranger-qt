@@ -755,6 +755,26 @@ element 521,475 of a 1275-wide image, which is row 409 to the pixel. Passing
 `tiffinfo={278: image.height}` gives one strip, one continuous coding, one
 payload.
 
+## Pillow will not resample a palette, and does not say so
+
+`Image.resize(size, Image.LANCZOS)` on a `P` or `1` image silently ignores the
+filter it was given and uses nearest-neighbour. The reasoning is sound —
+there is no meaningful average of two palette indices, since halfway between
+index 7 and index 9 is index 8, an unrelated colour — but nothing in the call
+says it happened, and the result is a plausible-looking image that has been
+point-sampled.
+
+It is invisible from the outside, and the test that caught it had to be built
+for the purpose: alternating black and white columns at 300 ppi, halved.
+Lanczos averages them into greys; nearest-neighbour can only ever return black
+or white. A grey in the result is proof the image was widened before it was
+resized.
+
+So an indexed image is converted to RGB and a bilevel one to grey *before*
+resampling, and quantised back afterwards. Doing it the other way round is the
+same defect the whole `placements` mechanism exists to avoid — a compressor
+that appears to work and quietly degrades what it touches.
+
 ## What pikepdf hands over as an image, and what it does not
 
 Three things learned while walking image XObjects, none of them documented

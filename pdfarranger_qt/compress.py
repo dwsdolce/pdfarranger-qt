@@ -51,6 +51,7 @@ import io
 import math
 import os
 import tempfile
+import zlib
 from dataclasses import dataclass, field
 from typing import Callable, Dict, Iterable, List, Optional, Sequence, Tuple
 
@@ -66,6 +67,7 @@ RESAMPLE = Image.LANCZOS
 DOWNSAMPLED = "downsampled"
 RECODED = "recoded"          # same pixels, cheaper encoding
 GROUP4 = "group4"            # bilevel, sent to CCITT Group 4
+PALETTE = "palette"          # indexed, re-quantised and deflated
 KEPT = "kept"
 
 #: Why an image was kept. Symbols rather than sentences: this module has no
@@ -76,16 +78,23 @@ WOULD_GROW = "would-grow"
 NOT_PLACED = "not-placed"
 STENCIL = "stencil"
 INK_CHANNELS = "ink-channels"
-INDEXED = "indexed"
 SOFT_MASK = "soft-mask"
 UNSUPPORTED_FILTER = "unsupported-filter"
 UNSUPPORTED_MODE = "unsupported-mode"
 DECODE_FAILED = "decode-failed"
 
-#: Pillow modes this knows how to re-encode. CMYK is deliberately absent:
-#: Adobe's inverted CMYK JPEGs round-trip badly, and shifting colour is not
-#: something a page arranger should do to somebody's document by accident.
-ENCODABLE = ("RGB", "L", "1")
+#: Pillow modes this knows how to re-encode.
+#:
+#: CMYK is here on the strength of a measurement rather than a hope. Adobe
+#: stores CMYK JPEGs inverted, which is the kind of convention that silently
+#: produces a colour negative -- so ten of them out of a real publisher's book
+#: were decoded, re-encoded and compared: worst channel drift 12 to 16 of 255
+#: at quality 90, mean under 1. That is ordinary JPEG quantisation. An
+#: inversion would have read about 255.
+#:
+#: "P" is here too, and goes back as a palette rather than as JPEG. See
+#: `_encode_palette`.
+ENCODABLE = ("RGB", "L", "1", "CMYK", "P")
 
 #: Preset names.
 SCREEN, BALANCED, PRINT = "screen", "balanced", "print"
@@ -440,8 +449,6 @@ def _skip_reason(obj, pdf_image) -> Optional[str]:
         return STENCIL          # tied to the fill colour; not an image as such
     if pdf_image.is_device_n or pdf_image.is_separation:
         return INK_CHANNELS     # ink channels, not colour
-    if pdf_image.indexed:
-        return INDEXED          # resampling would interpolate palette indices
     if "/SMask" in obj or "/Mask" in obj:
         return SOFT_MASK        # scales with its parent or not at all
     return None
@@ -614,11 +621,25 @@ def _one(obj, drawn: Optional[Tuple[float, float]],
         outcome.reason = BELOW_TARGET
         return outcome
 
+    indexed = image.mode == "P"
     if target is not None:
+        # Pillow quietly forces NEAREST for "P" and "1", because there is no
+        # meaningful average of two palette indices or two bits -- halfway
+        # between index 7 and index 9 is index 8, an unrelated colour. So
+        # widen first and let Lanczos do its job: for an indexed image that
+        # means RGB, and for a bilevel one grey, which `to_bilevel` then
+        # thresholds. Resizing before this line looks like it works and
+        # silently returns nearest-neighbour.
+        if indexed:
+            image = image.convert("RGB")
+        elif image.mode == "1":
+            image = image.convert("L")
         image = image.resize(target, RESAMPLE)
 
     if bilevel:
         data, encoding = _encode_group4(image)
+    elif indexed:
+        data, encoding = _encode_palette(image, settings)
     else:
         data, encoding = _encode_jpeg(image, settings)
     if data is None:
@@ -634,8 +655,8 @@ def _one(obj, drawn: Optional[Tuple[float, float]],
     outcome.after = len(data)
     outcome.size = (image.width, image.height)
     outcome.ppi = effective_ppi(image.width, drawn[0])
-    if encoding[0] == GROUP4:
-        outcome.action = GROUP4
+    if encoding[0] in (GROUP4, PALETTE):
+        outcome.action = encoding[0]
     elif target is not None:
         outcome.action = DOWNSAMPLED
     else:
@@ -651,11 +672,42 @@ def _encode_group4(image: Image.Image):
         return None, None
 
 
+def _encode_palette(image: Image.Image, settings: Settings):
+    """An indexed image, re-quantised and deflated -- never sent to JPEG.
+
+    Resampling palette *indices* is nonsense: halfway between index 7 and
+    index 9 is index 8, which is an unrelated colour. So the work happens in
+    RGB and the result is quantised back to a palette, which keeps what these
+    images almost always are -- diagrams, rules and flat colour -- free of the
+    ringing JPEG puts around a hard edge.
+
+    Measured on a real handbook: a 1053x705 diagram goes 189,423 -> 129,739
+    bytes this way, and a 945x1234 one 112,897 -> 23,973. JPEG would have been
+    27,656 and 8,814, three to five times smaller again -- and the same
+    document holds thousands of 1036x4 rules where JPEG turns 29 bytes into
+    759. Flat colour is the case, so flat colour is what this preserves;
+    anything JPEG would genuinely win is a photograph, and a photograph is not
+    usually stored as a palette.
+    """
+    if settings.greyscale:
+        return _encode_jpeg(image.convert("L"), settings)
+    palette = image.convert("RGB").quantize(colors=256, method=Image.MEDIANCUT)
+    # Fewer colours than the palette can hold is the normal case for a
+    # diagram, and quantize returns exactly those, so a document that was
+    # already economical is not made worse.
+    try:
+        return (zlib.compress(palette.tobytes(), 9), (PALETTE, palette))
+    except Exception:
+        return None, None
+
+
 def _encode_jpeg(image: Image.Image, settings: Settings):
-    if settings.greyscale and image.mode != "L":
+    if settings.greyscale and image.mode not in ("L", "1"):
         image = image.convert("L")
     elif image.mode == "1":
         image = image.convert("L")
+    elif image.mode == "P":
+        image = image.convert("RGB")
     buffer = io.BytesIO()
     try:
         image.save(buffer, "JPEG", quality=settings.quality, optimize=True)
@@ -671,7 +723,19 @@ def _write(obj, data: bytes, encoding, image: Image.Image):
     and applying it to newly encoded ones would show a negative.
     """
     kind, encoded = encoding
-    if kind == GROUP4:
+    if kind == PALETTE:
+        # The palette travels with the image: a new quantisation means new
+        # colours, so the old /Indexed lookup would map the new indices onto
+        # somebody else's palette.
+        lookup = bytes(encoded.getpalette() or b"")
+        colours = max(1, len(lookup) // 3)
+        obj.write(data, filter=pikepdf.Name.FlateDecode)
+        obj.Width, obj.Height = encoded.width, encoded.height
+        obj.BitsPerComponent = 8
+        obj.ColorSpace = pikepdf.Array([
+            pikepdf.Name.Indexed, pikepdf.Name.DeviceRGB, colours - 1,
+            pikepdf.String(lookup[:colours * 3])])
+    elif kind == GROUP4:
         obj.write(data, filter=pikepdf.Name.CCITTFaxDecode,
                   decode_parms=pikepdf.Dictionary(
                       K=-1, Columns=encoded.width, Rows=encoded.height,

@@ -469,19 +469,6 @@ class TestWhatMustBeLeftAlone(unittest.TestCase):
         outcome = compress.compress(pdf).outcomes[0]
         self.assertEqual(outcome.reason, compress.UNSUPPORTED_FILTER)
 
-    def test_an_indexed_palette_would_interpolate_into_nonsense(self):
-        pdf = pikepdf.Pdf.new()
-        palette = Image.new("P", (300, 300))
-        palette.putpalette([0, 0, 0, 255, 0, 0, 0, 255, 0] + [0] * (768 - 9))
-        lookup = pikepdf.String(bytes(palette.getpalette()[:9]))
-        stream = embed(pdf, palette.tobytes(), palette,
-                       colorspace=pikepdf.Array(
-                           [pikepdf.Name.Indexed, pikepdf.Name.DeviceRGB,
-                            2, lookup]))
-        self.placed(pdf, stream)
-        outcome = compress.compress(pdf).outcomes[0]
-        self.assertEqual(outcome.reason, compress.INDEXED)
-
     def test_an_image_with_a_soft_mask_scales_with_it_or_not_at_all(self):
         pdf = pikepdf.Pdf.new()
         image = text_page(150)
@@ -519,6 +506,173 @@ class TestWhatMustBeLeftAlone(unittest.TestCase):
         self.assertEqual(result.images, 1)
         self.assertEqual(result.changed, 0)
         self.assertEqual(result.saved, 0)
+
+
+class TestIndexedPalettes(unittest.TestCase):
+    """Diagrams, rules and flat colour -- and never sent to JPEG.
+
+    Resampling palette *indices* is nonsense, so the work happens in RGB and
+    the result is quantised back to a palette. That keeps the flat colour flat
+    rather than ringing it, and on the document these numbers came from JPEG
+    would have turned a 29-byte rule into 759 bytes.
+    """
+
+    def diagram(self, pdf, width=800, height=600, ppi=300):
+        """Flat blocks of colour, which is what an indexed image usually is."""
+        blocks = Image.new("RGB", (width, height), (255, 255, 255))
+        draw = ImageDraw.Draw(blocks)
+        for index, colour in enumerate(((200, 30, 40), (30, 90, 200),
+                                        (250, 210, 40), (20, 140, 70))):
+            draw.rectangle((index * width // 4, 0,
+                            (index + 1) * width // 4, height),
+                           fill=colour)
+        # A band of shading across the blocks, so that re-quantising after a
+        # resample genuinely produces a different palette. Four flat colours
+        # quantise back to the same four, which is a fixture that cannot tell
+        # a working lookup from an untouched one.
+        for x in range(width):
+            draw.line((x, height // 3, x, 2 * height // 3),
+                      fill=(x * 255 // max(1, width - 1), 120, 200))
+        palette = blocks.quantize(colors=64)
+        lookup = pikepdf.String(bytes(palette.getpalette()[:64 * 3]))
+        stream = embed(pdf, palette.tobytes(), palette,
+                       colorspace=pikepdf.Array(
+                           [pikepdf.Name.Indexed, pikepdf.Name.DeviceRGB,
+                            63, lookup]))
+        drawn = width * 72 / ppi
+        page_with(pdf, [(stream, 0, 0, drawn, height * 72 / ppi)])
+        return stream
+
+    def test_an_indexed_image_is_re_quantised_not_jpeged(self):
+        pdf = pikepdf.Pdf.new()
+        stream = self.diagram(pdf)
+        outcome = compress.compress(
+            pdf, compress.Settings(ppi=150)).outcomes[0]
+        self.assertEqual(outcome.action, compress.PALETTE)
+        self.assertEqual(str(stream.Filter), "/FlateDecode")
+        self.assertEqual(str(stream.ColorSpace[0]), "/Indexed")
+
+    def test_the_new_palette_replaces_the_old_one(self):
+        """A new quantisation means new colours: the old lookup is wrong."""
+        pdf = pikepdf.Pdf.new()
+        stream = self.diagram(pdf)
+        was = bytes(stream.ColorSpace[3])
+        compress.compress(pdf, compress.Settings(ppi=150))
+        now = bytes(stream.ColorSpace[3])
+        self.assertNotEqual(now, was)
+        self.assertEqual(len(now) % 3, 0)
+        self.assertEqual(int(stream.ColorSpace[2]), len(now) // 3 - 1)
+
+    def test_the_colours_survive(self):
+        """Size proves compression; only reading it back proves the picture."""
+        pdf = pikepdf.Pdf.new()
+        stream = self.diagram(pdf)
+        before = pikepdf.PdfImage(stream).as_pil_image().convert("RGB")
+        compress.compress(pdf, compress.Settings(ppi=150))
+        after = pikepdf.PdfImage(stream).as_pil_image().convert("RGB")
+        # Sample the middle of each block, away from any resampled edge.
+        for fraction in (0.125, 0.375, 0.625, 0.875):
+            # A sixth of the way down: inside a flat block, above the band.
+            was = before.getpixel((int(before.width * fraction),
+                                   before.height // 6))
+            now = after.getpixel((int(after.width * fraction),
+                                  after.height // 6))
+            with self.subTest(fraction=fraction):
+                self.assertLess(max(abs(a - b) for a, b in zip(was, now)), 12)
+
+    def test_the_resample_is_not_nearest_neighbour(self):
+        """Pillow forces NEAREST on a "P" resize, and says nothing about it.
+
+        Alternating black and white columns at 300 ppi, halved: Lanczos
+        averages them into greys, nearest-neighbour can only ever return black
+        or white. So a grey in the result is proof the image was widened to
+        RGB before it was resized, and its absence is proof it was not.
+        """
+        pdf = pikepdf.Pdf.new()
+        stripes = Image.new("RGB", (600, 40))
+        for x in range(600):
+            stripes.paste(Image.new("RGB", (1, 40),
+                                    (255, 255, 255) if x % 2 else (0, 0, 0)),
+                          (x, 0))
+        palette = stripes.quantize(colors=2)
+        stream = embed(pdf, palette.tobytes(), palette,
+                       colorspace=pikepdf.Array(
+                           [pikepdf.Name.Indexed, pikepdf.Name.DeviceRGB, 1,
+                            pikepdf.String(bytes(palette.getpalette()[:6]))]))
+        page_with(pdf, [(stream, 0, 0, 600 * 72 / 300, 40 * 72 / 300)])
+
+        compress.compress(pdf, compress.Settings(ppi=150))
+
+        after = pikepdf.PdfImage(stream).as_pil_image().convert("RGB")
+        greys = [value for value, _count, in
+                 [(c[1], c[0]) for c in (after.getcolors(256) or [])]
+                 if 40 < value[0] < 215]
+        self.assertTrue(greys, "the columns were resampled as palette indices")
+
+    def test_a_tiny_rule_is_not_made_bigger(self):
+        """Thousands of 1036x4 rules is what that document is actually full of."""
+        pdf = pikepdf.Pdf.new()
+        stream = self.diagram(pdf, width=1036, height=4, ppi=300)
+        raw = bytes(stream.read_raw_bytes())
+        outcome = compress.compress(
+            pdf, compress.Settings(ppi=150)).outcomes[0]
+        self.assertLessEqual(outcome.after, outcome.before)
+        if outcome.action == compress.KEPT:
+            self.assertEqual(bytes(stream.read_raw_bytes()), raw)
+
+
+class TestCMYK(unittest.TestCase):
+    """Re-encoded as CMYK, so no colour space is converted and no ICC needed.
+
+    The hazard is that Adobe stores CMYK JPEGs inverted. Ten images from a
+    real publisher's book were decoded, re-encoded and compared: worst channel
+    drift 12 to 16 of 255, mean under 1. An inversion would read about 255.
+    """
+
+    def swatches(self, pdf, ppi=300, width=600, height=400):
+        image = Image.new("CMYK", (width, height))
+        for index, ink in enumerate(((255, 0, 0, 0), (0, 255, 0, 0),
+                                     (0, 0, 255, 0), (0, 0, 0, 200))):
+            image.paste(Image.new("CMYK", (width // 4, height), ink),
+                        (index * width // 4, 0))
+        buffer = io.BytesIO()
+        image.save(buffer, "JPEG", quality=95)
+        stream = embed(pdf, buffer.getvalue(), image,
+                       filter_=pikepdf.Name.DCTDecode,
+                       colorspace=pikepdf.Name.DeviceCMYK)
+        page_with(pdf, [(stream, 0, 0, width * 72 / ppi, height * 72 / ppi)])
+        return stream
+
+    def test_a_cmyk_image_is_downsampled_and_stays_cmyk(self):
+        pdf = pikepdf.Pdf.new()
+        stream = self.swatches(pdf)
+        outcome = compress.compress(
+            pdf, compress.Settings(ppi=150)).outcomes[0]
+        self.assertEqual(outcome.action, compress.DOWNSAMPLED)
+        self.assertEqual(str(stream.ColorSpace), "/DeviceCMYK")
+        self.assertEqual(pikepdf.PdfImage(stream).as_pil_image().mode, "CMYK")
+
+    def test_the_inks_are_not_inverted(self):
+        """The failure this was measured against: a colour negative."""
+        pdf = pikepdf.Pdf.new()
+        stream = self.swatches(pdf)
+        before = pikepdf.PdfImage(stream).as_pil_image().convert("CMYK")
+        compress.compress(pdf, compress.Settings(ppi=150))
+        after = pikepdf.PdfImage(stream).as_pil_image().convert("CMYK")
+        for fraction in (0.125, 0.375, 0.625, 0.875):
+            was = before.getpixel((int(before.width * fraction),
+                                   before.height // 2))
+            now = after.getpixel((int(after.width * fraction),
+                                  after.height // 2))
+            with self.subTest(fraction=fraction):
+                self.assertLess(max(abs(a - b) for a, b in zip(was, now)), 24)
+
+    def test_greyscale_takes_a_cmyk_image_to_devicegray(self):
+        pdf = pikepdf.Pdf.new()
+        stream = self.swatches(pdf)
+        compress.compress(pdf, compress.Settings(ppi=150, greyscale=True))
+        self.assertEqual(str(stream.ColorSpace), "/DeviceGray")
+        self.assertEqual(pikepdf.PdfImage(stream).as_pil_image().mode, "L")
 
 
 class TestSharedImages(unittest.TestCase):
