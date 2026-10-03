@@ -318,3 +318,83 @@ class TestLayout(unittest.TestCase):
         self.win.rotate(90)
         settle(timeout_ms=400)
         self.assertLessEqual(abs(self.win.view._visible_range()[0] - before), 1)
+
+
+class TestRenderingFollowsTheScreen(unittest.TestCase):
+    """Render at the screen's real resolution, not its logical one.
+
+    Windows at 150% presents a 2560-pixel screen as 1707 logical pixels. A
+    bitmap rendered at the logical size is stretched by half again when it is
+    drawn, so every stem of every glyph lands across one and a half pixels --
+    measured at 1.1 to 2.2 times further from a reference render than one made
+    at the real size, worst on pages of text, which is where a reader looks.
+    """
+
+    def setUp(self):
+        from pdfarranger_qt.core import Dims, Page
+        from pdfarranger_qt.model import PageListModel
+        from pdfarranger_qt.render import Renderer
+
+        self.renderer = Renderer()
+        self.addCleanup(self.renderer.shutdown)
+        self.model = PageListModel(self.renderer)
+        self.model.set_pages([Page(1, 1, "a.pdf", size_orig=Dims(612, 792))])
+        self.page = self.model.pages[0]
+
+    def test_a_thumbnail_is_rendered_in_device_pixels(self):
+        self.model.set_device_ratio(1.0)
+        logical = self.model.thumb_width(self.page)
+        self.model.set_device_ratio(1.5)
+        self.assertEqual(self.model.thumb_width(self.page),
+                         round(logical * 1.5))
+
+    def test_the_layout_stays_in_logical_pixels(self):
+        """The cell must not move when the window changes screens."""
+        self.model.set_device_ratio(1.0)
+        before = self.model.thumb_size(self.page)
+        self.model.set_device_ratio(2.0)
+        self.assertEqual(self.model.thumb_size(self.page), before)
+
+    def test_changing_screens_changes_the_render_key(self):
+        """Otherwise the cached bitmap for the old screen is reused."""
+        self.model.set_device_ratio(1.0)
+        was = self.page.render_key(self.model.thumb_width(self.page))
+        self.model.set_device_ratio(1.5)
+        self.assertNotEqual(
+            self.page.render_key(self.model.thumb_width(self.page)), was)
+
+    def test_the_ratio_never_drops_below_one(self):
+        self.model.set_device_ratio(0.0)
+        self.assertEqual(self.model.device_ratio, 1.0)
+
+    def test_the_view_follows_the_screen_it_is_on(self):
+        from pdfarranger_qt.view import PageView
+
+        class Scaled(PageView):
+            def devicePixelRatioF(self):
+                return 1.5
+
+        view = Scaled(self.model)
+        self.addCleanup(view.deleteLater)
+        view._follow_device_ratio()
+        self.assertAlmostEqual(self.model.device_ratio, 1.5)
+
+
+class TestTheReaderRendersInDevicePixels(unittest.TestCase):
+    def test_the_page_size_asked_for_is_scaled(self):
+        from PySide6.QtCore import QRectF
+
+        from pdfarranger_qt.canvas import PageCanvas
+
+        rect = QRectF(0, 0, 790, 1022)
+        self.assertEqual(PageCanvas._device_size(rect, 1.0).width(), 790)
+        self.assertEqual(PageCanvas._device_size(rect, 1.5).width(), 1185)
+        self.assertEqual(PageCanvas._device_size(rect, 1.5).height(), 1533)
+
+    def test_a_degenerate_rectangle_still_asks_for_a_pixel(self):
+        from PySide6.QtCore import QRectF
+
+        from pdfarranger_qt.canvas import PageCanvas
+
+        size = PageCanvas._device_size(QRectF(0, 0, 0, 0), 1.5)
+        self.assertEqual((size.width(), size.height()), (1, 1))

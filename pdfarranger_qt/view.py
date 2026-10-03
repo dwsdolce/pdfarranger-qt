@@ -620,7 +620,24 @@ class PageView(QListView):
 
     def showEvent(self, event):
         super().showEvent(event)
+        self._follow_device_ratio()
         self._schedule_render()
+
+    def changeEvent(self, event):
+        """Qt sends this when the window moves to a screen scaled differently."""
+        super().changeEvent(event)
+        if event.type() == QEvent.Type.DevicePixelRatioChange:
+            self._follow_device_ratio()
+            self._schedule_render()
+
+    def _follow_device_ratio(self):
+        """Render at the screen's real resolution, not its logical one.
+
+        Before a widget is shown its ratio is whatever the primary screen
+        says, so this is called again on show and on every change rather than
+        read once in the constructor.
+        """
+        self.page_model.set_device_ratio(self.devicePixelRatioF())
 
     def _rows_near(self, y_values):
         """Rows hit by a grid of probes along the given viewport lines.
