@@ -42,6 +42,7 @@ two is how a hit test ends up half a page out on an external monitor.
 import bisect
 import collections
 import math
+import time
 from typing import List, Optional, Sequence, Tuple
 
 from PySide6.QtCore import (
@@ -224,6 +225,18 @@ class PageLayout:
     def page_count(self) -> int:
         return len(self._sizes)
 
+    def size_of(self, index: int) -> QSizeF:
+        """This page's size in points, as the layout currently believes it."""
+        return self._sizes[index]
+
+    def set_size(self, index: int, size: QSizeF):
+        """Correct one page's size, for the measuring pass that follows an open.
+
+        Does not re-lay out: a caller correcting a run of pages wants one
+        relayout at the end of it, not sixty-four.
+        """
+        self._sizes[index] = QSizeF(size)
+
     def content_size(self) -> QSizeF:
         """The whole scrolled column, in document pixels."""
         return QSizeF(self._width, self._height)
@@ -374,11 +387,32 @@ class PageLayout:
 def sizes_from_document(document, count: Optional[int] = None) -> List[QSizeF]:
     """Page sizes off a `QPdfDocument`, in points.
 
-    Read once and kept: `pagePointSize` is cheap but not free, and the layout
-    consults every size on each zoom change.
+    Read once and kept: the layout consults every size on each zoom change.
+
+    Not cheap, which is the thing the comment here used to get wrong. It is
+    1.8 ms a page on a 1,590-page book -- 2.9 seconds, against 0.7 s to parse
+    the file and 20 ms to render a page -- so asking for every size before
+    showing anything is most of what opening a large document costs. See
+    `provisional_sizes`.
     """
     n = document.pageCount() if count is None else count
     return [document.pagePointSize(i) for i in range(n)]
+
+
+def provisional_sizes(document) -> List[QSizeF]:
+    """Every page the size of the first, pending the real measurements.
+
+    Enough to lay out and paint immediately. A book is nearly but not quite
+    uniform -- 1,550 of the Handbook's 1,590 pages share one size, and the
+    other 40 are the plates -- so the guess is right for most of the document
+    and wrong in exactly the places a layout would notice. `PageCanvas` then
+    measures the rest a chunk at a time and corrects itself.
+    """
+    count = document.pageCount()
+    if count <= 0:
+        return []
+    first = document.pagePointSize(0)
+    return [QSizeF(first) for _ in range(count)]
 
 
 def _is_finite_point(point) -> bool:
@@ -547,6 +581,23 @@ class PageText:
         return start, end
 
 
+class _ThisThread:
+    """A document provider that hands back one already-open document.
+
+    `PageRenderTask.render` asks a provider for the document, because the
+    worker parses its own from bytes. Rendering inline needs the opposite:
+    the document already on this thread, and no parse at all.
+    """
+
+    __slots__ = ("_document",)
+
+    def __init__(self, document):
+        self._document = document
+
+    def get(self, *_args):
+        return self._document
+
+
 class PageRenderTask:
     """One page of the reader's document at one size.
 
@@ -624,20 +675,32 @@ class AsynchronousPages(QObject):
                                   documents=self._documents, name="pdf-reader")
         self._renderer.ready.connect(self._arrived)
         self._sizes = {}          # page -> the size most recently asked for
+        #: The GUI thread's document, for rendering a page while painting it.
+        self._document = None
+        #: Pages that took longer than `INLINE_BUDGET_MS` when rendered here,
+        #: and go back to the worker next time rather than stalling a scroll.
+        self._slow = set()
         #: Low-resolution copies, kept far longer than the full-size ones.
-        #: Rendering small is not cheaper -- a heavy page costs 134 ms at 80 px
-        #: against 186 ms at 2000 px, because the cost is parsing and image
-        #: decoding rather than rasterising -- but *keeping* small is enormously
-        #: cheaper, and that is the lever. A page rendered once never blanks
-        #: again, which is what most reading actually does: move back and forth
-        #: over pages already seen.
+        #: Rendering small is not cheaper -- 40 pages cost 419 ms at 150 px and
+        #: 436 ms at 300 px, because the time goes into parsing the page rather
+        #: than rasterising it -- but *keeping* small is enormously cheaper, and
+        #: that is the lever. These are now made by shrinking the bitmap a paint
+        #: just produced rather than by a second render, and they stand in for
+        #: the pages too slow to render inline.
         self._proxies: collections.OrderedDict = collections.OrderedDict()
 
     def set_document(self, document, data: Optional[bytes] = None):
-        """Point at a new document. ``data`` is what the render thread parses."""
+        """Point at a new document. ``data`` is what the render thread parses.
+
+        ``document`` is the GUI thread's own copy, kept here so a page that is
+        being painted *now* can be rendered inline rather than queued. Same
+        object the search and the outline use; no second parse.
+        """
         self._renderer.invalidate()
         self._sizes.clear()
         self._proxies.clear()
+        self._slow.clear()
+        self._document = document
         self._documents.set_data(data)
 
     def clear(self):
@@ -667,12 +730,25 @@ class AsynchronousPages(QObject):
         while len(self._proxies) > self.PROXY_PAGES:
             self._proxies.popitem(last=False)
 
-    def page_image(self, index: int, size: QSize) -> Optional[QImage]:
-        """The page at this size if it is ready, else the best stand-in.
+    def page_image(self, index: int, size: QSize,
+                   settled: bool = True) -> Optional[QImage]:
+        """The page at this size: rendered here if it can be, else a stand-in.
 
-        Never blocks and never renders here. A miss queues the real render and
-        returns whatever the cache holds for this page at another size, which
-        the canvas scales into place.
+        This used to never render, only queue. The round trip costs a median
+        of 35 ms -- the render plus the queue, the thread hop, the signal and
+        a second paint -- so every page not already cached was painted blank
+        or blurred first and corrected two to five frames later. That is the
+        white-then-fills-in a scrollbar drag shows, and the low-resolution
+        proxy is the same thing on a page visited before.
+
+        The asynchronous design was right when a page cost 134 ms. Measured on
+        the same book today it costs 12 to 33 ms, median 20, because the pages
+        that were expensive were full of the CMYK and indexed images that are
+        now compressed. One dropped frame beats five blank ones, so a page
+        being painted now is rendered now.
+
+        The worker keeps prefetch, proxies, and any page that proves too slow
+        to do inline.
         """
         if size.width() <= 0 or size.height() <= 0:
             return None
@@ -681,10 +757,52 @@ class AsynchronousPages(QObject):
         if image is not None:
             return image
         self._sizes[index] = size
+        aspect = size.height() / max(1, size.width())
+
+        image = self._render_now(index, size, settled)
+        if image is not None:
+            self._renderer.cache.put(key, image)
+            self._proxy_from(index, image)
+            return image
+
         # Urgent: this page is being painted right now.
         self._request(index, size, urgent=True)
-        self._request_proxy(index, size.height() / max(1, size.width()))
+        self._request_proxy(index, aspect)
         return self._stand_in(index)
+
+    #: Longer than this and a page is left to the worker from then on. Two
+    #: frames at 60 Hz: enough for all but the heaviest pages measured, and
+    #: short enough that one of them cannot be felt as a stutter.
+    INLINE_BUDGET_MS = 33.0
+
+    def _render_now(self, index: int, size: QSize,
+                    settled: bool = True) -> Optional[QImage]:
+        """Render on this thread, or None to let the worker have it.
+
+        The same `PageRenderTask` the worker runs, against the GUI thread's
+        document: identical pixels for an identical key, which matters because
+        the two share one cache.
+
+        ``settled`` is whether the viewport has stopped. The budget applies
+        only while it is moving: the cover of a book measured 63 ms and its
+        first page 127 ms, so the budget alone sent exactly the two pages a
+        reader returns to most back to the worker for ever, and jumping to the
+        front of the document faded in rather than appearing.
+        """
+        if self._document is None:
+            return None
+        if index in self._slow and not settled:
+            return None
+        key = (index, size.width(), size.height())
+        started = time.perf_counter()
+        image = PageRenderTask(key, index, size).render(_ThisThread(self._document))
+        if image is None or image.isNull():
+            return None
+        if (time.perf_counter() - started) * 1000 > self.INLINE_BUDGET_MS:
+            # Keep this one -- it is already paid for -- but do not stall a
+            # scroll on it again once it has been evicted.
+            self._slow.add(index)
+        return image
 
     def _stand_in(self, index: int) -> Optional[QImage]:
         """The best bitmap we already hold for this page, at any size.
@@ -709,6 +827,21 @@ class AsynchronousPages(QObject):
         self._renderer.request(
             [PageRenderTask((index, size.width(), size.height()), index, size)],
             urgent=urgent)
+
+    def _proxy_from(self, index: int, image: QImage):
+        """Shrink the bitmap we just made instead of rendering it again.
+
+        Asking the worker for the proxy of a page rendered inline costs more
+        than the proxy is worth: the two run at once and contend for the CPU,
+        which measured as *double* the inline paint -- a median of 50 ms
+        against 24 for the same pages with the proxy suppressed. Scaling an
+        image already in hand is a fraction of a millisecond and gives the
+        same picture.
+        """
+        if index in self._proxies:
+            return
+        self._keep_proxy(index, image.scaledToWidth(self.PROXY_WIDTH,
+                                                    Qt.SmoothTransformation))
 
     def _request_proxy(self, index: int, aspect: float):
         """Queue the low-resolution copy, if this page has never had one.
@@ -818,6 +951,19 @@ class PageCanvas(QAbstractScrollArea):
         self.viewport().setMouseTracking(True)
         self.setFrameShape(QFrame.NoFrame)
         self.viewport().setAutoFillBackground(True)
+        #: Fires once the viewport has stopped, to repaint the pages that were
+        #: too expensive to render while it was moving.
+        self._settle = QTimer(self)
+        self._settle.setSingleShot(True)
+        self._settle.timeout.connect(lambda: self.viewport().update())
+        #: Reads the real page sizes a chunk at a time, after the document is
+        #: already on screen.
+        self._measured = 0
+        self._measure = QTimer(self)
+        self._measure.timeout.connect(self._measure_some)
+        #: True while the scrollbar is being moved by us rather than by the
+        #: person reading, so that it does not read as scrolling.
+        self._anchoring = False
         self.verticalScrollBar().valueChanged.connect(self._scrolled)
         self.horizontalScrollBar().valueChanged.connect(lambda _v: self.viewport().update())
 
@@ -829,10 +975,11 @@ class PageCanvas(QAbstractScrollArea):
         ``data`` is the same document as bytes, for the render thread to parse
         into one of its own: QPdfDocument is not thread-safe, and this one is
         bound to the search, bookmark and page-selector models on this thread.
-        Without it the reader still works, but every page paints as a
-        placeholder, because nothing can be rendered.
+        Without it prefetch and the slow-page fallback have nothing to work
+        with, but pages still display: they are rendered on this thread from
+        ``document`` as they are painted.
         """
-        sizes = sizes_from_document(document) if document is not None else []
+        sizes = provisional_sizes(document) if document is not None else []
         # Carrying the zoom *and* the facing mode across: these belong to the
         # reader, not to the document, and a new document arrives every time an
         # edit makes the snapshot stale. Dropping facing here meant the setting
@@ -853,6 +1000,67 @@ class PageCanvas(QAbstractScrollArea):
         self.viewport().update()
         if sizes:
             self._emit_current()
+        self._start_measuring(len(sizes))
+
+    #: Pages measured per tick while the real sizes are gathered. At 1.8 ms a
+    #: page that is about 100 ms of work between turns of the event loop --
+    #: long enough to get through a book quickly, short enough not to be felt.
+    MEASURE_CHUNK = 64
+
+    def _start_measuring(self, count: int):
+        """Replace the provisional sizes with the real ones, in the background.
+
+        Reading all 1,590 of the Handbook's page sizes takes 2.9 seconds and
+        used to happen before the first page could be drawn. Nothing about it
+        has to be finished before the document is shown: the layout is right
+        for the pages that match the first one, which is nearly all of them,
+        and wrong only in its total height until this catches up.
+        """
+        self._measured = 1 if count else 0
+        self._measure.stop()
+        if count > 1 and self._document is not None:
+            self._measure.start(0)
+
+    def _measure_some(self):
+        """One chunk of page sizes, then yield to the event loop."""
+        document, layout = self._document, self._layout
+        count = layout.page_count
+        if document is None or self._measured >= count:
+            self._measure.stop()
+            return
+        end = min(self._measured + self.MEASURE_CHUNK, count)
+        changed = False
+        for index in range(self._measured, end):
+            size = document.pagePointSize(index)
+            if size != layout.size_of(index):
+                layout.set_size(index, size)
+                changed = True
+        self._measured = end
+        if changed:
+            # Re-laying out moves the scrollbar under the reader, so hold the
+            # page they are on rather than the pixel offset -- but only when
+            # they are still. Re-anchoring mid-scroll would snap the view to
+            # the top of the current page and fight the drag, and a few pixels
+            # of drift while moving is not noticeable.
+            page = self._page_filling_the_viewport() if self.settled() else -1
+            was_settled = self.settled()
+            self._anchoring = True
+            try:
+                # Changing the range moves the value, which is the same signal
+                # a drag sends.
+                layout.set_zoom(layout.zoom)
+                self._update_ranges()
+            finally:
+                self._anchoring = False
+            if page >= 0:
+                self.go_to_page(page)
+            if was_settled and self._settle.isActive():
+                # Nothing the reader did; do not make them wait for a settle
+                # that only this pass started.
+                self._settle.stop()
+            self.viewport().update()
+        if end >= count:
+            self._measure.stop()
 
     def shutdown(self):
         """Stop the render thread and join it.
@@ -1015,7 +1223,18 @@ class PageCanvas(QAbstractScrollArea):
             self._single = index
             self._update_ranges()
         top = self._layout.page_rect(index).top() - self._layout.margin_px()
-        self.verticalScrollBar().setValue(int(round(top)))
+        # Not motion. Moving the scrollbar from code -- a jump to a bookmark,
+        # restoring where you were, re-anchoring after the page sizes are
+        # measured -- arrives through the same signal as a drag, and counting
+        # it as scrolling made the arrival of a page blank it: the paint that
+        # followed thought the view was moving, showed the proxy for anything
+        # expensive, and corrected itself 120 ms later. Displayed, blanked,
+        # displayed.
+        self._anchoring = True
+        try:
+            self.verticalScrollBar().setValue(int(round(top)))
+        finally:
+            self._anchoring = False
         self._emit_current()
 
     def next_page(self):
@@ -1121,7 +1340,31 @@ class PageCanvas(QAbstractScrollArea):
 
     def _scrolled(self, _value):
         self._emit_current()
+        self._moving()
         self.viewport().update()
+
+    #: How long after the last scroll the view counts as settled. Long enough
+    #: not to fire during a drag, short enough to feel like part of stopping.
+    SETTLE_MS = 120
+
+    def _moving(self):
+        """Note that the viewport is in motion, and arrange to notice when it stops.
+
+        A scrollbar moved from code is not motion -- see `go_to_page`.
+
+        While it is moving, an expensive page is left to the worker: stalling a
+        scroll for 127 ms is felt, and a stand-in for one frame is not. Once it
+        has stopped, the opposite is true -- nobody perceives a render as a
+        stall when they are sitting still, and a page left blurred is simply
+        wrong. So the timer repaints once, settled, and the slow pages are
+        rendered properly then.
+        """
+        if self._anchoring:
+            return
+        self._settle.start(self.SETTLE_MS)
+
+    def settled(self) -> bool:
+        return not self._settle.isActive()
 
     def _emit_current(self):
         page = self._page_filling_the_viewport()
@@ -2205,6 +2448,7 @@ class PageCanvas(QAbstractScrollArea):
             top, bottom = max(top, band_top), min(bottom, band_bottom)
         visible = list(self._layout.pages_in(top, bottom))
         ratio = self.devicePixelRatioF()
+        settled = self.settled()
         for index in visible:
             rect = self._layout.page_rect(index)
             target = QRectF(rect.topLeft() - offset, rect.size())
@@ -2215,7 +2459,7 @@ class PageCanvas(QAbstractScrollArea):
             # never looks like a page. Nothing offscreen catches this: the
             # geometry is right either way, and only the pixels are wrong.
             painter.fillRect(target, Qt.white)
-            image = self._pages.page_image(index, size)
+            image = self._pages.page_image(index, size, settled)
             if image is not None:
                 painter.drawImage(target, image)
             # Blank paper is also what shows while there is no bitmap yet. Step

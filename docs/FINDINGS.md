@@ -755,6 +755,48 @@ element 521,475 of a 1275-wide image, which is row 409 to the pixel. Passing
 `tiffinfo={278: image.height}` gives one strip, one continuous coding, one
 payload.
 
+## A render that is queued costs more than the render
+
+The reader asked the worker for every page it did not already have, and
+painted a stand-in meanwhile. Measured end to end on the compressed Handbook,
+a page was blank for a median of **35 ms** — the render, the queue, the thread
+hop, the signal and a second paint — which at 60 Hz is two to five frames of
+white before the page appears. That is what a scrollbar drag showed as
+blank-then-fills-in, and as blurred-then-sharp on a page visited before, where
+the 120 px proxy stood in instead of nothing.
+
+The design was right when it was written and wrong by the time anyone looked
+again. It rested on a measurement in its own comment — "a heavy page costs
+134 ms at 80 px against 186 ms at 2000 px" — and at 134 ms, rendering inside a
+paint would have been indefensible. The same pages now render in a median of
+**29 ms**, because the CMYK and indexed images that made them expensive were
+compressed. Nothing told us the premise had expired; the number simply stopped
+being true.
+
+Three things measured along the way, two of which were wrong guesses worth
+recording so nobody spends the time again:
+
+- **It is not the in-memory buffer.** The reader parses its document from
+  bytes rather than from a file (D15), which looked like an obvious suspect.
+  Median 19.6 ms from the file against 19.7 ms from a 155 MB `QBuffer`.
+  Identical.
+- **It is not a queue backlog.** The reader never calls `cancel_pending`,
+  unlike the grid, so a drag ought to pile up work for pages long gone.
+  Flicking the thumb across 1,200 pages at 60 paints a second: 298 renders in
+  6.0 s and **nothing left queued**. One thread sustains ~50 renders a second
+  and simply keeps up.
+- **The proxy was competing with the page.** This one was real. Asking the
+  worker for the 120 px copy of a page being rendered inline runs both at
+  once, and they contend: the same 60 pages cost a median of **50 ms** with
+  the proxy render and **24 ms** without it. Shrinking the bitmap already in
+  hand costs a fraction of a millisecond and gives the same picture.
+
+Cold and warm are also worth not confusing. An early timing here took the
+minimum of two runs per page, which measures a page PDFium has already parsed;
+a scroll meets every page cold exactly once. On this document they turned out
+to be close — cold 25.7 ms, warm 22.9 — but the measurement has to be made,
+not assumed.
+
 ## Pillow will not resample a palette, and does not say so
 
 `Image.resize(size, Image.LANCZOS)` on a `P` or `1` image silently ignores the

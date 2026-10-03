@@ -1725,6 +1725,12 @@ class MainWindow(QMainWindow):
         self._refresh_state()
 
     def _reset_document(self):
+        # First, while there is still a document to remember and a path to
+        # remember it against. This is how every way of letting one go ends --
+        # File ▸ Close, and opening another over it -- so putting it here
+        # covers them all; `closeEvent` has to do it separately because
+        # quitting does not come through here.
+        self._store_reading_position()
         self.model.undo.clear()
         self.model.set_pages([])
         self.renderer.invalidate()
@@ -2955,6 +2961,12 @@ class MainWindow(QMainWindow):
             event.ignore()
             return
         self.settings.setValue("reader/outline-width", self.reader.outline_width())
+        # Where you had got to, before the reader is torn down. Switching to
+        # the grid used to be the only thing that stored it, so quitting from
+        # read mode -- which is how reading ends -- saved nothing, and the next
+        # open restored a position from whenever the view was last switched,
+        # possibly sessions ago.
+        self._store_reading_position()
         self.settings.setValue("window/geometry", self.saveGeometry())
         self.settings.setValue("window/state", self.saveState())
         # Belt and braces, not a fix for anything observed: a normal quit does

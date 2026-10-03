@@ -374,14 +374,23 @@ class TestTheStatusBarSaysWhereYouAre(unittest.TestCase):
         self.win = MainWindow()
         self.win.resize(900, 700)
         self.win.show()
-        self.win.open_paths([MANY_PAGES])
-        settle(timeout_ms=400)
         # These assert absolute page numbers, and the reading position is
         # stored per document *path* -- so an earlier test in this file that
         # read the same fixture would otherwise decide where this one starts.
+        #
+        # Cleared *before* the document is opened, not after. Opening ends in
+        # read mode, which is where a stored position is applied, so clearing
+        # it afterwards is too late: it only looked sufficient while the
+        # position was written on a mode switch and never on close, which left
+        # nothing behind for a window that was simply closed.
+        self.win.current_path = os.path.abspath(MANY_PAGES)
         key = self.win._reading_key()
         if key:
             self.win.settings.remove(key)
+        self.win.current_path = None
+
+        self.win.open_paths([MANY_PAGES])
+        settle(timeout_ms=400)
         self.win.modified = False
 
     def tearDown(self):

@@ -1393,3 +1393,101 @@ class TestBookmarkPanel(unittest.TestCase):
         self.addCleanup(second.close)
         self.addCleanup(setattr, second, "modified", False)
         self.assertEqual(second.reader.outline_width(), 288)
+
+
+class TestAPageIsRenderedInThePaintThatAsksForIt(unittest.TestCase):
+    """The reader used to queue every miss and paint a stand-in first.
+
+    That round trip costs a median of 35 ms -- the render, the queue, the
+    thread hop, the signal and a second paint -- so a page not already cached
+    was blank or blurred for two to five frames and corrected afterwards.
+    That is what a scrollbar drag shows as white-then-fills-in.
+
+    The asynchronous design was right when a page cost 134 ms. The same pages
+    now cost a median of 29 ms inline, because the images that made them
+    expensive have since been compressed.
+    """
+
+    def pages(self, with_document=True):
+        from PySide6.QtCore import QBuffer, QByteArray, QIODevice
+        from PySide6.QtPdf import QPdfDocument
+
+        from pdfarranger_qt.canvas import AsynchronousPages
+
+        data = open(TEST_PDF, "rb").read()
+        document = None
+        if with_document:
+            self.array = QByteArray(data)
+            self.buffer = QBuffer(self.array)
+            self.buffer.open(QIODevice.ReadOnly)
+            document = QPdfDocument(None)
+            document.load(self.buffer)
+        pages = AsynchronousPages()
+        self.addCleanup(pages.shutdown)
+        pages.set_document(document, data)
+        return pages
+
+    def test_a_cold_page_comes_back_rendered(self):
+        from PySide6.QtCore import QSize
+
+        pages = self.pages()
+        size = QSize(400, 518)
+        image = pages.page_image(0, size)
+        self.assertIsNotNone(image, "the page was not rendered in the paint")
+        self.assertEqual(image.size(), size)
+
+    def test_it_lands_in_the_cache_the_worker_shares(self):
+        """Same key, same pixels: the two render paths share one cache."""
+        from PySide6.QtCore import QSize
+
+        pages = self.pages()
+        size = QSize(400, 518)
+        pages.page_image(0, size)
+        self.assertIsNotNone(pages._renderer.get((0, 400, 518)))
+
+    def test_the_proxy_is_shrunk_from_it_rather_than_rendered_again(self):
+        """Rendering both at once contends for the CPU and doubles the paint."""
+        from PySide6.QtCore import QSize
+
+        pages = self.pages()
+        pages.page_image(0, QSize(400, 518))
+        self.assertIn(0, pages._proxies)
+        self.assertEqual(pages._proxies[0].width(),
+                         pages.PROXY_WIDTH)
+
+    def test_a_slow_page_goes_back_to_the_worker_while_scrolling(self):
+        from PySide6.QtCore import QSize
+
+        pages = self.pages()
+        pages._slow.add(0)
+        self.assertIsNone(pages._render_now(0, QSize(400, 518), settled=False))
+
+    def test_but_a_settled_view_renders_it_anyway(self):
+        """The budget is about stalling a scroll, and a still view has none.
+
+        Measured on a real book, the cover costs 63 ms and the first page
+        127 ms -- so a budget that applied always sent exactly the two pages a
+        reader returns to most back to the worker for ever, and jumping to the
+        front faded in instead of appearing.
+        """
+        from PySide6.QtCore import QSize
+
+        pages = self.pages()
+        pages._slow.add(0)
+        image = pages._render_now(0, QSize(400, 518), settled=True)
+        self.assertIsNotNone(image)
+        self.assertEqual(image.size(), QSize(400, 518))
+
+    def test_without_a_document_it_behaves_as_it_did(self):
+        """The reader still works when only the bytes arrived."""
+        from PySide6.QtCore import QSize
+
+        pages = self.pages(with_document=False)
+        self.assertIsNone(pages._render_now(0, QSize(400, 518)))
+        self.assertIsNone(pages.page_image(0, QSize(400, 518)))
+
+    def test_a_degenerate_size_renders_nothing(self):
+        from PySide6.QtCore import QSize
+
+        pages = self.pages()
+        self.assertIsNone(pages.page_image(0, QSize(0, 0)))

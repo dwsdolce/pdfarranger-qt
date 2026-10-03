@@ -1100,3 +1100,84 @@ class TestClosingAWindowLeavesNothingDangling(unittest.TestCase):
         page = win.model.pages[0]
         win.close()
         self.assertEqual(win._password_for(page), "")
+
+
+class TestTheReadingPositionSurvivesQuitting(unittest.TestCase):
+    """It was stored only when switching from the reader to the grid.
+
+    Quitting from read mode -- which is how reading usually ends -- wrote
+    nothing, so the next open restored whatever was saved the last time the
+    view was switched, possibly from a previous session. That reads as the
+    document reopening at an arbitrary page.
+    """
+
+    def setUp(self):
+        from pdfarranger_qt.mainwindow import MainWindow
+
+        self.win = MainWindow()
+        self.win.show()
+        self.win.open_paths([TEXT_PDF])
+        self.win.modified = False
+        settle(timeout_ms=300)
+        key = self.win._reading_key()
+        if key:
+            self.win.settings.remove(key)
+
+    def test_closing_from_read_mode_remembers_where_you_were(self):
+        self.win.set_read_mode(True)
+        settle(timeout_ms=300)
+        self.win.reader.go_to_page(1)
+        settle(timeout_ms=300)
+        key = self.win._reading_key()
+
+        self.win.modified = False
+        self.win.close()
+
+        self.assertEqual(self.win.settings.value(key, 0, type=int), 1)
+
+    def test_an_unsaved_document_has_nowhere_to_remember(self):
+        """Keyed on the path, so a document without one does not try."""
+        self.win.current_path = None
+        self.win.modified = False
+        self.win.close()          # must not raise
+        self.assertIsNone(self.win._reading_key())
+
+    def test_closing_the_document_remembers_it_too(self):
+        """File ▸ Close does not go through closeEvent, and is how most
+        documents are let go of."""
+        self.win.set_read_mode(True)
+        settle(timeout_ms=300)
+        self.win.reader.go_to_page(1)
+        settle(timeout_ms=300)
+        key = self.win._reading_key()
+
+        self.win.modified = False
+        self.win.close_document()
+
+        self.assertEqual(self.win.settings.value(key, 0, type=int), 1)
+
+    def test_reopening_comes_back_to_the_same_page(self):
+        """The whole point, end to end: close it there, open it there."""
+        self.win.set_read_mode(True)
+        settle(timeout_ms=300)
+        self.win.reader.go_to_page(1)
+        settle(timeout_ms=300)
+        self.win.modified = False
+        self.win.close_document()
+
+        self.win.open_paths([TEXT_PDF])
+        settle(timeout_ms=400)
+        self.assertEqual(self.win.reader.current_page(), 1)
+
+    def test_opening_another_document_remembers_this_one(self):
+        self.win.set_read_mode(True)
+        settle(timeout_ms=300)
+        self.win.reader.go_to_page(1)
+        settle(timeout_ms=300)
+        key = self.win._reading_key()
+
+        self.win.modified = False
+        self.win.open_paths([TEST_PDF])
+        settle(timeout_ms=300)
+
+        self.assertEqual(self.win.settings.value(key, 0, type=int), 1)

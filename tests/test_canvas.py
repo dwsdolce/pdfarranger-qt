@@ -1317,58 +1317,71 @@ class TestAsynchronousPages(unittest.TestCase):
         settle(lambda: self.source._renderer.get(
             (index, size.width(), size.height())) is not None, timeout_ms=5000)
 
-    def test_the_first_ask_does_not_render_inline(self):
-        """It answers with nothing or a stand-in -- never with the render.
+    def queued_only(self):
+        """A source with no GUI-thread document, so nothing renders inline.
 
-        Asserted on *what comes back* rather than on how long it took. This
-        used to time the call and require it under 50 ms, which is a proxy for
-        the real property and one a cold process fails: the first run after a
-        checkout pays for bytecode compilation and a cold file cache, so it
-        flaked roughly one run in five and passed on every run after.
+        Still a real configuration -- it is what the reader has when only the
+        bytes arrived -- and it is the path a page that proved too slow to
+        render in a paint falls back to, so the machinery below is live and
+        worth testing on its own.
+        """
+        source = AsynchronousPages()
+        self.addCleanup(source.shutdown)
+        source.set_document(None, self.data)
+        return source
 
-        An image at exactly the size asked for is the failure this is about,
-        because nothing but an inline render could have produced one.
+    def test_the_first_ask_renders_the_page_it_is_asked_for(self):
+        """It used to answer with nothing or a stand-in, deliberately.
+
+        The round trip costs a median of 35 ms -- render, queue, thread hop,
+        signal, second paint -- so every page not already cached was painted
+        blank first and corrected two to five frames later, which is what a
+        scrollbar drag showed as white-then-fills-in.
+
+        That was the right trade when a page cost 134 ms. The same pages now
+        cost a median of 29 ms rendered in the paint, because the images that
+        made them expensive have since been compressed, and one dropped frame
+        beats five blank ones.
         """
         size = QSize(200, 260)
         first = self.source.page_image(0, size)
-        if first is not None:
-            self.assertNotEqual(first.size(), size,
-                                "page_image rendered inline instead of queuing")
+        self.assertIsNotNone(first, "the page was not rendered in the paint")
+        self.assertEqual(first.size(), size)
 
-    def test_the_page_arrives_and_is_then_returned(self):
+    def test_without_a_document_of_its_own_it_still_queues(self):
+        """The old path, intact: a stand-in now and the bitmap later."""
+        source = self.queued_only()
         size = QSize(200, 260)
-        self.assertIsNone(self.source.page_image(0, size))
-        self.wait_for(0, size)
-        image = self.source.page_image(0, size)
-        self.assertIsNotNone(image)
-        self.assertEqual(image.size(), size)
+        first = source.page_image(0, size)
+        if first is not None:
+            self.assertNotEqual(first.size(), size)
+        settle(lambda: source._renderer.get(
+            (0, size.width(), size.height())) is not None, timeout_ms=5000)
+        self.assertEqual(source.page_image(0, size).size(), size)
 
     def test_it_says_when_a_page_arrives(self):
+        source = self.queued_only()
         seen = []
-        self.source.page_ready.connect(seen.append)
-        size = QSize(160, 200)
-        self.source.page_image(1, size)
+        source.page_ready.connect(seen.append)
+        source.page_image(1, QSize(160, 200))
         settle(lambda: 1 in seen, timeout_ms=5000)
         self.assertIn(1, seen)
 
     def test_another_size_of_the_same_page_stands_in(self):
-        """The only placeholder available: rendering a quick small one is not.
-
-        The Handbook's worst page costs 248 ms at 1000 px and 247 ms
-        at 2000 px, because the cost is parsing and image decode rather than
-        rasterising. So a cheap low-resolution pass does not exist.
-        """
+        """What the queued path offers while the right size is rendering."""
+        source = self.queued_only()
         small = QSize(120, 155)
-        self.source.page_image(0, small)
-        self.wait_for(0, small)
+        source.page_image(0, small)
+        settle(lambda: source._renderer.get((0, 120, 155)) is not None,
+               timeout_ms=5000)
 
         big = QSize(400, 515)
-        stand_in = self.source.page_image(0, big)
+        stand_in = source.page_image(0, big)
         self.assertIsNotNone(stand_in, "no stand-in offered for a cached page")
         self.assertEqual(stand_in.size(), small, "should be the cached bitmap")
 
     def test_a_page_never_rendered_has_no_stand_in(self):
-        self.assertIsNone(self.source.page_image(3, QSize(200, 260)))
+        self.assertIsNone(self.queued_only().page_image(3, QSize(200, 260)))
 
     def test_the_budget_is_what_the_caller_asks_for(self):
         """Only the layout knows how many pages are on screen at once."""
@@ -1407,11 +1420,24 @@ class TestAsynchronousPages(unittest.TestCase):
         self.source.clear()
         self.assertIsNone(self.source._renderer.get((0, size.width(), size.height())))
 
-    def test_a_source_with_no_bytes_renders_nothing(self):
-        """Without the bytes the render thread has no document of its own."""
+    def test_the_bytes_are_no_longer_needed_to_show_a_page(self):
+        """They are the render *thread's* document, and it is not the only one.
+
+        Without them the worker can parse nothing, so this used to display
+        placeholders for ever. Rendering in the paint uses the GUI thread's
+        document instead, which the search and the outline need anyway.
+        """
         source = AsynchronousPages()
         self.addCleanup(source.shutdown)
         source.set_document(self.memory.document, None)
+        image = source.page_image(0, QSize(100, 130))
+        self.assertIsNotNone(image)
+        self.assertEqual(image.size(), QSize(100, 130))
+
+    def test_with_neither_document_nothing_renders(self):
+        source = AsynchronousPages()
+        self.addCleanup(source.shutdown)
+        source.set_document(None, None)
         self.assertIsNone(source.page_image(0, QSize(100, 130)))
         settle(timeout_ms=300)
         self.assertIsNone(source._renderer.get((0, 100, 130)))
@@ -1736,8 +1762,15 @@ class TestProxyTier(unittest.TestCase):
         self.assertEqual(self.source._proxies[0].width(),
                          AsynchronousPages.PROXY_WIDTH)
 
-    def test_the_proxy_stands_in_after_the_full_page_is_evicted(self):
-        """The point of the whole tier: a revisit does not blank."""
+    def test_the_proxy_stands_in_for_a_page_too_slow_to_render_in_a_paint(self):
+        """What the tier is now for.
+
+        A page that fits the inline budget is simply rendered again when it is
+        revisited, which is better than any stand-in. The proxy is what covers
+        the ones that do not: rendering those in a paint would stall a scroll,
+        so they go back to the worker, and this is what fills the gap until
+        the bitmap arrives.
+        """
         size = QSize(300, 390)
         self.source.page_image(0, size)
         self.wait_for_proxy(0)
@@ -1746,8 +1779,10 @@ class TestProxyTier(unittest.TestCase):
 
         self.source._renderer.invalidate()          # as eviction would
         self.assertIsNone(self.source._renderer.get((0, 300, 390)))
+        self.source._slow.add(0)                    # as a slow render would
 
-        stand_in = self.source.page_image(0, size)
+        # Mid-scroll: this is the only time an expensive page is refused.
+        stand_in = self.source.page_image(0, size, settled=False)
         self.assertIsNotNone(stand_in, "a page read once still blanked")
         self.assertEqual(stand_in.width(), AsynchronousPages.PROXY_WIDTH)
 
@@ -2693,3 +2728,85 @@ class TestArrowKeyTable(unittest.TestCase):
         settle(timeout_ms=60)
         self.assertFalse(self.canvas.has_selection())
         self.assertIsNotNone(self.canvas.caret())
+
+
+class TestOpeningDoesNotMeasureEveryPageFirst(unittest.TestCase):
+    """Reading 1,590 page sizes took 4.8 s before anything could be drawn.
+
+    `pagePointSize` is 1.8 ms a page on a large book -- against 0.7 s to parse
+    the file and 20 ms to render a page -- so asking for all of them up front
+    was most of what opening cost. The layout now starts from the first page's
+    size and corrects itself in the background, which brings a usable, painted
+    document down to 34 ms.
+    """
+
+    def setUp(self):
+        self.docs = DocumentSet()
+        self.addCleanup(self.docs.cleanup)
+        pages = []
+        for _ in range(3):
+            pages += self.docs.add_file(OUTLINE_PDF)
+        self.data = get_in_memory_pdf(list(pages), self.docs.files_for_export())
+        self.memory = MemoryDocument(self.data)
+        self.addCleanup(self.memory.close)
+        self.canvas = PageCanvas()
+        self.addCleanup(self.canvas.shutdown)
+        self.canvas.resize(600, 500)
+
+    def test_the_layout_is_complete_before_the_sizes_are(self):
+        self.canvas.set_document(self.memory.document, self.data)
+        self.assertEqual(self.canvas._layout.page_count,
+                         self.memory.document.pageCount())
+        self.assertEqual(self.canvas._measured, 1,
+                         "every page was measured before the first was shown")
+
+    def test_every_page_starts_the_size_of_the_first(self):
+        from pdfarranger_qt.canvas import provisional_sizes
+
+        sizes = provisional_sizes(self.memory.document)
+        self.assertEqual(len(sizes), self.memory.document.pageCount())
+        self.assertEqual(set(tuple((s.width(), s.height())) for s in sizes),
+                         {(sizes[0].width(), sizes[0].height())})
+
+    def test_the_real_sizes_arrive_afterwards(self):
+        self.canvas.set_document(self.memory.document, self.data)
+        settle(lambda: not self.canvas._measure.isActive(), timeout_ms=5000)
+        self.assertEqual(self.canvas._measured,
+                         self.memory.document.pageCount())
+        for index in range(self.canvas._layout.page_count):
+            self.assertEqual(self.canvas._layout.size_of(index),
+                             self.memory.document.pagePointSize(index))
+
+    def test_an_empty_document_measures_nothing(self):
+        self.canvas.set_document(None)
+        self.assertFalse(self.canvas._measure.isActive())
+        self.assertEqual(self.canvas._measured, 0)
+
+    def test_measuring_does_not_look_like_scrolling(self):
+        """It displayed, blanked, then displayed again.
+
+        Re-anchoring after a size correction moves the scrollbar, which
+        arrives through the same signal as a drag. The paint that followed
+        believed the view was moving, showed the proxy for anything expensive,
+        and corrected itself 120 ms later.
+        """
+        self.canvas.set_document(self.memory.document, self.data)
+        self.assertTrue(self.canvas.settled())
+        settle(lambda: not self.canvas._measure.isActive(), timeout_ms=5000)
+        self.assertTrue(self.canvas.settled(),
+                        "the measuring pass read as scrolling")
+
+    def test_a_jump_is_not_scrolling_either(self):
+        """A bookmark, a restored position, Go to Page: all discrete."""
+        self.canvas.set_document(self.memory.document, self.data)
+        settle(lambda: not self.canvas._measure.isActive(), timeout_ms=5000)
+        self.canvas.go_to_page(2)
+        self.assertTrue(self.canvas.settled())
+
+    def test_but_a_drag_is(self):
+        """The one case the budget exists for."""
+        self.canvas.set_document(self.memory.document, self.data)
+        settle(lambda: not self.canvas._measure.isActive(), timeout_ms=5000)
+        bar = self.canvas.verticalScrollBar()
+        bar.setValue(min(bar.maximum(), bar.value() + 40))
+        self.assertFalse(self.canvas.settled())
