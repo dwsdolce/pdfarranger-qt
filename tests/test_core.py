@@ -141,3 +141,71 @@ class TestPageIdentity(unittest.TestCase):
         copy = page.duplicate(new_identity=True)
         self.assertEqual(copy.angle, page.angle)
         self.assertEqual(copy.npage, page.npage)
+
+
+class TestPageSizesAreReadTheFastWay(unittest.TestCase):
+    """`QPdfDocument.pagePointSize` once per page is most of a large open.
+
+    1,941 ms for a 1,590-page book, against 23 ms to read the same boxes off
+    the page dictionaries with pikepdf -- which is already a dependency and
+    already open on the file everywhere else.
+
+    The equivalence is the part to be careful about. A reader shows the
+    CropBox where there is one, clipped to the MediaBox, turned by /Rotate.
+    Taking the MediaBox alone disagreed with QtPdf on 18 pages of that book.
+    """
+
+    def make(self, path, boxes):
+        """``boxes`` is ``(media, crop or None, rotate)`` per page."""
+        pdf = pikepdf.Pdf.new()
+        for media, crop, rotate in boxes:
+            page = pdf.add_blank_page(page_size=(media[2] - media[0],
+                                                 media[3] - media[1]))
+            page.MediaBox = list(media)
+            if crop is not None:
+                page.CropBox = list(crop)
+            if rotate:
+                page.Rotate = rotate
+        pdf.save(path)
+        pdf.close()
+
+    def test_it_agrees_with_the_renderer(self):
+        from PySide6.QtPdf import QPdfDocument
+
+        from pdfarranger_qt.core import DocumentSet
+
+        path = os.path.join(os.path.dirname(TEST_PDF), "boxes-tmp.pdf")
+        self.addCleanup(lambda: os.path.exists(path) and os.remove(path))
+        self.make(path, [
+            ((0, 0, 612, 792), None, 0),            # plain
+            ((0, 0, 612, 792), (10, 20, 500, 700), 0),   # cropped
+            ((0, 0, 612, 792), None, 90),           # turned
+            ((0, 0, 612, 792), (10, 20, 500, 700), 270),  # both
+            ((0, 0, 800, 600), (0, 0, 2000, 2000), 0),   # crop beyond media
+        ])
+
+        docs = DocumentSet()
+        self.addCleanup(docs.cleanup)
+        docs.add_file(path)
+        ours = docs.docs[0].page_sizes
+
+        doc = QPdfDocument(None)
+        doc.load(path)
+        theirs = [doc.pagePointSize(i) for i in range(doc.pageCount())]
+        doc.close()
+
+        self.assertEqual(len(ours), len(theirs))
+        for index, (mine, real) in enumerate(zip(ours, theirs)):
+            with self.subTest(page=index):
+                self.assertAlmostEqual(mine.width, real.width(), places=2)
+                self.assertAlmostEqual(mine.height, real.height(), places=2)
+
+    def test_it_falls_back_when_the_two_disagree_on_the_count(self):
+        """Trust the renderer: it is what will actually draw the pages."""
+        from pdfarranger_qt.core import DocumentSet
+
+        docs = DocumentSet()
+        self.addCleanup(docs.cleanup)
+        docs.add_file(TEST_PDF)
+        doc = docs.docs[0]
+        self.assertIsNone(doc._sizes_with_pikepdf(doc.n_pages + 1))

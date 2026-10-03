@@ -789,7 +789,7 @@ def apply(pages: Sequence[Page], docs: DocumentSet,
     Mutates ``pages`` in place, like `stamp.apply`. The caller commits an undo
     state first.
     """
-    from .export import SaveOptions  # heavy, and only needed here
+    from .export import SaveOptions, balance_page_tree  # heavy, here only
 
     total = Result()
     by_source: Dict[int, List[Page]] = {}
@@ -823,6 +823,10 @@ def apply(pages: Sequence[Page], docs: DocumentSet,
                 progress(WRITING, 0, 1)
             handle, path = tempfile.mkstemp(suffix=".pdf", dir=docs.tmp_dir)
             os.close(handle)
+            # qpdf would otherwise leave one flat /Pages node, which costs a
+            # reader O(n^2) to walk and made a compressed book slower to open
+            # than the original.
+            balance_page_tree(pdf)
             pdf.save(path, **SaveOptions(compress=True).save_kwargs())
 
         # Already inside tmp_dir, so `PDFDoc` adopts it rather than copying.

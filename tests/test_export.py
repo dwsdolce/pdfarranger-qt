@@ -17,9 +17,10 @@
 """Writing PDFs back out, including the pikepdf Job path."""
 
 import os
+import unittest
 
 import pikepdf
-from support import QtDocumentTestCase
+from support import TEST_PDF, QtDocumentTestCase
 
 from pdfarranger_qt.core import Dims, Sides
 from pdfarranger_qt.export import export
@@ -187,3 +188,117 @@ class TestExportJobPath(QtDocumentTestCase):
         export(files, self.model.pages, {}, [b], preserve_first_document=True)
         with pikepdf.open(a) as pa, pikepdf.open(b) as pb:
             self.assertEqual(len(pa.pages), len(pb.pages))
+
+
+class TestThePageTreeIsBalanced(unittest.TestCase):
+    """qpdf writes every page as a direct child of one /Pages node.
+
+    Legal and pessimal: a reader finding page N walks that array, so reading
+    every page costs O(n squared). Measured with QtPdf on a 1,590-page book,
+    the flat tree we wrote against the balanced one it arrived with -- 0.55 ms
+    a page rising to 4.21 ms by the end, against 0.18 rising to 0.53. The
+    document we had just written was slower to open than its own source.
+    """
+
+    def shape(self, pdf):
+        """``(intermediate nodes, widest /Kids, depth)``."""
+        found = {"nodes": 0, "widest": 0, "depth": 0}
+
+        def walk(node, depth=0):
+            kids = node.get("/Kids")
+            if kids is None:
+                found["depth"] = max(found["depth"], depth)
+                return
+            found["nodes"] += 1
+            found["widest"] = max(found["widest"], len(kids))
+            for kid in kids:
+                walk(kid, depth + 1)
+
+        walk(pdf.Root.Pages)
+        return found
+
+    def document(self, pages=95):
+        pdf = pikepdf.Pdf.new()
+        for _ in range(pages):
+            pdf.add_blank_page(page_size=(612, 792))
+        return pdf
+
+    def test_a_long_document_gets_a_tree(self):
+        from pdfarranger_qt.export import balance_page_tree
+
+        pdf = self.document()
+        self.assertEqual(self.shape(pdf)["widest"], 95, "qpdf starts flat")
+        balance_page_tree(pdf)
+        found = self.shape(pdf)
+        self.assertLessEqual(found["widest"], 10)
+        self.assertGreater(found["nodes"], 1)
+        self.assertGreater(found["depth"], 1)
+
+    def test_the_pages_stay_in_order(self):
+        """The one thing a tree rewrite must not get wrong."""
+        from pdfarranger_qt.export import balance_page_tree
+
+        pdf = self.document(pages=0)
+        for number in range(40):
+            page = pdf.add_blank_page(page_size=(612, 792))
+            page.UserUnit = number          # a label that survives the move
+        balance_page_tree(pdf)
+        self.assertEqual([int(page.UserUnit) for page in pdf.pages],
+                         list(range(40)))
+
+    def test_every_node_counts_the_leaves_below_it(self):
+        from pdfarranger_qt.export import balance_page_tree
+
+        pdf = self.document()
+        balance_page_tree(pdf)
+
+        def check(node):
+            kids = node.get("/Kids")
+            if kids is None:
+                return 1
+            below = sum(check(kid) for kid in kids)
+            self.assertEqual(int(node.Count), below)
+            return below
+
+        self.assertEqual(check(pdf.Root.Pages), 95)
+
+    def test_every_page_knows_its_parent(self):
+        from pdfarranger_qt.export import balance_page_tree
+
+        pdf = self.document()
+        balance_page_tree(pdf)
+        for page in pdf.pages:
+            self.assertIn("/Parent", page.obj)
+
+    def test_a_short_document_is_left_alone(self):
+        from pdfarranger_qt.export import balance_page_tree
+
+        pdf = self.document(pages=6)
+        balance_page_tree(pdf)
+        self.assertEqual(self.shape(pdf)["nodes"], 1)
+
+    def test_it_survives_the_write(self):
+        """qpdf flattens the tree it builds; it keeps one that is given to it."""
+        from pdfarranger_qt.export import balance_page_tree
+
+        pdf = self.document()
+        balance_page_tree(pdf)
+        out = os.path.join(os.path.dirname(TEST_PDF), "..", "balanced-tmp.pdf")
+        out = os.path.abspath(out)
+        self.addCleanup(lambda: os.path.exists(out) and os.remove(out))
+        pdf.save(out)
+        with pikepdf.open(out) as written:
+            self.assertLessEqual(self.shape(written)["widest"], 10)
+            self.assertEqual(len(written.pages), 95)
+
+    def test_inherited_attributes_still_resolve(self):
+        """The new nodes define none, so inheritance passes through them."""
+        from pdfarranger_qt.export import balance_page_tree
+
+        pdf = self.document()
+        for page in pdf.pages:
+            del page.obj["/MediaBox"]
+        pdf.Root.Pages.MediaBox = [0, 0, 612, 792]
+        balance_page_tree(pdf)
+        self.assertEqual([float(v) for v in pdf.pages[50].mediabox],
+                         [0, 0, 612, 792])

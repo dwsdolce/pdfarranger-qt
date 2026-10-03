@@ -1061,6 +1061,9 @@ class TestClosingAWindowLeavesNothingDangling(unittest.TestCase):
         from pdfarranger_qt.mainwindow import MainWindow
 
         win = MainWindow()
+        # Closed in reverse order: the flag first, then the window, so a test
+        # that leaves it open does not abort the process at shutdown.
+        self.addCleanup(win.close)
         self.addCleanup(setattr, win, "modified", False)
         win.show()
         win.open_paths([TEST_PDF])
@@ -1122,6 +1125,17 @@ class TestTheReadingPositionSurvivesQuitting(unittest.TestCase):
         key = self.win._reading_key()
         if key:
             self.win.settings.remove(key)
+
+    def tearDown(self):
+        """Close it even when the test did not.
+
+        Qt aborts the process outright if a QThread is destroyed while still
+        running, so a window left open by a test takes its render and reader
+        threads to interpreter shutdown and the whole run exits non-zero with
+        every test passing. Closing twice is harmless.
+        """
+        self.win.modified = False
+        self.win.close()
 
     def test_closing_from_read_mode_remembers_where_you_were(self):
         self.win.set_read_mode(True)
