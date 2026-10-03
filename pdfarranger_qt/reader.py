@@ -33,7 +33,7 @@ And it belongs to the render thread, so sharing it is a data race besides.
 import logging
 from typing import List, Optional
 
-from PySide6.QtCore import QAbstractItemModel, QModelIndex, Qt, Signal
+from PySide6.QtCore import QAbstractItemModel, QModelIndex, QSizeF, Qt, Signal
 from PySide6.QtGui import (
     QBrush,
     QColor,
@@ -59,6 +59,22 @@ from .export import get_in_memory_pdf
 from .i18n import gettext_ as _
 from .outline import BOLD, ITALIC, Outline
 from .render import MemoryDocument
+
+
+def _sizes_of(pages):
+    """The page sizes of a 1:1 view, which the page list already knows.
+
+    Only used on the fast path, and only correct there: a source is taken
+    directly when every page is unmodified and in its original order, so each
+    `Page.size_orig` is exactly the size that document's page displays at.
+
+    Worth handing over because the alternative is measuring them again --
+    `QPdfDocument.pagePointSize` is 1.8 ms a page, 2.9 s on a large book, and
+    asking pikepdf instead would mean parsing the file a third time for 550 ms.
+    These cost nothing: they were read when the document was loaded.
+    """
+    return [QSizeF(page.size_orig.width, page.size_orig.height)
+            for page in pages]
 
 
 class SplitterWithAVisibleHandle(QSplitter):
@@ -227,7 +243,8 @@ class ReaderView(QWidget):
         63 ms parse, for a document that is byte-for-byte what is already on
         disk.
         """
-        if source is not None and self._load_source(*source):
+        if source is not None and self._load_source(
+                *source, sizes=_sizes_of(pages)):
             return True
         try:
             # No outlines: the sidebar reads the document's own tree (D20), not
@@ -245,10 +262,13 @@ class ReaderView(QWidget):
         if not document.ok:
             document.close()
             return False
+        # No sizes to hand over here: this is an export of an *edited* page
+        # list, so the page list's own sizes are not this document's. The
+        # canvas measures them itself, in the background.
         self._show(document, data)
         return True
 
-    def _load_source(self, copyname: str, password: str) -> bool:
+    def _load_source(self, copyname: str, password: str, sizes=None) -> bool:
         """Open a source file directly, skipping the export. False to fall back.
 
         Deliberately silent on failure: the caller retries through the export,
@@ -270,10 +290,10 @@ class ReaderView(QWidget):
                 data = handle.read()
         except OSError:
             data = None
-        self._show(document, data)
+        self._show(document, data, sizes)
         return True
 
-    def _show(self, document, data=None):
+    def _show(self, document, data=None, sizes=None):
         """Bind a document to every model, then drop the previous one.
 
         ``data`` is the document as bytes, handed to the canvas for its render
@@ -283,7 +303,7 @@ class ReaderView(QWidget):
         """
         previous = self._document
         self._document = document
-        self.canvas.set_document(document.document, data)
+        self.canvas.set_document(document.document, data, sizes)
         self.search_model.setDocument(document.document)
         self.page_selector.setDocument(document.document)
         # Only after the view has taken the new one: closing a document the

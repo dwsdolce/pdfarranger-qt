@@ -132,14 +132,29 @@ class SaveOptions:
     viewer: Optional[Any] = None
 
     def save_kwargs(self) -> Dict[str, Any]:
-        """The pikepdf `save` arguments these options imply."""
-        kwargs: Dict[str, Any] = {}
+        """The pikepdf `save` arguments these options imply.
+
+        Object streams are not among the options: they are written always.
+        They pack the small objects -- page dictionaries, annotations, the
+        outline -- into compressed streams, which makes a file both smaller
+        and faster to read, and neither of those is something to ask a user
+        about. Measured on a 1,590-page book: 155.3 MB without them against
+        151.0 MB with, and reading every page's size 1,955 ms against 1,411.
+        The source document it was made from has 1,928 of them.
+
+        They were tied to the Compress checkbox, so a document that had its
+        images compressed and was then saved with that box unticked lost the
+        packing on the way out -- which is how the measurement above came to
+        be taken in the first place.
+        """
+        kwargs: Dict[str, Any] = {
+            "object_stream_mode": pikepdf.ObjectStreamMode.generate,
+        }
         if self.linearize:
             kwargs["linearize"] = True
         if self.compress:
             kwargs["compress_streams"] = True
             kwargs["recompress_flate"] = True
-            kwargs["object_stream_mode"] = pikepdf.ObjectStreamMode.generate
         return kwargs
 
 

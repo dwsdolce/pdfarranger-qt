@@ -755,6 +755,55 @@ element 521,475 of a 1275-wide image, which is row 409 to the pixel. Passing
 `tiffinfo={278: image.height}` gives one strip, one continuous coding, one
 payload.
 
+## A document we write is slower to read than the one it came from
+
+Reading every page's size out of a 1,590-page book with
+`QPdfDocument.pagePointSize`, the source against our own output of it:
+
+| | time | per page |
+|---|---|---|
+| the original | 266–583 ms | 0.17–0.37 ms |
+| our output | 1,886–1,955 ms | 1.19–1.23 ms |
+
+Five times slower, from a file that is *smaller* — 155 MB against 273 MB.
+Reproducible in both orders, so not disk caching. Two causes found, and a
+third of the gap still unaccounted for.
+
+**The page tree was flat.** qpdf writes `/Pages` with every page as a direct
+child: one node with 1,590 kids, where the source had 358 intermediate nodes
+five deep. Finding page N then walks the array, and the cost of a lookup rises
+through the document — 0.55 ms at the front against 4.21 ms at the back, where
+the balanced original went 0.18 to 0.53. That rising cost is the walk, and it
+is the clearest evidence in the whole investigation. `export.balance_page_tree`
+now builds a tree before every single-file save. Worth about a quarter of the
+gap.
+
+**There were no object streams, and that is the surprise.** The guess was the
+opposite — that we packed page dictionaries into compressed streams and paid
+to inflate them. In fact the original has **1,928** object streams and our
+output had **none**, and the original is the fast one: the small objects are
+packed densely together, so reading page dictionaries has locality, while ours
+were individual objects scattered through 155 MB of image data. Adding them
+recovers about another quarter *and* makes the file smaller, 151.0 MB against
+155.3.
+
+They had been tied to the Compress checkbox, so a book whose images had just
+been compressed lost the packing when it was saved with that box unticked —
+which is how a file with none of them came to exist to be measured.
+`SaveOptions.save_kwargs` writes them always now.
+
+**The remaining 2.4× is unexplained.** Not the tree, not object streams, and
+not the cross-reference format (a classic table measured the same as a
+stream). One clue for whoever picks it up: the granularity differs sharply.
+The original has 1,928 object streams for 1,590 pages — roughly one per page,
+each small — where qpdf packs the same objects into **116** large ones, and
+inflating a big shared stream to read one page dictionary should cost more
+than inflating a small one.
+
+It no longer affects opening a document: page sizes are read with pikepdf
+instead, in 23 ms rather than 1,941. It remains a property of what we write,
+and it is paid by every other reader too.
+
 ## A render that is queued costs more than the render
 
 The reader asked the worker for every page it did not already have, and

@@ -969,7 +969,8 @@ class PageCanvas(QAbstractScrollArea):
 
     # -- document ----------------------------------------------------------
 
-    def set_document(self, document, data: Optional[bytes] = None):
+    def set_document(self, document, data: Optional[bytes] = None,
+                     sizes: Optional[Sequence[QSizeF]] = None):
         """Show ``document``, a QPdfDocument, or None to show nothing.
 
         ``data`` is the same document as bytes, for the render thread to parse
@@ -979,7 +980,16 @@ class PageCanvas(QAbstractScrollArea):
         with, but pages still display: they are rendered on this thread from
         ``document`` as they are painted.
         """
-        sizes = provisional_sizes(document) if document is not None else []
+        known = False
+        if document is None:
+            sizes = []
+        elif sizes is not None and len(sizes) == document.pageCount():
+            # The caller already knew them -- the page list does, on the 1:1
+            # path -- so there is nothing to measure and nothing to correct.
+            sizes = [QSizeF(size) for size in sizes]
+            known = True
+        else:
+            sizes = provisional_sizes(document)
         # Carrying the zoom *and* the facing mode across: these belong to the
         # reader, not to the document, and a new document arrives every time an
         # edit makes the snapshot stale. Dropping facing here meant the setting
@@ -1000,14 +1010,14 @@ class PageCanvas(QAbstractScrollArea):
         self.viewport().update()
         if sizes:
             self._emit_current()
-        self._start_measuring(len(sizes))
+        self._start_measuring(len(sizes), known=known)
 
     #: Pages measured per tick while the real sizes are gathered. At 1.8 ms a
     #: page that is about 100 ms of work between turns of the event loop --
     #: long enough to get through a book quickly, short enough not to be felt.
     MEASURE_CHUNK = 64
 
-    def _start_measuring(self, count: int):
+    def _start_measuring(self, count: int, known: bool = False):
         """Replace the provisional sizes with the real ones, in the background.
 
         Reading all 1,590 of the Handbook's page sizes takes 2.9 seconds and
@@ -1016,9 +1026,9 @@ class PageCanvas(QAbstractScrollArea):
         for the pages that match the first one, which is nearly all of them,
         and wrong only in its total height until this catches up.
         """
-        self._measured = 1 if count else 0
+        self._measured = count if known else (1 if count else 0)
         self._measure.stop()
-        if count > 1 and self._document is not None:
+        if not known and count > 1 and self._document is not None:
             self._measure.start(0)
 
     def _measure_some(self):
