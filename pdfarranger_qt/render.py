@@ -24,14 +24,23 @@ copies are never written to after import.
 Only the visible range plus a margin is ever queued; the queue is dropped and
 rebuilt when the viewport moves, so scrolling fast never backs up behind
 thumbnails nobody is looking at any more.
+
+**Shutting down.** Qt calls ``qFatal`` from ``QThread::~QThread`` if the thread
+is still running, which aborts the process -- so a render thread that outlives
+its owner turns any other failure into SIGABRT. The window stops both renderers
+in ``closeEvent``, and `_stop_stragglers` is the net for the exit that never
+reaches it.
 """
 
+import atexit
 import collections
+import weakref
 from typing import Dict, Optional
 
 from PySide6.QtCore import (
     QBuffer,
     QByteArray,
+    QCoreApplication,
     QIODevice,
     QMetaObject,
     QMutex,
@@ -455,6 +464,37 @@ class ThumbnailCache:
         return len(self._items)
 
 
+#: Every renderer that has not been shut down, weakly held so that being on
+#: this list never keeps one alive.
+_live: "weakref.WeakSet[Renderer]" = weakref.WeakSet()
+
+
+def _stop_stragglers():
+    """Join any render thread whose owner never got round to it.
+
+    Registered with `atexit`, which is what makes this a net rather than a
+    second shutdown path: it runs on every way out of the interpreter -- a
+    normal return, ``sys.exit``, or an unhandled exception -- and only finds
+    anything when `Renderer.shutdown` was not reached.
+
+    It has to run *before* PySide tears QtCore down, because that is where the
+    QThread destructor fires. It does: PySide registers its own cleanup when
+    QtCore is imported, which is necessarily before any renderer exists, and
+    atexit runs handlers in reverse order of registration.
+
+    Nothing here is allowed to raise. The whole point is a tidy exit, and an
+    exception in an atexit handler would just be a different mess.
+    """
+    for renderer in list(_live):
+        try:
+            renderer.shutdown()
+        except Exception:  # pragma: no cover - exiting anyway
+            pass
+
+
+atexit.register(_stop_stragglers)
+
+
 class Renderer(QObject):
     """UI-thread facade over the render thread and one cache.
 
@@ -480,7 +520,9 @@ class Renderer(QObject):
         self._worker = _RenderWorker(documents)
         self._worker.moveToThread(self._thread)
         self._worker.rendered.connect(self._on_rendered)
+        self._stopped = False
         self._thread.start()
+        _live.add(self)
 
     def get(self, key) -> Optional[QImage]:
         return self.cache.get(key)
@@ -534,8 +576,24 @@ class Renderer(QObject):
             self.idle.emit()
 
     def shutdown(self):
-        """Close every QPdfDocument on the render thread, then join it."""
+        """Close every QPdfDocument on the render thread, then join it.
+
+        Idempotent, because `_stop_stragglers` may arrive here after the window
+        already has -- and because calling it twice used to mean a blocking
+        invocation into a thread that had already gone.
+        """
+        if self._stopped:
+            return
+        self._stopped = True
+        _live.discard(self)
         self._worker.stop()
-        QMetaObject.invokeMethod(self._worker, "shutdown", Qt.BlockingQueuedConnection)
+        # Handing the documents back to the thread that opened them needs an
+        # event loop to deliver the call. At exit there may no longer be an
+        # application to run one, and a BlockingQueuedConnection with nothing
+        # to deliver it would wait for an answer that cannot come; the handles
+        # are the operating system's problem at that point anyway.
+        if QCoreApplication.instance() is not None:
+            QMetaObject.invokeMethod(self._worker, "shutdown",
+                                     Qt.BlockingQueuedConnection)
         self._thread.quit()
         self._thread.wait(3000)

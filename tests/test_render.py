@@ -173,3 +173,105 @@ class TestCompositedThumbnails(QtDocumentTestCase):
         self.model.doc_files = lambda: asked.append(1) or []
         self.model.ensure_rendered(0, self.model.rowCount() - 1)
         self.assertEqual(asked, [])
+
+
+class TestTheExitNet(unittest.TestCase):
+    """A render thread that outlives its owner used to abort the process.
+
+    Qt calls ``qFatal`` from ``QThread::~QThread`` when the thread is still
+    running, so any failure that skipped ``MainWindow.closeEvent`` turned into
+    SIGABRT at interpreter shutdown -- an unhandled exception exited 134 rather
+    than 1, and left a crash report behind. ``render._stop_stragglers`` is the
+    net; these hold it in place.
+    """
+
+    def renderer(self):
+        from pdfarranger_qt.render import Renderer
+
+        made = Renderer(name="test-exit-net")
+        self.addCleanup(made.shutdown)
+        return made
+
+    def test_a_live_renderer_is_known_to_the_net(self):
+        from pdfarranger_qt import render
+
+        made = self.renderer()
+        self.assertIn(made, render._live)
+
+    def test_shutting_down_takes_it_off_the_list(self):
+        from pdfarranger_qt import render
+
+        made = self.renderer()
+        made.shutdown()
+        self.assertNotIn(made, render._live,
+                         "nothing left for the net to find")
+
+    def test_shutdown_is_idempotent(self):
+        """The net can arrive after the window already shut the same one down."""
+        made = self.renderer()
+        made.shutdown()
+        made.shutdown()          # must not block on a thread that has gone
+
+    def test_the_net_joins_a_thread_nobody_stopped(self):
+        from pdfarranger_qt import render
+
+        made = self.renderer()
+        self.assertTrue(made._thread.isRunning())
+        render._stop_stragglers()
+        self.assertFalse(made._thread.isRunning())
+        self.assertNotIn(made, render._live)
+
+    def test_the_net_is_registered_with_atexit(self):
+        """Registered at import, which is what puts it ahead of PySide's own
+        cleanup: atexit runs handlers in reverse order, and QtCore is imported
+        before any renderer exists.
+
+        There is no way to ask atexit what it holds, so this takes the handler
+        off and counts the difference -- and puts it back before anything else
+        can run, failure or not.
+        """
+        import atexit
+
+        from pdfarranger_qt import render
+
+        self.addCleanup(atexit.register, render._stop_stragglers)
+        before = atexit._ncallbacks()
+        atexit.unregister(render._stop_stragglers)
+        self.assertGreater(before - atexit._ncallbacks(), 0,
+                           "the net was never registered, so nothing runs it")
+
+    def test_a_window_that_dies_without_closing_exits_cleanly(self):
+        """The crash this all exists for, end to end in a real interpreter."""
+        import os
+        import signal
+        import subprocess
+        import sys
+
+        from support import HERE, ROOT, TEXT_PDF
+
+        program = (
+            "import os, sys\n"
+            "os.environ['QT_QPA_PLATFORM'] = 'offscreen'\n"
+            "os.environ['PDFARRANGER_QT_TEST_SETTINGS'] = '1'\n"
+            "os.environ['PYTEST_CURRENT_TEST'] = 'exit-net'\n"
+            f"sys.path.insert(0, {HERE!r})\n"
+            "from PySide6.QtWidgets import QApplication\n"
+            "app = QApplication([])\n"
+            "from support import settle\n"
+            "from pdfarranger_qt.mainwindow import MainWindow\n"
+            "win = MainWindow()\n"
+            "win.show()\n"
+            f"win.open_paths([{TEXT_PDF!r}])\n"
+            "settle(timeout_ms=400)\n"
+            "raise RuntimeError('died before the window could close')\n"
+        )
+        done = subprocess.run([sys.executable, "-c", program], cwd=ROOT,
+                              capture_output=True, text=True, timeout=180,
+                              env={**os.environ, "QT_QPA_PLATFORM": "offscreen"})
+        self.assertNotEqual(done.returncode, -signal.SIGABRT,
+                            "the render thread outlived the window again")
+        self.assertEqual(done.returncode, 1,
+                         f"expected a plain traceback exit, got "
+                         f"{done.returncode}\n{done.stderr[-2000:]}")
+        self.assertIn("RuntimeError", done.stderr, "the real error should survive")
+        self.assertNotIn("Destroyed while thread", done.stderr)
