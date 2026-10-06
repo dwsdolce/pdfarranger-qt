@@ -27,7 +27,7 @@ showing them.
 import re
 from typing import List, Tuple
 
-from PySide6.QtCore import QLocale, Qt
+from PySide6.QtCore import QLocale, Qt, QTimer, Signal
 from PySide6.QtGui import QColor, QFont, QKeySequence
 from PySide6.QtWidgets import (
     QApplication,
@@ -51,13 +51,16 @@ from PySide6.QtWidgets import (
     QScrollArea,
     QSpinBox,
     QTextBrowser,
+    QTreeWidget,
+    QTreeWidgetItem,
     QVBoxLayout,
     QWidget,
 )
 
 from . import compress, i18n, nup, stamp, viewer
 from .core import Dims, Sides
-from .i18n import N_
+from .find import Query
+from .i18n import N_, ngettext
 from .i18n import gettext_ as _
 
 MM_PER_POINT = 25.4 / 72
@@ -1279,6 +1282,241 @@ class ShortcutsDialog(BaseDialog):
 # Help
 
 
+class FindDialog(QDialog):
+    """Find, with options and a list of every hit.
+
+    Modeless, which is the whole point: Next and Previous move the document
+    behind it, so a dialog that blocked the window would have to be closed
+    before you could look at what it found. The user guide's "find" section and
+    every other find UI work the same way.
+
+    It holds no cursor of its own. The window owns that, because Find Next on
+    the menu keeps working when this is closed, and because one cursor has to
+    serve both the reader and the grid.
+    """
+
+    #: The query changed and wants running.
+    query_changed = Signal(Query)
+    #: Next (True) or previous (False).
+    step = Signal(bool)
+    #: Go to this hit, by index.
+    go_to = Signal(int)
+
+    #: Typing pauses this long before searching. Long enough not to search
+    #: "t", "ta", "tap" on the way to "taps", short enough to feel live.
+    TYPING_PAUSE_MS = 250
+
+    #: Hits listed at most. The counter still reports the true total; this only
+    #: bounds how many rows get built, for the search that matches half a book.
+    MAX_LISTED = 2000
+
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.setWindowTitle(_("Find"))
+        self.setModal(False)
+        self._filling = False
+        self._position = -1
+        #: The phrase the window last reported on, which is not always what is
+        #: in the field: the field can be mid-keystroke, and the counter has to
+        #: describe the search that actually ran.
+        self._phrase = ""
+
+        layout = QVBoxLayout(self)
+
+        row = QHBoxLayout()
+        row.addWidget(QLabel(_("Find:")))
+        self.field = QLineEdit(self)
+        self.field.setClearButtonEnabled(True)
+        # Return is Next, which is what every find field does. The line edit
+        # has no default button to fight with, the dialog having none.
+        self.field.returnPressed.connect(lambda: self.step.emit(True))
+        self.field.textChanged.connect(self._typed)
+        row.addWidget(self.field, 1)
+        layout.addLayout(row)
+
+        options = QGridLayout()
+        self.case_sensitive = QCheckBox(_("Case sensitive"), self)
+        self.whole_word = QCheckBox(_("Whole words only"), self)
+        self.regex = QCheckBox(_("Regular expression"), self)
+        self.wrap = QCheckBox(_("Wrap around"), self)
+        self.wrap.setChecked(True)
+        self.wrap.setToolTip(_("Carry on from the other end of the document "
+                               "when the last match is passed."))
+        self.regex.setToolTip(_("Interpret the text as a regular expression, "
+                                "so that \"tap(s|ping)\" matches either word."))
+        options.addWidget(self.case_sensitive, 0, 0)
+        options.addWidget(self.whole_word, 0, 1)
+        options.addWidget(self.regex, 1, 0)
+        options.addWidget(self.wrap, 1, 1)
+        layout.addLayout(options)
+        for box in (self.case_sensitive, self.whole_word, self.regex):
+            # An option changes what matches, so it searches at once rather
+            # than after the typing pause: the click *is* the deliberate act.
+            box.toggled.connect(self._option_changed)
+
+        self.status = QLabel("", self)
+        layout.addWidget(self.status)
+
+        self.results = QTreeWidget(self)
+        self.results.setHeaderLabels([_("Page"), _("Text")])
+        self.results.setRootIsDecorated(False)
+        self.results.setUniformRowHeights(True)
+        self.results.setAllColumnsShowFocus(True)
+        self.results.setColumnWidth(0, 60)
+        self.results.currentItemChanged.connect(self._row_chosen)
+        layout.addWidget(self.results, 1)
+
+        buttons = QDialogButtonBox(self)
+        self.previous_button = buttons.addButton(
+            _("Previous"), QDialogButtonBox.ActionRole)
+        self.next_button = buttons.addButton(
+            _("Next"), QDialogButtonBox.ActionRole)
+        close = buttons.addButton(QDialogButtonBox.Close)
+        self.previous_button.clicked.connect(lambda: self.step.emit(False))
+        self.next_button.clicked.connect(lambda: self.step.emit(True))
+        close.clicked.connect(self.close)
+        layout.addWidget(buttons)
+
+        self._timer = QTimer(self)
+        self._timer.setSingleShot(True)
+        self._timer.setInterval(self.TYPING_PAUSE_MS)
+        self._timer.timeout.connect(self._announce)
+
+        self.resize(520, 420)
+
+    # -- what the window reads ---------------------------------------------
+
+    def query(self) -> Query:
+        return Query(self.field.text(),
+                     case_sensitive=self.case_sensitive.isChecked(),
+                     whole_word=self.whole_word.isChecked(),
+                     regex=self.regex.isChecked())
+
+    def wraps(self) -> bool:
+        return self.wrap.isChecked()
+
+    def set_query(self, query: Query):
+        """Put an existing query in the field, without starting a search."""
+        self._filling = True
+        try:
+            self.field.setText(query.phrase)
+            self.case_sensitive.setChecked(query.case_sensitive)
+            self.whole_word.setChecked(query.whole_word)
+            self.regex.setChecked(query.regex)
+        finally:
+            self._filling = False
+        self._regex_owns_word_boundaries()
+
+    def focus_field(self):
+        """Take the focus and select what is there, ready to be typed over."""
+        self.field.setFocus()
+        self.field.selectAll()
+
+    # -- what the window writes --------------------------------------------
+
+    def set_results(self, hits, total: int, labels=None, phrase=""):
+        """Fill the list. ``labels`` maps a page index to what to call it."""
+        self._phrase = phrase
+        self._filling = True
+        try:
+            self.results.clear()
+            items = []
+            for index, hit in enumerate(hits[:self.MAX_LISTED]):
+                label = labels(hit.page) if labels else str(hit.page + 1)
+                item = QTreeWidgetItem([label, hit.context()])
+                item.setData(0, Qt.UserRole, index)
+                items.append(item)
+            self.results.addTopLevelItems(items)
+        finally:
+            self._filling = False
+        self._say(total)
+
+    def set_position(self, index: int, total: int):
+        """Which hit is current, so the counter and the list agree with the view."""
+        self._position = index
+        self._filling = True
+        try:
+            if 0 <= index < self.results.topLevelItemCount():
+                item = self.results.topLevelItem(index)
+                self.results.setCurrentItem(item)
+                self.results.scrollToItem(item)
+            else:
+                self.results.setCurrentItem(None)
+        finally:
+            self._filling = False
+        self._say(total, index)
+
+    def set_error(self, message: str, phrase=""):
+        self._phrase = phrase
+        self.results.clear()
+        self.status.setText(_("Not a valid pattern: %s") % message)
+        self.next_button.setEnabled(False)
+        self.previous_button.setEnabled(False)
+
+    # -- internals ---------------------------------------------------------
+
+    def _say(self, total: int, index: int = -1):
+        if not self._phrase:
+            self.status.setText("")
+        elif not total:
+            self.status.setText(_("No matches"))
+        elif index < 0:
+            self.status.setText(ngettext("%d match", "%d matches", total) % total)
+        else:
+            self.status.setText(_("%(number)d of %(total)d")
+                                % {"number": index + 1, "total": total})
+        listed = self.results.topLevelItemCount()
+        if listed and listed < total:
+            self.status.setText(
+                self.status.text() + " "
+                + _("(first %d listed)") % listed)
+        has = bool(total)
+        self.next_button.setEnabled(has)
+        self.previous_button.setEnabled(has)
+
+    def _typed(self, _text=None):
+        if self._filling:
+            return
+        self._timer.start()
+
+    def _option_changed(self, _checked=None):
+        self._regex_owns_word_boundaries()
+        if self._filling:
+            return
+        self._timer.stop()
+        self._announce()
+
+    def _regex_owns_word_boundaries(self):
+        """A pattern writes its own boundaries, so the checkbox stands down.
+
+        Leaving it enabled would mean silently wrapping somebody's pattern in
+        lookarounds -- an edit to what they typed, which is not what a checkbox
+        beside a regex field is entitled to do.
+        """
+        pattern = self.regex.isChecked()
+        self.whole_word.setDisabled(pattern)
+        if pattern:
+            self.whole_word.setToolTip(
+                _("A regular expression states its own word boundaries, "
+                  "with \\b."))
+        else:
+            self.whole_word.setToolTip("")
+
+    def _announce(self):
+        self.query_changed.emit(self.query())
+
+    def _row_chosen(self, current, _previous=None):
+        if self._filling or current is None:
+            return
+        index = current.data(0, Qt.UserRole)
+        if index is not None:
+            self.go_to.emit(int(index))
+
+    def closeEvent(self, event):
+        self._timer.stop()
+        super().closeEvent(event)
+
+
 def help_sections():
     """The user guide, as ``(heading, [paragraphs])`` pairs.
 
@@ -1521,10 +1759,38 @@ def help_sections():
               "the whole document."),
         ]),
         (_("Finding text"), [
-            _("<b>Find</b> selects the pages that contain the phrase and boxes "
-              "each hit on the thumbnail, so you can see where on the page it "
-              "is. The boxes clear as soon as you change the document, since "
-              "the pages they were drawn for may have moved."),
+            _("<b>Edit ▸ Find</b> (Ctrl+F) opens a panel that stays open while "
+              "you work, so you can walk through the results without closing "
+              "it. It lists every match with the text around it: pick one to "
+              "go straight there, or use <b>Next</b> and <b>Previous</b> — F3 "
+              "and Shift+F3, which keep working when the panel is closed."),
+            _("The counter beside the field says which match you are on and "
+              "how many there are, counting individual matches rather than "
+              "pages: a phrase can occur several times on one page."),
+            _("Three options change what counts as a match. <b>Case "
+              "sensitive</b> distinguishes \"Tap\" from \"tap\". <b>Whole "
+              "words only</b> ignores a match inside a longer word, so "
+              "\"tap\" no longer finds \"tapping\". <b>Regular "
+              "expression</b> treats what you type as a pattern — "
+              "\"tap(s|ping)\" matches either word, \"^Chapter\" only "
+              "where it begins a line — and takes over from whole words, "
+              "since a pattern states its own boundaries with \\b. "
+              "<b>Wrap around</b> decides whether Next carries on from the "
+              "start of the document after the last match."),
+            _("While reading, Next scrolls to the match and picks it out from "
+              "the others on the page. While arranging, it selects the page "
+              "the match is on and boxes every hit on the thumbnail; "
+              "<b>Find All</b> selects every page that matches at once. Either "
+              "way one position is shared, so switching between reading and "
+              "arranging keeps your place."),
+            _("The boxes clear as soon as you change the document, since the "
+              "pages they were drawn for may have moved. The phrase and the "
+              "options survive — Next searches again and carries on."),
+            _("Text is searched as the document will be <i>saved</i>, not as "
+              "it sits in the original file, so a page you have cropped is "
+              "searched cropped. A page that is a scanned image with no text "
+              "layer cannot be searched at all; nothing in it will ever "
+              "match."),
         ]),
         (_("Keyboard shortcuts"), [
             _("Every shortcut can be changed in "

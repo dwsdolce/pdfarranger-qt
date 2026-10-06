@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-25 23:34+0000\n"
+"POT-Creation-Date: 2026-10-06 22:49+0000\n"
 "PO-Revision-Date: 2024-09-05 17:05+0300\n"
 "Last-Translator: Abdullah Albaroty <albaroty@gmail.com>\n"
 "Language: ar\n"
@@ -714,6 +714,103 @@ msgstr "صفّر"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
+msgid "Find"
+msgstr "ابحث"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Find:"
+msgstr "بحث:"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Case sensitive"
+msgstr "مطابقة حالة الأحرف"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Whole words only"
+msgstr "الكلمات الكاملة فقط"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Regular expression"
+msgstr "تعبير نمطي"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Wrap around"
+msgstr "المتابعة من البداية"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Carry on from the other end of the document when the last match is passed."
+msgstr "المتابعة من الطرف الآخر للمستند بعد آخر نتيجة."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Interpret the text as a regular expression, so that \"tap(s|ping)\" matches "
+"either word."
+msgstr "تفسير النص كتعبير نمطي، بحيث يجد «tap(s|ping)» أيًّا من الكلمتين."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Page"
+msgstr "صفحة"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Previous"
+msgstr "السابق"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Next"
+msgstr "التالي"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "Not a valid pattern: %s"
+msgstr "النمط غير صالح: %s"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+msgid "No matches"
+msgstr "لا نتائج"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "%d match"
+msgid_plural "%d matches"
+msgstr[0] "%d نتيجة"
+msgstr[1] "%d نتيجة"
+msgstr[2] "%d نتيجتان"
+msgstr[3] "%d نتائج"
+msgstr[4] "%d نتيجة"
+msgstr[5] "%d نتيجة"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "%(number)d of %(total)d"
+msgstr "%(number)d من %(total)d"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+#, python-format
+msgid "(first %d listed)"
+msgstr "(أول %d معروضة)"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "A regular expression states its own word boundaries, with \\b."
+msgstr "التعبير النمطي يحدد حدود كلماته بنفسه، بواسطة \\b."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
 msgid "Description"
 msgstr "الوصف"
 
@@ -1332,14 +1429,81 @@ msgstr "البحث عن نص"
 # machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
 msgid ""
-"<b>Find</b> selects the pages that contain the phrase and boxes each hit on "
-"the thumbnail, so you can see where on the page it is. The boxes clear as "
-"soon as you change the document, since the pages they were drawn for may "
-"have moved."
+"<b>Edit ▸ Find</b> (Ctrl+F) opens a panel that stays open while you work, so"
+" you can walk through the results without closing it. It lists every match "
+"with the text around it: pick one to go straight there, or use <b>Next</b> "
+"and <b>Previous</b> — F3 and Shift+F3, which keep working when the panel is "
+"closed."
 msgstr ""
-"‏<b>ابحث</b> يحدد الصفحات التي تحوي العبارة ويؤطر كل إصابة على المصغرة، لترى"
-" أين هي في الصفحة. وتزول الأطر فور تغييرك المستند، إذ قد تكون الصفحات التي "
-"رُسمت لأجلها قد انتقلت."
+"<b>تحرير ▸ بحث</b> (Ctrl+F) يفتح لوحة تبقى مفتوحة أثناء العمل، فتتمكن من "
+"تتبع النتائج دون إغلاقها. تسرد كل نتيجة مع النص المحيط بها: اختر واحدة "
+"للانتقال إليها مباشرة، أو استخدم <b>التالي</b> و<b>السابق</b> — F3 و "
+"Shift+F3، وهما يعملان حتى عند إغلاق اللوحة."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"The counter beside the field says which match you are on and how many there "
+"are, counting individual matches rather than pages: a phrase can occur "
+"several times on one page."
+msgstr ""
+"يبين العدّاد المجاور للحقل أي نتيجة أنت عندها وكم عددها، إذ يعد النتائج "
+"فرادى لا الصفحات: فقد ترد العبارة مرات عدة في صفحة واحدة."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Three options change what counts as a match. <b>Case sensitive</b> "
+"distinguishes \"Tap\" from \"tap\". <b>Whole words only</b> ignores a match "
+"inside a longer word, so \"tap\" no longer finds \"tapping\". <b>Regular "
+"expression</b> treats what you type as a pattern — \"tap(s|ping)\" matches "
+"either word, \"^Chapter\" only where it begins a line — and takes over from "
+"whole words, since a pattern states its own boundaries with \\b. <b>Wrap "
+"around</b> decides whether Next carries on from the start of the document "
+"after the last match."
+msgstr ""
+"ثلاثة خيارات تغير ما يُعتد به نتيجة. <b>مطابقة حالة الأحرف</b> تميز «Tap» من"
+" «tap». <b>الكلمات الكاملة فقط</b> يتجاوز نتيجة تقع داخل كلمة أطول، فلا يجد "
+"«tap» بعدها «tapping». <b>تعبير نمطي</b> يعامل ما تكتبه نمطًا — "
+"فـ«tap(s|ping)» يجد أيًّا من الكلمتين، و«^Chapter» في بداية السطر وحدها — "
+"ويحل محل الكلمات الكاملة، لأن النمط يحدد حدوده بنفسه بواسطة \\b. <b>المتابعة"
+" من البداية</b> يقرر إن كان التالي يتابع من أول المستند بعد آخر نتيجة."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"While reading, Next scrolls to the match and picks it out from the others on"
+" the page. While arranging, it selects the page the match is on and boxes "
+"every hit on the thumbnail; <b>Find All</b> selects every page that matches "
+"at once. Either way one position is shared, so switching between reading and"
+" arranging keeps your place."
+msgstr ""
+"في وضع القراءة ينتقل التالي إلى النتيجة ويميزها من سواها في الصفحة. وفي وضع "
+"الترتيب يحدد الصفحة التي هي فيها ويحيط كل نتيجة بإطار على المصغَّرة؛ و<b>بحث"
+" عن الكل</b> يحدد كل الصفحات المطابقة مرة واحدة. وفي الحالين الموضع واحد "
+"مشترك، فالتنقل بين القراءة والترتيب يحفظ موضعك."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"The boxes clear as soon as you change the document, since the pages they "
+"were drawn for may have moved. The phrase and the options survive — Next "
+"searches again and carries on."
+msgstr ""
+"تُمحى الأطر بمجرد تغييرك المستند، لأن الصفحات التي رُسمت لها قد تكون انتقلت."
+" أما العبارة والخيارات فتبقى — فيبحث التالي من جديد ويتابع."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Text is searched as the document will be <i>saved</i>, not as it sits in the"
+" original file, so a page you have cropped is searched cropped. A page that "
+"is a scanned image with no text layer cannot be searched at all; nothing in "
+"it will ever match."
+msgstr ""
+"يُبحث في النص كما سيُحفظ المستند <i>محفوظًا</i>، لا كما هو في الملف الأصلي، "
+"فالصفحة التي قصصتها يُبحث فيها مقصوصة. والصفحة التي هي صورة ممسوحة بلا طبقة "
+"نص لا يمكن البحث فيها إطلاقًا؛ ولن يُعثر فيها على شيء أبدًا."
 
 # machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
@@ -2286,20 +2450,19 @@ msgstr[5] "‏%d صفحة مطبوعة"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
-msgid "Find"
-msgstr "ابحث"
+#, python-format
+msgid "%(matches)s on %(pages)s"
+msgstr "%(matches)s في %(pages)s"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
-#, python-format
-msgid "%d page matches"
-msgid_plural "%d pages match"
-msgstr[0] "‏%d صفحة مطابقة"
-msgstr[1] "‏%d صفحة مطابقة"
-msgstr[2] "‏%d صفحتان مطابقتان"
-msgstr[3] "‏%d صفحات مطابقة"
-msgstr[4] "‏%d صفحة مطابقة"
-msgstr[5] "‏%d صفحة مطابقة"
+msgid "Last match"
+msgstr "آخر نتيجة"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "First match"
+msgstr "أول نتيجة"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
@@ -2916,4 +3079,30 @@ msgstr "أظهر العنوان بدل اسم الملف"
 #~ "مقدار ما يوفره هذا يعتمد على الملف:"
 #~ " ملف مليء بصور مضغوطة أصلًا لن "
 #~ "ينكمش إلا بالكاد."
+
+# machine translation, unreviewed
+#~ msgid ""
+#~ "<b>Find</b> selects the pages that contain"
+#~ " the phrase and boxes each hit on"
+#~ " the thumbnail, so you can see "
+#~ "where on the page it is. The "
+#~ "boxes clear as soon as you change "
+#~ "the document, since the pages they "
+#~ "were drawn for may have moved."
+#~ msgstr ""
+#~ "‏<b>ابحث</b> يحدد الصفحات التي تحوي العبارة"
+#~ " ويؤطر كل إصابة على المصغرة، لترى "
+#~ "أين هي في الصفحة. وتزول الأطر فور "
+#~ "تغييرك المستند، إذ قد تكون الصفحات "
+#~ "التي رُسمت لأجلها قد انتقلت."
+
+# machine translation, unreviewed
+#~ msgid "%d page matches"
+#~ msgid_plural "%d pages match"
+#~ msgstr[0] "‏%d صفحة مطابقة"
+#~ msgstr[1] "‏%d صفحة مطابقة"
+#~ msgstr[2] "‏%d صفحتان مطابقتان"
+#~ msgstr[3] "‏%d صفحات مطابقة"
+#~ msgstr[4] "‏%d صفحة مطابقة"
+#~ msgstr[5] "‏%d صفحة مطابقة"
 

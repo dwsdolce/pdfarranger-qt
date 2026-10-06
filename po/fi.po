@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  pdfarranger\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-25 23:34+0000\n"
+"POT-Creation-Date: 2026-10-06 22:49+0000\n"
 "PO-Revision-Date: 2024-03-24 19:16+0200\n"
 "Last-Translator: \n"
 "Language: fi\n"
@@ -716,6 +716,101 @@ msgstr "Palauta"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
+msgid "Find"
+msgstr "Etsi"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Find:"
+msgstr "Etsi:"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Case sensitive"
+msgstr "Sama kirjainkoko"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Whole words only"
+msgstr "Vain kokonaiset sanat"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Regular expression"
+msgstr "Säännöllinen lauseke"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Wrap around"
+msgstr "Jatka alusta"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Carry on from the other end of the document when the last match is passed."
+msgstr "Jatka asiakirjan toisesta päästä viimeisen osuman jälkeen."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Interpret the text as a regular expression, so that \"tap(s|ping)\" matches "
+"either word."
+msgstr ""
+"Tulkitse teksti säännöllisenä lausekkeena, jolloin ”tap(s|ping)” löytää "
+"kummankin sanan."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Page"
+msgstr "Sivu"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Previous"
+msgstr "Edellinen"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Next"
+msgstr "Seuraava"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "Not a valid pattern: %s"
+msgstr "Virheellinen hahmo: %s"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+msgid "No matches"
+msgstr "Ei osumia"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "%d match"
+msgid_plural "%d matches"
+msgstr[0] "%d osuma"
+msgstr[1] "%d osumaa"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "%(number)d of %(total)d"
+msgstr "%(number)d / %(total)d"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+#, python-format
+msgid "(first %d listed)"
+msgstr "(ensimmäiset %d luetellaan)"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "A regular expression states its own word boundaries, with \\b."
+msgstr "Säännöllinen lauseke ilmaisee sanarajansa itse, \\b:llä."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
 msgid "Description"
 msgstr "Kuvaus"
 
@@ -1373,15 +1468,89 @@ msgstr "Tekstin etsiminen"
 # machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
 msgid ""
-"<b>Find</b> selects the pages that contain the phrase and boxes each hit on "
-"the thumbnail, so you can see where on the page it is. The boxes clear as "
-"soon as you change the document, since the pages they were drawn for may "
-"have moved."
+"<b>Edit ▸ Find</b> (Ctrl+F) opens a panel that stays open while you work, so"
+" you can walk through the results without closing it. It lists every match "
+"with the text around it: pick one to go straight there, or use <b>Next</b> "
+"and <b>Previous</b> — F3 and Shift+F3, which keep working when the panel is "
+"closed."
 msgstr ""
-"<b>Etsi</b> valitsee sivut, jotka sisältävät hakulausekkeen, ja kehystää "
-"jokaisen osuman pienoiskuvassa, jotta näet missä kohtaa sivua se on. "
-"Kehykset katoavat heti kun muutat asiakirjaa, koska sivut joille ne "
-"piirrettiin ovat voineet siirtyä."
+"<b>Muokkaa ▸ Etsi</b> (Ctrl+F) avaa paneelin, joka pysyy avoinna "
+"työskentelyn ajan, jotta tulokset voi käydä läpi sulkematta sitä. Se "
+"luettelee jokaisen osuman ympäröivän tekstin kanssa: valitse yksi "
+"siirtyäksesi suoraan siihen, tai käytä <b>Seuraava</b>- ja "
+"<b>Edellinen</b>-painikkeita — F3 ja Vaihto+F3, jotka toimivat myös paneelin"
+" ollessa suljettuna."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"The counter beside the field says which match you are on and how many there "
+"are, counting individual matches rather than pages: a phrase can occur "
+"several times on one page."
+msgstr ""
+"Kentän vieressä oleva laskuri kertoo, monennessa osumassa olet ja montako "
+"niitä on, laskien yksittäiset osumat eikä sivuja: ilmaus voi esiintyä "
+"samalla sivulla useita kertoja."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Three options change what counts as a match. <b>Case sensitive</b> "
+"distinguishes \"Tap\" from \"tap\". <b>Whole words only</b> ignores a match "
+"inside a longer word, so \"tap\" no longer finds \"tapping\". <b>Regular "
+"expression</b> treats what you type as a pattern — \"tap(s|ping)\" matches "
+"either word, \"^Chapter\" only where it begins a line — and takes over from "
+"whole words, since a pattern states its own boundaries with \\b. <b>Wrap "
+"around</b> decides whether Next carries on from the start of the document "
+"after the last match."
+msgstr ""
+"Kolme valintaa muuttaa sitä, mikä lasketaan osumaksi. <b>Sama "
+"kirjainkoko</b> erottaa ”Tap”-sanan ”tap”-sanasta. <b>Vain kokonaiset "
+"sanat</b> sivuuttaa pitemmän sanan sisällä olevan osuman, joten ”tap” ei "
+"enää löydä sanaa ”tapping”. <b>Säännöllinen lauseke</b> käsittelee "
+"kirjoitettua hahmona — ”tap(s|ping)” löytää kummankin sanan, ”^Chapter” vain"
+" rivin alusta — ja syrjäyttää kokonaiset sanat, sillä hahmo ilmaisee rajansa"
+" itse \\b:llä. <b>Jatka alusta</b> ratkaisee, jatkaako Seuraava viimeisen "
+"osuman jälkeen asiakirjan alusta."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"While reading, Next scrolls to the match and picks it out from the others on"
+" the page. While arranging, it selects the page the match is on and boxes "
+"every hit on the thumbnail; <b>Find All</b> selects every page that matches "
+"at once. Either way one position is shared, so switching between reading and"
+" arranging keeps your place."
+msgstr ""
+"Luettaessa Seuraava vierittää osumaan ja erottaa sen sivun muista. "
+"Järjesteltäessä se valitsee sivun, jolla osuma on, ja kehystää "
+"pienoiskuvassa jokaisen osuman; <b>Etsi kaikki</b> valitsee kerralla kaikki "
+"osuvat sivut. Kummassakin tapauksessa sijainti on sama, joten lukemisen ja "
+"järjestelyn välillä siirtyminen säilyttää paikkasi."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"The boxes clear as soon as you change the document, since the pages they "
+"were drawn for may have moved. The phrase and the options survive — Next "
+"searches again and carries on."
+msgstr ""
+"Kehykset katoavat heti, kun muutat asiakirjaa, sillä sivut, joille ne "
+"piirrettiin, ovat voineet siirtyä. Ilmaus ja valinnat säilyvät — Seuraava "
+"etsii uudelleen ja jatkaa."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Text is searched as the document will be <i>saved</i>, not as it sits in the"
+" original file, so a page you have cropped is searched cropped. A page that "
+"is a scanned image with no text layer cannot be searched at all; nothing in "
+"it will ever match."
+msgstr ""
+"Tekstiä etsitään siinä muodossa, jossa asiakirja <i>tallennetaan</i>, ei "
+"sellaisena kuin se on alkuperäisessä tiedostossa, joten rajaamasi sivu "
+"etsitään rajattuna. Sivua, joka on skannattu kuva ilman tekstikerrosta, ei "
+"voi etsiä lainkaan; siitä ei koskaan löydy mitään."
 
 # machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
@@ -2307,16 +2476,19 @@ msgstr[1] "%d sivua tulostettu"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
-msgid "Find"
-msgstr "Etsi"
+#, python-format
+msgid "%(matches)s on %(pages)s"
+msgstr "%(matches)s, %(pages)s"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
-#, python-format
-msgid "%d page matches"
-msgid_plural "%d pages match"
-msgstr[0] "%d sivu täsmää"
-msgstr[1] "%d sivua täsmää"
+msgid "Last match"
+msgstr "Viimeinen osuma"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "First match"
+msgstr "Ensimmäinen osuma"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
@@ -2933,4 +3105,27 @@ msgstr "Näytä otsikko tiedostonimen sijaan"
 #~ "tiedostosta: jo valmiiksi pakattuja kuvia "
 #~ "täynnä oleva tiedosto kutistuu tuskin "
 #~ "lainkaan."
+
+# machine translation, unreviewed
+#~ msgid ""
+#~ "<b>Find</b> selects the pages that contain"
+#~ " the phrase and boxes each hit on"
+#~ " the thumbnail, so you can see "
+#~ "where on the page it is. The "
+#~ "boxes clear as soon as you change "
+#~ "the document, since the pages they "
+#~ "were drawn for may have moved."
+#~ msgstr ""
+#~ "<b>Etsi</b> valitsee sivut, jotka sisältävät "
+#~ "hakulausekkeen, ja kehystää jokaisen osuman "
+#~ "pienoiskuvassa, jotta näet missä kohtaa "
+#~ "sivua se on. Kehykset katoavat heti "
+#~ "kun muutat asiakirjaa, koska sivut joille"
+#~ " ne piirrettiin ovat voineet siirtyä."
+
+# machine translation, unreviewed
+#~ msgid "%d page matches"
+#~ msgid_plural "%d pages match"
+#~ msgstr[0] "%d sivu täsmää"
+#~ msgstr[1] "%d sivua täsmää"
 

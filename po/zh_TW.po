@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-25 23:34+0000\n"
+"POT-Creation-Date: 2026-10-06 22:49+0000\n"
 "PO-Revision-Date: 2024-03-20 17:20+0800\n"
 "Last-Translator: 錢政維 <e.cwchien@gmail.com>\n"
 "Language: zh_TW\n"
@@ -705,6 +705,98 @@ msgstr "重設"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
+msgid "Find"
+msgstr "尋找"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Find:"
+msgstr "尋找："
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Case sensitive"
+msgstr "區分大小寫"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Whole words only"
+msgstr "全字相符"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Regular expression"
+msgstr "正規表示式"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Wrap around"
+msgstr "循環尋找"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Carry on from the other end of the document when the last match is passed."
+msgstr "越過最後一個相符處後，從文件的另一端繼續。"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Interpret the text as a regular expression, so that \"tap(s|ping)\" matches "
+"either word."
+msgstr "把輸入當作正規表示式，使「tap(s|ping)」能找到這兩個詞。"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Page"
+msgstr "頁"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Previous"
+msgstr "上一個"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Next"
+msgstr "下一個"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "Not a valid pattern: %s"
+msgstr "不是有效的樣式：%s"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+msgid "No matches"
+msgstr "沒有相符處"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "%d match"
+msgid_plural "%d matches"
+msgstr[0] "%d 個相符處"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "%(number)d of %(total)d"
+msgstr "第 %(number)d 個，共 %(total)d 個"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+#, python-format
+msgid "(first %d listed)"
+msgstr "（僅列出前 %d 個）"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "A regular expression states its own word boundaries, with \\b."
+msgstr "正規表示式以 \\b 自行標明詞的邊界。"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
 msgid "Description"
 msgstr "描述"
 
@@ -1250,11 +1342,65 @@ msgstr "尋找文字"
 # machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
 msgid ""
-"<b>Find</b> selects the pages that contain the phrase and boxes each hit on "
-"the thumbnail, so you can see where on the page it is. The boxes clear as "
-"soon as you change the document, since the pages they were drawn for may "
-"have moved."
-msgstr "<b>尋找</b>會選取含有該詞句的頁面，並在縮圖上把每個符合處框起來，讓你看見它在頁面上的位置。一旦你更動文件，這些框就會消失，因為它們所對應的頁面可能已經移動了。"
+"<b>Edit ▸ Find</b> (Ctrl+F) opens a panel that stays open while you work, so"
+" you can walk through the results without closing it. It lists every match "
+"with the text around it: pick one to go straight there, or use <b>Next</b> "
+"and <b>Previous</b> — F3 and Shift+F3, which keep working when the panel is "
+"closed."
+msgstr ""
+"<b>編輯 ▸ "
+"尋找</b>（Ctrl+F）會開啟一個面板，工作時它一直開著，因此可以不關掉它就逐一查看結果。面板列出每一個相符處及其周圍的文字：選取一列就直接跳到那裡，也可以用<b>下一個</b>和<b>上一個</b>——即"
+" F3 與 Shift+F3，面板關閉後它們照樣有效。"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"The counter beside the field says which match you are on and how many there "
+"are, counting individual matches rather than pages: a phrase can occur "
+"several times on one page."
+msgstr "輸入框旁的計數告訴你正在第幾個相符處，以及一共有多少個。計的是單個相符處而非頁：同一個詞句在一頁上可能出現多次。"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Three options change what counts as a match. <b>Case sensitive</b> "
+"distinguishes \"Tap\" from \"tap\". <b>Whole words only</b> ignores a match "
+"inside a longer word, so \"tap\" no longer finds \"tapping\". <b>Regular "
+"expression</b> treats what you type as a pattern — \"tap(s|ping)\" matches "
+"either word, \"^Chapter\" only where it begins a line — and takes over from "
+"whole words, since a pattern states its own boundaries with \\b. <b>Wrap "
+"around</b> decides whether Next carries on from the start of the document "
+"after the last match."
+msgstr ""
+"三個選項改變什麼算作相符。<b>區分大小寫</b>把「Tap」與「tap」分開。<b>全字相符</b>略過落在更長單詞內部的相符處，於是「tap」不再找到「tapping」。<b>正規表示式</b>把輸入當作樣式——「tap(s|ping)」能找到這兩個詞，「^Chapter」只在行首處相符——並取代全字相符，因為樣式以"
+" \\b 自行標明邊界。<b>循環尋找</b>決定越過最後一個相符處後，下一個是否從文件開頭繼續。"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"While reading, Next scrolls to the match and picks it out from the others on"
+" the page. While arranging, it selects the page the match is on and boxes "
+"every hit on the thumbnail; <b>Find All</b> selects every page that matches "
+"at once. Either way one position is shared, so switching between reading and"
+" arranging keeps your place."
+msgstr "閱讀時，下一個會捲動到該相符處，並把它從同頁其餘相符處中標出。整理時，它選取該相符處所在的頁，並在縮圖上為每個相符處畫框；<b>尋找全部</b>一次選取所有相符的頁。兩種情形共用同一個位置，因此在閱讀與整理之間切換會保留你所在之處。"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"The boxes clear as soon as you change the document, since the pages they "
+"were drawn for may have moved. The phrase and the options survive — Next "
+"searches again and carries on."
+msgstr "一改動文件，這些框就會清除，因為它們所依據的頁可能已經移位。詞句和選項仍在——下一個會重新尋找並繼續。"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Text is searched as the document will be <i>saved</i>, not as it sits in the"
+" original file, so a page you have cropped is searched cropped. A page that "
+"is a scanned image with no text layer cannot be searched at all; nothing in "
+"it will ever match."
+msgstr "尋找的文字是文件<i>儲存後</i>的樣子，而不是原檔案裡的樣子，所以裁剪過的頁是按裁剪後的樣子尋找的。只是掃描影像、沒有文字層的頁根本無法尋找，其中永遠不會有相符處。"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
@@ -2160,15 +2306,19 @@ msgstr[0] "已列印 %d 頁"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
-msgid "Find"
-msgstr "尋找"
+#, python-format
+msgid "%(matches)s on %(pages)s"
+msgstr "%(pages)s中有%(matches)s"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
-#, python-format
-msgid "%d page matches"
-msgid_plural "%d pages match"
-msgstr[0] "%d 頁符合"
+msgid "Last match"
+msgstr "最後一個相符處"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "First match"
+msgstr "第一個相符處"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
@@ -2780,4 +2930,20 @@ msgstr "顯示標題而非檔案名稱"
 #~ " file: one full of already-compressed"
 #~ " images will barely shrink."
 #~ msgstr "能省下多少要看檔案：一份滿是已壓縮影像的檔案幾乎不會變小。"
+
+# machine translation, unreviewed
+#~ msgid ""
+#~ "<b>Find</b> selects the pages that contain"
+#~ " the phrase and boxes each hit on"
+#~ " the thumbnail, so you can see "
+#~ "where on the page it is. The "
+#~ "boxes clear as soon as you change "
+#~ "the document, since the pages they "
+#~ "were drawn for may have moved."
+#~ msgstr "<b>尋找</b>會選取含有該詞句的頁面，並在縮圖上把每個符合處框起來，讓你看見它在頁面上的位置。一旦你更動文件，這些框就會消失，因為它們所對應的頁面可能已經移動了。"
+
+# machine translation, unreviewed
+#~ msgid "%d page matches"
+#~ msgid_plural "%d pages match"
+#~ msgstr[0] "%d 頁符合"
 

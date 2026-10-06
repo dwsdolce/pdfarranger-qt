@@ -49,14 +49,43 @@ class TestSearch(unittest.TestCase):
     def test_empty_phrase_finds_nothing(self):
         self.assertEqual(self.index.search("", self.pages, self.files()), [])
 
-    def test_next_wraps_around(self):
+    def test_hits_are_addressable_one_at_a_time(self):
+        """The cursor lives in the window now; the index serves hits by number."""
         self.index.search("tests", self.pages, self.files())
-        first = self.index.next()
-        self.assertEqual(self.index.next(), first, "one match should wrap to itself")
+        self.assertGreater(self.index.count(), 0)
+        first = self.index.hit(0)
+        self.assertIsNotNone(first)
+        self.assertEqual(first.page, 0)
+        self.assertEqual(first.text().lower(), "tests")
 
-    def test_previous_without_matches_is_none(self):
-        self.index.search("zzzz", self.pages, self.files())
-        self.assertIsNone(self.index.previous())
+    def test_a_hit_past_the_end_is_none(self):
+        self.index.search("tests", self.pages, self.files())
+        self.assertIsNone(self.index.hit(self.index.count()))
+
+    def test_no_hits_without_a_match(self):
+        self.index.search("zzzznotpresent", self.pages, self.files())
+        self.assertEqual(self.index.count(), 0)
+        self.assertIsNone(self.index.hit(0))
+
+    def test_first_at_or_after_finds_the_page_to_start_from(self):
+        self.index.search("tests", self.pages, self.files())
+        self.assertEqual(self.index.first_at_or_after(0), 0)
+        self.assertEqual(self.index.first_at_or_after(99), -1,
+                         "nothing on or after a page past the end")
+
+    def test_options_reach_the_engine(self):
+        """The reason this engine exists: QPdfSearchModel took no options."""
+        from pdfarranger_qt.find import Query
+
+        hits = self.index.search(Query("tests", case_sensitive=True),
+                                 self.pages, self.files())
+        self.assertEqual(hits, [0])
+        self.assertEqual(self.index.search(Query("TESTS", case_sensitive=True),
+                                           self.pages, self.files()), [],
+                         "case-sensitive search should not match the wrong case")
+        self.assertEqual(self.index.search(Query("TESTS"), self.pages,
+                                           self.files()), [0],
+                         "and should match it again when case is ignored")
 
     def test_invalidate_allows_a_rebuild(self):
         self.index.search("tests", self.pages, self.files())

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-25 23:34+0000\n"
+"POT-Creation-Date: 2026-10-06 22:49+0000\n"
 "PO-Revision-Date: 2022-10-03 23:44+0200\n"
 "Last-Translator: Ícar N. S. <icar.nin@protonmail.com>\n"
 "Language: ca\n"
@@ -730,6 +730,101 @@ msgstr "Reinicialitza"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
+msgid "Find"
+msgstr "Cerca"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Find:"
+msgstr "Cerca:"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Case sensitive"
+msgstr "Distingeix majúscules"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Whole words only"
+msgstr "Només paraules senceres"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Regular expression"
+msgstr "Expressió regular"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Wrap around"
+msgstr "Continua des del principi"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Carry on from the other end of the document when the last match is passed."
+msgstr "Continuar per l'altre extrem del document després de l'última coincidència."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Interpret the text as a regular expression, so that \"tap(s|ping)\" matches "
+"either word."
+msgstr ""
+"Interpretar el text com una expressió regular, de manera que «tap(s|ping)» "
+"trobi qualsevol de les dues paraules."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Page"
+msgstr "Pàgina"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Previous"
+msgstr "Anterior"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Next"
+msgstr "Següent"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "Not a valid pattern: %s"
+msgstr "Patró no vàlid: %s"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+msgid "No matches"
+msgstr "Cap coincidència"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "%d match"
+msgid_plural "%d matches"
+msgstr[0] "%d coincidència"
+msgstr[1] "%d coincidències"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "%(number)d of %(total)d"
+msgstr "%(number)d de %(total)d"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+#, python-format
+msgid "(first %d listed)"
+msgstr "(es mostren les %d primeres)"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "A regular expression states its own word boundaries, with \\b."
+msgstr "Una expressió regular indica els seus propis límits de paraula, amb \\b."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
 msgid "Description"
 msgstr "Descripció"
 
@@ -1390,15 +1485,90 @@ msgstr "Cercar text"
 # machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
 msgid ""
-"<b>Find</b> selects the pages that contain the phrase and boxes each hit on "
-"the thumbnail, so you can see where on the page it is. The boxes clear as "
-"soon as you change the document, since the pages they were drawn for may "
-"have moved."
+"<b>Edit ▸ Find</b> (Ctrl+F) opens a panel that stays open while you work, so"
+" you can walk through the results without closing it. It lists every match "
+"with the text around it: pick one to go straight there, or use <b>Next</b> "
+"and <b>Previous</b> — F3 and Shift+F3, which keep working when the panel is "
+"closed."
 msgstr ""
-"<b>Cerca</b> selecciona les pàgines que contenen la frase i emmarca cada "
-"coincidència a la miniatura, perquè vegeu on és a la pàgina. Els marcs "
-"desapareixen tan bon punt canvieu el document, ja que les pàgines per a les "
-"quals es van dibuixar poden haver-se mogut."
+"<b>Edita ▸ Cerca</b> (Ctrl+F) obre un plafó que es manté obert mentre "
+"treballeu, per recórrer els resultats sense tancar-lo. Hi consta cada "
+"coincidència amb el text del voltant: trieu-ne una per anar-hi directament, "
+"o useu <b>Següent</b> i <b>Anterior</b> — F3 i Maj+F3, que continuen "
+"funcionant amb el plafó tancat."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"The counter beside the field says which match you are on and how many there "
+"are, counting individual matches rather than pages: a phrase can occur "
+"several times on one page."
+msgstr ""
+"El comptador del costat del camp indica en quina coincidència sou i quantes "
+"n'hi ha, comptant coincidències individuals i no pàgines: una expressió pot "
+"aparèixer diverses vegades en una mateixa pàgina."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Three options change what counts as a match. <b>Case sensitive</b> "
+"distinguishes \"Tap\" from \"tap\". <b>Whole words only</b> ignores a match "
+"inside a longer word, so \"tap\" no longer finds \"tapping\". <b>Regular "
+"expression</b> treats what you type as a pattern — \"tap(s|ping)\" matches "
+"either word, \"^Chapter\" only where it begins a line — and takes over from "
+"whole words, since a pattern states its own boundaries with \\b. <b>Wrap "
+"around</b> decides whether Next carries on from the start of the document "
+"after the last match."
+msgstr ""
+"Tres opcions canvien què compta com a coincidència. <b>Distingeix "
+"majúscules</b> diferencia «Tap» de «tap». <b>Només paraules senceres</b> "
+"passa per alt una coincidència dins d'una paraula més llarga, de manera que "
+"«tap» ja no troba «tapping». <b>Expressió regular</b> tracta el que escriviu"
+" com un patró — «tap(s|ping)» troba qualsevol de les dues paraules, "
+"«^Chapter» només a principi de línia — i substitueix les paraules senceres, "
+"ja que un patró indica els seus propis límits amb \\b. <b>Continua des del "
+"principi</b> decideix si Següent continua des del començament del document "
+"després de l'última coincidència."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"While reading, Next scrolls to the match and picks it out from the others on"
+" the page. While arranging, it selects the page the match is on and boxes "
+"every hit on the thumbnail; <b>Find All</b> selects every page that matches "
+"at once. Either way one position is shared, so switching between reading and"
+" arranging keeps your place."
+msgstr ""
+"En lectura, Següent desplaça fins a la coincidència i la distingeix de les "
+"altres de la pàgina. En organització, selecciona la pàgina on és i emmarca "
+"cada coincidència a la miniatura; <b>Cerca-ho tot</b> selecciona de cop "
+"totes les pàgines que coincideixen. En tots dos casos la posició és la "
+"mateixa, de manera que passar de llegir a organitzar conserva el vostre "
+"lloc."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"The boxes clear as soon as you change the document, since the pages they "
+"were drawn for may have moved. The phrase and the options survive — Next "
+"searches again and carries on."
+msgstr ""
+"Els marcs desapareixen tan bon punt modifiqueu el document, perquè les "
+"pàgines per a les quals es van dibuixar poden haver-se mogut. L'expressió i "
+"les opcions es conserven — Següent torna a cercar i continua."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Text is searched as the document will be <i>saved</i>, not as it sits in the"
+" original file, so a page you have cropped is searched cropped. A page that "
+"is a scanned image with no text layer cannot be searched at all; nothing in "
+"it will ever match."
+msgstr ""
+"El text se cerca tal com es <i>desarà</i> el document, no tal com és al "
+"fitxer original, de manera que una pàgina que hàgiu retallat se cerca "
+"retallada. Una pàgina que és una imatge escanejada sense capa de text no es "
+"pot cercar gens; no s'hi trobarà mai res."
 
 # machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
@@ -2334,16 +2504,19 @@ msgstr[1] "S'han imprès %d pàgines"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
-msgid "Find"
-msgstr "Cerca"
+#, python-format
+msgid "%(matches)s on %(pages)s"
+msgstr "%(matches)s en %(pages)s"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
-#, python-format
-msgid "%d page matches"
-msgid_plural "%d pages match"
-msgstr[0] "%d pàgina coincideix"
-msgstr[1] "%d pàgines coincideixen"
+msgid "Last match"
+msgstr "Última coincidència"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "First match"
+msgstr "Primera coincidència"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
@@ -2962,4 +3135,29 @@ msgstr "Mostra el títol en lloc del nom del fitxer"
 #~ "El que s'estalvia depèn del fitxer: "
 #~ "un que sigui ple d'imatges ja "
 #~ "comprimides amb prou feines s'encongirà."
+
+# machine translation, unreviewed
+#~ msgid ""
+#~ "<b>Find</b> selects the pages that contain"
+#~ " the phrase and boxes each hit on"
+#~ " the thumbnail, so you can see "
+#~ "where on the page it is. The "
+#~ "boxes clear as soon as you change "
+#~ "the document, since the pages they "
+#~ "were drawn for may have moved."
+#~ msgstr ""
+#~ "<b>Cerca</b> selecciona les pàgines que "
+#~ "contenen la frase i emmarca cada "
+#~ "coincidència a la miniatura, perquè vegeu"
+#~ " on és a la pàgina. Els marcs "
+#~ "desapareixen tan bon punt canvieu el "
+#~ "document, ja que les pàgines per a"
+#~ " les quals es van dibuixar poden "
+#~ "haver-se mogut."
+
+# machine translation, unreviewed
+#~ msgid "%d page matches"
+#~ msgid_plural "%d pages match"
+#~ msgstr[0] "%d pàgina coincideix"
+#~ msgstr[1] "%d pàgines coincideixen"
 

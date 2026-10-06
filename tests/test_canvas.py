@@ -35,7 +35,7 @@ from PySide6.QtCore import (
     QUrl,
 )
 from PySide6.QtGui import QKeyEvent, QKeySequence, QMouseEvent
-from PySide6.QtPdf import QPdfLinkModel, QPdfSearchModel
+from PySide6.QtPdf import QPdfLinkModel
 from PySide6.QtWidgets import QApplication
 from support import HERE, TEXT_PDF, settle
 
@@ -51,6 +51,7 @@ from pdfarranger_qt.canvas import (
 )
 from pdfarranger_qt.core import DocumentSet, Sides
 from pdfarranger_qt.export import get_in_memory_pdf
+from pdfarranger_qt.find import Query, TextSearch
 from pdfarranger_qt.render import MemoryDocument
 
 OUTLINE_PDF = os.path.join(HERE, "exporter", "outlines.pdf")
@@ -539,11 +540,11 @@ class TestCanvasParity(unittest.TestCase):
         self.canvas.viewport().repaint()
 
     def test_a_search_model_can_be_attached_and_replaced(self):
-        first = QPdfSearchModel()
-        first.setDocument(self.memory.document)
+        first = TextSearch()
+        first.set_document(self.memory.document)
         self.canvas.set_search_model(first)
-        second = QPdfSearchModel()
-        second.setDocument(self.memory.document)
+        second = TextSearch()
+        second.set_document(self.memory.document)
         self.canvas.set_search_model(second)      # must disconnect the first
         self.canvas.viewport().repaint()
 
@@ -554,15 +555,14 @@ class TestCanvasParity(unittest.TestCase):
         its own filename -- searching for "the" skipped the test, which meant
         the painting it exists to exercise was never running.
         """
-        model = QPdfSearchModel()
-        model.setDocument(self.memory.document)
-        model.setSearchString("tests")
-        settle(lambda: model.rowCount(QModelIndex()) > 0, timeout_ms=5000)
-        self.assertGreater(model.rowCount(QModelIndex()), 0,
+        model = TextSearch()
+        model.set_document(self.memory.document)
+        model.set_query(Query("tests"))
+        self.assertGreater(model.count(), 0,
                            "fixture text changed; pick another phrase")
         self.canvas.set_search_model(model)
 
-        hits = model.resultsOnPage(0)
+        hits = model.hits_on_page(0)
         self.assertTrue(hits, "the hit should be on page 0")
         self.canvas.set_current_search_result(0)
         self.canvas.viewport().repaint()

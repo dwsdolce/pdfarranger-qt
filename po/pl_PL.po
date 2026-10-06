@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PDF-Shuffler 0.7\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-25 23:34+0000\n"
+"POT-Creation-Date: 2026-10-06 22:49+0000\n"
 "PO-Revision-Date: 2021-12-30 17:13+0100\n"
 "Last-Translator: Toratora <darex7@o2.pl>\n"
 "Language: pl_PL\n"
@@ -735,6 +735,102 @@ msgstr "Przywróć"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
+msgid "Find"
+msgstr "Znajdź"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Find:"
+msgstr "Znajdź:"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Case sensitive"
+msgstr "Uwzględniaj wielkość liter"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Whole words only"
+msgstr "Tylko całe wyrazy"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Regular expression"
+msgstr "Wyrażenie regularne"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Wrap around"
+msgstr "Zawijaj"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Carry on from the other end of the document when the last match is passed."
+msgstr "Po ostatnim trafieniu kontynuować od drugiego końca dokumentu."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Interpret the text as a regular expression, so that \"tap(s|ping)\" matches "
+"either word."
+msgstr ""
+"Traktować tekst jako wyrażenie regularne, tak aby „tap(s|ping)” znajdowało "
+"oba wyrazy."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Page"
+msgstr "Strona"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Previous"
+msgstr "Poprzednie"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Next"
+msgstr "Następne"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "Not a valid pattern: %s"
+msgstr "Nieprawidłowy wzorzec: %s"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+msgid "No matches"
+msgstr "Brak trafień"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "%d match"
+msgid_plural "%d matches"
+msgstr[0] "%d trafienie"
+msgstr[1] "%d trafienia"
+msgstr[2] "%d trafień"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "%(number)d of %(total)d"
+msgstr "%(number)d z %(total)d"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+#, python-format
+msgid "(first %d listed)"
+msgstr "(wypisano pierwsze %d)"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "A regular expression states its own word boundaries, with \\b."
+msgstr "Wyrażenie regularne samo określa granice wyrazów, za pomocą \\b."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
 msgid "Description"
 msgstr "Opis"
 
@@ -1391,15 +1487,89 @@ msgstr "Wyszukiwanie tekstu"
 # machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
 msgid ""
-"<b>Find</b> selects the pages that contain the phrase and boxes each hit on "
-"the thumbnail, so you can see where on the page it is. The boxes clear as "
-"soon as you change the document, since the pages they were drawn for may "
-"have moved."
+"<b>Edit ▸ Find</b> (Ctrl+F) opens a panel that stays open while you work, so"
+" you can walk through the results without closing it. It lists every match "
+"with the text around it: pick one to go straight there, or use <b>Next</b> "
+"and <b>Previous</b> — F3 and Shift+F3, which keep working when the panel is "
+"closed."
 msgstr ""
-"<b>Znajdź</b> zaznacza strony zawierające dane wyrażenie i obramowuje każde "
-"trafienie na miniaturze, żebyś widział, gdzie na stronie się znajduje. Ramki"
-" znikają, gdy tylko zmienisz dokument, bo strony, dla których je narysowano,"
-" mogły się przesunąć."
+"<b>Edycja ▸ Znajdź</b> (Ctrl+F) otwiera panel, który pozostaje otwarty "
+"podczas pracy, dzięki czemu można przeglądać wyniki bez zamykania go. "
+"Wypisuje każde trafienie z otaczającym tekstem: wybierz jedno, aby przejść "
+"wprost do niego, albo użyj <b>Następne</b> i <b>Poprzednie</b> — F3 i "
+"Shift+F3, które działają także przy zamkniętym panelu."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"The counter beside the field says which match you are on and how many there "
+"are, counting individual matches rather than pages: a phrase can occur "
+"several times on one page."
+msgstr ""
+"Licznik obok pola podaje, przy którym trafieniu jesteś i ile ich jest, "
+"licząc poszczególne trafienia, a nie strony: wyrażenie może wystąpić na "
+"jednej stronie kilka razy."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Three options change what counts as a match. <b>Case sensitive</b> "
+"distinguishes \"Tap\" from \"tap\". <b>Whole words only</b> ignores a match "
+"inside a longer word, so \"tap\" no longer finds \"tapping\". <b>Regular "
+"expression</b> treats what you type as a pattern — \"tap(s|ping)\" matches "
+"either word, \"^Chapter\" only where it begins a line — and takes over from "
+"whole words, since a pattern states its own boundaries with \\b. <b>Wrap "
+"around</b> decides whether Next carries on from the start of the document "
+"after the last match."
+msgstr ""
+"Trzy opcje zmieniają to, co liczy się jako trafienie. <b>Uwzględniaj "
+"wielkość liter</b> odróżnia „Tap” od „tap”. <b>Tylko całe wyrazy</b> pomija "
+"trafienie wewnątrz dłuższego wyrazu, więc „tap” już nie znajduje „tapping”. "
+"<b>Wyrażenie regularne</b> traktuje wpisany tekst jako wzorzec — "
+"„tap(s|ping)” znajduje oba wyrazy, „^Chapter” tylko na początku wiersza — i "
+"zastępuje całe wyrazy, ponieważ wzorzec sam określa swoje granice za pomocą "
+"\\b. <b>Zawijaj</b> decyduje, czy Następne po ostatnim trafieniu przechodzi "
+"na początek dokumentu."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"While reading, Next scrolls to the match and picks it out from the others on"
+" the page. While arranging, it selects the page the match is on and boxes "
+"every hit on the thumbnail; <b>Find All</b> selects every page that matches "
+"at once. Either way one position is shared, so switching between reading and"
+" arranging keeps your place."
+msgstr ""
+"Przy czytaniu Następne przewija do trafienia i wyróżnia je spośród "
+"pozostałych na stronie. Przy porządkowaniu zaznacza stronę, na której się "
+"ono znajduje, i obramowuje każde trafienie na miniaturze; <b>Znajdź "
+"wszystko</b> zaznacza od razu wszystkie pasujące strony. W obu wypadkach "
+"obowiązuje jedno położenie, więc przejście między czytaniem a porządkowaniem"
+" zachowuje twoje miejsce."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"The boxes clear as soon as you change the document, since the pages they "
+"were drawn for may have moved. The phrase and the options survive — Next "
+"searches again and carries on."
+msgstr ""
+"Ramki znikają, gdy tylko zmienisz dokument, ponieważ strony, dla których je "
+"narysowano, mogły się przemieścić. Wyrażenie i opcje pozostają — Następne "
+"szuka ponownie i kontynuuje."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Text is searched as the document will be <i>saved</i>, not as it sits in the"
+" original file, so a page you have cropped is searched cropped. A page that "
+"is a scanned image with no text layer cannot be searched at all; nothing in "
+"it will ever match."
+msgstr ""
+"Tekst jest przeszukiwany tak, jak dokument zostanie <i>zapisany</i>, a nie "
+"jak wygląda w pierwotnym pliku, więc strona, którą przycięto, jest "
+"przeszukiwana przycięta. Strona będąca zeskanowanym obrazem bez warstwy "
+"tekstowej nie da się przeszukać wcale; nic się w niej nigdy nie znajdzie."
 
 # machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
@@ -2358,17 +2528,19 @@ msgstr[2] "Wydrukowano %d stron"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
-msgid "Find"
-msgstr "Znajdź"
+#, python-format
+msgid "%(matches)s on %(pages)s"
+msgstr "%(matches)s na %(pages)s"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
-#, python-format
-msgid "%d page matches"
-msgid_plural "%d pages match"
-msgstr[0] "%d strona pasuje"
-msgstr[1] "%d strony pasują"
-msgstr[2] "%d stron pasuje"
+msgid "Last match"
+msgstr "Ostatnie trafienie"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "First match"
+msgstr "Pierwsze trafienie"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
@@ -2988,4 +3160,29 @@ msgstr "Pokaż tytuł zamiast nazwy pliku"
 #~ "Ile to daje, zależy od pliku: plik"
 #~ " pełen już skompresowanych obrazów prawie "
 #~ "się nie zmniejszy."
+
+# machine translation, unreviewed
+#~ msgid ""
+#~ "<b>Find</b> selects the pages that contain"
+#~ " the phrase and boxes each hit on"
+#~ " the thumbnail, so you can see "
+#~ "where on the page it is. The "
+#~ "boxes clear as soon as you change "
+#~ "the document, since the pages they "
+#~ "were drawn for may have moved."
+#~ msgstr ""
+#~ "<b>Znajdź</b> zaznacza strony zawierające dane"
+#~ " wyrażenie i obramowuje każde trafienie "
+#~ "na miniaturze, żebyś widział, gdzie na "
+#~ "stronie się znajduje. Ramki znikają, gdy"
+#~ " tylko zmienisz dokument, bo strony, dla"
+#~ " których je narysowano, mogły się "
+#~ "przesunąć."
+
+# machine translation, unreviewed
+#~ msgid "%d page matches"
+#~ msgid_plural "%d pages match"
+#~ msgstr[0] "%d strona pasuje"
+#~ msgstr[1] "%d strony pasują"
+#~ msgstr[2] "%d stron pasuje"
 

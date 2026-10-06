@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  pdfarranger\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-25 23:34+0000\n"
+"POT-Creation-Date: 2026-10-06 22:49+0000\n"
 "PO-Revision-Date: 2026-01-21 05:07+0100\n"
 "Last-Translator: Ekaterine Papava <papava.e@gtu.ge>\n"
 "Language: ka\n"
@@ -699,6 +699,100 @@ msgstr "ჩამოყრა"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
+msgid "Find"
+msgstr "ძებნა"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Find:"
+msgstr "ძიება:"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Case sensitive"
+msgstr "მთავრულის გარჩევა"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Whole words only"
+msgstr "მხოლოდ მთლიანი სიტყვები"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Regular expression"
+msgstr "რეგულარული გამოსახულება"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Wrap around"
+msgstr "თავიდან გაგრძელება"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Carry on from the other end of the document when the last match is passed."
+msgstr "ბოლო დამთხვევის შემდეგ დოკუმენტის მეორე ბოლოდან გაგრძელება."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Interpret the text as a regular expression, so that \"tap(s|ping)\" matches "
+"either word."
+msgstr ""
+"ტექსტის რეგულარულ გამოსახულებად აღქმა, რათა „tap(s|ping)“-მა ორივე სიტყვა "
+"მოძებნოს."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Page"
+msgstr "გვერდი"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Previous"
+msgstr "წინა"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Next"
+msgstr "შემდეგი"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "Not a valid pattern: %s"
+msgstr "არასწორი ნიმუში: %s"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+msgid "No matches"
+msgstr "დამთხვევა არ არის"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "%d match"
+msgid_plural "%d matches"
+msgstr[0] "%d დამთხვევა"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "%(number)d of %(total)d"
+msgstr "%(number)d / %(total)d"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+#, python-format
+msgid "(first %d listed)"
+msgstr "(ნაჩვენებია პირველი %d)"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "A regular expression states its own word boundaries, with \\b."
+msgstr "რეგულარული გამოსახულება სიტყვის საზღვრებს თავად აღნიშნავს, \\b-ით."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
 msgid "Description"
 msgstr "აღწერა"
 
@@ -1353,15 +1447,88 @@ msgstr "ტექსტის ძებნა"
 # machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
 msgid ""
-"<b>Find</b> selects the pages that contain the phrase and boxes each hit on "
-"the thumbnail, so you can see where on the page it is. The boxes clear as "
-"soon as you change the document, since the pages they were drawn for may "
-"have moved."
+"<b>Edit ▸ Find</b> (Ctrl+F) opens a panel that stays open while you work, so"
+" you can walk through the results without closing it. It lists every match "
+"with the text around it: pick one to go straight there, or use <b>Next</b> "
+"and <b>Previous</b> — F3 and Shift+F3, which keep working when the panel is "
+"closed."
 msgstr ""
-"<b>ძებნა</b> მონიშნავს იმ გვერდებს, რომლებიც ფრაზას შეიცავს, და ყოველ "
-"დამთხვევას მინიატურაზე ჩარჩოში სვამს, რომ დაინახოთ, სად არის ის გვერდზე. "
-"ჩარჩოები მაშინვე ქრება, როგორც კი დოკუმენტს შეცვლით, რადგან ის გვერდები, "
-"რომლებისთვისაც დაიხატა, შეიძლება გადაადგილებულიყო."
+"<b>ჩასწორება ▸ ძიება</b> (Ctrl+F) ხსნის პანელს, რომელიც მუშაობის დროს ღია "
+"რჩება, ასე რომ შედეგების დათვალიერება მისი დახურვის გარეშე შეიძლება. იგი "
+"ჩამოთვლის ყოველ დამთხვევას მის გარშემო ტექსტთან ერთად: აირჩიეთ ერთი, რომ "
+"პირდაპირ მივიდეთ, ან გამოიყენეთ <b>შემდეგი</b> და <b>წინა</b> — F3 და "
+"Shift+F3, რომლებიც პანელის დახურვის შემდეგაც მუშაობს."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"The counter beside the field says which match you are on and how many there "
+"are, counting individual matches rather than pages: a phrase can occur "
+"several times on one page."
+msgstr ""
+"მრიცხველი მინდვრის გვერდით აღნიშნავს, რომელ დამთხვევაზე ხართ და რამდენია "
+"სულ; ითვლის ცალკეულ დამთხვევებს და არა გვერდებს: გამოთქმა ერთ გვერდზე "
+"რამდენჯერმე შეიძლება შეგვხვდეს."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Three options change what counts as a match. <b>Case sensitive</b> "
+"distinguishes \"Tap\" from \"tap\". <b>Whole words only</b> ignores a match "
+"inside a longer word, so \"tap\" no longer finds \"tapping\". <b>Regular "
+"expression</b> treats what you type as a pattern — \"tap(s|ping)\" matches "
+"either word, \"^Chapter\" only where it begins a line — and takes over from "
+"whole words, since a pattern states its own boundaries with \\b. <b>Wrap "
+"around</b> decides whether Next carries on from the start of the document "
+"after the last match."
+msgstr ""
+"სამი პარამეტრი ცვლის იმას, რა ითვლება დამთხვევად. <b>მთავრულის გარჩევა</b> "
+"განასხვავებს „Tap“-ს „tap“-ისგან. <b>მხოლოდ მთლიანი სიტყვები</b> გამოტოვებს "
+"დამთხვევას უფრო გრძელი სიტყვის შიგნით, ასე რომ „tap“ ვეღარ პოულობს "
+"„tapping“-ს. <b>რეგულარული გამოსახულება</b> ნაკრეფს ნიმუშად აღიქვამს — "
+"„tap(s|ping)“ პოულობს ორივე სიტყვას, „^Chapter“ მხოლოდ სტრიქონის დასაწყისში "
+"— და ანაცვლებს მთლიან სიტყვებს, ვინაიდან ნიმუში საზღვრებს თავად აღნიშნავს "
+"\\b-ით. <b>თავიდან გაგრძელება</b> წყვეტს, განაგრძობს თუ არა შემდეგი "
+"დოკუმენტის დასაწყისიდან ბოლო დამთხვევის შემდეგ."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"While reading, Next scrolls to the match and picks it out from the others on"
+" the page. While arranging, it selects the page the match is on and boxes "
+"every hit on the thumbnail; <b>Find All</b> selects every page that matches "
+"at once. Either way one position is shared, so switching between reading and"
+" arranging keeps your place."
+msgstr ""
+"კითხვის დროს შემდეგი გადააქრულავს დამთხვევამდე და გამოარჩევს მას გვერდის "
+"დანარჩენებისგან. დალაგების დროს ირჩევს გვერდს, რომელზეც იგია, და ყოველ "
+"დამთხვევას ჩარჩოში სვამს მინიატურაზე; <b>ყველას ძიება</b> ერთბაშად ირჩევს "
+"ყველა შესაბამის გვერდს. ორივე შემთხვევაში მდებარეობა საერთოა, ასე რომ "
+"კითხვასა და დალაგებას შორის გადასვლა ინახავს თქვენს ადგილს."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"The boxes clear as soon as you change the document, since the pages they "
+"were drawn for may have moved. The phrase and the options survive — Next "
+"searches again and carries on."
+msgstr ""
+"ჩარჩოები ქრება მაშინვე, როგორც კი დოკუმენტს შეცვლით, ვინაიდან გვერდები, "
+"რომლებისთვისაც დაიხატა, შეიძლება გადაადგილებულიყო. გამოთქმა და პარამეტრები "
+"რჩება — შემდეგი ხელახლა ეძებს და განაგრძობს."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Text is searched as the document will be <i>saved</i>, not as it sits in the"
+" original file, so a page you have cropped is searched cropped. A page that "
+"is a scanned image with no text layer cannot be searched at all; nothing in "
+"it will ever match."
+msgstr ""
+"ტექსტი ისე იძებნება, როგორც დოკუმენტი <i>შეინახება</i>, და არა როგორც "
+"თავდაპირველ ფაილშია; ასე რომ გვერდი, რომელიც შეკვეცეთ, შეკვეცილად იძებნება. "
+"გვერდი, რომელიც ტექსტის შრის გარეშე სკანირებული სურათია, სრულიად ვერ "
+"იძებნება; მასში ვერაფერი ვერასდროს მოიძებნება."
 
 # machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
@@ -2268,15 +2435,19 @@ msgstr[0] "დაბეჭდილია %d გვერდი"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
-msgid "Find"
-msgstr "ძებნა"
+#, python-format
+msgid "%(matches)s on %(pages)s"
+msgstr "%(matches)s %(pages)s-ზე"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
-#, python-format
-msgid "%d page matches"
-msgid_plural "%d pages match"
-msgstr[0] "ემთხვევა %d გვერდი"
+msgid "Last match"
+msgstr "ბოლო დამთხვევა"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "First match"
+msgstr "პირველი დამთხვევა"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
@@ -2924,4 +3095,27 @@ msgstr "ფაილის სახელის ნაცვლად სათ
 #~ "რამდენს დაზოგავს, ფაილზეა დამოკიდებული: უკვე "
 #~ "შეკუმშული სურათებით სავსე ფაილი თითქმის არ"
 #~ " შემცირდება."
+
+# machine translation, unreviewed
+#~ msgid ""
+#~ "<b>Find</b> selects the pages that contain"
+#~ " the phrase and boxes each hit on"
+#~ " the thumbnail, so you can see "
+#~ "where on the page it is. The "
+#~ "boxes clear as soon as you change "
+#~ "the document, since the pages they "
+#~ "were drawn for may have moved."
+#~ msgstr ""
+#~ "<b>ძებნა</b> მონიშნავს იმ გვერდებს, რომლებიც "
+#~ "ფრაზას შეიცავს, და ყოველ დამთხვევას "
+#~ "მინიატურაზე ჩარჩოში სვამს, რომ დაინახოთ, "
+#~ "სად არის ის გვერდზე. ჩარჩოები მაშინვე "
+#~ "ქრება, როგორც კი დოკუმენტს შეცვლით, რადგან"
+#~ " ის გვერდები, რომლებისთვისაც დაიხატა, შეიძლება"
+#~ " გადაადგილებულიყო."
+
+# machine translation, unreviewed
+#~ msgid "%d page matches"
+#~ msgid_plural "%d pages match"
+#~ msgstr[0] "ემთხვევა %d გვერდი"
 

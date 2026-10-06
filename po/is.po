@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-25 23:34+0000\n"
+"POT-Creation-Date: 2026-10-06 22:49+0000\n"
 "PO-Revision-Date: 2025-09-28 16:51+0000\n"
 "Last-Translator: Sveinn í Felli <sv1@fellsnet.is>\n"
 "Language: is\n"
@@ -705,6 +705,101 @@ msgstr "Endurstilla"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
+msgid "Find"
+msgstr "Finna"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Find:"
+msgstr "Finna:"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Case sensitive"
+msgstr "Greina stóra og litla stafi"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Whole words only"
+msgstr "Aðeins heil orð"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Regular expression"
+msgstr "Regluleg segð"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Wrap around"
+msgstr "Halda áfram frá byrjun"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Carry on from the other end of the document when the last match is passed."
+msgstr "Halda áfram frá öðrum enda skjalsins eftir síðustu samsvörun."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Interpret the text as a regular expression, so that \"tap(s|ping)\" matches "
+"either word."
+msgstr ""
+"Túlka textann sem reglulega segð, svo að „tap(s|ping)“ finni hvort orðið sem"
+" er."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Page"
+msgstr "Síða"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Previous"
+msgstr "Fyrri"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Next"
+msgstr "Næsta"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "Not a valid pattern: %s"
+msgstr "Ógilt mynstur: %s"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+msgid "No matches"
+msgstr "Engar samsvaranir"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "%d match"
+msgid_plural "%d matches"
+msgstr[0] "%d samsvörun"
+msgstr[1] "%d samsvaranir"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "%(number)d of %(total)d"
+msgstr "%(number)d af %(total)d"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+#, python-format
+msgid "(first %d listed)"
+msgstr "(fyrstu %d sýndar)"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "A regular expression states its own word boundaries, with \\b."
+msgstr "Regluleg segð tilgreinir sjálf orðamörk sín, með \\b."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
 msgid "Description"
 msgstr "Lýsing"
 
@@ -1354,15 +1449,88 @@ msgstr "Að finna texta"
 # machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
 msgid ""
-"<b>Find</b> selects the pages that contain the phrase and boxes each hit on "
-"the thumbnail, so you can see where on the page it is. The boxes clear as "
-"soon as you change the document, since the pages they were drawn for may "
-"have moved."
+"<b>Edit ▸ Find</b> (Ctrl+F) opens a panel that stays open while you work, so"
+" you can walk through the results without closing it. It lists every match "
+"with the text around it: pick one to go straight there, or use <b>Next</b> "
+"and <b>Previous</b> — F3 and Shift+F3, which keep working when the panel is "
+"closed."
 msgstr ""
-"<b>Finna</b> velur þær síður sem innihalda orðasambandið og rammar hverja "
-"niðurstöðu inn á smámyndinni, svo þú sjáir hvar á síðunni hún er. Rammarnir "
-"hverfa um leið og þú breytir skjalinu, því síðurnar sem þeir voru teiknaðir "
-"fyrir kunna að hafa færst til."
+"<b>Breyta ▸ Finna</b> (Ctrl+F) opnar spjald sem stendur opið á meðan þú "
+"vinnur, svo þú getur farið yfir niðurstöðurnar án að loka því. Það birtir "
+"hverja samsvörun með textanum umhverfis: veldu eina til að fara beint "
+"þangað, eða notaðu <b>Næsta</b> og <b>Fyrri</b> — F3 og Shift+F3, sem starfa"
+" enn þótt spjaldinu sé lokað."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"The counter beside the field says which match you are on and how many there "
+"are, counting individual matches rather than pages: a phrase can occur "
+"several times on one page."
+msgstr ""
+"Teljarinn við innsláttarsvæðið segir hvar þú ert og hversu margar "
+"samsvaranir eru, og telur einstakar samsvaranir fremur en síður: setning "
+"getur komið fyrir oftar en einu sinni á sömu síðu."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Three options change what counts as a match. <b>Case sensitive</b> "
+"distinguishes \"Tap\" from \"tap\". <b>Whole words only</b> ignores a match "
+"inside a longer word, so \"tap\" no longer finds \"tapping\". <b>Regular "
+"expression</b> treats what you type as a pattern — \"tap(s|ping)\" matches "
+"either word, \"^Chapter\" only where it begins a line — and takes over from "
+"whole words, since a pattern states its own boundaries with \\b. <b>Wrap "
+"around</b> decides whether Next carries on from the start of the document "
+"after the last match."
+msgstr ""
+"Þrír valkostir breyta því hvað telst samsvörun. <b>Greina stóra og litla "
+"stafi</b> greinir „Tap“ frá „tap“. <b>Aðeins heil orð</b> sleppir samsvörun "
+"innan lengra orðs, svo „tap“ finnur ekki lengur „tapping“. <b>Regluleg "
+"segð</b> lítur á það sem þú skrifar sem mynstur — „tap(s|ping)“ finnur hvort"
+" orðið sem er, „^Chapter“ aðeins í byrjun línu — og tekur yfir frá heilum "
+"orðum, því mynstur tilgreinir sjálft mörk sín með \\b. <b>Halda áfram frá "
+"byrjun</b> ákveður hvort Næsta haldi áfram frá byrjun skjalsins eftir "
+"síðustu samsvörun."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"While reading, Next scrolls to the match and picks it out from the others on"
+" the page. While arranging, it selects the page the match is on and boxes "
+"every hit on the thumbnail; <b>Find All</b> selects every page that matches "
+"at once. Either way one position is shared, so switching between reading and"
+" arranging keeps your place."
+msgstr ""
+"Við lestur skrollar Næsta að samsvöruninni og skilur hana frá öðrum á "
+"síðunni. Við uppröðun er síðan sem samsvörunin er á valin og hver samsvörun "
+"römmuð inn á smámyndinni; <b>Finna allt</b> velur allar síður sem samsvara í"
+" einu. Í báðum tilvikum gildir sama staðan, svo að skipta milli lestrar og "
+"uppröðunar heldur stað þínum."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"The boxes clear as soon as you change the document, since the pages they "
+"were drawn for may have moved. The phrase and the options survive — Next "
+"searches again and carries on."
+msgstr ""
+"Rammarnir hverfa um leið og þú breytir skjalinu, því síðurnar sem þeir voru "
+"dregnir fyrir kunna að hafa færst. Leitarorðið og valkostirnir haldast — "
+"Næsta leitar aftur og heldur áfram."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Text is searched as the document will be <i>saved</i>, not as it sits in the"
+" original file, so a page you have cropped is searched cropped. A page that "
+"is a scanned image with no text layer cannot be searched at all; nothing in "
+"it will ever match."
+msgstr ""
+"Leitað er í textanum eins og skjalið verður <i>vistað</i>, ekki eins og hann"
+" er í upphaflegu skránni, svo síða sem þú hefur skorið er leituð skorin. "
+"Síða sem er skönnuð mynd án textalags er alls ekki leitanleg; þar finnst "
+"aldrei neitt."
 
 # machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
@@ -2283,16 +2451,19 @@ msgstr[1] "%d síður prentaðar"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
-msgid "Find"
-msgstr "Finna"
+#, python-format
+msgid "%(matches)s on %(pages)s"
+msgstr "%(matches)s á %(pages)s"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
-#, python-format
-msgid "%d page matches"
-msgid_plural "%d pages match"
-msgstr[0] "%d síða passar"
-msgstr[1] "%d síður passa"
+msgid "Last match"
+msgstr "Síðasta samsvörun"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "First match"
+msgstr "Fyrsta samsvörun"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
@@ -2926,4 +3097,28 @@ msgstr "Sýna titilinn í stað skráarnafnsins"
 #~ "Hversu miklu þetta skilar fer eftir "
 #~ "skránni: skrá full af þegar þjöppuðum "
 #~ "myndum minnkar varla neitt."
+
+# machine translation, unreviewed
+#~ msgid ""
+#~ "<b>Find</b> selects the pages that contain"
+#~ " the phrase and boxes each hit on"
+#~ " the thumbnail, so you can see "
+#~ "where on the page it is. The "
+#~ "boxes clear as soon as you change "
+#~ "the document, since the pages they "
+#~ "were drawn for may have moved."
+#~ msgstr ""
+#~ "<b>Finna</b> velur þær síður sem innihalda"
+#~ " orðasambandið og rammar hverja niðurstöðu "
+#~ "inn á smámyndinni, svo þú sjáir hvar"
+#~ " á síðunni hún er. Rammarnir hverfa "
+#~ "um leið og þú breytir skjalinu, því"
+#~ " síðurnar sem þeir voru teiknaðir fyrir"
+#~ " kunna að hafa færst til."
+
+# machine translation, unreviewed
+#~ msgid "%d page matches"
+#~ msgid_plural "%d pages match"
+#~ msgstr[0] "%d síða passar"
+#~ msgstr[1] "%d síður passa"
 

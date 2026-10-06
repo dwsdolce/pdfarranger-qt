@@ -158,6 +158,8 @@ class PageListModel(QAbstractListModel):
         #: {row: [QRectF]} for the current search, in page points. Empty when
         #: nothing is being searched for.
         self._matches = {}
+        self._match_rows = set()
+        self._resolve_match = None
         self.renderer.ready.connect(self._on_thumbnail_ready)
 
     # -- search highlighting -----------------------------------------------
@@ -168,18 +170,41 @@ class PageListModel(QAbstractListModel):
         Rows outside the current page list are ignored rather than rejected: a
         search result can outlive the edit that shortened the document.
         """
-        rows = set(self._matches) | set(matches or {})
-        self._matches = {row: list(rects)
-                         for row, rects in (matches or {}).items()
-                         if 0 <= row < len(self.pages) and rects}
-        for row in rows:
+        matches = matches or {}
+        self.set_match_rows([row for row, rects in matches.items() if rects],
+                            lambda row: matches.get(row, []))
+
+    def set_match_rows(self, rows, resolve):
+        """Which rows contain hits, and a callable for one row's rectangles.
+
+        Lazy because a rectangle costs a PDFium lookup of about 1.5 ms. That is
+        nothing for the twenty thumbnails on screen and 700 ms for the 450 hits
+        a three-letter word finds in an eighty-page manual, so the delegate --
+        which only ever draws what is visible -- pays for what it draws, and
+        the answers are kept until the next search or edit.
+        """
+        previous = set(self._match_rows)
+        self._match_rows = {row for row in rows if 0 <= row < len(self.pages)}
+        self._resolve_match = resolve
+        self._matches = {}
+        for row in previous | self._match_rows:
             if 0 <= row < len(self.pages):
                 index = self.index(row, 0)
                 self.dataChanged.emit(index, index, [self.MatchRole])
 
+    def matches_for(self, row: int):
+        """This row's hit rectangles, or None. Resolved once, then cached."""
+        if row not in self._match_rows:
+            return None
+        cached = self._matches.get(row)
+        if cached is None:
+            cached = list(self._resolve_match(row)) if self._resolve_match else []
+            self._matches[row] = cached
+        return cached or None
+
     def clear_matches(self):
-        if self._matches:
-            self.set_matches({})
+        if self._match_rows:
+            self.set_match_rows([], None)
 
     # -- Qt model interface ------------------------------------------------
 
@@ -195,7 +220,7 @@ class PageListModel(QAbstractListModel):
         if role == self.ImageRole:
             return self.renderer.get(page.render_key(self.thumb_width(page)))
         if role == self.MatchRole:
-            return self._matches.get(index.row())
+            return self.matches_for(index.row())
         if role == Qt.DisplayRole:
             return page.description
         if role == Qt.ToolTipRole:

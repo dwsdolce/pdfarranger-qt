@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pdfarranger - Korean\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-25 23:34+0000\n"
+"POT-Creation-Date: 2026-10-06 22:49+0000\n"
 "PO-Revision-Date: 2026-05-25 00:41+0900\n"
 "Last-Translator: VenusGirl <venusgirl@outlook.com>\n"
 "Language: ko\n"
@@ -682,6 +682,98 @@ msgstr "되돌리기"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
+msgid "Find"
+msgstr "찾기"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Find:"
+msgstr "찾기:"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Case sensitive"
+msgstr "대소문자 구별"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Whole words only"
+msgstr "단어 단위로"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Regular expression"
+msgstr "정규 표현식"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Wrap around"
+msgstr "처음부터 계속"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Carry on from the other end of the document when the last match is passed."
+msgstr "마지막 일치 뒤에 문서의 다른 끝에서 이어 갑니다."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Interpret the text as a regular expression, so that \"tap(s|ping)\" matches "
+"either word."
+msgstr "입력한 글을 정규 표현식으로 해석하여 “tap(s|ping)”이 두 낱말을 모두 찾게 합니다."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Page"
+msgstr "쪽"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Previous"
+msgstr "이전"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Next"
+msgstr "다음"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "Not a valid pattern: %s"
+msgstr "올바른 패턴이 아닙니다: %s"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+msgid "No matches"
+msgstr "일치하는 것이 없습니다"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "%d match"
+msgid_plural "%d matches"
+msgstr[0] "%d개 일치"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "%(number)d of %(total)d"
+msgstr "%(total)d개 중 %(number)d번째"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+#, python-format
+msgid "(first %d listed)"
+msgstr "(처음 %d개 표시)"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "A regular expression states its own word boundaries, with \\b."
+msgstr "정규 표현식은 \\b로 낱말 경계를 스스로 밝힙니다."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
 msgid "Description"
 msgstr "설명"
 
@@ -1269,13 +1361,76 @@ msgstr "텍스트 찾기"
 # machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
 msgid ""
-"<b>Find</b> selects the pages that contain the phrase and boxes each hit on "
-"the thumbnail, so you can see where on the page it is. The boxes clear as "
-"soon as you change the document, since the pages they were drawn for may "
-"have moved."
+"<b>Edit ▸ Find</b> (Ctrl+F) opens a panel that stays open while you work, so"
+" you can walk through the results without closing it. It lists every match "
+"with the text around it: pick one to go straight there, or use <b>Next</b> "
+"and <b>Previous</b> — F3 and Shift+F3, which keep working when the panel is "
+"closed."
 msgstr ""
-"<b>찾기</b>는 그 문구가 들어 있는 페이지를 선택하고 축소판 위에 각 결과를 상자로 표시하여, 페이지의 어디에 있는지 보이게 "
-"합니다. 문서를 바꾸는 즉시 상자는 사라지는데, 그것들이 그려진 페이지가 옮겨졌을 수 있기 때문입니다."
+"<b>편집 ▸ 찾기</b>(Ctrl+F)는 작업하는 동안 열린 채로 남는 창을 엽니다. 그래서 닫지 않고도 결과를 차례로 살펴볼 수 "
+"있습니다. 각 일치를 둘레의 글과 함께 늘어놓으므로, 하나를 고르면 곧바로 그곳으로 갑니다. 또는 <b>다음</b>과 <b>이전</b>,"
+" 곧 F3과 Shift+F3을 쓰십시오. 창이 닫혀 있어도 작동합니다."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"The counter beside the field says which match you are on and how many there "
+"are, counting individual matches rather than pages: a phrase can occur "
+"several times on one page."
+msgstr ""
+"입력란 옆의 숫자는 몇 번째 일치에 있고 모두 몇 개인지 알려 줍니다. 쪽이 아니라 일치를 하나하나 셉니다. 한 쪽에 같은 어구가 여러 "
+"번 나올 수 있기 때문입니다."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Three options change what counts as a match. <b>Case sensitive</b> "
+"distinguishes \"Tap\" from \"tap\". <b>Whole words only</b> ignores a match "
+"inside a longer word, so \"tap\" no longer finds \"tapping\". <b>Regular "
+"expression</b> treats what you type as a pattern — \"tap(s|ping)\" matches "
+"either word, \"^Chapter\" only where it begins a line — and takes over from "
+"whole words, since a pattern states its own boundaries with \\b. <b>Wrap "
+"around</b> decides whether Next carries on from the start of the document "
+"after the last match."
+msgstr ""
+"세 가지 선택이 무엇을 일치로 볼지 바꿉니다. <b>대소문자 구별</b>은 “Tap”과 “tap”을 가립니다. <b>단어 단위로</b>는"
+" 더 긴 낱말 안의 일치를 건너뛰므로 “tap”이 더는 “tapping”을 찾지 않습니다. <b>정규 표현식</b>은 입력을 패턴으로 "
+"다루어 “tap(s|ping)”은 두 낱말을, “^Chapter”는 줄머리만을 찾습니다. 패턴은 \\b로 경계를 스스로 밝히므로 단어 "
+"단위를 대신합니다. <b>처음부터 계속</b>은 마지막 일치 뒤에 다음이 문서 처음부터 이어 갈지를 정합니다."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"While reading, Next scrolls to the match and picks it out from the others on"
+" the page. While arranging, it selects the page the match is on and boxes "
+"every hit on the thumbnail; <b>Find All</b> selects every page that matches "
+"at once. Either way one position is shared, so switching between reading and"
+" arranging keeps your place."
+msgstr ""
+"읽기 모드에서는 다음이 그 일치까지 넘겨 주고, 같은 쪽의 다른 일치와 구별해 보여 줍니다. 정리 모드에서는 그 일치가 있는 쪽을 "
+"고르고, 미리 보기 그림 위에 일치마다 네모를 그립니다. <b>모두 찾기</b>는 들어맞는 쪽을 한꺼번에 고릅니다. 어느 쪽이든 자리는 "
+"하나로 함께 쓰이므로, 읽기와 정리를 넘나들어도 있던 자리가 그대로 남습니다."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"The boxes clear as soon as you change the document, since the pages they "
+"were drawn for may have moved. The phrase and the options survive — Next "
+"searches again and carries on."
+msgstr ""
+"문서를 고치면 네모는 곧 사라집니다. 네모를 그린 쪽이 자리를 옮겼을 수 있기 때문입니다. 찾던 어구와 선택은 남으므로, 다음이 다시 "
+"찾아서 이어 갑니다."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Text is searched as the document will be <i>saved</i>, not as it sits in the"
+" original file, so a page you have cropped is searched cropped. A page that "
+"is a scanned image with no text layer cannot be searched at all; nothing in "
+"it will ever match."
+msgstr ""
+"찾기는 원래 파일에 있는 그대로가 아니라 문서가 <i>저장될</i> 모습의 글을 살핍니다. 그러니 잘라 낸 쪽은 잘린 채로 찾습니다. 글"
+" 층이 없는 스캔 그림인 쪽은 아예 찾을 수 없어, 그 안에서는 아무것도 나오지 않습니다."
 
 # machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
@@ -2170,15 +2325,19 @@ msgstr[0] "%d페이지 인쇄됨"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
-msgid "Find"
-msgstr "찾기"
+#, python-format
+msgid "%(matches)s on %(pages)s"
+msgstr "%(pages)s에서 %(matches)s"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
-#, python-format
-msgid "%d page matches"
-msgid_plural "%d pages match"
-msgstr[0] "%d페이지 일치"
+msgid "Last match"
+msgstr "마지막 일치"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "First match"
+msgstr "첫 일치"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
@@ -2833,4 +2992,25 @@ msgstr "파일 이름 대신 제목 보이기"
 #~ " file: one full of already-compressed"
 #~ " images will barely shrink."
 #~ msgstr "얼마나 줄어드는지는 파일에 달려 있습니다: 이미 압축된 이미지로 가득한 파일은 거의 줄지 않습니다."
+
+# machine translation, unreviewed
+#~ msgid ""
+#~ "<b>Find</b> selects the pages that contain"
+#~ " the phrase and boxes each hit on"
+#~ " the thumbnail, so you can see "
+#~ "where on the page it is. The "
+#~ "boxes clear as soon as you change "
+#~ "the document, since the pages they "
+#~ "were drawn for may have moved."
+#~ msgstr ""
+#~ "<b>찾기</b>는 그 문구가 들어 있는 페이지를 선택하고 "
+#~ "축소판 위에 각 결과를 상자로 표시하여, 페이지의 어디에"
+#~ " 있는지 보이게 합니다. 문서를 바꾸는 즉시 상자는 "
+#~ "사라지는데, 그것들이 그려진 페이지가 옮겨졌을 수 있기 "
+#~ "때문입니다."
+
+# machine translation, unreviewed
+#~ msgid "%d page matches"
+#~ msgid_plural "%d pages match"
+#~ msgstr[0] "%d페이지 일치"
 

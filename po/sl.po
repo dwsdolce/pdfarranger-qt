@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  pdfarranger\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-25 23:34+0000\n"
+"POT-Creation-Date: 2026-10-06 22:49+0000\n"
 "PO-Revision-Date: 2023-06-06 13:27+0200\n"
 "Last-Translator: Janez G <janezgac@gmail.com>\n"
 "Language: sl_SI\n"
@@ -716,6 +716,103 @@ msgstr "Ponastavi"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
+msgid "Find"
+msgstr "Najdi"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Find:"
+msgstr "Najdi:"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Case sensitive"
+msgstr "Razlikuj velike in male črke"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Whole words only"
+msgstr "Samo cele besede"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Regular expression"
+msgstr "Regularni izraz"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Wrap around"
+msgstr "Nadaljuj z začetka"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Carry on from the other end of the document when the last match is passed."
+msgstr "Po zadnjem zadetku nadaljevati z drugega konca dokumenta."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Interpret the text as a regular expression, so that \"tap(s|ping)\" matches "
+"either word."
+msgstr ""
+"Besedilo razumeti kot regularni izraz, tako da »tap(s|ping)« najde obe "
+"besedi."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Page"
+msgstr "Stran"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Previous"
+msgstr "Prejšnji"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Next"
+msgstr "Naslednji"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "Not a valid pattern: %s"
+msgstr "Neveljaven vzorec: %s"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+msgid "No matches"
+msgstr "Ni zadetkov"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "%d match"
+msgid_plural "%d matches"
+msgstr[0] "%d zadetek"
+msgstr[1] "%d zadetka"
+msgstr[2] "%d zadetki"
+msgstr[3] "%d zadetkov"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "%(number)d of %(total)d"
+msgstr "%(number)d od %(total)d"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+#, python-format
+msgid "(first %d listed)"
+msgstr "(prikazanih prvih %d)"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "A regular expression states its own word boundaries, with \\b."
+msgstr "Regularni izraz sam določa svoje besedne meje, z \\b."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
 msgid "Description"
 msgstr "Opis"
 
@@ -1359,14 +1456,87 @@ msgstr "Iskanje besedila"
 # machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
 msgid ""
-"<b>Find</b> selects the pages that contain the phrase and boxes each hit on "
-"the thumbnail, so you can see where on the page it is. The boxes clear as "
-"soon as you change the document, since the pages they were drawn for may "
-"have moved."
+"<b>Edit ▸ Find</b> (Ctrl+F) opens a panel that stays open while you work, so"
+" you can walk through the results without closing it. It lists every match "
+"with the text around it: pick one to go straight there, or use <b>Next</b> "
+"and <b>Previous</b> — F3 and Shift+F3, which keep working when the panel is "
+"closed."
 msgstr ""
-"<b>Najdi</b> izbere strani, ki vsebujejo izraz, in vsak zadetek uokviri na "
-"sličici, da vidiš, kje na strani je. Okviri izginejo takoj, ko spremeniš "
-"dokument, saj so se strani, za katere so bili narisani, morda premaknile."
+"<b>Uredi ▸ Najdi</b> (Ctrl+F) odpre pult, ki med delom ostane odprt, tako da"
+" lahko zadetke pregledujete, ne da bi ga zaprli. Navaja vsak zadetek z "
+"okoliškim besedilom: izberite enega, da greste neposredno nanj, ali "
+"uporabite <b>Naslednji</b> in <b>Prejšnji</b> — F3 in Shift+F3, ki delujeta "
+"tudi pri zaprtem pultu."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"The counter beside the field says which match you are on and how many there "
+"are, counting individual matches rather than pages: a phrase can occur "
+"several times on one page."
+msgstr ""
+"Števec ob polju pove, pri katerem zadetku ste in koliko jih je, pri čemer "
+"šteje posamezne zadetke in ne strani: izraz se lahko na isti strani pojavi "
+"večkrat."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Three options change what counts as a match. <b>Case sensitive</b> "
+"distinguishes \"Tap\" from \"tap\". <b>Whole words only</b> ignores a match "
+"inside a longer word, so \"tap\" no longer finds \"tapping\". <b>Regular "
+"expression</b> treats what you type as a pattern — \"tap(s|ping)\" matches "
+"either word, \"^Chapter\" only where it begins a line — and takes over from "
+"whole words, since a pattern states its own boundaries with \\b. <b>Wrap "
+"around</b> decides whether Next carries on from the start of the document "
+"after the last match."
+msgstr ""
+"Tri možnosti spremenijo, kaj velja za zadetek. <b>Razlikuj velike in male "
+"črke</b> loči »Tap« od »tap«. <b>Samo cele besede</b> spregleda zadetek "
+"znotraj daljše besede, tako da »tap« ne najde več »tapping«. <b>Regularni "
+"izraz</b> vtipkano jemlje kot vzorec — »tap(s|ping)« najde obe besedi, "
+"»^Chapter« samo na začetku vrstice — in nadomesti cele besede, saj vzorec "
+"svoje meje določa sam z \\b. <b>Nadaljuj z začetka</b> odloča, ali Naslednji"
+" po zadnjem zadetku nadaljuje z začetka dokumenta."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"While reading, Next scrolls to the match and picks it out from the others on"
+" the page. While arranging, it selects the page the match is on and boxes "
+"every hit on the thumbnail; <b>Find All</b> selects every page that matches "
+"at once. Either way one position is shared, so switching between reading and"
+" arranging keeps your place."
+msgstr ""
+"Pri branju se Naslednji pomakne do zadetka in ga izmed drugih na strani "
+"izpostavi. Pri razvrščanju izbere stran, na kateri je, in vsak zadetek "
+"uokviri na sličici; <b>Najdi vse</b> hkrati izbere vse ustrezajoče strani. V"
+" obeh primerih velja isti položaj, zato prehod med branjem in razvrščanjem "
+"ohrani vaše mesto."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"The boxes clear as soon as you change the document, since the pages they "
+"were drawn for may have moved. The phrase and the options survive — Next "
+"searches again and carries on."
+msgstr ""
+"Okviri izginejo, takoj ko spremenite dokument, saj so se strani, za katere "
+"so bili narisani, morda premaknile. Izraz in možnosti ostanejo — Naslednji "
+"poišče znova in nadaljuje."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Text is searched as the document will be <i>saved</i>, not as it sits in the"
+" original file, so a page you have cropped is searched cropped. A page that "
+"is a scanned image with no text layer cannot be searched at all; nothing in "
+"it will ever match."
+msgstr ""
+"Besedilo se išče tako, kot bo dokument <i>shranjen</i>, ne kot je v izvirni "
+"datoteki, zato se obrezana stran išče obrezana. Strani, ki je optično "
+"prebrana slika brez besedilne plasti, ni mogoče iskati; v njej se nikoli nič"
+" ne najde."
 
 # machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
@@ -2301,18 +2471,19 @@ msgstr[3] "Natisnjenih %d strani"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
-msgid "Find"
-msgstr "Najdi"
+#, python-format
+msgid "%(matches)s on %(pages)s"
+msgstr "%(matches)s na %(pages)s"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
-#, python-format
-msgid "%d page matches"
-msgid_plural "%d pages match"
-msgstr[0] "%d stran se ujema"
-msgstr[1] "%d strani se ujemata"
-msgstr[2] "%d strani se ujemajo"
-msgstr[3] "%d strani se ujema"
+msgid "Last match"
+msgstr "Zadnji zadetek"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "First match"
+msgstr "Prvi zadetek"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
@@ -2932,4 +3103,29 @@ msgstr "Pokaži naslov namesto imena datoteke"
 #~ "Koliko se s tem prihrani, je odvisno"
 #~ " od datoteke: datoteka, polna že "
 #~ "stisnjenih slik, se bo komaj skrčila."
+
+# machine translation, unreviewed
+#~ msgid ""
+#~ "<b>Find</b> selects the pages that contain"
+#~ " the phrase and boxes each hit on"
+#~ " the thumbnail, so you can see "
+#~ "where on the page it is. The "
+#~ "boxes clear as soon as you change "
+#~ "the document, since the pages they "
+#~ "were drawn for may have moved."
+#~ msgstr ""
+#~ "<b>Najdi</b> izbere strani, ki vsebujejo "
+#~ "izraz, in vsak zadetek uokviri na "
+#~ "sličici, da vidiš, kje na strani je."
+#~ " Okviri izginejo takoj, ko spremeniš "
+#~ "dokument, saj so se strani, za katere"
+#~ " so bili narisani, morda premaknile."
+
+# machine translation, unreviewed
+#~ msgid "%d page matches"
+#~ msgid_plural "%d pages match"
+#~ msgstr[0] "%d stran se ujema"
+#~ msgstr[1] "%d strani se ujemata"
+#~ msgstr[2] "%d strani se ujemajo"
+#~ msgstr[3] "%d strani se ujema"
 

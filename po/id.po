@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-25 23:34+0000\n"
+"POT-Creation-Date: 2026-10-06 22:49+0000\n"
 "PO-Revision-Date: 2023-06-08 10:00+0700\n"
 "Last-Translator: Abdul Munif Hanafi <amunifhanafi@gmail.com>\n"
 "Language: id\n"
@@ -725,6 +725,101 @@ msgstr "Atur ulang"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
+msgid "Find"
+msgstr "Cari"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Find:"
+msgstr "Cari:"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Case sensitive"
+msgstr "Peka huruf besar/kecil"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Whole words only"
+msgstr "Hanya kata utuh"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Regular expression"
+msgstr "Ekspresi reguler"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Wrap around"
+msgstr "Lanjut dari awal"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Carry on from the other end of the document when the last match is passed."
+msgstr "Lanjutkan dari ujung lain dokumen setelah kecocokan terakhir."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Interpret the text as a regular expression, so that \"tap(s|ping)\" matches "
+"either word."
+msgstr ""
+"Tafsirkan teks sebagai ekspresi reguler, sehingga “tap(s|ping)” menemukan "
+"kedua kata."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Page"
+msgstr "Halaman"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Previous"
+msgstr "Sebelumnya"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "Next"
+msgstr "Berikutnya"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "Not a valid pattern: %s"
+msgstr "Pola tidak sah: %s"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+msgid "No matches"
+msgstr "Tidak ada kecocokan"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "%d match"
+msgid_plural "%d matches"
+msgstr[0] "%d kecocokan"
+msgstr[1] "%d kecocokan"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "%(number)d of %(total)d"
+msgstr "%(number)d dari %(total)d"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+#, python-format
+msgid "(first %d listed)"
+msgstr "(%d pertama ditampilkan)"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid "A regular expression states its own word boundaries, with \\b."
+msgstr "Ekspresi reguler menyatakan batas katanya sendiri, dengan \\b."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
 msgid "Description"
 msgstr "Deskripsi"
 
@@ -1388,15 +1483,90 @@ msgstr "Mencari teks"
 # machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
 msgid ""
-"<b>Find</b> selects the pages that contain the phrase and boxes each hit on "
-"the thumbnail, so you can see where on the page it is. The boxes clear as "
-"soon as you change the document, since the pages they were drawn for may "
-"have moved."
+"<b>Edit ▸ Find</b> (Ctrl+F) opens a panel that stays open while you work, so"
+" you can walk through the results without closing it. It lists every match "
+"with the text around it: pick one to go straight there, or use <b>Next</b> "
+"and <b>Previous</b> — F3 and Shift+F3, which keep working when the panel is "
+"closed."
 msgstr ""
-"<b>Cari</b> memilih halaman yang memuat frasa itu dan mengotaki tiap "
-"kecocokan pada miniaturnya, sehingga Anda bisa melihat di mana letaknya pada"
-" halaman. Kotaknya hilang begitu Anda mengubah dokumen, sebab halaman yang "
-"menjadi acuan gambarnya bisa saja sudah berpindah."
+"<b>Sunting ▸ Cari</b> (Ctrl+F) membuka panel yang tetap terbuka selagi Anda "
+"bekerja, sehingga hasilnya dapat ditelusuri tanpa menutupnya. Panel itu "
+"mendaftar setiap kecocokan beserta teks di sekitarnya: pilih salah satu "
+"untuk langsung menuju ke sana, atau gunakan <b>Berikutnya</b> dan "
+"<b>Sebelumnya</b> — F3 dan Shift+F3, yang tetap bekerja saat panel tertutup."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"The counter beside the field says which match you are on and how many there "
+"are, counting individual matches rather than pages: a phrase can occur "
+"several times on one page."
+msgstr ""
+"Penghitung di samping kolom menyebutkan Anda berada pada kecocokan yang mana"
+" dan ada berapa banyak, dengan menghitung kecocokan satu per satu alih-alih "
+"halaman: sebuah ungkapan dapat muncul beberapa kali pada satu halaman."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Three options change what counts as a match. <b>Case sensitive</b> "
+"distinguishes \"Tap\" from \"tap\". <b>Whole words only</b> ignores a match "
+"inside a longer word, so \"tap\" no longer finds \"tapping\". <b>Regular "
+"expression</b> treats what you type as a pattern — \"tap(s|ping)\" matches "
+"either word, \"^Chapter\" only where it begins a line — and takes over from "
+"whole words, since a pattern states its own boundaries with \\b. <b>Wrap "
+"around</b> decides whether Next carries on from the start of the document "
+"after the last match."
+msgstr ""
+"Tiga pilihan mengubah apa yang dihitung sebagai kecocokan. <b>Peka huruf "
+"besar/kecil</b> membedakan “Tap” dari “tap”. <b>Hanya kata utuh</b> "
+"mengabaikan kecocokan di dalam kata yang lebih panjang, sehingga “tap” tidak"
+" lagi menemukan “tapping”. <b>Ekspresi reguler</b> memperlakukan yang Anda "
+"ketik sebagai pola — “tap(s|ping)” menemukan kedua kata, “^Chapter” hanya di"
+" awal baris — dan menggantikan kata utuh, karena pola menyatakan batasnya "
+"sendiri dengan \\b. <b>Lanjut dari awal</b> menentukan apakah Berikutnya "
+"meneruskan dari awal dokumen setelah kecocokan terakhir."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"While reading, Next scrolls to the match and picks it out from the others on"
+" the page. While arranging, it selects the page the match is on and boxes "
+"every hit on the thumbnail; <b>Find All</b> selects every page that matches "
+"at once. Either way one position is shared, so switching between reading and"
+" arranging keeps your place."
+msgstr ""
+"Saat membaca, Berikutnya menggulir ke kecocokan dan membedakannya dari yang "
+"lain pada halaman itu. Saat menata, ia memilih halaman tempat kecocokan "
+"berada dan mengotaki setiap kecocokan pada gambar mini; <b>Cari Semua</b> "
+"memilih sekaligus semua halaman yang cocok. Keduanya memakai satu posisi "
+"yang sama, sehingga berpindah antara membaca dan menata tetap menjaga tempat"
+" Anda."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"The boxes clear as soon as you change the document, since the pages they "
+"were drawn for may have moved. The phrase and the options survive — Next "
+"searches again and carries on."
+msgstr ""
+"Kotak-kotak itu hilang begitu Anda mengubah dokumen, sebab halaman yang "
+"menjadi dasarnya mungkin telah berpindah. Ungkapan dan pilihannya tetap — "
+"Berikutnya mencari lagi dan meneruskan."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/dialogs.py
+msgid ""
+"Text is searched as the document will be <i>saved</i>, not as it sits in the"
+" original file, so a page you have cropped is searched cropped. A page that "
+"is a scanned image with no text layer cannot be searched at all; nothing in "
+"it will ever match."
+msgstr ""
+"Teks dicari sebagaimana dokumen akan <i>disimpan</i>, bukan sebagaimana "
+"adanya dalam berkas asli, jadi halaman yang Anda pangkas dicari dalam "
+"keadaan terpangkas. Halaman yang berupa citra hasil pindai tanpa lapisan "
+"teks tidak dapat dicari sama sekali; tidak akan pernah ada yang ditemukan di"
+" dalamnya."
 
 # machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py
@@ -2328,16 +2498,19 @@ msgstr[1] "%d halaman dicetak"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
-msgid "Find"
-msgstr "Cari"
+#, python-format
+msgid "%(matches)s on %(pages)s"
+msgstr "%(matches)s pada %(pages)s"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
-#, python-format
-msgid "%d page matches"
-msgid_plural "%d pages match"
-msgstr[0] "%d halaman cocok"
-msgstr[1] "%d halaman cocok"
+msgid "Last match"
+msgstr "Kecocokan terakhir"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "First match"
+msgstr "Kecocokan pertama"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
@@ -2958,4 +3131,28 @@ msgstr "Tampilkan judul alih-alih nama berkas"
 #~ "Berapa banyak yang dihemat bergantung pada"
 #~ " berkasnya: berkas yang penuh gambar "
 #~ "termampat tidak akan menyusut berarti."
+
+# machine translation, unreviewed
+#~ msgid ""
+#~ "<b>Find</b> selects the pages that contain"
+#~ " the phrase and boxes each hit on"
+#~ " the thumbnail, so you can see "
+#~ "where on the page it is. The "
+#~ "boxes clear as soon as you change "
+#~ "the document, since the pages they "
+#~ "were drawn for may have moved."
+#~ msgstr ""
+#~ "<b>Cari</b> memilih halaman yang memuat "
+#~ "frasa itu dan mengotaki tiap kecocokan "
+#~ "pada miniaturnya, sehingga Anda bisa "
+#~ "melihat di mana letaknya pada halaman. "
+#~ "Kotaknya hilang begitu Anda mengubah "
+#~ "dokumen, sebab halaman yang menjadi acuan"
+#~ " gambarnya bisa saja sudah berpindah."
+
+# machine translation, unreviewed
+#~ msgid "%d page matches"
+#~ msgid_plural "%d pages match"
+#~ msgstr[0] "%d halaman cocok"
+#~ msgstr[1] "%d halaman cocok"
 

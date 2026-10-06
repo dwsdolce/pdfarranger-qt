@@ -2035,15 +2035,15 @@ class PageCanvas(QAbstractScrollArea):
     # -- search ------------------------------------------------------------
 
     def set_search_model(self, model):
-        """Highlight this model's hits. `QPdfView` drew these for us."""
+        """Highlight this `find.TextSearch`'s hits. `QPdfView` drew these for us."""
         if self._search is not None:
             try:
-                self._search.dataChanged.disconnect(self._search_changed)
+                self._search.changed.disconnect(self._search_changed)
             except (RuntimeError, TypeError):  # already gone, or never connected
                 pass
         self._search = model
         if model is not None:
-            model.dataChanged.connect(self._search_changed)
+            model.changed.connect(self._search_changed)
         self.viewport().update()
 
     def _search_changed(self, *_args):
@@ -2055,13 +2055,13 @@ class PageCanvas(QAbstractScrollArea):
         if self._search is None or index < 0:
             self.viewport().update()
             return
-        link = self._search.resultAtIndex(index)
-        if link is None:
+        hit = self._search.hit(index)
+        if hit is None:
             self.viewport().update()
             return
-        rects = link.rectangles()
+        rects = hit.rectangles()
         if rects:
-            self.go_to(link.page(), rects[0].topLeft())
+            self.go_to(hit.page, rects[0].topLeft())
         self.viewport().update()
 
     def _paint_search(self, painter, index: int, offset: QPointF):
@@ -2073,18 +2073,18 @@ class PageCanvas(QAbstractScrollArea):
         if self._search is None:
             return
         try:
-            links = self._search.resultsOnPage(index)
+            hits = self._search.hits_on_page(index)
         except (RuntimeError, AttributeError):  # pragma: no cover - model gone
             return
-        if not links:
+        if not hits:
             return
         current = None
         if self._search_result >= 0:
-            found = self._search.resultAtIndex(self._search_result)
-            if found is not None and found.page() == index:
+            found = self._search.hit(self._search_result)
+            if found is not None and found.page == index:
                 current = [QRectF(r) for r in found.rectangles()]
-        for link in links:
-            for rect in link.rectangles():
+        for hit in hits:
+            for rect in hit.rectangles():
                 drawn = self._layout.rect_from_page(index, rect)
                 drawn.translate(-offset)
                 is_current = current is not None and any(

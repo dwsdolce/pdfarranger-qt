@@ -16,19 +16,25 @@
 
 """Text search across the document.
 
-Upstream used Poppler's ``find_text``; QtPdf offers ``QPdfSearchModel``, which
-searches a whole document and reports page numbers, so the port is a
-replacement rather than a translation.
+Upstream used Poppler's ``find_text``; this searches the page's own text layer
+through `find.TextSearch`, which is what makes "case sensitive" and "whole
+words only" possible -- see that module for why `QPdfSearchModel` cannot do
+either.
 
 Search runs against the *edited* document rendered to memory, so a page that has
 been cropped, rotated or merged is searched as it will be saved -- not as it sits
 in the source file. That does mean the index is rebuilt when the document
 changes, which is why ``invalidate()`` exists.
+
+Hit-granular since the find dialog arrived. It still reports which *rows* match,
+because selecting pages is what the grid does, but the hits behind those rows
+are now addressable individually: the dialog lists them, and one cursor steps
+through them in both reading and arranging mode.
 """
 
 from typing import TYPE_CHECKING, List, Optional
 
-from PySide6.QtPdf import QPdfSearchModel
+from .find import Query, TextSearch
 
 if TYPE_CHECKING:
     # Only the annotation on `rectangles` needs it, and that is a string. Left
@@ -42,29 +48,26 @@ from .render import MemoryDocument
 
 
 class SearchIndex:
-    """Finds which pages contain a phrase, and steps through them.
-
-    Deliberately page-granular: this application selects and arranges pages, so
-    "which pages mention this" is the useful answer. Highlighting the individual
-    hit inside a thumbnail would need the delegate to draw match rectangles, and
-    is noted as a future refinement rather than attempted here.
-    """
+    """Finds every occurrence of a phrase, and which pages hold them."""
 
     def __init__(self):
         self._doc: Optional[MemoryDocument] = None
-        self._model: Optional[QPdfSearchModel] = None
-        self._pages: List[int] = []
-        self._cursor = -1
-        self.phrase = ""
+        self._search: Optional[TextSearch] = None
+        self.query = Query()
+
+    @property
+    def phrase(self) -> str:
+        """What is being searched for. Read by the window and the dialog."""
+        return self.query.phrase
 
     def invalidate(self):
         """Drop the index; the next search rebuilds it."""
+        if self._search is not None:
+            self._search.set_document(None)
         if self._doc is not None:
             self._doc.close()
         self._doc = None
-        self._model = None
-        self._pages = []
-        self._cursor = -1
+        self._search = None
 
     def _ensure(self, pages, files) -> bool:
         if self._doc is not None:
@@ -75,29 +78,49 @@ class SearchIndex:
             doc.close()
             return False
         self._doc = doc
-        self._model = QPdfSearchModel()
-        self._model.setDocument(doc.document)
+        self._search = TextSearch()
+        self._search.set_document(doc.document)
         return True
 
-    def search(self, phrase: str, pages, files) -> List[int]:
-        """Return the rows whose page contains ``phrase``."""
-        self.phrase = phrase
-        if not phrase or not self._ensure(pages, files):
-            self._pages = []
-            self._cursor = -1
+    def search(self, query, pages, files) -> List[int]:
+        """Return the rows whose page contains a match.
+
+        ``query`` may be a `Query` or, for convenience at a call site that
+        wants nothing but a phrase, a plain string.
+        """
+        if isinstance(query, str):
+            query = Query(query)
+        self.query = query
+        if not query or not self._ensure(pages, files):
+            if self._search is not None:
+                self._search.set_query(Query())
             return []
-        self._model.setSearchString(phrase)
-        # resultsOnPage() computes on demand and answers immediately; the
-        # model's own rowCount() fills in asynchronously over a few hundred
-        # milliseconds, so reading it here would report no matches at all.
-        self._pages = [page for page in range(self._doc.page_count())
-                       if self._model.resultsOnPage(page)]
-        self._cursor = -1
-        return list(self._pages)
+        self._search.set_query(query)
+        return self._search.pages()
+
+    # -- results -----------------------------------------------------------
 
     @property
     def matches(self) -> List[int]:
-        return list(self._pages)
+        """Rows that contain at least one hit."""
+        return [] if self._search is None else self._search.pages()
+
+    @property
+    def error(self) -> Optional[str]:
+        return None if self._search is None else self._search.error
+
+    def count(self) -> int:
+        """How many individual hits, as against how many pages."""
+        return 0 if self._search is None else self._search.count()
+
+    def hits(self):
+        return [] if self._search is None else self._search.hits()
+
+    def hit(self, index: int):
+        return None if self._search is None else self._search.hit(index)
+
+    def first_at_or_after(self, page: int) -> int:
+        return -1 if self._search is None else self._search.first_at_or_after(page)
 
     def rectangles(self, row: int) -> List["QRectF"]:
         """Where the hits are on one page, in that page's own points.
@@ -108,27 +131,14 @@ class SearchIndex:
         Verified against rotated and cropped pages, where `pagePointSize`
         matches `Page.width_in_points()` exactly.
 
-        Rotation gives back negative widths and heights, so the rectangles are
-        normalised before anyone tries to draw them.
+        Resolved on demand, and this is the call that makes it worth being lazy
+        about: see `find`'s module docstring for the 700 ms it saves.
         """
-        if self._model is None or self._doc is None:
+        if self._search is None or self._doc is None:
             return []
         if not 0 <= row < self._doc.page_count():
             return []
-        out = []
-        for link in self._model.resultsOnPage(row):
-            out.extend(rect.normalized() for rect in link.rectangles())
+        out: List["QRectF"] = []
+        for hit in self._search.hits_on_page(row):
+            out.extend(hit.rectangles())
         return out
-
-    def next(self) -> Optional[int]:
-        """Row of the next matching page, wrapping around."""
-        if not self._pages:
-            return None
-        self._cursor = (self._cursor + 1) % len(self._pages)
-        return self._pages[self._cursor]
-
-    def previous(self) -> Optional[int]:
-        if not self._pages:
-            return None
-        self._cursor = (self._cursor - 1) % len(self._pages)
-        return self._pages[self._cursor]

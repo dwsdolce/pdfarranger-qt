@@ -65,6 +65,7 @@ from . import (
 )
 from .core import DocumentSet, Page, PDFDocError
 from .export import SaveOptions, export
+from .find import Query
 from .i18n import gettext_ as _
 from .i18n import menu_label as _m
 from .i18n import ngettext
@@ -139,6 +140,13 @@ class MainWindow(QMainWindow):
         self.metadata: dict = {}
         #: Text search; rebuilt lazily whenever the document changes.
         self.search = SearchIndex()
+        #: The find dialog, built the first time it is asked for.
+        self._find_dialog = None
+        #: Which hit is current, as an index into the search index's
+        #: hits. Lives here rather than in the dialog: Find Next keeps
+        #: working when the dialog is closed, and one cursor has to serve
+        #: both the reader and the grid.
+        self._find_cursor = -1
         self.recent = RecentFiles(self.settings)
         #: Encrypts the document on save when set. Deliberately not
         #: persisted anywhere: it is a property of this session's
@@ -178,6 +186,8 @@ class MainWindow(QMainWindow):
         # Rows move when pages do, so the highlights are stale the moment the
         # document changes. Drop them rather than draw them in the wrong place.
         self.model.contents_changed.connect(self.model.clear_matches)
+        # And so is the cursor, and so is whatever the dialog is listing.
+        self.model.contents_changed.connect(self._find_invalidated)
         # The reader shows a snapshot of the page list, so an edit dates it.
         self.model.contents_changed.connect(self._invalidate_reader)
 
@@ -1435,7 +1445,7 @@ class MainWindow(QMainWindow):
         if ok:
             # Carry any active Find over, so entering read mode keeps the
             # highlights rather than silently dropping them.
-            self.reader.search(self.search.phrase)
+            self.reader.search(self.search.query)
         return ok
 
     def _invalidate_reader(self):
@@ -2709,44 +2719,173 @@ class MainWindow(QMainWindow):
 
     # -- find --------------------------------------------------------------
 
-    def find_text(self):
-        phrase, ok = QInputDialog.getText(self, _("Find"), _("Find"),
-                                          QLineEdit.Normal, self.search.phrase)
-        if not ok or not phrase:
-            return
-        self._run_search(phrase)
-        if self.search.matches:
-            self.find_step(forward=True)
+    #: Where the options live between sessions, so a window opens how the last
+    #: one was left.
+    FIND_SETTINGS = {"case_sensitive": "find/case-sensitive",
+                     "whole_word": "find/whole-word",
+                     "regex": "find/regex"}
 
-    def _run_search(self, phrase):
+    def find_text(self):
+        """Show the find dialog, or bring it back to the front.
+
+        Modeless, so it is not shown with exec(): the window carries on, the
+        dialog sits on top, and Next moves the document behind it.
+        """
+        if self._find_dialog is None:
+            self._find_dialog = dialogs.FindDialog(self)
+            self._find_dialog.set_query(self._stored_query())
+            self._find_dialog.wrap.setChecked(
+                self.settings.value("find/wrap", True, type=bool))
+            self._find_dialog.query_changed.connect(self._dialog_asked)
+            self._find_dialog.step.connect(self.find_step)
+            self._find_dialog.go_to.connect(self._find_go)
+            self._find_dialog.wrap.toggled.connect(
+                lambda on: self.settings.setValue("find/wrap", bool(on)))
+        self._find_dialog.show()
+        self._find_dialog.raise_()
+        self._find_dialog.activateWindow()
+        self._find_dialog.focus_field()
+
+    def _stored_query(self) -> Query:
+        return Query(self.search.phrase,
+                     **{name: self.settings.value(key, False, type=bool)
+                        for name, key in self.FIND_SETTINGS.items()})
+
+    def _dialog_asked(self, query: Query):
+        """The dialog's field or options changed."""
+        for name, key in self.FIND_SETTINGS.items():
+            self.settings.setValue(key, getattr(query, name))
+        if not query:
+            # Clearing the field clears the highlights, rather than leaving the
+            # last search drawn over a document nobody is searching any more.
+            self._run_search(query)
+            return
+        self._run_search(query)
+        if self.search.count():
+            self._find_go(self.search.first_at_or_after(self._page_now()))
+
+    def _page_now(self) -> int:
+        """Where "find from here" starts from, in either mode."""
+        if self.read_mode:
+            return self.reader.current_page()
+        rows = self.view.selected_rows()
+        return rows[0] if rows else 0
+
+    def _run_search(self, query):
+        """Build the index for a query and publish it to the grid and reader."""
+        if isinstance(query, str):
+            query = Query(query)
         QApplication.setOverrideCursor(Qt.WaitCursor)
         try:
-            matches = self.search.search(phrase, self.model.pages,
+            matches = self.search.search(query, self.model.pages,
                                          self.docs.files_for_export())
         finally:
             QApplication.restoreOverrideCursor()
-        count = len(matches)
+        self._find_cursor = -1
         # The grid draws the hits itself, from rectangles in the edited page's
-        # own points; the reader only needs the phrase, because it highlights
-        # from its own search model over its own document.
-        self.model.set_matches({row: self.search.rectangles(row) for row in matches})
-        self.reader.search(phrase)
-        self.statusBar().showMessage(
-            ngettext("%d page matches", "%d pages match", count) % count, 5000)
+        # own points, and asks for them a row at a time; the reader searches
+        # its own document, because it highlights in that document's geometry.
+        self.model.set_match_rows(matches, self.search.rectangles)
+        self.reader.search(query)
+        self._report_search(matches)
+        self._refresh_find_dialog()
         return matches
 
+    def _report_search(self, matches):
+        count = self.search.count()
+        error = self.search.error
+        if error:
+            self.statusBar().showMessage(_("Not a valid pattern: %s") % error, 5000)
+        elif not self.search.phrase:
+            self.statusBar().clearMessage()
+        elif not count:
+            self.statusBar().showMessage(_("No matches"), 5000)
+        else:
+            # Both numbers, because "22 pages match" was the thing that left
+            # nowhere to go: it never said there were 44 places to look.
+            self.statusBar().showMessage(
+                _("%(matches)s on %(pages)s") % {
+                    "matches": ngettext("%d match", "%d matches", count) % count,
+                    "pages": ngettext("%d page", "%d pages",
+                                      len(matches)) % len(matches)}, 5000)
+
+    def _refresh_find_dialog(self):
+        if self._find_dialog is None:
+            return
+        error = self.search.error
+        if error:
+            self._find_dialog.set_error(error, self.search.phrase)
+            return
+        self._find_dialog.set_results(self.search.hits(), self.search.count(),
+                                      labels=self._page_label,
+                                      phrase=self.search.phrase)
+        self._find_dialog.set_position(self._find_cursor, self.search.count())
+
+    def _page_label(self, page: int) -> str:
+        """What to call a page in the results list."""
+        return str(page + 1)
+
+    def _find_invalidated(self):
+        """An edit moved the pages; the hits no longer point anywhere.
+
+        The phrase and the options survive, so Find Next rebuilds the index and
+        carries on -- it is the positions that are gone, not the search.
+        """
+        self._find_cursor = -1
+        if self._find_dialog is not None:
+            self._find_dialog.set_results([], 0)
+
     def find_step(self, forward: bool):
-        if not self.search.matches and self.search.phrase:
-            self._run_search(self.search.phrase)
-        row = self.search.next() if forward else self.search.previous()
-        if row is not None:
-            self.view.set_selected_rows([row])
+        """Move to the next or previous hit, in whichever mode is showing."""
+        if not self.search.count() and self.search.phrase:
+            self._run_search(self.search.query)
+        count = self.search.count()
+        if not count:
+            self._report_search(self.search.matches)
+            return
+        if self._find_cursor < 0:
+            self._find_go(self.search.first_at_or_after(self._page_now()))
+            return
+        nxt = self._find_cursor + (1 if forward else -1)
+        if not 0 <= nxt < count:
+            if not self._find_wraps():
+                self.statusBar().showMessage(
+                    _("Last match") if forward else _("First match"), 3000)
+                return
+            nxt %= count
+        self._find_go(nxt)
+
+    def _find_wraps(self) -> bool:
+        if self._find_dialog is not None:
+            return self._find_dialog.wraps()
+        return self.settings.value("find/wrap", True, type=bool)
+
+    def _find_go(self, index: int):
+        """Show one hit: scroll the reader to it, and select its page."""
+        hit = self.search.hit(index)
+        if hit is None:
+            return
+        self._find_cursor = index
+        # The row is selected in both modes, so that leaving reading mode lands
+        # on the page the hit was found on rather than wherever the grid was.
+        self.view.set_selected_rows([hit.page])
+        if self.read_mode:
+            # Carried across by position: the reader searched its own copy of
+            # the document, so its hit list is built separately from this one.
+            self.reader.show_search_result(
+                self.reader.index_of_hit(hit.page, hit.start))
+        if self._find_dialog is not None:
+            self._find_dialog.set_position(index, self.search.count())
+        self.statusBar().showMessage(
+            _("%(number)d of %(total)d") % {"number": index + 1,
+                                            "total": self.search.count()}, 5000)
 
     def find_all(self):
+        """Select every page that matches, which is the grid's own question."""
         if not self.search.phrase:
             self.find_text()
             return
-        matches = self._run_search(self.search.phrase)
+        matches = self._run_search(self.search.query)
         if matches:
             self.view.set_selected_rows(matches)
 

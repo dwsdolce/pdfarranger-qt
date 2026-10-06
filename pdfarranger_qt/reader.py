@@ -42,7 +42,6 @@ from PySide6.QtGui import (
     QPainter,
     QPalette,
 )
-from PySide6.QtPdf import QPdfSearchModel
 from PySide6.QtPdfWidgets import QPdfPageSelector
 from PySide6.QtWidgets import (
     QColorDialog,
@@ -56,6 +55,7 @@ from PySide6.QtWidgets import (
 
 from .canvas import ZOOM_LIMITS, ZOOM_STEP, PageCanvas
 from .export import get_in_memory_pdf
+from .find import Query, TextSearch
 from .i18n import gettext_ as _
 from .outline import BOLD, ITALIC, Outline
 from .render import MemoryDocument
@@ -146,11 +146,13 @@ class ReaderView(QWidget):
         self.canvas = PageCanvas(self)
         self.canvas.zoom_to_width()
 
-        # The reader's own search model, over the reader's own document.
+        # The reader's own search engine, over the reader's own document.
         # SearchIndex builds a separate in-memory copy for the grid; pointing
         # the canvas at that one would highlight using another document's page
-        # geometry. Same page list, so the row numbers still line up.
-        self.search_model = QPdfSearchModel(self)
+        # geometry. The page list is the same, so the two find the same hits --
+        # but they are built separately, so the window carries the cursor
+        # across by position rather than by index (see TextSearch.index_of).
+        self.search_model = TextSearch(self)
         self.canvas.set_search_model(self.search_model)
 
         # Ours, not QPdfBookmarkModel: that reads whatever document the reader
@@ -304,7 +306,7 @@ class ReaderView(QWidget):
         previous = self._document
         self._document = document
         self.canvas.set_document(document.document, data, sizes)
-        self.search_model.setDocument(document.document)
+        self.search_model.set_document(document.document)
         self.page_selector.setDocument(document.document)
         # Only after the view has taken the new one: closing a document the
         # canvas still holds a reference to crashes PDFium on its next paint.
@@ -325,7 +327,7 @@ class ReaderView(QWidget):
         """
         document, self._document = self._document, None
         self.canvas.set_document(None)
-        self.search_model.setDocument(None)
+        self.search_model.set_document(None)
         self.page_selector.setDocument(None)
         if document is not None:
             document.close()
@@ -802,19 +804,29 @@ class ReaderView(QWidget):
 
     # -- search ------------------------------------------------------------
 
-    def search(self, phrase: str):
-        """Highlight ``phrase`` in place. The canvas draws the highlights."""
-        self.search_model.setSearchString(phrase or "")
+    def search(self, query):
+        """Highlight a `find.Query` in place. The canvas draws the highlights."""
+        if isinstance(query, str):
+            query = Query(query)
+        self.search_model.set_query(query or Query())
+
+    def search_query(self) -> Query:
+        return self.search_model.query()
 
     def search_phrase(self) -> str:
-        return self.search_model.searchString()
+        return self.search_model.query().phrase
 
     def show_search_result(self, index: int):
+        """Scroll to one hit and pick it out from the others."""
         self.canvas.set_current_search_result(index)
 
+    def index_of_hit(self, page: int, start: int) -> int:
+        """This document's index for the hit the grid's index found."""
+        return self.search_model.index_of(page, start)
+
     def matches_on_page(self, page: int) -> int:
-        """How many hits are on a page. Synchronous, unlike rowCount()."""
-        return len(self.search_model.resultsOnPage(page))
+        """How many hits are on a page."""
+        return len(self.search_model.hits_on_page(page))
 
     # -- text selection ----------------------------------------------------
 
