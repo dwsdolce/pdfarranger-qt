@@ -165,7 +165,6 @@ class MainWindow(QMainWindow):
         self._reader_stale = True
         #: Zoom to restore when double-click toggles fit back off.
         self._zoom_before_fit: Optional[float] = None
-        self.import_dir = os.path.expanduser("~")
 
         self._build_actions()
         self._build_menus()
@@ -1180,7 +1179,7 @@ class MainWindow(QMainWindow):
                 except OSError as e:
                     QMessageBox.warning(self, APP_NAME, f"{path}: {e}")
                 else:
-                    self.import_dir = os.path.dirname(os.path.abspath(path))
+                    self._remember_folder(self.SOURCE_FOLDER, path)
         finally:
             if progress is not None:
                 progress.setValue(len(paths))
@@ -1618,17 +1617,66 @@ class MainWindow(QMainWindow):
         if not QProcess.startDetached(program, arguments, os.getcwd())[0]:
             QMessageBox.warning(self, APP_NAME, _("Could not open a new window."))
 
+    # -- where the file dialogs start --------------------------------------
+
+    #: Settings keys for the two remembered folders. Two rather than one
+    #: because the place documents come from and the place they are written to
+    #: are usually different, and a single memory makes each use retarget the
+    #: other: read a PDF from Downloads and the next save goes there, save to a
+    #: project folder and the next open starts there. Splitting them is also
+    #: what the platforms assume -- Windows persists this state per use of the
+    #: dialog (IFileDialog::SetClientGuid) and KDE by named keyword.
+    #:
+    #: Kept here rather than left to the native dialog, which does remember by
+    #: itself on Windows and macOS: passing an explicit directory overrides
+    #: that, and Qt's own dialog on Linux would not persist across launches, so
+    #: doing it ourselves is the only way all three behave alike.
+    SOURCE_FOLDER = "files/source"
+    OUTPUT_FOLDER = "files/output"
+
+    def _folder(self, key: str) -> str:
+        """A remembered folder, or home if it has gone away.
+
+        Checked rather than trusted: a folder on a disk that is no longer
+        mounted makes the dialog open somewhere arbitrary.
+        """
+        remembered = self.settings.value(key, "", type=str)
+        if remembered and os.path.isdir(remembered):
+            return remembered
+        return os.path.expanduser("~")
+
+    def _remember_folder(self, key: str, path: str):
+        """Record where ``path`` is, for the next dialog of that kind.
+
+        In the settings rather than on the window, so a second window starts
+        where the first one left off.
+        """
+        folder = path if os.path.isdir(path) else os.path.dirname(
+            os.path.abspath(path))
+        if os.path.isdir(folder):
+            self.settings.setValue(key, folder)
+
+    @property
+    def source_dir(self) -> str:
+        """Where documents were last opened from."""
+        return self._folder(self.SOURCE_FOLDER)
+
+    @property
+    def output_dir(self) -> str:
+        """Where something was last written to."""
+        return self._folder(self.OUTPUT_FOLDER)
+
     def open_file(self):
         if not self._confirm_discard():
             return
         paths, _f = QFileDialog.getOpenFileNames(
-            self, _("Open"), self.import_dir, IMPORT_FILTER)
+            self, _("Open"), self.source_dir, IMPORT_FILTER)
         if paths:
             self.open_paths(paths)
 
     def import_files(self):
         paths, _f = QFileDialog.getOpenFileNames(
-            self, _("Import"), self.import_dir, IMPORT_FILTER)
+            self, _("Import"), self.source_dir, IMPORT_FILTER)
         if paths:
             rows = self.view.selected_rows()
             at = rows[-1] + 1 if rows else None
@@ -1646,7 +1694,7 @@ class MainWindow(QMainWindow):
                            outline=self.model.outline)
 
     def save_as(self):
-        start = self.current_path or os.path.join(self.import_dir, "output.pdf")
+        start = self.current_path or os.path.join(self.output_dir, "output.pdf")
         path, _f = QFileDialog.getSaveFileName(self, _("Save As…"), start, PDF_FILTER)
         if not path:
             return False
@@ -1662,7 +1710,7 @@ class MainWindow(QMainWindow):
         rows = self.view.selected_rows()
         if not rows:
             return
-        start = os.path.join(self.import_dir, "selection.pdf")
+        start = os.path.join(self.output_dir, "selection.pdf")
         path, _f = QFileDialog.getSaveFileName(self, _("Export…"), start, PDF_FILTER)
         if path:
             self._write([path], [self.model.pages[r] for r in rows],
@@ -1720,6 +1768,7 @@ class MainWindow(QMainWindow):
         if mark_saved:
             self.modified = False
             self._refresh_state()
+        self._remember_folder(self.OUTPUT_FOLDER, files_out[0])
         self.statusBar().showMessage(_("Saved") + f" {files_out[0]}", 4000)
         return True
 
@@ -1997,7 +2046,7 @@ class MainWindow(QMainWindow):
         if not pages:
             return
         directory = QFileDialog.getExistingDirectory(
-            self, _("Export…"), self.import_dir)
+            self, _("Export…"), self.output_dir)
         if not directory:
             return
         stem = os.path.splitext(os.path.basename(self.current_path or "page"))[0]
@@ -2468,9 +2517,10 @@ class MainWindow(QMainWindow):
         cannot open properly either.
         """
         path, _f = QFileDialog.getOpenFileName(
-            self, _("Repair Document…"), self.import_dir, PDF_FILTER)
+            self, _("Repair Document…"), self.source_dir, PDF_FILTER)
         if not path:
             return
+        self._remember_folder(self.SOURCE_FOLDER, path)
         QApplication.setOverrideCursor(Qt.WaitCursor)
         try:
             found = repair.diagnose(path)
@@ -2502,6 +2552,7 @@ class MainWindow(QMainWindow):
             return
         finally:
             QApplication.restoreOverrideCursor()
+        self._remember_folder(self.OUTPUT_FOLDER, out)
         self.statusBar().showMessage(_("Saved") + f" {out}", 4000)
 
     # -- phase 3 handlers --------------------------------------------------
@@ -2538,7 +2589,7 @@ class MainWindow(QMainWindow):
         if not rows:
             return None, None
         directory = QFileDialog.getExistingDirectory(
-            self, _("Export…"), self.import_dir)
+            self, _("Export…"), self.output_dir)
         if not directory:
             return None, None
         pages = [self.model.pages[r] for r in rows]
@@ -2560,6 +2611,8 @@ class MainWindow(QMainWindow):
                 greyscale=self._preference("image/greyscale"))
         finally:
             QApplication.restoreOverrideCursor()
+        if written:
+            self._remember_folder(self.OUTPUT_FOLDER, paths[0])
         self.statusBar().showMessage(
             ngettext("%d image written", "%d images written", written) % written, 4000)
 
@@ -2567,7 +2620,7 @@ class MainWindow(QMainWindow):
         rows = self.view.selected_rows()
         if not rows:
             return
-        start = os.path.join(self.import_dir, "rasterised.pdf")
+        start = os.path.join(self.output_dir, "rasterised.pdf")
         path, _f = QFileDialog.getSaveFileName(self, _("Export…"), start, PDF_FILTER)
         if not path:
             return
@@ -2586,6 +2639,7 @@ class MainWindow(QMainWindow):
                 self, APP_NAME,
                 _("Image files are only supported with img2pdf"))
         else:
+            self._remember_folder(self.OUTPUT_FOLDER, path)
             self.statusBar().showMessage(_("Saved") + f" {path}", 4000)
 
     def copy_page_text(self):
