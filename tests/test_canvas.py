@@ -2810,3 +2810,80 @@ class TestOpeningDoesNotMeasureEveryPageFirst(unittest.TestCase):
         bar = self.canvas.verticalScrollBar()
         bar.setValue(min(bar.maximum(), bar.value() + 40))
         self.assertFalse(self.canvas.settled())
+
+
+class TestClosingADocumentIsQuiet(unittest.TestCase):
+    """Qt printed a warning every time a document was closed.
+
+    `QPdfLinkModel.setDocument(None)` disconnects from the old document and
+    then connects to the null one without checking for it, so closing a
+    document -- which happens on every edit while reading, because the snapshot
+    is rebuilt -- put this on the console::
+
+        QObject::connect(QPdfDocument, QPdfLinkModel): invalid nullptr parameter
+
+    Harmless, and exactly the kind of noise that trains people to ignore the
+    console. An empty document is handed over instead of a null one.
+    """
+
+    def messages(self, work):
+        """Run ``work``, returning everything Qt logged while it did."""
+        from PySide6.QtCore import qInstallMessageHandler
+
+        logged = []
+        previous = qInstallMessageHandler(
+            lambda mode, context, message: logged.append(message))
+        try:
+            work()
+        finally:
+            qInstallMessageHandler(previous)
+        return logged
+
+    def test_closing_a_document_logs_nothing(self):
+        from pdfarranger_qt.canvas import PageCanvas
+        from pdfarranger_qt.render import MemoryDocument
+
+        with open(TEXT_PDF, "rb") as handle:
+            document = MemoryDocument(handle.read())
+        self.addCleanup(document.close)
+        canvas = PageCanvas()
+        self.addCleanup(canvas.shutdown)
+        canvas.set_document(document.document, None, None)
+
+        logged = self.messages(lambda: canvas.set_document(None))
+        self.assertEqual(
+            [m for m in logged if "nullptr" in m], [],
+            "closing a document should not warn about a null connection")
+
+    def test_a_link_is_still_found_after_a_document_comes_back(self):
+        """The substitution must not leave the model stuck on the empty one.
+
+        text_and_link.pdf has a link on page 0, so finding it proves the model
+        is looking at the real document again rather than at the placeholder.
+        """
+        from pdfarranger_qt.canvas import PageCanvas
+        from pdfarranger_qt.render import MemoryDocument
+
+        with open(LINK_PDF, "rb") as handle:
+            document = MemoryDocument(handle.read())
+        self.addCleanup(document.close)
+        canvas = PageCanvas()
+        canvas.resize(800, 900)
+        self.addCleanup(canvas.shutdown)
+        canvas.set_document(None)                       # starts empty
+        canvas.set_document(document.document, None, None)
+        settle(timeout_ms=300)
+
+        rect = canvas.layout.page_rect(0)
+        found = None
+        for fraction_y in (0.05, 0.1, 0.15, 0.2, 0.25, 0.3):
+            for fraction_x in (0.1, 0.3, 0.5, 0.7):
+                point = QPointF(rect.left() + rect.width() * fraction_x,
+                                rect.top() + rect.height() * fraction_y)
+                found = canvas.link_at(point - canvas.offset())
+                if found is not None:
+                    break
+            if found is not None:
+                break
+        self.assertIsNotNone(found, "the fixture's link should be findable")
+        canvas.set_document(None)

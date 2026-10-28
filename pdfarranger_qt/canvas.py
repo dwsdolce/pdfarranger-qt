@@ -57,7 +57,11 @@ from PySide6.QtCore import (
     Signal,
 )
 from PySide6.QtGui import QColor, QImage, QKeySequence, QPainter, QPalette
-from PySide6.QtPdf import QPdfDocumentRenderOptions, QPdfLinkModel
+from PySide6.QtPdf import (
+    QPdfDocument,
+    QPdfDocumentRenderOptions,
+    QPdfLinkModel,
+)
 from PySide6.QtWidgets import QAbstractScrollArea, QApplication, QFrame, QMenu
 
 from .i18n import gettext_ as _
@@ -919,6 +923,15 @@ class PageCanvas(QAbstractScrollArea):
         self._search_result = -1
         self._links = QPdfLinkModel(self)
         self._links_page = -1
+        #: Handed to the link model in place of None when there is no document.
+        #: `QPdfLinkModel.setDocument(None)` disconnects from the old document
+        #: and then connects to the null one without checking, so Qt prints
+        #: "QObject::connect(QPdfDocument, QPdfLinkModel): invalid nullptr
+        #: parameter" every time a document is closed. An empty document is a
+        #: real object with no pages: the model has nothing to find, `linkAt`
+        #: returns an invalid link, and nothing is left pointing at the
+        #: document that has just been closed.
+        self._no_document = QPdfDocument(self)
         self._tooltip = ""
         self._text = PageText()
         self._document = None
@@ -1004,7 +1017,7 @@ class PageCanvas(QAbstractScrollArea):
         self._document = document
         self.clear_selection()
         self.clear_caret()
-        self._links.setDocument(document)
+        self._links.setDocument(document or self._no_document)
         self._links_page = -1
         self._current = -1
         self._update_ranges()
