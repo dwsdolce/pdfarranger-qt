@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-06 22:49+0000\n"
+"POT-Creation-Date: 2026-10-28 18:53+0000\n"
 "PO-Revision-Date: 2025-09-28 16:51+0000\n"
 "Last-Translator: Sveinn í Felli <sv1@fellsnet.is>\n"
 "Language: is\n"
@@ -1627,6 +1627,11 @@ msgstr "Gefið út undir GNU General Public License útgáfu 3 eða síðari."
 #: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
 msgid "User Guide"
 msgstr "Notendahandbók"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/export.py
+msgid "Merged form fields share a name, so they will share a value: "
+msgstr "Sameinaðir eyðublaðsreitir deila heiti og deila því gildi: "
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py

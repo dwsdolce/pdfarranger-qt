@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: unnamed project\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-06 22:49+0000\n"
+"POT-Creation-Date: 2026-10-28 18:53+0000\n"
 "PO-Revision-Date: 2026-05-27 19:30+0300\n"
 "Last-Translator: Dymko <Dymkovych@proton.me>\n"
 "Language: uk\n"
@@ -1631,6 +1631,11 @@ msgstr "Ліцензовано за GNU General Public License версії 3 а
 #: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
 msgid "User Guide"
 msgstr "Посібник користувача"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/export.py
+msgid "Merged form fields share a name, so they will share a value: "
+msgstr "Об'єднані поля форми мають одне ім'я, тож матимуть одне значення: "
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py

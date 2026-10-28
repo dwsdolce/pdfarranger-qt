@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pdfarranger master\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-06 22:49+0000\n"
+"POT-Creation-Date: 2026-10-28 18:53+0000\n"
 "PO-Revision-Date: 2026-09-04 09:59+0000\n"
 "Last-Translator: Lumenman <28367232+Lumenman@users.noreply.github.com>\n"
 "Language: ru\n"
@@ -1534,6 +1534,11 @@ msgstr "Распространяется по лицензии GNU General Publi
 #: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
 msgid "User Guide"
 msgstr "Руководство пользователя"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/export.py
+msgid "Merged form fields share a name, so they will share a value: "
+msgstr "Объединённые поля формы имеют одно имя и поэтому будут иметь одно значение: "
 
 #: pdfarranger_qt/mainwindow.py
 msgid "Insert pages from another PDF or an image"

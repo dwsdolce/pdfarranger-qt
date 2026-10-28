@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-06 22:49+0000\n"
+"POT-Creation-Date: 2026-10-28 18:53+0000\n"
 "PO-Revision-Date: 2022-10-03 23:44+0200\n"
 "Last-Translator: Ícar N. S. <icar.nin@protonmail.com>\n"
 "Language: ca\n"
@@ -1666,6 +1666,13 @@ msgstr "Publicat sota la GNU General Public License versió 3 o posterior."
 #: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
 msgid "User Guide"
 msgstr "Guia d'usuari"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/export.py
+msgid "Merged form fields share a name, so they will share a value: "
+msgstr ""
+"Camps de formulari fusionats comparteixen un nom, de manera que compartiran "
+"un valor: "
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py

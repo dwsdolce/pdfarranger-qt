@@ -61,7 +61,7 @@ from PySide6.QtPdf import QPdfDocumentRenderOptions, QPdfLinkModel
 from PySide6.QtWidgets import QAbstractScrollArea, QApplication, QFrame, QMenu
 
 from .i18n import gettext_ as _
-from .render import DEFAULT_CACHE_PIXELS, BytesDocument, Renderer
+from .render import ANNOTATIONS, DEFAULT_CACHE_PIXELS, BytesDocument, Renderer
 
 #: Gap between consecutive pages, and around the column, in logical pixels at
 #: zoom 1. Scaled with the zoom so the layout looks the same at every size.
@@ -619,6 +619,7 @@ class PageRenderTask:
             return None
         options = QPdfDocumentRenderOptions()
         options.setScaledSize(self.size)
+        options.setRenderFlags(ANNOTATIONS)
         try:
             return document.render(self.page, self.size, options)
         except Exception:  # pragma: no cover - PDFium can be unhappy

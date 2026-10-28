@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  pdfarranger\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-06 22:49+0000\n"
+"POT-Creation-Date: 2026-10-28 18:53+0000\n"
 "PO-Revision-Date: 2026-01-21 05:07+0100\n"
 "Last-Translator: Ekaterine Papava <papava.e@gtu.ge>\n"
 "Language: ka\n"
@@ -1625,6 +1625,13 @@ msgstr "გამოცემულია GNU General Public License-ის მ�
 #: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
 msgid "User Guide"
 msgstr "მომხმარებლის სახელმძღვანელო"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/export.py
+msgid "Merged form fields share a name, so they will share a value: "
+msgstr ""
+"შერწყმული ფორმის ველებს ერთი სახელი აქვთ, ამიტომ ერთ მნიშვნელობასაც "
+"გაიზიარებენ: "
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py

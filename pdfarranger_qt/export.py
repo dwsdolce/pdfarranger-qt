@@ -24,6 +24,7 @@ during the port.  What was dropped is the GTK plumbing: the warning dialogs, the
 print operation, and the multiprocessing wrapper.
 """
 
+import collections
 import dataclasses
 import io
 import locale
@@ -37,6 +38,7 @@ import pikepdf
 
 from . import metadata
 from .core import Page, Sides
+from .i18n import gettext_ as _
 
 #: export_doc_job() uses the pikepdf Job interface, added in pikepdf 8.
 HAS_PIKEPDF8 = packaging.version.parse(pikepdf.__version__) >= packaging.version.Version("8.0")
@@ -321,6 +323,119 @@ def _append_page(current_page, copied_pages, pdf_output, row):
         new_page.Annots = pdf_output.copy_foreign(indirect_annots)
 
 
+#: How deep a field tree is walked looking for the root. A widget is often its
+#: own field, a kid of one, or a kid of a radio group; eight is far beyond any
+#: real form and stops a /Parent cycle in a damaged file spinning for ever.
+_FIELD_DEPTH = 8
+
+
+def _root_field(annot):
+    """The top-level field a widget belongs to, which may be the widget."""
+    node, depth = annot, 0
+    while pikepdf.Name.Parent in node and depth < _FIELD_DEPTH:
+        node = node[pikepdf.Name.Parent]
+        depth += 1
+    return node
+
+
+def _surviving_fields(pdf_output):
+    """Top-level fields of the widgets that landed in the output, in order.
+
+    Read off the output rather than copied from the input because the output
+    is a different set of pages: an export of a selection keeps only the
+    widgets on the pages it kept, and /Fields naming the others would point at
+    annotations that are not in the document.
+    """
+    seen, fields = set(), []
+    for page in pdf_output.pages:
+        for annot in page.get(pikepdf.Name.Annots, []):
+            if annot.get(pikepdf.Name.Subtype) != pikepdf.Name.Widget:
+                continue
+            field = _root_field(annot)
+            try:
+                key = field.objgen
+            except Exception:  # pragma: no cover - a direct field dictionary
+                key = None
+            if key is None or key == (0, 0):
+                fields.append(field)       # cannot be identified, so not merged
+                continue
+            if key not in seen:
+                seen.add(key)
+                fields.append(field)
+    return fields
+
+
+def _restore_acroform(pdf_input, pdf_output):
+    """Give the output back the form dictionary the page copy left behind.
+
+    Export builds a new document and copies pages into it. Widget annotations
+    travel with their page; /AcroForm does not, because it hangs off the
+    document root -- so a filled form came out with all 23 of its answers still
+    in the annotations and nothing interactive able to reach them. pikepdf says
+    so as it happens: "86 form widget annotation(s) that are not reachable from
+    /AcroForm; they may not display in Adobe Acrobat."
+
+    The form-wide settings are carried from whichever inputs have them. /DR in
+    particular is not optional: it holds the fonts an appearance stream names,
+    and without it a viewer regenerating an appearance has nothing to draw with.
+    """
+    fields = _surviving_fields(pdf_output)
+    if not fields:
+        return                       # not a form; do not invent one
+    acroform = pikepdf.Dictionary(Fields=pikepdf.Array(fields))
+    resources = pikepdf.Dictionary()
+    for pdf in pdf_input:
+        # _open_inputs leaves a None for every source these pages do not
+        # reference, which is most of them when exporting a selection.
+        if pdf is None:
+            continue
+        source = pdf.Root.get(pikepdf.Name.AcroForm)
+        if source is None:
+            continue
+        for key in (pikepdf.Name.DA, pikepdf.Name.Q,
+                    pikepdf.Name.NeedAppearances, pikepdf.Name.SigFlags):
+            if key in source and key not in acroform:
+                acroform[key] = source[key]
+        for name, value in source.get(pikepdf.Name.DR, pikepdf.Dictionary()).items():
+            # One level down, because /DR is a resource dictionary: its entries
+            # are themselves dictionaries of named fonts and so on, and
+            # replacing /Font wholesale would drop the first document's.
+            if isinstance(value, pikepdf.Dictionary):
+                into = resources.get(name)
+                if into is None:
+                    into = resources[name] = pikepdf.Dictionary()
+                for key, entry in value.items():
+                    if key not in into:
+                        into[key] = pdf_output.copy_foreign(
+                            pdf.make_indirect(entry))
+            elif name not in resources:
+                resources[name] = value
+    if len(resources):
+        acroform[pikepdf.Name.DR] = resources
+    pdf_output.Root[pikepdf.Name.AcroForm] = pdf_output.make_indirect(acroform)
+    _warn_about_shared_names(fields)
+
+
+def _warn_about_shared_names(fields):
+    """Two fields with one name are one field, which merging can create.
+
+    A field's value is keyed by its fully qualified name, so two documents each
+    carrying a "Name" field become a single field with two widgets once they
+    are in the same document: type into one and the other changes with it.
+    Acrobat renames on import. Detecting it and saying so is honest and cheap;
+    renaming silently would be a different surprise.
+    """
+    counts = collections.Counter(
+        str(field[pikepdf.Name.T]) for field in fields
+        if pikepdf.Name.T in field)
+    shared = sorted(name for name, n in counts.items() if n > 1)
+    if shared:
+        warnings.warn(
+            _("Merged form fields share a name, so they will share a value: ")
+            + ", ".join(shared[:5]) + ("…" if len(shared) > 5 else ""),
+            stacklevel=2)
+
+
 def _copy_n_transform(pdf_input, pdf_output, pages, quit_flag=None):
     # All pages must be copied to pdf_output BEFORE applying geometrical
     # transformation. See https://github.com/pikepdf/pikepdf/issues/271
@@ -399,6 +514,9 @@ def export_doc(pdf_input, pages, mdata, files_out, quit_flag=None,
     _copy_n_transform(pdf_input, pdf_output, pages, quit_flag)
     if quit_flag is not None and quit_flag.is_set():
         return
+    # After the pages, because it is built from the widgets that actually
+    # arrived rather than from the ones the inputs had.
+    _restore_acroform(pdf_input, pdf_output)
 
     # files_out entries are paths when saving and file-like objects when
     # rendering to memory (previews, printing). Metadata and encryption are only

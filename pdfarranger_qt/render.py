@@ -63,6 +63,20 @@ _ROTATIONS = {
     270: QPdfDocumentRenderOptions.Rotation.Clockwise270,
 }
 
+#: Annotations are drawn, which they are not by default. Highlights, sticky
+#: notes, stamps, strikethrough and freehand are all appearance streams hanging
+#: off the page rather than page content, so without this a document somebody
+#: has commented on arrives looking pristine and says nothing about what was
+#: left out. Measured on one page carrying one annotation: /Square draws 5000
+#: pixels with this flag and none without it.
+#:
+#: It does *not* bring form fields with it. PDFium excludes widget annotations
+#: from page rendering by design and leaves them to a form-fill module QtPdf
+#: never initialises, so the same appearance stream under /Subtype /Widget
+#: draws nothing either way. That is handled where the document is prepared,
+#: not here.
+ANNOTATIONS = QPdfDocumentRenderOptions.RenderFlag.Annotations
+
 #: How many pixels' worth of thumbnails to keep before evicting the oldest.
 DEFAULT_CACHE_PIXELS = 96 * 1024 * 1024 // 4  # ~96 MB of ARGB32
 
@@ -185,6 +199,7 @@ class RenderTask:
         options = QPdfDocumentRenderOptions()
         options.setRotation(_ROTATIONS.get(self.angle % 360, _ROTATIONS[0]))
         options.setScaledSize(full)
+        options.setRenderFlags(ANNOTATIONS)
         # Deliberately no setScaledClipRect: as of Qt 6.11 setting it makes
         # PDFium ignore the rotation, so the page comes back upright inside a
         # sideways frame. Render the whole page and cut the crop out below.
@@ -241,6 +256,7 @@ class RenderTask:
             full = QSize(max(1, round(width * scale)), max(1, round(height * scale)))
             options = QPdfDocumentRenderOptions()
             options.setScaledSize(full)
+            options.setRenderFlags(ANNOTATIONS)
             try:
                 image = doc.document.render(0, full, options)
             except Exception:  # noqa: BLE001 - PDFium can be unhappy
