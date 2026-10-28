@@ -25,6 +25,7 @@ belongs when you come to add to it.
 | [completed/PDF24-COMPARISON.md](completed/PDF24-COMPARISON.md) | **Complete** — every tool from PDF24's list judged worth having is built. Scored against its live menus; eight features came out of it. |
 | [completed/COMPRESSION.md](completed/COMPRESSION.md) | **Complete** — [Issue #8](https://github.com/dwsdolce/pdfarranger-qt/issues/8) is closed. What PDF24, Acrobat and Ghostscript offer, the measurements that set the defaults, and what compressing a real 1,590-page book actually did. |
 | [completed/I18N.md](completed/I18N.md) | **Complete** — the [Internationalisation milestone](https://github.com/dwsdolce/pdfarranger-qt/milestone/1) is closed. The translated interface that was not one, and what filling 33 catalogues took. |
+| [ANNOTATIONS.md](ANNOTATIONS.md) | **Open** — a filled form that displayed blank. Why no annotation is drawn, why form fields need more than a render flag, what saving one costs today, and the case for superseding D17 and D21. |
 
 ## Where to put a new thing
 
