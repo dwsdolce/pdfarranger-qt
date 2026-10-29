@@ -1311,7 +1311,7 @@ class TestTypingIntoAField(unittest.TestCase):
 
 
 def signed(data=None, certify=False, placeholder=False, flags_only=False,
-           usage_rights=False):
+           usage_rights=False, visible=False):
     """``typable()`` with a signature field added to it.
 
     Structural rather than cryptographic. What the application reads is a
@@ -1348,6 +1348,15 @@ def signed(data=None, certify=False, placeholder=False, flags_only=False,
         Type=pikepdf.Name.Annot, Subtype=pikepdf.Name.Widget,
         FT=pikepdf.Name.Sig, T=pikepdf.String("signature"), F=132,
         Rect=pikepdf.Array([0, 0, 0, 0])))
+    if visible:
+        # A signature that puts something on the page, which an invisible one
+        # -- the shape both real samples take -- does not.
+        drawing = pikepdf.Stream(pdf, b"0 0 1 rg 0 0 80 20 re f\n")
+        drawing[pikepdf.Name.Type] = pikepdf.Name.XObject
+        drawing[pikepdf.Name.Subtype] = pikepdf.Name.Form
+        drawing[pikepdf.Name.BBox] = pikepdf.Array([0, 0, 80, 20])
+        field[pikepdf.Name.Rect] = pikepdf.Array([200, 10, 280, 30])
+        field[pikepdf.Name.AP] = pikepdf.Dictionary(N=drawing)
     if not placeholder:
         field[pikepdf.Name.V] = value
         if certify:
@@ -1509,3 +1518,144 @@ class TestASignedDocumentRefusesAFill(unittest.TestCase):
         win.field_edited(field, "typed anyway")
         self.assertIsNone(win.model.form_values.get(page.nfile, field.name))
         self.assertFalse(win.modified)
+
+
+class TestExportLeavesNoSignatureBehind(unittest.TestCase):
+    """2.8's done-when, and a bug that was there whichever way D5 had gone.
+
+    A document built by export is a new one. The bytes a `/ByteRange` names
+    are gone, `/Perms` does not survive a new root and neither does `/DSS` --
+    so a signature carried into it asserts something about a file that never
+    existed, which a viewer reports as a broken signature and a reader cannot
+    tell from tampering. Worse on a certified document: the `/Reference`
+    declaring `DocMDP P=1`, no changes permitted, travelled while the
+    `/Perms` entry naming it did not.
+    """
+
+    def exported(self, data, order=None):
+        from pdfarranger_qt.core import DocumentSet
+        from pdfarranger_qt.export import get_in_memory_pdf
+
+        path = temp_path("signed-export.pdf")
+        with open(path, "wb") as handle:
+            handle.write(data)
+        docs = DocumentSet()
+        self.addCleanup(docs.cleanup)
+        pages = docs.add_file(path)
+        if order is not None:
+            pages = [pages[i] for i in order]
+        self.raw = get_in_memory_pdf(pages, docs.files_for_export())
+        return pikepdf.open(io.BytesIO(self.raw))
+
+    def signature_fields(self, pdf):
+        acroform = pdf.Root.get(pikepdf.Name.AcroForm)
+        return [f for f in (acroform.get(pikepdf.Name.Fields, [])
+                            if acroform is not None else [])
+                if f.get(pikepdf.Name.FT) == pikepdf.Name.Sig]
+
+    def test_no_signature_field_survives(self):
+        out = self.exported(signed())
+        self.assertEqual(self.signature_fields(out), [])
+
+    def test_a_certification_does_not_survive_either(self):
+        """The one that mattered most: it claimed no changes were permitted."""
+        out = self.exported(signed(certify=True))
+        self.assertEqual(self.signature_fields(out), [])
+        self.assertNotIn(pikepdf.Name.Perms, out.Root)
+        self.assertNotIn(b"DocMDP", self.raw)
+
+    def test_sigflags_is_not_carried(self):
+        """It says a signature exists and that the file is append-only.
+
+        Neither is true of a document assembled from scratch.
+        """
+        out = self.exported(signed())
+        acroform = out.Root.get(pikepdf.Name.AcroForm)
+        if acroform is not None:
+            self.assertNotIn(pikepdf.Name.SigFlags, acroform)
+
+    def test_the_signature_dictionary_is_emptied_not_just_unhooked(self):
+        """Unreferenced is not the same as gone.
+
+        qpdf does not collect unreachable objects. Dropping the reference
+        alone left the whole signature in the output of the certified sample
+        -- 6,453 bytes of PKCS#7 and the signer's certificate chain up to the
+        Adobe root -- unreachable, so harmless to a viewer, but carried into a
+        document that has nothing to do with it.
+
+        Asserted on the dictionary rather than on the saved bytes, because
+        whether the orphan is written at all turns out to depend on qpdf: it
+        keeps one for that sample and collects one from a fixture built here.
+        What this code does is empty it, so that is what is checked.
+        """
+        from pdfarranger_qt.export import _blank_signature
+
+        pdf = pikepdf.open(io.BytesIO(signed()))
+        widget = next(a for a in pdf.pages[0][pikepdf.Name.Annots]
+                      if a.get(pikepdf.Name.FT) == pikepdf.Name.Sig)
+        value = widget[pikepdf.Name.V]
+        self.assertIn(pikepdf.Name.Contents, value)
+        _blank_signature(widget)
+        self.assertEqual(len(value.keys()), 0,
+                         "nothing of the signature should be left in it")
+
+    def test_nothing_of_the_signature_reaches_the_saved_bytes(self):
+        self.exported(signed())
+        self.assertNotIn(b"adbe.pkcs7", self.raw)
+
+    def test_an_invisible_signature_takes_its_annotation_with_it(self):
+        out = self.exported(signed())
+        widgets = [a for page in out.pages
+                   for a in page.get(pikepdf.Name.Annots, [])
+                   if a.get(pikepdf.Name.Subtype) == pikepdf.Name.Widget]
+        self.assertEqual(len(widgets), 1, "only the text field should remain")
+        self.assertEqual(str(widgets[0].get(pikepdf.Name.FT)), "/Tx")
+
+    def test_a_visible_signature_keeps_its_drawing(self):
+        """The appearance is page content; it is the dictionary that lied.
+
+        Deleting what the user can see would be a different kind of wrong.
+        """
+        out = self.exported(signed(visible=True))
+        stamps = [a for page in out.pages
+                  for a in page.get(pikepdf.Name.Annots, [])
+                  if a.get(pikepdf.Name.Subtype) == pikepdf.Name.Stamp]
+        self.assertEqual(len(stamps), 1)
+        self.assertIn(pikepdf.Name.AP, stamps[0])
+        for key in (pikepdf.Name.FT, pikepdf.Name.V, pikepdf.Name.T):
+            self.assertNotIn(key, stamps[0], "a picture, not a field")
+
+    def test_an_ordinary_form_is_untouched(self):
+        """The control. Stripping signatures must not cost a form its fields."""
+        out = self.exported(typable())
+        acroform = out.Root.get(pikepdf.Name.AcroForm)
+        self.assertIsNotNone(acroform)
+        self.assertEqual(len(acroform.get(pikepdf.Name.Fields, [])), 1)
+
+    def test_the_source_document_is_not_damaged(self):
+        """The strip edits the output in place, so this is worth holding.
+
+        A source is reused for every later export; emptying its signature
+        instead of the copy's would break the second save in a session.
+        """
+        import warnings
+
+        path = temp_path("signed-source.pdf")
+        with open(path, "wb") as handle:
+            handle.write(signed())
+        from pdfarranger_qt.core import DocumentSet
+        from pdfarranger_qt.export import get_in_memory_pdf
+
+        docs = DocumentSet()
+        self.addCleanup(docs.cleanup)
+        pages = docs.add_file(path)
+        with warnings.catch_warnings(record=True) as caught:
+            warnings.simplefilter("always")
+            get_in_memory_pdf(pages, docs.files_for_export())
+            unreachable = [w for w in caught
+                           if "not reachable" in str(w.message)]
+        self.assertEqual(unreachable, [], "no orphaned widgets")
+        with pikepdf.open(path) as source:
+            self.assertTrue(forms.is_signed(source),
+                            "the original must still be signed")
+

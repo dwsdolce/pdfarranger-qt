@@ -363,6 +363,106 @@ def _root_field(annot):
     return node
 
 
+#: Keys that make an annotation part of a form. Taken off a signature widget
+#: that is kept for its drawing, so that what remains is a picture and not a
+#: field.
+_FORM_KEYS = (pikepdf.Name.FT, pikepdf.Name.T, pikepdf.Name.V,
+              pikepdf.Name.DV, pikepdf.Name.Ff, pikepdf.Name.AS,
+              pikepdf.Name.Parent, pikepdf.Name.Lock, pikepdf.Name.SV)
+
+
+def _strip_signatures(pdf_output) -> int:
+    """Take the remains of a signature out of the output. Returns how many.
+
+    Export builds a new document, so a signature in it can only ever be a
+    corpse: the bytes its ``/ByteRange`` names are gone, the ``/Perms`` entry a
+    viewer reads to find a certification does not survive the new root, and the
+    ``/DSS`` holding the validation data does not either. What used to survive
+    was the signature field itself, with 32,767 bytes of PKCS#7 and -- on a
+    certified document -- a ``/Reference`` still declaring ``DocMDP P=1``, no
+    changes permitted, over a file that was never the one it was computed from.
+    A viewer opening that reports a broken signature, which is indistinguishable
+    from tampering, and whether it happened at all depended on whether the page
+    the widget sat on was in the selection.
+
+    A *visible* signature keeps its drawing, as a ``/Stamp``. The appearance is
+    page content the user can see and expects to still be there, and it makes
+    no claim by itself -- it is the signature dictionary that asserts validity,
+    and that is what goes. An invisible one, which is what both real samples
+    are, has nothing to keep and the annotation goes with it.
+    """
+    stripped = 0
+    for page in pdf_output.pages:
+        annots = page.get(pikepdf.Name.Annots)
+        if annots is None:
+            continue
+        kept = []
+        for annot in annots:
+            if (annot.get(pikepdf.Name.Subtype) != pikepdf.Name.Widget
+                    or _field_kind(annot) != pikepdf.Name.Sig):
+                kept.append(annot)
+                continue
+            stripped += 1
+            _blank_signature(annot)
+            if _has_drawing(annot):
+                annot[pikepdf.Name.Subtype] = pikepdf.Name.Stamp
+                for key in _FORM_KEYS:
+                    if key in annot:
+                        del annot[key]
+                kept.append(annot)
+        if len(kept) != len(annots):
+            page[pikepdf.Name.Annots] = pikepdf.Array(kept)
+    return stripped
+
+
+def _blank_signature(annot) -> None:
+    """Empty the signature dictionary this widget points at.
+
+    Dropping the reference is not enough. qpdf does not collect unreferenced
+    objects, so the dictionary stays in the output -- unreachable, and so
+    harmless to any viewer, but carrying the signer's certificate chain and
+    several kilobytes of PKCS#7 into a document that has nothing to do with
+    it. Measured on the certified sample: 6,453 bytes and a full chain up to
+    the Adobe root, in a file whose signature had supposedly been taken out.
+
+    Emptying it is safe because the output's objects are its own. An export
+    leaves the source document it copied from untouched, which is checked.
+    """
+    node, depth = annot, 0
+    while node is not None and depth < _FIELD_DEPTH:
+        value = node.get(pikepdf.Name.V)
+        if isinstance(value, pikepdf.Dictionary):
+            for key in list(value.keys()):
+                del value[key]
+            return
+        node = node.get(pikepdf.Name.Parent)
+        depth += 1
+
+
+def _field_kind(annot):
+    """``/FT`` for a widget, which can sit anywhere above it."""
+    node, depth = annot, 0
+    while node is not None and depth < _FIELD_DEPTH:
+        if pikepdf.Name.FT in node:
+            return node[pikepdf.Name.FT]
+        node = node.get(pikepdf.Name.Parent)
+        depth += 1
+    return None
+
+
+def _has_drawing(annot) -> bool:
+    """Whether this widget puts anything on the page.
+
+    Both real samples answer no: an invisible signature is the normal shape
+    for one applied by an e-signature service, and carries ``/Rect [0 0 0 0]``.
+    """
+    appearance = annot.get(pikepdf.Name.AP)
+    if appearance is None or pikepdf.Name.N not in appearance:
+        return False
+    rect = [float(v) for v in annot.get(pikepdf.Name.Rect, [0, 0, 0, 0])]
+    return abs(rect[2] - rect[0]) > 0 and abs(rect[3] - rect[1]) > 0
+
+
 def _surviving_fields(pdf_output):
     """Top-level fields of the widgets that landed in the output, in order.
 
@@ -417,8 +517,11 @@ def _restore_acroform(pdf_input, pdf_output):
         source = pdf.Root.get(pikepdf.Name.AcroForm)
         if source is None:
             continue
+        # Not /SigFlags. It says a signature exists and that the file should
+        # be saved by appending, and neither is true of a document built from
+        # scratch with the signatures taken out of it (D5).
         for key in (pikepdf.Name.DA, pikepdf.Name.Q,
-                    pikepdf.Name.NeedAppearances, pikepdf.Name.SigFlags):
+                    pikepdf.Name.NeedAppearances):
             if key in source and key not in acroform:
                 acroform[key] = source[key]
         for name, value in source.get(pikepdf.Name.DR, pikepdf.Dictionary()).items():
@@ -560,6 +663,10 @@ def export_doc(pdf_input, pages, mdata, files_out, quit_flag=None,
     _copy_n_transform(pdf_input, pdf_output, pages, quit_flag)
     if quit_flag is not None and quit_flag.is_set():
         return
+    # Before the form is rebuilt, so that what is rebuilt cannot name a
+    # signature field: a document assembled here is a new one, and the only
+    # honest thing it can say about a signature is nothing (D5).
+    _strip_signatures(pdf_output)
     # After the pages, because it is built from the widgets that actually
     # arrived rather than from the ones the inputs had.
     _restore_acroform(pdf_input, pdf_output)
