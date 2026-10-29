@@ -84,6 +84,22 @@ Two consequences worth stating, because they are what makes the list trustworthy
   it gets lost. A decision not to do something now is not a decision never to
   do it, and the three phase-7 items are open for exactly that reason — two of
   the original five were deprioritised and then built anyway.
-- **A body of work too large to close gets a tracking issue**, whose body
-  carries the plan and whose sub-issues are created per wave as waves start.
-  Re-scoping then edits the body instead of losing the item.
+- **A body of work too large to close gets a tracking issue, and a document.**
+  They carry different things and must not carry the same thing twice. The
+  issue says what is wrong, what state it is in, and where the detail is; the
+  document holds the analysis, the measurements, the decisions and the plan.
+  An issue that repeats the plan is a second copy to keep in step, and it will
+  not be kept in step — this one listed four steps of a six-step body for a
+  day, while the document had all six.
+
+      Detail doc: `docs/ANNOTATIONS.md`
+
+      **Status:** what is true now.
+
+      What is wrong, in prose, and what it costs.
+
+      Related: Issue #15
+
+  On closing, the issue gains a **Resolution** naming the commits and what
+  landed. The same shape the guitar-tap project uses, which is worth being
+  consistent with.

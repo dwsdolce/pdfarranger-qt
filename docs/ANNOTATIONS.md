@@ -27,7 +27,7 @@ highlight are the same problem a second time.
 | | State |
 |---|---|
 | 1. Show what is in the file | **complete** — drawn, saved, printed, and measured against real forms |
-| 2. Fill fields | next; the plan is below and nothing blocks it |
+| 2. Fill fields | in progress — 2.1 to 2.3 and 2.6 done; text fields next |
 | 3. Markup | after filling, which proves the model it needs |
 
 The first was correctness and needed no decision reversed: the application did
@@ -229,9 +229,9 @@ and damaged a form on save.
 |---|---|---|
 | 1.1 | Draw annotations — the render flag, in all three render paths | **complete** |
 | 1.2 | Rebuild `/AcroForm` on export, so a saved form keeps its fields | **complete** |
-| 1.3 | Draw form fields, from a render-only copy | **complete** |
+| 1.3 | Draw form fields | **complete** — from a render-only copy, until 2.3 made the reader composite them instead |
 | 1.4 | Draw both in the output paths — printing, image export, rasterising | **complete** |
-| 1.5 | Stop export splitting a field whose widgets span pages | next |
+| 1.5 | Stop export splitting a field whose widgets span pages | **complete** |
 | 1.6 | A validation corpus: public PDFs this has been checked against | **complete** |
 
 1.5 is a defect found by building the fixture 1.1–1.4 were never tested
@@ -294,15 +294,15 @@ cheaper than a flag every caller has to remember.
 
 ### 2. Fill fields
 
-| # | Step | Depends on | Done when |
-|---|---|---|---|
-| 2.1 | Own field values in the model | — | a value survives undo, redo and a page reorder |
-| 2.2 | Find the field under a click | — | clicking a widget identifies its field; clicking elsewhere does not |
-| 2.3 | Tick boxes | 2.1, 2.2 | **complete** |
-| 2.4 | Write values on save | 2.1 | done for buttons with 2.3; text waits on 2.5 |
-| 2.5 | Text fields, single-line, explicit size | 2.1, 2.2, 2.4 | typing shows, survives undo, and saves |
-| 2.6 | Narrow the snapshot invalidation | — | **done with 2.3**, by not rebuilding anything |
-| 2.7 | Refuse to edit a signed document | 2.3 | a signed form says why rather than invalidating a signature |
+| # | Step | Depends on | Done when | State |
+|---|---|---|---|---|
+| 2.1 | Own field values in the model | — | a value survives undo, redo and a page reorder | **complete** |
+| 2.2 | Find the field under a click | — | clicking a widget identifies its field; clicking elsewhere does not | **complete** |
+| 2.3 | Tick boxes | 2.1, 2.2 | clicking one toggles it on screen and after a save | **complete** |
+| 2.4 | Write values on save | 2.1 | a saved file opens in Acrobat with the value in the field | buttons done with 2.3; text waits on 2.5 |
+| 2.5 | Text fields, single-line, explicit size | 2.1, 2.2, 2.4 | typing shows, survives undo, and saves | next |
+| 2.6 | Narrow the snapshot invalidation | — | ten fills do not rebuild the reader ten times | **complete** with 2.3, by leaving nothing to rebuild |
+| 2.7 | Refuse to edit a signed document | 2.3 | a signed form says why rather than invalidating a signature | |
 
 **2.1 has a precedent.** D20 settled how the outline is owned in the undo state
 beside the page list, keyed by a stable page id so reordering costs nothing and
@@ -344,13 +344,13 @@ them.
 Not started, and not before 2 has proved the model: it needs the same ownership,
 the same undo behaviour and the same save path.
 
-| # | Step | Depends on | Done when |
-|---|---|---|---|
-| 3.1 | An annotation model | 2.1, 2.4 | an added note survives undo and a save |
-| 3.2 | A tool mode in the canvas | 3.1 | the pointer selects, highlights or draws as chosen |
-| 3.3 | Highlight and strikethrough | 3.2 | a selection becomes a mark the file keeps |
-| 3.4 | Sticky note | 3.2 | a note can be placed, read and edited |
-| 3.5 | Free text and freehand | 3.3, 3.4 | both draw, save and reopen |
+| # | Step | Depends on | Done when | State |
+|---|---|---|---|---|
+| 3.1 | An annotation model | 2.1, 2.4 | an added note survives undo and a save | |
+| 3.2 | A tool mode in the canvas | 3.1 | the pointer selects, highlights or draws as chosen | |
+| 3.3 | Highlight and strikethrough | 3.2 | a selection becomes a mark the file keeps | |
+| 3.4 | Sticky note | 3.2 | a note can be placed, read and edited | |
+| 3.5 | Free text and freehand | 3.3, 3.4 | both draw, save and reopen | |
 
 Highlight first of the marks because its geometry already exists — text
 selection produces the quadrilaterals a `/Highlight` wants, so it needs no new
