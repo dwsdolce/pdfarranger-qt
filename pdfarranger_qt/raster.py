@@ -33,10 +33,12 @@ from typing import Iterator, List, Sequence
 
 from PySide6.QtCore import QSize
 from PySide6.QtGui import QImage
+from PySide6.QtPdf import QPdfDocumentRenderOptions
 
+from . import forms
 from .core import Page, Sides
 from .export import get_in_memory_pdf
-from .render import MemoryDocument
+from .render import ANNOTATIONS, MemoryDocument
 
 #: Grey level at or above which a pixel counts as blank when trimming borders.
 WHITE_THRESHOLD = 250
@@ -74,17 +76,33 @@ def render_pages(pages: Sequence[Page], files, ppi: float = 72.0,
     """Render the edited pages at the given resolution, in order.
 
     Always flattened onto white -- see ``flatten_onto_white``.
+
+    Everything that leaves the application as pixels comes through here:
+    printing, image export, rasterising, and white-border detection. So it
+    draws what the page actually says, annotations included. Without the flag
+    a commented document prints clean; without the rewrite a filled form
+    prints blank, because PDFium leaves form fields to a form-fill module
+    QtPdf never initialises (see `forms`). The form that prompted this printed
+    none of the fifteen answers on its third page.
+
+    The rewrite is unconditional rather than asked for. It costs 4 ms on a
+    document with no fields and 10 ms on one with them, against 95 ms to
+    render four pages at 300 dpi -- below the noise of the render it precedes,
+    and cheaper than a flag every caller has to remember to pass.
     """
-    data = get_in_memory_pdf(list(pages), files)
+    data = forms.rendered_bytes(get_in_memory_pdf(list(pages), files))
     with MemoryDocument(data) as doc:
         if not doc.ok:
             return
+        options = QPdfDocumentRenderOptions()
+        options.setRenderFlags(ANNOTATIONS)
         scale = ppi / 72.0
         for index in range(doc.page_count()):
             size = doc.document.pagePointSize(index)
             target = QSize(max(1, round(size.width() * scale)),
                            max(1, round(size.height() * scale)))
-            image = flatten_onto_white(doc.document.render(index, target))
+            image = flatten_onto_white(
+                doc.document.render(index, target, options))
             if greyscale and not image.isNull():
                 image = image.convertToFormat(QImage.Format_Grayscale8)
             yield image

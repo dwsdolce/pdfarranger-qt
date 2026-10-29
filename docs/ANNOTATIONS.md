@@ -2,8 +2,9 @@
 
 **Issue:** [#14](https://github.com/dwsdolce/pdfarranger-qt/issues/14)
 
-**Status:** IN PROGRESS — showing what is in the file is **complete**; filling
-fields is next, and nothing blocks it.
+**Status:** IN PROGRESS — body 1 of 3 is **complete**: annotations and filled
+form fields now draw on screen, in print and in image export. Filling fields is
+next, and nothing blocks it.
 
 A filled insurance form was opened in this application and came up blank. Every
 answer typed into it was missing — text, ticks, the lot — with nothing on screen
@@ -24,19 +25,19 @@ highlight are the same problem a second time.
 
 | | State |
 |---|---|
-| Showing what is in the file | **complete** — annotations drawn, form fields visible, `/AcroForm` kept on save |
-| Filling fields | next; the plan is below and nothing blocks it |
-| Markup | after filling, which proves the model it needs |
-| The rest of the reader | last; ranked below authoring |
+| 1. Show what is in the file | **complete** — on screen, and in print and image export |
+| 2. Fill fields | next; the plan is below and nothing blocks it |
+| 3. Markup | after filling, which proves the model it needs |
 
-The first is pure correctness and needed no decision reversed: the application
-was not showing what the document said, and was damaging a form on save. Both
-were bugs under the scope as it stood.
+The first was correctness and needed no decision reversed: the application did
+not draw what the document said, and damaged a form on save. Both were bugs
+under the scope as it stood. The other two are features, and the decisions that
+forbade them are superseded by this document's own — see *Decisions*, below.
 
-The other three are features, and the decisions that forbade them are now
-superseded — **D26** puts showing and authoring annotations and form fields in
-scope, and **D27** settles that filling a field is a document edit. The case
-that led to both is argued below; what remains is work.
+Reader features that came up in the same conversation — attachments, signature
+status, a thumbnail panel, view-only rotation, dark mode — are
+[Issue #15](https://github.com/dwsdolce/pdfarranger-qt/issues/15); they have
+nothing to do with annotations.
 
 What "complete" means for the first, concretely: a filled form that displayed
 blank now shows all of it. Measured on the four-page insurance form that
@@ -213,149 +214,123 @@ representativeness:
   26pt box and is a fudge. Acrobat derives it from the font's ascent and
   descent, which means reading the `/FontDescriptor`.
 
-## The shape of the work
+## Plan
 
-Four bodies of work, in the order that makes each one useful on its own. The
-trackable items belong in a tracking issue rather than here, per
-[README.md](README.md); what follows is the reasoning for the order.
+Three bodies of work. Each step is useful on its own, and the risky ones come
+after the model they depend on is proved.
 
-**Showing what is in the file** — **complete**. The render flag, form fields
-made visible, and `/AcroForm` preserved on export. These were one change in
-spirit — the application did not show what the document said — and the export
-half could cost a user data. Worth doing whatever is decided about authoring,
-and the floor for calling the application a reader.
+### 1. Show what is in the file
 
-Two things about how it was done differ from what this document first proposed.
+Correctness, not a feature: the application did not draw what the document said,
+and damaged a form on save.
+
+| # | Step | State |
+|---|---|---|
+| 1.1 | Draw annotations — the render flag, in all three render paths | **complete** |
+| 1.2 | Rebuild `/AcroForm` on export, so a saved form keeps its fields | **complete** |
+| 1.3 | Draw form fields, from a render-only copy | **complete** |
+| 1.4 | Draw both in the output paths — printing, image export, rasterising | **complete** |
+
+1.4 was missed when 1.1–1.3 landed, and is the reason to distrust "display
+works" as a finishing condition: everything that leaves as pixels goes through
+`raster.render_pages`, which built the real export and rendered it with no
+options, so the form printed blank — none of the fifteen answers on page three.
+
+Two things about how this was done differ from what was first proposed here.
 
 *Not flattened.* Stamping the appearance into the page content stream is the
 obvious implementation and it is wrong. An appearance is placed by transforming
 its BBox by its Matrix and fitting the result to the annotation's Rect; of the
 74 appearances in the form that prompted this, **every one had a Matrix and 45
 had a BBox that did not match the Rect** — one 18.2pt tall in an 11.5pt box. A
-translate to the corner of the Rect, which is what the obvious code does, draws
-61% of them at the wrong size. Rewriting `/Subtype` from `/Widget` to `/Stamp`
-instead leaves the placement to PDFium, which already implements the rule. It is
-also three times faster and leaves the file size unchanged.
+translate to the corner of the Rect draws 61% of them at the wrong size.
+Rewriting `/Subtype` from `/Widget` to `/Stamp` leaves the placement to PDFium,
+which already implements the rule, and is three times faster.
 
-*Conditional, so D19 is untouched.* The rewritten copy is built only for a
-document that actually has fields with appearances, which is almost none of
-them, and only the first time one is wanted. `PDFDoc` learns the answer during
-the probe that already opens the file to read page sizes, so the check is free.
-Everything without fields keeps returning the working copy, nothing extra is
-written, and the fast entry into read mode behaves exactly as it did.
+*Conditional for display, unconditional for output.* The rewritten copy is built
+only for a document that has fields, and only when one is first wanted, so D19's
+fast entry into read mode is untouched. In `render_pages` the same rewrite is
+applied every time: 4 ms with nothing to do and 10 ms with, against 95 ms to
+render four pages at 300 dpi — below the noise of the render it precedes, and
+cheaper than a flag every caller has to remember.
 
-### Filling fields
-
-Ordered so that each step is useful on its own and the risky parts come after
-the model they depend on is proved. Nothing here is blocked: D26 and D27 are
-taken.
+### 2. Fill fields
 
 | # | Step | Depends on | Done when |
 |---|---|---|---|
-| 1 | Own field values in the model | — | a value survives undo, redo and a page reorder |
-| 2 | Find the field under a click | — | clicking a widget identifies its field; clicking elsewhere does not |
-| 3 | Tick boxes | 1, 2 | clicking one toggles it on screen and after a save |
-| 4 | Write values on save | 1 | a saved file opens in Acrobat with the value in the field |
-| 5 | Text fields, single-line, explicit size | 1, 2, 4 | typing shows, survives undo, and saves |
-| 6 | Narrow the snapshot invalidation | 3 or 5 | ten fills do not rebuild the reader ten times |
-| 7 | Refuse to edit a signed document | 3 | a signed form says why rather than invalidating a signature |
+| 2.1 | Own field values in the model | — | a value survives undo, redo and a page reorder |
+| 2.2 | Find the field under a click | — | clicking a widget identifies its field; clicking elsewhere does not |
+| 2.3 | Tick boxes | 2.1, 2.2 | clicking one toggles it on screen and after a save |
+| 2.4 | Write values on save | 2.1 | a saved file opens in Acrobat with the value in the field |
+| 2.5 | Text fields, single-line, explicit size | 2.1, 2.2, 2.4 | typing shows, survives undo, and saves |
+| 2.6 | Narrow the snapshot invalidation | 2.3 or 2.5 | ten fills do not rebuild the reader ten times |
+| 2.7 | Refuse to edit a signed document | 2.3 | a signed form says why rather than invalidating a signature |
 
-**Step 1 is the one with a precedent.** D20 settled how the outline is owned in
-the undo state beside the page list, keyed by a stable page id so that
-reordering costs nothing, and dangling when its page goes. Field values want
-exactly that treatment and exactly that keying, which is why the outline is
-worth reading before writing any of this. The difference is that an outline
-entry names a page while a field value names a *field*, which a page carries —
-so the key is the page uid plus the field's fully qualified name.
+**2.1 has a precedent.** D20 settled how the outline is owned in the undo state
+beside the page list, keyed by a stable page id so reordering costs nothing and
+a deleted page leaves its entries dangling rather than destroyed. Field values
+want the same treatment, keyed by the page uid plus the field's fully qualified
+name.
 
-**Step 3 before step 5 because tick boxes are nearly free.** Their appearance
-for every state is already in the file, so setting `/V` on the field and `/AS`
-on the widget is the whole of it, with nothing generated. On the form that
-prompted this that is 58 of 86 widgets. Text fields need an appearance built,
-which is step 5 and a different kind of work.
+**2.3 before 2.5** because a tick box carries an appearance for every state
+already, so setting `/V` and `/AS` is the whole of it — 58 of 86 widgets on the
+form that prompted this, with nothing generated. A text field needs an
+appearance built, which is different work.
 
-**Step 4 before step 5** so that writing is proved on the values that need no
+**2.4 before 2.5** so that writing is proved on the values that need no
 generation. A tick that saves correctly means the export path is right; adding
 text then only has to get the drawing right.
 
-**Step 6 is not optional and is why it is listed.** Filling is a document edit
-(see *Settled*), and an edit today rebuilds the reader's whole snapshot. Ten
-fills on an eighty-page form would be ten full rebuilds. An annotation edit
-changes what is drawn on a page without changing which pages exist, so it can
-invalidate one page rather than the document — but only if that path is built.
+**2.6 is a step, not an optimisation.** Filling is a document edit, and an edit
+rebuilds the reader's whole snapshot today. Ten fills on an eighty-page form
+would be ten full rebuilds. An annotation edit changes what is drawn on a page
+without changing which pages exist, so it can invalidate one page — but only if
+that path is built.
 
-### Markup
+### 3. Markup
 
-Not started, and should not start until filling has proved the model: it needs
-the same ownership, the same undo behaviour and the same save path, plus two
-things filling does not.
+Not started, and not before 2 has proved the model: it needs the same ownership,
+the same undo behaviour and the same save path.
 
 | # | Step | Depends on | Done when |
 |---|---|---|---|
-| 1 | An annotation model | filling, steps 1 and 4 | an added note survives undo and a save |
-| 2 | A tool mode in the canvas | 1 | the pointer selects, highlights or draws as chosen |
-| 3 | Highlight and strikethrough | 2 | a selection becomes a mark the file keeps |
-| 4 | Sticky note | 2 | a note can be placed, read and edited |
-| 5 | Free text and freehand | 3, 4 | both draw, save and reopen |
+| 3.1 | An annotation model | 2.1, 2.4 | an added note survives undo and a save |
+| 3.2 | A tool mode in the canvas | 3.1 | the pointer selects, highlights or draws as chosen |
+| 3.3 | Highlight and strikethrough | 3.2 | a selection becomes a mark the file keeps |
+| 3.4 | Sticky note | 3.2 | a note can be placed, read and edited |
+| 3.5 | Free text and freehand | 3.3, 3.4 | both draw, save and reopen |
 
-Highlight is first of the marks because its geometry already exists: text
-selection produces the quadrilaterals a `/Highlight` annotation wants, so it is
-the one mark that needs no new hit-testing. Freehand is last because it is the
-only one whose appearance is not derived from something already on the page.
+Highlight first of the marks because its geometry already exists — text
+selection produces the quadrilaterals a `/Highlight` wants, so it needs no new
+hit-testing. Freehand last because it is the only one whose appearance is not
+derived from something already on the page.
 
-### The rest of the reader
+### Not here
 
-Not started, and ranked below authoring by the user. An attachments panel —
-nothing today touches `/EmbeddedFiles`, so a PDF carrying a file shows nothing;
-signature status; a thumbnail panel while reading; view-only rotation; a dark
-mode. None is a correctness problem, which is why they come last.
+**Reader features** — attachments, signature status, a thumbnail panel, view-only
+rotation, dark mode — are [Issue #15](https://github.com/dwsdolce/pdfarranger-qt/issues/15).
+They came up in the same conversation as this work but have nothing to do with
+annotations.
 
-### A deliberate flatten
+**A flatten command** was considered and dropped. It is an Acrobat *Pro* feature,
+not a Reader one — Reader saves a filled form with its fields intact and reaches
+the same end by printing to PDF — so it is out by the same line that excludes
+OCR, redaction and compare. The reason it looked necessary was that a recipient
+might not see the answers, and the application was itself that recipient until
+step 1.4; printing now carries them.
 
-Separate from all of the above and useful on its own: a command that turns
-filled values into permanent page content, which is what you want before
-sending a completed form on. It cannot take the shortcut the display path took
-— it writes a file, so it must implement the real placement rule, transforming
-the appearance's BBox by its Matrix and fitting the result to the annotation's
-Rect. That rule is the one piece of PDF geometry this work has deliberately
-avoided writing so far.
+## Still open
 
-### Settled
-
-**`/AcroForm` is rebuilt from the output, always, and a name clash is
-reported.** Rebuilt rather than copied because the output is a different set of
-pages: an export of a selection keeps only the widgets on the pages it kept, and
-`/Fields` naming the others would point at annotations that are not in the
-document. Always rather than only for one source, because what merging cannot
-resolve is narrower than it first appeared — two fields with the same name,
-which in PDF are one field with two widgets, so typing in one changes the other.
-Acrobat renames on import; this says so through the warning the save already
-has, because renaming somebody's fields silently is a different surprise.
-
-**Filling a field is an edit to the document.** It goes on the undo stack, marks
-the document modified and is written on save, exactly as rotating a page is.
-That is what Acrobat does and it is the only model that does not require the
-user to hold two ideas about what "save" means.
-
-The consequence has to be designed for rather than discovered: every edit
-currently invalidates the reader's snapshot, which is rebuilt in full. Ten
-highlights on an eighty-page document would mean ten full rebuilds. Annotation
-and field edits need a narrower invalidation path than a page edit, because they
-change what is drawn on a page without changing which pages exist.
-
-### Still open
-
-- How a *deliberate* flatten should work, for the command that makes filled
-  values permanent page content before sending a form on. That one writes a
-  file, so it cannot take the shortcut above: it has to implement the
-  BBox-by-Matrix-fitted-to-Rect rule properly.
-- Whether a signed document refuses field editing outright or warns. Signature
-  *validation* is out, but noticing `/SigFlags` and declining to invalidate
-  somebody's signature silently is a guard, not a feature.
-- Whether this application's name still describes it. Not part of this work, but
-  it is the same premise change, and D1 and D13 deliberately pinned the
-  `QSettings` scope so that a rename cannot orphan saved state. A rename would
-  also move the macOS bundle identifier, which carries the Finder association.
+- **Whether a signed document refuses field editing outright or warns.** The
+  form that prompted this carries two signature fields and `/SigFlags`. Editing
+  one invalidates the signature, and doing that silently is the failure this
+  whole document is about. Noticing and declining is a guard, not a feature;
+  validating the signature is a cryptographic sub-project and stays out. Step
+  2.7.
+- **Whether this application's name still describes it.** Not part of this work,
+  but it is the same premise change, and D1 and D13 deliberately pinned the
+  `QSettings` scope so a rename cannot orphan saved state. A rename would also
+  move the macOS bundle identifier, which carries the Finder association.
 
 ## Decisions (owner, 2026-10-28)
 
@@ -423,7 +398,17 @@ the page list, keyed by the page's stable uid plus the field's fully qualified
 name, so reordering costs nothing and a deleted page leaves its values dangling
 rather than destroyed.
 
-**3. The rewritten copy is for rendering only.** A document with form fields
+**3. `/AcroForm` is rebuilt from the output, always, and a name clash is
+reported.** Rebuilt rather than copied because the output is a different set of
+pages: an export of a selection keeps only the widgets on the pages it kept, and
+`/Fields` naming the others would point at annotations not in the document.
+Always rather than only for a single source, because what merging cannot resolve
+is narrower than it first appeared — two fields with the same name, which in PDF
+are one field with two widgets, so typing in one changes the other. Acrobat
+renames on import; this says so through the warning the save already has,
+because renaming somebody's fields silently is a different surprise.
+
+**4. The rewritten copy is for rendering only.** A document with form fields
 gets a second temporary copy with `/Subtype` rewritten; export reads the real
 one. A field drawn into a saved file is no longer a field, so `DocumentSet` has
 two views of itself — `files_for_export` and `render_file` — and the tests hold
@@ -432,10 +417,16 @@ path.
 
 ## Done
 
-**2026-10-28 — showing what is in the file.** Annotations drawn in all three
-render paths; form fields visible through the rewritten copy; `/AcroForm` rebuilt
+**2026-10-28 — body 1, steps 1.1 to 1.3.** Annotations drawn in all three render
+paths; form fields visible through the rewritten copy; `/AcroForm` rebuilt
 on export so a saved form keeps its fields. Verified on the four-page insurance
 form that prompted the work: 15 of 15 filled fields on page three draw, a ticked
 box carries four times the ink of an unticked one, and the form round-trips a
 save with 82 fields, 86 widgets and 23 values intact. A Qt warning on every
 document close was fixed alongside it, being in the same code.
+
+**2026-10-28 — step 1.4.** The output paths were still blind: printing and image
+export go through `raster.render_pages`, which rendered the real export with no
+options, so the same form printed none of its fifteen answers. Now 15 of 15.
+Found by asking whether a flatten command was worth having — it was not, and the
+question exposed the gap it would have papered over.

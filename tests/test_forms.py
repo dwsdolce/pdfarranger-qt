@@ -241,3 +241,65 @@ class TestItNeverReachesASavedFile(unittest.TestCase):
         saved = self.saved(document_with_annotation("/Widget"))
         self.assertIsNotNone(saved.Root.get("/AcroForm"))
         self.assertEqual(len(saved.Root.AcroForm.Fields), 1)
+
+
+class TestTheOutputPathsShowThemToo(unittest.TestCase):
+    """Printing a filled form printed it blank.
+
+    Display was fixed first and every output path was left blind: printing,
+    image export and rasterising all go through `raster.render_pages`, which
+    built the real export and rendered it with no options at all. On the form
+    that prompted this work, none of the fifteen answers on page three
+    appeared. A blank screen is noticed; a blank printout gets posted.
+
+    `render_pages` is the single funnel for everything that leaves as pixels,
+    so the fix belongs there and reaches all four callers at once.
+    """
+
+    def pages(self, data):
+        from pdfarranger_qt.core import DocumentSet
+
+        path = temp_path("printed-form.pdf")
+        with open(path, "wb") as handle:
+            handle.write(data)
+        docs = DocumentSet()
+        self.addCleanup(docs.cleanup)
+        return docs.add_file(path), docs
+
+    def blue_in_render(self, data, ppi=144):
+        from pdfarranger_qt.raster import render_pages
+
+        pages, docs = self.pages(data)
+        images = list(render_pages(pages, docs.files_for_export(), ppi=ppi))
+        self.assertTrue(images, "nothing rendered")
+        image = images[0]
+        found = 0
+        for y in range(0, image.height(), 2):
+            for x in range(0, image.width(), 2):
+                colour = image.pixelColor(x, y)
+                if colour.blue() > 150 and colour.red() < 100:
+                    found += 1
+        return found
+
+    def test_a_form_field_is_printed(self):
+        self.assertGreater(self.blue_in_render(
+            document_with_annotation("/Widget")), 0)
+
+    def test_an_annotation_is_printed(self):
+        """A colleague's highlight should reach the paper as well."""
+        self.assertGreater(self.blue_in_render(
+            document_with_annotation("/Square")), 0)
+
+    def test_a_hidden_field_is_not(self):
+        """Bit 2 of /F is Hidden, and that has to survive into the output."""
+        self.assertEqual(self.blue_in_render(
+            document_with_annotation("/Widget", flags=2)), 0)
+
+    def test_the_source_is_not_modified_by_rendering(self):
+        """Rendering reads; it must not leave the widgets rewritten on disk."""
+        pages, docs = self.pages(document_with_annotation("/Widget"))
+        from pdfarranger_qt.raster import render_pages
+
+        list(render_pages(pages, docs.files_for_export(), ppi=72))
+        with pikepdf.open(docs.docs[0].copyname) as pdf:
+            self.assertEqual(str(pdf.pages[0].Annots[0].Subtype), "/Widget")
