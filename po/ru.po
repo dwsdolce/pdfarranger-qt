@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pdfarranger master\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-29 17:47+0000\n"
+"POT-Creation-Date: 2026-10-29 19:29+0000\n"
 "PO-Revision-Date: 2026-09-04 09:59+0000\n"
 "Last-Translator: Lumenman <28367232+Lumenman@users.noreply.github.com>\n"
 "Language: ru\n"
@@ -1983,6 +1983,12 @@ msgstr "Документ «{}» заблокирован, для его откр
 #: pdfarranger_qt/mainwindow.py
 msgid "The password will be remembered until you close PDF Arranger."
 msgstr "Пароль будет запомнен, пока вы не закроете PDF Arranger."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "Opening %s…"
+msgstr "Открытие %s…"
 
 #: pdfarranger_qt/mainwindow.py
 msgid "Importing…"

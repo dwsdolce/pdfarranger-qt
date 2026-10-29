@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PDF-Shuffler 0.7\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-29 17:47+0000\n"
+"POT-Creation-Date: 2026-10-29 19:29+0000\n"
 "PO-Revision-Date: 2025-05-26 10:43+0200\n"
 "Last-Translator: Heimen Stoffels <vistausss@fastmail.com>\n"
 "Language: nl\n"
@@ -2149,6 +2149,12 @@ msgstr "“{}” is beveiligd en kan alleen worden geopend met een wachtwoord."
 #: pdfarranger_qt/mainwindow.py
 msgid "The password will be remembered until you close PDF Arranger."
 msgstr "PDF Arranger bewaart het wachtwoord totdat u afsluit."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "Opening %s…"
+msgstr "%s wordt geopend…"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py

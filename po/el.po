@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PDF Arranger 1.9.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-29 17:47+0000\n"
+"POT-Creation-Date: 2026-10-29 19:29+0000\n"
 "PO-Revision-Date: 2023-06-12 10:30+0300\n"
 "Last-Translator: Manussos Pulinakis "
 "<38626261+manussos@users.noreply.github.com>\n"
@@ -2181,6 +2181,12 @@ msgstr "Το έγγραφο “{}” είναι κλειδωμένο και απ
 #: pdfarranger_qt/mainwindow.py
 msgid "The password will be remembered until you close PDF Arranger."
 msgstr "Ο κωδικός θα παραμείνει αποθηκευμένος μέχρι να κλείσετε το PDF Arranger."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "Opening %s…"
+msgstr "Άνοιγμα %s…"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py

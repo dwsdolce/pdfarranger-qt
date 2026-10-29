@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-29 17:47+0000\n"
+"POT-Creation-Date: 2026-10-29 19:29+0000\n"
 "PO-Revision-Date: 2022-10-03 23:44+0200\n"
 "Last-Translator: Ícar N. S. <icar.nin@protonmail.com>\n"
 "Language: ca\n"
@@ -2173,6 +2173,12 @@ msgstr ""
 #: pdfarranger_qt/mainwindow.py
 msgid "The password will be remembered until you close PDF Arranger."
 msgstr "La contrasenya es recordarà fins que tanqueu el PDF Arranger."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "Opening %s…"
+msgstr "S'està obrint %s…"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  pdfarranger\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-29 17:47+0000\n"
+"POT-Creation-Date: 2026-10-29 19:29+0000\n"
 "PO-Revision-Date: 2026-01-21 05:07+0100\n"
 "Last-Translator: Ekaterine Papava <papava.e@gtu.ge>\n"
 "Language: ka\n"
@@ -2108,6 +2108,12 @@ msgstr "დოკუმენტი '{}' დაბლოკილია და �
 #: pdfarranger_qt/mainwindow.py
 msgid "The password will be remembered until you close PDF Arranger."
 msgstr "პაროლი დამახსოვრებული იქნება, სანამ PDF Arranger-ს არ დახურავთ."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "Opening %s…"
+msgstr "%s იხსნება…"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py

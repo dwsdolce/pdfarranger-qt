@@ -899,3 +899,54 @@ XObject (`q s 0 0 s 0 0 cm /pN Do Q`). That wraps the page whole; it never parse
 rewrites what is inside it, so no glyph or font work is involved. Firmly Tier 1.
 
 ---
+
+## A cloud file hands over nothing until it hands over everything
+
+Opening a document from a cloud-backed folder froze the window for about ten
+seconds with no explanation. The obvious reading — a big file, so copy it in
+chunks and show a progress bar — is wrong twice over, and measuring it said so.
+
+A 185 MB PDF in `~/Library/CloudStorage/Dropbox`, read once while a second
+thread sampled its on-disk size every 250 ms:
+
+    first read() returned after 11.4s   (of an 11.5s total)
+    st_blocks:  0.0 MB  held for all 11.3 seconds of sampling
+                185.3 MB at the end
+
+**The block is not in our loop, it is in the kernel.** macOS backs an
+online-only file with a File Provider extension; `open()` succeeds, and the
+first `read()` traps while the provider fetches. It does not return until the
+fetch is done. A chunked copy would therefore block on its first chunk for the
+whole transfer and call its progress callback exactly once, at the end, having
+shown nothing. **No copy loop written here can report progress.**
+
+**There is no progress to poll either.** Dropbox fetches to somewhere else and
+swaps the file in atomically, so `st_blocks` sits at zero and jumps. Nothing
+can turn that into a percentage from outside, so an indeterminate "something is
+happening" is not a lazy choice — it is the only honest display.
+
+**It is the normal case, not an edge case.** Of 2,137 files over 5 MB in that
+Dropbox, **2,133 were online-only** and four were local. So the gate cannot be
+a size threshold: a 2 MB dataless PDF pays a full round trip while a 500 MB
+local one does not block at all. Throughput worked out at roughly 16 MB/s.
+
+**And detection is the wrong lever anyway**, which Windows settles. `st_blocks`
+does not exist there — it is Unix-only, so the obvious test raises
+`AttributeError` on every Windows open. The Windows equivalent is
+`st_file_attributes` against `FILE_ATTRIBUTE_RECALL_ON_DATA_ACCESS`
+(`0x00400000`) and `RECALL_ON_OPEN` (`0x00040000`), which Python's `stat`
+module does not even name — it exposes only `FILE_ATTRIBUTE_OFFLINE`. That
+branch would be hardcoded constants in a platform path no test could ever
+execute.
+
+So the application does not detect anything. `PDFDoc` takes a `copier`, the
+window passes one that runs `shutil.copy` on a worker thread and shows a
+dialog only if it is still going after 400 ms, and everything headless keeps
+plain `shutil.copy`. Identical on all three platforms, exercised by the same
+tests everywhere, and it covers what detection would have missed anyway: a
+slow network share, a spinning disk, a very large local file.
+
+The probe is worth keeping in mind if this is ever revisited: read the file on
+one thread, sample `st_blocks` on another, and look at whether the curve climbs
+or jumps. Fifteen lines, and it replaced two plausible designs with the one
+that works.

@@ -584,7 +584,18 @@ class PDFDoc:
     """
 
     def __init__(self, filename, tmp_dir, description=None, password="",
-                 stat=None, blank_size=None):
+                 stat=None, blank_size=None, copier=None):
+        """``copier`` stands in for ``shutil.copy`` when reading may be slow.
+
+        Reading the source is the one step here that can take a visible amount
+        of time, and not because the file is large: on a cloud-backed folder
+        the first read blocks while the provider fetches the whole file. The
+        window passes a copier that does it on a worker thread and puts a
+        dialog up if it takes long enough to notice; everything else -- tests,
+        anything without a window -- gets `shutil.copy` and never waits on a
+        thread.
+        """
+        copy = copier or shutil.copy
         self.filename = os.path.abspath(filename)
         self.stat = stat
         self.blank_size = blank_size
@@ -608,7 +619,7 @@ class PDFDoc:
             else:
                 fd, self.copyname = tempfile.mkstemp(suffix=".pdf", dir=tmp_dir)
                 os.close(fd)
-                shutil.copy(self.filename, self.copyname)
+                copy(self.filename, self.copyname)
         elif filemime.split("/")[0] == "image":
             if img2pdf is None:
                 raise PDFDocError(
@@ -616,7 +627,14 @@ class PDFDoc:
                     + ": " + filename)
             if mimetypes.guess_type(filename, strict=False)[0] not in img2pdf_supported_img:
                 raise PDFDocError(_("Image format is not supported by img2pdf") + ": " + filename)
-            self.copyname = _img_to_pdf([filename], tmp_dir)
+            # Copied first, through the same seam as a PDF, so that an image
+            # on a cloud-backed folder gets the same feedback: img2pdf reads
+            # the original, and that read blocks exactly as the copy would.
+            fd, local = tempfile.mkstemp(
+                suffix=os.path.splitext(filename)[1] or ".img", dir=tmp_dir)
+            os.close(fd)
+            copy(self.filename, local)
+            self.copyname = _img_to_pdf([local], tmp_dir)
         else:
             raise PDFDocError(_("File is neither pdf nor image") + ": " + filename)
 
@@ -760,8 +778,8 @@ class DocumentSet:
         return self._stat_cache[filename]
 
     def get_doc(self, filename, description=None, blank_size=None,
-                ask_password: Optional[Callable[[str], Optional[str]]] = None
-                ) -> Tuple[PDFDoc, int, bool]:
+                ask_password: Optional[Callable[[str], Optional[str]]] = None,
+                copier=None) -> Tuple[PDFDoc, int, bool]:
         """Return ``(doc, nfile, created)`` for filename, loading it if needed.
 
         ``ask_password`` is called with the file's basename each time the
@@ -782,7 +800,8 @@ class DocumentSet:
         while True:
             try:
                 doc = PDFDoc(filename, self.tmp_dir, description=description,
-                             password=password, stat=key, blank_size=blank_size)
+                             password=password, stat=key,
+                             blank_size=blank_size, copier=copier)
                 break
             except PasswordRequired:
                 if ask_password is None:
@@ -797,10 +816,11 @@ class DocumentSet:
         return doc, len(self.docs), True
 
     def add_file(self, filename, first=1, last=-1, description=None,
-                 ask_password=None) -> List[Page]:
+                 ask_password=None, copier=None) -> List[Page]:
         """Load a file and return Page objects for the requested page range."""
         doc, nfile, _created = self.get_doc(filename, description,
-                                            ask_password=ask_password)
+                                            ask_password=ask_password,
+                                            copier=copier)
         n_end = doc.n_pages
         n_start = min(n_end, max(1, first))
         if last != -1:

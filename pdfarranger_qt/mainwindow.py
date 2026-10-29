@@ -23,10 +23,19 @@ expects.
 
 import logging
 import os
+import shutil
 import sys
 from typing import List, Optional
 
-from PySide6.QtCore import QProcess, QSize, Qt, QUrl
+from PySide6.QtCore import (
+    QEventLoop,
+    QProcess,
+    QSize,
+    Qt,
+    QThread,
+    QTimer,
+    QUrl,
+)
 from PySide6.QtGui import QAction, QDesktopServices, QFontMetrics, QKeySequence
 from PySide6.QtWidgets import (
     QApplication,
@@ -1167,6 +1176,59 @@ class MainWindow(QMainWindow):
         )
         return text if ok else None
 
+    #: How long an open may take before it is worth saying something. Short
+    #: enough that a freeze is never silent, long enough that an ordinary
+    #: local file never flashes a dialog.
+    SLOW_OPEN_MS = 400
+
+    def _copy_source(self, source: str, destination: str):
+        """`shutil.copy`, off the GUI thread, with a dialog if it is slow.
+
+        Opening a file from a cloud-backed folder blocks on the *first read*
+        while the provider fetches the whole thing -- measured at 11.4 of 11.5
+        seconds for a 185 MB file, with nothing landing on disk until the very
+        end. So there is no progress to report and no way to copy in chunks
+        that would report any: the only honest answer is to get the blocking
+        read off this thread and say that something is happening.
+
+        Deliberately not gated on detecting a cloud file. `st_blocks` does not
+        exist on Windows, where the equivalent is a pair of `st_file_attributes`
+        bits that Python does not even name, and that branch could never be
+        exercised by a test. A timer needs none of it, behaves the same on all
+        three platforms, and also covers what detection would miss: a slow
+        network share, a spinning disk, a very large local file.
+        """
+        failure = []
+
+        class _Copy(QThread):
+            def run(self):
+                try:
+                    shutil.copy(source, destination)
+                except BaseException as error:   # noqa: BLE001 - re-raised below
+                    failure.append(error)
+
+        worker = _Copy()
+        waiting = QEventLoop()
+        worker.finished.connect(waiting.quit)
+        dialog = QProgressDialog(
+            _("Opening %s…") % os.path.basename(source), "", 0, 0, self)
+        dialog.setCancelButton(None)        # a blocked read cannot be stopped
+        dialog.setWindowModality(Qt.ApplicationModal)
+        dialog.reset()                      # built hidden; the timer shows it
+        later = QTimer(self)
+        later.setSingleShot(True)
+        later.timeout.connect(dialog.show)
+        later.start(self.SLOW_OPEN_MS)
+        try:
+            worker.start()
+            waiting.exec()
+        finally:
+            later.stop()
+            dialog.close()
+            worker.wait()
+        if failure:
+            raise failure[0]
+
     def _load_paths(self, paths, at: Optional[int] = None) -> int:
         """Load files and insert their pages. Returns the number of pages added."""
         added = []
@@ -1182,7 +1244,9 @@ class MainWindow(QMainWindow):
                     if progress.wasCanceled():
                         break
                 try:
-                    added.extend(self.docs.add_file(path, ask_password=self._ask_password))
+                    added.extend(self.docs.add_file(
+                        path, ask_password=self._ask_password,
+                        copier=self._copy_source))
                 except PDFDocError as e:
                     QMessageBox.warning(self, APP_NAME, str(e))
                 except OSError as e:
