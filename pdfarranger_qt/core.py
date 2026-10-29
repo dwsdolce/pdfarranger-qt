@@ -629,6 +629,10 @@ class PDFDoc:
         self._render_copy: Optional[str] = None
         self._render_copy_tried = False
         self._tmp_dir = tmp_dir
+        #: Set by the window: what has been filled into *this* document, so a
+        #: thumbnail shows it. The reader does not come here -- it draws the
+        #: fields itself -- so this is for the renderers that cannot.
+        self.form_values = None
         self._probe()
 
     def _probe(self):
@@ -684,6 +688,14 @@ class PDFDoc:
     def n_pages(self) -> int:
         return len(self.page_sizes)
 
+    def forget_render_copy(self):
+        """Throw the rewritten copy away, so the next render rebuilds it.
+
+        Called when a value changes: the copy has the old one baked in.
+        """
+        self._render_copy = None
+        self._render_copy_tried = False
+
     @property
     def render_copyname(self) -> str:
         """The path a *renderer* should open. `copyname` for most documents.
@@ -702,7 +714,8 @@ class PDFDoc:
         if not self._render_copy_tried:
             self._render_copy_tried = True
             self._render_copy = forms.rendered_copy(
-                self.copyname, self.password, self._tmp_dir)
+                self.copyname, self.password, self._tmp_dir,
+                self.form_values() if self.form_values else None)
         return self._render_copy or self.copyname
 
 
@@ -718,6 +731,8 @@ class DocumentSet:
         self.tmp_dir = self._tmp_dir_obj.name
         self.docs: List[PDFDoc] = []
         self._stat_cache = {}
+        #: What has been filled into the forms, for the copies the grid draws.
+        self._form_values = None
 
     def cleanup(self):
         self.docs.clear()
@@ -770,6 +785,9 @@ class DocumentSet:
                 if password is None:
                     raise
         self.docs.append(doc)
+        if self._form_values is not None:
+            index = len(self.docs)
+            doc.form_values = lambda n=index: self._form_values.for_document(n)
         return doc, len(self.docs), True
 
     def add_file(self, filename, first=1, last=-1, description=None,
@@ -881,6 +899,17 @@ class DocumentSet:
         """
         return [(d.copyname, d.password) for d in self.docs]
 
+    def set_form_values(self, values):
+        """Where every document should look for what has been filled in.
+
+        A document's rewritten copy bakes the values in, so it needs them, and
+        it is the window that owns the edits. Given as a callable per document
+        so that a document added later is covered too.
+        """
+        self._form_values = values
+        for index, doc in enumerate(self.docs, start=1):
+            doc.form_values = (lambda n=index: values.for_document(n)) if values else None
+
     def render_file(self, page) -> str:
         """The path a renderer should open for ``page``.
 
@@ -916,10 +945,10 @@ class DocumentSet:
         opened. Handing the reader the original would put PDFium on a file that
         a save can rewrite underneath it.
 
-        The render copy for a document with form fields, because this is a
-        reader asking: a page renderer draws no field unless they are rewritten
-        first (see `forms`). For everything else that is the same path as
-        before, so D19's fast entry into read mode is untouched.
+        The working copy, not the render copy. The reader draws form fields
+        itself, over the page, so it wants the document as it really is --
+        widgets and all -- and the rewritten one is for the renderers that
+        cannot: the grid's thumbnails and the output paths.
 
         Cheap by design -- this runs on every entry into read mode.
         """
@@ -936,7 +965,7 @@ class DocumentSet:
                     or page.npage != expected
                     or not page.unmodified()):
                 return None
-        return doc.render_copyname, doc.password
+        return doc.copyname, doc.password
 
     def source_names(self) -> List[str]:
         """Original basenames, indexed by ``nfile - 1``.

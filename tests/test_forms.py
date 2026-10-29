@@ -31,6 +31,7 @@ import os
 import unittest
 
 import pikepdf
+from PySide6.QtGui import QImage
 from support import TEST_PDF, settle, temp_path
 from test_annotations import blue_pixels, document_with_annotation
 
@@ -177,14 +178,27 @@ class TestTheReaderShowsThem(unittest.TestCase):
         self.addCleanup(lambda: setattr(win, "modified", False))
         return win
 
-    def test_an_unmodified_form_is_read_from_the_rewritten_copy(self):
-        """D19's fast path, pointed at the copy a renderer can draw."""
+    def test_an_unmodified_form_is_read_from_the_working_copy(self):
+        """D19's fast path, pointed at the document as it really is.
+
+        It used to hand over the rewritten copy, because the page renderer
+        would draw no field otherwise. The reader draws them itself now, over
+        the page, so it wants the widgets intact -- the rewrite is for the
+        renderers that cannot, which is the grid and the output paths.
+        """
         win = self.window(document_with_annotation("/Widget"))
         source = win.docs.source_if_unmodified(win.model.pages)
         self.assertIsNotNone(source, "one unedited document should qualify")
-        self.assertEqual(source[0], win.docs.docs[0].render_copyname)
-        self.assertNotEqual(source[0], win.docs.docs[0].copyname,
-                            "the reader would show a blank form otherwise")
+        self.assertEqual(source[0], win.docs.docs[0].copyname)
+
+    def test_the_reader_has_the_fields_to_draw(self):
+        """What replaced it: the canvas holds the widgets and paints them."""
+        win = self.window(document_with_annotation("/Widget"))
+        win.set_read_mode(True)
+        settle(timeout_ms=600)
+        fields = win.reader.canvas.fields()
+        self.assertIsNotNone(fields)
+        self.assertEqual(len(fields), 1)
 
     def test_a_plain_document_still_takes_the_fast_path_unchanged(self):
         """D19 must not pay for a feature it does not use."""
@@ -765,3 +779,262 @@ class TestClickingAField(unittest.TestCase):
         settle(timeout_ms=600)
         self.win.modified = False
         self.assertIsNone(self.win.reader.field_at(self.viewport_point(100, 100)))
+
+
+def tickable(name="box", on="/Yes", value=None, radio=False, pages=1):
+    """A document of tick boxes, one per page, sharing one field."""
+    def drawing(pdf, filled):
+        stream = pikepdf.Stream(
+            pdf, b"0 0 1 rg 0 0 14 14 re f\n" if filled else b"1 1 1 rg 0 0 14 14 re f\n")
+        stream[pikepdf.Name.Type] = pikepdf.Name.XObject
+        stream[pikepdf.Name.Subtype] = pikepdf.Name.Form
+        stream[pikepdf.Name.BBox] = pikepdf.Array([0, 0, 14, 14])
+        return stream
+
+    pdf = pikepdf.new()
+    field = pdf.make_indirect(pikepdf.Dictionary(
+        FT=pikepdf.Name.Btn, T=pikepdf.String(name),
+        Ff=(1 << 15) if radio else 0))
+    if value is not None:
+        field[pikepdf.Name.V] = pikepdf.Name(value)
+    kids = []
+    for _ in range(pages):
+        pdf.add_blank_page(page_size=(200, 200))
+        page = pdf.pages[-1]
+        widget = pdf.make_indirect(pikepdf.Dictionary(
+            Type=pikepdf.Name.Annot, Subtype=pikepdf.Name.Widget,
+            Rect=pikepdf.Array([50, 50, 64, 64]), F=4, Parent=field,
+            AS=pikepdf.Name(value if value in (on,) else "/Off"),
+            AP=pikepdf.Dictionary(N=pikepdf.Dictionary(
+                {on: drawing(pdf, True), "/Off": drawing(pdf, False)}))))
+        kids.append(widget)
+        page[pikepdf.Name.Annots] = pikepdf.Array([widget])
+    field[pikepdf.Name.Kids] = pikepdf.Array(kids)
+    pdf.Root[pikepdf.Name.AcroForm] = pikepdf.Dictionary(
+        Fields=pikepdf.Array([field]))
+    out = io.BytesIO()
+    pdf.save(out)
+    return out.getvalue()
+
+
+class TestDrawingOneAppearance(unittest.TestCase):
+    """The layer's engine: one widget's appearance, on its own."""
+
+    def renderer(self):
+        from pdfarranger_qt.fieldlayer import AppearanceRenderer
+
+        return AppearanceRenderer()
+
+    def widget(self, data=None):
+        pdf = pikepdf.open(io.BytesIO(data or tickable()))
+        self.addCleanup(pdf.close)
+        return pdf.pages[0].Annots[0]
+
+    def blue(self, image):
+        if image is None:
+            return 0
+        return sum(1 for y in range(image.height()) for x in range(image.width())
+                   if image.pixelColor(x, y).blue() > 150
+                   and image.pixelColor(x, y).red() < 100)
+
+    def test_the_on_state_draws_and_the_off_state_does_not(self):
+        renderer, widget = self.renderer(), self.widget()
+        self.assertGreater(self.blue(renderer.image(widget, "/Yes", 40, 40)), 0)
+        self.assertEqual(self.blue(renderer.image(widget, "/Off", 40, 40)), 0)
+
+    def test_a_state_the_widget_has_no_drawing_for_is_nothing(self):
+        renderer, widget = self.renderer(), self.widget()
+        self.assertIsNone(renderer.image(widget, "/Maybe", 40, 40))
+
+    def test_an_appearance_is_rendered_once(self):
+        renderer, widget = self.renderer(), self.widget()
+        first = renderer.image(widget, "/Yes", 40, 40)
+        self.assertIs(renderer.image(widget, "/Yes", 40, 40), first)
+        self.assertEqual(len(renderer), 1)
+
+    def test_a_different_size_is_a_different_image(self):
+        renderer, widget = self.renderer(), self.widget()
+        renderer.image(widget, "/Yes", 40, 40)
+        renderer.image(widget, "/Yes", 80, 80)
+        self.assertEqual(len(renderer), 2)
+
+    def test_a_widget_scaled_to_nothing_is_not_drawn(self):
+        renderer, widget = self.renderer(), self.widget()
+        self.assertIsNone(renderer.image(widget, "/Yes", 1, 1))
+
+    def test_clearing_forgets_everything(self):
+        renderer, widget = self.renderer(), self.widget()
+        renderer.image(widget, "/Yes", 40, 40)
+        renderer.clear()
+        self.assertEqual(len(renderer), 0)
+
+
+class TestWhichAppearanceAWidgetShows(unittest.TestCase):
+    """One field, one value, many widgets -- which draws itself on."""
+
+    def field(self, states, kind="/Btn", flags=0):
+        from pdfarranger_qt.forms import Field
+
+        return Field(page=0, rect=(0, 0, 10, 10), name="f", kind=kind,
+                     flags=flags, states=states, value=None, hidden=False)
+
+    def test_a_box_is_on_when_the_value_names_its_state(self):
+        box = self.field(["/Yes"])
+        self.assertEqual(box.state_for("/Yes"), "/Yes")
+        self.assertEqual(box.state_for("/Off"), "/Off")
+        self.assertEqual(box.state_for(None), "/Off")
+
+    def test_a_radio_member_is_off_when_another_is_chosen(self):
+        """How a group clears itself: nothing has to, because the value names
+        one member's state and the others simply do not match it."""
+        first = self.field(["/first"], flags=1 << 15)
+        second = self.field(["/second"], flags=1 << 15)
+        self.assertEqual(first.state_for("/second"), "/Off")
+        self.assertEqual(second.state_for("/second"), "/second")
+
+    def test_a_text_field_has_no_state(self):
+        self.assertIsNone(self.field([], kind="/Tx").state_for("anything"))
+
+
+class TestTickingABox(unittest.TestCase):
+    """2.3's done-when: clicking one toggles it on screen and after a save."""
+
+    def window(self, data=None):
+        from pdfarranger_qt.mainwindow import MainWindow
+
+        path = temp_path("tickable.pdf")
+        with open(path, "wb") as handle:
+            handle.write(data or tickable())
+        win = MainWindow()
+        win.resize(700, 640)
+        win.show()
+        win.open_paths([path])
+        settle(timeout_ms=600)
+        win.set_read_mode(True)
+        settle(timeout_ms=600)
+        win.modified = False
+        self.addCleanup(win.close)
+        self.addCleanup(lambda: setattr(win, "modified", False))
+        return win
+
+    def only_field(self, win, page=0):
+        return win.reader.canvas.fields().on_page(page)[0]
+
+    def held(self, win, field):
+        page = win.model.pages[field.page]
+        return win.model.form_values.get(page.nfile, field.name)
+
+    def blue_on_screen(self, win):
+        """How much of the layer's blue is painted. Nothing else is blue."""
+        canvas = win.reader.canvas
+        shot = QImage(canvas.viewport().size(), QImage.Format_RGB32)
+        shot.fill(0xFFFFFFFF)
+        canvas.viewport().render(shot)
+        return sum(1 for y in range(0, shot.height(), 2)
+                   for x in range(0, shot.width(), 2)
+                   if shot.pixelColor(x, y).blue() > 150
+                   and shot.pixelColor(x, y).red() < 100)
+
+    # -- on screen ---------------------------------------------------------
+
+    def test_an_empty_box_shows_nothing_and_a_click_fills_it(self):
+        win = self.window()
+        field = self.only_field(win)
+        self.assertEqual(self.blue_on_screen(win), 0, "nothing ticked yet")
+        win.field_pressed(field)
+        settle(timeout_ms=200)
+        self.assertGreater(self.blue_on_screen(win), 0, "it should show")
+
+    def test_clicking_again_clears_it(self):
+        win = self.window()
+        field = self.only_field(win)
+        win.field_pressed(field)
+        settle(timeout_ms=150)
+        win.field_pressed(field)
+        settle(timeout_ms=150)
+        self.assertEqual(self.held(win, field), "/Off")
+        self.assertEqual(self.blue_on_screen(win), 0)
+
+    def test_a_radio_does_not_turn_itself_off(self):
+        """Pressing the chosen member of a group leaves it chosen, which is
+        what every radio group anywhere does."""
+        win = self.window(tickable(radio=True))
+        field = self.only_field(win)
+        win.field_pressed(field)
+        settle(timeout_ms=150)
+        first = self.held(win, field)
+        win.field_pressed(field)
+        settle(timeout_ms=150)
+        self.assertEqual(self.held(win, field), first)
+
+    def test_a_box_the_document_already_ticked_clears(self):
+        win = self.window(tickable(value="/Yes"))
+        field = self.only_field(win)
+        self.assertGreater(self.blue_on_screen(win), 0, "it starts ticked")
+        win.field_pressed(field)
+        settle(timeout_ms=150)
+        self.assertEqual(self.blue_on_screen(win), 0)
+
+    # -- and it is an edit --------------------------------------------------
+
+    def test_it_marks_the_document_modified(self):
+        win = self.window()
+        win.field_pressed(self.only_field(win))
+        self.assertTrue(win.modified)
+
+    def test_undo_takes_the_tick_back(self):
+        win = self.window()
+        field = self.only_field(win)
+        win.field_pressed(field)
+        settle(timeout_ms=150)
+        win.undo()
+        settle(timeout_ms=200)
+        self.assertIsNone(self.held(win, field))
+        self.assertEqual(self.blue_on_screen(win), 0)
+
+    # -- and after a save ---------------------------------------------------
+
+    def saved(self, win):
+        out = temp_path("ticked.pdf")
+        self.assertTrue(win._write([out], win.model.pages))
+        return pikepdf.open(out)
+
+    def test_the_tick_reaches_the_file(self):
+        win = self.window()
+        win.field_pressed(self.only_field(win))
+        settle(timeout_ms=150)
+        saved = self.saved(win)
+        widget = saved.pages[0].Annots[0]
+        self.assertEqual(str(widget.AS), "/Yes")
+        self.assertEqual(str(widget.Parent.V), "/Yes")
+
+    def test_an_untouched_form_is_written_unchanged(self):
+        win = self.window(tickable(value="/Yes"))
+        saved = self.saved(win)
+        self.assertEqual(str(saved.pages[0].Annots[0].AS), "/Yes")
+
+    def test_every_widget_of_the_field_follows_the_value(self):
+        """Two pages, one field: ticking reaches both drawings of it."""
+        win = self.window(tickable(pages=2))
+        win.field_pressed(self.only_field(win))
+        settle(timeout_ms=150)
+        saved = self.saved(win)
+        self.assertEqual([str(p.Annots[0].AS) for p in saved.pages],
+                         ["/Yes", "/Yes"])
+
+    # -- and what a click must not do ---------------------------------------
+
+    def test_a_read_only_field_does_not_move(self):
+        win = self.window()
+        field = self.only_field(win)
+        field.flags = 1                      # the document saying no
+        win.field_pressed(field)
+        self.assertIsNone(self.held(win, field))
+        self.assertFalse(win.modified)
+
+    def test_a_text_field_is_left_for_later(self):
+        win = self.window(document_with_annotation("/Widget"))
+        field = self.only_field(win)
+        self.assertEqual(field.kind, "/Tx")
+        win.field_pressed(field)
+        self.assertIsNone(self.held(win, field))

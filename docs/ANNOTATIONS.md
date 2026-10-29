@@ -2,9 +2,10 @@
 
 **Issue:** [#14](https://github.com/dwsdolce/pdfarranger-qt/issues/14)
 
-**Status:** IN PROGRESS — body 1 of 3 is **complete**: annotations and filled
-form fields draw on screen, in print and in image export, and six real forms
-round-trip a save unchanged. Filling fields is next.
+**Status:** IN PROGRESS — body 1 **complete**. Body 2 is at 2.3 of 2.7: tick
+boxes can be filled in, the form fields are drawn as a layer over the page
+rather than baked into it, and a tick survives undo and reaches the saved file.
+Text fields are next.
 
 A filled insurance form was opened in this application and came up blank. Every
 answer typed into it was missing — text, ticks, the lot — with nothing on screen
@@ -297,10 +298,10 @@ cheaper than a flag every caller has to remember.
 |---|---|---|---|
 | 2.1 | Own field values in the model | — | a value survives undo, redo and a page reorder |
 | 2.2 | Find the field under a click | — | clicking a widget identifies its field; clicking elsewhere does not |
-| 2.3 | Tick boxes | 2.1, 2.2 | clicking one toggles it on screen and after a save |
-| 2.4 | Write values on save | 2.1 | a saved file opens in Acrobat with the value in the field |
+| 2.3 | Tick boxes | 2.1, 2.2 | **complete** |
+| 2.4 | Write values on save | 2.1 | done for buttons with 2.3; text waits on 2.5 |
 | 2.5 | Text fields, single-line, explicit size | 2.1, 2.2, 2.4 | typing shows, survives undo, and saves |
-| 2.6 | Narrow the snapshot invalidation | 2.3 or 2.5 | ten fills do not rebuild the reader ten times |
+| 2.6 | Narrow the snapshot invalidation | — | **done with 2.3**, by not rebuilding anything |
 | 2.7 | Refuse to edit a signed document | 2.3 | a signed form says why rather than invalidating a signature |
 
 **2.1 has a precedent.** D20 settled how the outline is owned in the undo state
@@ -318,11 +319,25 @@ appearance built, which is different work.
 generation. A tick that saves correctly means the export path is right; adding
 text then only has to get the drawing right.
 
-**2.6 is a step, not an optimisation.** Filling is a document edit, and an edit
-rebuilds the reader's whole snapshot today. Ten fills on an eighty-page form
-would be ten full rebuilds. An annotation edit changes what is drawn on a page
-without changing which pages exist, so it can invalidate one page — but only if
-that path is built.
+**2.6 was answered by changing where the fields are drawn**, which is worth
+more than narrowing the invalidation would have been. Form fields are no longer
+baked into the document the reader opens; they are composited over the page
+from state held in memory, so a tick invalidates nothing at all. The page
+bitmap does not change — only which appearance is drawn on top of it.
+
+That is also how every other implementation does it. PDFium renders a page
+*without* its form fields in `FPDF_RenderPageBitmap` and draws them afterwards
+in `FPDF_FFLDraw`, from a form-fill environment holding the state; QtPdf calls
+the first and not the second, which is why a filled form came up blank here.
+pdf.js puts an annotation layer of real HTML inputs over a rendered canvas.
+Acrobat regenerates appearances on commit, not per keystroke.
+
+The measurement that forced it: changing a value in the file costs 1 ms, and
+re-saving the document to show it costs 682 ms on sf86.pdf. A tick could just
+about afford that; a keystroke cannot, and 2.5 is typing. Compositing costs
+0.4 ms per appearance, cached by appearance and size, and a tick box's drawings
+are shared -- sf86's 2,846 buttons have a handful of distinct images between
+them.
 
 ### 3. Markup
 
@@ -467,6 +482,23 @@ export go through `raster.render_pages`, which rendered the real export with no
 options, so the same form printed none of its fifteen answers. Now 15 of 15.
 Found by asking whether a flatten command was worth having — it was not, and the
 question exposed the gap it would have papered over.
+
+**2026-10-29 — steps 2.1 to 2.3.** Field values are owned in the model, keyed
+by source document and qualified name, and ride the undo stack beside the
+outline. A click finds the field under it. Tick boxes fill in, undo, and reach
+the saved file with `/V` on the field and `/AS` on every widget of it.
+
+Form fields are now drawn as a layer over the page instead of being rewritten
+into the document -- which supersedes how body 1 displayed them, for a reason
+that is about 2.5 rather than 2.3: the state has to live in memory, because a
+keystroke cannot cost a 682 ms re-save. The `/Subtype` rewrite stays where
+there is no canvas to composite in: the grid's thumbnails and the output paths.
+
+One bug of mine, worth the note: `QPdfDocument.load` has two overloads and the
+one taking a device returns *void*. Comparing its result with `Error.None_`
+therefore fails for every document ever loaded, silently, and the layer drew
+nothing with nothing to say why. The existing code gets this right in all four
+places it loads a document; only the new code had it wrong.
 
 **2026-10-29 — steps 1.5 and 1.6.** Export no longer splits a field whose
 widgets span pages; a real government form turned out to contain one. A

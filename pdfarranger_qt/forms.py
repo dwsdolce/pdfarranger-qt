@@ -93,17 +93,25 @@ def show_widgets(pdf) -> int:
     return changed
 
 
-def rendered_copy(source: str, password: str, tmp_dir: str) -> Optional[str]:
+def rendered_copy(source: str, password: str, tmp_dir: str,
+                  values: Optional[Dict[str, str]] = None) -> Optional[str]:
     """A copy of ``source`` whose fields will draw, or None if it has none.
 
     None rather than a copy of an unchanged file, so that the caller can go on
     using the original path and nothing is written for the documents that do
     not need it.
+
+    ``values`` are written in first, so that what the grid's thumbnails draw is
+    what has been filled in rather than what the file came with. The reader
+    does not come here -- it draws the fields itself, over the page -- so this
+    is for the renderers that cannot.
     """
     try:
         with pikepdf.open(source, password=password or "") as pdf:
             if not has_widgets(pdf):
                 return None
+            if values:
+                apply_values(pdf.pages, values)
             show_widgets(pdf)
             fd, path = tempfile.mkstemp(suffix=".pdf", dir=tmp_dir)
             os.close(fd)
@@ -230,9 +238,10 @@ class Field:
     """
 
     __slots__ = ("page", "rect", "name", "kind", "flags", "states", "value",
-                 "hidden")
+                 "hidden", "annot")
 
-    def __init__(self, page, rect, name, kind, flags, states, value, hidden):
+    def __init__(self, page, rect, name, kind, flags, states, value, hidden,
+                 annot=None):
         self.page = page
         #: ``(left, bottom, right, top)`` in PDF points, y measured upward.
         self.rect = rect
@@ -246,6 +255,10 @@ class Field:
         #: What the *document* says, before any edit of ours.
         self.value = value
         self.hidden = hidden
+        #: The widget itself, for the layer that draws it. Opaque here: this
+        #: class answers what a field *is*, and holding the object is what
+        #: lets something else render it without reading the file twice.
+        self.annot = annot
 
     # -- what the field is -------------------------------------------------
 
@@ -275,6 +288,21 @@ class Field:
         """
         return (not self.read_only and not self.is_pushbutton
                 and not self.hidden and self.kind in ("/Tx", "/Btn", "/Ch"))
+
+    def state_for(self, value: Optional[str]) -> Optional[str]:
+        """Which appearance this *widget* shows when the field holds ``value``.
+
+        A field has one value and may have many widgets. A tick box shows its
+        on-state when the value names it and "/Off" otherwise, which is also
+        what makes a radio group work: the value names one member's state, so
+        that member draws itself on and every other draws itself off, without
+        anything having to clear them.
+        """
+        if self.kind != "/Btn":
+            return None             # not state-keyed; the one appearance
+        if value is not None and value in self.states:
+            return value
+        return "/Off"
 
     def contains(self, x: float, y: float) -> bool:
         """Whether a point in PDF space, y upward, is on this widget."""
@@ -352,7 +380,8 @@ def fields_in(pdf) -> "list[Field]":
                 flags=int(_inherited(annot, pikepdf.Name.Ff) or 0),
                 states=states,
                 value=str(value) if value is not None else None,
-                hidden=bool(int(annot.get(pikepdf.Name.F, 0)) & 2)))
+                hidden=bool(int(annot.get(pikepdf.Name.F, 0)) & 2),
+                annot=annot))
     return found
 
 
@@ -363,10 +392,14 @@ class FieldMap:
     press and a form can carry thousands of widgets -- sf86.pdf has 6,852.
     """
 
-    __slots__ = ("_by_page",)
+    __slots__ = ("_by_page", "_pdf")
 
-    def __init__(self, fields=()):
+    def __init__(self, fields=(), pdf=None):
         self._by_page: Dict[int, list] = {}
+        #: The document the fields were read from, held *open*. The layer that
+        #: draws them renders each appearance out of it, so closing it here
+        #: would mean reading the file again for every widget on screen.
+        self._pdf = pdf
         for item in fields:
             self._by_page.setdefault(item.page, []).append(item)
 
@@ -377,12 +410,22 @@ class FieldMap:
             if isinstance(source, (bytes, bytearray)):
                 import io
 
-                with pikepdf.open(io.BytesIO(source)) as pdf:
-                    return cls(fields_in(pdf))
-            with pikepdf.open(source) as pdf:
-                return cls(fields_in(pdf))
+                pdf = pikepdf.open(io.BytesIO(source))
+            else:
+                pdf = pikepdf.open(source)
+            return cls(fields_in(pdf), pdf)
         except Exception:  # noqa: BLE001 - a click simply finds nothing
             return cls()
+
+    def close(self):
+        """Let the document go. The fields are unusable afterwards."""
+        if self._pdf is not None:
+            try:
+                self._pdf.close()
+            except Exception:  # pragma: no cover - already gone
+                pass
+            self._pdf = None
+        self._by_page.clear()
 
     def __len__(self):
         return sum(len(v) for v in self._by_page.values())
@@ -402,3 +445,65 @@ class FieldMap:
             if item.contains(x, y):
                 found = item
         return found
+
+
+def _field_node(annot):
+    """The node a value belongs on: the nearest ancestor carrying ``/FT``.
+
+    Not the widget and not the root. A value lives on the field, and in a deep
+    tree the field sits between the two -- which is the same lesson `fields_in`
+    learned, and the same one that made a coverage tool call 1,053 radio
+    buttons typeless.
+    """
+    node, depth = annot, 0
+    while node is not None and depth < _FIELD_DEPTH:
+        if pikepdf.Name.FT in node:
+            return node
+        node = node.get(pikepdf.Name.Parent)
+        depth += 1
+    return annot
+
+
+def apply_values(pages, values: Dict[str, str]) -> int:
+    """Write ``{qualified name: value}`` into some pages. Returns how many.
+
+    Pages rather than a document, because a name identifies a field only
+    within the document it came from. An export can hold pages from several,
+    so the caller applies one source's values to that source's pages and no
+    others.
+
+    Buttons only, for now: their appearance for every state is already in the
+    file, so setting the value and the state a widget shows is the whole of it
+    and nothing has to be drawn. A text field needs an appearance generated,
+    which is a different piece of work.
+
+    ``/V`` goes on the field and ``/AS`` on each widget, which is what makes a
+    radio group behave: the value names one member's state, so that member
+    draws itself on and the others draw themselves off, with nothing having to
+    clear them.
+    """
+    written = 0
+    for page in pages:
+        for annot in page.get(pikepdf.Name.Annots, []):
+            if annot.get(pikepdf.Name.Subtype) not in (
+                    pikepdf.Name.Widget, pikepdf.Name.Stamp):
+                continue
+            name = _qualified(annot)
+            if name not in values:
+                continue
+            kind = _inherited(annot, pikepdf.Name.FT)
+            if str(kind) != "/Btn":
+                continue
+            value = values[name]
+            appearance = annot.get(pikepdf.Name.AP)
+            normal = appearance.get(pikepdf.Name.N) if appearance else None
+            states = ([str(k) for k in normal.keys()]
+                      if isinstance(normal, pikepdf.Dictionary)
+                      and not isinstance(normal, pikepdf.Stream) else [])
+            # What this widget shows: the value when it names one of its own
+            # states, and off otherwise.
+            shown = value if value in states else "/Off"
+            annot[pikepdf.Name.AS] = pikepdf.Name(shown)
+            _field_node(annot)[pikepdf.Name.V] = pikepdf.Name(value)
+            written += 1
+    return written

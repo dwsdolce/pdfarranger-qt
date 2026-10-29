@@ -139,12 +139,15 @@ class ReaderView(QWidget):
     outline_edit_begun = Signal(str)
     #: The outline changed, so the document is modified.
     outline_edited = Signal()
+    #: A form field was clicked, for the window to act on.
+    field_pressed = Signal(object)
 
     def __init__(self, parent=None):
         super().__init__(parent)
         self._document: Optional[MemoryDocument] = None
 
         self.canvas = PageCanvas(self)
+        self.canvas.field_pressed.connect(self.field_pressed)
         self.canvas.zoom_to_width()
 
         # The reader's own search engine, over the reader's own document.
@@ -247,12 +250,11 @@ class ReaderView(QWidget):
         63 ms parse, for a document that is byte-for-byte what is already on
         disk.
 
-        ``forms_present`` says that some loaded document has form fields, which
-        a page renderer will not draw until they are rewritten (see `forms`).
-        Only the export path needs telling: ``source`` already arrives as the
-        rewritten copy when there is one. Asked of the caller rather than of
-        the exported bytes because finding out means parsing them again, and
-        the answer is no for almost every document.
+        ``forms_present`` is accepted and ignored. It was how the export path
+        was told to rewrite the widgets so that a page renderer would draw
+        them; the canvas draws them itself now, over the page, so there is
+        nothing to rewrite. The argument stays until its callers stop passing
+        it.
         """
         if source is not None and self._load_source(
                 *source, sizes=_sizes_of(pages)):
@@ -263,10 +265,6 @@ class ReaderView(QWidget):
             # mode switch -- and on a 1590 page book that is not free.
             data = get_in_memory_pdf(list(pages), files,
                                      source_names=source_names)
-            if forms_present:
-                # The export carries the fields across as fields, which is
-                # right for a file but invisible on screen.
-                data = forms_module.rendered_bytes(data)
         except Exception:  # noqa: BLE001 - reported by the caller as "cannot read"
             # Logged, not silent. Swallowing this once turned a crash in the
             # export path into "the reader just returns False", and 42 tests
@@ -321,6 +319,7 @@ class ReaderView(QWidget):
         models are bound to it.
         """
         previous = self._document
+        previous_fields = self.canvas.fields()
         self._document = document
         # From the document being *shown*, so the rectangles are in the
         # coordinates on screen: a rotated or cropped page has been through
@@ -337,6 +336,10 @@ class ReaderView(QWidget):
         # canvas still holds a reference to crashes PDFium on its next paint.
         if previous is not None:
             previous.close()
+        # Same order, same reason: the field map holds a pikepdf document that
+        # the layer renders appearances out of.
+        if previous_fields is not None:
+            previous_fields.close()
 
     def shutdown(self):
         """Stop the canvas's render thread. Qt aborts if one outlives its widget."""

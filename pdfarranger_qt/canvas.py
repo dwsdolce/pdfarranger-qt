@@ -70,6 +70,7 @@ from PySide6.QtWidgets import (
     QStyle,
 )
 
+from .fieldlayer import AppearanceRenderer
 from .i18n import gettext_ as _
 from .render import ANNOTATIONS, DEFAULT_CACHE_PIXELS, BytesDocument, Renderer
 
@@ -915,6 +916,9 @@ class PageCanvas(QAbstractScrollArea):
     #: what a PDF may ask the desktop to do is a policy question, and a widget
     #: is the wrong place to decide it. See ReaderView.
     external_link_activated = Signal(QUrl)
+    #: A form field was pressed. Not acted on here: changing a value is a
+    #: document edit, which belongs on the undo stack the window owns.
+    field_pressed = Signal(object)
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -938,9 +942,17 @@ class PageCanvas(QAbstractScrollArea):
         #: returns an invalid link, and nothing is left pointing at the
         #: document that has just been closed.
         self._no_document = QPdfDocument(self)
-        #: The document's form fields, for hit testing. Set by the reader,
-        #: which is the only thing that knows which document is showing.
+        #: The document's form fields, for hit testing and for the layer that
+        #: draws them. Set by the reader, which is the only thing that knows
+        #: which document is showing.
         self._fields = None
+        #: Renders and caches one widget's appearance. Lives as long as the
+        #: canvas: its cache is keyed by appearance, so it is worth keeping
+        #: across documents that share one.
+        self._appearances = AppearanceRenderer()
+        #: Given a Field, what the application says it holds, or None to use
+        #: what the document says. Set by the window, which owns the edits.
+        self.field_values = None
 
         self._tooltip = ""
         self._text = PageText()
@@ -2086,8 +2098,12 @@ class PageCanvas(QAbstractScrollArea):
     # -- form fields -------------------------------------------------------
 
     def set_field_map(self, fields):
-        """The widgets of the document being shown, for hit testing."""
+        """The widgets of the document being shown, drawn and hit-tested."""
         self._fields = fields
+        self.viewport().update()
+
+    def fields(self):
+        return self._fields
 
     def field_at(self, point: QPointF):
         """The form field under a *viewport* point, or None.
@@ -2275,6 +2291,14 @@ class PageCanvas(QAbstractScrollArea):
         a drag, which is `extend_to` and `_extend_selection` respectively.
         """
         if event.button() == Qt.LeftButton:
+            # A form field takes the press before the text does. Clicking a
+            # tick box is not the start of a selection, and treating it as one
+            # would leave a stray caret in the middle of a form.
+            field = self.field_at(QPointF(event.position()))
+            if field is not None and field.fillable:
+                self.field_pressed.emit(field)
+                event.accept()
+                return
             self._press = QPointF(event.position())
             self._selecting = False
             found = self.to_page(self._press)
@@ -2587,11 +2611,60 @@ class PageCanvas(QAbstractScrollArea):
             # Blank paper is also what shows while there is no bitmap yet. Step
             # 5 draws the grid's thumbnail there instead, once there is an
             # asynchronous render worth waiting for.
+            self._paint_fields(painter, index, offset, ratio)
             self._paint_selection(painter, index, offset)
             self._paint_search(painter, index, offset)
         self._paint_caret(painter, offset)
         painter.end()
         self._prefetch_around(visible)
+
+    def _paint_fields(self, painter, index: int, offset: QPointF, ratio: float):
+        """Draw this page's form fields over it.
+
+        The page bitmap has none in it -- PDFium leaves form fields to a part
+        of itself QtPdf does not call -- so they are composited here instead,
+        from the state the application holds rather than from the file. A tick
+        is then a repaint, which is what makes editing possible at all: the
+        alternative is rewriting the document for every change, measured at
+        682 ms on a large form against 1 ms to change the value.
+
+        The y axis flips again. A page rectangle here runs down from the top
+        left; a PDF rectangle runs up from the bottom.
+        """
+        if self._fields is None or self._appearances is None:
+            return
+        on_page = self._fields.on_page(index)
+        if not on_page:
+            return
+        height = self._layout.page_height(index)
+        if height is None:
+            return
+        zoom = self._layout.zoom
+        for field in on_page:
+            if field.hidden:
+                continue
+            left, bottom, right, top = field.rect
+            where = QRectF((left * zoom) + self._layout.page_rect(index).x(),
+                           ((height - top) * zoom)
+                           + self._layout.page_rect(index).y(),
+                           (right - left) * zoom, (top - bottom) * zoom)
+            where.translate(-offset)
+            if not where.intersects(QRectF(self.viewport().rect())):
+                continue
+            image = self._appearances.image(
+                field.annot, field.state_for(self._value_of(field)),
+                max(1, round(where.width() * ratio)),
+                max(1, round(where.height() * ratio)))
+            if image is not None:
+                painter.drawImage(where, image)
+
+    def _value_of(self, field):
+        """What the field holds now: the edit if there is one, else the file."""
+        if self.field_values is not None:
+            edited = self.field_values(field)
+            if edited is not None:
+                return edited
+        return field.value
 
     def _paint_caret(self, painter, offset: QPointF):
         """The insertion point: a blinking vertical bar, as Acrobat draws it.

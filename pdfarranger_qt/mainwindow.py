@@ -94,6 +94,7 @@ class MainWindow(QMainWindow):
         self.model.doc_password = self._password_for
         self.model.doc_files = self.docs.files_for_export
         self.model.doc_render_file = self.docs.render_file
+        self.docs.set_form_values(self.model.form_values)
         self.view = PageView(self.model, self)
         self.reader = reader.ReaderView(self)
         # One stack, two modes. The reader is what a window shows, opened or
@@ -110,6 +111,10 @@ class MainWindow(QMainWindow):
         self.setCentralWidget(self.stack)
         self.reader.page_changed.connect(self._reader_page_changed)
         self.reader.selection_changed.connect(self._reader_selection_changed)
+        # What the canvas asks when it needs to know which appearance to draw,
+        # and what it tells us when one is clicked.
+        self.reader.canvas.field_values = self._field_value
+        self.reader.field_pressed.connect(self.field_pressed)
         # The sidebar shows the document's outline, not the reader document's
         # (D20), so the window keeps the two in step.
         self.model.outline_changed.connect(self._refresh_outline)
@@ -1749,6 +1754,8 @@ class MainWindow(QMainWindow):
                 # The edited tree, in place of one rebuilt from the sources.
                 # Without this every bookmark command is undone by the save.
                 outline=outline,
+                # And what has been filled into the form, for the same reason.
+                form_values=self.model.form_values,
                 # A subset of the pages keeps only the bookmarks that still
                 # have somewhere to point; a whole document keeps everything,
                 # including the headings the user put there deliberately.
@@ -2772,6 +2779,73 @@ class MainWindow(QMainWindow):
                 progress.close()
         self.statusBar().showMessage(
             ngettext("%d page printed", "%d pages printed", printed) % printed, 4000)
+
+    # -- filling in a form -------------------------------------------------
+
+    def _field_value(self, field):
+        """What the application says this field holds, or None for the file.
+
+        The canvas asks this to decide which appearance to draw, so an edit
+        shows the moment it is made: nothing is written to any document until
+        the save.
+        """
+        page = self._page_for_field(field)
+        if page is None:
+            return None
+        return self.model.form_values.get(page.nfile, field.name)
+
+    def _page_for_field(self, field):
+        """Which of our pages the field's widget is drawn on.
+
+        The reader shows one document made of our pages, so its page index is
+        a row in the page list, and the row is what knows which *source*
+        document the field belongs to. That is the other half of the key: a
+        field name alone is only unique within a document.
+        """
+        if 0 <= field.page < len(self.model.pages):
+            return self.model.pages[field.page]
+        return None
+
+    def field_pressed(self, field):
+        """A form field was clicked. Tick boxes toggle; the rest wait for 2.5."""
+        page = self._page_for_field(field)
+        if page is None or not field.fillable:
+            return
+        if field.kind != "/Btn":
+            return                      # text and choice fields are 2.5
+        current = self.model.form_values.get(page.nfile, field.name, field.value)
+        wanted = self._toggled(field, current)
+        if wanted is None:
+            return
+        self.model.undo.commit(_("Fill"))
+        self.model.form_values.set(page.nfile, field.name, wanted)
+        # The grid draws from a rewritten copy with the old value baked in, so
+        # it has to be rebuilt. Lazily: nothing happens until a thumbnail is
+        # next wanted, and the reader never comes here at all.
+        if 0 < page.nfile <= len(self.docs.docs):
+            self.docs.docs[page.nfile - 1].forget_render_copy()
+        self.model.touch(range(len(self.model.pages)))
+        self._mark_modified()
+        # The page bitmap is unchanged -- only which appearance is drawn over
+        # it -- so a repaint is the whole of showing it.
+        self.reader.canvas.viewport().update()
+
+    @staticmethod
+    def _toggled(field, current):
+        """The state this widget should show after being clicked, or None.
+
+        A tick box turns itself off again; a radio button does not. Pressing
+        the member of a group that is already chosen leaves it chosen, which
+        is what every radio group anywhere does, and is why they are not the
+        same gesture.
+        """
+        on = field.states[0] if field.states else None
+        if on is None:
+            return None
+        showing = field.state_for(current)
+        if field.is_radio:
+            return on
+        return "/Off" if showing == on else on
 
     # -- find --------------------------------------------------------------
 

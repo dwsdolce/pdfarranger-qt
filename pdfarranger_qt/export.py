@@ -36,7 +36,7 @@ from typing import Any, Dict, List, Optional, Tuple
 import packaging.version
 import pikepdf
 
-from . import metadata
+from . import forms, metadata
 from .core import Page, Sides
 from .i18n import gettext_ as _
 
@@ -461,6 +461,25 @@ def _warn_about_shared_names(fields):
             stacklevel=2)
 
 
+def _write_form_values(pdf_output, pages, form_values):
+    """Put what has been filled in into the document being written.
+
+    Page by page rather than document-wide, because a field name identifies a
+    field only within the document it came from: an export can hold pages from
+    several, and a "Name" field in each is two fields until they are merged.
+    Output page *i* is ``pages[i]``, which knows its source, so each page gets
+    its own document's values and no others.
+    """
+    if not form_values:
+        return
+    for index, row in enumerate(pages):
+        if index >= len(pdf_output.pages):
+            break
+        wanted = form_values.for_document(row.nfile)
+        if wanted:
+            forms.apply_values([pdf_output.pages[index]], wanted)
+
+
 def _copy_n_transform(pdf_input, pdf_output, pages, quit_flag=None):
     # All pages must be copied to pdf_output BEFORE applying geometrical
     # transformation. See https://github.com/pikepdf/pikepdf/issues/271
@@ -526,7 +545,7 @@ def get_max_pdf_version(pdf_list: List[pikepdf.Pdf]) -> str:
 def export_doc(pdf_input, pages, mdata, files_out, quit_flag=None,
                test_mode=False, output_password=None, with_outlines=False,
                options: "SaveOptions" = None, source_names=None, outline=None,
-               prune_outline=False):
+               prune_outline=False, form_values=None):
     """Same as export() but taking already-opened pikepdf.Pdf objects.
 
     ``outline`` is the document's own bookmark tree (D20). When given it is
@@ -542,6 +561,7 @@ def export_doc(pdf_input, pages, mdata, files_out, quit_flag=None,
     # After the pages, because it is built from the widgets that actually
     # arrived rather than from the ones the inputs had.
     _restore_acroform(pdf_input, pdf_output)
+    _write_form_values(pdf_output, pages, form_values)
 
     # files_out entries are paths when saving and file-like objects when
     # rendering to memory (previews, printing). Metadata and encryption are only
@@ -846,7 +866,7 @@ def export(files: List[Tuple[str, str]], pages: List[Page], mdata: dict,
            preserve_first_document: bool = False,
            source_names: Optional[List[str]] = None,
            outline=None, prune_outline: bool = False,
-           options: Optional["SaveOptions"] = None) -> str:
+           options: Optional["SaveOptions"] = None, form_values=None) -> str:
     """Write ``pages`` to ``files_out``.
 
     ``files`` is the ``(copyname, password)`` list from ``DocumentSet``; a page's
@@ -883,7 +903,7 @@ def export(files: List[Tuple[str, str]], pages: List[Page], mdata: dict,
             export_doc(pdf_input, pages, mdata, files_out, quit_flag, test_mode,
                        output_password=output_password, options=options,
                        source_names=source_names, outline=outline,
-                       prune_outline=prune_outline)
+                       prune_outline=prune_outline, form_values=form_values)
     finally:
         warnings.showwarning = backup
         for pdf in pdf_input:
