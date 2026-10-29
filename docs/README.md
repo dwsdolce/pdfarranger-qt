@@ -29,6 +29,7 @@ Neither belongs to any one piece of work, and both outlive all of them.
 |---|---|
 | [FINDINGS.md](FINDINGS.md) | What the libraries actually do, as opposed to what the documentation says. Each one measured, most the hard way. |
 | [CONVENTIONS.md](CONVENTIONS.md) | How the project is laid out and built: test layout, settings isolation, temporary files, installers. |
+| [VALIDATION-CORPUS.md](VALIDATION-CORPUS.md) | Real PDFs this has been checked against, as links rather than files, with what each one exercises and what measuring them changed. |
 
 ## Work after the port
 

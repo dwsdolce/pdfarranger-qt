@@ -57,3 +57,9 @@ packages/
 #
 # Root level only. The 47 PDF fixtures under tests/ are tracked and unaffected.
 /*.pdf
+
+# Real PDFs fetched to measure form handling against. Links and findings are in
+# docs/VALIDATION-CORPUS.md; the files themselves are public-domain federal
+# forms that there is no reason to carry in the history, and a committed binary
+# hides what it is testing.
+/corpus/

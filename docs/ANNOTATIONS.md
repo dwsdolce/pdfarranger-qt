@@ -2,9 +2,9 @@
 
 **Issue:** [#14](https://github.com/dwsdolce/pdfarranger-qt/issues/14)
 
-**Status:** IN PROGRESS — annotations and filled form fields now draw on screen,
-in print and in image export. Two steps of body 1 remain: a field whose widgets
-span pages is split by export, and the validation corpus is not written.
+**Status:** IN PROGRESS — body 1 of 3 is **complete**: annotations and filled
+form fields draw on screen, in print and in image export, and six real forms
+round-trip a save unchanged. Filling fields is next.
 
 A filled insurance form was opened in this application and came up blank. Every
 answer typed into it was missing — text, ticks, the lot — with nothing on screen
@@ -25,7 +25,7 @@ highlight are the same problem a second time.
 
 | | State |
 |---|---|
-| 1. Show what is in the file | drawing is **complete**; two steps left — see 1.5 and 1.6 |
+| 1. Show what is in the file | **complete** — drawn, saved, printed, and measured against real forms |
 | 2. Fill fields | next; the plan is below and nothing blocks it |
 | 3. Markup | after filling, which proves the model it needs |
 
@@ -231,7 +231,7 @@ and damaged a form on save.
 | 1.3 | Draw form fields, from a render-only copy | **complete** |
 | 1.4 | Draw both in the output paths — printing, image export, rasterising | **complete** |
 | 1.5 | Stop export splitting a field whose widgets span pages | next |
-| 1.6 | A validation corpus: public PDFs this has been checked against | |
+| 1.6 | A validation corpus: public PDFs this has been checked against | **complete** |
 
 1.5 is a defect found by building the fixture 1.1–1.4 were never tested
 against. A radio group with a widget on each of two pages comes out of export as
@@ -243,7 +243,14 @@ annotation — and only became visible when `/AcroForm` started being rebuilt.
 Filling makes it worse: a value written to a field split in two reaches half of
 it.
 
-1.6 is the other half of the lesson. A fixture built from the specification is
+1.6 is the other half of the lesson, and it changed three assumptions this
+document had made from a single form — see
+[VALIDATION-CORPUS.md](VALIDATION-CORPUS.md) for the measurements. An empty text
+field usually has **no** appearance stream at all (0 of 164 in one form), so
+2.5 generates one from nothing rather than editing one. Auto-sized fields are 6
+to 8% of real forms, so 2.5 cannot simply refuse them. And `/DA` carries colour
+as well as font and size, inherited from an ancestor, so a generated appearance
+that ignores it writes black into a form expecting blue. A fixture built from the specification is
 what finds a case like 1.5; a corpus of real files is what says whether we are
 wrong about the real world, and the two are not substitutes. The corpus is a
 *document* listing public PDFs — a US federal form is public domain, most others
@@ -451,3 +458,9 @@ export go through `raster.render_pages`, which rendered the real export with no
 options, so the same form printed none of its fifteen answers. Now 15 of 15.
 Found by asking whether a flatten command was worth having — it was not, and the
 question exposed the gap it would have papered over.
+
+**2026-10-29 — steps 1.5 and 1.6.** Export no longer splits a field whose
+widgets span pages; a real government form turned out to contain one. A
+validation corpus of six public forms from three producers is recorded in
+[VALIDATION-CORPUS.md](VALIDATION-CORPUS.md), and measuring it corrected three
+assumptions body 2 would otherwise have been built on.
