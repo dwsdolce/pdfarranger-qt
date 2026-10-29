@@ -13,7 +13,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  pdfarranger\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-28 18:53+0000\n"
+"POT-Creation-Date: 2026-10-29 04:33+0000\n"
 "PO-Revision-Date: 2025-08-29 21:18+0100\n"
 "Last-Translator: Hugo Carvalho <hugokarvalho@hotmail.com>\n"
 "Language: pt_PT\n"
@@ -2475,6 +2475,11 @@ msgid "%d page printed"
 msgid_plural "%d pages printed"
 msgstr[0] "%d página impressa"
 msgstr[1] "%d páginas impressas"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Fill Field"
+msgstr "Preencher campo"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py

@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PDF Arranger 1.9.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-28 18:53+0000\n"
+"POT-Creation-Date: 2026-10-29 04:33+0000\n"
 "PO-Revision-Date: 2023-06-12 10:30+0300\n"
 "Last-Translator: Manussos Pulinakis "
 "<38626261+manussos@users.noreply.github.com>\n"
@@ -2516,6 +2516,11 @@ msgid "%d page printed"
 msgid_plural "%d pages printed"
 msgstr[0] "Εκτυπώθηκε %d σελίδα"
 msgstr[1] "Εκτυπώθηκαν %d σελίδες"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Fill Field"
+msgstr "Συμπλήρωση πεδίου"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py

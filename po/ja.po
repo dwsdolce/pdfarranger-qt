@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-28 18:53+0000\n"
+"POT-Creation-Date: 2026-10-29 04:33+0000\n"
 "PO-Revision-Date: 2022-09-01 00:40+0900\n"
 "Last-Translator: sicklylife <translation@sicklylife.jp>\n"
 "Language: ja\n"
@@ -2353,6 +2353,11 @@ msgstr "プリンタードライバーがジョブを処理しています。"
 msgid "%d page printed"
 msgid_plural "%d pages printed"
 msgstr[0] "%d ページを印刷しました"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Fill Field"
+msgstr "フィールドに入力"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py

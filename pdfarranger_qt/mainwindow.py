@@ -2817,7 +2817,7 @@ class MainWindow(QMainWindow):
         wanted = self._toggled(field, current)
         if wanted is None:
             return
-        self.model.undo.commit(_("Fill"))
+        self.model.undo.commit(_("Fill Field"))
         self.model.form_values.set(page.nfile, field.name, wanted)
         # The grid draws from a rewritten copy with the old value baked in, so
         # it has to be rebuilt. Lazily: nothing happens until a thumbnail is

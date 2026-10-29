@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-28 18:53+0000\n"
+"POT-Creation-Date: 2026-10-29 04:33+0000\n"
 "PO-Revision-Date: 2024-03-20 17:20+0800\n"
 "Last-Translator: 錢政維 <e.cwchien@gmail.com>\n"
 "Language: zh_TW\n"
@@ -2308,6 +2308,11 @@ msgstr "印表機驅動程式正在處理這項工作。"
 msgid "%d page printed"
 msgid_plural "%d pages printed"
 msgstr[0] "已列印 %d 頁"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Fill Field"
+msgstr "填寫欄位"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py

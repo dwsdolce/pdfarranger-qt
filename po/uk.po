@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: unnamed project\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-28 18:53+0000\n"
+"POT-Creation-Date: 2026-10-29 04:33+0000\n"
 "PO-Revision-Date: 2026-05-27 19:30+0300\n"
 "Last-Translator: Dymko <Dymkovych@proton.me>\n"
 "Language: uk\n"
@@ -2455,6 +2455,11 @@ msgid_plural "%d pages printed"
 msgstr[0] "Надруковано %d сторінку"
 msgstr[1] "Надруковано %d сторінки"
 msgstr[2] "Надруковано %d сторінок"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Fill Field"
+msgstr "Заповнити поле"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py

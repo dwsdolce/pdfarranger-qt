@@ -15,7 +15,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  pdfarranger\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-28 18:53+0000\n"
+"POT-Creation-Date: 2026-10-29 04:33+0000\n"
 "PO-Revision-Date: 2025-07-09 08:35+0200\n"
 "Last-Translator: Sebastian Scherch\n"
 "Language: de\n"
@@ -2477,6 +2477,11 @@ msgid "%d page printed"
 msgid_plural "%d pages printed"
 msgstr[0] "%d Seite gedruckt"
 msgstr[1] "%d Seiten gedruckt"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Fill Field"
+msgstr "Feld ausfüllen"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py

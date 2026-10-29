@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-28 18:53+0000\n"
+"POT-Creation-Date: 2026-10-29 04:33+0000\n"
 "PO-Revision-Date: 2026-02-15 15:16+0100\n"
 "Last-Translator: Quentin PAGÈS\n"
 "Language: oc\n"
@@ -2453,6 +2453,11 @@ msgid "%d page printed"
 msgid_plural "%d pages printed"
 msgstr[0] "%d pagina imprimida"
 msgstr[1] "%d paginas imprimidas"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Fill Field"
+msgstr "Emplenar lo camp"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py

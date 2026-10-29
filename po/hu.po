@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-28 18:53+0000\n"
+"POT-Creation-Date: 2026-10-29 04:33+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: hu\n"
@@ -2485,6 +2485,11 @@ msgid "%d page printed"
 msgid_plural "%d pages printed"
 msgstr[0] "%d oldal kinyomtatva"
 msgstr[1] "%d oldal kinyomtatva"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Fill Field"
+msgstr "Mező kitöltése"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py

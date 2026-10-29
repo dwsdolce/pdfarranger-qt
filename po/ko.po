@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pdfarranger - Korean\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-28 18:53+0000\n"
+"POT-Creation-Date: 2026-10-29 04:33+0000\n"
 "PO-Revision-Date: 2026-05-25 00:41+0900\n"
 "Last-Translator: VenusGirl <venusgirl@outlook.com>\n"
 "Language: ko\n"
@@ -2327,6 +2327,11 @@ msgstr "프린터 드라이버가 작업을 처리하고 있습니다."
 msgid "%d page printed"
 msgid_plural "%d pages printed"
 msgstr[0] "%d페이지 인쇄됨"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Fill Field"
+msgstr "필드 채우기"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py

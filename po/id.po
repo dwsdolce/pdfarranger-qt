@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-28 18:53+0000\n"
+"POT-Creation-Date: 2026-10-29 04:33+0000\n"
 "PO-Revision-Date: 2023-06-08 10:00+0700\n"
 "Last-Translator: Abdul Munif Hanafi <amunifhanafi@gmail.com>\n"
 "Language: id\n"
@@ -2502,6 +2502,11 @@ msgid "%d page printed"
 msgid_plural "%d pages printed"
 msgstr[0] "%d halaman dicetak"
 msgstr[1] "%d halaman dicetak"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Fill Field"
+msgstr "Isi bidang"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py

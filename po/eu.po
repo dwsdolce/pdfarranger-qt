@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-28 18:53+0000\n"
+"POT-Creation-Date: 2026-10-29 04:33+0000\n"
 "PO-Revision-Date: 2023-01-19 20:27+0100\n"
 "Last-Translator: alexgabi\n"
 "Language: eu\n"
@@ -2505,6 +2505,11 @@ msgid "%d page printed"
 msgid_plural "%d pages printed"
 msgstr[0] "Orrialde %d inprimatuta"
 msgstr[1] "%d orrialde inprimatuta"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Fill Field"
+msgstr "Bete eremua"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py

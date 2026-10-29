@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pdfarranger-qt VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/dwsdolce/pdfarranger-qt/issues\n"
-"POT-Creation-Date: 2026-10-28 18:53+0000\n"
+"POT-Creation-Date: 2026-10-29 04:33+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1928,6 +1928,10 @@ msgid "%d page printed"
 msgid_plural "%d pages printed"
 msgstr[0] ""
 msgstr[1] ""
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Fill Field"
+msgstr ""
 
 #: pdfarranger_qt/mainwindow.py
 #, python-format

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pdfarranger main\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-28 18:53+0000\n"
+"POT-Creation-Date: 2026-10-29 04:33+0000\n"
 "PO-Revision-Date: 2026-04-24 21:19+0300\n"
 "Last-Translator: Oğuz Ersen <oguz@ersen.moe>\n"
 "Language: tr\n"
@@ -2427,6 +2427,11 @@ msgstr "Yazıcı sürücüsü işi işliyor."
 msgid "%d page printed"
 msgid_plural "%d pages printed"
 msgstr[0] "%d sayfa yazdırıldı"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Fill Field"
+msgstr "Alanı doldur"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py

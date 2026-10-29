@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pdfarranger master\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-28 18:53+0000\n"
+"POT-Creation-Date: 2026-10-29 04:33+0000\n"
 "PO-Revision-Date: 2026-09-04 09:59+0000\n"
 "Last-Translator: Lumenman <28367232+Lumenman@users.noreply.github.com>\n"
 "Language: ru\n"
@@ -2287,6 +2287,11 @@ msgid_plural "%d pages printed"
 msgstr[0] "%d страница напечатана"
 msgstr[1] "%d страницы напечатано"
 msgstr[2] "%d страниц напечатано"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Fill Field"
+msgstr "Заполнить поле"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py

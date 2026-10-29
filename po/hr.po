@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  pdfarranger\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-28 18:53+0000\n"
+"POT-Creation-Date: 2026-10-29 04:33+0000\n"
 "PO-Revision-Date: 2023-06-06 13:27+0200\n"
 "Last-Translator: Milo Ivir <mail@milotype.de>\n"
 "Language: hr\n"
@@ -2484,6 +2484,11 @@ msgid_plural "%d pages printed"
 msgstr[0] "Ispisana %d stranica"
 msgstr[1] "Ispisane %d stranice"
 msgstr[2] "Ispisano %d stranica"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Fill Field"
+msgstr "Ispuni polje"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
