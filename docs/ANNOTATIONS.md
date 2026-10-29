@@ -570,6 +570,26 @@ needed whichever way the arrange question goes. Step 2.8.
 
 ## Still open
 
+- **Which frame a mark is stored in, and what a resize does to it.** `/Rotate`
+  and a crop carry a page-space rectangle for free -- a turn changes nothing in
+  the space and a crop only rewrites the box -- but `export._scale` multiplies
+  the space by the factor, and it builds a *fresh* page dictionary. Measured on
+  a 300x120 page with one `/Text` annotation scaled by two: the box comes back
+  600x240 and the page comes back with `/Contents`, `/MediaBox`, `/Resources`,
+  `/Rotate`, `/Type` -- and no `/Annots` at all. So a resized page loses the
+  annotations *and the widgets* the file came with, before any of this work is
+  reached. `_write_annotations` runs after the transform, which leaves a
+  choice: keep marks in the source page's space and multiply by `row.scale` on
+  the way out, which makes a later resize carry them, or keep them in the
+  output page's space and have every mark move the next time the page is
+  resized. The first is what the body 3 prose already claims; neither is
+  implemented, because nothing produces coordinates until 3.2.
+- **Where the canvas gets a page's displayed box.** `from_displayed` needs one,
+  and `fields_in` already computes it per page -- but inside a *field* map, and
+  a page with no widgets still needs its box to place a mark. Either `FieldMap`
+  grows a `box_of(page)`, which is honest about it holding what the reader read
+  rather than only the fields, or the canvas keeps the boxes beside it. Not
+  decided; opening the same bytes a second time is the option to avoid.
 - **Whether this application's name still describes it.** Not part of this work,
   but it is the same premise change, and D1 and D13 deliberately pinned the
   `QSettings` scope so a rename cannot orphan saved state. A rename would also
@@ -764,6 +784,24 @@ One of the three new appearance tests earns its place. With the turning
 removed, both of the *size* assertions still pass, because the renderer draws
 at whatever size it is asked for; only comparing the pixels catches an image
 that was squashed into the new shape rather than turned into it.
+
+**2026-10-29 — the inverse, for 3.2.** `from_displayed` takes a rectangle in
+the frame the page is laid out in back to the page's own space, which is the
+direction a pointer needs: everything on screen is in the laid-out frame, and
+anything written into the file is written in the page's own space. Written
+beside `to_displayed` and derived the same way, from where the corners come
+*from* rather than by inverting a matrix, so the two can be read against each
+other -- and asserted against a table derived by hand from a 300x120 page, so
+that the two cannot agree on the same mistake. It normalises, which is what a
+drag gives: dragging up and to the left is the same rectangle, not a negative
+one, and a click is simply a rectangle with no width.
+
+Checked by neutering it three ways. Dropping the rotation branches fails ten;
+dropping the crop origin fails five, including the one case with no rotation at
+all; swapping width for height on the quarter turns -- the plausible mistake,
+since the displayed box has them the other way round -- fails seven. A
+round-trip test alone would have caught the first and third but not told them
+apart, which is why the hand-derived table is there as well.
 
 **2026-10-29 — step 3.1.** Marks added to a document are owned in the model,
 keyed by page uid, and ride the same undo stack as the pages, the outline and

@@ -487,6 +487,38 @@ def to_displayed(rect, box) -> "tuple[float, float, float, float]":
     return (min(ax, bx), min(ay, by), max(ax, bx), max(ay, by))
 
 
+def from_displayed(rect, box) -> "tuple[float, float, float, float]":
+    """A rectangle in the laid-out frame, back in the page's own space.
+
+    The exact inverse of `to_displayed`, and the direction a *pointer* needs:
+    everything on screen is in the frame the page is shown in, while anything
+    written into the file is written in the page's own space, which is where a
+    mark has to be kept so that a later crop or turn carries it.
+
+    Derived from where the corners come *from* rather than by inverting a
+    matrix, so the two functions can be read side by side -- and so the test
+    can assert numbers derived by hand instead of whatever a matrix produces.
+
+    Takes the two corners in either order and returns them normalised, which
+    is what a drag gives: dragging up and to the left is not a negative
+    rectangle, it is the same rectangle.
+    """
+    left, bottom, width, height, rotation = box
+    x0, y0 = rect[0], rect[1]
+    x1, y1 = rect[2], rect[3]
+    if rotation == 90:
+        corners = ((width - y0, x0), (width - y1, x1))
+    elif rotation == 180:
+        corners = ((width - x0, height - y0), (width - x1, height - y1))
+    elif rotation == 270:
+        corners = ((y0, height - x0), (y1, height - x1))
+    else:
+        corners = ((x0, y0), (x1, y1))
+    (ax, ay), (bx, by) = corners
+    return (min(ax, bx) + left, min(ay, by) + bottom,
+            max(ax, bx) + left, max(ay, by) + bottom)
+
+
 def fields_in(pdf) -> "list[Field]":
     """Every widget in a document, in page order then drawing order.
 

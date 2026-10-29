@@ -1839,6 +1839,74 @@ class TestARotatedPagePutsFieldsWhereTheyAre(unittest.TestCase):
         fields.close()
 
 
+class TestAPointerComesBackToThePagesOwnSpace(unittest.TestCase):
+    """The other direction. Everything on screen is in the frame the page is
+    laid out in; anything written into the file is written in the page's own
+    space, so a mark placed with the pointer has to travel back through the
+    crop and the turn before it can be kept.
+    """
+
+    def box(self, angle, size=(300, 120), crop=None):
+        pdf = pikepdf.new()
+        pdf.add_blank_page(page_size=size)
+        if angle:
+            pdf.pages[0][pikepdf.Name.Rotate] = angle
+        if crop is not None:
+            pdf.pages[0][pikepdf.Name.CropBox] = pikepdf.Array(list(crop))
+        return forms.displayed_box(pdf.pages[0])
+
+    def test_the_corners_come_from_where_turning_put_them(self):
+        """Derived by hand from a 300 x 120 page rather than by running the
+        forward transform, so the two cannot agree on the same mistake."""
+        shown = (10, 20, 30, 50)
+        for angle, expected in ((0, (10, 20, 30, 50)),
+                                (90, (250, 10, 280, 30)),
+                                (180, (270, 70, 290, 100)),
+                                (270, (20, 90, 50, 110))):
+            with self.subTest(angle=angle):
+                got = forms.from_displayed(shown, self.box(angle))
+                self.assertEqual(tuple(round(v, 3) for v in got), expected)
+
+    def test_it_undoes_the_forward_transform_exactly(self):
+        """A field read out of the file and then clicked on has to come back to
+        the rectangle the file holds, or the mark lands beside the widget."""
+        rect = (20, 40, 60, 80)
+        for angle in (0, 90, 180, 270):
+            for crop in (None, (50, 20, 250, 100)):
+                with self.subTest(angle=angle, crop=crop):
+                    box = self.box(angle, crop=crop)
+                    there = forms.to_displayed(rect, box)
+                    back = forms.from_displayed(there, box)
+                    self.assertEqual(tuple(round(v, 3) for v in back), rect)
+
+    def test_a_drag_may_run_either_way(self):
+        """Dragging up and to the left is the same rectangle, not a negative
+        one. Normalising here is what spares every caller from doing it."""
+        for angle in (0, 90, 180, 270):
+            with self.subTest(angle=angle):
+                box = self.box(angle)
+                forwards = forms.from_displayed((10, 20, 30, 50), box)
+                backwards = forms.from_displayed((30, 50, 10, 20), box)
+                self.assertEqual(forwards, backwards)
+                self.assertLessEqual(forwards[0], forwards[2])
+                self.assertLessEqual(forwards[1], forwards[3])
+
+    def test_the_crop_origin_is_put_back(self):
+        """The screen frame starts at the crop; the page's own space does not.
+        A cropped page is out by the crop even with no rotation at all."""
+        box = self.box(0, crop=(50, 20, 250, 100))
+        self.assertEqual(forms.from_displayed((10, 10, 30, 30), box),
+                         (60.0, 30.0, 80.0, 50.0))
+
+    def test_a_point_is_a_rectangle_with_no_width(self):
+        """What a click gives, as against a drag. Nothing special happens: the
+        same call carries it, which is why there is no second function."""
+        box = self.box(90)
+        x, y, x2, y2 = forms.from_displayed((10, 20, 10, 20), box)
+        self.assertEqual((x, y), (280.0, 10.0))
+        self.assertEqual((x2, y2), (280.0, 10.0))
+
+
 class TestTheAppearanceIsTurnedToo(unittest.TestCase):
     """The stream is written in the page's own frame, so it has to be turned
     by the same amount or it comes out on its side."""
