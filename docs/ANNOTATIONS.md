@@ -2,10 +2,11 @@
 
 **Issue:** [#14](https://github.com/dwsdolce/pdfarranger-qt/issues/14)
 
-**Status:** IN PROGRESS — body 1 **complete**, body 2 at six of seven. Tick
+**Status:** IN PROGRESS — body 1 **complete**, body 2 at six of nine. Tick
 boxes and single-line text fields can both be filled in; what is typed shows,
 survives undo and reaches the saved file with a drawing for it. Only the guard
-against editing a signed document is left before markup.
+against filling a signed document, the export strip and the save guard are
+left before markup.
 
 A filled insurance form was opened in this application and came up blank. Every
 answer typed into it was missing — text, ticks, the lot — with nothing on screen
@@ -27,7 +28,7 @@ highlight are the same problem a second time.
 | | State |
 |---|---|
 | 1. Show what is in the file | **complete** — drawn, saved, printed, and measured against real forms |
-| 2. Fill fields | in progress — six of seven; only the signed-document guard is left |
+| 2. Fill fields | in progress — six of nine; the signed-document guard, the export strip and the save guard are left |
 | 3. Markup | after filling, which proves the model it needs |
 
 The first was correctness and needed no decision reversed: the application did
@@ -302,7 +303,9 @@ cheaper than a flag every caller has to remember.
 | 2.4 | Write values on save | 2.1 | a saved file opens in Acrobat with the value in the field | **complete** |
 | 2.5 | Text fields, single-line, explicit size | 2.1, 2.2, 2.4 | typing shows, survives undo, and saves | **complete** |
 | 2.6 | Narrow the snapshot invalidation | — | ten fills do not rebuild the reader ten times | **complete** with 2.3, by leaving nothing to rebuild |
-| 2.7 | Refuse to edit a signed document | 2.3 | a signed form says why rather than invalidating a signature | next |
+| 2.7 | Refuse to fill a field in a signed document | 2.3 | a signed form says why rather than invalidating a signature | next |
+| 2.8 | Strip the remains of a signature on export | -- | a derived document is honestly unsigned instead of claiming a signature over bytes that are gone | |
+| 2.9 | Refuse to save over a signed source, and say the signature will not carry | 2.7, 2.8 | Save on a signed document offers Save As; a derived save says the signature is gone | |
 
 **2.1 has a precedent.** D20 settled how the outline is owned in the undo state
 beside the page list, keyed by a stable page id so reordering costs nothing and
@@ -390,14 +393,163 @@ OCR, redaction and compare. The reason it looked necessary was that a recipient
 might not see the answers, and the application was itself that recipient until
 step 1.4; printing now carries them.
 
+### What a signed form means, and what Acrobat does with one
+
+Acrobat has four behaviours here, not one, and which one you get is state this
+application does not currently read:
+
+- **An unsigned signature field** locks nothing. It is a placeholder for a
+  future signer, so the form fills normally.
+- **An approval signature** (a `/Sig` field with a `/V`, no certification)
+  restricts nothing either. Acrobat keeps filling fields and saves
+  *incrementally*, appending a revision so the signature stays valid over the
+  bytes it covers; the Signatures panel then reports it as valid but modified
+  since signing, and offers to show the signed version.
+- **A certification signature**, `/Perms /DocMDP`, carries the permission level:
+  `P=1` no changes, `P=2` form filling and signing, `P=3` filling, signing and
+  annotation. Acrobat makes the fields uneditable where the level forbids it.
+- **A field-level lock**, `/Lock` on a signature field (FieldMDP), makes the
+  named fields read-only once that field is signed.
+
+So Acrobat refuses at the *field* when permissions forbid the edit, and
+otherwise permits it and keeps the signature by appending rather than
+rewriting. qpdf, under pikepdf, always rewrites, so the second half is not
+available here at any permission level.
+
+Two measurements decide what "signed" has to mean in the code. **Nothing we
+have is signed**: of the nine corpus forms and the insurance form that prompted
+this work, none has a `/Sig` field carrying a `/V` and none has `/Perms
+/DocMDP`. The insurance form's two signature fields are empty placeholders, and
+its `/SigFlags 1` says only that signature fields exist. **And `/SigFlags` and
+`/Perms` are both traps**: five corpus forms set `/SigFlags 2` (AppendOnly)
+while having no signature field at all, and five carry `/Perms /UR3` -- a
+usage-rights signature, which Reader-enables the form rather than attesting to
+its content. Treating either as "signed" would refuse to fill the 1040, the
+W-4, the W-9, the 1099-MISC and SF-3107. The test is a `/Sig` field with a
+`/V`, or `/Perms /DocMDP`; nothing else.
+
+**A real signed document, measured.** A 43-page DocuSign envelope, held
+locally and deliberately not published (see
+[VALIDATION-CORPUS.md](VALIDATION-CORPUS.md)). One signature field,
+`adbe.pkcs7.detached` under `Adobe.PPKMS`, `/SigFlags 3` (SignaturesExist and
+AppendOnly), and a `/DSS` carried in a revision appended *after* the signature
+so that long-term validation data does not disturb the bytes it covers. The
+important part is what it does **not** have: no `/Perms`, no DocMDP, no
+`/Lock`. The commonest kind of signed document in existence carries an
+*approval* signature, which restricts nothing -- so "signed" does not mean the
+author forbade editing, and a rule phrased that way would be guessing at an
+intent the file does not express.
+
+**Acrobat, watched rather than described.** Opening that document shows a blue
+bar reading only *"At least one signature requires validating"* -- no
+certification banner, no permissions notice -- with **Edit and E-Sign both
+enabled**. Acrobat does not lock a document carrying an approval signature.
+Editing is disabled in exactly one place: *View Signed Version*, which says
+*"You are currently viewing a signed version. All editing and interactive
+features are disabled. Save a copy and reopen to edit this document."* That is
+a historical revision being shown read-only, and Acrobat's own instruction for
+how to proceed is to **derive a new document**. Adobe's answer to "may I
+rearrange a signed form" is "yes, on a copy."
+
+Saving that signed version also demonstrates the incremental-update model
+exactly. The file Acrobat wrote is **byte-for-byte the first 1,809,095 bytes of
+the original** -- the prefixes are identical -- which is the file truncated at
+the end of the signature's `/ByteRange`:
+
+| | as delivered | signed version |
+| --- | --- | --- |
+| bytes | 1,847,081 | 1,809,095 |
+| revisions | 3 | 2 |
+| `/DSS`, `/Extensions` | present | gone |
+| `/ByteRange` covers | 1,809,095 of 1,847,081 | the whole file |
+
+`/DSS` and `/Extensions` disappear because they existed only in the revision
+appended after signing. Rolling back to the signed revision drops them without
+disturbing a byte the signature covers, which is the whole point of appending
+rather than rewriting. The two files are kept as a pair: the delivered one
+tests the appended-revision case, and the extracted one is self-consistent --
+its signature covers the entire file -- which makes it the better fixture for
+detection and for proving the export strip.
+
+Acrobat's Appearance Integrity Report on the same document returns 2013 (text
+appearance may silently change), 4002 (content contains errors) and 4000
+(unrecognized content), so the producer's output is structurally sloppy. Both
+files parse here without complaint.
+
+**A certified document, and the pair that settles the predicate.** A second
+private sample, a two-page form put through Adobe Acrobat Sign, carries what
+the first does not: `/Perms /DocMDP` with **`P = 1`, no changes permitted**.
+Its certification covers the whole file in a single revision, and the one
+field in the document is the invisible `ES_CERTIFYING_SIGNATURE` at
+`/Rect [0 0 0 0]`. Acrobat's signature panel says "No changes are allowed" and
+greys out Edit and E-Sign; on the approval-signed file it greys out nothing.
+
+| | approval-signed | certified |
+| --- | --- | --- |
+| `/Perms` | none | `/DocMDP` |
+| permission level | -- | **P=1, no changes** |
+| `/ByteRange` | all but the appended `/DSS` revision | the whole file |
+| Acrobat's Edit / E-Sign | enabled | greyed out |
+
+Acrobat's behaviour tracks `/Perms /DocMDP` and its `P` value, not the mere
+presence of a signature. So "a signature makes this read-only" and "the
+author's permissions make this read-only" are not the same rule applied to
+real files: one of these two documents is locked by its author and the other
+is not.
+
+**What a conforming tool does on save**, measured rather than assumed. Saving
+that certified document from Acrobat produced a file **byte-for-byte identical
+to the original** -- 513,598 bytes in, 513,598 out, every byte the same.
+Acrobat did not re-serialise it: not a renumbered object, not a recompressed
+stream. Together with the appended `/DSS` revision on the other sample, that
+is the whole rule:
+
+- a permitted change -> **append** a revision, leaving the signed bytes alone
+- no change -> **copy the bytes**
+- rebuild from scratch -> **never**
+
+Export here only knows the third. That is why a signed document cannot survive
+a save, and why 2.8's strip is not a workaround but the honest form of the one
+thing this application can do.
+
+**Exporting the certified file is worse than exporting the approval-signed
+one.** `/Perms` is dropped, because it hangs off the document root and the
+export builds a new one -- so the entry a viewer reads to find the
+certification is gone -- while `/SigFlags 3` is carried across and the
+signature field survives with its `/Reference` still declaring `DocMDP P=1`,
+over a `/ByteRange` naming 513,598 bytes of a file that is nothing like that
+size. The output is an incoherent half-certified document asserting that no
+changes were permitted. Exporting the page the signature widget is *not* on
+comes out clean, which is the same accident as before.
+
+**Neither platform leaves a fillable field.** Acrobat Sign and DocuSign both
+flatten the form before signing: one `/Sig` field each and nothing else. The
+signed-*and*-fillable case does not occur in anything found, which settles that
+it has to be a generated fixture.
+
+It is also no use for testing the fill guard. The only field in its 43 pages is
+the signature itself, invisible at `/Rect [0 0 0 0]`, and `FieldMap.read` finds
+zero fields in it. A case that is both signed *and* fillable is a rarer animal
+and still wanted.
+
+**Export carries a corpse, and that is a bug under any rule.** Run through the
+real export path, the signature field travels with its page, `_surviving_fields`
+picks it up and `_restore_acroform` carries `/SigFlags` across:
+
+| Exported | `/AcroForm` | `/SigFlags` | Signature | `/DSS` |
+| --- | --- | --- | --- | --- |
+| all 43 pages | rebuilt | `3` carried | survives; `/ByteRange` claims 1,809,095 bytes of a 1,563,238-byte file | dropped |
+| pages 1-3 | rebuilt | `3` carried | survives, same `/ByteRange`, in a 691 KB file | dropped |
+| pages 5-8 | none | none | gone | -- |
+
+The output announces a signature over bytes that do not exist, keeps 32,767
+bytes of PKCS#7 that cannot verify, and loses the `/DSS` that would let anyone
+check -- and whether it lies at all depends on whether page 1 happened to be in
+the selection. That is an accident, not a policy, and stripping the remains is
+needed whichever way the arrange question goes. Step 2.8.
+
 ## Still open
 
-- **Whether a signed document refuses field editing outright or warns.** The
-  form that prompted this carries two signature fields and `/SigFlags`. Editing
-  one invalidates the signature, and doing that silently is the failure this
-  whole document is about. Noticing and declining is a guard, not a feature;
-  validating the signature is a cryptographic sub-project and stays out. Step
-  2.7.
 - **Whether this application's name still describes it.** Not part of this work,
   but it is the same premise change, and D1 and D13 deliberately pinned the
   `QSettings` scope so a rename cannot orphan saved state. A rename would also
@@ -486,6 +638,34 @@ two views of itself — `files_for_export` and `render_file` — and the tests h
 that line for an unedited document and for an edited one, which takes the other
 path.
 
+**5. A signature stops an edit in place, not the derivation of a new
+document.** Taken on the evidence of the two signed samples rather than on the
+principle that a signature means hands off, which the files do not support: one
+of them carries an approval signature that restricts nothing and that Acrobat
+leaves fully editable, and Acrobat's own instruction for editing a signed
+document is *"Save a copy and reopen."* A blanket read-only rule would block
+extracting three pages from a 43-page envelope whose signer never asked for
+that protection, and this application's reason to exist is rearranging pages.
+
+So the line is drawn where the harm is, which is leaving a broken signature
+where a good one was -- not at whether the operation is a fill or a rearrange:
+
+- **Filling a field** in a signed document is refused. It is always an edit in
+  place, and the saved file would present itself as the same signed record
+  with content that no longer verifies.
+- **Arranging** is allowed, because export writes a new file and the signed
+  original stays on disk untouched.
+- **Saving over the signed source** is refused, and offers Save As instead.
+  `save()` writes to `current_path` where `save_as()` prompts, so the two are
+  already distinct.
+- **The derived document is honestly unsigned.** The remains of the signature
+  are stripped on export rather than carried, and the save says that the
+  signature has not come across.
+
+What is *not* claimed: that any of this preserves a signature. Nothing here
+can, because qpdf rewrites and a signature survives only an append or a byte
+copy. The decision is about which lie not to tell.
+
 ## Done
 
 **2026-10-28 — body 1, steps 1.1 to 1.3.** Annotations drawn in all three render
@@ -532,6 +712,20 @@ named gaps rather than for bulk — a real radio group, signature fields, and a
 form with many widgets per field. The tool found its own bug on the way: `/FT`
 is inherited and can sit between the widget and the root, so reading it off the
 root called 1,053 radio buttons typeless.
+
+**2026-10-29 — a stamp is not a field.** `fields_in` accepted `/Stamp` as well
+as `/Widget`, which was right while body 1 showed the reader the copy with the
+widgets rewritten into stamps. The reader composites the fields itself now and
+is handed the export or the source file, both carrying real widgets, so the
+only thing that exception still caught was *genuine* stamp annotations. Two
+documents in the corpus have one -- Apple's markup titles everything it writes
+with the device's user name -- and each read as a phantom field called "Mobile
+User". Harmless by luck in those two, whose stamp has a degenerate rectangle at
+the integer limits and so falls under the two-pixel floor; with an ordinary
+rectangle the annotation would be drawn twice, once by PDFium and once by the
+field layer over the top, and a stamp sharing a real field's name would have
+shared its value. Dropped from `apply_values` for the same reason, where it
+cost nothing: the one caller that rewrites writes its values first.
 
 **2026-10-29 — steps 2.4 and 2.5.** Single-line text fields can be filled in.
 Typing goes into a real editor over the field and the appearance is generated

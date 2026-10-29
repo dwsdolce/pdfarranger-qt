@@ -47,6 +47,39 @@ Checked 2026-10-29. All nine round-trip this application's export with their
 field and widget counts unchanged — including sf86's 6,852 widgets — and none
 produces a spurious warning.
 
+### The signed sample, which is not here
+
+None of the nine is signed, and a signature cannot be fetched from a link: a
+public form is published *unsigned*, because signing is what the recipient
+does. So the one genuinely signed document measured for this work — a 43-page
+DocuSign envelope — is a private document. It stays in `corpus/`, which is
+ignored, it is **not published and not described here**, and what was learned
+from it is in [ANNOTATIONS.md](ANNOTATIONS.md) as structure only: an approval
+signature with no `/Perms`, `/SigFlags 3`, a `/DSS` in an appended revision,
+and no fillable field anywhere in it.
+
+It is held as a set of five, none of them published:
+
+| sample | signature | permission | what it is for |
+|---|---|---|---|
+| e-signed envelope, as delivered | approval | none | a `/DSS` revision appended after signing; a `/ByteRange` that does not reach the end of the file |
+| the same, signed version | approval | none | self-consistent: the signature covers the whole file |
+| certified form | certification | **`P=1`** | the locked case, and `/Perms /DocMDP` detection |
+| the same, re-saved by Acrobat | certification | `P=1` | proof that a conforming save is a byte-for-byte copy |
+| a marked-up copy | none | — | a flattened form, and a genuine `/Stamp` that read as a phantom field |
+
+It is held as a pair. Acrobat's *View Signed Version* writes out the revision
+the signature covers, which is the delivered file truncated at the end of its
+`/ByteRange` — so the second file is self-consistent where the first is not,
+and the two together cover both the appended-revision case and the plain one.
+
+That last part is why the hunt continues. A document that is signed *and*
+fillable is the case the fill guard needs, and it is not a thing governments
+publish. Where real files run out, the answer is a generated fixture with real
+cryptography — a self-signed certificate over a form built in code — which can
+cover what no corpus will: certification at each `/DocMDP` level, and a `/Lock`
+that names its fields.
+
 ## Coverage
 
     python tools/form_coverage.py corpus/*.pdf
