@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  pdfarranger\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-29 17:22+0000\n"
+"POT-Creation-Date: 2026-10-29 17:47+0000\n"
 "PO-Revision-Date: 2026-01-21 05:07+0100\n"
 "Last-Translator: Ekaterine Papava <papava.e@gtu.ge>\n"
 "Language: ka\n"
@@ -2195,6 +2195,15 @@ msgstr "ახალი ფანჯრის გახსნა შეუძლ
 msgid "Open"
 msgstr "გახსნა"
 
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid ""
+"This document is signed. Saving over it would leave a broken signature in "
+"its place, so save it under another name."
+msgstr ""
+"ეს დოკუმენტი ხელმოწერილია. მის ზემოდან შენახვა მის ადგილას დაზიანებულ "
+"ხელმოწერას დატოვებს, ამიტომ შეინახეთ სხვა სახელით."
+
 #: pdfarranger_qt/mainwindow.py
 msgid "Save As…"
 msgstr "შენახვა, როგორც…"
@@ -2217,6 +2226,15 @@ msgstr "შენახვა შეუძლებელია:"
 #: pdfarranger_qt/mainwindow.py
 msgid "Saved"
 msgstr "შენახულია"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid ""
+"The signature has not been carried over. Only the original file is signed; "
+"this is a new document."
+msgstr ""
+"ხელმოწერა არ გადმოვიდა. ხელმოწერილია მხოლოდ თავდაპირველი ფაილი; ეს ახალი "
+"დოკუმენტია."
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py

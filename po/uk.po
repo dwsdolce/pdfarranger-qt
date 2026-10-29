@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: unnamed project\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-29 17:22+0000\n"
+"POT-Creation-Date: 2026-10-29 17:47+0000\n"
 "PO-Revision-Date: 2026-05-27 19:30+0300\n"
 "Last-Translator: Dymko <Dymkovych@proton.me>\n"
 "Language: uk\n"
@@ -2203,6 +2203,15 @@ msgstr "Не вдалося відкрити нове вікно."
 msgid "Open"
 msgstr "Відкрити"
 
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid ""
+"This document is signed. Saving over it would leave a broken signature in "
+"its place, so save it under another name."
+msgstr ""
+"Цей документ підписано. Перезапис залишить на його місці порушений підпис, "
+"тож збережіть його під іншою назвою."
+
 #: pdfarranger_qt/mainwindow.py
 msgid "Save As…"
 msgstr "Зберегти як…"
@@ -2225,6 +2234,13 @@ msgstr "Не вдалося зберегти:"
 #: pdfarranger_qt/mainwindow.py
 msgid "Saved"
 msgstr "Збережено"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid ""
+"The signature has not been carried over. Only the original file is signed; "
+"this is a new document."
+msgstr "Підпис не перенесено. Підписано лише початковий файл; це новий документ."
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py

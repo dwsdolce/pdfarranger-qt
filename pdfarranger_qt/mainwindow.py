@@ -1697,8 +1697,44 @@ class MainWindow(QMainWindow):
         if self._load_paths(paths, row if row >= 0 else None):
             self._mark_modified()
 
+    def _signed_sources(self, pages=None):
+        """Open source documents that carry a signature.
+
+        Narrowed to the ones the given pages come from, so that exporting a
+        selection which does not touch the signed document says nothing about
+        signatures.
+        """
+        wanted = ({page.nfile for page in pages} if pages is not None
+                  else set(range(1, len(self.docs.docs) + 1)))
+        return [doc for number, doc in enumerate(self.docs.docs, start=1)
+                if number in wanted and getattr(doc, "signed", False)]
+
+    def _signed_file_at(self, path) -> bool:
+        """Whether ``path`` is the file one of the signed sources came from."""
+        try:
+            target = os.path.realpath(path)
+        except OSError:
+            return False
+        for doc in self._signed_sources():
+            try:
+                if os.path.realpath(doc.filename) == target:
+                    return True
+            except OSError:
+                continue
+        return False
+
     def save(self):
         if not self.current_path:
+            return self.save_as()
+        # Saving over a signed file is the one case this refuses outright: a
+        # document built here is a new one, so overwriting leaves a broken
+        # signature where a good one was, which no reader can tell from
+        # tampering. Deriving a new file is allowed, and is what Acrobat tells
+        # you to do as well -- "save a copy and reopen" (D5).
+        if self._signed_file_at(self.current_path):
+            QMessageBox.information(self, APP_NAME, _(
+                "This document is signed. Saving over it would leave a broken "
+                "signature in its place, so save it under another name."))
             return self.save_as()
         return self._write([self.current_path], self.model.pages,
                            outline=self.model.outline)
@@ -1782,6 +1818,12 @@ class MainWindow(QMainWindow):
             self._refresh_state()
         self._remember_folder(self.OUTPUT_FOLDER, files_out[0])
         self.statusBar().showMessage(_("Saved") + f" {files_out[0]}", 4000)
+        # Said once the file is written, because it is a fact about the file
+        # that was just written rather than a reason not to write it.
+        if self._signed_sources(pages):
+            QMessageBox.information(self, APP_NAME, _(
+                "The signature has not been carried over. Only the original "
+                "file is signed; this is a new document."))
         return True
 
     def close_document(self):

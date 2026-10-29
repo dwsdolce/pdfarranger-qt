@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PDF-Shuffler 0.7\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-29 17:22+0000\n"
+"POT-Creation-Date: 2026-10-29 17:47+0000\n"
 "PO-Revision-Date: 2025-05-26 10:43+0200\n"
 "Last-Translator: Heimen Stoffels <vistausss@fastmail.com>\n"
 "Language: nl\n"
@@ -2237,6 +2237,15 @@ msgstr "Kon geen nieuw venster openen."
 msgid "Open"
 msgstr "Openen"
 
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid ""
+"This document is signed. Saving over it would leave a broken signature in "
+"its place, so save it under another name."
+msgstr ""
+"Dit document is ondertekend. Het overschrijven zou er een ongeldige "
+"handtekening achterlaten, dus sla het op onder een andere naam."
+
 #: pdfarranger_qt/mainwindow.py
 msgid "Save As…"
 msgstr "Opslaan als…"
@@ -2259,6 +2268,15 @@ msgstr "Kon niet opslaan:"
 #: pdfarranger_qt/mainwindow.py
 msgid "Saved"
 msgstr "Opgeslagen"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid ""
+"The signature has not been carried over. Only the original file is signed; "
+"this is a new document."
+msgstr ""
+"De handtekening is niet meegenomen. Alleen het oorspronkelijke bestand is "
+"ondertekend; dit is een nieuw document."
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py

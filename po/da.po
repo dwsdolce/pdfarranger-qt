@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  pdfarranger\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-29 17:22+0000\n"
+"POT-Creation-Date: 2026-10-29 17:47+0000\n"
 "PO-Revision-Date: 2023-10-22 00:28+0200\n"
 "Last-Translator: Lrss <dev@lrss.dk>\n"
 "Language: da\n"
@@ -2225,6 +2225,15 @@ msgstr "Kunne ikke åbne et nyt vindue."
 msgid "Open"
 msgstr "Åben"
 
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid ""
+"This document is signed. Saving over it would leave a broken signature in "
+"its place, so save it under another name."
+msgstr ""
+"Dette dokument er signeret. At gemme hen over det ville efterlade en ødelagt"
+" signatur, så gem det under et andet navn."
+
 #: pdfarranger_qt/mainwindow.py
 msgid "Save As…"
 msgstr "Gem som…"
@@ -2247,6 +2256,15 @@ msgstr "Kunne ikke gemme:"
 #: pdfarranger_qt/mainwindow.py
 msgid "Saved"
 msgstr "Gemt"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid ""
+"The signature has not been carried over. Only the original file is signed; "
+"this is a new document."
+msgstr ""
+"Signaturen er ikke ført med over. Kun den oprindelige fil er signeret; dette"
+" er et nyt dokument."
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py

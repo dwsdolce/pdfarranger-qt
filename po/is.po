@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-29 17:22+0000\n"
+"POT-Creation-Date: 2026-10-29 17:47+0000\n"
 "PO-Revision-Date: 2025-09-28 16:51+0000\n"
 "Last-Translator: Sveinn í Felli <sv1@fellsnet.is>\n"
 "Language: is\n"
@@ -2207,6 +2207,15 @@ msgstr "Tókst ekki að opna nýjan glugga."
 msgid "Open"
 msgstr "Opna"
 
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid ""
+"This document is signed. Saving over it would leave a broken signature in "
+"its place, so save it under another name."
+msgstr ""
+"Þetta skjal er undirritað. Að vista yfir það myndi skilja eftir rofna "
+"undirritun í þess stað, vistaðu það því undir öðru heiti."
+
 #: pdfarranger_qt/mainwindow.py
 msgid "Save As…"
 msgstr "Vista sem…"
@@ -2229,6 +2238,15 @@ msgstr "Tókst ekki að vista:"
 #: pdfarranger_qt/mainwindow.py
 msgid "Saved"
 msgstr "Vistað"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid ""
+"The signature has not been carried over. Only the original file is signed; "
+"this is a new document."
+msgstr ""
+"Undirritunin fluttist ekki með. Aðeins upphaflega skráin er undirrituð; "
+"þetta er nýtt skjal."
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py

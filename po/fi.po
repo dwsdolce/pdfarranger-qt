@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  pdfarranger\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-29 17:22+0000\n"
+"POT-Creation-Date: 2026-10-29 17:47+0000\n"
 "PO-Revision-Date: 2024-03-24 19:16+0200\n"
 "Last-Translator: \n"
 "Language: fi\n"
@@ -2232,6 +2232,15 @@ msgstr "Uutta ikkunaa ei voitu avata."
 msgid "Open"
 msgstr "Avaa"
 
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid ""
+"This document is signed. Saving over it would leave a broken signature in "
+"its place, so save it under another name."
+msgstr ""
+"Tämä asiakirja on allekirjoitettu. Sen päälle tallentaminen jättäisi tilalle"
+" rikkinäisen allekirjoituksen, joten tallenna se toisella nimellä."
+
 #: pdfarranger_qt/mainwindow.py
 msgid "Save As…"
 msgstr "Tallenna nimellä…"
@@ -2254,6 +2263,15 @@ msgstr "Ei voitu tallentaa:"
 #: pdfarranger_qt/mainwindow.py
 msgid "Saved"
 msgstr "Tallennettu"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid ""
+"The signature has not been carried over. Only the original file is signed; "
+"this is a new document."
+msgstr ""
+"Allekirjoitusta ei siirretty mukana. Vain alkuperäinen tiedosto on "
+"allekirjoitettu; tämä on uusi asiakirja."
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py

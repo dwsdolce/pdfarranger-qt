@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-29 17:22+0000\n"
+"POT-Creation-Date: 2026-10-29 17:47+0000\n"
 "PO-Revision-Date: 2025-12-15 00:59+0700\n"
 "Last-Translator: Loc Huynh <https://github.com/hthienloc>\n"
 "Language: vi\n"
@@ -2191,6 +2191,15 @@ msgstr "Không mở được cửa sổ mới."
 msgid "Open"
 msgstr "Mở"
 
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid ""
+"This document is signed. Saving over it would leave a broken signature in "
+"its place, so save it under another name."
+msgstr ""
+"Tài liệu này đã được ký. Ghi đè lên nó sẽ để lại một chữ ký bị hỏng ở vị trí"
+" đó, vì vậy hãy lưu với tên khác."
+
 #: pdfarranger_qt/mainwindow.py
 msgid "Save As…"
 msgstr "Lưu dưới dạng…"
@@ -2213,6 +2222,15 @@ msgstr "Không lưu được:"
 #: pdfarranger_qt/mainwindow.py
 msgid "Saved"
 msgstr "Đã lưu"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid ""
+"The signature has not been carried over. Only the original file is signed; "
+"this is a new document."
+msgstr ""
+"Chữ ký đã không được chuyển sang. Chỉ tệp gốc được ký; đây là một tài liệu "
+"mới."
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py

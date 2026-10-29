@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-29 17:22+0000\n"
+"POT-Creation-Date: 2026-10-29 17:47+0000\n"
 "PO-Revision-Date: 2024-03-20 17:20+0800\n"
 "Last-Translator: 錢政維 <e.cwchien@gmail.com>\n"
 "Language: zh_TW\n"
@@ -2066,6 +2066,13 @@ msgstr "無法開啟新視窗。"
 msgid "Open"
 msgstr "開啟舊檔"
 
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid ""
+"This document is signed. Saving over it would leave a broken signature in "
+"its place, so save it under another name."
+msgstr "此文件已簽章。覆蓋儲存會在原處留下已損壞的簽章，請改用其他名稱儲存。"
+
 #: pdfarranger_qt/mainwindow.py
 msgid "Save As…"
 msgstr "另存新檔…"
@@ -2088,6 +2095,13 @@ msgstr "無法儲存："
 #: pdfarranger_qt/mainwindow.py
 msgid "Saved"
 msgstr "已儲存"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid ""
+"The signature has not been carried over. Only the original file is signed; "
+"this is a new document."
+msgstr "簽章未被保留。只有原始檔案帶有簽章；這是一份新文件。"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py

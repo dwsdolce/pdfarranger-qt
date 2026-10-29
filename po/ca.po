@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-29 17:22+0000\n"
+"POT-Creation-Date: 2026-10-29 17:47+0000\n"
 "PO-Revision-Date: 2022-10-03 23:44+0200\n"
 "Last-Translator: Ícar N. S. <icar.nin@protonmail.com>\n"
 "Language: ca\n"
@@ -2261,6 +2261,15 @@ msgstr "No s'ha pogut obrir una finestra nova."
 msgid "Open"
 msgstr "Obre"
 
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid ""
+"This document is signed. Saving over it would leave a broken signature in "
+"its place, so save it under another name."
+msgstr ""
+"Aquest document està signat. Desar-hi a sobre hi deixaria una signatura "
+"trencada, així que deseu-lo amb un altre nom."
+
 #: pdfarranger_qt/mainwindow.py
 msgid "Save As…"
 msgstr "Anomena i desa…"
@@ -2283,6 +2292,15 @@ msgstr "No s'ha pogut desar:"
 #: pdfarranger_qt/mainwindow.py
 msgid "Saved"
 msgstr "Desat"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid ""
+"The signature has not been carried over. Only the original file is signed; "
+"this is a new document."
+msgstr ""
+"La signatura no s'ha conservat. Només el fitxer original està signat; aquest"
+" és un document nou."
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py

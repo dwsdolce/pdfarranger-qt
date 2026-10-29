@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-29 17:22+0000\n"
+"POT-Creation-Date: 2026-10-29 17:47+0000\n"
 "PO-Revision-Date: 2023-06-08 10:00+0700\n"
 "Last-Translator: Abdul Munif Hanafi <amunifhanafi@gmail.com>\n"
 "Language: id\n"
@@ -2255,6 +2255,15 @@ msgstr "Tidak dapat membuka jendela baru."
 msgid "Open"
 msgstr "Buka"
 
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid ""
+"This document is signed. Saving over it would leave a broken signature in "
+"its place, so save it under another name."
+msgstr ""
+"Dokumen ini ditandatangani. Menimpanya akan meninggalkan tanda tangan yang "
+"rusak di tempatnya, jadi simpan dengan nama lain."
+
 #: pdfarranger_qt/mainwindow.py
 msgid "Save As…"
 msgstr "Simpan Sebagai…"
@@ -2277,6 +2286,15 @@ msgstr "Tidak dapat menyimpan:"
 #: pdfarranger_qt/mainwindow.py
 msgid "Saved"
 msgstr "Tersimpan"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid ""
+"The signature has not been carried over. Only the original file is signed; "
+"this is a new document."
+msgstr ""
+"Tanda tangan tidak ikut terbawa. Hanya berkas asli yang ditandatangani; ini "
+"adalah dokumen baru."
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py

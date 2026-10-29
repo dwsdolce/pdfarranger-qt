@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pdfarranger main\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-29 17:22+0000\n"
+"POT-Creation-Date: 2026-10-29 17:47+0000\n"
 "PO-Revision-Date: 2026-04-24 21:19+0300\n"
 "Last-Translator: Oğuz Ersen <oguz@ersen.moe>\n"
 "Language: tr\n"
@@ -2185,6 +2185,15 @@ msgstr "Yeni bir pencere açılamadı."
 msgid "Open"
 msgstr "Aç"
 
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid ""
+"This document is signed. Saving over it would leave a broken signature in "
+"its place, so save it under another name."
+msgstr ""
+"Bu belge imzalanmış. Üzerine kaydetmek yerinde bozuk bir imza bırakır, bu "
+"yüzden başka bir adla kaydedin."
+
 #: pdfarranger_qt/mainwindow.py
 msgid "Save As…"
 msgstr "Farklı Kaydet…"
@@ -2207,6 +2216,13 @@ msgstr "Kaydedilemedi:"
 #: pdfarranger_qt/mainwindow.py
 msgid "Saved"
 msgstr "Kaydedildi"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid ""
+"The signature has not been carried over. Only the original file is signed; "
+"this is a new document."
+msgstr "İmza aktarılmadı. Yalnızca özgün dosya imzalı; bu yeni bir belge."
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py

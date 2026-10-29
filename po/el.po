@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PDF Arranger 1.9.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-29 17:22+0000\n"
+"POT-Creation-Date: 2026-10-29 17:47+0000\n"
 "PO-Revision-Date: 2023-06-12 10:30+0300\n"
 "Last-Translator: Manussos Pulinakis "
 "<38626261+manussos@users.noreply.github.com>\n"
@@ -2269,6 +2269,15 @@ msgstr "Δεν ήταν δυνατό το άνοιγμα νέου παραθύρ
 msgid "Open"
 msgstr "Άνοιγμα"
 
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid ""
+"This document is signed. Saving over it would leave a broken signature in "
+"its place, so save it under another name."
+msgstr ""
+"Αυτό το έγγραφο είναι υπογεγραμμένο. Η αποθήκευση πάνω του θα άφηνε στη θέση"
+" του μια κατεστραμμένη υπογραφή, γι' αυτό αποθηκεύστε το με άλλο όνομα."
+
 #: pdfarranger_qt/mainwindow.py
 msgid "Save As…"
 msgstr "Αποθήκευση ως…"
@@ -2291,6 +2300,15 @@ msgstr "Δεν ήταν δυνατή η αποθήκευση:"
 #: pdfarranger_qt/mainwindow.py
 msgid "Saved"
 msgstr "Αποθηκεύτηκε"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid ""
+"The signature has not been carried over. Only the original file is signed; "
+"this is a new document."
+msgstr ""
+"Η υπογραφή δεν μεταφέρθηκε. Μόνο το αρχικό αρχείο είναι υπογεγραμμένο· αυτό "
+"είναι ένα νέο έγγραφο."
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py

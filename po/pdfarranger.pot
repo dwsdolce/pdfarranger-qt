@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pdfarranger-qt VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/dwsdolce/pdfarranger-qt/issues\n"
-"POT-Creation-Date: 2026-10-29 17:22+0000\n"
+"POT-Creation-Date: 2026-10-29 17:47+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1725,6 +1725,12 @@ msgid "Open"
 msgstr ""
 
 #: pdfarranger_qt/mainwindow.py
+msgid ""
+"This document is signed. Saving over it would leave a broken signature in "
+"its place, so save it under another name."
+msgstr ""
+
+#: pdfarranger_qt/mainwindow.py
 msgid "Save As…"
 msgstr ""
 
@@ -1742,6 +1748,12 @@ msgstr ""
 
 #: pdfarranger_qt/mainwindow.py
 msgid "Saved"
+msgstr ""
+
+#: pdfarranger_qt/mainwindow.py
+msgid ""
+"The signature has not been carried over. Only the original file is signed; "
+"this is a new document."
 msgstr ""
 
 #: pdfarranger_qt/mainwindow.py

@@ -13,7 +13,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-29 17:22+0000\n"
+"POT-Creation-Date: 2026-10-29 17:47+0000\n"
 "PO-Revision-Date: 2024-02-24 20:47+0100\n"
 "Last-Translator: Jérôme Robert <jeromerobert@gmx.com>\n"
 "Language: fr\n"
@@ -2248,6 +2248,15 @@ msgstr "Impossible d'ouvrir une nouvelle fenêtre."
 msgid "Open"
 msgstr "Ouvrir"
 
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid ""
+"This document is signed. Saving over it would leave a broken signature in "
+"its place, so save it under another name."
+msgstr ""
+"Ce document est signé. L'écraser laisserait à sa place une signature "
+"invalide ; enregistrez-le donc sous un autre nom."
+
 #: pdfarranger_qt/mainwindow.py
 msgid "Save As…"
 msgstr "Enregistrer sous…"
@@ -2270,6 +2279,15 @@ msgstr "Impossible d'enregistrer :"
 #: pdfarranger_qt/mainwindow.py
 msgid "Saved"
 msgstr "Enregistré"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid ""
+"The signature has not been carried over. Only the original file is signed; "
+"this is a new document."
+msgstr ""
+"La signature n'a pas été conservée. Seul le fichier d'origine est signé ; "
+"ceci est un nouveau document."
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py

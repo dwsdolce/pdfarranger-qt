@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pdfarranger master\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-29 17:22+0000\n"
+"POT-Creation-Date: 2026-10-29 17:47+0000\n"
 "PO-Revision-Date: 2026-09-04 09:59+0000\n"
 "Last-Translator: Lumenman <28367232+Lumenman@users.noreply.github.com>\n"
 "Language: ru\n"
@@ -2058,6 +2058,15 @@ msgstr "Не удалось открыть новое окно."
 msgid "Open"
 msgstr "Открыть"
 
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid ""
+"This document is signed. Saving over it would leave a broken signature in "
+"its place, so save it under another name."
+msgstr ""
+"Этот документ подписан. Перезапись оставит на его месте нарушенную подпись, "
+"поэтому сохраните его под другим именем."
+
 #: pdfarranger_qt/mainwindow.py
 msgid "Save As…"
 msgstr "Сохранить как…"
@@ -2077,6 +2086,13 @@ msgstr "Не удалось сохранить:"
 #: pdfarranger_qt/mainwindow.py
 msgid "Saved"
 msgstr "Сохранено"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid ""
+"The signature has not been carried over. Only the original file is signed; "
+"this is a new document."
+msgstr "Подпись не перенесена. Подписан только исходный файл; это новый документ."
 
 #: pdfarranger_qt/mainwindow.py
 msgid "This document has unsaved changes."

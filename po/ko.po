@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pdfarranger - Korean\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-29 17:22+0000\n"
+"POT-Creation-Date: 2026-10-29 17:47+0000\n"
 "PO-Revision-Date: 2026-05-25 00:41+0900\n"
 "Last-Translator: VenusGirl <venusgirl@outlook.com>\n"
 "Language: ko\n"
@@ -2085,6 +2085,13 @@ msgstr "새 창을 열 수 없습니다."
 msgid "Open"
 msgstr "열기"
 
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid ""
+"This document is signed. Saving over it would leave a broken signature in "
+"its place, so save it under another name."
+msgstr "이 문서는 서명되어 있습니다. 덮어쓰면 그 자리에 손상된 서명이 남으므로 다른 이름으로 저장하십시오."
+
 #: pdfarranger_qt/mainwindow.py
 msgid "Save As…"
 msgstr "다른 이름으로 저장…"
@@ -2107,6 +2114,13 @@ msgstr "저장할 수 없습니다:"
 #: pdfarranger_qt/mainwindow.py
 msgid "Saved"
 msgstr "저장됨"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid ""
+"The signature has not been carried over. Only the original file is signed; "
+"this is a new document."
+msgstr "서명이 이어지지 않았습니다. 서명된 것은 원본 파일뿐이며, 이것은 새 문서입니다."
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py

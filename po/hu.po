@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-29 17:22+0000\n"
+"POT-Creation-Date: 2026-10-29 17:47+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: hu\n"
@@ -2239,6 +2239,15 @@ msgstr "Nem sikerült új ablakot nyitni."
 msgid "Open"
 msgstr "Megnyitás"
 
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid ""
+"This document is signed. Saving over it would leave a broken signature in "
+"its place, so save it under another name."
+msgstr ""
+"Ez a dokumentum alá van írva. Felülírása érvénytelen aláírást hagyna a "
+"helyén, ezért mentse másik néven."
+
 #: pdfarranger_qt/mainwindow.py
 msgid "Save As…"
 msgstr "Mentés másként…"
@@ -2261,6 +2270,15 @@ msgstr "Nem sikerült menteni:"
 #: pdfarranger_qt/mainwindow.py
 msgid "Saved"
 msgstr "Mentve"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid ""
+"The signature has not been carried over. Only the original file is signed; "
+"this is a new document."
+msgstr ""
+"Az aláírás nem került át. Csak az eredeti fájl van aláírva; ez egy új "
+"dokumentum."
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py

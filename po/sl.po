@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  pdfarranger\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-29 17:22+0000\n"
+"POT-Creation-Date: 2026-10-29 17:47+0000\n"
 "PO-Revision-Date: 2023-06-06 13:27+0200\n"
 "Last-Translator: Janez G <janezgac@gmail.com>\n"
 "Language: sl_SI\n"
@@ -2219,6 +2219,15 @@ msgstr "Novega okna ni bilo mogoče odpreti."
 msgid "Open"
 msgstr "Odpri"
 
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid ""
+"This document is signed. Saving over it would leave a broken signature in "
+"its place, so save it under another name."
+msgstr ""
+"Ta dokument je podpisan. Shranjevanje čezenj bi na njegovem mestu pustilo "
+"pokvarjen podpis, zato ga shranite pod drugim imenom."
+
 #: pdfarranger_qt/mainwindow.py
 msgid "Save As…"
 msgstr "Shrani kot …"
@@ -2241,6 +2250,13 @@ msgstr "Ni bilo mogoče shraniti:"
 #: pdfarranger_qt/mainwindow.py
 msgid "Saved"
 msgstr "Shranjeno"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid ""
+"The signature has not been carried over. Only the original file is signed; "
+"this is a new document."
+msgstr "Podpis ni bil prenesen. Podpisana je le izvirna datoteka; to je nov dokument."
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py

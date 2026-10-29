@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PDF-Shuffler 0.7\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-29 17:22+0000\n"
+"POT-Creation-Date: 2026-10-29 17:47+0000\n"
 "PO-Revision-Date: 2021-12-30 17:13+0100\n"
 "Last-Translator: Toratora <darex7@o2.pl>\n"
 "Language: pl_PL\n"
@@ -2279,6 +2279,15 @@ msgstr "Otwórz"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
+msgid ""
+"This document is signed. Saving over it would leave a broken signature in "
+"its place, so save it under another name."
+msgstr ""
+"Ten dokument jest podpisany. Zapisanie na nim pozostawiłoby w jego miejscu "
+"uszkodzony podpis, zapisz go więc pod inną nazwą."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
 msgid "Save As…"
 msgstr "Zapisz jako…"
 
@@ -2300,6 +2309,15 @@ msgstr "Nie udało się zapisać:"
 #: pdfarranger_qt/mainwindow.py
 msgid "Saved"
 msgstr "Zapisano"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid ""
+"The signature has not been carried over. Only the original file is signed; "
+"this is a new document."
+msgstr ""
+"Podpis nie został przeniesiony. Podpisany jest tylko pierwotny plik; to jest"
+" nowy dokument."
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py

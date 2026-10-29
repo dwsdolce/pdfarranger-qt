@@ -29,10 +29,11 @@ check: a field turned into a picture of itself is no longer a field.
 import io
 import os
 import unittest
+from unittest.mock import patch
 
 import pikepdf
 from PySide6.QtGui import QImage
-from support import TEST_PDF, settle, temp_path
+from support import MESSAGE_BOXES, TEST_PDF, settle, temp_path
 from test_annotations import blue_pixels, document_with_annotation
 
 from pdfarranger_qt import forms
@@ -1659,3 +1660,88 @@ class TestExportLeavesNoSignatureBehind(unittest.TestCase):
             self.assertTrue(forms.is_signed(source),
                             "the original must still be signed")
 
+
+class TestSavingADocumentThatWasSigned(unittest.TestCase):
+    """2.9's done-when, and the other half of D5.
+
+    Filling is refused and arranging is not, so what is left is the save: a
+    new file may be written, the file that carries the signature may not be
+    written over, and either way the user is told the signature has not come
+    with it. Acrobat draws the same line -- "save a copy and reopen to edit
+    this document".
+    """
+
+    def window(self, data, name="to-save.pdf"):
+        from pdfarranger_qt.mainwindow import MainWindow
+
+        self.path = temp_path(name)
+        with open(self.path, "wb") as handle:
+            handle.write(data)
+        win = MainWindow()
+        win.resize(700, 560)
+        win.show()
+        win.open_paths([self.path])
+        settle(timeout_ms=600)
+        win.modified = False
+        self.addCleanup(win.close)
+        self.addCleanup(lambda: setattr(win, "modified", False))
+        MESSAGE_BOXES.clear()
+        return win
+
+    def dialogs(self):
+        return [text for _kind, _title, text in MESSAGE_BOXES]
+
+    def said(self, fragment):
+        return any(fragment in text for text in self.dialogs())
+
+    def test_saving_over_a_signed_file_is_refused(self):
+        """It would leave a broken signature where a good one was.
+
+        Which is the one thing D5 says never to do, and the only thing a
+        reader could not tell from tampering.
+        """
+        win = self.window(signed())
+        before = os.path.getsize(self.path)
+        with patch.object(type(win), "save_as", return_value=False) as elsewhere:
+            win.save()
+        self.assertTrue(elsewhere.called, "it should offer Save As instead")
+        self.assertTrue(self.said("Saving over it"), self.dialogs())
+        self.assertEqual(os.path.getsize(self.path), before,
+                         "the signed file must be untouched")
+
+    def test_saving_over_an_unsigned_file_is_not(self):
+        """The control, and the common case by a very long way."""
+        win = self.window(typable())
+        with patch.object(type(win), "save_as", return_value=False) as elsewhere:
+            win.save()
+        self.assertFalse(elsewhere.called)
+
+    def test_a_placeholder_signature_does_not_refuse_a_save(self):
+        win = self.window(signed(placeholder=True))
+        with patch.object(type(win), "save_as", return_value=False) as elsewhere:
+            win.save()
+        self.assertFalse(elsewhere.called)
+
+    def test_saving_elsewhere_says_the_signature_is_gone(self):
+        """Allowed, and said plainly, because the new file is not signed."""
+        win = self.window(signed())
+        out = temp_path("derived.pdf")
+        self.assertTrue(win._write([out], win.model.pages))
+        self.assertTrue(os.path.exists(out))
+        self.assertTrue(self.said("has not been carried over"), self.dialogs())
+
+    def test_an_ordinary_save_says_nothing_about_signatures(self):
+        win = self.window(typable())
+        out = temp_path("plain.pdf")
+        self.assertTrue(win._write([out], win.model.pages))
+        self.assertFalse(self.said("has not been carried over"), self.dialogs())
+
+    def test_the_derived_file_really_is_unsigned(self):
+        """The message has to be true, so it is checked rather than trusted."""
+        win = self.window(signed())
+        out = temp_path("derived-check.pdf")
+        self.assertTrue(win._write([out], win.model.pages))
+        with pikepdf.open(out) as saved:
+            self.assertFalse(forms.is_signed(saved))
+        with pikepdf.open(self.path) as original:
+            self.assertTrue(forms.is_signed(original), "the original stands")

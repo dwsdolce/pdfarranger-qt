@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-29 17:22+0000\n"
+"POT-Creation-Date: 2026-10-29 17:47+0000\n"
 "PO-Revision-Date: 2023-01-19 20:27+0100\n"
 "Last-Translator: alexgabi\n"
 "Language: eu\n"
@@ -2259,6 +2259,15 @@ msgstr "Ezin izan da leiho berri bat ireki."
 msgid "Open"
 msgstr "Ireki"
 
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid ""
+"This document is signed. Saving over it would leave a broken signature in "
+"its place, so save it under another name."
+msgstr ""
+"Dokumentu hau sinatuta dago. Gainean gordetzeak sinadura hautsi bat utziko "
+"luke haren lekuan; gorde ezazu beste izen batekin."
+
 #: pdfarranger_qt/mainwindow.py
 msgid "Save As…"
 msgstr "Gorde honela…"
@@ -2281,6 +2290,15 @@ msgstr "Ezin izan da gorde:"
 #: pdfarranger_qt/mainwindow.py
 msgid "Saved"
 msgstr "Gordeta"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid ""
+"The signature has not been carried over. Only the original file is signed; "
+"this is a new document."
+msgstr ""
+"Sinadura ez da mantendu. Jatorrizko fitxategia bakarrik dago sinatuta; hau "
+"dokumentu berri bat da."
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py

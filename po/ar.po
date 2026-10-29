@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-29 17:22+0000\n"
+"POT-Creation-Date: 2026-10-29 17:47+0000\n"
 "PO-Revision-Date: 2024-09-05 17:05+0300\n"
 "Last-Translator: Abdullah Albaroty <albaroty@gmail.com>\n"
 "Language: ar\n"
@@ -2188,6 +2188,15 @@ msgstr "تعذر فتح نافذة جديدة."
 msgid "Open"
 msgstr "فتح"
 
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid ""
+"This document is signed. Saving over it would leave a broken signature in "
+"its place, so save it under another name."
+msgstr ""
+"هذا المستند موقَّع. الحفظ فوقه سيترك مكانه توقيعًا تالفًا، لذا احفظه باسم "
+"آخر."
+
 #: pdfarranger_qt/mainwindow.py
 msgid "Save As…"
 msgstr "حفظ باسم…"
@@ -2210,6 +2219,13 @@ msgstr "تعذر الحفظ:"
 #: pdfarranger_qt/mainwindow.py
 msgid "Saved"
 msgstr "حُفظ"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid ""
+"The signature has not been carried over. Only the original file is signed; "
+"this is a new document."
+msgstr "لم يُنقل التوقيع. الملف الأصلي وحده هو الموقَّع؛ هذا مستند جديد."
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py

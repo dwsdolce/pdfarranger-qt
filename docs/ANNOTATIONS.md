@@ -2,11 +2,11 @@
 
 **Issue:** [#14](https://github.com/dwsdolce/pdfarranger-qt/issues/14)
 
-**Status:** IN PROGRESS — body 1 **complete**, body 2 at seven of nine. Tick
+**Status:** IN PROGRESS — bodies 1 and 2 **complete**; markup is left. Tick
 boxes and single-line text fields can both be filled in; what is typed shows,
 survives undo and reaches the saved file with a drawing for it. Only the guard
-Filling is refused in a signed document. The export strip and the save guard
-are left before markup.
+A signed document refuses to be filled in or saved over, and a document
+derived from one is honestly unsigned. Body 3, markup, is what remains.
 
 A filled insurance form was opened in this application and came up blank. Every
 answer typed into it was missing — text, ticks, the lot — with nothing on screen
@@ -28,7 +28,7 @@ highlight are the same problem a second time.
 | | State |
 |---|---|
 | 1. Show what is in the file | **complete** — drawn, saved, printed, and measured against real forms |
-| 2. Fill fields | in progress — seven of nine; the export strip and the save guard are left |
+| 2. Fill fields | **complete** — nine of nine |
 | 3. Markup | after filling, which proves the model it needs |
 
 The first was correctness and needed no decision reversed: the application did
@@ -304,8 +304,8 @@ cheaper than a flag every caller has to remember.
 | 2.5 | Text fields, single-line, explicit size | 2.1, 2.2, 2.4 | typing shows, survives undo, and saves | **complete** |
 | 2.6 | Narrow the snapshot invalidation | — | ten fills do not rebuild the reader ten times | **complete** with 2.3, by leaving nothing to rebuild |
 | 2.7 | Refuse to fill a field in a signed document | 2.3 | a signed form says why rather than invalidating a signature | **complete** |
-| 2.8 | Strip the remains of a signature on export | -- | a derived document is honestly unsigned instead of claiming a signature over bytes that are gone | next |
-| 2.9 | Refuse to save over a signed source, and say the signature will not carry | 2.7, 2.8 | Save on a signed document offers Save As; a derived save says the signature is gone | |
+| 2.8 | Strip the remains of a signature on export | -- | a derived document is honestly unsigned instead of claiming a signature over bytes that are gone | **complete** |
+| 2.9 | Refuse to save over a signed source, and say the signature will not carry | 2.7, 2.8 | Save on a signed document offers Save As; a derived save says the signature is gone | **complete** |
 
 **2.1 has a precedent.** D20 settled how the outline is owned in the undo state
 beside the page list, keyed by a stable page id so reordering costs nothing and
@@ -712,6 +712,30 @@ named gaps rather than for bulk — a real radio group, signature fields, and a
 form with many widgets per field. The tool found its own bug on the way: `/FT`
 is inherited and can sit between the widget and the root, so reading it off the
 root called 1,053 radio buttons typeless.
+
+**2026-10-29 — steps 2.8 and 2.9.** Export takes the remains of a signature
+out instead of carrying them. The bug was there whichever way D5 had gone: a
+signature field travelled with its page and `/SigFlags` was carried across, so
+the output announced a signature over bytes that no longer existed -- and on
+the certified sample kept a `/Reference` declaring `DocMDP P=1`, no changes
+permitted, while the `/Perms` entry naming it did not survive the new root.
+Whether the output lied at all depended on whether the widget's page was in
+the selection.
+
+Dropping the reference turned out not to be enough. qpdf does not collect
+unreachable objects, so the signature dictionary stayed in the file -- 6,453
+bytes of PKCS#7 and the signer's certificate chain up to the Adobe root,
+unreachable and so harmless to a viewer, but carried into a document with
+nothing to do with it. It is emptied before it is unhooked. A *visible*
+signature keeps its drawing, as a `/Stamp`: the appearance is page content the
+user can see, and it is the dictionary that made the claim.
+
+With that, a save may happen but not over the signed file. `save()` writes to
+`current_path` where `save_as()` prompts, so refusing the first and offering
+the second is the whole of it -- which is also what Acrobat tells you to do,
+"save a copy and reopen to edit this document". Either way the save says the
+signature has not come with it, and a test opens the result to check that is
+true rather than trusting the message.
 
 **2026-10-29 — step 2.7.** A signed document refuses to have its fields
 filled in, and says so rather than ignoring the click. The test is a `/Sig`

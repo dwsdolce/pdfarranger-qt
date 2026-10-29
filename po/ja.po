@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-29 17:22+0000\n"
+"POT-Creation-Date: 2026-10-29 17:47+0000\n"
 "PO-Revision-Date: 2022-09-01 00:40+0900\n"
 "Last-Translator: sicklylife <translation@sicklylife.jp>\n"
 "Language: ja\n"
@@ -2110,6 +2110,13 @@ msgstr "開く"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
+msgid ""
+"This document is signed. Saving over it would leave a broken signature in "
+"its place, so save it under another name."
+msgstr "この文書は署名されています。上書きすると壊れた署名が残るため、別の名前で保存してください。"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
 msgid "Save As…"
 msgstr "名前を付けて保存…"
 
@@ -2131,6 +2138,13 @@ msgstr "保存できませんでした:"
 #: pdfarranger_qt/mainwindow.py
 msgid "Saved"
 msgstr "保存しました"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid ""
+"The signature has not been carried over. Only the original file is signed; "
+"this is a new document."
+msgstr "署名は引き継がれていません。署名されているのは元のファイルだけで、これは新しい文書です。"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py

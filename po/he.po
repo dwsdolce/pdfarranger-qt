@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-29 17:22+0000\n"
+"POT-Creation-Date: 2026-10-29 17:47+0000\n"
 "PO-Revision-Date: 2023-06-12 11:22+0300\n"
 "Last-Translator: Yaron Shahrabani <sh.yaron@gmail.com>\n"
 "Language: he\n"
@@ -2186,6 +2186,13 @@ msgstr "לא ניתן היה לפתוח חלון חדש."
 msgid "Open"
 msgstr "פתיחה"
 
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid ""
+"This document is signed. Saving over it would leave a broken signature in "
+"its place, so save it under another name."
+msgstr "מסמך זה חתום. שמירה עליו תשאיר במקומו חתימה פגומה, לכן שמור אותו בשם אחר."
+
 #: pdfarranger_qt/mainwindow.py
 msgid "Save As…"
 msgstr "שמירה בשם…"
@@ -2208,6 +2215,13 @@ msgstr "לא ניתן היה לשמור:"
 #: pdfarranger_qt/mainwindow.py
 msgid "Saved"
 msgstr "נשמר"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid ""
+"The signature has not been carried over. Only the original file is signed; "
+"this is a new document."
+msgstr "החתימה לא הועברה. רק הקובץ המקורי חתום; זהו מסמך חדש."
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py

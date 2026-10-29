@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PDF Arranger 1.14.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-29 17:22+0000\n"
+"POT-Creation-Date: 2026-10-29 17:47+0000\n"
 "PO-Revision-Date: 2026-06-02 17:09+0800\n"
 "Last-Translator: Puqns67 <me@puqns67.icu>\n"
 "Language: zh_CN\n"
@@ -2029,6 +2029,13 @@ msgstr "无法打开新窗口。"
 msgid "Open"
 msgstr "打开"
 
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid ""
+"This document is signed. Saving over it would leave a broken signature in "
+"its place, so save it under another name."
+msgstr "此文档已签名。覆盖保存会在原处留下已损坏的签名，请换一个名称保存。"
+
 #: pdfarranger_qt/mainwindow.py
 msgid "Save As…"
 msgstr "另存为…"
@@ -2051,6 +2058,13 @@ msgstr "无法保存："
 #: pdfarranger_qt/mainwindow.py
 msgid "Saved"
 msgstr "已保存"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid ""
+"The signature has not been carried over. Only the original file is signed; "
+"this is a new document."
+msgstr "签名未被保留。只有原始文件带有签名；这是一个新文档。"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py

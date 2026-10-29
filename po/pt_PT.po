@@ -13,7 +13,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  pdfarranger\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-29 17:22+0000\n"
+"POT-Creation-Date: 2026-10-29 17:47+0000\n"
 "PO-Revision-Date: 2025-08-29 21:18+0100\n"
 "Last-Translator: Hugo Carvalho <hugokarvalho@hotmail.com>\n"
 "Language: pt_PT\n"
@@ -2229,6 +2229,15 @@ msgstr "Não foi possível abrir uma nova janela."
 msgid "Open"
 msgstr "Abrir"
 
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid ""
+"This document is signed. Saving over it would leave a broken signature in "
+"its place, so save it under another name."
+msgstr ""
+"Este documento está assinado. Substituí-lo deixaria uma assinatura inválida "
+"no seu lugar, por isso guarde-o com outro nome."
+
 #: pdfarranger_qt/mainwindow.py
 msgid "Save As…"
 msgstr "Guardar como…"
@@ -2251,6 +2260,15 @@ msgstr "Não foi possível guardar:"
 #: pdfarranger_qt/mainwindow.py
 msgid "Saved"
 msgstr "Guardado"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid ""
+"The signature has not been carried over. Only the original file is signed; "
+"this is a new document."
+msgstr ""
+"A assinatura não foi transferida. Apenas o ficheiro original está assinado; "
+"este é um documento novo."
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
