@@ -333,8 +333,10 @@ def radio_across_pages():
             Rect=pikepdf.Array([50, 50 + index * 20, 62, 62 + index * 20]),
             F=4, Parent=field,
             AS=pikepdf.Name("/yes") if index == 0 else pikepdf.Name.Off,
+            # A positional dict, not keywords: pikepdf prefixes a slash to a
+            # keyword, so **{"/yes": ...} builds a state called "//yes".
             AP=pikepdf.Dictionary(N=pikepdf.Dictionary(
-                **{"/yes": tick(pdf, True), "/Off": tick(pdf, False)}))))
+                {"/yes": tick(pdf, True), "/Off": tick(pdf, False)}))))
         kids.append(widget)
         page[pikepdf.Name.Annots] = pikepdf.Array([widget])
     field[pikepdf.Name.Kids] = pikepdf.Array(kids)
@@ -580,3 +582,186 @@ class TestAValueSurvivesEditing(unittest.TestCase):
         self.win.undo()
         settle(timeout_ms=200)
         self.assertEqual(self.typed(), "typed")
+
+
+class TestReadingTheFieldsOfADocument(unittest.TestCase):
+    """What the fields are, read with pikepdf and no canvas in sight."""
+
+    def map_of(self, data):
+        from pdfarranger_qt.forms import FieldMap
+
+        return FieldMap.read(data)
+
+    def test_a_widget_is_found_with_its_identity(self):
+        fields = self.map_of(document_with_annotation("/Widget"))
+        self.assertEqual(len(fields), 1)
+        only = fields.on_page(0)[0]
+        self.assertEqual(only.name, "a field")
+        self.assertEqual(only.kind, "/Tx")
+        self.assertEqual(only.value, "a value")
+
+    def test_a_plain_annotation_is_not_a_field(self):
+        self.assertEqual(len(self.map_of(document_with_annotation("/Square"))), 0)
+
+    def test_a_rewritten_widget_is_still_a_field(self):
+        """The reader shows the copy where widgets became stamps, and the
+        click has to land on them there."""
+        from pdfarranger_qt import forms
+
+        data = forms.rendered_bytes(document_with_annotation("/Widget"))
+        self.assertEqual(len(self.map_of(data)), 1)
+
+    def test_a_radio_group_is_recognised_as_one(self):
+        fields = self.map_of(radio_across_pages())
+        self.assertEqual(len(fields), 2, "one widget on each page")
+        for page in (0, 1):
+            found = fields.on_page(page)[0]
+            self.assertEqual(found.name, "choice",
+                             "both widgets name the same field")
+            self.assertTrue(found.is_radio)
+            self.assertFalse(found.is_checkbox)
+            self.assertEqual(found.states, ["/yes"])
+
+    def test_rubbish_reads_as_nothing(self):
+        self.assertEqual(len(self.map_of(b"not a pdf")), 0)
+
+    # -- what a click should and should not act on -------------------------
+
+    def field(self, **kwargs):
+        from pdfarranger_qt.forms import Field
+
+        base = dict(page=0, rect=(0, 0, 10, 10), name="f", kind="/Tx",
+                    flags=0, states=[], value=None, hidden=False)
+        base.update(kwargs)
+        return Field(**base)
+
+    def test_an_ordinary_field_is_fillable(self):
+        self.assertTrue(self.field().fillable)
+
+    def test_a_read_only_field_is_not(self):
+        """The document saying no."""
+        self.assertFalse(self.field(flags=1).fillable)
+
+    def test_a_pushbutton_is_not(self):
+        """It runs an action; it holds no value."""
+        self.assertFalse(self.field(kind="/Btn", flags=1 << 16).fillable)
+
+    def test_a_signature_is_not(self):
+        self.assertFalse(self.field(kind="/Sig").fillable)
+
+    def test_a_hidden_field_is_not(self):
+        self.assertFalse(self.field(hidden=True).fillable)
+
+    def test_a_radio_is_not_mistaken_for_a_tick_box(self):
+        radio = self.field(kind="/Btn", flags=1 << 15)
+        self.assertTrue(radio.is_radio)
+        self.assertFalse(radio.is_checkbox)
+        box = self.field(kind="/Btn")
+        self.assertTrue(box.is_checkbox)
+        self.assertFalse(box.is_radio)
+
+
+class TestWhichFieldIsUnderAPoint(unittest.TestCase):
+    def map_of(self, *rects):
+        from pdfarranger_qt.forms import Field, FieldMap
+
+        return FieldMap(
+            Field(page=0, rect=r, name=f"f{i}", kind="/Tx", flags=0,
+                  states=[], value=None, hidden=False)
+            for i, r in enumerate(rects))
+
+    def test_a_point_inside_finds_it(self):
+        found = self.map_of((10, 10, 50, 30)).at(0, 20, 20)
+        self.assertIsNotNone(found)
+        self.assertEqual(found.name, "f0")
+
+    def test_a_point_outside_finds_nothing(self):
+        self.assertIsNone(self.map_of((10, 10, 50, 30)).at(0, 5, 5))
+
+    def test_the_edge_counts_as_inside(self):
+        fields = self.map_of((10, 10, 50, 30))
+        for x, y in ((10, 10), (50, 30), (10, 30), (50, 10)):
+            self.assertIsNotNone(fields.at(0, x, y), f"({x}, {y})")
+
+    def test_another_page_finds_nothing(self):
+        self.assertIsNone(self.map_of((10, 10, 50, 30)).at(1, 20, 20))
+
+    def test_the_one_on_top_wins(self):
+        """Annotations draw in array order, so the later one is on top and is
+        what a click should reach."""
+        found = self.map_of((0, 0, 100, 100), (10, 10, 50, 50)).at(0, 20, 20)
+        self.assertEqual(found.name, "f1")
+
+
+class TestClickingAField(unittest.TestCase):
+    """2.2's done-when: clicking a widget identifies its field; clicking
+    elsewhere does not.
+
+    Through the real canvas, because the y axis is the whole of the work: a
+    page point here is measured down from the top, a PDF rectangle up from the
+    bottom, and nothing but a round trip proves the flip is right.
+    """
+
+    def setUp(self):
+        from pdfarranger_qt.mainwindow import MainWindow
+
+        path = temp_path("clickable.pdf")
+        with open(path, "wb") as handle:
+            handle.write(document_with_annotation("/Widget"))
+        self.win = MainWindow()
+        self.win.resize(700, 760)
+        self.win.show()
+        self.win.open_paths([path])
+        settle(timeout_ms=600)
+        self.win.set_read_mode(True)
+        settle(timeout_ms=800)
+        self.addCleanup(self.win.close)
+        self.addCleanup(lambda: setattr(self.win, "modified", False))
+        self.canvas = self.win.reader.canvas
+
+    def viewport_point(self, x_pt, y_pt_from_top):
+        """A page point, in the viewport coordinates a click arrives in."""
+        from PySide6.QtCore import QPointF
+
+        document = self.canvas.layout.from_page(
+            0, QPointF(x_pt, y_pt_from_top))
+        return document - self.canvas.offset()
+
+    def test_the_widget_is_found_where_it_is_drawn(self):
+        """The fixture's widget is Rect 100,150 to 300,250 on a 400pt page,
+        so its centre is 100pt down from the top."""
+        found = self.win.reader.field_at(self.viewport_point(200, 200))
+        self.assertIsNotNone(found)
+        self.assertEqual(found.name, "a field")
+
+    def test_above_it_finds_nothing(self):
+        """Proves the y flip. Without it this point would be the hit and the
+        one inside would not."""
+        self.assertIsNone(self.win.reader.field_at(self.viewport_point(200, 20)))
+
+    def test_beside_it_finds_nothing(self):
+        self.assertIsNone(self.win.reader.field_at(self.viewport_point(20, 200)))
+
+    def test_every_corner_of_the_rectangle_is_inside(self):
+        for x, y in ((101, 151), (299, 151), (101, 249), (299, 249)):
+            self.assertIsNotNone(
+                self.win.reader.field_at(self.viewport_point(x, y)),
+                f"page point ({x}, {y}) should be on the widget")
+
+    def test_closing_the_document_forgets_the_fields(self):
+        """A raw viewport point, because once the document has gone there are
+        no pages left to map one through."""
+        from PySide6.QtCore import QPointF
+
+        inside = self.viewport_point(200, 200)
+        self.assertIsNotNone(self.win.reader.field_at(inside))
+        self.win.reader.clear()
+        settle(timeout_ms=100)
+        self.assertIsNone(self.win.reader.field_at(inside))
+        self.assertIsNone(self.win.reader.field_at(QPointF(10, 10)))
+
+    def test_a_document_with_no_fields_finds_nothing(self):
+        self.win.open_paths([TEST_PDF])
+        settle(timeout_ms=600)
+        self.win.modified = False
+        self.assertIsNone(self.win.reader.field_at(self.viewport_point(100, 100)))

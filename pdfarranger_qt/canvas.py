@@ -938,6 +938,9 @@ class PageCanvas(QAbstractScrollArea):
         #: returns an invalid link, and nothing is left pointing at the
         #: document that has just been closed.
         self._no_document = QPdfDocument(self)
+        #: The document's form fields, for hit testing. Set by the reader,
+        #: which is the only thing that knows which document is showing.
+        self._fields = None
 
         self._tooltip = ""
         self._text = PageText()
@@ -2079,6 +2082,33 @@ class PageCanvas(QAbstractScrollArea):
             self._links_page = index
         link = self._links.linkAt(page_point)
         return link if self.usable_link(link) else None
+
+    # -- form fields -------------------------------------------------------
+
+    def set_field_map(self, fields):
+        """The widgets of the document being shown, for hit testing."""
+        self._fields = fields
+
+    def field_at(self, point: QPointF):
+        """The form field under a *viewport* point, or None.
+
+        The y axis is the whole of the work. A page point here is measured
+        down from the top left, the way every other coordinate in this canvas
+        is; a PDF rectangle is measured up from the bottom. Mapping one to the
+        other needs the page's height, which the layout has and the field map
+        deliberately does not -- `forms` stays in PDF coordinates so that it
+        can be read and tested without a canvas.
+        """
+        if self._fields is None:
+            return None
+        found = self.to_page(point)
+        if found is None:
+            return None
+        index, page_point = found
+        height = self._layout.page_height(index)
+        if height is None:
+            return None
+        return self._fields.at(index, page_point.x(), height - page_point.y())
 
     def follow(self, link) -> bool:
         """Go where ``link`` points, or emit it if that is outside the document.

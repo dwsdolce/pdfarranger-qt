@@ -218,3 +218,187 @@ class FormValues:
 
     def __repr__(self):  # pragma: no cover - debugging aid
         return f"FormValues({len(self._values)} edited)"
+
+
+class Field:
+    """One widget, and the identity of the field it draws.
+
+    A widget rather than a field, because a click lands on a widget: two of
+    them can belong to one field, and ticking either sets the one value they
+    share. `name` is what identifies the field; `rect` is where this particular
+    drawing of it sits.
+    """
+
+    __slots__ = ("page", "rect", "name", "kind", "flags", "states", "value",
+                 "hidden")
+
+    def __init__(self, page, rect, name, kind, flags, states, value, hidden):
+        self.page = page
+        #: ``(left, bottom, right, top)`` in PDF points, y measured upward.
+        self.rect = rect
+        #: The fully qualified name -- the ``/T`` chain from the root down.
+        self.name = name
+        #: ``/Tx``, ``/Btn``, ``/Ch`` or ``/Sig``.
+        self.kind = kind
+        self.flags = flags
+        #: For a button, the states its appearance can draw, "/Off" excluded.
+        self.states = states
+        #: What the *document* says, before any edit of ours.
+        self.value = value
+        self.hidden = hidden
+
+    # -- what the field is -------------------------------------------------
+
+    @property
+    def read_only(self) -> bool:
+        return bool(self.flags & 1)
+
+    @property
+    def is_radio(self) -> bool:
+        return self.kind == "/Btn" and bool(self.flags & (1 << 15))
+
+    @property
+    def is_pushbutton(self) -> bool:
+        return self.kind == "/Btn" and bool(self.flags & (1 << 16))
+
+    @property
+    def is_checkbox(self) -> bool:
+        return (self.kind == "/Btn" and not self.is_radio
+                and not self.is_pushbutton)
+
+    @property
+    def fillable(self) -> bool:
+        """Whether this is something a click should do anything with.
+
+        A pushbutton runs an action rather than holding a value, a signature
+        needs a certificate, and a read-only field is the document saying no.
+        """
+        return (not self.read_only and not self.is_pushbutton
+                and not self.hidden and self.kind in ("/Tx", "/Btn", "/Ch"))
+
+    def contains(self, x: float, y: float) -> bool:
+        """Whether a point in PDF space, y upward, is on this widget."""
+        left, bottom, right, top = self.rect
+        return left <= x <= right and bottom <= y <= top
+
+    def __repr__(self):  # pragma: no cover - debugging aid
+        return f"Field({self.name!r}, {self.kind}, page {self.page})"
+
+
+def _qualified(annot) -> str:
+    parts, node, depth = [], annot, 0
+    while node is not None and depth < _FIELD_DEPTH:
+        if pikepdf.Name.T in node:
+            parts.append(str(node[pikepdf.Name.T]))
+        node = node.get(pikepdf.Name.Parent)
+        depth += 1
+    return ".".join(reversed(parts))
+
+
+def _inherited(annot, key):
+    """The nearest value of an inheritable key, walking up from the widget.
+
+    Up from the widget and stopping at the first hit, not down from the root:
+    `/FT` can sit between the two. In sf86.pdf it is two levels above the
+    widget, under three naming subforms, and reading it off the root called
+    1,053 radio buttons typeless.
+    """
+    node, depth = annot, 0
+    while node is not None and depth < _FIELD_DEPTH:
+        if key in node:
+            return node[key]
+        node = node.get(pikepdf.Name.Parent)
+        depth += 1
+    return None
+
+
+#: How far up a field tree to look. Eight is past any real form and stops a
+#: /Parent cycle in a damaged file spinning for ever.
+_FIELD_DEPTH = 8
+
+
+def fields_in(pdf) -> "list[Field]":
+    """Every widget in a document, in page order then drawing order.
+
+    Read from the document the *reader is showing*, so the rectangles are in
+    the coordinates on screen: a rotated or cropped page has already been
+    through the export by then, and asking the source would give a rectangle
+    in a space nothing is drawn in.
+    """
+    found = []
+    for index, page in enumerate(pdf.pages):
+        for annot in page.get(pikepdf.Name.Annots, []):
+            if annot.get(pikepdf.Name.Subtype) not in (
+                    pikepdf.Name.Widget, pikepdf.Name.Stamp):
+                continue
+            name = _qualified(annot)
+            if not name:
+                continue            # nothing to key a value on
+            kind = _inherited(annot, pikepdf.Name.FT)
+            rect = [float(v) for v in annot.get(pikepdf.Name.Rect, [0, 0, 0, 0])]
+            states = []
+            appearance = annot.get(pikepdf.Name.AP)
+            normal = appearance.get(pikepdf.Name.N) if appearance else None
+            if isinstance(normal, pikepdf.Dictionary) and not isinstance(
+                    normal, pikepdf.Stream):
+                states = [str(k) for k in normal.keys() if str(k) != "/Off"]
+            value = _inherited(annot, pikepdf.Name.V)
+            found.append(Field(
+                page=index,
+                rect=(min(rect[0], rect[2]), min(rect[1], rect[3]),
+                      max(rect[0], rect[2]), max(rect[1], rect[3])),
+                name=name,
+                kind=str(kind) if kind is not None else "None",
+                flags=int(_inherited(annot, pikepdf.Name.Ff) or 0),
+                states=states,
+                value=str(value) if value is not None else None,
+                hidden=bool(int(annot.get(pikepdf.Name.F, 0)) & 2)))
+    return found
+
+
+class FieldMap:
+    """Which field is under a point, per page.
+
+    Built once per document shown and kept, because a click asks on every
+    press and a form can carry thousands of widgets -- sf86.pdf has 6,852.
+    """
+
+    __slots__ = ("_by_page",)
+
+    def __init__(self, fields=()):
+        self._by_page: Dict[int, list] = {}
+        for item in fields:
+            self._by_page.setdefault(item.page, []).append(item)
+
+    @classmethod
+    def read(cls, source) -> "FieldMap":
+        """From a path or bytes. An empty map if it cannot be read."""
+        try:
+            if isinstance(source, (bytes, bytearray)):
+                import io
+
+                with pikepdf.open(io.BytesIO(source)) as pdf:
+                    return cls(fields_in(pdf))
+            with pikepdf.open(source) as pdf:
+                return cls(fields_in(pdf))
+        except Exception:  # noqa: BLE001 - a click simply finds nothing
+            return cls()
+
+    def __len__(self):
+        return sum(len(v) for v in self._by_page.values())
+
+    def on_page(self, page: int) -> list:
+        return self._by_page.get(page, [])
+
+    def at(self, page: int, x: float, y: float) -> Optional[Field]:
+        """The widget under a point in PDF space, y upward, or None.
+
+        Last match wins: annotations are drawn in array order, so the one
+        later in the array is the one on top, and that is the one a click
+        should reach.
+        """
+        found = None
+        for item in self._by_page.get(page, ()):
+            if item.contains(x, y):
+                found = item
+        return found

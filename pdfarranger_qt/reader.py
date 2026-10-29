@@ -283,6 +283,10 @@ class ReaderView(QWidget):
         self._show(document, data)
         return True
 
+    def field_at(self, point):
+        """The form field under a viewport point of the canvas, or None."""
+        return self.canvas.field_at(point)
+
     def _load_source(self, copyname: str, password: str, sizes=None) -> bool:
         """Open a source file directly, skipping the export. False to fall back.
 
@@ -318,6 +322,14 @@ class ReaderView(QWidget):
         """
         previous = self._document
         self._document = document
+        # From the document being *shown*, so the rectangles are in the
+        # coordinates on screen: a rotated or cropped page has been through
+        # the export by now, and the source's rectangles are in a space
+        # nothing is drawn in. Both paths here have the bytes in hand -- the
+        # fast one reads them for the render thread -- and without them the
+        # map is simply empty, so a click finds nothing rather than failing.
+        self.canvas.set_field_map(
+            forms_module.FieldMap.read(data) if data else None)
         self.canvas.set_document(document.document, data, sizes)
         self.search_model.set_document(document.document)
         self.page_selector.setDocument(document.document)
@@ -339,6 +351,7 @@ class ReaderView(QWidget):
         "Internal C++ object (QPdfDocument) already deleted".
         """
         document, self._document = self._document, None
+        self.canvas.set_field_map(None)
         self.canvas.set_document(None)
         self.search_model.set_document(None)
         self.page_selector.setDocument(None)
