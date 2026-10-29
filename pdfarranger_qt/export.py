@@ -306,21 +306,46 @@ def _remove_unreferenced_resources(pdfdoc):
 
 
 def _append_page(current_page, copied_pages, pdf_output, row):
-    """Add a page to the output pdf. A page that already exists is duplicated."""
-    new_page = copied_pages.get((row.nfile, row.npage))
+    """Add a page to the output pdf. A page that already exists is duplicated.
+
+    Annotations are copied rather than referenced, or editing one copy of a
+    duplicated page changed the other (upstream's issue 437). The copy is made
+    two different ways, because two requirements pull against each other.
+
+    *Different pages that share a field must go on sharing it.* A radio group
+    puts one widget on each page and hangs both off one parent; copy them
+    separately and the group becomes two groups, so selecting an option stops
+    clearing the other. `copy_foreign` keeps a map per source document, so
+    copying each annotation straight across gets this right for nothing: the
+    parent is copied the first time it is reached and found again after.
+
+    *A duplicated page must not share with its own copy*, which is 437 and the
+    reason the detour through a temporary document exists -- it defeats that
+    same map deliberately. So it is kept, for the second and later copies of a
+    page only.
+    """
+    key = (row.nfile, row.npage)
+    duplicate = key in copied_pages
+    new_page = copied_pages.get(key)
     if new_page is None:
         new_page = current_page
     # let pdf_output adopt new_page
     pdf_output.pages.append(new_page)
     new_page = pdf_output.pages[-1]
-    copied_pages[(row.nfile, row.npage)] = new_page
-    # Ensure annotations are copied rather than referenced
-    # https://github.com/pdfarranger/pdfarranger/issues/437
-    if pikepdf.Name.Annots in current_page:
-        pdf_temp = pikepdf.Pdf.new()
-        pdf_temp.pages.append(current_page)
-        indirect_annots = pdf_temp.make_indirect(pdf_temp.pages[0].Annots)
-        new_page.Annots = pdf_output.copy_foreign(indirect_annots)
+    copied_pages[key] = new_page
+    if pikepdf.Name.Annots not in current_page:
+        return
+    annots = current_page.Annots
+    if not duplicate and all(a.is_indirect for a in annots):
+        new_page.Annots = pikepdf.Array(
+            [pdf_output.copy_foreign(a) for a in annots])
+        return
+    # A duplicate, or a page whose annotations are written inline and so
+    # cannot be copied one at a time.
+    pdf_temp = pikepdf.Pdf.new()
+    pdf_temp.pages.append(current_page)
+    indirect_annots = pdf_temp.make_indirect(pdf_temp.pages[0].Annots)
+    new_page.Annots = pdf_output.copy_foreign(indirect_annots)
 
 
 #: How deep a field tree is walked looking for the root. A widget is often its

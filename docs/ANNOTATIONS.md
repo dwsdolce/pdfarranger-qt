@@ -2,9 +2,9 @@
 
 **Issue:** [#14](https://github.com/dwsdolce/pdfarranger-qt/issues/14)
 
-**Status:** IN PROGRESS — body 1 of 3 is **complete**: annotations and filled
-form fields now draw on screen, in print and in image export. Filling fields is
-next, and nothing blocks it.
+**Status:** IN PROGRESS — annotations and filled form fields now draw on screen,
+in print and in image export. Two steps of body 1 remain: a field whose widgets
+span pages is split by export, and the validation corpus is not written.
 
 A filled insurance form was opened in this application and came up blank. Every
 answer typed into it was missing — text, ticks, the lot — with nothing on screen
@@ -25,7 +25,7 @@ highlight are the same problem a second time.
 
 | | State |
 |---|---|
-| 1. Show what is in the file | **complete** — on screen, and in print and image export |
+| 1. Show what is in the file | drawing is **complete**; two steps left — see 1.5 and 1.6 |
 | 2. Fill fields | next; the plan is below and nothing blocks it |
 | 3. Markup | after filling, which proves the model it needs |
 
@@ -230,6 +230,27 @@ and damaged a form on save.
 | 1.2 | Rebuild `/AcroForm` on export, so a saved form keeps its fields | **complete** |
 | 1.3 | Draw form fields, from a render-only copy | **complete** |
 | 1.4 | Draw both in the output paths — printing, image export, rasterising | **complete** |
+| 1.5 | Stop export splitting a field whose widgets span pages | next |
+| 1.6 | A validation corpus: public PDFs this has been checked against | |
+
+1.5 is a defect found by building the fixture 1.1–1.4 were never tested
+against. A radio group with a widget on each of two pages comes out of export as
+*two* fields: `_append_page` copies each page's `/Annots` through its own
+temporary document, so the shared parent is copied once per page. The group
+stops behaving as one, and the merge warning fires on a document nobody merged.
+The splitting is old — it is how upstream stopped duplicated pages sharing an
+annotation — and only became visible when `/AcroForm` started being rebuilt.
+Filling makes it worse: a value written to a field split in two reaches half of
+it.
+
+1.6 is the other half of the lesson. A fixture built from the specification is
+what finds a case like 1.5; a corpus of real files is what says whether we are
+wrong about the real world, and the two are not substitutes. The corpus is a
+*document* listing public PDFs — a US federal form is public domain, most others
+are not — each with what it exercises, a hash, and what was observed when. Links
+rather than files: a committed binary hides what it is testing, which is why
+every fixture in this project is built in code. It is standing reference, not
+part of this work, so it will live beside `FINDINGS.md` once it has entries.
 
 1.4 was missed when 1.1–1.3 landed, and is the reason to distrust "display
 works" as a finishing condition: everything that leaves as pixels goes through

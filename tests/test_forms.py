@@ -303,3 +303,122 @@ class TestTheOutputPathsShowThemToo(unittest.TestCase):
         list(render_pages(pages, docs.files_for_export(), ppi=72))
         with pikepdf.open(docs.docs[0].copyname) as pdf:
             self.assertEqual(str(pdf.pages[0].Annots[0].Subtype), "/Widget")
+
+
+def radio_across_pages():
+    """One radio field with a widget on each of two pages.
+
+    The case the form that prompted this work does not contain -- all 82 of its
+    fields sit on a single page -- and the one that showed export splitting a
+    field in two. Built from the specification rather than found, which is the
+    only way to meet a case nobody has sent you yet.
+    """
+    def tick(pdf, on):
+        stream = pikepdf.Stream(pdf, b"0 0 1 rg 0 0 12 12 re f\n" if on else b"\n")
+        stream[pikepdf.Name.Type] = pikepdf.Name.XObject
+        stream[pikepdf.Name.Subtype] = pikepdf.Name.Form
+        stream[pikepdf.Name.BBox] = pikepdf.Array([0, 0, 12, 12])
+        return stream
+
+    pdf = pikepdf.new()
+    pdf.add_blank_page(page_size=(300, 300))
+    pdf.add_blank_page(page_size=(300, 300))
+    field = pdf.make_indirect(pikepdf.Dictionary(
+        FT=pikepdf.Name.Btn, T=pikepdf.String("choice"),
+        Ff=1 << 15, V=pikepdf.Name("/yes")))
+    kids = []
+    for index, page in enumerate(pdf.pages):
+        widget = pdf.make_indirect(pikepdf.Dictionary(
+            Type=pikepdf.Name.Annot, Subtype=pikepdf.Name.Widget,
+            Rect=pikepdf.Array([50, 50 + index * 20, 62, 62 + index * 20]),
+            F=4, Parent=field,
+            AS=pikepdf.Name("/yes") if index == 0 else pikepdf.Name.Off,
+            AP=pikepdf.Dictionary(N=pikepdf.Dictionary(
+                **{"/yes": tick(pdf, True), "/Off": tick(pdf, False)}))))
+        kids.append(widget)
+        page[pikepdf.Name.Annots] = pikepdf.Array([widget])
+    field[pikepdf.Name.Kids] = pikepdf.Array(kids)
+    pdf.Root[pikepdf.Name.AcroForm] = pikepdf.Dictionary(
+        Fields=pikepdf.Array([field]))
+    out = io.BytesIO()
+    pdf.save(out)
+    return out.getvalue()
+
+
+class TestAFieldIsNotSplitAcrossPages(unittest.TestCase):
+    """Two requirements that pull against each other.
+
+    Pages sharing a field must keep sharing it, or a radio group becomes two
+    groups and selecting one option stops clearing the other. But *duplicated*
+    pages must get independent annotations, which is why the per-page copy
+    exists at all -- without it, editing one copy's annotation changed the
+    other (upstream's issue 437).
+
+    A fix that satisfies only the first reintroduces that bug, so both are
+    checked here and neither may be traded for the other.
+    """
+
+    def exported(self, data, order=None):
+        from pdfarranger_qt.core import DocumentSet
+        from pdfarranger_qt.export import get_in_memory_pdf
+
+        path = temp_path("across-pages.pdf")
+        with open(path, "wb") as handle:
+            handle.write(data)
+        docs = DocumentSet()
+        self.addCleanup(docs.cleanup)
+        pages = docs.add_file(path)
+        if order is not None:
+            pages = [pages[i] for i in order]
+        return pikepdf.open(io.BytesIO(
+            get_in_memory_pdf(pages, docs.files_for_export())))
+
+    def shape(self, pdf):
+        """``(fields, widgets, distinct parents)`` of the output."""
+        acroform = pdf.Root.get("/AcroForm")
+        fields = len(acroform.get("/Fields", [])) if acroform is not None else 0
+        widgets, parents = 0, set()
+        for page in pdf.pages:
+            for annot in page.get("/Annots", []):
+                if annot.get("/Subtype") != "/Widget":
+                    continue
+                widgets += 1
+                if "/Parent" in annot:
+                    parents.add(annot.Parent.objgen)
+        return fields, widgets, len(parents)
+
+    def test_one_field_stays_one_field(self):
+        self.assertEqual(self.shape(self.exported(radio_across_pages())),
+                         (1, 2, 1))
+
+    def test_and_after_reordering(self):
+        self.assertEqual(
+            self.shape(self.exported(radio_across_pages(), order=[1, 0])),
+            (1, 2, 1))
+
+    def test_dropping_a_page_keeps_the_field_for_the_other(self):
+        fields, widgets, _parents = self.shape(
+            self.exported(radio_across_pages(), order=[0]))
+        self.assertEqual((fields, widgets), (1, 1))
+
+    def test_no_merge_warning_for_a_document_nobody_merged(self):
+        from pdfarranger_qt.core import DocumentSet
+        from pdfarranger_qt.export import export
+
+        path = temp_path("across-pages.pdf")
+        with open(path, "wb") as handle:
+            handle.write(radio_across_pages())
+        docs = DocumentSet()
+        self.addCleanup(docs.cleanup)
+        pages = docs.add_file(path)
+        warning = export(docs.files_for_export(), pages, {},
+                         [temp_path("out.pdf")])
+        self.assertNotIn("share a name", warning)
+
+    def test_a_duplicated_page_still_gets_its_own_annotations(self):
+        """Upstream's issue 437, which the per-page copy exists to prevent."""
+        exported = self.exported(radio_across_pages(), order=[0, 0, 1])
+        first = exported.pages[0].Annots[0].objgen
+        second = exported.pages[1].Annots[0].objgen
+        self.assertNotEqual(first, second,
+                            "two copies of one page must not share a widget")
