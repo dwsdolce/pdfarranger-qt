@@ -2,11 +2,12 @@
 
 **Issue:** [#14](https://github.com/dwsdolce/pdfarranger-qt/issues/14)
 
-**Status:** IN PROGRESS — bodies 1 and 2 **complete**; markup is left. Tick
+**Status:** IN PROGRESS — bodies 1 and 2 **complete**, body 3 at one of five. Tick
 boxes and single-line text fields can both be filled in; what is typed shows,
 survives undo and reaches the saved file with a drawing for it. Only the guard
 A signed document refuses to be filled in or saved over, and a document
-derived from one is honestly unsigned. Body 3, markup, is what remains.
+derived from one is honestly unsigned. Body 3 has its model: a mark is owned,
+undoable and saved. What puts one on the page is next.
 
 A filled insurance form was opened in this application and came up blank. Every
 answer typed into it was missing — text, ticks, the lot — with nothing on screen
@@ -29,7 +30,7 @@ highlight are the same problem a second time.
 |---|---|
 | 1. Show what is in the file | **complete** — drawn, saved, printed, and measured against real forms |
 | 2. Fill fields | **complete** — nine of nine |
-| 3. Markup | after filling, which proves the model it needs |
+| 3. Markup | in progress — the model is in; the canvas is next |
 
 The first was correctness and needed no decision reversed: the application did
 not draw what the document said, and damaged a form on save. Both were bugs
@@ -363,13 +364,32 @@ them.
 
 ### 3. Markup
 
-Not started, and not before 2 has proved the model: it needs the same ownership,
-the same undo behaviour and the same save path.
+Not before 2 had proved the model: it needs the same ownership, the same undo
+behaviour and the same save path, and it got all three by following them.
+
+**Keyed by page uid**, which is D20's answer for bookmarks and is as true
+here. An index dies at the next reorder and an object reference dies at the
+next undo, because `UndoManager.snapshot` rebuilds the page list with
+`duplicate()`. The uid survives both, and the Duplicate *command* assigns a
+fresh one, so copying a page does not quietly copy somebody's notes with it.
+
+**Nothing prunes a mark when its page goes.** Export asks for the marks of
+the pages it is writing and never sees the others, so a note on a deleted page
+is skipped with no tidying up anywhere -- and the identical rule, unchanged,
+is what makes an export of a *selection* leave the unselected pages' notes
+out.
+
+**Coordinates are the page's own**, the space its `/MediaBox` is in, so a mark
+is carried by every geometric edit exactly as the annotations already in the
+file are: export turns a page with `/Rotate` and crops it by rewriting boxes,
+and both move page-space geometry together with the content. The conversion
+from where the pointer actually is belongs to 3.2, which is where a pointer
+first exists.
 
 | # | Step | Depends on | Done when | State |
 |---|---|---|---|---|
-| 3.1 | An annotation model | 2.1, 2.4 | an added note survives undo and a save | |
-| 3.2 | A tool mode in the canvas | 3.1 | the pointer selects, highlights or draws as chosen | |
+| 3.1 | An annotation model | 2.1, 2.4 | an added note survives undo and a save | **complete** |
+| 3.2 | A tool mode in the canvas | 3.1 | the pointer selects, highlights or draws as chosen | next |
 | 3.3 | Highlight and strikethrough | 3.2 | a selection becomes a mark the file keeps | |
 | 3.4 | Sticky note | 3.2 | a note can be placed, read and edited | |
 | 3.5 | Free text and freehand | 3.3, 3.4 | both draw, save and reopen | |
@@ -712,6 +732,16 @@ named gaps rather than for bulk — a real radio group, signature fields, and a
 form with many widgets per field. The tool found its own bug on the way: `/FT`
 is inherited and can sit between the widget and the root, so reading it off the
 root called 1,053 radio buttons typeless.
+
+**2026-10-29 — step 3.1.** Marks added to a document are owned in the model,
+keyed by page uid, and ride the same undo stack as the pages, the outline and
+the form values. A note survives undo and redo, reaches the saved file with
+its text, rectangle, author, colour and the Print flag, follows its page when
+the order changes rather than staying in the slot, and is left behind by an
+export of a selection that does not include its page. The two undo tests were
+checked by neutering the restore: the first version of the second test passed
+anyway, because undoing a *delete* never needed the note put back, so it now
+walks back two steps instead of one.
 
 **2026-10-29 — steps 2.8 and 2.9.** Export takes the remains of a signature
 out instead of carrying them. The bug was there whichever way D5 had gone: a

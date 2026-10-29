@@ -1859,6 +1859,8 @@ class MainWindow(QMainWindow):
                 outline=outline,
                 # And what has been filled into the form, for the same reason.
                 form_values=self.model.form_values,
+                # And the marks added to it, which are owned the same way.
+                annotations=self.model.annotations,
                 # A subset of the pages keeps only the bookmarks that still
                 # have somewhere to point; a whole document keeps everything,
                 # including the headings the user put there deliberately.

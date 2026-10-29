@@ -36,7 +36,7 @@ from typing import Any, Dict, List, Optional, Tuple
 import packaging.version
 import pikepdf
 
-from . import forms, metadata
+from . import forms, markup, metadata
 from .core import Page, Sides
 from .i18n import gettext_ as _
 
@@ -585,6 +585,28 @@ def _write_form_values(pdf_output, pages, form_values):
                                pdf_output)
 
 
+def _write_annotations(pdf_output, pages, annotations) -> int:
+    """Put the marks the user added onto the pages being written.
+
+    Looked up by page uid, which is what makes this need no tidying up
+    elsewhere: a mark whose page is not among the ones being written is simply
+    not asked for. That covers a deleted page and an export of a selection
+    with the same rule, and it is why nothing prunes `Annotations` when the
+    page list shrinks.
+    """
+    if not annotations:
+        return 0
+    written = 0
+    for index, row in enumerate(pages):
+        if index >= len(pdf_output.pages):
+            break
+        marks = annotations.for_page(row.uid)
+        if marks:
+            written += markup.add_to_page(
+                pdf_output, pdf_output.pages[index], marks)
+    return written
+
+
 def _copy_n_transform(pdf_input, pdf_output, pages, quit_flag=None):
     # All pages must be copied to pdf_output BEFORE applying geometrical
     # transformation. See https://github.com/pikepdf/pikepdf/issues/271
@@ -650,7 +672,7 @@ def get_max_pdf_version(pdf_list: List[pikepdf.Pdf]) -> str:
 def export_doc(pdf_input, pages, mdata, files_out, quit_flag=None,
                test_mode=False, output_password=None, with_outlines=False,
                options: "SaveOptions" = None, source_names=None, outline=None,
-               prune_outline=False, form_values=None):
+               prune_outline=False, form_values=None, annotations=None):
     """Same as export() but taking already-opened pikepdf.Pdf objects.
 
     ``outline`` is the document's own bookmark tree (D20). When given it is
@@ -671,6 +693,9 @@ def export_doc(pdf_input, pages, mdata, files_out, quit_flag=None,
     # arrived rather than from the ones the inputs had.
     _restore_acroform(pdf_input, pdf_output)
     _write_form_values(pdf_output, pages, form_values)
+    # After the form, because a mark is added to the page rather than to the
+    # form, and the page's /Annots must already hold whatever travelled with it.
+    _write_annotations(pdf_output, pages, annotations)
 
     # files_out entries are paths when saving and file-like objects when
     # rendering to memory (previews, printing). Metadata and encryption are only
@@ -975,7 +1000,8 @@ def export(files: List[Tuple[str, str]], pages: List[Page], mdata: dict,
            preserve_first_document: bool = False,
            source_names: Optional[List[str]] = None,
            outline=None, prune_outline: bool = False,
-           options: Optional["SaveOptions"] = None, form_values=None) -> str:
+           options: Optional["SaveOptions"] = None, form_values=None,
+           annotations=None) -> str:
     """Write ``pages`` to ``files_out``.
 
     ``files`` is the ``(copyname, password)`` list from ``DocumentSet``; a page's
@@ -993,6 +1019,9 @@ def export(files: List[Tuple[str, str]], pages: List[Page], mdata: dict,
     the first document's outline and gives us nowhere to put ours. That
     preference and edited bookmarks are therefore mutually exclusive, and the
     window says so rather than saving an outline the user cannot see.
+
+    ``annotations`` are the marks the user has added, and reach only the same
+    merging path, for the same reason.
     """
     collected = []
 
@@ -1012,7 +1041,8 @@ def export(files: List[Tuple[str, str]], pages: List[Page], mdata: dict,
             export_doc(pdf_input, pages, mdata, files_out, quit_flag, test_mode,
                        output_password=output_password, options=options,
                        source_names=source_names, outline=outline,
-                       prune_outline=prune_outline, form_values=form_values)
+                       prune_outline=prune_outline, form_values=form_values,
+                       annotations=annotations)
     finally:
         warnings.showwarning = backup
         for pdf in pdf_input:

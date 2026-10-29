@@ -29,6 +29,7 @@ from PySide6.QtCore import QAbstractListModel, QModelIndex, Qt, Signal
 
 from .core import Dims, Page, Sides
 from .forms import FormValues
+from .markup import Annotations
 from .outline import Outline
 from .render import RenderTask
 
@@ -45,6 +46,13 @@ class UndoState:
     rather than two that can disagree: undoing a rename and undoing a rotation
     come off the same stack, and a page delete and the bookmarks pointing at it
     are restored together.
+    """
+    annotations: Optional["Annotations"] = None
+    """The marks the user has added (D20's keying, by page uid).
+
+    Here for the reason the outline and the form values are: one history, so
+    adding a note and deleting the page under it cannot disagree about what
+    the document is.
     """
     form_values: Optional["FormValues"] = None
     """What had been typed into the document's form fields.
@@ -75,6 +83,7 @@ class UndoManager:
             [p.duplicate() for p in self.model.pages],
             list(self.model.selected_rows()),
             self.model.outline.duplicate(),
+            self.model.annotations.duplicate(),
             self.model.form_values.duplicate(),
         )
 
@@ -154,6 +163,7 @@ class PageListModel(QAbstractListModel):
         """The document's bookmarks (D20). Owned here rather than derived at
         export time, which is what makes them editable at all."""
         self.form_values = FormValues()
+        self.annotations = Annotations()
         """What has been typed into the form, as an overlay on what the
         documents already say. Owned here for the same reason as the outline:
         it has to survive undo, and it has to be written on save."""
@@ -529,6 +539,8 @@ class PageListModel(QAbstractListModel):
         # staying dangling -- which is the whole reason the two share a stack.
         if state.outline is not None:
             self.outline = state.outline.duplicate()
+        if state.annotations is not None:
+            self.annotations = state.annotations.duplicate()
         if state.form_values is not None:
             self.form_values = state.form_values.duplicate()
         self._key_rows.clear()
