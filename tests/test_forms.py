@@ -1745,3 +1745,135 @@ class TestSavingADocumentThatWasSigned(unittest.TestCase):
             self.assertFalse(forms.is_signed(saved))
         with pikepdf.open(self.path) as original:
             self.assertTrue(forms.is_signed(original), "the original stands")
+
+
+def turned(angle, data=None, crop=None):
+    """``typable()`` on a page the reader will turn before showing it."""
+    pdf = pikepdf.open(io.BytesIO(data or typable(value="ABC")))
+    if angle:
+        pdf.pages[0][pikepdf.Name.Rotate] = angle
+    if crop is not None:
+        pdf.pages[0][pikepdf.Name.CropBox] = pikepdf.Array(list(crop))
+    out = io.BytesIO()
+    pdf.save(out)
+    return out.getvalue()
+
+
+class TestARotatedPagePutsFieldsWhereTheyAre(unittest.TestCase):
+    """A `/Rect` is written in the page's own space; the canvas works in the
+    frame the page is laid out in. `/Rotate` is how far apart those are.
+
+    They agree only at zero, and disagree worst at 180, where a rectangle
+    taken straight from the file lands mirrored across both axes -- measured
+    at 69px against 544px on a 300pt page. Scanned documents carry `/Rotate`
+    constantly, and this application's own Rotate command produces it, so a
+    form the user has just turned had its fields drawn and clicked in the
+    wrong place.
+    """
+
+    def box(self, angle, size=(300, 120), crop=None):
+        pdf = pikepdf.new()
+        pdf.add_blank_page(page_size=size)
+        if angle:
+            pdf.pages[0][pikepdf.Name.Rotate] = angle
+        if crop is not None:
+            pdf.pages[0][pikepdf.Name.CropBox] = pikepdf.Array(list(crop))
+        return forms.displayed_box(pdf.pages[0])
+
+    def test_the_corners_go_where_turning_a_sheet_puts_them(self):
+        """Hand-derived rather than taken from the code: turning a sheet
+        clockwise sends its bottom-left corner to the top-left."""
+        rect = (20, 40, 60, 80)          # on a 300 x 120 page
+        for angle, expected in ((0, (20, 40, 60, 80)),
+                                (90, (40, 240, 80, 280)),
+                                (180, (240, 40, 280, 80)),
+                                (270, (40, 20, 80, 60))):
+            with self.subTest(angle=angle):
+                got = forms.to_displayed(rect, self.box(angle))
+                self.assertEqual(tuple(round(v, 3) for v in got), expected)
+
+    def test_a_quarter_turn_swaps_the_page(self):
+        for angle, shape in ((0, (300, 120)), (90, (120, 300)),
+                             (180, (300, 120)), (270, (120, 300))):
+            with self.subTest(angle=angle):
+                _l, _b, width, height, rotation = self.box(angle)
+                turned_shape = ((height, width) if (rotation // 90) % 2
+                                else (width, height))
+                self.assertEqual(turned_shape, shape)
+
+    def test_the_origin_is_the_crop_box(self):
+        """The layout sizes pages from the CropBox, so a rectangle measured
+        from the MediaBox origin is out by the crop on every page."""
+        box = self.box(0, crop=(50, 20, 250, 100))
+        self.assertEqual(box[:4], (50.0, 20.0, 200.0, 80.0))
+        self.assertEqual(forms.to_displayed((60, 30, 80, 50), box),
+                         (10.0, 10.0, 30.0, 30.0))
+
+    def test_an_unreadable_rotation_is_no_rotation(self):
+        pdf = pikepdf.new()
+        pdf.add_blank_page(page_size=(300, 120))
+        pdf.pages[0][pikepdf.Name.Rotate] = pikepdf.String("sideways")
+        self.assertEqual(forms.displayed_box(pdf.pages[0])[4], 0)
+
+    def test_a_rotation_that_is_not_a_quarter_turn_rounds_down(self):
+        self.assertEqual(self.box(45)[4], 0)
+        self.assertEqual(self.box(450)[4], 90)
+
+    def test_the_field_map_reports_the_turned_rectangle(self):
+        """Where it matters: what the canvas is handed for hit-testing."""
+        fields = forms.FieldMap.read(turned(180))
+        only = fields.on_page(0)[0]
+        # typable()'s widget is at [20, 40, 280, 70] on a 300 x 120 page.
+        self.assertEqual(tuple(round(v, 3) for v in only.rect),
+                         (20.0, 50.0, 280.0, 80.0))
+        self.assertEqual(only.rotation, 180)
+        fields.close()
+
+    def test_an_unrotated_page_is_left_exactly_as_it_was(self):
+        """The common case must not move by so much as a rounding error."""
+        fields = forms.FieldMap.read(turned(0))
+        only = fields.on_page(0)[0]
+        self.assertEqual(tuple(round(v, 3) for v in only.rect),
+                         (20.0, 40.0, 280.0, 70.0))
+        self.assertEqual(only.rotation, 0)
+        fields.close()
+
+
+class TestTheAppearanceIsTurnedToo(unittest.TestCase):
+    """The stream is written in the page's own frame, so it has to be turned
+    by the same amount or it comes out on its side."""
+
+    def rendered(self, angle, size):
+        from pdfarranger_qt.fieldlayer import AppearanceRenderer
+
+        fields = forms.FieldMap.read(turned(angle))
+        self.addCleanup(fields.close)
+        field = fields.on_page(0)[0]
+        renderer = AppearanceRenderer()
+        self.addCleanup(renderer.clear)
+        return renderer.text_image(field.annot, "ABC", fields.acroform,
+                                   fields.pdf, size[0], size[1], field.rotation)
+
+    def test_a_quarter_turn_comes_back_the_other_way_round(self):
+        """Asked for a tall image on a page turned 90 degrees, because that is
+        the shape the turned field occupies on screen."""
+        image = self.rendered(90, (60, 260))
+        self.assertIsNotNone(image)
+        self.assertEqual((image.width(), image.height()), (60, 260))
+
+    def test_an_unturned_page_renders_at_the_size_asked_for(self):
+        image = self.rendered(0, (260, 60))
+        self.assertIsNotNone(image)
+        self.assertEqual((image.width(), image.height()), (260, 60))
+
+    def test_turning_changes_the_picture(self):
+        """Not merely the size: the same drawing turned is different pixels.
+
+        Without this the test above passes on an image that was squashed into
+        the new shape rather than turned into it.
+        """
+        upright = self.rendered(0, (60, 260))
+        sideways = self.rendered(90, (60, 260))
+        self.assertIsNotNone(upright)
+        self.assertIsNotNone(sideways)
+        self.assertNotEqual(upright.constBits(), sideways.constBits())

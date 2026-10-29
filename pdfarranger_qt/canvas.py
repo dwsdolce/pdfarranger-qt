@@ -2776,10 +2776,11 @@ class PageCanvas(QAbstractScrollArea):
                     self._edited(field) or (value and not field.drawn)):
                 image = self._appearances.text_image(
                     field.annot, value or "", self._fields.acroform,
-                    self._fields.pdf, wide, high)
+                    self._fields.pdf, wide, high, field.rotation)
             else:
                 image = self._appearances.image(
-                    field.annot, field.state_for(value), wide, high)
+                    field.annot, field.state_for(value), wide, high,
+                    field.rotation)
             if image is not None:
                 painter.drawImage(where, image)
 

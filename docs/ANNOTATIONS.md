@@ -733,6 +733,38 @@ form with many widgets per field. The tool found its own bug on the way: `/FT`
 is inherited and can sit between the widget and the root, so reading it off the
 root called 1,053 radio buttons typeless.
 
+**2026-10-29 — a form on a turned page was drawn in the wrong place.** Found
+while preparing 3.2, and a fault in body 2 rather than a complication for body
+3. A widget's `/Rect` is written in the page's own space; the canvas works in
+the frame the page is *laid out* in, which is cropped and turned by `/Rotate`.
+The two agree only at zero. Measured with a black square at a known coordinate
+and compared against where it actually drew:
+
+| `/Rotate` | the mapping predicted | where it drew |
+| --- | --- | --- |
+| 0 | (69, 112, 156, 199) | (69, 112, 155, 198) |
+| 90 | (152, 197, 341, 386) | off screen entirely |
+| 180 | (69, 112, 156, 199) | **(544, 112, 630, 198)** |
+| 270 | (152, 197, 341, 386) | (246, 292, 435, 481) |
+
+So on any page carrying a rotation the fields were drawn and clicked in the
+wrong place, mirrored across both axes at 180 degrees. Not an exotic file
+either: scanned documents carry `/Rotate` constantly, and this application's
+own Rotate command produces one, so a form the user had just turned behaved
+this way. Every body 2 test used an unturned page, which is why it went through
+green CI.
+
+The rectangles are now converted as they are read, against the same box the
+layout sizes from -- the CropBox clipped to the MediaBox -- and the generated
+appearance is turned to match, at the unturned size so that a quarter turn is
+not squashed into the wrong aspect first. Verified the same way it was found:
+all four angles now land within a pixel of the content.
+
+One of the three new appearance tests earns its place. With the turning
+removed, both of the *size* assertions still pass, because the renderer draws
+at whatever size it is asked for; only comparing the pixels catches an image
+that was squashed into the new shape rather than turned into it.
+
 **2026-10-29 — step 3.1.** Marks added to a document are owned in the model,
 keyed by page uid, and ride the same undo stack as the pages, the outline and
 the form values. A note survives undo and redo, reaches the saved file with

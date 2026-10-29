@@ -240,12 +240,21 @@ class Field:
     """
 
     __slots__ = ("page", "rect", "name", "kind", "flags", "states", "value",
-                 "hidden", "annot", "drawn")
+                 "hidden", "annot", "drawn", "rotation")
 
     def __init__(self, page, rect, name, kind, flags, states, value, hidden,
-                 annot=None, drawn=False):
+                 annot=None, drawn=False, rotation=0):
         self.page = page
-        #: ``(left, bottom, right, top)`` in PDF points, y measured upward.
+        #: ``(left, bottom, right, top)`` in PDF points, y measured upward,
+        #: **in the frame a reader lays the page out in** -- cropped, and
+        #: turned by `/Rotate`. Not the frame the `/Rect` was written in.
+        #:
+        #: The two differ whenever a page carries a rotation, which scanned
+        #: documents very often do and which this application's own Rotate
+        #: command produces. Everything downstream of here works in viewport
+        #: coordinates derived from the layout, and the layout shows the page
+        #: turned, so a rectangle straight out of the file lands somewhere
+        #: else entirely: mirrored across the page at 180 degrees.
         self.rect = rect
         #: The fully qualified name -- the ``/T`` chain from the root down.
         self.name = name
@@ -265,6 +274,10 @@ class Field:
         #: do not even when they hold a value, so something has to decide
         #: between showing what is there and making what is missing.
         self.drawn = drawn
+        #: The page's `/Rotate`, needed by whatever draws the appearance: the
+        #: stream is written in the page's own frame, so it has to be turned
+        #: by the same amount to come out the right way up.
+        self.rotation = rotation
 
     # -- what the field is -------------------------------------------------
 
@@ -422,6 +435,58 @@ def is_signed(pdf) -> bool:
     return bool(signatures_in(pdf))
 
 
+def displayed_box(page) -> "tuple[float, float, float, float, int]":
+    """``(left, bottom, width, height, rotation)`` as a reader lays the page out.
+
+    The same rule as `core._displayed_size`, and it has to be: the canvas sizes
+    its pages from there, so a rectangle has to be expressed against the same
+    box or it is measured from a different origin. The CropBox where there is
+    one, clipped to the MediaBox because a CropBox outside it means nothing.
+    """
+    try:
+        media = [float(v) for v in page.mediabox]
+        box = [float(v) for v in page.cropbox]
+    except Exception:           # noqa: BLE001 - a page without usable boxes
+        return (0.0, 0.0, 0.0, 0.0, 0)
+    left = max(min(box[0], box[2]), min(media[0], media[2]))
+    bottom = max(min(box[1], box[3]), min(media[1], media[3]))
+    right = min(max(box[0], box[2]), max(media[0], media[2]))
+    top = min(max(box[1], box[3]), max(media[1], media[3]))
+    try:
+        rotation = int(page.obj.get(pikepdf.Name.Rotate, 0) or 0) % 360
+    except Exception:           # noqa: BLE001 - a rotation we cannot read
+        rotation = 0
+    return (left, bottom, abs(right - left), abs(top - bottom),
+            rotation - rotation % 90)
+
+
+def to_displayed(rect, box) -> "tuple[float, float, float, float]":
+    """A ``/Rect`` from the file, in the frame the page is laid out in.
+
+    A ``/Rect`` is written in the page's own space. `/Rotate` says how far
+    clockwise a reader turns the page before showing it, so the two frames
+    agree only at zero -- and disagree most visibly at 180, where a rectangle
+    taken straight from the file lands mirrored across both axes.
+
+    Derived from where the corners go rather than from a matrix, because there
+    are only four cases and each one is checkable by eye: turning a sheet
+    clockwise sends its bottom-left corner to the top-left.
+    """
+    left, bottom, width, height, rotation = box
+    x0, y0 = rect[0] - left, rect[1] - bottom
+    x1, y1 = rect[2] - left, rect[3] - bottom
+    if rotation == 90:
+        corners = ((y0, width - x0), (y1, width - x1))
+    elif rotation == 180:
+        corners = ((width - x0, height - y0), (width - x1, height - y1))
+    elif rotation == 270:
+        corners = ((height - y0, x0), (height - y1, x1))
+    else:
+        corners = ((x0, y0), (x1, y1))
+    (ax, ay), (bx, by) = corners
+    return (min(ax, bx), min(ay, by), max(ax, bx), max(ay, by))
+
+
 def fields_in(pdf) -> "list[Field]":
     """Every widget in a document, in page order then drawing order.
 
@@ -432,6 +497,7 @@ def fields_in(pdf) -> "list[Field]":
     """
     found = []
     for index, page in enumerate(pdf.pages):
+        box = displayed_box(page)
         for annot in page.get(pikepdf.Name.Annots, []):
             # Widgets only. `/Stamp` was accepted here while body 1 showed the
             # reader the copy with the widgets rewritten into stamps; it is
@@ -457,15 +523,16 @@ def fields_in(pdf) -> "list[Field]":
             value = _inherited(annot, pikepdf.Name.V)
             found.append(Field(
                 page=index,
-                rect=(min(rect[0], rect[2]), min(rect[1], rect[3]),
-                      max(rect[0], rect[2]), max(rect[1], rect[3])),
+                rect=to_displayed(
+                    (min(rect[0], rect[2]), min(rect[1], rect[3]),
+                     max(rect[0], rect[2]), max(rect[1], rect[3])), box),
                 name=name,
                 kind=str(kind) if kind is not None else "None",
                 flags=int(_inherited(annot, pikepdf.Name.Ff) or 0),
                 states=states,
                 value=str(value) if value is not None else None,
                 hidden=bool(int(annot.get(pikepdf.Name.F, 0)) & 2),
-                annot=annot, drawn=drawn))
+                annot=annot, drawn=drawn, rotation=box[4]))
     return found
 
 

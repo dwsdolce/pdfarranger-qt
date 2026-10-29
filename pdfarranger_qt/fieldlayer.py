@@ -43,7 +43,7 @@ from typing import Dict, Optional
 
 import pikepdf
 from PySide6.QtCore import QBuffer, QByteArray, QSize
-from PySide6.QtGui import QImage
+from PySide6.QtGui import QImage, QTransform
 from PySide6.QtPdf import QPdfDocument, QPdfDocumentRenderOptions
 
 from . import forms
@@ -97,7 +97,7 @@ class AppearanceRenderer:
         return len(self._cache)
 
     def text_image(self, annot, value: str, acroform, source, width: int,
-                   height: int) -> Optional[QImage]:
+                   height: int, rotation: int = 0) -> Optional[QImage]:
         """A text field drawn with ``value``, which is not in the file.
 
         The appearance is generated rather than looked up, because a field the
@@ -109,20 +109,21 @@ class AppearanceRenderer:
         if width < _MINIMUM_PX or height < _MINIMUM_PX:
             return None
         try:
-            key = ("text", annot.objgen, value, width, height)
+            key = ("text", annot.objgen, value, width, height, rotation)
         except Exception:  # pragma: no cover - a direct annotation
-            key = ("text", id(annot), value, width, height)
+            key = ("text", id(annot), value, width, height, rotation)
         found = self._cache.get(key)
         if found is not None:
             return found
         image = self._render(annot, None, width, height, text=value,
-                             acroform=acroform, source=source)
+                             acroform=acroform, source=source,
+                             rotation=rotation)
         if image is not None:
             self._cache[key] = image
         return image
 
     def image(self, annot, state: Optional[str], width: int,
-              height: int) -> Optional[QImage]:
+              height: int, rotation: int = 0) -> Optional[QImage]:
         """``annot`` drawn in ``state`` at this pixel size, or None.
 
         None when there is nothing to draw -- an empty text field, a state the
@@ -135,19 +136,30 @@ class AppearanceRenderer:
         if appearance is None:
             return None
         try:
-            key = (appearance.objgen, state, width, height)
+            key = (appearance.objgen, state, width, height, rotation)
         except Exception:  # pragma: no cover - a direct appearance stream
-            key = (id(appearance), state, width, height)
+            key = (id(appearance), state, width, height, rotation)
         found = self._cache.get(key)
         if found is not None:
             return found
-        image = self._render(annot, state, width, height)
+        image = self._render(annot, state, width, height, rotation=rotation)
         if image is not None:
             self._cache[key] = image
         return image
 
     def _render(self, annot, state, width, height, text=None,
-                acroform=None, source=None) -> Optional[QImage]:
+                acroform=None, source=None, rotation=0) -> Optional[QImage]:
+        """``width`` and ``height`` are the size wanted on screen.
+
+        On a page the reader turns, that is not the size to render at: the
+        appearance is written in the page's own frame, so it is drawn at the
+        unturned size -- the two swapped for a quarter turn -- and the result
+        is turned to match. Rendering at the on-screen size instead would
+        squash the drawing into the wrong aspect ratio before turning it.
+        """
+        quarter = (rotation // 90) % 4
+        if quarter % 2:
+            width, height = height, width
         try:
             rect = [float(v) for v in annot.get(pikepdf.Name.Rect, [0, 0, 0, 0])]
             points_wide = abs(rect[2] - rect[0])
@@ -206,6 +218,11 @@ class AppearanceRenderer:
             if image.isNull():
                 return None
             # The document owns the bitmap; a copy outlives it.
-            return image.copy()
+            image = image.copy()
+            if quarter:
+                # Clockwise, which is what /Rotate means and which is the
+                # direction a positive angle turns in Qt's y-down frame.
+                image = image.transformed(QTransform().rotate(quarter * 90))
+            return image
         except Exception:  # noqa: BLE001 - a field that will not draw is blank
             return None
