@@ -617,13 +617,6 @@ class TestReadingTheFieldsOfADocument(unittest.TestCase):
     def test_a_plain_annotation_is_not_a_field(self):
         self.assertEqual(len(self.map_of(document_with_annotation("/Square"))), 0)
 
-    def test_a_rewritten_widget_is_still_a_field(self):
-        """The reader shows the copy where widgets became stamps, and the
-        click has to land on them there."""
-        from pdfarranger_qt import forms
-
-        data = forms.rendered_bytes(document_with_annotation("/Widget"))
-        self.assertEqual(len(self.map_of(data)), 1)
 
     def test_a_radio_group_is_recognised_as_one(self):
         fields = self.map_of(radio_across_pages())
@@ -673,6 +666,54 @@ class TestReadingTheFieldsOfADocument(unittest.TestCase):
         box = self.field(kind="/Btn")
         self.assertTrue(box.is_checkbox)
         self.assertFalse(box.is_radio)
+
+
+def stamp_titled(name="Mobile User", kind=None):
+    """A genuine stamp annotation that carries a title.
+
+    Which is what Apple's markup leaves behind: every annotation it writes is
+    titled with the device's user name, and alongside the ``/FreeText`` boxes
+    it adds one ``/Stamp``. Two documents in the corpus carry exactly this.
+    """
+    data = document_with_annotation("/Stamp")
+    pdf = pikepdf.open(io.BytesIO(data))
+    annot = pdf.pages[0].Annots[0]
+    annot[pikepdf.Name.T] = pikepdf.String(name)
+    if kind is not None:
+        annot[pikepdf.Name.FT] = pikepdf.Name(kind)
+    out = io.BytesIO()
+    pdf.save(out)
+    return out.getvalue()
+
+
+class TestAStampIsNotAField(unittest.TestCase):
+    """A drawing is a drawing, however it is titled.
+
+    ``show_widgets`` turns widgets into stamps so that PDFium will draw them,
+    and body 1 showed the reader that rewritten copy -- so reading a stamp as
+    a field was right then. The reader is not shown that copy any more: it
+    composites the fields over the page itself, and is handed either the
+    export or the source file, both carrying real widgets. All the exception
+    still caught was genuine stamps, and real documents have them.
+    """
+
+    def test_a_titled_stamp_is_not_read_as_a_field(self):
+        self.assertEqual(len(forms.FieldMap.read(stamp_titled())), 0)
+
+    def test_a_widget_still_is(self):
+        """The other half: the change must not cost us real fields."""
+        self.assertEqual(
+            len(forms.FieldMap.read(document_with_annotation("/Widget"))), 1)
+
+    def test_a_stamp_is_not_written_to(self):
+        """Even one carrying the type and name of a field that is being filled.
+
+        A stamp sharing a field's name would otherwise take its value, and the
+        phantom would be saved into the document.
+        """
+        pdf = pikepdf.open(io.BytesIO(stamp_titled("box", kind="/Btn")))
+        self.assertEqual(forms.apply_values(pdf.pages, {"box": "/Yes"}), 0)
+        self.assertNotIn(pikepdf.Name.V, pdf.pages[0].Annots[0])
 
 
 class TestWhichFieldIsUnderAPoint(unittest.TestCase):

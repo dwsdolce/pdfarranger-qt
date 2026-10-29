@@ -362,8 +362,14 @@ def fields_in(pdf) -> "list[Field]":
     found = []
     for index, page in enumerate(pdf.pages):
         for annot in page.get(pikepdf.Name.Annots, []):
-            if annot.get(pikepdf.Name.Subtype) not in (
-                    pikepdf.Name.Widget, pikepdf.Name.Stamp):
+            # Widgets only. `/Stamp` was accepted here while body 1 showed the
+            # reader the copy with the widgets rewritten into stamps; it is
+            # shown the export or the source file now, both of which carry
+            # real widgets, so all the exception still caught was *genuine*
+            # stamps. Two documents in the corpus have one -- Apple's markup
+            # titles everything it writes with the device's user name -- and
+            # each surfaced as a phantom field named "Mobile User".
+            if annot.get(pikepdf.Name.Subtype) != pikepdf.Name.Widget:
                 continue
             name = _qualified(annot)
             if not name:
@@ -512,8 +518,11 @@ def apply_values(pages, values: Dict[str, str], acroform=None,
     written = 0
     for page in pages:
         for annot in page.get(pikepdf.Name.Annots, []):
-            if annot.get(pikepdf.Name.Subtype) not in (
-                    pikepdf.Name.Widget, pikepdf.Name.Stamp):
+            # Widgets only, for the reason given in `fields_in`. Nothing is
+            # lost by it: the one caller that rewrites -- `rendered_copy` --
+            # writes the values *before* `show_widgets`, while they are still
+            # widgets.
+            if annot.get(pikepdf.Name.Subtype) != pikepdf.Name.Widget:
                 continue
             name = _qualified(annot)
             if name not in values:
