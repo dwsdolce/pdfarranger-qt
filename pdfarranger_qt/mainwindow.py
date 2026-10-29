@@ -93,6 +93,7 @@ class MainWindow(QMainWindow):
         self.model = PageListModel(self.renderer, self)
         self.model.doc_password = self._password_for
         self.model.doc_files = self.docs.files_for_export
+        self.model.doc_render_file = self.docs.render_file
         self.view = PageView(self.model, self)
         self.reader = reader.ReaderView(self)
         # One stack, two modes. The reader is what a window shows, opened or
@@ -1437,7 +1438,8 @@ class MainWindow(QMainWindow):
         try:
             ok = self.reader.load(self.model.pages, self.docs.files_for_export(),
                                   self.docs.source_names(),
-                                  self.docs.source_if_unmodified(self.model.pages))
+                                  self.docs.source_if_unmodified(self.model.pages),
+                                  forms_present=self.docs.has_form_widgets())
         finally:
             QApplication.restoreOverrideCursor()
         self._reader_stale = not ok

@@ -49,6 +49,7 @@ from typing import Callable, List, NamedTuple, Optional, Tuple, Union
 import pikepdf
 from PySide6.QtPdf import QPdfDocument
 
+from . import forms
 from .i18n import gettext_ as _
 
 try:
@@ -620,6 +621,14 @@ class PDFDoc:
             raise PDFDocError(_("File is neither pdf nor image") + ": " + filename)
 
         self.page_sizes: List[Dims] = []
+        #: Whether this document has form fields with something to draw, and
+        #: the copy that will draw them. Read off the probe, which already has
+        #: the file open, and the copy is built the first time it is wanted --
+        #: nearly every document has no fields and must pay for neither.
+        self.has_form_widgets = False
+        self._render_copy: Optional[str] = None
+        self._render_copy_tried = False
+        self._tmp_dir = tmp_dir
         self._probe()
 
     def _probe(self):
@@ -662,6 +671,9 @@ class PDFDoc:
         """
         try:
             with pikepdf.open(self.copyname, password=self.password) as pdf:
+                # Asked here because the file is already open and walking the
+                # annotations is cheap beside parsing it again later.
+                self.has_form_widgets = forms.has_widgets(pdf)
                 if len(pdf.pages) != count:
                     return None     # the two disagree; trust the renderer
                 return [_displayed_size(page) for page in pdf.pages]
@@ -671,6 +683,27 @@ class PDFDoc:
     @property
     def n_pages(self) -> int:
         return len(self.page_sizes)
+
+    @property
+    def render_copyname(self) -> str:
+        """The path a *renderer* should open. `copyname` for most documents.
+
+        A form's fields are invisible to a page renderer (see `forms`), so a
+        document that has them gets a second temporary copy with the fields
+        rewritten into something PDFium will draw. Built once, on demand, and
+        only for the documents that need it; everything else keeps returning
+        the working copy and nothing extra is written.
+
+        Export never comes here. It reads `copyname`, which still has its
+        widgets and its rebuilt /AcroForm.
+        """
+        if not self.has_form_widgets:
+            return self.copyname
+        if not self._render_copy_tried:
+            self._render_copy_tried = True
+            self._render_copy = forms.rendered_copy(
+                self.copyname, self.password, self._tmp_dir)
+        return self._render_copy or self.copyname
 
 
 class DocumentSet:
@@ -848,6 +881,23 @@ class DocumentSet:
         """
         return [(d.copyname, d.password) for d in self.docs]
 
+    def render_file(self, page) -> str:
+        """The path a renderer should open for ``page``.
+
+        The working copy for almost everything, and a rewritten one where the
+        document has form fields, which a page renderer will not otherwise
+        draw. Export has `files_for_export`; this is the other half of that
+        pair and the two must not be confused -- a rewritten copy in a saved
+        file would turn every field into a picture of itself.
+        """
+        if 0 < page.nfile <= len(self.docs):
+            return self.docs[page.nfile - 1].render_copyname
+        return page.copyname
+
+    def has_form_widgets(self) -> bool:
+        """Whether any loaded document has fields that need the rewrite."""
+        return any(d.has_form_widgets for d in self.docs)
+
     def source_if_unmodified(self, pages) -> Optional[Tuple[str, str]]:
         """``(copyname, password)`` if ``pages`` is a 1:1 view of one source.
 
@@ -866,6 +916,11 @@ class DocumentSet:
         opened. Handing the reader the original would put PDFium on a file that
         a save can rewrite underneath it.
 
+        The render copy for a document with form fields, because this is a
+        reader asking: a page renderer draws no field unless they are rewritten
+        first (see `forms`). For everything else that is the same path as
+        before, so D19's fast entry into read mode is untouched.
+
         Cheap by design -- this runs on every entry into read mode.
         """
         if not pages:
@@ -881,7 +936,7 @@ class DocumentSet:
                     or page.npage != expected
                     or not page.unmodified()):
                 return None
-        return doc.copyname, doc.password
+        return doc.render_copyname, doc.password
 
     def source_names(self) -> List[str]:
         """Original basenames, indexed by ``nfile - 1``.

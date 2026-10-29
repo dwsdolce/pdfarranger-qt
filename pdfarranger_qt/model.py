@@ -598,7 +598,7 @@ class PageListModel(QAbstractListModel):
             tasks.append(
                 RenderTask(
                     key,
-                    page.copyname,
+                    self.doc_render_file(page),
                     self.doc_password(page),
                     page.npage,
                     page.angle,
@@ -617,6 +617,14 @@ class PageListModel(QAbstractListModel):
     #: Overridden by the window once a DocumentSet exists.
     def doc_password(self, page: Page) -> str:
         return ""
+
+    #: Overridden by the window once a DocumentSet exists. Thumbnails come
+    #: from this rather than from ``page.copyname`` because a document with
+    #: form fields renders from a rewritten copy -- a page renderer draws no
+    #: field otherwise. Unset, it is the page's own file, which is what every
+    #: document without fields uses anyway.
+    def doc_render_file(self, page: Page) -> str:
+        return page.copyname
 
     #: Overridden by the window once a DocumentSet exists. Only a page with
     #: layers needs it, so an unset hook is harmless for an ordinary document.

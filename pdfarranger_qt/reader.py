@@ -53,6 +53,7 @@ from PySide6.QtWidgets import (
     QWidget,
 )
 
+from . import forms as forms_module
 from .canvas import ZOOM_LIMITS, ZOOM_STEP, PageCanvas
 from .export import get_in_memory_pdf
 from .find import Query, TextSearch
@@ -232,7 +233,8 @@ class ReaderView(QWidget):
 
     # -- document ----------------------------------------------------------
 
-    def load(self, pages, files, source_names=None, source=None) -> bool:
+    def load(self, pages, files, source_names=None, source=None,
+             forms_present=False) -> bool:
         """Render ``pages`` to an in-memory PDF and show it (D15).
 
         Returns False if the export or the load failed, leaving whatever was
@@ -244,6 +246,13 @@ class ReaderView(QWidget):
         1590 page book the export costs 3.6 s and peaks at 1.7 GB against a
         63 ms parse, for a document that is byte-for-byte what is already on
         disk.
+
+        ``forms_present`` says that some loaded document has form fields, which
+        a page renderer will not draw until they are rewritten (see `forms`).
+        Only the export path needs telling: ``source`` already arrives as the
+        rewritten copy when there is one. Asked of the caller rather than of
+        the exported bytes because finding out means parsing them again, and
+        the answer is no for almost every document.
         """
         if source is not None and self._load_source(
                 *source, sizes=_sizes_of(pages)):
@@ -254,6 +263,10 @@ class ReaderView(QWidget):
             # mode switch -- and on a 1590 page book that is not free.
             data = get_in_memory_pdf(list(pages), files,
                                      source_names=source_names)
+            if forms_present:
+                # The export carries the fields across as fields, which is
+                # right for a file but invisible on screen.
+                data = forms_module.rendered_bytes(data)
         except Exception:  # noqa: BLE001 - reported by the caller as "cannot read"
             # Logged, not silent. Swallowing this once turned a crash in the
             # export path into "the reader just returns False", and 42 tests
