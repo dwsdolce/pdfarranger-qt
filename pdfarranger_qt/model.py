@@ -28,6 +28,7 @@ from typing import List, Optional, Tuple
 from PySide6.QtCore import QAbstractListModel, QModelIndex, Qt, Signal
 
 from .core import Dims, Page, Sides
+from .forms import FormValues
 from .outline import Outline
 from .render import RenderTask
 
@@ -44,6 +45,15 @@ class UndoState:
     rather than two that can disagree: undoing a rename and undoing a rotation
     come off the same stack, and a page delete and the bookmarks pointing at it
     are restored together.
+    """
+    form_values: Optional["FormValues"] = None
+    """What had been typed into the document's form fields.
+
+    Here for the same reason as the outline, and it is the reason filling a
+    field is a document edit at all: one stack, so undoing a tick and undoing a
+    rotation are the same gesture and cannot disagree about what the document
+    is. An overlay of changes only, so a document nobody has filled snapshots
+    an empty one.
     """
 
 
@@ -65,6 +75,7 @@ class UndoManager:
             [p.duplicate() for p in self.model.pages],
             list(self.model.selected_rows()),
             self.model.outline.duplicate(),
+            self.model.form_values.duplicate(),
         )
 
     def commit(self, label: str):
@@ -142,6 +153,10 @@ class PageListModel(QAbstractListModel):
         self.outline = Outline()
         """The document's bookmarks (D20). Owned here rather than derived at
         export time, which is what makes them editable at all."""
+        self.form_values = FormValues()
+        """What has been typed into the form, as an overlay on what the
+        documents already say. Owned here for the same reason as the outline:
+        it has to survive undo, and it has to be written on save."""
         self.renderer = renderer
         self.undo = UndoManager(self)
         #: Rendered pixels per PDF point. Every page is drawn at the same zoom,
@@ -514,6 +529,8 @@ class PageListModel(QAbstractListModel):
         # staying dangling -- which is the whole reason the two share a stack.
         if state.outline is not None:
             self.outline = state.outline.duplicate()
+        if state.form_values is not None:
+            self.form_values = state.form_values.duplicate()
         self._key_rows.clear()
         self.endResetModel()
         self.outline_changed.emit()

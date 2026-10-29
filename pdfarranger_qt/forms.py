@@ -52,7 +52,7 @@ has a working ``/AcroForm``.
 
 import os
 import tempfile
-from typing import Optional
+from typing import Dict, Optional, Tuple
 
 import pikepdf
 
@@ -131,3 +131,90 @@ def rendered_bytes(data: bytes) -> bytes:
             return out.getvalue()
     except Exception:  # noqa: BLE001 - rendering falls back to the original
         return data
+
+
+class FormValues:
+    """What the user has typed or ticked, and nothing else.
+
+    A sparse overlay. The source document already holds the values it came
+    with; this records only what has been *changed*, so an untouched form stores
+    nothing, and undoing every edit leaves an empty overlay which is by
+    definition the original document. The same shape as a `Page`, which holds a
+    rotation and a crop rather than a copy of the page.
+
+    **Keyed by document and fully qualified field name, never by page.** A value
+    belongs to the field, and a field's widgets can sit on more than one page --
+    the I-9 has such a field, though the insurance form that prompted this work
+    has none of its 82 there. Key by page and there is no answer to which page
+    owns the value, and duplicating a page would make two fields of one name
+    hold two values, which PDF forbids: one qualified name is one field with one
+    value, however many widgets draw it.
+
+    Everything else then falls out. Reordering costs nothing, because nothing
+    refers to position. Deleting a page leaves a value with no widget, which the
+    export simply does not write, since `/Fields` is rebuilt from the widgets
+    that survived -- dangling rather than destroyed, the same choice the outline
+    makes for a bookmark whose page has gone, and undoable for the same reason.
+    Duplicating a page gives one field two widgets and one value, which is what
+    PDF says.
+
+    A plain container, like `Outline`: it knows nothing about pikepdf or Qt, so
+    what survives an edit can be tested without either.
+    """
+
+    __slots__ = ("_values",)
+
+    def __init__(self, values=None):
+        #: ``(nfile, qualified name) -> str``. For a text or choice field the
+        #: string is its text; for a button it is the state name to show. The
+        #: writer decides which PDF type that becomes, because that depends on
+        #: the field and the field is not here.
+        self._values: Dict[Tuple[int, str], str] = dict(values or {})
+
+    def duplicate(self) -> "FormValues":
+        """A copy, for the undo snapshot the page list is taking anyway."""
+        return FormValues(self._values)
+
+    def __bool__(self):
+        return bool(self._values)
+
+    def __len__(self):
+        return len(self._values)
+
+    def __eq__(self, other):
+        if not isinstance(other, FormValues):
+            return NotImplemented
+        return self._values == other._values
+
+    def get(self, nfile: int, name: str, default=None):
+        """The edited value, or ``default`` when this field was never touched.
+
+        The default matters: absent means "ask the document", not "empty". A
+        field the user has deliberately emptied holds ``""``, which is an edit.
+        """
+        return self._values.get((nfile, name), default)
+
+    def edited(self, nfile: int, name: str) -> bool:
+        return (nfile, name) in self._values
+
+    def set(self, nfile: int, name: str, value: str):
+        self._values[(nfile, name)] = value
+
+    def revert(self, nfile: int, name: str):
+        """Forget an edit, so the document's own value applies again."""
+        self._values.pop((nfile, name), None)
+
+    def clear(self):
+        self._values.clear()
+
+    def items(self):
+        """``((nfile, name), value)`` for every edit, in insertion order."""
+        return self._values.items()
+
+    def for_document(self, nfile: int) -> Dict[str, str]:
+        """Every edit belonging to one source document, by qualified name."""
+        return {name: value for (file, name), value in self._values.items()
+                if file == nfile}
+
+    def __repr__(self):  # pragma: no cover - debugging aid
+        return f"FormValues({len(self._values)} edited)"

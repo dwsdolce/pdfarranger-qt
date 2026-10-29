@@ -422,3 +422,161 @@ class TestAFieldIsNotSplitAcrossPages(unittest.TestCase):
         second = exported.pages[1].Annots[0].objgen
         self.assertNotEqual(first, second,
                             "two copies of one page must not share a widget")
+
+
+class TestTheOverlayItself(unittest.TestCase):
+    """What has been typed, as a container, with no Qt and no document."""
+
+    def values(self):
+        from pdfarranger_qt.forms import FormValues
+
+        return FormValues()
+
+    def test_an_untouched_form_stores_nothing(self):
+        """Sparse on purpose: the document already holds what it came with."""
+        self.assertFalse(self.values())
+        self.assertEqual(len(self.values()), 0)
+
+    def test_absent_is_not_empty(self):
+        """"Never touched" and "deliberately emptied" are different answers.
+
+        The first means ask the document; the second is an edit to empty, and
+        must survive a save as one.
+        """
+        values = self.values()
+        self.assertIsNone(values.get(1, "name"))
+        self.assertFalse(values.edited(1, "name"))
+        values.set(1, "name", "")
+        self.assertEqual(values.get(1, "name"), "")
+        self.assertTrue(values.edited(1, "name"))
+
+    def test_reverting_forgets_the_edit(self):
+        values = self.values()
+        values.set(1, "name", "typed")
+        values.revert(1, "name")
+        self.assertFalse(values.edited(1, "name"))
+        self.assertIsNone(values.get(1, "name"))
+
+    def test_the_same_name_in_two_documents_is_two_fields(self):
+        """Merging two forms that both have a "name" field keeps them apart
+        here; they only become one field once they are in one document, which
+        is what the save warns about."""
+        values = self.values()
+        values.set(1, "name", "from the first")
+        values.set(2, "name", "from the second")
+        self.assertEqual(values.get(1, "name"), "from the first")
+        self.assertEqual(values.get(2, "name"), "from the second")
+
+    def test_a_copy_is_independent(self):
+        values = self.values()
+        values.set(1, "name", "typed")
+        copy = values.duplicate()
+        copy.set(1, "other", "later")
+        self.assertEqual(len(values), 1)
+        self.assertEqual(len(copy), 2)
+
+    def test_one_document_can_be_read_out(self):
+        values = self.values()
+        values.set(1, "a", "x")
+        values.set(2, "b", "y")
+        values.set(1, "c", "z")
+        self.assertEqual(values.for_document(1), {"a": "x", "c": "z"})
+        self.assertEqual(values.for_document(3), {})
+
+
+class TestAValueSurvivesEditing(unittest.TestCase):
+    """2.1's done-when: a value survives undo, redo and a page reorder.
+
+    The point of putting it on the same stack as the pages. A value keyed by
+    page would not survive the reorder; one on a stack of its own could
+    disagree with the page list about what the document is.
+    """
+
+    def setUp(self):
+        from pdfarranger_qt.mainwindow import MainWindow
+
+        self.win = MainWindow()
+        self.win.open_paths([TEST_PDF])
+        settle(timeout_ms=400)
+        self.win.modified = False
+        self.addCleanup(self.win.close)
+        self.addCleanup(lambda: setattr(self.win, "modified", False))
+        self.model = self.win.model
+
+    def typed(self):
+        return self.model.form_values.get(1, "a.field")
+
+    def type_something(self):
+        self.model.undo.commit("Fill")
+        self.model.form_values.set(1, "a.field", "typed")
+
+    def test_a_value_is_remembered(self):
+        self.type_something()
+        self.assertEqual(self.typed(), "typed")
+
+    def test_undo_takes_it_back(self):
+        self.type_something()
+        self.win.undo()
+        settle(timeout_ms=200)
+        self.assertIsNone(self.typed())
+
+    def test_redo_brings_it_back(self):
+        self.type_something()
+        self.win.undo()
+        settle(timeout_ms=200)
+        self.win.redo()
+        settle(timeout_ms=200)
+        self.assertEqual(self.typed(), "typed")
+
+    def test_a_reorder_leaves_it_alone(self):
+        """Nothing in the key refers to a position, so this is free."""
+        self.type_something()
+        self.win.view.set_selected_rows([1])
+        self.win.move_to_start()
+        settle(timeout_ms=200)
+        self.assertEqual(self.typed(), "typed")
+
+    def test_undoing_a_page_edit_does_not_lose_it(self):
+        """One stack: a rotation's undo must not take the typing with it.
+
+        Both halves are asserted. Checking only that the value survived would
+        pass with the whole mechanism switched off, since a value that is never
+        snapshotted is also never restored.
+        """
+        self.type_something()
+        before = self.model.pages[0].angle
+        self.win.view.set_selected_rows([0])
+        self.win.rotate(90)
+        settle(timeout_ms=200)
+        self.assertNotEqual(self.model.pages[0].angle, before, "it should rotate")
+        self.win.undo()
+        settle(timeout_ms=200)
+        self.assertEqual(self.model.pages[0].angle, before,
+                         "the rotation should be undone")
+        self.assertEqual(self.typed(), "typed",
+                         "and only the rotation")
+
+    def test_a_value_set_before_a_page_edit_is_restored_with_it(self):
+        """The discriminating case: undo must put back the value that was in
+        the snapshot, not merely leave the live one alone."""
+        self.type_something()
+        self.model.undo.commit("Rotate")
+        self.model.form_values.set(1, "a.field", "changed later")
+        self.win.view.set_selected_rows([0])
+        self.win.undo()
+        settle(timeout_ms=200)
+        self.assertEqual(self.typed(), "typed",
+                         "undo should restore the snapshotted value")
+
+    def test_deleting_the_page_leaves_the_value_dangling(self):
+        """Not destroyed: undo restores the page, and the value is still there
+        to go with it. The export writes only the fields whose widgets
+        survived, so a dangling value reaches no file."""
+        self.type_something()
+        self.win.view.set_selected_rows([0])
+        self.win.delete_selected()
+        settle(timeout_ms=200)
+        self.assertEqual(self.typed(), "typed")
+        self.win.undo()
+        settle(timeout_ms=200)
+        self.assertEqual(self.typed(), "typed")
