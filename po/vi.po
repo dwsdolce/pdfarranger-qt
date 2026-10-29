@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-29 04:33+0000\n"
+"POT-Creation-Date: 2026-10-29 17:22+0000\n"
 "PO-Revision-Date: 2025-12-15 00:59+0700\n"
 "Last-Translator: Loc Huynh <https://github.com/hthienloc>\n"
 "Language: vi\n"
@@ -2433,6 +2433,11 @@ msgstr "Trình điều khiển máy in đang xử lý tác vụ."
 msgid "%d page printed"
 msgid_plural "%d pages printed"
 msgstr[0] "Đã in %d trang"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "This document is signed. Filling a field would break the signature."
+msgstr "Tài liệu này đã được ký. Điền vào một trường sẽ làm hỏng chữ ký."
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py

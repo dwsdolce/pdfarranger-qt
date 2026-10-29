@@ -626,6 +626,11 @@ class PDFDoc:
         #: the file open, and the copy is built the first time it is wanted --
         #: nearly every document has no fields and must pay for neither.
         self.has_form_widgets = False
+        #: Whether this document carries a signature a save would break, so
+        #: that its fields refuse to be filled in. Read off the same probe,
+        #: and off the *source*: the reader is shown an export, which has had
+        #: the remains of any signature stripped out of it.
+        self.signed = False
         self._render_copy: Optional[str] = None
         self._render_copy_tried = False
         self._tmp_dir = tmp_dir
@@ -678,6 +683,7 @@ class PDFDoc:
                 # Asked here because the file is already open and walking the
                 # annotations is cheap beside parsing it again later.
                 self.has_form_widgets = forms.has_widgets(pdf)
+                self.signed = forms.is_signed(pdf)
                 if len(pdf.pages) != count:
                     return None     # the two disagree; trust the renderer
                 return [_displayed_size(page) for page in pdf.pages]

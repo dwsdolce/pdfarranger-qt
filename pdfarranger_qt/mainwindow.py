@@ -114,8 +114,10 @@ class MainWindow(QMainWindow):
         # What the canvas asks when it needs to know which appearance to draw,
         # and what it tells us when one is clicked.
         self.reader.canvas.field_values = self._field_value
+        self.reader.canvas.field_locked = self._field_locked
         self.reader.field_pressed.connect(self.field_pressed)
         self.reader.field_edited.connect(self.field_edited)
+        self.reader.field_refused.connect(self.field_refused)
         # The sidebar shows the document's outline, not the reader document's
         # (D20), so the window keeps the two in step.
         self.model.outline_changed.connect(self._refresh_outline)
@@ -2807,10 +2809,35 @@ class MainWindow(QMainWindow):
             return self.model.pages[field.page]
         return None
 
+    def _field_locked(self, field) -> bool:
+        """Whether this field's document refuses to be filled in.
+
+        A signature is the only reason so far. Asked of the source document
+        rather than of the one on screen, because the one on screen is an
+        export and export does not carry a signature over (D5).
+        """
+        page = self._page_for_field(field)
+        if page is None:
+            return False
+        if 0 < page.nfile <= len(self.docs.docs):
+            return bool(self.docs.docs[page.nfile - 1].signed)
+        return False
+
+    def field_refused(self, field):
+        """A field was clicked in a document that will not take the edit.
+
+        Saying so beats doing nothing: a field that quietly ignores a click
+        looks broken, and this one is refusing for a reason the user cannot
+        otherwise see.
+        """
+        self.statusBar().showMessage(
+            _("This document is signed. Filling a field would break the "
+              "signature."), 6000)
+
     def field_edited(self, field, text: str):
         """A text field was typed into and the editor closed."""
         page = self._page_for_field(field)
-        if page is None or not field.fillable:
+        if page is None or not field.fillable or self._field_locked(field):
             return
         current = self.model.form_values.get(page.nfile, field.name,
                                              field.value)
@@ -2825,12 +2852,12 @@ class MainWindow(QMainWindow):
         self.reader.canvas.viewport().update()
 
     def field_pressed(self, field):
-        """A form field was clicked. Tick boxes toggle; the rest wait for 2.5."""
+        """A form field was clicked. Tick boxes toggle; text opens an editor."""
         page = self._page_for_field(field)
-        if page is None or not field.fillable:
+        if page is None or not field.fillable or self._field_locked(field):
             return
         if field.kind != "/Btn":
-            return                      # text and choice fields are 2.5
+            return          # text and choice go through the canvas's editor
         current = self.model.form_values.get(page.nfile, field.name, field.value)
         wanted = self._toggled(field, current)
         if wanted is None:

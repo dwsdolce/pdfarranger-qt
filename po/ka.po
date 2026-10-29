@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  pdfarranger\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-29 04:33+0000\n"
+"POT-Creation-Date: 2026-10-29 17:22+0000\n"
 "PO-Revision-Date: 2026-01-21 05:07+0100\n"
 "Last-Translator: Ekaterine Papava <papava.e@gtu.ge>\n"
 "Language: ka\n"
@@ -2439,6 +2439,11 @@ msgstr "პრინტერის დრაივერი დავალე�
 msgid "%d page printed"
 msgid_plural "%d pages printed"
 msgstr[0] "დაბეჭდილია %d გვერდი"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "This document is signed. Filling a field would break the signature."
+msgstr "ეს დოკუმენტი ხელმოწერილია. ველის შევსება ხელმოწერას დაარღვევს."
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py

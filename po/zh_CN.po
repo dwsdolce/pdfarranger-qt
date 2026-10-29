@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PDF Arranger 1.14.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-29 04:33+0000\n"
+"POT-Creation-Date: 2026-10-29 17:22+0000\n"
 "PO-Revision-Date: 2026-06-02 17:09+0800\n"
 "Last-Translator: Puqns67 <me@puqns67.icu>\n"
 "Language: zh_CN\n"
@@ -2271,6 +2271,11 @@ msgstr "打印机驱动程序正在处理该作业。"
 msgid "%d page printed"
 msgid_plural "%d pages printed"
 msgstr[0] "已打印 %d 页"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "This document is signed. Filling a field would break the signature."
+msgstr "此文档已签名。填写字段会破坏签名。"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py

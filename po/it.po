@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pdfarranger master\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-29 04:33+0000\n"
+"POT-Creation-Date: 2026-10-29 17:22+0000\n"
 "PO-Revision-Date: 2026-01-04 02:52+0100\n"
 "Last-Translator: Massimo Pissarello <mapi68@gmail.com>\n"
 "Language: it\n"
@@ -2457,6 +2457,11 @@ msgid "%d page printed"
 msgid_plural "%d pages printed"
 msgstr[0] "%d pagina stampata"
 msgstr[1] "%d pagine stampate"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "This document is signed. Filling a field would break the signature."
+msgstr "Questo documento è firmato. Compilare un campo invaliderebbe la firma."
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-29 04:33+0000\n"
+"POT-Creation-Date: 2026-10-29 17:22+0000\n"
 "PO-Revision-Date: 2025-09-28 16:51+0000\n"
 "Last-Translator: Sveinn í Felli <sv1@fellsnet.is>\n"
 "Language: is\n"
@@ -2453,6 +2453,11 @@ msgid "%d page printed"
 msgid_plural "%d pages printed"
 msgstr[0] "%d síða prentuð"
 msgstr[1] "%d síður prentaðar"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "This document is signed. Filling a field would break the signature."
+msgstr "Þetta skjal er undirritað. Að fylla út reit myndi rjúfa undirritunina."
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py

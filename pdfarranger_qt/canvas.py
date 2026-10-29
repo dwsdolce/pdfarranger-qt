@@ -930,6 +930,9 @@ class PageCanvas(QAbstractScrollArea):
     #: A text field was typed into and the editor closed: ``(field, text)``.
     field_edited = Signal(object, str)
 
+    #: A fillable field was clicked in a document that will not take the edit.
+    field_refused = Signal(object)
+
     def __init__(self, parent=None):
         super().__init__(parent)
         self._layout = PageLayout([])
@@ -963,6 +966,12 @@ class PageCanvas(QAbstractScrollArea):
         #: Given a Field, what the application says it holds, or None to use
         #: what the document says. Set by the window, which owns the edits.
         self.field_values = None
+        #: Set by the window: whether this field's document refuses to be
+        #: filled in. Asked here rather than in the handler because the canvas
+        #: decides whether to put an editor over the field, and an editor that
+        #: opens and then refuses to commit is a worse answer than one that
+        #: never opens.
+        self.field_locked = None
         #: ``(field, editor)`` while a text field is being typed into.
         self._editing = None
 
@@ -2183,6 +2192,15 @@ class PageCanvas(QAbstractScrollArea):
         font.setPixelSize(int(round(size)))
         return font
 
+    def _refuses(self, field) -> bool:
+        """Whether this field's document will not take an edit."""
+        if self.field_locked is None:
+            return False
+        try:
+            return bool(self.field_locked(field))
+        except Exception:  # noqa: BLE001 - a click must not raise
+            return False
+
     def set_field_map(self, fields):
         """The widgets of the document being shown, drawn and hit-tested."""
         self._fields = fields
@@ -2382,7 +2400,9 @@ class PageCanvas(QAbstractScrollArea):
             # would leave a stray caret in the middle of a form.
             field = self.field_at(QPointF(event.position()))
             if field is not None and field.fillable:
-                if field.kind in ("/Tx", "/Ch"):
+                if self._refuses(field):
+                    self.field_refused.emit(field)
+                elif field.kind in ("/Tx", "/Ch"):
                     self.edit_field(field)
                 else:
                     self.field_pressed.emit(field)

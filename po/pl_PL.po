@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PDF-Shuffler 0.7\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-29 04:33+0000\n"
+"POT-Creation-Date: 2026-10-29 17:22+0000\n"
 "PO-Revision-Date: 2021-12-30 17:13+0100\n"
 "Last-Translator: Toratora <darex7@o2.pl>\n"
 "Language: pl_PL\n"
@@ -2530,6 +2530,11 @@ msgid_plural "%d pages printed"
 msgstr[0] "Wydrukowano %d stronę"
 msgstr[1] "Wydrukowano %d strony"
 msgstr[2] "Wydrukowano %d stron"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "This document is signed. Filling a field would break the signature."
+msgstr "Ten dokument jest podpisany. Wypełnienie pola naruszyłoby podpis."
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py

@@ -1308,3 +1308,204 @@ class TestTypingIntoAField(unittest.TestCase):
         canvas = win.reader.canvas
         canvas.field_pressed.emit(self.field(win))
         self.assertIsNone(canvas.editing())
+
+
+def signed(data=None, certify=False, placeholder=False, flags_only=False,
+           usage_rights=False):
+    """``typable()`` with a signature field added to it.
+
+    Structural rather than cryptographic. What the application reads is a
+    ``/Sig`` field carrying a ``/V``, and nothing here validates a
+    certificate: doing that is a sub-project that stays out, and refusing an
+    edit does not need it.
+
+    The keyword arguments build the near misses as well as the hit, because
+    the near misses are what the corpus says real forms are full of.
+    """
+    pdf = pikepdf.open(io.BytesIO(data or typable()))
+    acroform = pdf.Root[pikepdf.Name.AcroForm]
+    if flags_only:
+        # What five corpus forms do: declare AppendOnly with no signature
+        # field anywhere in them.
+        acroform[pikepdf.Name.SigFlags] = 2
+        out = io.BytesIO()
+        pdf.save(out)
+        return out.getvalue()
+    value = pdf.make_indirect(pikepdf.Dictionary(
+        Type=pikepdf.Name.Sig,
+        Filter=pikepdf.Name("/Adobe.PPKLite"),
+        SubFilter=pikepdf.Name("/adbe.pkcs7.detached"),
+        ByteRange=pikepdf.Array([0, 100, 200, 300]),
+        Contents=pikepdf.String(b"\x00" * 16)))
+    if usage_rights:
+        # Reader-enabling, which five corpus forms carry. It grants rights
+        # rather than attesting to content, and must not count.
+        pdf.Root[pikepdf.Name.Perms] = pikepdf.Dictionary(UR3=value)
+        out = io.BytesIO()
+        pdf.save(out)
+        return out.getvalue()
+    field = pdf.make_indirect(pikepdf.Dictionary(
+        Type=pikepdf.Name.Annot, Subtype=pikepdf.Name.Widget,
+        FT=pikepdf.Name.Sig, T=pikepdf.String("signature"), F=132,
+        Rect=pikepdf.Array([0, 0, 0, 0])))
+    if not placeholder:
+        field[pikepdf.Name.V] = value
+        if certify:
+            value[pikepdf.Name.Reference] = pikepdf.Array([pikepdf.Dictionary(
+                Type=pikepdf.Name.SigRef,
+                TransformMethod=pikepdf.Name.DocMDP,
+                TransformParams=pikepdf.Dictionary(
+                    Type=pikepdf.Name.TransformParams, P=1))])
+            pdf.Root[pikepdf.Name.Perms] = pikepdf.Dictionary(DocMDP=value)
+    pdf.pages[0][pikepdf.Name.Annots].append(field)
+    acroform[pikepdf.Name.Fields].append(field)
+    acroform[pikepdf.Name.SigFlags] = 3
+    out = io.BytesIO()
+    pdf.save(out)
+    return out.getvalue()
+
+
+class TestWhetherADocumentIsSigned(unittest.TestCase):
+    """The predicate, and the three near misses that must not trip it.
+
+    Every one of the misses is something a real form in the corpus does, and
+    reading any of them as a signature would refuse to fill documents that
+    every other viewer fills happily.
+    """
+
+    def pdf(self, data):
+        return pikepdf.open(io.BytesIO(data))
+
+    def test_a_signed_field_counts_and_is_named(self):
+        pdf = self.pdf(signed())
+        self.assertTrue(forms.is_signed(pdf))
+        self.assertEqual(forms.signatures_in(pdf), ["signature"])
+
+    def test_a_certification_counts(self):
+        pdf = self.pdf(signed(certify=True))
+        self.assertTrue(forms.is_signed(pdf))
+
+    def test_an_empty_signature_field_does_not(self):
+        """A placeholder is an invitation to sign, not a signature.
+
+        The insurance form that began this work carries two of them, and it
+        has to stay fillable.
+        """
+        pdf = self.pdf(signed(placeholder=True))
+        self.assertFalse(forms.is_signed(pdf))
+        self.assertEqual(forms.signatures_in(pdf), [])
+
+    def test_sigflags_alone_does_not(self):
+        self.assertFalse(forms.is_signed(self.pdf(signed(flags_only=True))))
+
+    def test_a_usage_rights_signature_does_not(self):
+        """`/Perms /UR3` Reader-enables a form; it says nothing about content.
+
+        Five corpus forms carry one, the 1040 and the W-9 among them.
+        """
+        self.assertFalse(forms.is_signed(self.pdf(signed(usage_rights=True))))
+
+    def test_a_plain_form_does_not(self):
+        self.assertFalse(forms.is_signed(self.pdf(typable())))
+
+    def test_rubbish_is_not_a_signature(self):
+        pdf = pikepdf.new()
+        pdf.add_blank_page(page_size=(100, 100))
+        self.assertFalse(forms.is_signed(pdf))
+
+
+class TestASignedDocumentRefusesAFill(unittest.TestCase):
+    """2.7's done-when: a signed form says why rather than being quietly inert.
+
+    Refused in both directions a click can go -- the editor must not open over
+    a text field, and a tick box must not toggle -- because the canvas decides
+    which of those to do before the window hears about the click at all.
+    """
+
+    def window(self, data):
+        from pdfarranger_qt.mainwindow import MainWindow
+
+        path = temp_path("signed.pdf")
+        with open(path, "wb") as handle:
+            handle.write(data)
+        win = MainWindow()
+        win.resize(700, 560)
+        win.show()
+        win.open_paths([path])
+        settle(timeout_ms=600)
+        win.set_read_mode(True)
+        settle(timeout_ms=700)
+        win.modified = False
+        self.addCleanup(win.close)
+        self.addCleanup(lambda: setattr(win, "modified", False))
+        return win
+
+    def text_field(self, win):
+        for field in win.reader.canvas.fields().on_page(0):
+            if field.kind == "/Tx":
+                return field
+        self.fail("the fixture should have a text field")
+
+    def click(self, win, field):
+        from PySide6.QtCore import QEvent, Qt
+        from PySide6.QtGui import QMouseEvent
+        from PySide6.QtWidgets import QApplication
+
+        canvas = win.reader.canvas
+        where = canvas._field_rect(field)
+        self.assertIsNotNone(where, "the field should be on screen")
+        point = where.center()
+        QApplication.sendEvent(canvas.viewport(), QMouseEvent(
+            QEvent.MouseButtonPress, point,
+            canvas.viewport().mapToGlobal(point.toPoint()),
+            Qt.LeftButton, Qt.LeftButton, Qt.NoModifier))
+        settle(timeout_ms=200)
+
+    def test_an_unsigned_document_still_opens_an_editor(self):
+        """The control. Without it the rest passes on a broken canvas."""
+        win = self.window(typable())
+        self.click(win, self.text_field(win))
+        self.assertIsNotNone(win.reader.canvas.editing())
+
+    def test_a_signed_document_opens_no_editor(self):
+        win = self.window(signed())
+        self.click(win, self.text_field(win))
+        self.assertIsNone(win.reader.canvas.editing())
+
+    def test_a_certified_document_opens_no_editor(self):
+        win = self.window(signed(certify=True))
+        self.click(win, self.text_field(win))
+        self.assertIsNone(win.reader.canvas.editing())
+
+    def test_a_placeholder_signature_does_not_refuse(self):
+        """The case that must keep working: unsigned signature fields."""
+        win = self.window(signed(placeholder=True))
+        self.click(win, self.text_field(win))
+        self.assertIsNotNone(win.reader.canvas.editing())
+
+    def test_the_refusal_says_why(self):
+        win = self.window(signed())
+        self.click(win, self.text_field(win))
+        self.assertIn("signed", win.statusBar().currentMessage())
+
+    def test_a_tick_box_in_a_signed_document_does_not_toggle(self):
+        win = self.window(signed(data=tickable()))
+        field = next(f for f in win.reader.canvas.fields().on_page(0)
+                     if f.kind == "/Btn")
+        page = win.model.pages[field.page]
+        self.click(win, field)
+        self.assertIsNone(win.model.form_values.get(page.nfile, field.name))
+
+    def test_the_value_is_unchanged_even_if_a_handler_is_reached(self):
+        """The window guards as well as the canvas.
+
+        Belt and braces on purpose: the canvas stops the gesture, and the
+        handlers refuse the value, so neither alone is the only thing
+        standing between a signed document and a broken signature.
+        """
+        win = self.window(signed())
+        field = self.text_field(win)
+        page = win.model.pages[field.page]
+        win.field_edited(field, "typed anyway")
+        self.assertIsNone(win.model.form_values.get(page.nfile, field.name))
+        self.assertFalse(win.modified)

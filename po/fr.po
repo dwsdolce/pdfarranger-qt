@@ -13,7 +13,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-29 04:33+0000\n"
+"POT-Creation-Date: 2026-10-29 17:22+0000\n"
 "PO-Revision-Date: 2024-02-24 20:47+0100\n"
 "Last-Translator: Jérôme Robert <jeromerobert@gmx.com>\n"
 "Language: fr\n"
@@ -2494,6 +2494,11 @@ msgid "%d page printed"
 msgid_plural "%d pages printed"
 msgstr[0] "%d page imprimée"
 msgstr[1] "%d pages imprimées"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "This document is signed. Filling a field would break the signature."
+msgstr "Ce document est signé. Remplir un champ invaliderait la signature."
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py

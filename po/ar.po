@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-29 04:33+0000\n"
+"POT-Creation-Date: 2026-10-29 17:22+0000\n"
 "PO-Revision-Date: 2024-09-05 17:05+0300\n"
 "Last-Translator: Abdullah Albaroty <albaroty@gmail.com>\n"
 "Language: ar\n"
@@ -2452,6 +2452,11 @@ msgstr[2] "‏%d صفحتان مطبوعتان"
 msgstr[3] "‏%d صفحات مطبوعة"
 msgstr[4] "‏%d صفحة مطبوعة"
 msgstr[5] "‏%d صفحة مطبوعة"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "This document is signed. Filling a field would break the signature."
+msgstr "هذا المستند موقَّع. ملء أي حقل سيؤدي إلى إبطال التوقيع."
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py

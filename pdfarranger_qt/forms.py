@@ -351,6 +351,77 @@ def _inherited(annot, key):
 _FIELD_DEPTH = 8
 
 
+def signatures_in(pdf) -> "list[str]":
+    """The qualified names of signature fields that have actually been signed.
+
+    Signed means a ``/V``. An empty ``/Sig`` field is a *placeholder* for a
+    future signer and locks nothing: the insurance form that began this work
+    carries two of them and is perfectly fillable.
+    """
+    found, seen = [], set()
+
+    def walk(node, prefix="", depth=0):
+        if depth > _FIELD_DEPTH:
+            return
+        name = (str(node[pikepdf.Name.T])
+                if pikepdf.Name.T in node else "")
+        qualified = f"{prefix}.{name}" if prefix and name else (name or prefix)
+        kids = node.get(pikepdf.Name.Kids)
+        if kids is not None and any(
+                pikepdf.Name.T in kid or pikepdf.Name.Kids in kid
+                for kid in kids):
+            for kid in kids:
+                walk(kid, qualified, depth + 1)
+            return
+        if _inherited(node, pikepdf.Name.FT) != pikepdf.Name.Sig:
+            return
+        if node.get(pikepdf.Name.V) is None:
+            return
+        if qualified not in seen:
+            seen.add(qualified)
+            found.append(qualified)
+
+    try:
+        acroform = pdf.Root.get(pikepdf.Name.AcroForm)
+        fields = (acroform.get(pikepdf.Name.Fields, [])
+                  if acroform is not None else [])
+        for field in fields:
+            walk(field)
+    except Exception:  # noqa: BLE001 - an unreadable tree is not a signature
+        return found
+    return found
+
+
+def is_signed(pdf) -> bool:
+    """Whether this document carries a signature that saving would break.
+
+    Two things count. A ``/Sig`` field with a ``/V``: something has been
+    signed. ``/Perms /DocMDP``: a certification, which also carries the
+    permission level its author set.
+
+    Three plausible ones deliberately do not, each measured against the
+    corpus. **``/SigFlags``** is a hint about what the file contains and real
+    forms set it wrongly -- five of them declare AppendOnly while holding no
+    signature field at all, and the insurance form declares SignaturesExist
+    with two empty placeholders. **``/Perms /UR3``** is a usage-rights
+    signature, which Reader-enables a form rather than attesting to its
+    content; refusing on it would refuse to fill the 1040, the W-4, the W-9,
+    the 1099-MISC and SF-3107. **An empty ``/Sig`` field** is an invitation to
+    sign, not a signature.
+
+    Asked of the *source* document, never of what the reader shows. The reader
+    is shown an export, and export strips the remains of a signature rather
+    than carrying them, so by then there is nothing left to find.
+    """
+    try:
+        perms = pdf.Root.get(pikepdf.Name.Perms)
+        if perms is not None and pikepdf.Name.DocMDP in perms:
+            return True
+    except Exception:  # noqa: BLE001 - a damaged root is not a certification
+        return False
+    return bool(signatures_in(pdf))
+
+
 def fields_in(pdf) -> "list[Field]":
     """Every widget in a document, in page order then drawing order.
 

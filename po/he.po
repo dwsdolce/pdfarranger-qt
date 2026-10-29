@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-29 04:33+0000\n"
+"POT-Creation-Date: 2026-10-29 17:22+0000\n"
 "PO-Revision-Date: 2023-06-12 11:22+0300\n"
 "Last-Translator: Yaron Shahrabani <sh.yaron@gmail.com>\n"
 "Language: he\n"
@@ -2441,6 +2441,11 @@ msgstr[0] "הודפס עמוד %d"
 msgstr[1] "הודפסו %d עמודים"
 msgstr[2] "הודפסו %d עמודים"
 msgstr[3] "הודפסו %d עמודים"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "This document is signed. Filling a field would break the signature."
+msgstr "מסמך זה חתום. מילוי שדה יפגע בחתימה."
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py

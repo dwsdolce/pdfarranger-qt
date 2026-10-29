@@ -2,11 +2,11 @@
 
 **Issue:** [#14](https://github.com/dwsdolce/pdfarranger-qt/issues/14)
 
-**Status:** IN PROGRESS — body 1 **complete**, body 2 at six of nine. Tick
+**Status:** IN PROGRESS — body 1 **complete**, body 2 at seven of nine. Tick
 boxes and single-line text fields can both be filled in; what is typed shows,
 survives undo and reaches the saved file with a drawing for it. Only the guard
-against filling a signed document, the export strip and the save guard are
-left before markup.
+Filling is refused in a signed document. The export strip and the save guard
+are left before markup.
 
 A filled insurance form was opened in this application and came up blank. Every
 answer typed into it was missing — text, ticks, the lot — with nothing on screen
@@ -28,7 +28,7 @@ highlight are the same problem a second time.
 | | State |
 |---|---|
 | 1. Show what is in the file | **complete** — drawn, saved, printed, and measured against real forms |
-| 2. Fill fields | in progress — six of nine; the signed-document guard, the export strip and the save guard are left |
+| 2. Fill fields | in progress — seven of nine; the export strip and the save guard are left |
 | 3. Markup | after filling, which proves the model it needs |
 
 The first was correctness and needed no decision reversed: the application did
@@ -303,8 +303,8 @@ cheaper than a flag every caller has to remember.
 | 2.4 | Write values on save | 2.1 | a saved file opens in Acrobat with the value in the field | **complete** |
 | 2.5 | Text fields, single-line, explicit size | 2.1, 2.2, 2.4 | typing shows, survives undo, and saves | **complete** |
 | 2.6 | Narrow the snapshot invalidation | — | ten fills do not rebuild the reader ten times | **complete** with 2.3, by leaving nothing to rebuild |
-| 2.7 | Refuse to fill a field in a signed document | 2.3 | a signed form says why rather than invalidating a signature | next |
-| 2.8 | Strip the remains of a signature on export | -- | a derived document is honestly unsigned instead of claiming a signature over bytes that are gone | |
+| 2.7 | Refuse to fill a field in a signed document | 2.3 | a signed form says why rather than invalidating a signature | **complete** |
+| 2.8 | Strip the remains of a signature on export | -- | a derived document is honestly unsigned instead of claiming a signature over bytes that are gone | next |
 | 2.9 | Refuse to save over a signed source, and say the signature will not carry | 2.7, 2.8 | Save on a signed document offers Save As; a derived save says the signature is gone | |
 
 **2.1 has a precedent.** D20 settled how the outline is owned in the undo state
@@ -712,6 +712,27 @@ named gaps rather than for bulk — a real radio group, signature fields, and a
 form with many widgets per field. The tool found its own bug on the way: `/FT`
 is inherited and can sit between the widget and the root, so reading it off the
 root called 1,053 radio buttons typeless.
+
+**2026-10-29 — step 2.7.** A signed document refuses to have its fields
+filled in, and says so rather than ignoring the click. The test is a `/Sig`
+field carrying a `/V`, or `/Perms /DocMDP`; `/SigFlags`, `/Perms /UR3` and an
+empty signature field are each rejected explicitly, because each of them
+occurs in the corpus on a form that must stay fillable -- reading `/UR3` as a
+signature alone would refuse the 1040, the W-4, the W-9, the 1099-MISC and
+SF-3107.
+
+Asked of the *source* document, where the probe already has it open with
+pikepdf, and not of the document on screen: the reader is shown an export, and
+2.8 will leave no signature in one. The canvas asks before deciding what a
+click means, so no editor opens over a field it would then refuse to commit,
+and the handlers refuse the value as well -- neither is the only thing between
+a signed document and a broken signature. Checked by neutering each half
+separately: without the detection seven tests fail, without the canvas guard
+three, without the handler guard exactly one.
+
+Classified correctly across every sample held: the four signed files, the nine
+public forms, and the insurance form whose two empty signature fields leave it
+fillable.
 
 **2026-10-29 — a stamp is not a field.** `fields_in` accepted `/Stamp` as well
 as `/Widget`, which was right while body 1 showed the reader the copy with the
