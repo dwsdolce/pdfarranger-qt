@@ -6,6 +6,13 @@ decision keeps its number for ever, even when it is superseded.
 
 Anything not here is still open.
 
+> **The port's record, closed.** D1–D25 were taken while porting the GTK
+> application, which ended at phase 7. Nothing is added here now: a decision
+> taken for a piece of work since then lives in that work's own document, dated
+> and numbered within it, the way [ANNOTATIONS.md](ANNOTATIONS.md) carries its
+> own. These twenty-five keep their numbers for ever because fourteen of them
+> are cited by name in the source, and because a closed register cannot rot.
+
 ## Decisions
 
 Settled decisions and why, numbered in the order they were taken. Anything

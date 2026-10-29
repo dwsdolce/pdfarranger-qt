@@ -163,7 +163,13 @@ class TestTheDocumentsHangTogether(unittest.TestCase):
     #: A `#12` that does not say what kind of thing it is. Four numbering
     #: systems are in play and two of them use a `#`, so the word in front is
     #: the only thing distinguishing "Issue #8" from "phase 8".
-    UNNAMED = re.compile(r"(?<!Issue )(?<!Pull Request )(?<!PR )(?<![\w&])#\d{1,3}\b")
+    #:
+    #: `**Issue:** [#14](…)` is allowed as well: it is the heading a work
+    #: document carries to name the Issue it belongs to, and it says what the
+    #: number is as plainly as the prose form does.
+    UNNAMED = re.compile(
+        r"(?<!Issue )(?<!Pull Request )(?<!PR )(?<!Issue:\*\* \[)"
+        r"(?<![\w&])#\d{1,3}\b")
 
     #: Inline code quotes rather than refers: `#8` in a sentence *about* the
     #: notation is not a citation, and neither is `#000000`. Stripped before
@@ -206,6 +212,11 @@ class TestTheDocumentsHangTogether(unittest.TestCase):
         strip = self.CODE_SPAN.sub
         self.assertTrue(self.UNNAMED.search("blocked on #8 for now"))
         self.assertIsNone(self.UNNAMED.search("see Issue #8"))
+        # The heading form a work document carries.
+        self.assertIsNone(self.UNNAMED.search(
+            "**Issue:** [#14](https://github.com/x/y/issues/14)"))
+        self.assertTrue(self.UNNAMED.search("**Fixed:** [#14](https://x/14)"),
+                        "only the Issue heading is exempt, not any link")
         self.assertIsNone(self.UNNAMED.search("see Pull Request #2"))
         self.assertIsNone(self.UNNAMED.search("see PR #2"))
         # Quoted rather than cited, so both of these are allowed through.

@@ -6,6 +6,10 @@ time somebody reads it.
 
 The measurements these decisions rest on are in [FINDINGS.md](FINDINGS.md).
 
+> **The port's record, closed.** What is here was reasoned out while porting the
+> GTK application. Reasoning for a piece of work done since lives in that work's
+> own document — see [README.md](README.md) for the rule.
+
 ## Editing bookmarks — the design
 
 Settled with David before building, and worth reading before changing any of it:

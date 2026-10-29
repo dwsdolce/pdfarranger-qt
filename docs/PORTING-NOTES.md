@@ -6,6 +6,10 @@ got, and what the result is built from. Started 2026-08-06.
 Work done *after* the port, and everything learned along the way, lives beside
 this file — see [README.md](README.md) for what is where.
 
+> **Complete, and closed.** The port ended at phase 7. This file is its record
+> and is not added to; work since then is tracked as an Issue with a document of
+> its own.
+
 - **Run:** `python -m pdfarranger_qt [files...]`
 - **Test:** `pytest tests`
 - **Code:** `pdfarranger_qt/` — the whole application. The GTK `pdfarranger/`

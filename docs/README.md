@@ -8,34 +8,54 @@ These files were one 3,144-line document until it stopped being readable. The
 split is by *kind of knowledge*, because that is what decides where something
 belongs when you come to add to it.
 
-## The record
+There are two kinds of file here, and knowing which is which is what tells you
+where something belongs.
+
+## The port's record — closed
+
+The port ended at phase 7. These three describe it and **are not added to**.
+
+| File | What is in it |
+|---|---|
+| [PORTING-NOTES.md](PORTING-NOTES.md) | The port: goal and scope, the menu map, phases 0–7, what the architecture is made of, and behaviour documented only in upstream's wiki. |
+| [DECISIONS.md](DECISIONS.md) | D1–D25 and their reasoning. **The numbers are identifiers, not positions** — fourteen are cited by name in the source, so a decision keeps its number for ever. The register is closed; a decision taken for a piece of work now lives in that work's own document. |
+| [DESIGN.md](DESIGN.md) | What the application was decided to do and why, while it was being ported — reasoning that is not obvious from the code and would otherwise be re-argued every time somebody reads it. |
+
+## Standing reference — these keep growing
+
+Neither belongs to any one piece of work, and both outlive all of them.
 
 | File | What goes in it |
 |---|---|
-| [PORTING-NOTES.md](PORTING-NOTES.md) | The port: goal and scope, the menu map, phases 0–7, what the architecture is made of, and behaviour documented only in upstream's wiki. |
-| [DECISIONS.md](DECISIONS.md) | D1–D22 and their reasoning. **The numbers are identifiers, not positions** — code cites `D13` and `D20`, so a decision keeps its number for ever. |
 | [FINDINGS.md](FINDINGS.md) | What the libraries actually do, as opposed to what the documentation says. Each one measured, most the hard way. |
-| [DESIGN.md](DESIGN.md) | What the application was decided to do and why — reasoning that is not obvious from the code and would otherwise be re-argued every time somebody reads it. |
 | [CONVENTIONS.md](CONVENTIONS.md) | How the project is laid out and built: test layout, settings isolation, temporary files, installers. |
 
 ## Work after the port
+
+One Issue, one document, everything about that work inside it — its decisions,
+its measurements, its plan and what has actually landed. It carries the Issue
+number at the top and moves to `completed/` when the Issue closes.
 
 | File | State |
 |---|---|
 | [completed/PDF24-COMPARISON.md](completed/PDF24-COMPARISON.md) | **Complete** — every tool from PDF24's list judged worth having is built. Scored against its live menus; eight features came out of it. |
 | [completed/COMPRESSION.md](completed/COMPRESSION.md) | **Complete** — [Issue #8](https://github.com/dwsdolce/pdfarranger-qt/issues/8) is closed. What PDF24, Acrobat and Ghostscript offer, the measurements that set the defaults, and what compressing a real 1,590-page book actually did. |
 | [completed/I18N.md](completed/I18N.md) | **Complete** — the [Internationalisation milestone](https://github.com/dwsdolce/pdfarranger-qt/milestone/1) is closed. The translated interface that was not one, and what filling 33 catalogues took. |
-| [ANNOTATIONS.md](ANNOTATIONS.md) | **Open** — a filled form that displayed blank. Why no annotation is drawn, why form fields need more than a render flag, what saving one costs today, and the case for superseding D17 and D21. |
+| [ANNOTATIONS.md](ANNOTATIONS.md) | **Open** — [Issue #14](https://github.com/dwsdolce/pdfarranger-qt/issues/14). A filled form that displayed blank. Why no annotation is drawn, why form fields need more than a render flag, what saving one costs, and the decisions that put showing and authoring them in scope. |
 
 ## Where to put a new thing
 
-- *"The library does X, not Y — I measured it"* → **FINDINGS.md**
-- *"We chose to behave this way because…"* → **DESIGN.md**, unless it is
-  numbered, in which case **DECISIONS.md**
+- *"The library does X, not Y — I measured it"* → **FINDINGS.md**, if it is true
+  of the library whoever meets it next; the work's own document if it is only
+  true of that work
 - *"Here is how you build/test/lay out…"* → **CONVENTIONS.md**
-- A body of work with a beginning and an end → **its own file**, moved to
-  `completed/` when it is done — the guards in `tests/test_docs.py` follow it
-  there, so a finished document still has to have its links resolve
+- *"We chose to behave this way because…"* → **the document for the work that
+  chose it**, under a dated `## Decisions` heading, numbered within that
+  document. Not DECISIONS.md: that is the port's register and it is closed
+- A body of work with a beginning and an end → **an Issue and its own file**,
+  the file naming the Issue at the top, moved to `completed/` when the Issue
+  closes — the guards in `tests/test_docs.py` follow it there, so a finished
+  document still has to have its links resolve
 
 Two rules learned by getting them wrong:
 
