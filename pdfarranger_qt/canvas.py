@@ -62,7 +62,13 @@ from PySide6.QtPdf import (
     QPdfDocumentRenderOptions,
     QPdfLinkModel,
 )
-from PySide6.QtWidgets import QAbstractScrollArea, QApplication, QFrame, QMenu
+from PySide6.QtWidgets import (
+    QAbstractScrollArea,
+    QApplication,
+    QFrame,
+    QMenu,
+    QStyle,
+)
 
 from .i18n import gettext_ as _
 from .render import ANNOTATIONS, DEFAULT_CACHE_PIXELS, BytesDocument, Renderer
@@ -932,6 +938,7 @@ class PageCanvas(QAbstractScrollArea):
         #: returns an invalid link, and nothing is left pointing at the
         #: document that has just been closed.
         self._no_document = QPdfDocument(self)
+
         self._tooltip = ""
         self._text = PageText()
         self._document = None
@@ -1122,6 +1129,16 @@ class PageCanvas(QAbstractScrollArea):
         """
         zoom = max(ZOOM_LIMITS[0], min(float(zoom), ZOOM_LIMITS[1]))
         self._fit = fit
+        if zoom == self._layout.zoom and self._layout.page_count:
+            # Nothing to do, and *saying* so is what stops fit-to-width
+            # oscillating. Re-laying out at the zoom already in force clears
+            # the page cache and resets the scroll ranges, which can change
+            # whether a scrollbar is wanted, which arrives back here as
+            # another resize. The zoom is the same every time round, so the
+            # cycle is invisible in the result and endless in the event
+            # queue -- at some window sizes tight enough to starve the timer
+            # that would have ended it, and the application simply stopped.
+            return
         if not self._layout.page_count:
             self._layout.set_zoom(zoom)
             return
@@ -1149,9 +1166,60 @@ class PageCanvas(QAbstractScrollArea):
         self.viewport().update()
 
     def zoom_to_width(self):
-        """Fit the width, and keep fitting it as the window changes."""
-        self.set_zoom(self._layout.zoom_for_width(self.viewport().width()),
+        """Fit the width, and keep fitting it as the window changes.
+
+        The vertical scrollbar is *predicted* rather than reacted to, which is
+        what stops this oscillating. Reacting looks simpler: fit the viewport
+        as it is, and if a scrollbar then appears the resize it causes will
+        fit again. Usually the second answer agrees with the first. In a
+        narrow band it never does -- the zoom without a scrollbar makes the
+        content just tall enough to need one, and the zoom with it makes the
+        content just short enough not to. With a 400pt square page the window
+        froze between 760 and 775 pixels tall and nowhere else, which is
+        exactly why it went unnoticed: 700x600, 700x700, 900x700 and 1000x900
+        are all fine.
+
+        The resize that scrollbar causes arrives as a *posted* event rather
+        than a nested call, so a re-entrancy guard does not see it and a depth
+        counter is back at zero every time. Predicting is what converges:
+        decide once whether the content will be taller than the viewport, take
+        the scrollbar's width off before fitting if it will, and the answer is
+        stable because nothing it depends on changes afterwards.
+        """
+        width = self.viewport().width()
+        # Only when the bar is not already there. If it is, the viewport has
+        # already lost its width and taking it off again fits to a window
+        # narrower than any that exists -- which is the oscillation one step
+        # removed: a zoom for width minus one bar and a zoom for width minus
+        # two, alternating for ever.
+        if (not self.verticalScrollBar().isVisible()
+                and self._needs_vertical_bar(
+                    self._layout.zoom_for_width(width))):
+            width -= self._scrollbar_extent()
+        self.set_zoom(self._layout.zoom_for_width(max(1, width)),
                       fit=FitMode.WIDTH)
+
+    def _scrollbar_extent(self) -> int:
+        """How much width a vertical scrollbar takes from the viewport."""
+        bar = self.verticalScrollBar()
+        width = bar.sizeHint().width()
+        return width if width > 0 else self.style().pixelMetric(
+            QStyle.PixelMetric.PM_ScrollBarExtent)
+
+    def _needs_vertical_bar(self, zoom: float) -> bool:
+        """Whether the content would be taller than the viewport at ``zoom``.
+
+        Everything in the layout scales with the zoom, margins included, so the
+        height at another zoom is the height now in proportion -- no relayout
+        needed to ask.
+        """
+        if self.verticalScrollBarPolicy() == Qt.ScrollBarAlwaysOff:
+            return False
+        current = self._layout.zoom
+        if current <= 0:
+            return False
+        height = self._layout.content_size().height() / current * zoom
+        return height > self.viewport().height()
 
     def zoom_to_page(self):
         """Fit a whole page, and keep fitting it as the window changes."""

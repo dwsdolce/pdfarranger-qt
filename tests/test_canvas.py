@@ -37,7 +37,7 @@ from PySide6.QtCore import (
 from PySide6.QtGui import QKeyEvent, QKeySequence, QMouseEvent
 from PySide6.QtPdf import QPdfLinkModel
 from PySide6.QtWidgets import QApplication
-from support import HERE, TEXT_PDF, settle
+from support import HERE, TEXT_PDF, settle, temp_path
 
 from pdfarranger_qt.canvas import (
     DEFAULT_MARGIN,
@@ -376,9 +376,37 @@ class TestPageCanvas(unittest.TestCase):
         self.assertAlmostEqual(before[1].y(), after[1].y(), delta=2)
 
     def test_zoom_to_width_fills_the_viewport(self):
+        """Measured once the layout has settled, not the instant it is asked.
+
+        This document is two pages in a 500px viewport, so a vertical
+        scrollbar is certainly coming. Fit-to-width now takes its width off
+        before working out the zoom rather than after, so the content is
+        582 wide from the first pass while the viewport is briefly still 600.
+        Both end at 582; the old order got there by overshooting to 600 and
+        raising the horizontal scrollbar that fit-to-width exists to avoid,
+        until the next resize corrected it.
+        """
         self.canvas.zoom_to_width()
+        settle(lambda: self.canvas.viewport().width()
+               == round(self.canvas.layout.content_size().width()),
+               timeout_ms=600)
         self.assertAlmostEqual(self.canvas.layout.content_size().width(),
                                self.canvas.viewport().width(), delta=1)
+
+    def test_zoom_to_width_does_not_raise_a_horizontal_scrollbar(self):
+        """The property fitting the width is for.
+
+        It states the intent rather than guarding the oscillation: the old
+        reactive order reached the same place after another pass, so this
+        passes either way once the layout has settled. What guards the
+        oscillation is `TestFittingTheWidthConverges`, which counts the
+        passes instead of looking at where they end up.
+        """
+        self.canvas.zoom_to_width()
+        settle(timeout_ms=300)
+        bar = self.canvas.horizontalScrollBar()
+        self.assertEqual(bar.maximum(), bar.minimum(),
+                         "fitting the width should never need to scroll it")
 
     def test_painting_does_not_raise(self):
         """Offscreen still executes paintEvent, so this exercises the real path."""
@@ -2887,3 +2915,125 @@ class TestClosingADocumentIsQuiet(unittest.TestCase):
                 break
         self.assertIsNotNone(found, "the fixture's link should be findable")
         canvas.set_document(None)
+
+
+class TestFittingTheWidthConverges(unittest.TestCase):
+    """Fit-to-width used to freeze the application at some window sizes.
+
+    The zoom is derived from the viewport width; applying it changes the
+    content height; that decides whether a vertical scrollbar is needed; the
+    scrollbar changes the viewport width, which comes back as another resize.
+    Usually the second answer agrees with the first. In a narrow band it never
+    does -- the zoom without a scrollbar makes the content just tall enough to
+    need one, and the zoom with it just short enough not to.
+
+    With a 400pt square page the window froze between 760 and 775 pixels tall
+    and nowhere else, which is why it went unnoticed: 700x600, 700x700,
+    900x700 and 1000x900 are all fine.
+
+    Two things these tests have to get right, both learned by getting them
+    wrong first. A canvas built by hand never shows a scrollbar, so the loop
+    cannot happen in one and a test using one passes whether the bug is there
+    or not -- it takes a real window. And the runaway has to be *stopped*
+    rather than raised out of: Qt prints an exception from an event handler
+    and carries on, so raising would hang the suite exactly as the bug does.
+    """
+
+    #: Where to stop calling through, so a regression ends the test instead
+    #: of the suite. Well above any legitimate figure.
+    RUNAWAY = 200
+    #: What one resize may legitimately cost. A window resize cascades through
+    #: the splitter and the toolbar, so several arrive at the canvas; eight is
+    #: the most seen across the sizes below, and the runaway was unbounded.
+    PER_RESIZE = 20
+
+    def window(self, width=400, height=400):
+        """A real window, shown, on a page of the given size in points."""
+        import io
+
+        import pikepdf
+
+        from pdfarranger_qt.mainwindow import MainWindow
+
+        pdf = pikepdf.new()
+        pdf.add_blank_page(page_size=(width, height))
+        out = io.BytesIO()
+        pdf.save(out)
+        path = temp_path(f"fit-{width}x{height}.pdf")
+        with open(path, "wb") as handle:
+            handle.write(out.getvalue())
+
+        win = MainWindow()
+        win.resize(700, 600)
+        win.show()
+        win.open_paths([path])
+        settle(timeout_ms=400)
+        win.modified = False
+        self.addCleanup(win.close)
+        self.addCleanup(lambda: setattr(win, "modified", False))
+        return win
+
+    def capped(self):
+        """Count re-fits, and stop re-fitting once it is plainly runaway.
+
+        Stopping rather than raising: an exception from inside a resize event
+        is printed by Qt and swallowed, so the loop would continue and the
+        suite would hang instead of failing.
+        """
+        from pdfarranger_qt.canvas import PageCanvas
+
+        calls = []
+        real = PageCanvas._reapply_fit
+
+        def counted(canvas):
+            calls.append(1)
+            if len(calls) > self.RUNAWAY:
+                return
+            return real(canvas)
+
+        PageCanvas._reapply_fit = counted
+        self.addCleanup(setattr, PageCanvas, "_reapply_fit", real)
+        return calls
+
+    def resize_cost(self, win, calls, size):
+        """How many re-fits one resize costs, counted on its own."""
+        calls.clear()
+        win.resize(*size)
+        settle(timeout_ms=80)
+        return len(calls)
+
+    def test_it_settles_in_the_band_that_used_to_freeze(self):
+        win = self.window()
+        win.reader.canvas.zoom_to_width()
+        calls = self.capped()
+        for height in (758, 760, 765, 770, 775, 780):
+            cost = self.resize_cost(win, calls, (700, height))
+            self.assertLess(cost, self.PER_RESIZE,
+                            f"700x{height} took {cost} re-fits; fit-to-width "
+                            f"is not converging")
+
+    def test_and_at_sizes_that_always_worked(self):
+        win = self.window()
+        win.reader.canvas.zoom_to_width()
+        calls = self.capped()
+        for size in ((700, 600), (700, 700), (900, 700), (1000, 900)):
+            cost = self.resize_cost(win, calls, size)
+            self.assertLess(cost, self.PER_RESIZE, f"{size} took {cost}")
+
+    def test_the_scrollbar_is_predicted_rather_than_discovered(self):
+        """The decision is taken before the zoom, from the height the content
+        would have, not after one has appeared."""
+        canvas = self.window().reader.canvas
+        tall = canvas.layout.zoom_for_width(canvas.viewport().width())
+        self.assertTrue(canvas._needs_vertical_bar(tall),
+                        "a 400pt square page in this viewport needs one")
+        self.assertFalse(canvas._needs_vertical_bar(0.01),
+                         "and at a tiny zoom it does not")
+
+    def test_a_page_that_fits_keeps_the_whole_width(self):
+        """Nothing is given away when no scrollbar is coming."""
+        canvas = self.window(400, 40).reader.canvas
+        canvas.zoom_to_width()
+        settle(timeout_ms=150)
+        self.assertAlmostEqual(canvas.layout.content_size().width(),
+                               canvas.viewport().width(), delta=3)
