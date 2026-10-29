@@ -25,6 +25,10 @@ when something about form handling changes.
     curl -LO https://www.irs.gov/pub/irs-pdf/fw9.pdf
     …
 
+Three of the URLs tried while assembling this returned 403 or 404; a government
+form moves. The hash is how you tell whether the file behind a link is still
+the one that was measured.
+
 ## The files
 
 | File | Pages | Producer | Exercises | SHA-256 (first 16) |
@@ -34,10 +38,45 @@ when something about form handling changes.
 | [f1040.pdf](https://www.irs.gov/pub/irs-pdf/f1040.pdf) | 2 | Designer 6.5 | XFA hybrid; 199 widgets under one root field, tree five deep | `3d31c226df0d189c` |
 | [f1099msc.pdf](https://www.irs.gov/pub/irs-pdf/f1099msc.pdf) | 6 | Designer 6.5 | XFA hybrid; 164 text fields, none with an appearance | `38051fe1cdce8fac` |
 | [i-9.pdf](https://www.uscis.gov/sites/default/files/document/forms/i-9.pdf) | 4 | Acrobat Distiller 23.0 | **a field whose widgets span pages**; duplicate qualified names; 10 auto-sized fields | `780f348c34df694b` |
-| [sf3107.pdf](https://www.opm.gov/forms/pdf_fill/sf3107.pdf) | 14 | Acrobat Distiller 7.0.5 | 470 fields, one widget each; 30 auto-sized | `849fb67a65a37171` |
+| [sf3107.pdf](https://www.opm.gov/forms/pdf_fill/sf3107.pdf) | 14 | Acrobat Distiller 7.0.5 | 470 fields, one widget each; 30 auto-sized; encrypted | `849fb67a65a37171` |
+| [sf86.pdf](https://www.opm.gov/forms/pdf_fill/sf86.pdf) | 136 | LiveCycle Designer 11.0 | 6,852 widgets; 1,053 **radio** buttons; `/FT` two levels above the widget | `973e23e3ba1e30ef` |
+| [vba-21-526ez-are.pdf](https://www.vba.va.gov/pubs/forms/VBA-21-526EZ-ARE.pdf) | 15 | Designer 6.5 | 3 **signature** fields; 66 radios | `48d87f2b679f61e4` |
+| [ao239.pdf](https://www.uscourts.gov/sites/default/files/ao239.pdf) | 5 | Acrobat Distiller 11.0 | 68 fields, 196 widgets — many widgets per field | `670a3dbe41546b78` |
 
-Checked 2026-10-29. All six round-trip this application's export with their
-field and widget counts unchanged, and none produces a spurious warning.
+Checked 2026-10-29. All nine round-trip this application's export with their
+field and widget counts unchanged — including sf86's 6,852 widgets — and none
+produces a spurious warning.
+
+## Coverage
+
+    python tools/form_coverage.py corpus/*.pdf
+
+"Are there enough files?" is otherwise a matter of taste. The form part of the
+specification is a closed list — four field types, seventeen `/Ff` bits, a
+handful of appearance shapes, three alignments — so it can be enumerated and
+the files measured against it. These nine cover **35 of 47 cells (74%)**.
+
+The tool measures the corpus, not this application: a covered cell means a real
+file contains that construct, not that anything here handles it.
+
+It also found its own bug, which is worth recording because it is the shape of
+mistake this kind of tool invites. `/FT` is inherited, and in a deep tree sits
+on neither the widget nor the root but somewhere between — sf86 keeps it two
+levels up, under three naming subforms. Reading it off the root reported 1,053
+radio buttons as typeless and showed the commonest button in the specification
+as uncovered. A coverage number is only as good as the walk behind it.
+
+**What is still uncovered**, after deliberately going looking for the gaps:
+
+- `/NeedAppearances` — see below; nine files, four producers, never set.
+- Untitled fields, rollover appearances, hidden fields, required, no-export,
+  radios-in-unison, password, file-select, rich text, sorted and multi-select
+  choice lists.
+
+Those are better met by fixtures than by hunting files: `tests/test_forms.py`
+already builds a radio group and a hidden field, which is two of them. A
+fixture states what the case is in thirty readable lines; a file that happens
+to contain it does not.
 
 ## What it told us
 
@@ -75,7 +114,19 @@ ancestor rather than sitting on the widget:
 has to be resolvable from `/DR`. A generated appearance that ignores the colour
 writes black text into a form that expects blue.
 
-**Four of the six are XFA hybrids**, all from Adobe Designer. XFA is out of
+**`/NeedAppearances` is never set.** Not in any of the nine, from four
+producers. The flag tells a viewer it must generate the appearance streams
+itself, and its absence means a real form expects the appearances to be there
+already — so filling a field and *not* generating one leaves it blank in a
+conforming viewer. Generation is mandatory, not a nicety.
+
+The inverse is worth keeping in mind as a fallback: this application could
+*set* the flag on a document it has filled but could not draw accurately — an
+auto-sized field needing font metrics it does not have — so that a viewer which
+honours it repairs the gap. That is a decision for the work that writes values,
+not an assumption to make now.
+
+**Five of the nine are XFA hybrids**, all from Adobe Designer. XFA is out of
 scope, and these still carry a working AcroForm layer, so they display and
 round-trip. The open question is what happens when one is *filled*: a viewer
 that prefers the XFA layer may show an empty form while the AcroForm holds the

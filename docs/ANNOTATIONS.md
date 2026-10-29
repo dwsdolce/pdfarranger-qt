@@ -250,7 +250,16 @@ field usually has **no** appearance stream at all (0 of 164 in one form), so
 2.5 generates one from nothing rather than editing one. Auto-sized fields are 6
 to 8% of real forms, so 2.5 cannot simply refuse them. And `/DA` carries colour
 as well as font and size, inherited from an ancestor, so a generated appearance
-that ignores it writes black into a form expecting blue. A fixture built from the specification is
+that ignores it writes black into a form expecting blue.
+
+A fourth, from going after the gaps the coverage tool named:
+`/NeedAppearances` is set in none of the nine, from four producers. The flag
+tells a viewer to generate the appearances itself, so its absence means a
+filled field without one is blank in a conforming viewer — generation is
+mandatory for 2.5, not a nicety. The inverse is a fallback worth remembering:
+setting the flag on a document we have filled but could not draw accurately,
+an auto-sized field being the case, lets a viewer that honours it repair the
+gap. That is 2.5's decision to take, not an assumption to make now. A fixture built from the specification is
 what finds a case like 1.5; a corpus of real files is what says whether we are
 wrong about the real world, and the two are not substitutes. The corpus is a
 *document* listing public PDFs — a US federal form is public domain, most others
@@ -464,3 +473,11 @@ widgets span pages; a real government form turned out to contain one. A
 validation corpus of six public forms from three producers is recorded in
 [VALIDATION-CORPUS.md](VALIDATION-CORPUS.md), and measuring it corrected three
 assumptions body 2 would otherwise have been built on.
+
+**2026-10-29 — the corpus, extended.** Nine forms from four producers, measured
+against an enumeration of the specification's form surface by
+`tools/form_coverage.py`: 35 of 47 cells, 74%. Three files were added to fill
+named gaps rather than for bulk — a real radio group, signature fields, and a
+form with many widgets per field. The tool found its own bug on the way: `/FT`
+is inherited and can sit between the widget and the root, so reading it off the
+root called 1,053 radio buttons typeless.
