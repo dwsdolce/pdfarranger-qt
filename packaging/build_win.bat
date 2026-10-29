@@ -36,7 +36,13 @@ if exist build rmdir /s /q build
 REM ===============================================
 REM Compile the translation catalogues
 REM ===============================================
-python tools\build_mo.py
+REM tools\build_mo.py refuses to build on catalogue drift (D23), which is
+REM right for a release and in the way for a local build while a string is
+REM still in flight. A flag rather than an environment variable, so the
+REM override stays visible in the command that used it.
+set DRIFT=
+if /i "%~1"=="--allow-drift" set DRIFT=--allow-drift
+python tools\build_mo.py %DRIFT%
 if errorlevel 1 (
     echo Compiling translations failed
     exit /b 1

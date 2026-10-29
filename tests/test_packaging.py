@@ -102,6 +102,28 @@ class TestPackaging(unittest.TestCase):
 
         self.assertEqual(self.pyproject()["project"]["urls"]["Homepage"], PROJECT_URL)
 
+    def test_every_build_script_can_forward_allow_drift(self):
+        """`build_mo.py` refuses to build on catalogue drift (D23).
+
+        Right for a release and in the way for a local build while a string is
+        still in flight, so there has to be a way past it -- and it is a flag
+        rather than an environment variable so that the override stays visible
+        in the command that used it. That only holds if every script which
+        compiles catalogues forwards the flag rather than calling the tool
+        bare, which is what this checks.
+        """
+        packaging = os.path.join(os.path.dirname(HERE), "packaging")
+        for name, invocation in (
+                ("build_mac", 'python tools/build_mo.py "${drift[@]}"'),
+                ("build_linux", 'python tools/build_mo.py "${drift[@]}"'),
+                ("build_win", '"$PYTHON" tools/build_mo.py "${drift[@]}"'),
+                ("build_win.bat", "python tools\\build_mo.py %DRIFT%")):
+            with self.subTest(script=name):
+                with open(os.path.join(packaging, name), encoding="utf-8") as fh:
+                    text = fh.read()
+                self.assertIn(invocation, text,
+                              f"{name} calls build_mo.py without forwarding")
+
     def test_the_gtk_application_is_gone(self):
         """Phase 5 removed it; nothing may quietly import it again."""
         root = os.path.dirname(HERE)

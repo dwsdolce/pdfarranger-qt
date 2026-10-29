@@ -48,10 +48,12 @@ Two things stop a build:
   intended pressure: the string and its translations arrive together.
 
 `--allow-drift` turns both into warnings, for the obvious case of wanting a
-binary while a change is half-finished. Nothing in CI or in `packaging/` passes
-it, so the override is local and visible in the command that used it. It is on
-trial: if it proves too restrictive in practice the coverage half is the part
-to soften first, to a floor per language rather than completeness.
+binary while a change is half-finished. CI never passes it, and the scripts in
+`packaging/` forward it only when you put it on *their* command line -- so the
+override stays local and visible in the command that used it, which is why it
+is a flag and not an environment variable. It is on trial: if it proves too
+restrictive in practice the coverage half is the part to soften first, to a
+floor per language rather than completeness.
 """
 
 import argparse

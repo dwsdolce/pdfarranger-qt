@@ -35,6 +35,26 @@ if [ ! -f "$PYINSTALLER" ]; then
     exit 1
 fi
 
+#===============================================
+# --allow-drift, forwarded to the catalogue step
+#===============================================
+# tools/build_mo.py refuses to build when a string in the source has not
+# reached the template, or a catalogue is not fully translated (D23). That is
+# right for a release and in the way for a local build while a string is still
+# in flight. Taken out of the arguments here so the format check below still
+# sees only the format, and deliberately a flag rather than an environment
+# variable: the override stays visible in the command that used it.
+drift=()
+rest=()
+for arg in "$@"; do
+    if [[ "$arg" == "--allow-drift" ]]; then
+        drift=(--allow-drift)
+    else
+        rest+=("$arg")
+    fi
+done
+set -- "${rest[@]}"
+
 echo "Running build for $(uname -m) architecture"
 
 #===============================================
@@ -48,7 +68,7 @@ rm -rf build
 #===============================================
 # Compile the translation catalogues
 #===============================================
-"$PYTHON" tools/build_mo.py
+"$PYTHON" tools/build_mo.py "${drift[@]}"
 if [ $? -ne 0 ]; then
     echo "Compiling translations failed"
     exit 1
