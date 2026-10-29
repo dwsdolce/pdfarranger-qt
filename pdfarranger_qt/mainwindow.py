@@ -115,6 +115,7 @@ class MainWindow(QMainWindow):
         # and what it tells us when one is clicked.
         self.reader.canvas.field_values = self._field_value
         self.reader.field_pressed.connect(self.field_pressed)
+        self.reader.field_edited.connect(self.field_edited)
         # The sidebar shows the document's outline, not the reader document's
         # (D20), so the window keeps the two in step.
         self.model.outline_changed.connect(self._refresh_outline)
@@ -2805,6 +2806,23 @@ class MainWindow(QMainWindow):
         if 0 <= field.page < len(self.model.pages):
             return self.model.pages[field.page]
         return None
+
+    def field_edited(self, field, text: str):
+        """A text field was typed into and the editor closed."""
+        page = self._page_for_field(field)
+        if page is None or not field.fillable:
+            return
+        current = self.model.form_values.get(page.nfile, field.name,
+                                             field.value)
+        if text == (current or ""):
+            return                      # closed without changing anything
+        self.model.undo.commit(_("Fill Field"))
+        self.model.form_values.set(page.nfile, field.name, text)
+        if 0 < page.nfile <= len(self.docs.docs):
+            self.docs.docs[page.nfile - 1].forget_render_copy()
+        self.model.touch(range(len(self.model.pages)))
+        self._mark_modified()
+        self.reader.canvas.viewport().update()
 
     def field_pressed(self, field):
         """A form field was clicked. Tick boxes toggle; the rest wait for 2.5."""

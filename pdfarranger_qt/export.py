@@ -477,7 +477,9 @@ def _write_form_values(pdf_output, pages, form_values):
             break
         wanted = form_values.for_document(row.nfile)
         if wanted:
-            forms.apply_values([pdf_output.pages[index]], wanted)
+            forms.apply_values([pdf_output.pages[index]], wanted,
+                               pdf_output.Root.get(pikepdf.Name.AcroForm),
+                               pdf_output)
 
 
 def _copy_n_transform(pdf_input, pdf_output, pages, quit_flag=None):

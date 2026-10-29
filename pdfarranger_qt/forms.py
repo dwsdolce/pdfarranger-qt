@@ -51,6 +51,7 @@ has a working ``/AcroForm``.
 """
 
 import os
+import re
 import tempfile
 from typing import Dict, Optional, Tuple
 
@@ -111,7 +112,8 @@ def rendered_copy(source: str, password: str, tmp_dir: str,
             if not has_widgets(pdf):
                 return None
             if values:
-                apply_values(pdf.pages, values)
+                apply_values(pdf.pages, values,
+                             pdf.Root.get(pikepdf.Name.AcroForm), pdf)
             show_widgets(pdf)
             fd, path = tempfile.mkstemp(suffix=".pdf", dir=tmp_dir)
             os.close(fd)
@@ -238,10 +240,10 @@ class Field:
     """
 
     __slots__ = ("page", "rect", "name", "kind", "flags", "states", "value",
-                 "hidden", "annot")
+                 "hidden", "annot", "drawn")
 
     def __init__(self, page, rect, name, kind, flags, states, value, hidden,
-                 annot=None):
+                 annot=None, drawn=False):
         self.page = page
         #: ``(left, bottom, right, top)`` in PDF points, y measured upward.
         self.rect = rect
@@ -259,6 +261,10 @@ class Field:
         #: class answers what a field *is*, and holding the object is what
         #: lets something else render it without reading the file twice.
         self.annot = annot
+        #: Whether the file carries a drawing for this field. Most text fields
+        #: do not even when they hold a value, so something has to decide
+        #: between showing what is there and making what is missing.
+        self.drawn = drawn
 
     # -- what the field is -------------------------------------------------
 
@@ -367,6 +373,7 @@ def fields_in(pdf) -> "list[Field]":
             states = []
             appearance = annot.get(pikepdf.Name.AP)
             normal = appearance.get(pikepdf.Name.N) if appearance else None
+            drawn = normal is not None
             if isinstance(normal, pikepdf.Dictionary) and not isinstance(
                     normal, pikepdf.Stream):
                 states = [str(k) for k in normal.keys() if str(k) != "/Off"]
@@ -381,7 +388,7 @@ def fields_in(pdf) -> "list[Field]":
                 states=states,
                 value=str(value) if value is not None else None,
                 hidden=bool(int(annot.get(pikepdf.Name.F, 0)) & 2),
-                annot=annot))
+                annot=annot, drawn=drawn))
     return found
 
 
@@ -430,6 +437,21 @@ class FieldMap:
     def __len__(self):
         return sum(len(v) for v in self._by_page.values())
 
+    @property
+    def pdf(self):
+        """The document the fields were read from, for rendering out of."""
+        return self._pdf
+
+    @property
+    def acroform(self):
+        """Its form dictionary, which holds the fonts a `/DA` names."""
+        if self._pdf is None:
+            return None
+        try:
+            return self._pdf.Root.get(pikepdf.Name.AcroForm)
+        except Exception:  # pragma: no cover - a document without one
+            return None
+
     def on_page(self, page: int) -> list:
         return self._by_page.get(page, [])
 
@@ -464,8 +486,13 @@ def _field_node(annot):
     return annot
 
 
-def apply_values(pages, values: Dict[str, str]) -> int:
+def apply_values(pages, values: Dict[str, str], acroform=None,
+                 pdf=None) -> int:
     """Write ``{qualified name: value}`` into some pages. Returns how many.
+
+    ``pdf`` is the document those pages belong to, needed because a generated
+    appearance stream must be created in the file it will be drawn from and a
+    pikepdf object will not say which that is.
 
     Pages rather than a document, because a name identifies a field only
     within the document it came from. An export can hold pages from several,
@@ -491,10 +518,22 @@ def apply_values(pages, values: Dict[str, str]) -> int:
             name = _qualified(annot)
             if name not in values:
                 continue
-            kind = _inherited(annot, pikepdf.Name.FT)
-            if str(kind) != "/Btn":
-                continue
+            kind = str(_inherited(annot, pikepdf.Name.FT))
             value = values[name]
+            if kind in ("/Tx", "/Ch"):
+                # Text has no ready-made drawing to choose between, so one is
+                # made. Without it the value is in the file and invisible,
+                # which is the fault this whole body of work began with.
+                field_node = _field_node(annot)
+                field_node[pikepdf.Name.V] = pikepdf.String(value)
+                drawn = (text_appearance(pdf, annot, value, acroform)
+                         if pdf is not None else None)
+                if drawn is not None:
+                    annot[pikepdf.Name.AP] = pikepdf.Dictionary(N=drawn)
+                written += 1
+                continue
+            if kind != "/Btn":
+                continue
             appearance = annot.get(pikepdf.Name.AP)
             normal = appearance.get(pikepdf.Name.N) if appearance else None
             states = ([str(k) for k in normal.keys()]
@@ -507,3 +546,177 @@ def apply_values(pages, values: Dict[str, str]) -> int:
             _field_node(annot)[pikepdf.Name.V] = pikepdf.Name(value)
             written += 1
     return written
+
+
+#: A ``/DA`` is a tiny content stream: a font and size, then a colour. Only
+#: those two matter here, and both are optional.
+_DA_FONT = re.compile(r"/([^\s/]+)\s+([\d.]+)\s+Tf")
+_DA_COLOUR = re.compile(r"((?:[\d.]+\s+){1,4})(g|rg|k)\b")
+
+#: Inset of the text from the widget's edge, and of the clip from the BBox.
+#: Both are what Acrobat writes.
+_TEXT_INSET = 2.0
+_CLIP_INSET = 1.0
+
+
+def _escape(text: str) -> bytes:
+    """A PDF literal string. The three characters that end one, escaped."""
+    out = text.replace("\\", r"\\").replace("(", r"\(").replace(")", r"\)")
+    return out.encode("latin-1", "replace")
+
+
+def default_appearance(annot, acroform=None) -> tuple:
+    """``(font name, size, colour operators)`` from the nearest ``/DA``.
+
+    Inherited like everything else in a field tree, and falling back to the
+    form's own. The colour is carried because it is part of the string and
+    forms use it: four of the nine in the corpus write their fields in dark
+    blue, and a generated appearance that ignores it puts black text in a form
+    that expects blue.
+    """
+    da = _inherited(annot, pikepdf.Name.DA)
+    if da is None and acroform is not None:
+        da = acroform.get(pikepdf.Name.DA)
+    da = str(da) if da is not None else ""
+    font = _DA_FONT.search(da)
+    colour = _DA_COLOUR.search(da)
+    return (font.group(1) if font else "Helv",
+            float(font.group(2)) if font else 0.0,
+            (colour.group(0) if colour else "0 g"))
+
+
+def _font_metrics(resources, name: str) -> tuple:
+    """``(ascent, descent)`` as fractions of the size, or a usable guess.
+
+    From the font's own descriptor where there is one. The fallback is the
+    proportions of Helvetica, which is what a form naming a standard font
+    means anyway and is close enough for the rest.
+    """
+    try:
+        font = resources[pikepdf.Name.Font][pikepdf.Name("/" + name)]
+        descriptor = font.get(pikepdf.Name.FontDescriptor)
+        ascent = float(descriptor[pikepdf.Name.Ascent]) / 1000.0
+        descent = float(descriptor[pikepdf.Name.Descent]) / 1000.0
+        if ascent > 0 and descent < 0:
+            return ascent, descent
+    except Exception:  # noqa: BLE001 - any gap falls back
+        pass
+    return 0.718, -0.207
+
+
+def text_baseline(height: float, size: float, ascent: float,
+                  descent: float) -> float:
+    """Where the text sits in a single-line field, centred the way Acrobat
+    centres it.
+
+    Derived from an appearance Acrobat itself wrote rather than guessed: a
+    25.2pt box at 12pt in a font of ascent 989 and descent -360 put the
+    baseline at 8.826, and this gives 8.826 exactly. An earlier version of
+    this work used ``(height - size * 0.72) / 2 + size * 0.18``, which looks
+    right at one size and drifts at others.
+    """
+    return (height - (ascent - descent) * size) / 2.0 - descent * size
+
+
+def _string_width(resources, name: str, size: float, text: str):
+    """How wide ``text`` is, or None when the font will not say.
+
+    From the font's own ``/Widths``, which is the only honest source: a form's
+    font is often a subset with its own metrics, and guessing from a standard
+    table would be wrong by exactly the amount that makes centred text look
+    wrong.
+    """
+    try:
+        font = resources[pikepdf.Name.Font][pikepdf.Name("/" + name)]
+        widths = font[pikepdf.Name.Widths]
+        first = int(font[pikepdf.Name.FirstChar])
+        total = 0.0
+        for character in text.encode("latin-1", "replace"):
+            index = character - first
+            if not 0 <= index < len(widths):
+                return None
+            total += float(widths[index])
+        return total / 1000.0 * size
+    except Exception:  # noqa: BLE001 - no metrics is an answer, not a failure
+        return None
+
+
+def resources_for(annot, acroform=None):
+    """The resource dictionary a generated appearance should name.
+
+    The form's ``/DR`` where there is one -- that is what a ``/DA`` naming
+    ``/Helv`` is referring to -- and otherwise whatever the widget's existing
+    appearance used.
+    """
+    if acroform is not None:
+        resources = acroform.get(pikepdf.Name.DR)
+        if resources is not None:
+            return resources
+    existing = annot.get(pikepdf.Name.AP)
+    normal = existing.get(pikepdf.Name.N) if existing else None
+    if isinstance(normal, pikepdf.Stream):
+        return normal.get(pikepdf.Name.Resources)
+    return None
+
+
+def text_appearance(pdf, annot, value: str, acroform=None, resources=None):
+    """An appearance stream drawing ``value`` in ``annot``, or None.
+
+    Single line, which is what a text field is unless it says otherwise. The
+    shape is Acrobat's own, read out of a form it had filled: mark the content
+    as a text field, clip to the box, set the font and colour from the ``/DA``,
+    place the baseline, and show the string.
+
+    Most text fields in real forms have **no** appearance to start from -- 0 of
+    164 in one corpus form, 3 of 126 in another -- so this draws from nothing
+    rather than editing what is there. Buttons are the opposite and need none
+    of this: their drawings for every state are already in the file.
+    """
+    rect = [float(v) for v in annot.get(pikepdf.Name.Rect, [0, 0, 0, 0])]
+    width = abs(rect[2] - rect[0])
+    height = abs(rect[3] - rect[1])
+    if width <= 0 or height <= 0:
+        return None
+    if resources is None:
+        resources = resources_for(annot, acroform)
+    if resources is None:
+        return None
+
+    name, size, colour = default_appearance(annot, acroform)
+    ascent, descent = _font_metrics(resources, name)
+    if size <= 0:
+        # Auto-size: the field says "fit it". Start from the box and come down
+        # until the line fits, which is what a viewer does and what six to
+        # eight per cent of real fields ask for.
+        size = max(4.0, min(12.0, (height - 2 * _CLIP_INSET) / (ascent - descent)))
+        measured = _string_width(resources, name, size, value)
+        room = width - 2 * _TEXT_INSET
+        if measured and measured > room > 0:
+            size = max(4.0, size * room / measured)
+    baseline = text_baseline(height, size, ascent, descent)
+
+    # Left unless the field asks otherwise, and only when the font will say how
+    # wide the string is -- a centred line placed from a guess is worse than a
+    # left-aligned one that is right.
+    x = _TEXT_INSET
+    quadding = int(_inherited(annot, pikepdf.Name.Q) or 0)
+    if quadding in (1, 2):
+        measured = _string_width(resources, name, size, value)
+        if measured is not None:
+            spare = max(0.0, width - 2 * _TEXT_INSET - measured)
+            x = _TEXT_INSET + (spare / 2.0 if quadding == 1 else spare)
+
+    content = (
+        b"/Tx BMC\nq\n"
+        + f"{_CLIP_INSET} {_CLIP_INSET} "
+          f"{width - 2 * _CLIP_INSET:.4f} {height - 2 * _CLIP_INSET:.4f} re\n"
+          "W\nn\nBT\n".encode()
+        + f"/{name} {size:g} Tf\n{colour}\n{x:.4f} {baseline:.4f} Td\n".encode()
+        + b"(" + _escape(value) + b") Tj\nET\nQ\nEMC\n")
+
+    stream = pikepdf.Stream(pdf, content)
+    stream[pikepdf.Name.Type] = pikepdf.Name.XObject
+    stream[pikepdf.Name.Subtype] = pikepdf.Name.Form
+    stream[pikepdf.Name.BBox] = pikepdf.Array([0, 0, width, height])
+    stream[pikepdf.Name.Resources] = resources
+    return stream

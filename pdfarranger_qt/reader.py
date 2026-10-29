@@ -141,6 +141,8 @@ class ReaderView(QWidget):
     outline_edited = Signal()
     #: A form field was clicked, for the window to act on.
     field_pressed = Signal(object)
+    #: A text field was typed into: ``(field, text)``.
+    field_edited = Signal(object, str)
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -148,6 +150,7 @@ class ReaderView(QWidget):
 
         self.canvas = PageCanvas(self)
         self.canvas.field_pressed.connect(self.field_pressed)
+        self.canvas.field_edited.connect(self.field_edited)
         self.canvas.zoom_to_width()
 
         # The reader's own search engine, over the reader's own document.

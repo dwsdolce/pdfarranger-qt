@@ -46,6 +46,7 @@ from PySide6.QtCore import QBuffer, QByteArray, QSize
 from PySide6.QtGui import QImage
 from PySide6.QtPdf import QPdfDocument, QPdfDocumentRenderOptions
 
+from . import forms
 from .render import ANNOTATIONS
 
 #: Nothing is drawn below this; a widget scaled to nothing is not worth a
@@ -95,6 +96,31 @@ class AppearanceRenderer:
     def __len__(self):
         return len(self._cache)
 
+    def text_image(self, annot, value: str, acroform, source, width: int,
+                   height: int) -> Optional[QImage]:
+        """A text field drawn with ``value``, which is not in the file.
+
+        The appearance is generated rather than looked up, because a field the
+        user has just typed into has none that matches -- and most text fields
+        in real forms have none at all to begin with. Cached by the widget and
+        the string, so holding a key down costs one render per character and
+        nothing thereafter.
+        """
+        if width < _MINIMUM_PX or height < _MINIMUM_PX:
+            return None
+        try:
+            key = ("text", annot.objgen, value, width, height)
+        except Exception:  # pragma: no cover - a direct annotation
+            key = ("text", id(annot), value, width, height)
+        found = self._cache.get(key)
+        if found is not None:
+            return found
+        image = self._render(annot, None, width, height, text=value,
+                             acroform=acroform, source=source)
+        if image is not None:
+            self._cache[key] = image
+        return image
+
     def image(self, annot, state: Optional[str], width: int,
               height: int) -> Optional[QImage]:
         """``annot`` drawn in ``state`` at this pixel size, or None.
@@ -120,7 +146,8 @@ class AppearanceRenderer:
             self._cache[key] = image
         return image
 
-    def _render(self, annot, state, width, height) -> Optional[QImage]:
+    def _render(self, annot, state, width, height, text=None,
+                acroform=None, source=None) -> Optional[QImage]:
         try:
             rect = [float(v) for v in annot.get(pikepdf.Name.Rect, [0, 0, 0, 0])]
             points_wide = abs(rect[2] - rect[0])
@@ -139,6 +166,24 @@ class AppearanceRenderer:
             copy[pikepdf.Name.Subtype] = pikepdf.Name.Stamp
             if state is not None:
                 copy[pikepdf.Name.AS] = pikepdf.Name(state)
+            if text is not None:
+                # Built here rather than in the document being read: a stream
+                # has to belong to the file it is drawn from, and the one on
+                # screen is not ours to add objects to.
+                resources = forms.resources_for(annot, acroform)
+                if resources is None or source is None:
+                    return None
+                # Indirect first: copy_foreign will only take an object that
+                # has an identity in its own document, and a /DR written
+                # inline has none. The owning document has to be passed in
+                # because a pikepdf object does not know which one it is in.
+                drawn = forms.text_appearance(
+                    page, copy, text,
+                    resources=page.copy_foreign(
+                        source.make_indirect(resources)))
+                if drawn is None:
+                    return None
+                copy[pikepdf.Name.AP] = pikepdf.Dictionary(N=drawn)
             page.pages[0][pikepdf.Name.Annots] = pikepdf.Array([copy])
             data = io.BytesIO()
             page.save(data)

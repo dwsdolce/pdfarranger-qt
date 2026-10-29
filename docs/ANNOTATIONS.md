@@ -2,10 +2,10 @@
 
 **Issue:** [#14](https://github.com/dwsdolce/pdfarranger-qt/issues/14)
 
-**Status:** IN PROGRESS — body 1 **complete**. Body 2 is at 2.3 of 2.7: tick
-boxes can be filled in, the form fields are drawn as a layer over the page
-rather than baked into it, and a tick survives undo and reaches the saved file.
-Text fields are next.
+**Status:** IN PROGRESS — body 1 **complete**, body 2 at six of seven. Tick
+boxes and single-line text fields can both be filled in; what is typed shows,
+survives undo and reaches the saved file with a drawing for it. Only the guard
+against editing a signed document is left before markup.
 
 A filled insurance form was opened in this application and came up blank. Every
 answer typed into it was missing — text, ticks, the lot — with nothing on screen
@@ -27,7 +27,7 @@ highlight are the same problem a second time.
 | | State |
 |---|---|
 | 1. Show what is in the file | **complete** — drawn, saved, printed, and measured against real forms |
-| 2. Fill fields | in progress — 2.1 to 2.3 and 2.6 done; text fields next |
+| 2. Fill fields | in progress — six of seven; only the signed-document guard is left |
 | 3. Markup | after filling, which proves the model it needs |
 
 The first was correctness and needed no decision reversed: the application did
@@ -299,10 +299,10 @@ cheaper than a flag every caller has to remember.
 | 2.1 | Own field values in the model | — | a value survives undo, redo and a page reorder | **complete** |
 | 2.2 | Find the field under a click | — | clicking a widget identifies its field; clicking elsewhere does not | **complete** |
 | 2.3 | Tick boxes | 2.1, 2.2 | clicking one toggles it on screen and after a save | **complete** |
-| 2.4 | Write values on save | 2.1 | a saved file opens in Acrobat with the value in the field | buttons done with 2.3; text waits on 2.5 |
-| 2.5 | Text fields, single-line, explicit size | 2.1, 2.2, 2.4 | typing shows, survives undo, and saves | next |
+| 2.4 | Write values on save | 2.1 | a saved file opens in Acrobat with the value in the field | **complete** |
+| 2.5 | Text fields, single-line, explicit size | 2.1, 2.2, 2.4 | typing shows, survives undo, and saves | **complete** |
 | 2.6 | Narrow the snapshot invalidation | — | ten fills do not rebuild the reader ten times | **complete** with 2.3, by leaving nothing to rebuild |
-| 2.7 | Refuse to edit a signed document | 2.3 | a signed form says why rather than invalidating a signature | |
+| 2.7 | Refuse to edit a signed document | 2.3 | a signed form says why rather than invalidating a signature | next |
 
 **2.1 has a precedent.** D20 settled how the outline is owned in the undo state
 beside the page list, keyed by a stable page id so reordering costs nothing and
@@ -318,6 +318,25 @@ appearance built, which is different work.
 **2.4 before 2.5** so that writing is proved on the values that need no
 generation. A tick that saves correctly means the export path is right; adding
 text then only has to get the drawing right.
+
+**Where the baseline came from.** Acrobat had filled a field in the form that
+prompted this work, so what it wrote could simply be read: a 25.2pt box at 12pt
+in a font of ascent 989 and descent -360 put the baseline at 8.826, and
+`(height - (ascent - descent) x size) / 2 - descent x size` gives 8.826 exactly.
+An earlier sketch used `(height - size x 0.72) / 2 + size x 0.18`, which looks
+right at one size and drifts at every other.
+
+**Typing goes into a real editor**, a `QLineEdit` over the field, which is what
+pdf.js does with its annotation layer of HTML inputs. Nothing is generated per
+keystroke -- the appearance is made once, on commit -- and selection, the
+clipboard, input methods and right-to-left text are the editor's problem rather
+than something to rebuild on top of an appearance stream.
+
+**A value the file never drew is drawn too.** Most text fields in real forms
+carry no appearance at all: 0 of 164 in one corpus form, 3 of 126 in another.
+Showing nothing for those would be the very fault this work began with, so a
+drawing is generated whenever the file lacks one -- not only when the field has
+been typed into.
 
 **2.6 was answered by changing where the fields are drawn**, which is worth
 more than narrowing the invalidation would have been. Form fields are no longer
@@ -513,3 +532,12 @@ named gaps rather than for bulk — a real radio group, signature fields, and a
 form with many widgets per field. The tool found its own bug on the way: `/FT`
 is inherited and can sit between the widget and the root, so reading it off the
 root called 1,053 radio buttons typeless.
+
+**2026-10-29 — steps 2.4 and 2.5.** Single-line text fields can be filled in.
+Typing goes into a real editor over the field and the appearance is generated
+once, on commit, from the `/DA`'s font, size and colour, with the baseline rule
+read out of one Acrobat had written rather than guessed at. A value reaches the
+saved file with a drawing for it, and a value the file never drew gets one too,
+which most text fields in the corpus need. Verified on the insurance form:
+typed into an empty field, saw it, saved it, read back `/V` and a generated
+`/AP`, and undo removed it.

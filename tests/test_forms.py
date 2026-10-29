@@ -1038,3 +1038,232 @@ class TestTickingABox(unittest.TestCase):
         self.assertEqual(field.kind, "/Tx")
         win.field_pressed(field)
         self.assertIsNone(self.held(win, field))
+
+
+def typable(value=None, size=12, quadding=None, name="text"):
+    """One page, one single-line text field, with a font it can be drawn in.
+
+    `/Helv` with no descriptor on purpose: it is a standard-14 name, which is
+    what a real form's `/DA` usually says, and it exercises the fallback
+    metrics rather than a font that carries its own.
+    """
+    pdf = pikepdf.new()
+    pdf.add_blank_page(page_size=(300, 120))
+    font = pdf.make_indirect(pikepdf.Dictionary(
+        Type=pikepdf.Name.Font, Subtype=pikepdf.Name.Type1,
+        BaseFont=pikepdf.Name.Helvetica))
+    widget = pdf.make_indirect(pikepdf.Dictionary(
+        Type=pikepdf.Name.Annot, Subtype=pikepdf.Name.Widget,
+        FT=pikepdf.Name.Tx, T=pikepdf.String(name), F=4,
+        Rect=pikepdf.Array([20, 40, 280, 70]),
+        DA=pikepdf.String(f"/Helv {size} Tf 0 g")))
+    if value is not None:
+        widget[pikepdf.Name.V] = pikepdf.String(value)
+    if quadding is not None:
+        widget[pikepdf.Name.Q] = quadding
+    pdf.pages[0][pikepdf.Name.Annots] = pikepdf.Array([widget])
+    pdf.Root[pikepdf.Name.AcroForm] = pikepdf.Dictionary(
+        Fields=pikepdf.Array([widget]),
+        DR=pikepdf.Dictionary(Font=pikepdf.Dictionary(Helv=font)))
+    out = io.BytesIO()
+    pdf.save(out)
+    return out.getvalue()
+
+
+class TestGeneratingATextAppearance(unittest.TestCase):
+    """Drawing a value that is not in the file.
+
+    Most text fields in real forms have no appearance at all -- 0 of 164 in
+    one corpus form -- so this draws from nothing rather than editing what is
+    there, which is the opposite of a tick box.
+    """
+
+    def opened(self, data=None):
+        pdf = pikepdf.open(io.BytesIO(data or typable()))
+        self.addCleanup(pdf.close)
+        return pdf, pdf.pages[0].Annots[0], pdf.Root.AcroForm
+
+    def content(self, value, **kwargs):
+        pdf, widget, acroform = self.opened(typable(**kwargs))
+        stream = forms.text_appearance(pdf, widget, value, acroform)
+        self.assertIsNotNone(stream)
+        return bytes(stream.read_bytes()).decode("latin-1")
+
+    def test_the_value_is_shown(self):
+        self.assertIn("(hello) Tj", self.content("hello"))
+
+    def test_the_font_and_size_come_from_the_da(self):
+        self.assertIn("/Helv 12 Tf", self.content("x"))
+        self.assertIn("/Helv 9 Tf", self.content("x", size=9))
+
+    def test_the_colour_comes_from_the_da_too(self):
+        """Four of the nine forms in the corpus write their fields in dark
+        blue; black text in one of those reads as a rendering bug."""
+        pdf, widget, acroform = self.opened()
+        widget[pikepdf.Name.DA] = pikepdf.String("/Helv 10 Tf 0 0 .5 rg")
+        stream = forms.text_appearance(pdf, widget, "x", acroform)
+        self.assertIn("0 0 .5 rg", bytes(stream.read_bytes()).decode("latin-1"))
+
+    def test_brackets_in_the_value_do_not_end_the_string(self):
+        """`(`, `)` and `\\` are what ends a PDF literal string."""
+        body = self.content(r"a (b) c \ d")
+        self.assertIn(r"(a \(b\) c \\ d) Tj", body)
+
+    def test_it_is_marked_as_a_text_field(self):
+        """`/Tx BMC` is how a viewer knows this drawing is a field's, and may
+        replace it."""
+        self.assertTrue(self.content("x").startswith("/Tx BMC"))
+
+    def test_it_is_clipped_to_the_box(self):
+        """A long value stays inside its field rather than running across the
+        page."""
+        self.assertIn("re\nW\nn", self.content("x" * 200))
+
+    def test_the_baseline_is_acrobats(self):
+        """Taken from an appearance Acrobat wrote: a 25.2pt box at 12pt in a
+        font of ascent 989 and descent -360 put it at 8.826."""
+        self.assertAlmostEqual(
+            forms.text_baseline(25.2, 12, 0.989, -0.360), 8.826, places=3)
+
+    def test_an_empty_value_still_draws_nothing_visible(self):
+        self.assertIn("() Tj", self.content(""))
+
+    def test_a_field_with_no_resources_is_declined(self):
+        """Rather than written with a font the viewer cannot resolve."""
+        pdf, widget, _acroform = self.opened()
+        del pdf.Root.AcroForm[pikepdf.Name.DR]
+        self.assertIsNone(forms.text_appearance(pdf, widget, "x",
+                                                pdf.Root.AcroForm))
+
+    def test_auto_size_picks_something_that_fits(self):
+        """A /DA size of 0 means fit the text to the box, which 6 to 8% of
+        real fields ask for."""
+        body = self.content("x", size=0)
+        self.assertNotIn("/Helv 0 Tf", body)
+        self.assertRegex(body, r"/Helv [\d.]+ Tf")
+
+
+class TestTypingIntoAField(unittest.TestCase):
+    """2.5's done-when: typing shows, survives undo, and saves."""
+
+    def window(self, data=None):
+        from pdfarranger_qt.mainwindow import MainWindow
+
+        path = temp_path("typable.pdf")
+        with open(path, "wb") as handle:
+            handle.write(data or typable())
+        win = MainWindow()
+        win.resize(700, 560)
+        win.show()
+        win.open_paths([path])
+        settle(timeout_ms=600)
+        win.set_read_mode(True)
+        settle(timeout_ms=700)
+        win.modified = False
+        self.addCleanup(win.close)
+        self.addCleanup(lambda: setattr(win, "modified", False))
+        return win
+
+    def field(self, win):
+        return win.reader.canvas.fields().on_page(0)[0]
+
+    def held(self, win, field):
+        page = win.model.pages[field.page]
+        return win.model.form_values.get(page.nfile, field.name)
+
+    def ink(self, win):
+        """Dark pixels on screen. The fixture's page is otherwise blank, so
+        every one of them is the field's text."""
+        canvas = win.reader.canvas
+        shot = QImage(canvas.viewport().size(), QImage.Format_RGB32)
+        shot.fill(0xFFFFFFFF)
+        canvas.viewport().render(shot)
+        return sum(1 for y in range(0, shot.height(), 2)
+                   for x in range(0, shot.width(), 2)
+                   if shot.pixelColor(x, y).red() < 120)
+
+    def type_into(self, win, field, text):
+        canvas = win.reader.canvas
+        canvas.edit_field(field)
+        settle(timeout_ms=120)
+        self.assertIsNotNone(canvas.editing(), "an editor should have opened")
+        canvas._editing[1].setText(text)
+        canvas.finish_editing()
+        settle(timeout_ms=250)
+
+    # -- it shows ----------------------------------------------------------
+
+    def test_an_empty_field_shows_nothing_until_it_is_typed_into(self):
+        win = self.window()
+        self.assertEqual(self.ink(win), 0, "a blank page and an empty field")
+        self.type_into(win, self.field(win), "Hello")
+        self.assertGreater(self.ink(win), 0)
+
+    def test_what_was_typed_is_what_is_held(self):
+        win = self.window()
+        field = self.field(win)
+        self.type_into(win, field, "Hello")
+        self.assertEqual(self.held(win, field), "Hello")
+
+    def test_clearing_a_field_is_an_edit_rather_than_a_reset(self):
+        """"Never touched" and "deliberately emptied" must not look alike: the
+        second has to keep the field empty, not fall back to the file."""
+        win = self.window(typable(value="From the file"))
+        field = self.field(win)
+        self.assertGreater(self.ink(win), 0, "the file's value shows")
+        self.type_into(win, field, "")
+        self.assertEqual(self.held(win, field), "")
+        self.assertEqual(self.ink(win), 0)
+
+    def test_closing_the_editor_unchanged_is_not_an_edit(self):
+        win = self.window(typable(value="From the file"))
+        field = self.field(win)
+        self.type_into(win, field, "From the file")
+        self.assertIsNone(self.held(win, field))
+        self.assertFalse(win.modified)
+
+    # -- it survives undo ---------------------------------------------------
+
+    def test_undo_takes_the_typing_back(self):
+        win = self.window()
+        field = self.field(win)
+        self.type_into(win, field, "Hello")
+        self.assertTrue(win.modified)
+        win.undo()
+        settle(timeout_ms=250)
+        self.assertIsNone(self.held(win, field))
+        self.assertEqual(self.ink(win), 0)
+
+    def test_one_edit_is_one_undo(self):
+        """`editingFinished` arrives again as the editor is taken away, and
+        without a guard the value is committed twice."""
+        win = self.window()
+        field = self.field(win)
+        self.type_into(win, field, "Hello")
+        win.undo()
+        settle(timeout_ms=250)
+        self.assertIsNone(self.held(win, field),
+                          "one undo should be enough")
+
+    # -- and it saves -------------------------------------------------------
+
+    def test_the_text_reaches_the_file_with_something_to_draw_it(self):
+        win = self.window()
+        field = self.field(win)
+        self.type_into(win, field, "Hello")
+        out = temp_path("typed.pdf")
+        self.assertTrue(win._write([out], win.model.pages))
+        saved = pikepdf.open(out)
+        widget = saved.pages[0].Annots[0]
+        self.assertEqual(str(widget.V), "Hello")
+        self.assertIn(pikepdf.Name.AP, widget,
+                      "a value with no appearance is invisible, which is the "
+                      "fault this work began with")
+        self.assertIn("(Hello) Tj",
+                      bytes(widget.AP.N.read_bytes()).decode("latin-1"))
+
+    def test_a_tick_box_still_does_not_open_an_editor(self):
+        win = self.window(tickable())
+        canvas = win.reader.canvas
+        canvas.field_pressed.emit(self.field(win))
+        self.assertIsNone(canvas.editing())

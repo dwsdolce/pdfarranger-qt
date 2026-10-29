@@ -56,7 +56,14 @@ from PySide6.QtCore import (
     QUrl,
     Signal,
 )
-from PySide6.QtGui import QColor, QImage, QKeySequence, QPainter, QPalette
+from PySide6.QtGui import (
+    QColor,
+    QFont,
+    QImage,
+    QKeySequence,
+    QPainter,
+    QPalette,
+)
 from PySide6.QtPdf import (
     QPdfDocument,
     QPdfDocumentRenderOptions,
@@ -66,6 +73,7 @@ from PySide6.QtWidgets import (
     QAbstractScrollArea,
     QApplication,
     QFrame,
+    QLineEdit,
     QMenu,
     QStyle,
 )
@@ -919,6 +927,8 @@ class PageCanvas(QAbstractScrollArea):
     #: A form field was pressed. Not acted on here: changing a value is a
     #: document edit, which belongs on the undo stack the window owns.
     field_pressed = Signal(object)
+    #: A text field was typed into and the editor closed: ``(field, text)``.
+    field_edited = Signal(object, str)
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -953,6 +963,8 @@ class PageCanvas(QAbstractScrollArea):
         #: Given a Field, what the application says it holds, or None to use
         #: what the document says. Set by the window, which owns the edits.
         self.field_values = None
+        #: ``(field, editor)`` while a text field is being typed into.
+        self._editing = None
 
         self._tooltip = ""
         self._text = PageText()
@@ -2097,6 +2109,80 @@ class PageCanvas(QAbstractScrollArea):
 
     # -- form fields -------------------------------------------------------
 
+    def edit_field(self, field):
+        """Put a real editor over a text field, the way pdf.js does.
+
+        Not a caret drawn by us over a generated appearance. A line edit
+        already knows about selection, the clipboard, input methods, the
+        platform's keyboard conventions and right-to-left text, and none of
+        that is worth rewriting on top of a PDF appearance stream. It also
+        means typing costs nothing: no appearance is generated until the
+        value is committed, which is what Acrobat does too.
+        """
+        self.finish_editing()
+        rect = self._field_rect(field)
+        if rect is None:
+            return
+        editor = QLineEdit(self.viewport())
+        editor.setFrame(False)
+        editor.setText(self._value_of(field) or "")
+        editor.setGeometry(rect.toRect())
+        editor.setFont(self._editor_font(field, rect.height()))
+        editor.selectAll()
+        editor.show()
+        editor.setFocus()
+        editor.editingFinished.connect(self.finish_editing)
+        self._editing = (field, editor)
+
+    def finish_editing(self):
+        """Commit what was typed and take the editor away.
+
+        Guarded against re-entry: `editingFinished` arrives again when the
+        editor loses focus to its own removal, and without this the value
+        would be committed twice -- two undo entries for one edit.
+        """
+        if self._editing is None:
+            return
+        field, editor = self._editing
+        self._editing = None
+        text = editor.text()
+        editor.hide()
+        editor.deleteLater()
+        self.field_edited.emit(field, text)
+
+    def editing(self):
+        """The field being typed into, or None."""
+        return self._editing[0] if self._editing else None
+
+    def _field_rect(self, field):
+        """Where a field is in the viewport, or None if it is not visible."""
+        if self._layout.page_count <= field.page:
+            return None
+        height = self._layout.page_height(field.page)
+        if height is None:
+            return None
+        zoom = self._layout.zoom
+        page = self._layout.page_rect(field.page)
+        left, bottom, right, top = field.rect
+        where = QRectF(left * zoom + page.x(), (height - top) * zoom + page.y(),
+                       (right - left) * zoom, (top - bottom) * zoom)
+        where.translate(-self.offset())
+        return where
+
+    def _editor_font(self, field, height_px: float) -> QFont:
+        """A screen font close to what the field will be written in.
+
+        Close, not equal: the editor is a Qt widget and the appearance is a
+        PDF font, and matching them exactly would mean embedding one in the
+        other. What matters is that the text does not jump in size when the
+        editor goes away, so the size is taken from the field and the family
+        is left to the platform.
+        """
+        font = QFont(self.font())
+        size = max(6.0, height_px * 0.62)
+        font.setPixelSize(int(round(size)))
+        return font
+
     def set_field_map(self, fields):
         """The widgets of the document being shown, drawn and hit-tested."""
         self._fields = fields
@@ -2296,9 +2382,15 @@ class PageCanvas(QAbstractScrollArea):
             # would leave a stray caret in the middle of a form.
             field = self.field_at(QPointF(event.position()))
             if field is not None and field.fillable:
-                self.field_pressed.emit(field)
+                if field.kind in ("/Tx", "/Ch"):
+                    self.edit_field(field)
+                else:
+                    self.field_pressed.emit(field)
                 event.accept()
                 return
+            # A press anywhere else ends the edit, as clicking away from a
+            # field does in any form.
+            self.finish_editing()
             self._press = QPointF(event.position())
             self._selecting = False
             found = self.to_page(self._press)
@@ -2651,12 +2743,35 @@ class PageCanvas(QAbstractScrollArea):
             where.translate(-offset)
             if not where.intersects(QRectF(self.viewport().rect())):
                 continue
-            image = self._appearances.image(
-                field.annot, field.state_for(self._value_of(field)),
-                max(1, round(where.width() * ratio)),
-                max(1, round(where.height() * ratio)))
+            wide = max(1, round(where.width() * ratio))
+            high = max(1, round(where.height() * ratio))
+            value = self._value_of(field)
+            # A drawing is made rather than looked up when the file has
+            # none that fits: because the field has just been typed into, or
+            # because it holds a value the file never drew. Most text fields
+            # are the second case -- 0 of 164 in one corpus form carried an
+            # appearance -- and showing nothing there would be the very fault
+            # this work began with.
+            if field.kind in ("/Tx", "/Ch") and (
+                    self._edited(field) or (value and not field.drawn)):
+                image = self._appearances.text_image(
+                    field.annot, value or "", self._fields.acroform,
+                    self._fields.pdf, wide, high)
+            else:
+                image = self._appearances.image(
+                    field.annot, field.state_for(value), wide, high)
             if image is not None:
                 painter.drawImage(where, image)
+
+    def _edited(self, field) -> bool:
+        """Whether the application holds a value for this field.
+
+        Distinct from holding an empty one: a field somebody has deliberately
+        cleared must draw as empty rather than fall back to what the file
+        says.
+        """
+        return (self.field_values is not None
+                and self.field_values(field) is not None)
 
     def _value_of(self, field):
         """What the field holds now: the edit if there is one, else the file."""
