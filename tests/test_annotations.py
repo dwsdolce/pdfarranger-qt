@@ -317,3 +317,172 @@ class TestSharedFieldNamesAreReported(unittest.TestCase):
 
     def test_distinct_names_are_not(self):
         self.assertNotIn("share a name", self.export_two("another field"))
+
+
+def marked_up_page(pdf=None):
+    """One page carrying a mark of every kind whose geometry lives in more
+    than one place, plus a form field.
+
+    The point is the coordinates held *beside* ``/Rect``: `/QuadPoints` for a
+    highlight, `/InkList` for a drawing, `/L` for a line, `/RD` for a square's
+    inset. Scaling the rectangle and leaving those puts a correctly placed box
+    around a shape still drawn at the old size, which is what three of the
+    four tools measured against this do.
+    """
+    pdf = pdf or pikepdf.new()
+    pdf.add_blank_page(page_size=(600, 400))
+    page = pdf.pages[0]
+    rect = [100, 200, 300, 260]
+
+    def mark(subtype, **extra):
+        # ``/P`` named, because a real file names it and the test for
+        # repointing it asserts nothing if no annotation here carries one.
+        annot = pikepdf.Dictionary(
+            Type=pikepdf.Name.Annot, Subtype=pikepdf.Name(subtype),
+            Rect=pikepdf.Array(list(rect)), F=4, P=page.obj,
+            Contents=pikepdf.String(subtype), **extra)
+        return pdf.make_indirect(annot)
+
+    widget = mark("/Widget", FT=pikepdf.Name.Tx, T=pikepdf.String("a field"),
+                  V=pikepdf.String("a value"))
+    annots = [
+        mark("/Square", RD=pikepdf.Array([2, 4, 6, 8]),
+             BS=pikepdf.Dictionary(W=3)),
+        mark("/Highlight", QuadPoints=pikepdf.Array(
+            [100, 260, 300, 260, 100, 200, 300, 200])),
+        mark("/Line", L=pikepdf.Array([100, 230, 300, 230])),
+        mark("/Ink", InkList=pikepdf.Array(
+            [pikepdf.Array([100, 200, 200, 260, 300, 200])])),
+        mark("/Polygon", Vertices=pikepdf.Array([100, 200, 300, 260])),
+        widget,
+    ]
+    page[pikepdf.Name.Annots] = pdf.make_indirect(pikepdf.Array(annots))
+    pdf.Root[pikepdf.Name.AcroForm] = pikepdf.Dictionary(
+        Fields=pikepdf.Array([widget]))
+    return pdf
+
+
+class TestAResizedPageKeepsItsMarks(unittest.TestCase):
+    """Resizing used to throw every annotation away.
+
+    `_scale` composes a *new* page, and anything living beside the content
+    rather than in it stayed on the old one. Measured on a probe carrying
+    eight annotations: eight went in and none came out, the form field among
+    them, so resizing a filled form silently emptied it.
+
+    Three other implementations get this partly wrong and each differently.
+    PDF24 keeps every annotation and scales none of them, stranding marks off
+    the page. pypdf 6.21.4 scales `/Rect` and leaves every sibling array.
+    Ghostscript scales `/QuadPoints` and `/L`, leaves `/InkList` and `/RD`,
+    and drops the form field. So there is no precedent to copy, only a
+    mapping to get right.
+    """
+
+    def scaled(self, factor=0.5):
+        from pdfarranger_qt.export import _scale
+
+        pdf = marked_up_page()
+        self.addCleanup(pdf.close)
+        page = pikepdf.Page(_scale(pdf, pdf.pages[0], factor))
+        return pdf, page
+
+    def by_subtype(self, page):
+        return {str(a.Subtype): a for a in page.get(pikepdf.Name.Annots, [])}
+
+    def test_nothing_is_thrown_away(self):
+        _pdf, page = self.scaled()
+        self.assertEqual(len(page.get(pikepdf.Name.Annots, [])), 6)
+
+    def test_the_rectangle_is_scaled(self):
+        _pdf, page = self.scaled()
+        for subtype, annot in self.by_subtype(page).items():
+            with self.subTest(subtype=subtype):
+                self.assertEqual([float(v) for v in annot.Rect],
+                                 [50.0, 100.0, 150.0, 130.0])
+
+    def test_the_coordinates_beside_it_are_scaled_too(self):
+        """The failure three other tools have. A rectangle in the right place
+        around a shape drawn at the old size is worse than either alone."""
+        _pdf, page = self.scaled()
+        marks = self.by_subtype(page)
+        self.assertEqual([float(v) for v in marks["/Highlight"].QuadPoints],
+                         [50.0, 130.0, 150.0, 130.0, 50.0, 100.0, 150.0, 100.0])
+        self.assertEqual([float(v) for v in marks["/Line"].L],
+                         [50.0, 115.0, 150.0, 115.0])
+        self.assertEqual([[float(v) for v in stroke]
+                          for stroke in marks["/Ink"].InkList],
+                         [[50.0, 100.0, 100.0, 130.0, 150.0, 100.0]])
+        self.assertEqual([float(v) for v in marks["/Polygon"].Vertices],
+                         [50.0, 100.0, 150.0, 130.0])
+        self.assertEqual([float(v) for v in marks["/Square"].RD],
+                         [1.0, 2.0, 3.0, 4.0])
+
+    def test_a_border_width_is_a_length_too(self):
+        """A border kept at its old width on a half-size page is twice as
+        heavy as the one it was drawn to match."""
+        _pdf, page = self.scaled()
+        self.assertEqual(float(self.by_subtype(page)["/Square"].BS.W), 1.5)
+
+    def test_the_form_still_points_at_its_widget(self):
+        """Reusing the annotation objects rather than copying them is what
+        keeps `/Fields` valid; a copy would leave the form naming an orphan."""
+        pdf, page = self.scaled()
+        widget = self.by_subtype(page)["/Widget"]
+        field = pdf.Root.AcroForm.Fields[0]
+        self.assertEqual(field.objgen, widget.objgen)
+        self.assertEqual([float(v) for v in field.Rect],
+                         [50.0, 100.0, 150.0, 130.0])
+
+    def test_each_mark_names_the_page_it_is_now_on(self):
+        """`/P` would otherwise point at the page this one replaced."""
+        _pdf, page = self.scaled()
+        for subtype, annot in self.by_subtype(page).items():
+            if pikepdf.Name.P in annot:
+                with self.subTest(subtype=subtype):
+                    self.assertEqual(annot.P.objgen, page.obj.objgen)
+
+    def test_an_unscaled_page_is_not_touched(self):
+        """Factor 1 returns the page itself, so the common case cannot drift
+        by a rounding error."""
+        from pdfarranger_qt.export import _scale
+
+        pdf = marked_up_page()
+        self.addCleanup(pdf.close)
+        before = pdf.pages[0]
+        after = _scale(pdf, before, 1)
+        self.assertIs(after, before)
+
+
+class TestResizingThroughTheExport(unittest.TestCase):
+    """The same thing through the path the application actually takes, so
+    that rewiring `_apply_geom_transform` cannot quietly undo it."""
+
+    def test_a_resized_page_reaches_the_file_with_its_marks(self):
+        from support import temp_path
+
+        from pdfarranger_qt.core import DocumentSet
+        from pdfarranger_qt.export import export
+
+        source = temp_path("marked.pdf")
+        pdf = marked_up_page()
+        pdf.save(source)
+        pdf.close()
+
+        docs = DocumentSet()
+        self.addCleanup(docs.cleanup)
+        pages = docs.add_file(source)
+        pages[0].scale = 0.5
+        out = temp_path("marked-scaled.pdf")
+        export(docs.files_for_export(), pages, {}, [out])
+
+        with pikepdf.open(out) as written:
+            page = written.pages[0]
+            annots = page.get(pikepdf.Name.Annots, [])
+            self.assertEqual(len(annots), 6)
+            highlight = [a for a in annots
+                         if str(a.Subtype) == "/Highlight"][0]
+            self.assertEqual([float(v) for v in highlight.Rect],
+                             [50.0, 100.0, 150.0, 130.0])
+            self.assertEqual(
+                [float(v) for v in highlight.QuadPoints],
+                [50.0, 130.0, 150.0, 130.0, 50.0, 100.0, 150.0, 100.0])

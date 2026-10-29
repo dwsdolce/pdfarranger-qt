@@ -570,20 +570,16 @@ needed whichever way the arrange question goes. Step 2.8.
 
 ## Still open
 
-- **Which frame a mark is stored in, and what a resize does to it.** `/Rotate`
-  and a crop carry a page-space rectangle for free -- a turn changes nothing in
-  the space and a crop only rewrites the box -- but `export._scale` multiplies
-  the space by the factor, and it builds a *fresh* page dictionary. Measured on
-  a 300x120 page with one `/Text` annotation scaled by two: the box comes back
-  600x240 and the page comes back with `/Contents`, `/MediaBox`, `/Resources`,
-  `/Rotate`, `/Type` -- and no `/Annots` at all. So a resized page loses the
-  annotations *and the widgets* the file came with, before any of this work is
-  reached. `_write_annotations` runs after the transform, which leaves a
-  choice: keep marks in the source page's space and multiply by `row.scale` on
-  the way out, which makes a later resize carry them, or keep them in the
-  output page's space and have every mark move the next time the page is
-  resized. The first is what the body 3 prose already claims; neither is
-  implemented, because nothing produces coordinates until 3.2.
+- **Which frame a mark is stored in.** `/Rotate` and a crop carry a page-space
+  rectangle for free -- a turn changes nothing in the space and a crop only
+  rewrites the box -- but `export._scale` multiplies the space by its factor.
+  `_write_annotations` runs *after* the transform, so marks either live in the
+  source page's space and are multiplied by `row.scale` on the way out, which
+  makes a later resize carry them, or live in the output page's space and move
+  the next time the page is resized. The first is what the body 3 prose
+  claims. Neither is implemented, because nothing produces coordinates until
+  3.2 -- but the resize bug underneath it is now fixed, so a mark stored in
+  source space would behave exactly as the page's existing annotations do.
 - **Where the canvas gets a page's displayed box.** `from_displayed` needs one,
   and `fields_in` already computes it per page -- but inside a *field* map, and
   a page with no widgets still needs its box to place a mark. Either `FieldMap`
@@ -784,6 +780,51 @@ One of the three new appearance tests earns its place. With the turning
 removed, both of the *size* assertions still pass, because the renderer draws
 at whatever size it is asked for; only comparing the pixels catches an image
 that was squashed into the new shape rather than turned into it.
+
+**2026-10-29 — a resized page threw every mark away.** `_scale` composes a
+*new* page dictionary, and anything living beside the content rather than in
+it stayed on the old one. A probe page carrying eight annotations, scaled by
+half: eight in, none out -- the form field among them, so resizing a filled
+form silently emptied it. Found while deciding which frame a mark should be
+stored in, and a bug in the port rather than a question for body 3.
+
+The same probe through three other implementations, each wrong a different
+way:
+
+| | kept | `/Rect` | `/QuadPoints` | `/InkList` | `/L` | `/RD` | form field |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| PDF24 | 8/8 | **left behind** | left behind | left behind | left behind | left behind | kept, stranded |
+| pypdf 6.21.4 | 8/8 | scaled | left behind | left behind | left behind | left behind | kept |
+| Ghostscript | 7/8 | scaled | scaled | left behind | scaled | left behind | **dropped** |
+| this, before | 0/8 | -- | -- | -- | -- | -- | dropped |
+| this, after | 8/8 | scaled | scaled | scaled | scaled | scaled | kept |
+
+So there was no precedent to copy, only a mapping to get right. PDF24 is the
+one a user is likeliest to meet and the worst of them: it keeps every
+annotation and scales none, which leaves marks floating in the wrong part of
+the page or off it entirely. The quiet failure is the middle column -- the
+coordinates held *beside* `/Rect`, which put a correctly placed box around a
+shape still drawn at the old size.
+
+Annotations are now carried across with every page-space coordinate scaled:
+`/Rect`, `/QuadPoints`, `/InkList`, `/L`, `/Vertices`, `/CL`, `/RD`, and the
+border widths in `/Border` and `/BS /W`, which are lengths in the same space.
+`/AP` streams need nothing -- a viewer maps an appearance's `/BBox` through
+its `/Matrix` and fits the result to `/Rect`, which is the mechanism that lets
+an annotation be resized at all. The annotation *objects* are reused rather
+than copied, which is what keeps the AcroForm's `/Fields` naming the same
+widgets, and `/P` is repointed at the page that replaced the old one.
+
+Acrobat could not be asked: page scaling is a Pro-only Preflight fixup, and
+what Adobe does to annotation geometry there is undocumented -- three searches
+found nothing either way.
+
+Five neuterings, four of which bit at once. The fifth, `/P` left pointing at
+the replaced page, passed: the fixture set no `/P` on any annotation, so the
+test's loop body never ran and it asserted nothing. The fixture now names one,
+as a real file does. That is the third no-op test in this work, and all three
+had the same shape -- a test that iterates over something the fixture does not
+have.
 
 **2026-10-29 — the inverse, for 3.2.** `from_displayed` takes a rectangle in
 the frame the page is laid out in back to the page's own space, which is the
