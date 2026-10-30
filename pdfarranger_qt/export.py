@@ -36,7 +36,7 @@ from typing import Any, Dict, List, Optional, Tuple
 import packaging.version
 import pikepdf
 
-from . import forms, markup, metadata
+from . import forms, markup, metadata, structure
 from .core import Page, Sides
 from .i18n import gettext_ as _
 
@@ -418,6 +418,21 @@ def _remove_unreferenced_resources(pdfdoc):
         print(traceback.format_exc())
 
 
+def _record_trail(trail, source_page, index) -> None:
+    """Note where this copy of a page landed. See `_copy_n_transform`.
+
+    By *position*, not by object. `_apply_geom_transform` runs afterwards and
+    replaces every page: recording the objects instead put the whole trail out
+    of date before anything could read it, and the structure tree came out
+    with no page in it at all.
+    """
+    pages, annots = trail
+    pages[source_page.obj.objgen] = index
+    for at, annot in enumerate(source_page.get(pikepdf.Name.Annots, [])):
+        if annot.is_indirect:
+            annots[annot.objgen] = (index, at)
+
+
 def _append_page(current_page, copied_pages, pdf_output, row):
     """Add a page to the output pdf. A page that already exists is duplicated.
 
@@ -720,7 +735,8 @@ def _write_annotations(pdf_output, pages, annotations) -> int:
     return written
 
 
-def _copy_n_transform(pdf_input, pdf_output, pages, quit_flag=None):
+def _copy_n_transform(pdf_input, pdf_output, pages, quit_flag=None,
+                      trail=None):
     # All pages must be copied to pdf_output BEFORE applying geometrical
     # transformation. See https://github.com/pikepdf/pikepdf/issues/271
     copied_pages = {}
@@ -732,6 +748,14 @@ def _copy_n_transform(pdf_input, pdf_output, pages, quit_flag=None):
         current_page = pdf_input[row.nfile - 1].pages[row.npage - 1]
         mediaboxes.append(_mediabox(current_page))
         _append_page(current_page, copied_pages, pdf_output, row)
+        if trail is not None:
+            # Which source object became which output object, recorded here
+            # because this is the only place the two are side by side. The
+            # structure tree needs it: an element names its page in /Pg and an
+            # /OBJR names its annotation, and both have to be pointed at what
+            # the export actually wrote. Annotations are copied in order by
+            # `_append_page`, so they pair off by position.
+            _record_trail(trail, current_page, len(pdf_output.pages) - 1)
         # Layer pages are temporarily added after the page they belong to
         for lprow in row.layerpages:
             layer_page = pdf_input[lprow.nfile - 1].pages[lprow.npage - 1]
@@ -795,7 +819,8 @@ def export_doc(pdf_input, pages, mdata, files_out, quit_flag=None,
     """
     pdf_output = pikepdf.Pdf.new()
     max_version = get_max_pdf_version([pdf_output, *pdf_input])
-    _copy_n_transform(pdf_input, pdf_output, pages, quit_flag)
+    trail = ({}, {})
+    _copy_n_transform(pdf_input, pdf_output, pages, quit_flag, trail)
     if quit_flag is not None and quit_flag.is_set():
         return
     # Before the form is rebuilt, so that what is rebuilt cannot name a
@@ -809,6 +834,10 @@ def export_doc(pdf_input, pages, mdata, files_out, quit_flag=None,
     # After the form, because a mark is added to the page rather than to the
     # form, and the page's /Annots must already hold whatever travelled with it.
     _write_annotations(pdf_output, pages, annotations)
+    # Last of all, because it indexes the annotations that actually arrived:
+    # a signature taken out above must not leave an /OBJR naming it, and a
+    # mark added above has no structure and should gain none.
+    structure.carry(pdf_input, pdf_output, pages, *trail)
 
     # files_out entries are paths when saving and file-like objects when
     # rendering to memory (previews, printing). Metadata and encryption are only

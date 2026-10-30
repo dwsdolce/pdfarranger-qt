@@ -410,7 +410,7 @@ cheaper than a flag every caller has to remember.
 | 2.7 | Refuse to fill a field in a signed document | 2.3 | a signed form says why rather than invalidating a signature | **complete** |
 | 2.8 | Strip the remains of a signature on export | -- | a derived document is honestly unsigned instead of claiming a signature over bytes that are gone | **complete** |
 | 2.9 | Refuse to save over a signed source, and say the signature will not carry | 2.7, 2.8 | Save on a signed document offers Save As; a derived save says the signature is gone | **complete** |
-| 2.10 | Carry the structure tree through the export | -- | a tagged form saved from here is still tagged, and `/Tabs /S` still means something | |
+| 2.10 | Carry the structure tree through the export | -- | a tagged form saved from here is still tagged, and `/Tabs /S` still means something | **complete** |
 | 2.11 | Tab between fields, in the order the file declares | 2.5, 2.10 | Tab and Shift+Tab walk a form the way Acrobat walks it, honouring `/Tabs` | |
 
 **2.1 has a precedent.** D20 settled how the outline is owned in the undo state
@@ -1022,6 +1022,56 @@ test's loop body never ran and it asserted nothing. The fixture now names one,
 as a real file does. That is the third no-op test in this work, and all three
 had the same shape -- a test that iterates over something the fixture does not
 have.
+
+**2026-10-30 — step 2.10.** A tagged document stays tagged through a save,
+and where it cannot, it stops claiming to be.
+
+The thing this is *not* is `copy_foreign` on `/StructTreeRoot`. Every element
+names its page in `/Pg`, so following the root copies the **source** pages in
+as objects nothing points at, and leaves `/Pg` aimed at those orphans rather
+than at the pages the export wrote. The tree is rebuilt element by element
+with `/Pg` taken from a map of what was copied.
+
+Tab order survives exactly, which is the whole point of carrying it -- the
+widgets an `/OBJR` names, in tree order:
+
+| | source | export |
+| --- | --- | --- |
+| i-9 | 138 | 138, identical |
+| f1040 | 199 | 199, identical |
+| fw4 | 48 | 48, identical |
+| a four page insurance form | 91 | 91, identical |
+
+What it will not attempt says so rather than leaving a dangling claim:
+
+| | tagged | `/Tabs` | pages keyed | annotations keyed |
+| --- | --- | --- | --- | --- |
+| untouched | yes | `/S` | 4 | 138 |
+| a page deleted | yes | `/S` | 3 | 134 |
+| reversed | yes | `/S` | 4 | 138 |
+| a page duplicated | no | none | 0 | 0 |
+| a page scaled | no | none | 0 | 0 |
+| merged with another file | no | none | 0 | 0 |
+
+A duplicated page cannot say which copy an element belongs to; a scaled page
+has had its marked content wrapped into a form XObject, which needs its own
+key; merging would need two role maps reconciled. Each is a thing this does
+not know how to do, and the honest answer is to take the claim off.
+
+Two faults only measurement found. The trail recorded page *objects*, and
+`_apply_geom_transform` replaces every page after the copy: objgens (3,0) to
+(92,0) became (546,0) to (549,0), so every `/Pg` lookup missed and not one
+page got a `/StructParents` -- while 373 elements still arrived, so the output
+looked tagged and was not. It records positions now. And the first
+`_make_honest` took `/Tabs` off unconditionally, which threw away ao239's
+working `/Tabs /R`: row order is self-contained and says nothing about a
+structure tree. Only `/S` is removed.
+
+The `/ParentTree` is rebuilt flat. The source's is a number tree that a real
+file splits across `/Kids` -- the four page form measured here holds its 419
+entries that way -- so reading it needs a proper walk, but writing one in a
+single pass has no reason to be split, and its keys index the *source's*
+pages in any case.
 
 **2026-10-30 — step 3.2.** The pointer has a job, and a drag reports where it
 was in coordinates the file can keep.
