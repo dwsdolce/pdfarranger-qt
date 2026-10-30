@@ -240,6 +240,32 @@ def _scale_annotation(annot, factor):
         border[pikepdf.Name.W] = factor * float(border[pikepdf.Name.W])
 
 
+#: Page entries that survive a resize unchanged, because the resize does not
+#: mean anything to them. `/UserUnit` needs more than copying and is handled
+#: below. `/Tabs` became meaningful again when the annotations it orders came
+#: back.
+_PAGE_KEPT = ("/Group", "/Tabs", "/AA", "/B", "/Metadata")
+
+#: Boxes in the space being multiplied, so they are scaled rather than copied.
+#: `/CropBox` and `/TrimBox` are not here: `_apply_geom_transform` deletes
+#: those on purpose, having folded the crop into the MediaBox already.
+_PAGE_SCALED_BOXES = ("/BleedBox", "/ArtBox")
+
+#: Deliberately *not* carried. `/PieceInfo` is the private cache of whichever
+#: application wrote the file, describing content this function has just
+#: rewritten, so keeping it hands the next tool a description of a page that
+#: no longer exists.
+#:
+#: `/StructParents` is left behind for a harder reason: it indexes the
+#: structure tree's parent tree for marked content in the page's *own* content
+#: stream, and that content now lives inside a form XObject, which needs its
+#: own key and a matching tree entry. Copying the number across would point
+#: the tag tree at content that is not there, which is worse than dropping it.
+#: Tagged structure does not survive a resize, and saying so is honest where
+#: a copied key would not be.
+_PAGE_DROPPED = ("/PieceInfo", "/StructParents")
+
+
 def _scale(doc, page, factor):
     """Scale a page."""
     if factor == 1:
@@ -254,6 +280,16 @@ def _scale(doc, page, factor):
     newmediabox = [factor * float(x) for x in page.MediaBox]
     content = "q {} 0 0 {} 0 0 cm /p{} Do Q".format(factor, factor, page_id)
     xobject = pikepdf.Page(page).as_form_xobject()
+    # `as_form_xobject` adds a `/Matrix` for `/UserUnit` and for nothing else,
+    # baking the page's unit scale into the content. Carrying `/UserUnit` on
+    # as well would then apply it twice: measured on a 600x400 page at
+    # UserUnit 2.5 scaled by half, a box at x=100..300 drew at x=125..375 on a
+    # 300pt page instead of x=50..150. Dropping `/UserUnit` instead is not the
+    # answer either, since it exists to describe pages past the 14400pt the
+    # format allows, and flattening one can put it over that limit. So the
+    # conversion is undone and the unit kept.
+    if "/UserUnit" in page and pikepdf.Name.Matrix in xobject:
+        del xobject[pikepdf.Name.Matrix]
     # Carried across by hand, because this builds a *new* page and anything
     # not named here is left on the old one. Annotations and the widgets of a
     # filled form live beside the content rather than in it, so a resized page
@@ -269,6 +305,15 @@ def _scale(doc, page, factor):
         Resources={"/XObject": {"/p{}".format(page_id): xobject}},
         Rotate=rotate,
     )
+    for name in _PAGE_KEPT:
+        if name in page:
+            new_page[pikepdf.Name(name)] = page[pikepdf.Name(name)]
+    for name in _PAGE_SCALED_BOXES:
+        if name in page:
+            new_page[pikepdf.Name(name)] = pikepdf.Array(
+                [factor * float(v) for v in page[pikepdf.Name(name)]])
+    if "/UserUnit" in page:
+        new_page[pikepdf.Name.UserUnit] = page[pikepdf.Name.UserUnit]
     # Needed for pikepdf <= 2.6.0 and again for 8.8.
     # See https://github.com/pikepdf/pikepdf/issues/174
     indirect = doc.make_indirect(new_page)

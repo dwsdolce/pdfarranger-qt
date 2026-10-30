@@ -781,6 +781,48 @@ removed, both of the *size* assertions still pass, because the renderer draws
 at whatever size it is asked for; only comparing the pixels catches an image
 that was squashed into the new shape rather than turned into it.
 
+**2026-10-29 — and the rest of what a resize dropped.** The annotations were
+the bug worth naming; everything else on the page dictionary went the same way
+and for the same reason. Measured: `/AA`, `/ArtBox`, `/B`, `/BleedBox`,
+`/Group`, `/Metadata`, `/PieceInfo`, `/StructParents`, `/Tabs` and `/UserUnit`
+all left behind.
+
+The obvious fix -- stop rebuilding the page, mutate it instead, and everything
+survives for free -- does not work, and finding that out was worth more than
+the fix. `as_form_xobject` is bound to the page it came from: replace that
+page's `/Contents` afterwards and the XObject is left holding the wrapper,
+calling itself, and the page renders blank. Upstream's fresh dictionary is
+load-bearing, not sloppiness.
+
+So the entries are carried onto the new page, sorted by what is actually right
+rather than copied wholesale:
+
+- `/Group`, `/Tabs`, `/AA`, `/B`, `/Metadata` carried unchanged. `/Tabs` became
+  meaningful again when the annotations it orders came back.
+- `/BleedBox` and `/ArtBox` *scaled*, being in the space that was multiplied.
+  `/CropBox` and `/TrimBox` are not here: `_apply_geom_transform` deletes those
+  on purpose, having folded the crop into the MediaBox already.
+- `/PieceInfo` deliberately dropped. It is the private cache of whichever
+  application wrote the file, describing content this has just rewritten.
+- `/StructParents` dropped and recorded. It indexes the structure tree's parent
+  tree for marked content in the page's *own* stream, and that content now sits
+  inside a form XObject, which needs its own key and a matching tree entry.
+  Copying the number would point the tag tree at content that is not there.
+  Tagged structure does not survive a resize; saying so is honest where a
+  copied key would not be.
+
+`/UserUnit` was the one that had to be measured rather than reasoned about.
+`as_form_xobject` adds a `/Matrix` for it and for nothing else, baking the
+unit scale into the content, so carrying the key as well applies it twice: on
+a 600x400 page at `UserUnit` 2.5 scaled by half, a box at x=100..300 drew at
+x=125..375 on a 300pt page. Dropping it is wrong too -- it exists to describe
+pages past the 14400pt the format allows, and flattening one can put it over
+that limit. The conversion is undone and the unit kept, which puts both the
+plain and the `/UserUnit` page at x 50..149, y 100..149 exactly. A
+`/UserUnit` page was already resizing wrong before today, so this repairs it
+rather than preventing a regression -- `_scale` came over from the GTK
+exporter unchanged in the port.
+
 **2026-10-29 — a resized page threw every mark away.** `_scale` composes a
 *new* page dictionary, and anything living beside the content rather than in
 it stayed on the old one. A probe page carrying eight annotations, scaled by

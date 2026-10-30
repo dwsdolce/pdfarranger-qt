@@ -486,3 +486,83 @@ class TestResizingThroughTheExport(unittest.TestCase):
             self.assertEqual(
                 [float(v) for v in highlight.QuadPoints],
                 [50.0, 130.0, 150.0, 130.0, 50.0, 100.0, 150.0, 100.0])
+
+
+class TestAResizedPageKeepsWhatElseItHad(unittest.TestCase):
+    """`_scale` composes a new page, so every entry not named on it is left
+    on the one it replaced. The annotations were the bug worth fixing; these
+    went the same way for the same reason.
+
+    Rebuilding is not sloppiness, and the obvious alternative does not work:
+    `as_form_xobject` is bound to the page it came from, so replacing that
+    page's `/Contents` afterwards leaves the XObject holding the wrapper and
+    calling itself, and the page renders blank.
+    """
+
+    def page_with_everything(self, user_unit=None):
+        pdf = pikepdf.new()
+        pdf.add_blank_page(page_size=(600, 400))
+        page = pdf.pages[0]
+        page.Contents = pdf.make_stream(b"1 0 0 rg 100 100 200 100 re f")
+        page.obj[pikepdf.Name.Tabs] = pikepdf.Name.S
+        page.obj[pikepdf.Name.B] = pikepdf.Array([])
+        page.obj[pikepdf.Name.AA] = pikepdf.Dictionary()
+        page.obj[pikepdf.Name.Metadata] = pdf.make_stream(b"<x/>")
+        page.obj[pikepdf.Name.Group] = pdf.make_indirect(pikepdf.Dictionary(
+            S=pikepdf.Name.Transparency, CS=pikepdf.Name.DeviceRGB))
+        page.obj[pikepdf.Name.BleedBox] = pikepdf.Array([10, 10, 590, 390])
+        page.obj[pikepdf.Name.ArtBox] = pikepdf.Array([20, 20, 580, 380])
+        page.obj[pikepdf.Name.PieceInfo] = pikepdf.Dictionary()
+        page.obj[pikepdf.Name.StructParents] = 7
+        if user_unit is not None:
+            page.obj[pikepdf.Name.UserUnit] = user_unit
+        return pdf
+
+    def scaled(self, user_unit=None, factor=0.5):
+        from pdfarranger_qt.export import _scale
+
+        pdf = self.page_with_everything(user_unit)
+        self.addCleanup(pdf.close)
+        pdf.pages[0] = pikepdf.Page(_scale(pdf, pdf.pages[0], factor))
+        return pdf.pages[0]
+
+    def test_what_the_resize_does_not_touch_is_kept(self):
+        page = self.scaled()
+        for name in ("/Tabs", "/B", "/AA", "/Metadata", "/Group"):
+            with self.subTest(key=name):
+                self.assertIn(name, page.obj)
+
+    def test_the_other_boxes_are_scaled_not_copied(self):
+        """They are in the space being multiplied, so copying them unchanged
+        would be its own bug."""
+        page = self.scaled()
+        self.assertEqual([float(v) for v in page.obj.BleedBox],
+                         [5.0, 5.0, 295.0, 195.0])
+        self.assertEqual([float(v) for v in page.obj.ArtBox],
+                         [10.0, 10.0, 290.0, 190.0])
+
+    def test_a_private_cache_is_left_behind(self):
+        """`/PieceInfo` describes content this just rewrote, so carrying it
+        hands the next tool a description of a page that no longer exists."""
+        self.assertNotIn("/PieceInfo", self.scaled().obj)
+
+    def test_tagged_structure_does_not_survive(self):
+        """Recorded rather than papered over. `/StructParents` indexes the
+        parent tree for marked content in the page's *own* stream, and that
+        content is inside a form XObject now, so copying the number across
+        would point the tag tree at content that is not there."""
+        self.assertNotIn("/StructParents", self.scaled().obj)
+
+    def test_a_user_unit_is_not_counted_twice(self):
+        """`as_form_xobject` adds a `/Matrix` for `/UserUnit` and nothing
+        else, baking the unit scale into the content. Carried on as well it
+        applies twice: a box at x=100..300 drew at x=125..375 on a 300pt page.
+        """
+        page = self.scaled(user_unit=2.5)
+        self.assertEqual(float(page.obj.UserUnit), 2.5)
+        xobject = next(iter(page.Resources.XObject.values()))
+        self.assertNotIn("/Matrix", xobject)
+
+    def test_a_page_without_a_user_unit_gains_nothing(self):
+        page = self.scaled()
+        self.assertNotIn("/UserUnit", page.obj)
