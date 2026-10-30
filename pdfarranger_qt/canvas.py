@@ -46,6 +46,7 @@ import time
 from typing import List, Optional, Sequence, Tuple
 
 from PySide6.QtCore import (
+    QEvent,
     QObject,
     QPointF,
     QRectF,
@@ -104,6 +105,9 @@ SELECTION = QColor(60, 120, 220, 80)
 #: The band dragged out by a markup tool. Not `SELECTION`: a selection is
 #: something the document has and this is something about to be added to it,
 #: and the two are visible at once when a drag starts over selected text.
+#: The ring around the field Tab has reached. Drawn rather than relying on
+#: the editor appearing, because a tick box gets focus with no editor.
+FIELD_FOCUS = QColor(0, 120, 215)
 MARKING = QColor(40, 40, 40, 200)
 MARKING_FILL = QColor(60, 120, 220, 40)
 
@@ -972,6 +976,14 @@ class PageCanvas(QAbstractScrollArea):
         #: draws them. Set by the reader, which is the only thing that knows
         #: which document is showing.
         self._fields = None
+        #: True while a step is in progress. Closing a field's editor makes
+        #: Qt run focus traversal, which comes straight back here, so one Tab
+        #: stepped four fields without this.
+        self._stepping = False
+        #: The field with keyboard focus, or None. Separate from `_editing`,
+        #: which is a text field's editor: a tick box can be focused with no
+        #: editor over it, and before this there was no way to be *at* one.
+        self._focused = None
         #: What the pointer does. See `set_tool`.
         self._tool = self.SELECT
         #: ``(start, current)`` in viewport points while a mark is being drawn.
@@ -2223,7 +2235,47 @@ class PageCanvas(QAbstractScrollArea):
         editor.show()
         editor.setFocus()
         editor.editingFinished.connect(self.finish_editing)
+        # A line edit eats Tab for focus traversal, so the key never reaches
+        # keyPressEvent above -- it leaves the editor, `editingFinished`
+        # fires, and the form is behind you. Taken here instead.
+        editor.installEventFilter(self)
         self._editing = (field, editor)
+
+    def focusNextPrevChild(self, forward: bool) -> bool:
+        """Tab steps through the form rather than out of the canvas.
+
+        This hook and not `keyPressEvent`, which never sees the key: Qt takes
+        Tab in `QWidget.event()` for focus traversal before any key handler
+        runs. Handling it there looked right and did nothing -- Tab moved
+        between the canvas and the page number box while the form sat
+        untouched -- and the tests did not notice, because they called
+        `keyPressEvent` directly and so tested a path the keyboard never uses.
+        """
+        if self._stepping:
+            # Already moving: this is the traversal Qt runs as the old
+            # editor goes away, not a key the reader pressed.
+            return True
+        if self._fields is not None and self.focus_step(forward=forward):
+            return True
+        return super().focusNextPrevChild(forward)
+
+    def eventFilter(self, watched, event):
+        """Tab out of a field editor steps to the next field.
+
+        The editor is a real QLineEdit, which is what gives the selection,
+        the clipboard, input methods and right-to-left text for nothing -- and
+        it also means Qt's focus traversal gets Tab first unless it is taken
+        here.
+        """
+        if (self._editing is not None and watched is self._editing[1]
+                and event.type() == QEvent.Type.KeyPress
+                and event.key() in (Qt.Key_Tab, Qt.Key_Backtab)):
+            # Commit first: stepping closes the editor, and a value typed and
+            # then tabbed away from is a value the user entered.
+            self.finish_editing()
+            self.focus_step(forward=event.key() == Qt.Key_Tab)
+            return True
+        return super().eventFilter(watched, event)
 
     def finish_editing(self):
         """Commit what was typed and take the editor away.
@@ -2231,14 +2283,24 @@ class PageCanvas(QAbstractScrollArea):
         Guarded against re-entry: `editingFinished` arrives again when the
         editor loses focus to its own removal, and without this the value
         would be committed twice -- two undo entries for one edit.
+
+        Guarded against *traversal* for the same reason. Taking the editor
+        away makes Qt look for somewhere else to put the keyboard, which
+        reaches `focusNextPrevChild` and would step the form -- so merely
+        clicking away from a field moved the focus to another one and drew a
+        ring round it.
         """
         if self._editing is None:
             return
         field, editor = self._editing
         self._editing = None
         text = editor.text()
-        editor.hide()
-        editor.deleteLater()
+        was, self._stepping = self._stepping, True
+        try:
+            editor.hide()
+            editor.deleteLater()
+        finally:
+            self._stepping = was
         self.field_edited.emit(field, text)
 
     def editing(self):
@@ -2309,6 +2371,67 @@ class PageCanvas(QAbstractScrollArea):
     def marking(self) -> bool:
         """Whether a markup tool is active, as against reading."""
         return self._tool != self.SELECT
+
+    def focused_field(self):
+        """The field Tab has reached, or None."""
+        return self._focused
+
+    def focus_field(self, field) -> None:
+        """Put keyboard focus on a field, scroll to it, and open it if it
+        takes typing.
+
+        Opening the editor is what makes tabbing through a form work the way
+        it does anywhere else: arriving at a text field should leave you able
+        to type, not needing to click first.
+        """
+        self.finish_editing()
+        self._focused = field
+        if field is None:
+            self.viewport().update()
+            return
+        self._scroll_to_field(field)
+        if field.fillable and not self._refuses(field) \
+                and field.kind in ("/Tx", "/Ch"):
+            self.edit_field(field)
+        else:
+            # A tick box has no editor, so nothing else would hold the
+            # keyboard: without this the next Tab goes to whatever Qt thinks
+            # is next -- the page number box -- and the form is left behind.
+            self.setFocus()
+        self.viewport().update()
+
+    def focus_step(self, forward: bool = True) -> bool:
+        """Move focus to the next field, or the previous one.
+
+        False when the document has no fields, so the caller can let Tab mean
+        what it usually means instead of swallowing it.
+        """
+        if self._fields is None or self._stepping:
+            return False
+        field = self._fields.step(self._focused, forward)
+        if field is None:
+            return False
+        self._stepping = True
+        try:
+            self.focus_field(field)
+        finally:
+            self._stepping = False
+        return True
+
+    def _scroll_to_field(self, field) -> None:
+        """Bring a field into view, without moving if it is already there."""
+        rect = self._field_rect(field)
+        viewport = self.viewport().rect()
+        if rect is not None and viewport.contains(rect.toRect(), False):
+            return
+        height = self._layout.page_height(field.page)
+        if height is None:
+            return
+        # A little above the field rather than flush with the top edge, so
+        # that its label -- which is page content, not part of the field --
+        # is on screen with it.
+        into = min(height, field.rect[3] + 48)
+        self.go_to_position((field.page, into))
 
     def set_page_boxes(self, boxes) -> None:
         """The laid-out box of every page, for placing a mark.
@@ -2565,12 +2688,20 @@ class PageCanvas(QAbstractScrollArea):
             # would leave a stray caret in the middle of a form.
             field = self.field_at(QPointF(event.position()))
             if field is not None and field.fillable:
+                # Clicking a field is also *arriving* at it, so Tab carries on
+                # from there. Without this the focus stayed empty and the next
+                # Tab went to the first field in the document -- so clicking
+                # into page three and tabbing jumped back to page one.
+                self._focused = field
                 if self._refuses(field):
                     self.field_refused.emit(field)
                 elif field.kind in ("/Tx", "/Ch"):
                     self.edit_field(field)
                 else:
                     self.field_pressed.emit(field)
+                    # Nothing else holds the keyboard for a tick box.
+                    self.setFocus()
+                self.viewport().update()
                 event.accept()
                 return
             # A press anywhere else ends the edit, as clicking away from a
@@ -2771,6 +2902,19 @@ class PageCanvas(QAbstractScrollArea):
         if event.matches(QKeySequence.SelectAll):
             self.select_all_on(max(0, self.current_page()))
             return
+        if self._focused is not None and key in (Qt.Key_Space, Qt.Key_Return,
+                                                 Qt.Key_Enter):
+            field = self._focused
+            if field.fillable and field.kind == "/Btn":
+                if self._refuses(field):
+                    self.field_refused.emit(field)
+                else:
+                    self.field_pressed.emit(field)
+                return
+        if key == Qt.Key_Escape and self._focused is not None:
+            self.focus_field(None)
+            return
+
         if key == Qt.Key_Escape and self.marking():
             # Out of the tool first. Escape with a tool active means "stop
             # marking up", which is what it means in every editor; a selection
@@ -2970,6 +3114,7 @@ class PageCanvas(QAbstractScrollArea):
         if height is None:
             return
         zoom = self._layout.zoom
+        focused = self._focused
         for field in on_page:
             if field.hidden:
                 continue
@@ -3001,6 +3146,16 @@ class PageCanvas(QAbstractScrollArea):
                     field.rotation)
             if image is not None:
                 painter.drawImage(where, image)
+            if field is focused:
+                # Outside the field rather than over it, so the ring does not
+                # sit on top of what was typed.
+                painter.save()
+                pen = QPen(FIELD_FOCUS)
+                pen.setWidth(2)
+                painter.setPen(pen)
+                painter.setBrush(Qt.NoBrush)
+                painter.drawRect(where.adjusted(-1.5, -1.5, 1.5, 1.5))
+                painter.restore()
 
     def _edited(self, field) -> bool:
         """Whether the application holds a value for this field.

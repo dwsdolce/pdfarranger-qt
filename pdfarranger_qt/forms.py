@@ -594,7 +594,145 @@ def read_document(source) -> "tuple[FieldMap, list]":
             pdf = pikepdf.open(source)
     except Exception:  # noqa: BLE001 - a click finds nothing, a mark has no box
         return FieldMap(), []
-    return FieldMap(fields_in(pdf), pdf), boxes_in(pdf)
+    fields = fields_in(pdf)
+    return (FieldMap(fields, pdf, tab_order(pdf, fields)), boxes_in(pdf))
+
+
+def _structure_rank(pdf) -> dict:
+    """Annotation objgen -> where the structure tree names it.
+
+    `/Tabs /S` is what real forms declare -- eight of the nine corpus forms
+    that say anything -- and it means the order is the tag tree's, reached
+    through the `/OBJR` entries that name each widget.
+    """
+    root = pdf.Root.get(pikepdf.Name.StructTreeRoot)
+    if root is None:
+        return {}
+    rank, seen = {}, set()
+
+    def walk(node, depth=0):
+        if depth > 64:
+            return
+        if isinstance(node, pikepdf.Array):
+            for item in node:
+                walk(item, depth + 1)
+            return
+        if not isinstance(node, pikepdf.Dictionary):
+            return
+        if node.get(pikepdf.Name.Type) == pikepdf.Name("/OBJR"):
+            target = node.get(pikepdf.Name.Obj)
+            if target is not None and target.is_indirect \
+                    and target.objgen not in seen:
+                seen.add(target.objgen)
+                rank[target.objgen] = len(rank)
+            return
+        kids = node.get(pikepdf.Name.K)
+        if kids is not None:
+            walk(kids, depth + 1)
+
+    walk(root.get(pikepdf.Name.K))
+    return rank
+
+
+def _widget_rank(pdf) -> dict:
+    """Annotation objgen -> where the `/AcroForm` field tree names it."""
+    form = pdf.Root.get(pikepdf.Name.AcroForm)
+    if form is None:
+        return {}
+    rank = {}
+
+    def walk(node, depth=0):
+        if depth > _FIELD_DEPTH or not isinstance(node, pikepdf.Dictionary):
+            return
+        kids = node.get(pikepdf.Name.Kids)
+        if kids is not None:
+            for kid in kids:
+                walk(kid, depth + 1)
+            return
+        if node.is_indirect and node.objgen not in rank:
+            rank[node.objgen] = len(rank)
+
+    for field in form.get(pikepdf.Name.Fields, []):
+        walk(field)
+    return rank
+
+
+#: How a page says its fields should be walked. `/A` is the array order the
+#: file happens to be written in, which is what this used to use for
+#: everything -- and which the corpus shows is close to random on four of
+#: nine forms, so it is a declaration to honour and never a fallback.
+TAB_ROW = "/R"
+TAB_COLUMN = "/C"
+TAB_STRUCTURE = "/S"
+TAB_ARRAY = "/A"
+TAB_WIDGET = "/W"
+
+
+def tab_mode(page) -> str:
+    """The page's declared traversal, or row order where it declares none.
+
+    Acrobat falls back to an accessibility preference here, so two
+    installations can tab the same file differently. Row order instead,
+    because it is what a reader expects of a page and because the array order
+    the file was written in is not: sf86 declares nothing and its 6,852
+    widgets are in array order only 4% like reading order.
+    """
+    try:
+        declared = page.obj.get(pikepdf.Name.Tabs)
+    except Exception:           # noqa: BLE001 - a page we cannot read
+        return TAB_ROW
+    name = str(declared) if declared is not None else None
+    if name in (TAB_ROW, TAB_COLUMN, TAB_STRUCTURE, TAB_ARRAY, TAB_WIDGET):
+        return name
+    return TAB_ROW
+
+
+def tab_order(pdf, fields) -> "list[Field]":
+    """``fields`` in the order Tab should walk them, pages in order.
+
+    Within a page, whatever `/Tabs` declares. A field the declared order does
+    not mention -- a widget outside the tag tree, say -- goes after the ones
+    it does, in row order, rather than being dropped: unreachable by keyboard
+    is worse than out of sequence.
+    """
+    structure = _structure_rank(pdf)
+    widgets = _widget_rank(pdf)
+    by_page: Dict[int, list] = {}
+    for position, field in enumerate(fields):
+        by_page.setdefault(field.page, []).append((position, field))
+
+    ordered = []
+    for index in sorted(by_page):
+        try:
+            mode = tab_mode(pdf.pages[index])
+        except Exception:       # noqa: BLE001 - a page past the end
+            mode = TAB_ROW
+        entries = by_page[index]
+
+        def row(item):
+            _at, field = item
+            # Banded, so that fields meant to sit on one line are not split
+            # by a point of drift. Down the page, then across it.
+            return (-round(field.rect[3] / 6.0), field.rect[0])
+
+        def column(item):
+            _at, field = item
+            return (round(item[1].rect[0] / 6.0), -field.rect[3])
+
+        if mode == TAB_ARRAY:
+            entries.sort(key=lambda item: item[0])
+        elif mode == TAB_COLUMN:
+            entries.sort(key=column)
+        elif mode in (TAB_STRUCTURE, TAB_WIDGET):
+            rank = structure if mode == TAB_STRUCTURE else widgets
+            missing = len(rank)
+            entries.sort(key=lambda item: (
+                rank.get(item[1].annot.objgen, missing),
+                row(item)))
+        else:
+            entries.sort(key=row)
+        ordered.extend(field for _at, field in entries)
+    return ordered
 
 
 class FieldMap:
@@ -604,10 +742,15 @@ class FieldMap:
     press and a form can carry thousands of widgets -- sf86.pdf has 6,852.
     """
 
-    __slots__ = ("_by_page", "_pdf")
+    __slots__ = ("_by_page", "_pdf", "_order")
 
-    def __init__(self, fields=(), pdf=None):
+    def __init__(self, fields=(), pdf=None, order=()):
         self._by_page: Dict[int, list] = {}
+        #: Every field in the order Tab walks them. Computed once with the
+        #: map, because it needs the document -- `/Tabs` is on the page and
+        #: `/S` means the structure tree -- and the map is where the document
+        #: is held open.
+        self._order = list(order)
         #: The document the fields were read from, held *open*. The layer that
         #: draws them renders each appearance out of it, so closing it here
         #: would mean reading the file again for every widget on screen.
@@ -625,7 +768,8 @@ class FieldMap:
                 pdf = pikepdf.open(io.BytesIO(source))
             else:
                 pdf = pikepdf.open(source)
-            return cls(fields_in(pdf), pdf)
+            fields = fields_in(pdf)
+            return cls(fields, pdf, tab_order(pdf, fields))
         except Exception:  # noqa: BLE001 - a click simply finds nothing
             return cls()
 
@@ -638,9 +782,32 @@ class FieldMap:
                 pass
             self._pdf = None
         self._by_page.clear()
+        self._order.clear()
 
     def __len__(self):
         return sum(len(v) for v in self._by_page.values())
+
+    def in_tab_order(self) -> list:
+        """Every field in the order Tab walks them, pages in order."""
+        return self._order
+
+    def step(self, field, forward: bool = True):
+        """The field after ``field``, or before it. Wraps at the ends.
+
+        None when there is nothing to step to. Starting from a field the
+        order does not hold -- which should not happen, but a document can be
+        reloaded under a stale reference -- begins at one end.
+        """
+        order = self._order
+        if not order:
+            return None
+        try:
+            at = order.index(field) if field is not None else -1
+        except ValueError:
+            at = -1
+        if at < 0:
+            return order[0] if forward else order[-1]
+        return order[(at + (1 if forward else -1)) % len(order)]
 
     @property
     def pdf(self):

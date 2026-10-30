@@ -411,7 +411,7 @@ cheaper than a flag every caller has to remember.
 | 2.8 | Strip the remains of a signature on export | -- | a derived document is honestly unsigned instead of claiming a signature over bytes that are gone | **complete** |
 | 2.9 | Refuse to save over a signed source, and say the signature will not carry | 2.7, 2.8 | Save on a signed document offers Save As; a derived save says the signature is gone | **complete** |
 | 2.10 | Carry the structure tree through the export | -- | a tagged form saved from here is still tagged, and `/Tabs /S` still means something | **complete** |
-| 2.11 | Tab between fields, in the order the file declares | 2.5, 2.10 | Tab and Shift+Tab walk a form the way Acrobat walks it, honouring `/Tabs` | |
+| 2.11 | Tab between fields, in the order the file declares | 2.5, 2.10 | Tab and Shift+Tab walk a form the way Acrobat walks it, honouring `/Tabs` | **complete** |
 
 **2.1 has a precedent.** D20 settled how the outline is owned in the undo state
 beside the page list, keyed by a stable page id so reordering costs nothing and
@@ -1022,6 +1022,48 @@ test's loop body never ran and it asserted nothing. The fixture now names one,
 as a real file does. That is the third no-op test in this work, and all three
 had the same shape -- a test that iterates over something the fixture does not
 have.
+
+**2026-10-30 — step 2.11.** Tab walks a form in the order the file declares.
+
+The order follows `/Tabs`: `/S` through the structure tree, `/R` and `/C` by
+row and column, `/A` by the array, `/W` by the field tree. Where nothing is
+declared it falls back to **row order**, not array order -- Acrobat falls back
+to an accessibility preference there, so two installations tab the same file
+differently, and sf86 declares nothing while its 6,852 widgets sit in array
+order only 4% like reading order. A field the declared order does not mention
+goes after the ones it does rather than being dropped: unreachable by keyboard
+is worse than out of sequence. Checked across the corpus -- nothing lost or
+repeated, pages never interleave, and where `/S` is declared it is followed
+exactly on every file.
+
+The canvas gains a *focused field*, which did not previously exist: `_editing`
+is a text field's editor, so a tick box could not be focused at all. It draws
+a ring, scrolls into view, takes Space or Enter, and leaves on Escape.
+
+**Four faults, and the tests saw none of them.** Three were reported from use
+on a real form. All four were invisible because the tests called
+`keyPressEvent` directly, which is a path the keyboard never uses: Qt takes
+Tab in `QWidget.event()` for focus traversal *before* any key handler runs.
+Eighteen tests passed while Tab in the real window moved between the canvas
+and the page number box and never touched the form.
+
+- **Tab never reached a field.** It belongs in `focusNextPrevChild`.
+- **It stuck on a tick box.** A box has no editor, so once the line edit was
+  gone nothing held the keyboard.
+- **Clicking a field and then tabbing jumped to page one.** A click opened the
+  editor without setting the focus, so the step began from nothing.
+- **One Tab stepped four fields.** Taking the editor away makes Qt look for
+  somewhere else to put the keyboard, which comes straight back to
+  `focusNextPrevChild`. Guarded inside `finish_editing`, where it covers every
+  caller: guarding only the two callers that seemed to matter left *clicking
+  away* from a field moving the focus and drawing a ring round an unrelated
+  one, which an existing ink-counting test caught.
+
+Verified through Qt's own dispatch on i-9, 130 fields across text, choice and
+button: 40 consecutive tabs, 0 wrong, across page boundaries, and Shift+Tab
+correct going back. The tests drive `QTest.keyClick` now, and one of the four
+regression tests did not bite at first either, because it let a fallback mask
+the missing `setFocus`.
 
 **2026-10-30 — step 2.10.** A tagged document stays tagged through a save,
 and where it cannot, it stops claiming to be.
