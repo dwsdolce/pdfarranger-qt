@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-29 19:29+0000\n"
+"POT-Creation-Date: 2026-10-30 02:22+0000\n"
 "PO-Revision-Date: 2024-09-05 17:05+0300\n"
 "Last-Translator: Abdullah Albaroty <albaroty@gmail.com>\n"
 "Language: ar\n"
@@ -1916,6 +1916,25 @@ msgstr "ابحث عن السابق"
 msgid "Find All"
 msgstr "ابحث عن الكل"
 
+#: pdfarranger_qt/mainwindow.py
+msgid "_Select"
+msgstr "_حدد"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Highlight"
+msgstr "_إبراز"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Note"
+msgstr "_ملاحظة"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Draw"
+msgstr "_رسم"
+
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
 msgid "Select _Range"
@@ -2030,14 +2049,15 @@ msgstr "ا_ستخرج"
 msgid "Arrange"
 msgstr "رتّب"
 
-#: pdfarranger_qt/mainwindow.py
-msgid "_Select"
-msgstr "_حدد"
-
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
 msgid "_Booklet"
 msgstr "_كتيب"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Markup"
+msgstr "التوضيحات"
 
 #: pdfarranger_qt/mainwindow.py
 msgid "_View"

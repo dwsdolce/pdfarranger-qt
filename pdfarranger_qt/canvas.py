@@ -63,6 +63,7 @@ from PySide6.QtGui import (
     QKeySequence,
     QPainter,
     QPalette,
+    QPen,
 )
 from PySide6.QtPdf import (
     QPdfDocument,
@@ -100,6 +101,11 @@ SEARCH_CURRENT = QColor(255, 145, 0, 150)
 
 #: Selected text. Translucent for the same reason as the search highlights.
 SELECTION = QColor(60, 120, 220, 80)
+#: The band dragged out by a markup tool. Not `SELECTION`: a selection is
+#: something the document has and this is something about to be added to it,
+#: and the two are visible at once when a drag starts over selected text.
+MARKING = QColor(40, 40, 40, 200)
+MARKING_FILL = QColor(60, 120, 220, 40)
 
 
 class FitMode:
@@ -933,6 +939,12 @@ class PageCanvas(QAbstractScrollArea):
 
     #: A fillable field was clicked in a document that will not take the edit.
     field_refused = Signal(object)
+    #: The pointer's job changed: the new tool's name.
+    tool_changed = Signal(str)
+    #: A markup gesture finished: ``(tool, page, rect)``, the rectangle already
+    #: in the page's own space. What is made of it belongs to 3.3 onwards; the
+    #: canvas reports the gesture and keeps none of it.
+    mark_drawn = Signal(str, int, object)
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -960,6 +972,10 @@ class PageCanvas(QAbstractScrollArea):
         #: draws them. Set by the reader, which is the only thing that knows
         #: which document is showing.
         self._fields = None
+        #: What the pointer does. See `set_tool`.
+        self._tool = self.SELECT
+        #: ``(start, current)`` in viewport points while a mark is being drawn.
+        self._marking = None
         #: One `forms.displayed_box` per page, for placing a mark. Plain data
         #: and separate from the field map, for the reason given in D7.
         self._boxes = []
@@ -2267,6 +2283,33 @@ class PageCanvas(QAbstractScrollArea):
         except Exception:  # noqa: BLE001 - a click must not raise
             return False
 
+    #: The reader's own behaviour: text selection, links, the caret.
+    SELECT = "select"
+    #: Markup tools. The canvas treats every one of them the same -- a drag
+    #: that reports a rectangle -- so that what each *means* stays with the
+    #: step that adds it rather than being decided here.
+    HIGHLIGHT = "highlight"
+    NOTE = "note"
+    DRAW = "draw"
+
+    def tool(self) -> str:
+        return self._tool
+
+    def set_tool(self, tool: str) -> None:
+        """Choose what the pointer does. Markup tools draw; SELECT reads."""
+        tool = tool or self.SELECT
+        if tool == self._tool:
+            return
+        self._tool = tool
+        self._marking = None
+        self.viewport().unsetCursor()
+        self.viewport().update()
+        self.tool_changed.emit(tool)
+
+    def marking(self) -> bool:
+        """Whether a markup tool is active, as against reading."""
+        return self._tool != self.SELECT
+
     def set_page_boxes(self, boxes) -> None:
         """The laid-out box of every page, for placing a mark.
 
@@ -2463,6 +2506,11 @@ class PageCanvas(QAbstractScrollArea):
         """
         position = QPointF(event.position())
 
+        if self._marking is not None and event.buttons() & Qt.LeftButton:
+            self._marking = (self._marking[0], position)
+            self.viewport().update()
+            return
+
         if self._press is not None and event.buttons() & Qt.LeftButton:
             if (position - self._press).manhattanLength() > QApplication.startDragDistance():
                 self._selecting = True
@@ -2479,6 +2527,14 @@ class PageCanvas(QAbstractScrollArea):
                     self._extend_selection(*found)
                 super().mouseMoveEvent(event)
                 return
+
+        if self.marking():
+            # A crosshair everywhere, including over a field: the field still
+            # takes the press, and a cursor that promised otherwise would be
+            # the lie. The I-beam is wrong here either way.
+            self.viewport().setCursor(Qt.CrossCursor)
+            super().mouseMoveEvent(event)
+            return
 
         link = self.link_at(position)
         if link is not None:
@@ -2520,6 +2576,16 @@ class PageCanvas(QAbstractScrollArea):
             # A press anywhere else ends the edit, as clicking away from a
             # field does in any form.
             self.finish_editing()
+            if self.marking():
+                # Only here, *after* the field check: over a field there is no
+                # markup, the field takes the press and is edited. A widget
+                # that cannot be filled falls through to this, because a field
+                # you are not allowed to fill is no reason to refuse a mark on
+                # the page around it.
+                position = QPointF(event.position())
+                self._marking = (position, position)
+                event.accept()
+                return
             self._press = QPointF(event.position())
             self._selecting = False
             found = self.to_page(self._press)
@@ -2582,6 +2648,18 @@ class PageCanvas(QAbstractScrollArea):
         this document's text is link as far as PDFium is concerned (see section
         6), so without this the gesture would barely work.
         """
+        if event.button() == Qt.LeftButton and self._marking is not None:
+            start, end = self._marking
+            self._marking = None
+            self.viewport().update()
+            placed = self.mark_rect(start, QPointF(event.position()))
+            if placed is not None:
+                # A click rather than a drag arrives here as a rectangle with
+                # no width, which is what placing a sticky note is.
+                self.mark_drawn.emit(self._tool, placed[0], placed[1])
+            event.accept()
+            return
+
         if event.button() == Qt.LeftButton and self._press is not None:
             here = QPointF(event.position())
             moved = (here - self._press).manhattanLength()
@@ -2693,6 +2771,14 @@ class PageCanvas(QAbstractScrollArea):
         if event.matches(QKeySequence.SelectAll):
             self.select_all_on(max(0, self.current_page()))
             return
+        if key == Qt.Key_Escape and self.marking():
+            # Out of the tool first. Escape with a tool active means "stop
+            # marking up", which is what it means in every editor; a selection
+            # left behind from before is not what the key was pressed for.
+            self._marking = None
+            self.set_tool(self.SELECT)
+            return
+
         if key == Qt.Key_Escape and (self._selection or self._caret is not None):
             # Both. Acrobat leaves the selection behind; ours already cleared it
             # and had a test for it, and matching Acrobat there would have lost
@@ -2836,8 +2922,31 @@ class PageCanvas(QAbstractScrollArea):
             self._paint_selection(painter, index, offset)
             self._paint_search(painter, index, offset)
         self._paint_caret(painter, offset)
+        self._paint_marking(painter)
         painter.end()
         self._prefetch_around(visible)
+
+    def _paint_marking(self, painter) -> None:
+        """The rectangle being dragged out, while a markup tool is in use.
+
+        In viewport coordinates and outside the per-page loop, because the
+        band belongs to the gesture rather than to the page -- it has to stay
+        under the pointer even where that has wandered into a margin.
+        """
+        if self._marking is None:
+            return
+        start, current = self._marking
+        band = QRectF(start, current).normalized()
+        if band.width() < 1 and band.height() < 1:
+            return
+        painter.save()
+        pen = QPen(MARKING)
+        pen.setStyle(Qt.DashLine)
+        pen.setWidth(1)
+        painter.setPen(pen)
+        painter.setBrush(MARKING_FILL)
+        painter.drawRect(band)
+        painter.restore()
 
     def _paint_fields(self, painter, index: int, offset: QPointF, ratio: float):
         """Draw this page's form fields over it.

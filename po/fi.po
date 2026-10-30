@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  pdfarranger\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-29 19:29+0000\n"
+"POT-Creation-Date: 2026-10-30 02:22+0000\n"
 "PO-Revision-Date: 2024-03-24 19:16+0200\n"
 "Last-Translator: \n"
 "Language: fi\n"
@@ -1970,6 +1970,25 @@ msgstr "Etsi edellinen"
 msgid "Find All"
 msgstr "Etsi kaikki"
 
+#: pdfarranger_qt/mainwindow.py
+msgid "_Select"
+msgstr "_Valitse"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Highlight"
+msgstr "_Korostus"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Note"
+msgstr "_Muistiinpano"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Draw"
+msgstr "_Piirrä"
+
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
 msgid "Select _Range"
@@ -2084,14 +2103,15 @@ msgstr "Kopioi _muu"
 msgid "Arrange"
 msgstr "Järjestä"
 
-#: pdfarranger_qt/mainwindow.py
-msgid "_Select"
-msgstr "_Valitse"
-
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
 msgid "_Booklet"
 msgstr "_Vihko"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Markup"
+msgstr "Merkinnät"
 
 #: pdfarranger_qt/mainwindow.py
 msgid "_View"

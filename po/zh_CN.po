@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PDF Arranger 1.14.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-29 19:29+0000\n"
+"POT-Creation-Date: 2026-10-30 02:22+0000\n"
 "PO-Revision-Date: 2026-06-02 17:09+0800\n"
 "Last-Translator: Puqns67 <me@puqns67.icu>\n"
 "Language: zh_CN\n"
@@ -1774,6 +1774,25 @@ msgid "Find All"
 msgstr "查找全部"
 
 #: pdfarranger_qt/mainwindow.py
+msgid "_Select"
+msgstr "选择（_S）"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Highlight"
+msgstr "高亮(_H)"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Note"
+msgstr "注释(_N)"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Draw"
+msgstr "绘制(_D)"
+
+#: pdfarranger_qt/mainwindow.py
 msgid "Select _Range"
 msgstr "按范围选择页面（_R）"
 
@@ -1885,12 +1904,13 @@ msgid "Arrange"
 msgstr "整理"
 
 #: pdfarranger_qt/mainwindow.py
-msgid "_Select"
-msgstr "选择（_S）"
-
-#: pdfarranger_qt/mainwindow.py
 msgid "_Booklet"
 msgstr "小册子（_B）"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Markup"
+msgstr "标注"
 
 #: pdfarranger_qt/mainwindow.py
 msgid "_View"

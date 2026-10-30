@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-29 19:29+0000\n"
+"POT-Creation-Date: 2026-10-30 02:22+0000\n"
 "PO-Revision-Date: 2026-02-15 15:16+0100\n"
 "Last-Translator: Quentin PAGÈS\n"
 "Language: oc\n"
@@ -1948,6 +1948,25 @@ msgid "Find All"
 msgstr "Recercar tot"
 
 #: pdfarranger_qt/mainwindow.py
+msgid "_Select"
+msgstr "_Seleccionar"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Highlight"
+msgstr "Suslin_har"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Note"
+msgstr "_Nòta"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Draw"
+msgstr "_Dessenhar"
+
+#: pdfarranger_qt/mainwindow.py
 msgid "Select _Range"
 msgstr "Seleccionar la _plaja"
 
@@ -2061,12 +2080,13 @@ msgid "Arrange"
 msgstr "Ordenar"
 
 #: pdfarranger_qt/mainwindow.py
-msgid "_Select"
-msgstr "_Seleccionar"
-
-#: pdfarranger_qt/mainwindow.py
 msgid "_Booklet"
 msgstr "_Libret"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Markup"
+msgstr "Marcatge"
 
 #: pdfarranger_qt/mainwindow.py
 msgid "_View"

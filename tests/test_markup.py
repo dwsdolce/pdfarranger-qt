@@ -347,3 +347,144 @@ class TestFromThePointerToThePage(unittest.TestCase):
         self.assertEqual(canvas.page_at(end), 1, "the drag must end elsewhere")
         page, _rect = canvas.mark_rect(start, end)
         self.assertEqual(page, 0)
+
+
+class TestTheToolDecidesWhatThePointerDoes(unittest.TestCase):
+    """Step 3.2b. The canvas reports a gesture and keeps none of it; what a
+    mark *is* belongs to 3.3 onwards.
+
+    The precedence is the owner's: over a field there is no markup, the field
+    takes the press and is edited. A widget that cannot be filled falls
+    through to the tool, because a field you may not fill is no reason to
+    refuse a mark on the page around it.
+    """
+
+    def setUp(self):
+        from PySide6.QtWidgets import QApplication  # noqa: F401
+
+        from pdfarranger_qt.mainwindow import MainWindow
+
+        self.win = MainWindow()
+        self.win.resize(900, 700)
+        self.win.show()
+        self.win.open_paths([FORMS])
+        settle(timeout_ms=800)
+        self.win.set_read_mode(True)
+        settle(timeout_ms=1000)
+        self.canvas = self.win.reader.canvas
+        self.marks = []
+        self.canvas.mark_drawn.connect(
+            lambda tool, page, rect: self.marks.append((tool, page, rect)))
+
+    def tearDown(self):
+        self.win.modified = False
+        self.win.close()
+
+    def send(self, kind, point):
+        from PySide6.QtCore import QPoint, QPointF, Qt
+        from PySide6.QtGui import QMouseEvent
+
+        event = QMouseEvent(
+            kind, QPointF(point),
+            self.canvas.viewport().mapToGlobal(
+                QPoint(int(point.x()), int(point.y()))),
+            Qt.LeftButton, Qt.LeftButton, Qt.NoModifier)
+        if kind == QMouseEvent.Type.MouseButtonPress:
+            self.canvas.mousePressEvent(event)
+        elif kind == QMouseEvent.Type.MouseMove:
+            self.canvas.mouseMoveEvent(event)
+        else:
+            self.canvas.mouseReleaseEvent(event)
+
+    def drag(self, start, end):
+        from PySide6.QtGui import QMouseEvent
+
+        self.send(QMouseEvent.Type.MouseButtonPress, start)
+        self.send(QMouseEvent.Type.MouseMove, end)
+        self.send(QMouseEvent.Type.MouseButtonRelease, end)
+
+    def viewport_point(self, x, y_up):
+        from PySide6.QtCore import QPointF
+
+        height = self.canvas._layout.page_height(0)
+        return self.canvas.to_viewport(
+            self.canvas._layout.from_page(0, QPointF(x, height - y_up)))
+
+    def the_field(self):
+        return self.canvas.fields().on_page(0)[0]
+
+    def test_the_pointer_reads_until_a_tool_is_chosen(self):
+        from pdfarranger_qt.canvas import PageCanvas
+
+        self.assertEqual(self.canvas.tool(), PageCanvas.SELECT)
+        self.assertFalse(self.canvas.marking())
+
+    def test_a_drag_under_a_tool_reports_where_it_was(self):
+        from pdfarranger_qt.canvas import PageCanvas
+
+        self.win.set_tool(PageCanvas.HIGHLIGHT)
+        # Clear of the widget at (150, 550, 298, 570), so the field does not
+        # take the press instead.
+        self.drag(self.viewport_point(150, 690), self.viewport_point(298, 670))
+        self.assertEqual(len(self.marks), 1)
+        tool, page, rect = self.marks[0]
+        self.assertEqual((tool, page), (PageCanvas.HIGHLIGHT, 0))
+        for got, want in zip(rect, (150.0, 670.0, 298.0, 690.0)):
+            self.assertAlmostEqual(got, want, delta=1.5)
+
+    def test_over_a_field_there_is_no_markup(self):
+        """The owner's rule: the field takes the press and is edited."""
+        from pdfarranger_qt.canvas import PageCanvas
+
+        self.win.set_tool(PageCanvas.HIGHLIGHT)
+        field = self.the_field()
+        left, bottom, right, top = field.rect
+        middle = self.viewport_point((left + right) / 2, (bottom + top) / 2)
+        self.drag(middle, middle)
+        self.assertEqual(self.marks, [])
+        self.assertIsNotNone(self.canvas.editing())
+
+    def test_a_click_is_a_rectangle_with_no_width(self):
+        """Which is what placing a sticky note is."""
+        from pdfarranger_qt.canvas import PageCanvas
+
+        self.win.set_tool(PageCanvas.NOTE)
+        where = self.viewport_point(200, 690)
+        self.drag(where, where)
+        self.assertEqual(len(self.marks), 1)
+        _tool, _page, rect = self.marks[0]
+        self.assertAlmostEqual(rect[0], rect[2], delta=1.0)
+        self.assertAlmostEqual(rect[1], rect[3], delta=1.0)
+
+    def test_escape_puts_the_pointer_back_to_reading(self):
+        from PySide6.QtCore import Qt
+        from PySide6.QtGui import QKeyEvent
+
+        from pdfarranger_qt.canvas import PageCanvas
+
+        self.win.set_tool(PageCanvas.DRAW)
+        self.canvas.keyPressEvent(
+            QKeyEvent(QKeyEvent.Type.KeyPress, Qt.Key_Escape, Qt.NoModifier))
+        self.assertEqual(self.canvas.tool(), PageCanvas.SELECT)
+
+    def test_the_menu_follows_the_canvas(self):
+        """Escape changes the tool without going through the menu, so the
+        menu cannot be the only place the choice lives."""
+        from PySide6.QtCore import Qt
+        from PySide6.QtGui import QKeyEvent
+
+        from pdfarranger_qt.canvas import PageCanvas
+
+        self.win.set_tool(PageCanvas.HIGHLIGHT)
+        checked = [a for a in self.win.markup_tools.actions() if a.isChecked()]
+        self.assertEqual([a.data() for a in checked], [PageCanvas.HIGHLIGHT])
+        self.canvas.keyPressEvent(
+            QKeyEvent(QKeyEvent.Type.KeyPress, Qt.Key_Escape, Qt.NoModifier))
+        checked = [a for a in self.win.markup_tools.actions() if a.isChecked()]
+        self.assertEqual([a.data() for a in checked], [PageCanvas.SELECT])
+
+    def test_reading_is_untouched_while_no_tool_is_chosen(self):
+        """The whole of body 1 and 2 happens in this mode, so a drag here must
+        still select text rather than report a mark."""
+        self.drag(self.viewport_point(150, 690), self.viewport_point(298, 670))
+        self.assertEqual(self.marks, [])

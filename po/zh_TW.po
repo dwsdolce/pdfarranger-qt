@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-29 19:29+0000\n"
+"POT-Creation-Date: 2026-10-30 02:22+0000\n"
 "PO-Revision-Date: 2024-03-20 17:20+0800\n"
 "Last-Translator: 錢政維 <e.cwchien@gmail.com>\n"
 "Language: zh_TW\n"
@@ -1806,6 +1806,25 @@ msgstr "找上一個"
 msgid "Find All"
 msgstr "全部尋找"
 
+#: pdfarranger_qt/mainwindow.py
+msgid "_Select"
+msgstr "選取(_S)"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Highlight"
+msgstr "標示(_H)"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Note"
+msgstr "註解(_N)"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Draw"
+msgstr "繪製(_D)"
+
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
 msgid "Select _Range"
@@ -1920,14 +1939,15 @@ msgstr "擷取(_E)"
 msgid "Arrange"
 msgstr "整理"
 
-#: pdfarranger_qt/mainwindow.py
-msgid "_Select"
-msgstr "選取(_S)"
-
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
 msgid "_Booklet"
 msgstr "小冊子(_B)"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Markup"
+msgstr "標註"
 
 #: pdfarranger_qt/mainwindow.py
 msgid "_View"

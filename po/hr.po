@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  pdfarranger\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-29 19:29+0000\n"
+"POT-Creation-Date: 2026-10-30 02:22+0000\n"
 "PO-Revision-Date: 2023-06-06 13:27+0200\n"
 "Last-Translator: Milo Ivir <mail@milotype.de>\n"
 "Language: hr\n"
@@ -1968,6 +1968,25 @@ msgstr "Pronađi prethodno"
 msgid "Find All"
 msgstr "Pronađi sve"
 
+#: pdfarranger_qt/mainwindow.py
+msgid "_Select"
+msgstr "_Odaberi"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Highlight"
+msgstr "_Istakni"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Note"
+msgstr "_Bilješka"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Draw"
+msgstr "_Crtaj"
+
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
 msgid "Select _Range"
@@ -2083,14 +2102,15 @@ msgstr "_Izdvoji"
 msgid "Arrange"
 msgstr "Složi"
 
-#: pdfarranger_qt/mainwindow.py
-msgid "_Select"
-msgstr "_Odaberi"
-
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
 msgid "_Booklet"
 msgstr "_Knjižica"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Markup"
+msgstr "Označavanje"
 
 #: pdfarranger_qt/mainwindow.py
 msgid "_View"

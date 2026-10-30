@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pdfarranger master\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-29 19:29+0000\n"
+"POT-Creation-Date: 2026-10-30 02:22+0000\n"
 "PO-Revision-Date: 2026-09-04 09:59+0000\n"
 "Last-Translator: Lumenman <28367232+Lumenman@users.noreply.github.com>\n"
 "Language: ru\n"
@@ -1833,6 +1833,25 @@ msgid "Find All"
 msgstr "Найти все"
 
 #: pdfarranger_qt/mainwindow.py
+msgid "_Select"
+msgstr "В_ыделить"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Highlight"
+msgstr "_Выделение"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Note"
+msgstr "_Заметка"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Draw"
+msgstr "_Рисование"
+
+#: pdfarranger_qt/mainwindow.py
 msgid "Select _Range"
 msgstr "Выделение _диапазона"
 
@@ -1930,12 +1949,13 @@ msgid "Arrange"
 msgstr "Расположение"
 
 #: pdfarranger_qt/mainwindow.py
-msgid "_Select"
-msgstr "В_ыделить"
-
-#: pdfarranger_qt/mainwindow.py
 msgid "_Booklet"
 msgstr "_Буклет"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Markup"
+msgstr "Разметка"
 
 #: pdfarranger_qt/mainwindow.py
 msgid "_View"

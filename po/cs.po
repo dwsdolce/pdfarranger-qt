@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  pdfarranger\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-29 19:29+0000\n"
+"POT-Creation-Date: 2026-10-30 02:22+0000\n"
 "PO-Revision-Date: 2023-07-10 15:37+0000\n"
 "Last-Translator: PavelZ\n"
 "Language: cs_CZ\n"
@@ -1956,6 +1956,25 @@ msgstr "Najít předchozí"
 msgid "Find All"
 msgstr "Najít vše"
 
+#: pdfarranger_qt/mainwindow.py
+msgid "_Select"
+msgstr "Vybra_t"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Highlight"
+msgstr "_Zvýraznění"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Note"
+msgstr "Poz_námka"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Draw"
+msgstr "_Kreslení"
+
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
 msgid "Select _Range"
@@ -2071,14 +2090,15 @@ msgstr "_Extrahovat"
 msgid "Arrange"
 msgstr "Uspořádat"
 
-#: pdfarranger_qt/mainwindow.py
-msgid "_Select"
-msgstr "Vybra_t"
-
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
 msgid "_Booklet"
 msgstr "_Brožura"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Markup"
+msgstr "Poznámky"
 
 #: pdfarranger_qt/mainwindow.py
 msgid "_View"

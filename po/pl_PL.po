@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PDF-Shuffler 0.7\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-29 19:29+0000\n"
+"POT-Creation-Date: 2026-10-30 02:22+0000\n"
 "PO-Revision-Date: 2021-12-30 17:13+0100\n"
 "Last-Translator: Toratora <darex7@o2.pl>\n"
 "Language: pl_PL\n"
@@ -2002,6 +2002,25 @@ msgstr "Znajdź poprzednie"
 msgid "Find All"
 msgstr "Znajdź wszystkie"
 
+#: pdfarranger_qt/mainwindow.py
+msgid "_Select"
+msgstr "Zaznacz"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Highlight"
+msgstr "_Zakreślenie"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Note"
+msgstr "_Notatka"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Draw"
+msgstr "_Rysowanie"
+
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
 msgid "Select _Range"
@@ -2120,14 +2139,15 @@ msgstr "_Wyodrębnij"
 msgid "Arrange"
 msgstr "Porządkuj"
 
-#: pdfarranger_qt/mainwindow.py
-msgid "_Select"
-msgstr "Zaznacz"
-
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
 msgid "_Booklet"
 msgstr "_Broszura"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Markup"
+msgstr "Adnotacje"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py

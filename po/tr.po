@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pdfarranger main\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-29 19:29+0000\n"
+"POT-Creation-Date: 2026-10-30 02:22+0000\n"
 "PO-Revision-Date: 2026-04-24 21:19+0300\n"
 "Last-Translator: Oğuz Ersen <oguz@ersen.moe>\n"
 "Language: tr\n"
@@ -1930,6 +1930,25 @@ msgid "Find All"
 msgstr "Tümünü Bul"
 
 #: pdfarranger_qt/mainwindow.py
+msgid "_Select"
+msgstr "_Seç"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Highlight"
+msgstr "_Vurgula"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Note"
+msgstr "_Not"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Draw"
+msgstr "_Çiz"
+
+#: pdfarranger_qt/mainwindow.py
 msgid "Select _Range"
 msgstr "_Aralık Seç"
 
@@ -2041,12 +2060,13 @@ msgid "Arrange"
 msgstr "Yerleştir"
 
 #: pdfarranger_qt/mainwindow.py
-msgid "_Select"
-msgstr "_Seç"
-
-#: pdfarranger_qt/mainwindow.py
 msgid "_Booklet"
 msgstr "_Kitapçık"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Markup"
+msgstr "İşaretleme"
 
 #: pdfarranger_qt/mainwindow.py
 msgid "_View"

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-29 19:29+0000\n"
+"POT-Creation-Date: 2026-10-30 02:22+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: hu\n"
@@ -1977,6 +1977,25 @@ msgstr "Előző keresése"
 msgid "Find All"
 msgstr "Az összes keresése"
 
+#: pdfarranger_qt/mainwindow.py
+msgid "_Select"
+msgstr "_Kijelölés"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Highlight"
+msgstr "Ki_emelés"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Note"
+msgstr "_Jegyzet"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Draw"
+msgstr "_Rajzolás"
+
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
 msgid "Select _Range"
@@ -2091,14 +2110,15 @@ msgstr "Ki_bontás"
 msgid "Arrange"
 msgstr "Rendezés"
 
-#: pdfarranger_qt/mainwindow.py
-msgid "_Select"
-msgstr "_Kijelölés"
-
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
 msgid "_Booklet"
 msgstr "_Füzet"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Markup"
+msgstr "Jelölés"
 
 #: pdfarranger_qt/mainwindow.py
 msgid "_View"

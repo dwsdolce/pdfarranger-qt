@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-29 19:29+0000\n"
+"POT-Creation-Date: 2026-10-30 02:22+0000\n"
 "PO-Revision-Date: 2023-06-08 10:00+0700\n"
 "Last-Translator: Abdul Munif Hanafi <amunifhanafi@gmail.com>\n"
 "Language: id\n"
@@ -1992,6 +1992,25 @@ msgstr "Cari Sebelumnya"
 msgid "Find All"
 msgstr "Cari Semua"
 
+#: pdfarranger_qt/mainwindow.py
+msgid "_Select"
+msgstr "Pili_h"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Highlight"
+msgstr "_Sorot"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Note"
+msgstr "_Catatan"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Draw"
+msgstr "_Gambar"
+
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
 msgid "Select _Range"
@@ -2107,14 +2126,15 @@ msgstr "_Ekstrak"
 msgid "Arrange"
 msgstr "Tata"
 
-#: pdfarranger_qt/mainwindow.py
-msgid "_Select"
-msgstr "Pili_h"
-
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
 msgid "_Booklet"
 msgstr "_Buklet"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Markup"
+msgstr "Markah"
 
 #: pdfarranger_qt/mainwindow.py
 msgid "_View"

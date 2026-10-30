@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-29 19:29+0000\n"
+"POT-Creation-Date: 2026-10-30 02:22+0000\n"
 "PO-Revision-Date: 2023-01-19 20:27+0100\n"
 "Last-Translator: alexgabi\n"
 "Language: eu\n"
@@ -1997,6 +1997,25 @@ msgstr "Bilatu aurrekoa"
 msgid "Find All"
 msgstr "Bilatu guztiak"
 
+#: pdfarranger_qt/mainwindow.py
+msgid "_Select"
+msgstr "_Hautatu"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Highlight"
+msgstr "_Nabarmendu"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Note"
+msgstr "_Oharra"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Draw"
+msgstr "_Marraztu"
+
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
 msgid "Select _Range"
@@ -2111,14 +2130,15 @@ msgstr "_Atera"
 msgid "Arrange"
 msgstr "Antolatu"
 
-#: pdfarranger_qt/mainwindow.py
-msgid "_Select"
-msgstr "_Hautatu"
-
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
 msgid "_Booklet"
 msgstr "_Liburuxka"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Markup"
+msgstr "Markaketa"
 
 #: pdfarranger_qt/mainwindow.py
 msgid "_View"

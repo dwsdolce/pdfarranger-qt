@@ -260,7 +260,8 @@ class TestTranslatedInterface(unittest.TestCase):
         win = MainWindow()
         self.addCleanup(win.close)
         self.assertEqual([role for role, _actions in win._shortcut_groups()],
-                         ["File", "Edit", "Page", "Arrange", "View", "Help"])
+                         ["File", "Edit", "Page", "Arrange", "Markup",
+                          "View", "Help"])
 
     def test_the_shortcut_editor_still_shows_translated_headings(self):
         """The role is for deciding; the title is for reading."""

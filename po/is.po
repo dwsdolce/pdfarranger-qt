@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-29 19:29+0000\n"
+"POT-Creation-Date: 2026-10-30 02:22+0000\n"
 "PO-Revision-Date: 2025-09-28 16:51+0000\n"
 "Last-Translator: Sveinn í Felli <sv1@fellsnet.is>\n"
 "Language: is\n"
@@ -1948,6 +1948,25 @@ msgid "Find All"
 msgstr "Finna allt"
 
 #: pdfarranger_qt/mainwindow.py
+msgid "_Select"
+msgstr "_Velja"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Highlight"
+msgstr "_Áherslulitun"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Note"
+msgstr "_Minnispunktur"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Draw"
+msgstr "_Teikna"
+
+#: pdfarranger_qt/mainwindow.py
 msgid "Select _Range"
 msgstr "Velja _umfang"
 
@@ -2061,12 +2080,13 @@ msgid "Arrange"
 msgstr "Raða"
 
 #: pdfarranger_qt/mainwindow.py
-msgid "_Select"
-msgstr "_Velja"
-
-#: pdfarranger_qt/mainwindow.py
 msgid "_Booklet"
 msgstr "_Bæklingur"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Markup"
+msgstr "Merkingar"
 
 #: pdfarranger_qt/mainwindow.py
 msgid "_View"

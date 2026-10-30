@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-29 19:29+0000\n"
+"POT-Creation-Date: 2026-10-30 02:22+0000\n"
 "PO-Revision-Date: 2022-09-01 00:40+0900\n"
 "Last-Translator: sicklylife <translation@sicklylife.jp>\n"
 "Language: ja\n"
@@ -1844,6 +1844,25 @@ msgstr "前を検索"
 msgid "Find All"
 msgstr "すべて検索"
 
+#: pdfarranger_qt/mainwindow.py
+msgid "_Select"
+msgstr "選択(_S)"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Highlight"
+msgstr "ハイライト(_H)"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Note"
+msgstr "ノート(_N)"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Draw"
+msgstr "描画(_D)"
+
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
 msgid "Select _Range"
@@ -1961,14 +1980,15 @@ msgstr "抜き出し(_E)"
 msgid "Arrange"
 msgstr "並べ替え"
 
-#: pdfarranger_qt/mainwindow.py
-msgid "_Select"
-msgstr "選択(_S)"
-
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
 msgid "_Booklet"
 msgstr "小冊子(_B)"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Markup"
+msgstr "マークアップ"
 
 #: pdfarranger_qt/mainwindow.py
 msgid "_View"

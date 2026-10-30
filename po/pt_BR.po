@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  pdfarranger\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-29 19:29+0000\n"
+"POT-Creation-Date: 2026-10-30 02:22+0000\n"
 "PO-Revision-Date: 2026-05-23 07:56-0300\n"
 "Last-Translator: Rondnelly Assis <rond.nunes@gmail.com>\n"
 "Language: pt_BR\n"
@@ -1944,6 +1944,25 @@ msgid "Find All"
 msgstr "Encontrar todos"
 
 #: pdfarranger_qt/mainwindow.py
+msgid "_Select"
+msgstr "_Selecionar"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Highlight"
+msgstr "_Realçar"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Note"
+msgstr "_Nota"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Draw"
+msgstr "_Desenhar"
+
+#: pdfarranger_qt/mainwindow.py
 msgid "Select _Range"
 msgstr "Selecionar _intervalo"
 
@@ -2055,12 +2074,13 @@ msgid "Arrange"
 msgstr "Organizar"
 
 #: pdfarranger_qt/mainwindow.py
-msgid "_Select"
-msgstr "_Selecionar"
-
-#: pdfarranger_qt/mainwindow.py
 msgid "_Booklet"
 msgstr "_Livreto"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Markup"
+msgstr "Marcação"
 
 #: pdfarranger_qt/mainwindow.py
 msgid "_View"

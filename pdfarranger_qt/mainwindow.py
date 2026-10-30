@@ -36,7 +36,13 @@ from PySide6.QtCore import (
     QTimer,
     QUrl,
 )
-from PySide6.QtGui import QAction, QDesktopServices, QFontMetrics, QKeySequence
+from PySide6.QtGui import (
+    QAction,
+    QActionGroup,
+    QDesktopServices,
+    QFontMetrics,
+    QKeySequence,
+)
 from PySide6.QtWidgets import (
     QApplication,
     QDialog,
@@ -125,6 +131,7 @@ class MainWindow(QMainWindow):
         self.reader.canvas.field_values = self._field_value
         self.reader.canvas.field_locked = self._field_locked
         self.reader.field_pressed.connect(self.field_pressed)
+        self.reader.canvas.tool_changed.connect(self._tool_changed)
         self.reader.field_edited.connect(self.field_edited)
         self.reader.field_refused.connect(self.field_refused)
         # The sidebar shows the document's outline, not the reader document's
@@ -574,6 +581,26 @@ class MainWindow(QMainWindow):
         self.act_find_all = self._action("Find All", mnemonic=False)
         self.act_find_all.triggered.connect(self.find_all)
 
+        # Markup tools. Exclusive, like any tool palette, and the names are
+        # the canvas's own so that nothing has to translate between them.
+        from .canvas import PageCanvas
+
+        self.markup_tools = QActionGroup(self)
+        self.markup_tools.setExclusive(True)
+        # `self._action(...)` at each site rather than inside the helper: the
+        # template is extracted by matching the *called name*, so a label
+        # passed to a helper of any other name never reaches po/ at all. Three
+        # of these did exactly that, and the catalogue gate passed them.
+        self.act_tool_select = self._markup_tool(
+            self._action("_Select"), PageCanvas.SELECT)
+        self.act_tool_select.setChecked(True)
+        self.act_tool_highlight = self._markup_tool(
+            self._action("_Highlight"), PageCanvas.HIGHLIGHT)
+        self.act_tool_note = self._markup_tool(
+            self._action("_Note"), PageCanvas.NOTE)
+        self.act_tool_draw = self._markup_tool(
+            self._action("_Draw"), PageCanvas.DRAW)
+
         self.act_preferences = self._action("Preferences")
         self.act_preferences.triggered.connect(self.edit_preferences)
 
@@ -688,6 +715,33 @@ class MainWindow(QMainWindow):
         self._menus.append(menu)
         parent.addMenu(menu)
         return menu
+
+    def _markup_tool(self, action, tool):
+        """Make one already-built action an exclusive markup tool.
+
+        Takes the action rather than its msgid, so that the label stays inside
+        a `self._action(...)` call where the template extractor can see it.
+        """
+        action.setCheckable(True)
+        action.setData(tool)
+        self.markup_tools.addAction(action)
+        action.triggered.connect(lambda _checked, t=tool: self.set_tool(t))
+        return action
+
+    def set_tool(self, tool: str) -> None:
+        """Choose what the pointer does in the reader."""
+        self.reader.canvas.set_tool(tool)
+
+    def _tool_changed(self, tool: str) -> None:
+        """Keep the palette showing what the canvas is actually doing.
+
+        The canvas changes tool on its own when Escape is pressed, so the
+        menu cannot be the only place the choice lives.
+        """
+        for action in self.markup_tools.actions():
+            if action.data() == tool:
+                action.setChecked(True)
+                break
 
     def _build_menus(self):
         # Strong references to every menu; see _menu().
@@ -809,6 +863,13 @@ class MainWindow(QMainWindow):
         booklet_menu = self._menu(m, "_Booklet")
         booklet_menu.addAction(self.act_gen_booklet)
         booklet_menu.addAction(self.act_split_booklet)
+
+        m = self._menu(bar, "Markup", mnemonic=False, role="Markup")
+        m.addAction(self.act_tool_select)
+        m.addSeparator()
+        m.addAction(self.act_tool_highlight)
+        m.addAction(self.act_tool_note)
+        m.addAction(self.act_tool_draw)
 
         m = self._menu(bar, "_View", role="View")
         m.addAction(self.act_arrange_mode)

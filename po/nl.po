@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PDF-Shuffler 0.7\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-29 19:29+0000\n"
+"POT-Creation-Date: 2026-10-30 02:22+0000\n"
 "PO-Revision-Date: 2025-05-26 10:43+0200\n"
 "Last-Translator: Heimen Stoffels <vistausss@fastmail.com>\n"
 "Language: nl\n"
@@ -1978,6 +1978,25 @@ msgid "Find All"
 msgstr "Alles zoeken"
 
 #: pdfarranger_qt/mainwindow.py
+msgid "_Select"
+msgstr "_Selecteren"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Highlight"
+msgstr "_Markeren"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Note"
+msgstr "_Notitie"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Draw"
+msgstr "_Tekenen"
+
+#: pdfarranger_qt/mainwindow.py
 msgid "Select _Range"
 msgstr "Be_reik kiezen"
 
@@ -2091,12 +2110,13 @@ msgid "Arrange"
 msgstr "Ordenen"
 
 #: pdfarranger_qt/mainwindow.py
-msgid "_Select"
-msgstr "_Selecteren"
-
-#: pdfarranger_qt/mainwindow.py
 msgid "_Booklet"
 msgstr "_Boekje"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Markup"
+msgstr "Markeringen"
 
 #: pdfarranger_qt/mainwindow.py
 msgid "_View"

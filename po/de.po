@@ -15,7 +15,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  pdfarranger\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-29 19:29+0000\n"
+"POT-Creation-Date: 2026-10-30 02:22+0000\n"
 "PO-Revision-Date: 2025-07-09 08:35+0200\n"
 "Last-Translator: Sebastian Scherch\n"
 "Language: de\n"
@@ -1970,6 +1970,25 @@ msgid "Find All"
 msgstr "Alle suchen"
 
 #: pdfarranger_qt/mainwindow.py
+msgid "_Select"
+msgstr "Aus_wählen"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Highlight"
+msgstr "_Hervorheben"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Note"
+msgstr "_Notiz"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Draw"
+msgstr "_Zeichnen"
+
+#: pdfarranger_qt/mainwindow.py
 msgid "Select _Range"
 msgstr "_Bereich auswählen"
 
@@ -2083,12 +2102,13 @@ msgid "Arrange"
 msgstr "Anordnen"
 
 #: pdfarranger_qt/mainwindow.py
-msgid "_Select"
-msgstr "Aus_wählen"
-
-#: pdfarranger_qt/mainwindow.py
 msgid "_Booklet"
 msgstr "Broschüre"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Markup"
+msgstr "Markierungen"
 
 #: pdfarranger_qt/mainwindow.py
 msgid "_View"

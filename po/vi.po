@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-29 19:29+0000\n"
+"POT-Creation-Date: 2026-10-30 02:22+0000\n"
 "PO-Revision-Date: 2025-12-15 00:59+0700\n"
 "Last-Translator: Loc Huynh <https://github.com/hthienloc>\n"
 "Language: vi\n"
@@ -1934,6 +1934,25 @@ msgid "Find All"
 msgstr "Tìm tất cả"
 
 #: pdfarranger_qt/mainwindow.py
+msgid "_Select"
+msgstr "_Lựa chọn"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Highlight"
+msgstr "_Tô sáng"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Note"
+msgstr "_Ghi chú"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Draw"
+msgstr "_Vẽ"
+
+#: pdfarranger_qt/mainwindow.py
 msgid "Select _Range"
 msgstr "_Chọn phạm vi"
 
@@ -2047,12 +2066,13 @@ msgid "Arrange"
 msgstr "Sắp xếp"
 
 #: pdfarranger_qt/mainwindow.py
-msgid "_Select"
-msgstr "_Lựa chọn"
-
-#: pdfarranger_qt/mainwindow.py
 msgid "_Booklet"
 msgstr "_Tập sách nhỏ"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Markup"
+msgstr "Đánh dấu"
 
 #: pdfarranger_qt/mainwindow.py
 msgid "_View"

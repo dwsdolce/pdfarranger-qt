@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  pdfarranger\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-29 19:29+0000\n"
+"POT-Creation-Date: 2026-10-30 02:22+0000\n"
 "PO-Revision-Date: 2023-10-22 00:28+0200\n"
 "Last-Translator: Lrss <dev@lrss.dk>\n"
 "Language: da\n"
@@ -1962,6 +1962,25 @@ msgstr "Find forrige"
 msgid "Find All"
 msgstr "Find alle"
 
+#: pdfarranger_qt/mainwindow.py
+msgid "_Select"
+msgstr "_Makering"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Highlight"
+msgstr "_Fremhævning"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Note"
+msgstr "_Note"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Draw"
+msgstr "_Tegn"
+
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
 msgid "Select _Range"
@@ -2077,14 +2096,15 @@ msgstr "_Udtræk"
 msgid "Arrange"
 msgstr "Ordn"
 
-#: pdfarranger_qt/mainwindow.py
-msgid "_Select"
-msgstr "_Makering"
-
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
 msgid "_Booklet"
 msgstr "_Hæfte"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Markup"
+msgstr "Opmærkning"
 
 #: pdfarranger_qt/mainwindow.py
 msgid "_View"

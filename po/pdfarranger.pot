@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pdfarranger-qt VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/dwsdolce/pdfarranger-qt/issues\n"
-"POT-Creation-Date: 2026-10-29 19:29+0000\n"
+"POT-Creation-Date: 2026-10-30 02:22+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1503,6 +1503,22 @@ msgid "Find All"
 msgstr ""
 
 #: pdfarranger_qt/mainwindow.py
+msgid "_Select"
+msgstr ""
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Highlight"
+msgstr ""
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Note"
+msgstr ""
+
+#: pdfarranger_qt/mainwindow.py
+msgid "_Draw"
+msgstr ""
+
+#: pdfarranger_qt/mainwindow.py
 msgid "Select _Range"
 msgstr ""
 
@@ -1599,11 +1615,11 @@ msgid "Arrange"
 msgstr ""
 
 #: pdfarranger_qt/mainwindow.py
-msgid "_Select"
+msgid "_Booklet"
 msgstr ""
 
 #: pdfarranger_qt/mainwindow.py
-msgid "_Booklet"
+msgid "Markup"
 msgstr ""
 
 #: pdfarranger_qt/mainwindow.py

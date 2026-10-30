@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  pdfarranger\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-29 19:29+0000\n"
+"POT-Creation-Date: 2026-10-30 02:22+0000\n"
 "PO-Revision-Date: 2026-01-21 05:07+0100\n"
 "Last-Translator: Ekaterine Papava <papava.e@gtu.ge>\n"
 "Language: ka\n"
@@ -1938,6 +1938,25 @@ msgid "Find All"
 msgstr "ყველას პოვნა"
 
 #: pdfarranger_qt/mainwindow.py
+msgid "_Select"
+msgstr "_მონიშვნა"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Highlight"
+msgstr "_გამოკვეთა"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Note"
+msgstr "_შენიშვნა"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Draw"
+msgstr "_ხატვა"
+
+#: pdfarranger_qt/mainwindow.py
 msgid "Select _Range"
 msgstr "შუალედის მო_ნიშვნა"
 
@@ -2051,12 +2070,13 @@ msgid "Arrange"
 msgstr "დალაგება"
 
 #: pdfarranger_qt/mainwindow.py
-msgid "_Select"
-msgstr "_მონიშვნა"
-
-#: pdfarranger_qt/mainwindow.py
 msgid "_Booklet"
 msgstr "_ბუკლეტი"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Markup"
+msgstr "მონიშვნა"
 
 #: pdfarranger_qt/mainwindow.py
 msgid "_View"

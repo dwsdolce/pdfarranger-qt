@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PDF Arranger 1.9.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-29 19:29+0000\n"
+"POT-Creation-Date: 2026-10-30 02:22+0000\n"
 "PO-Revision-Date: 2023-06-12 10:30+0300\n"
 "Last-Translator: Manussos Pulinakis "
 "<38626261+manussos@users.noreply.github.com>\n"
@@ -2006,6 +2006,25 @@ msgstr "Εύρεση προηγούμενου"
 msgid "Find All"
 msgstr "Εύρεση όλων"
 
+#: pdfarranger_qt/mainwindow.py
+msgid "_Select"
+msgstr "Επιλο_γή"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Highlight"
+msgstr "_Επισήμανση"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Note"
+msgstr "_Σημείωση"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Draw"
+msgstr "Σχε_δίαση"
+
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
 msgid "Select _Range"
@@ -2121,14 +2140,15 @@ msgstr "Ε_ξαγωγή τμήματος"
 msgid "Arrange"
 msgstr "Τακτοποίηση"
 
-#: pdfarranger_qt/mainwindow.py
-msgid "_Select"
-msgstr "Επιλο_γή"
-
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
 msgid "_Booklet"
 msgstr "_Φυλλάδιο"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Markup"
+msgstr "Επισημάνσεις"
 
 #: pdfarranger_qt/mainwindow.py
 msgid "_View"

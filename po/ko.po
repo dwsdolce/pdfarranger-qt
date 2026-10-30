@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pdfarranger - Korean\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-29 19:29+0000\n"
+"POT-Creation-Date: 2026-10-30 02:22+0000\n"
 "PO-Revision-Date: 2026-05-25 00:41+0900\n"
 "Last-Translator: VenusGirl <venusgirl@outlook.com>\n"
 "Language: ko\n"
@@ -1830,6 +1830,25 @@ msgid "Find All"
 msgstr "모두 찾기"
 
 #: pdfarranger_qt/mainwindow.py
+msgid "_Select"
+msgstr "선택(_S)"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Highlight"
+msgstr "강조(_H)"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Note"
+msgstr "메모(_N)"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Draw"
+msgstr "그리기(_D)"
+
+#: pdfarranger_qt/mainwindow.py
 msgid "Select _Range"
 msgstr "범위 선택(_R)"
 
@@ -1941,12 +1960,13 @@ msgid "Arrange"
 msgstr "정리"
 
 #: pdfarranger_qt/mainwindow.py
-msgid "_Select"
-msgstr "선택(_S)"
-
-#: pdfarranger_qt/mainwindow.py
 msgid "_Booklet"
 msgstr "소책자(_B)"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Markup"
+msgstr "마크업"
 
 #: pdfarranger_qt/mainwindow.py
 msgid "_View"

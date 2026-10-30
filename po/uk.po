@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: unnamed project\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-29 19:29+0000\n"
+"POT-Creation-Date: 2026-10-30 02:22+0000\n"
 "PO-Revision-Date: 2026-05-27 19:30+0300\n"
 "Last-Translator: Dymko <Dymkovych@proton.me>\n"
 "Language: uk\n"
@@ -1942,6 +1942,25 @@ msgid "Find All"
 msgstr "Знайти все"
 
 #: pdfarranger_qt/mainwindow.py
+msgid "_Select"
+msgstr "_Обрати"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Highlight"
+msgstr "_Виділення"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Note"
+msgstr "_Нотатка"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Draw"
+msgstr "_Малювання"
+
+#: pdfarranger_qt/mainwindow.py
 msgid "Select _Range"
 msgstr "Обрати _діапазон"
 
@@ -2053,12 +2072,13 @@ msgid "Arrange"
 msgstr "Упорядкувати"
 
 #: pdfarranger_qt/mainwindow.py
-msgid "_Select"
-msgstr "_Обрати"
-
-#: pdfarranger_qt/mainwindow.py
 msgid "_Booklet"
 msgstr "_Буклет"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Markup"
+msgstr "Розмітка"
 
 #: pdfarranger_qt/mainwindow.py
 msgid "_View"

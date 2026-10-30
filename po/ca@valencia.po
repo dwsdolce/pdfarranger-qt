@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-29 19:29+0000\n"
+"POT-Creation-Date: 2026-10-30 02:22+0000\n"
 "PO-Revision-Date: 2022-08-13 11:15+0200\n"
 "Last-Translator: Juanma1980 <juanma1980@gmail.com>\n"
 "Language: ca@valencia\n"
@@ -1993,6 +1993,25 @@ msgstr "Cerca l'anterior"
 msgid "Find All"
 msgstr "Cerca-ho tot"
 
+#: pdfarranger_qt/mainwindow.py
+msgid "_Select"
+msgstr "Selecciona"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Highlight"
+msgstr "_Ressaltat"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Note"
+msgstr "_Nota"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Draw"
+msgstr "_Dibuixa"
+
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
 msgid "Select _Range"
@@ -2110,14 +2129,15 @@ msgstr "_Extreu"
 msgid "Arrange"
 msgstr "Ordena"
 
-#: pdfarranger_qt/mainwindow.py
-msgid "_Select"
-msgstr "Selecciona"
-
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
 msgid "_Booklet"
 msgstr "_Llibret"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Markup"
+msgstr "Marcatge"
 
 #: pdfarranger_qt/mainwindow.py
 msgid "_View"

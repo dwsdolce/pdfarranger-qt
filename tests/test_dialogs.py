@@ -350,7 +350,8 @@ class TestShortcutOrdering(unittest.TestCase):
 
     def test_groups_follow_the_menu_bar(self):
         titles = [t for t, _actions in self.win._shortcut_groups()]
-        self.assertEqual(titles, ["File", "Edit", "Page", "Arrange", "View", "Help"])
+        self.assertEqual(titles, ["File", "Edit", "Page", "Arrange", "Markup",
+                                  "View", "Help"])
 
     def test_first_group_starts_with_the_first_menu_entry(self):
         _title, actions = self.win._shortcut_groups()[0]

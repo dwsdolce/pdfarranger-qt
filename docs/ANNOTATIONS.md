@@ -494,7 +494,7 @@ first exists.
 | # | Step | Depends on | Done when | State |
 |---|---|---|---|---|
 | 3.1 | An annotation model | 2.1, 2.4 | an added note survives undo and a save | **complete** |
-| 3.2 | A tool mode in the canvas | 3.1 | the pointer selects, highlights or draws as chosen | next: D6, D7 and `from_displayed` settle its coordinates |
+| 3.2 | A tool mode in the canvas | 3.1 | the pointer selects, highlights or draws as chosen | **complete** |
 | 3.3 | Highlight and strikethrough | 3.2 | a selection becomes a mark the file keeps | |
 | 3.4 | Sticky note | 3.2 | a note can be placed, read and edited | |
 | 3.5 | Free text and freehand | 3.3, 3.4 | both draw, save and reopen | |
@@ -1022,6 +1022,65 @@ test's loop body never ran and it asserted nothing. The fixture now names one,
 as a real file does. That is the third no-op test in this work, and all three
 had the same shape -- a test that iterates over something the fixture does not
 have.
+
+**2026-10-30 — step 3.2.** The pointer has a job, and a drag reports where it
+was in coordinates the file can keep.
+
+Built in two halves because only one of them had anything left to decide. The
+seam was settled already: D6 fixes the frame, D7 fixes how the page boxes
+arrive, and `from_displayed` does the turn. Verified by dragging over a widget
+rather than over blank paper, so there was a rectangle in the *file* to check
+against instead of one this had computed for itself -- the canvas sees that
+widget at four different rectangles depending on `/Rotate`, and all four come
+back as the (150, 550, 298, 570) the file holds.
+
+The tool mode had one real question, and it was the owner's to answer: **over
+a field there is no markup.** The field takes the press and is edited. So the
+tool is consulted only after the field check that `mousePressEvent` already
+did, and the right button is untouched -- the context menu was already built
+from whatever is under the pointer and has nothing to do with the tool.
+
+Taken rather than asked, and recorded here instead: a widget that cannot be
+filled falls through to the tool, because a field you are not allowed to fill
+is no reason to refuse a mark on the page around it.
+
+The canvas treats every markup tool the same -- a drag that reports a
+rectangle -- so what each one *means* stays with the step that adds it. A
+click rather than a drag arrives as a rectangle with no width, which is what
+placing a sticky note is, so 3.4 needs no second path. Escape leaves the tool,
+and the menu follows the canvas rather than the other way round, because
+Escape changes it without going through the menu.
+
+One menu cost three rounds of failures, and the first two were the catalogue
+gate being necessary and not sufficient.
+
+`Markup` was new, D23 refused the build, and it went into the template and
+all 33 catalogues marked machine translation, unreviewed (D22). That looked
+like the whole of it. It was not: `_Highlight`, `_Note` and `_Draw` were new
+too and reached *nothing*, because the template is extracted by matching the
+**called name** -- `update_pot` knows `_action` and `_menu` -- and they had
+been passed to a new helper named `_tool_action`. A gate can only check the
+strings it has been shown. `test_i18n` caught them because its own regex is
+looser than the extractor's name match, finding three labels the extractor
+could not. Fixed at the cause: the helper takes an already-built action, so
+each label sits inside a `self._action(...)` call. Before, `update_pot` found
+nothing; after, three.
+
+Then the translations themselves collided. `test_catalogues` requires that no
+two entries of one menu share an access key, and four new entries had to fit
+around each catalogue's existing `_Select`, which the Arrange submenu shares
+and which is not ours to move. Seven languages clashed -- and in Georgian and
+Swedish the clash was that the *same word* had been given for Select and
+Highlight, which no choice of letter would have fixed.
+
+`merge_translations` then refused to apply the corrections, reporting them as
+already translated and left alone. That is its guarantee against overwriting
+human work, correctly applied; it also meant the first fix silently did
+nothing. The seven entries were rewritten in place instead, being machine
+strings written minutes earlier and still marked unreviewed.
+
+Two separate tests also hold an inventory of the menu bar, in `test_i18n` and
+in `test_dialogs`. A new menu belongs in both.
 
 **2026-10-29 — the inverse, for 3.2.** `from_displayed` takes a rectangle in
 the frame the page is laid out in back to the page's own space, which is the

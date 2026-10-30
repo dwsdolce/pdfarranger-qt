@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  pdfarranger\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-29 19:29+0000\n"
+"POT-Creation-Date: 2026-10-30 02:22+0000\n"
 "PO-Revision-Date: 2026-05-24 07:36+0300\n"
 "Last-Translator: kbengs\n"
 "Language: sv\n"
@@ -1932,6 +1932,25 @@ msgid "Find All"
 msgstr "Sök alla"
 
 #: pdfarranger_qt/mainwindow.py
+msgid "_Select"
+msgstr "_Markera"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Highlight"
+msgstr "_Överstrykning"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Note"
+msgstr "_Anteckning"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Draw"
+msgstr "_Rita"
+
+#: pdfarranger_qt/mainwindow.py
 msgid "Select _Range"
 msgstr "Markera _intervall"
 
@@ -2043,12 +2062,13 @@ msgid "Arrange"
 msgstr "Ordna"
 
 #: pdfarranger_qt/mainwindow.py
-msgid "_Select"
-msgstr "_Markera"
-
-#: pdfarranger_qt/mainwindow.py
 msgid "_Booklet"
 msgstr "_Häfte"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Markup"
+msgstr "Markeringar"
 
 #: pdfarranger_qt/mainwindow.py
 msgid "_View"

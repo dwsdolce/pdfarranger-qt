@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-29 19:29+0000\n"
+"POT-Creation-Date: 2026-10-30 02:22+0000\n"
 "PO-Revision-Date: 2023-06-12 11:22+0300\n"
 "Last-Translator: Yaron Shahrabani <sh.yaron@gmail.com>\n"
 "Language: he\n"
@@ -1919,6 +1919,25 @@ msgstr "חיפוש הקודם"
 msgid "Find All"
 msgstr "חיפוש הכול"
 
+#: pdfarranger_qt/mainwindow.py
+msgid "_Select"
+msgstr "_בחירה"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Highlight"
+msgstr "_הדגשה"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Note"
+msgstr "הע_רה"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "_Draw"
+msgstr "_ציור"
+
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
 msgid "Select _Range"
@@ -2034,14 +2053,15 @@ msgstr "ח_ילוץ"
 msgid "Arrange"
 msgstr "סידור"
 
-#: pdfarranger_qt/mainwindow.py
-msgid "_Select"
-msgstr "_בחירה"
-
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
 msgid "_Booklet"
 msgstr "_חוברת"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Markup"
+msgstr "סימון"
 
 #: pdfarranger_qt/mainwindow.py
 msgid "_View"
