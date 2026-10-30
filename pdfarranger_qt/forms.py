@@ -50,6 +50,7 @@ still has its widgets and, since the form dictionary is rebuilt there, still
 has a working ``/AcroForm``.
 """
 
+import io
 import os
 import re
 import tempfile
@@ -566,6 +567,34 @@ def fields_in(pdf) -> "list[Field]":
                 hidden=bool(int(annot.get(pikepdf.Name.F, 0)) & 2),
                 annot=annot, drawn=drawn, rotation=box[4]))
     return found
+
+
+def boxes_in(pdf) -> "list[tuple]":
+    """`displayed_box` for every page, in page order.
+
+    Plain data: five numbers a page, holding no reference to the document it
+    came from. That is the whole reason it is returned beside the field map
+    rather than looked up through it (D7) -- a mark can be placed on a page
+    that carries no widgets, and closing the field map must not take the
+    geometry with it.
+    """
+    return [displayed_box(page) for page in pdf.pages]
+
+
+def read_document(source) -> "tuple[FieldMap, list]":
+    """The field map and the page boxes, from one open of the document.
+
+    One open, because the reader does this on every document it shows and a
+    1,590 page book is not free to parse twice.
+    """
+    try:
+        if isinstance(source, (bytes, bytearray)):
+            pdf = pikepdf.open(io.BytesIO(source))
+        else:
+            pdf = pikepdf.open(source)
+    except Exception:  # noqa: BLE001 - a click finds nothing, a mark has no box
+        return FieldMap(), []
+    return FieldMap(fields_in(pdf), pdf), boxes_in(pdf)
 
 
 class FieldMap:

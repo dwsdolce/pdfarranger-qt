@@ -78,6 +78,7 @@ from PySide6.QtWidgets import (
     QStyle,
 )
 
+from . import forms as forms_module
 from .fieldlayer import AppearanceRenderer
 from .i18n import gettext_ as _
 from .render import ANNOTATIONS, DEFAULT_CACHE_PIXELS, BytesDocument, Renderer
@@ -959,6 +960,9 @@ class PageCanvas(QAbstractScrollArea):
         #: draws them. Set by the reader, which is the only thing that knows
         #: which document is showing.
         self._fields = None
+        #: One `forms.displayed_box` per page, for placing a mark. Plain data
+        #: and separate from the field map, for the reason given in D7.
+        self._boxes = []
         #: Renders and caches one widget's appearance. Lives as long as the
         #: canvas: its cache is keyed by appearance, so it is worth keeping
         #: across documents that share one.
@@ -2262,6 +2266,49 @@ class PageCanvas(QAbstractScrollArea):
             return bool(self.field_locked(field))
         except Exception:  # noqa: BLE001 - a click must not raise
             return False
+
+    def set_page_boxes(self, boxes) -> None:
+        """The laid-out box of every page, for placing a mark.
+
+        Plain data, kept here rather than reached through the field map (D7):
+        a page with no widgets still needs its box, and closing the field map
+        must not take the geometry with it.
+        """
+        self._boxes = list(boxes or ())
+
+    def page_box(self, index: int):
+        """``(left, bottom, width, height, rotation)`` for a page, or None."""
+        if 0 <= index < len(self._boxes):
+            return self._boxes[index]
+        return None
+
+    def mark_rect(self, start: QPointF, end: QPointF):
+        """Two *viewport* points to ``(page, rect)`` in the page's own space.
+
+        The rectangle a mark is stored with (D6). Three frames are crossed on
+        the way: viewport pixels to document pixels, document pixels to the
+        laid-out page's frame -- which runs *down* from the top left, where a
+        PDF rectangle runs up from the bottom -- and then back through the
+        crop and the turn with `forms.from_displayed`.
+
+        The page is the one the drag *began* on, so a selection that wanders
+        off the bottom stays on the page it started on rather than jumping.
+        None when it did not begin on a page at all.
+        """
+        index = self.page_at(start)
+        if index is None:
+            return None
+        box = self.page_box(index)
+        if box is None:
+            return None
+        height = self._layout.page_height(index)
+        if height is None:
+            return None
+        first = self._layout.point_in_page(index, self.to_document(start))
+        last = self._layout.point_in_page(index, self.to_document(end))
+        # Up from the bottom, which is the frame `from_displayed` expects.
+        shown = (first.x(), height - first.y(), last.x(), height - last.y())
+        return index, forms_module.from_displayed(shown, box)
 
     def set_field_map(self, fields):
         """The widgets of the document being shown, drawn and hit-tested."""

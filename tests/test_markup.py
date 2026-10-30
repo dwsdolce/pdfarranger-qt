@@ -22,6 +22,7 @@ undo stack, and reaches the file -- which is the same ground body 2 covered
 for form values, and the same answer.
 """
 
+import os
 import unittest
 
 import pikepdf
@@ -236,3 +237,113 @@ class TestItSurvivesUndo(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+FORMS = os.path.join(os.path.dirname(TEST_PDF), "exporter", "forms.pdf")
+MANY_PAGES = os.path.join(os.path.dirname(TEST_PDF), "exporter", "outlines.pdf")
+
+
+class TestFromThePointerToThePage(unittest.TestCase):
+    """The seam a mark is placed through (3.2).
+
+    A drag happens in viewport pixels; a mark is kept in the page's own space
+    (D6). Three frames are crossed between them, and the one that used to be
+    missing is the turn: a widget's rectangle and the canvas's frame agree
+    only at `/Rotate` zero.
+    """
+
+    def setUp(self):
+        from PySide6.QtWidgets import QApplication  # noqa: F401
+
+        from pdfarranger_qt.mainwindow import MainWindow
+
+        self.win = MainWindow()
+        self.win.resize(900, 700)
+        self.win.show()
+
+    def tearDown(self):
+        self.win.modified = False
+        self.win.close()
+
+    def reading(self, angle=0):
+        self.win.open_paths([FORMS])
+        settle(timeout_ms=800)
+        if angle:
+            self.win.model.rotate([0], angle)
+            settle(timeout_ms=400)
+        self.win.set_read_mode(True)
+        settle(timeout_ms=1000)
+        return self.win.reader.canvas
+
+    def drag_over(self, canvas, field):
+        """The two viewport corners of a field, by the forward path."""
+        from PySide6.QtCore import QPointF
+
+        height = canvas._layout.page_height(field.page)
+        left, bottom, right, top = field.rect
+        return (canvas.to_viewport(
+                    canvas._layout.from_page(field.page,
+                                             QPointF(left, height - top))),
+                canvas.to_viewport(
+                    canvas._layout.from_page(field.page,
+                                             QPointF(right, height - bottom))))
+
+    def test_a_drag_comes_back_in_the_coordinates_the_file_uses(self):
+        """Dragged over a widget, so there is a rectangle in the file to check
+        against rather than one this computed for itself."""
+        for angle in (0, 90, 180, 270):
+            with self.subTest(angle=angle):
+                canvas = self.reading(angle)
+                field = canvas.fields().on_page(0)[0]
+                page, rect = canvas.mark_rect(*self.drag_over(canvas, field))
+                self.assertEqual(page, 0)
+                for got, want in zip(rect, (150.0, 550.0, 298.0, 570.0)):
+                    self.assertAlmostEqual(got, want, delta=1.5)
+                self.win.set_read_mode(False)
+                settle(timeout_ms=200)
+
+    def test_every_page_has_a_box(self):
+        canvas = self.reading()
+        self.assertEqual(len(canvas._boxes), canvas._layout.page_count)
+        self.assertIsNotNone(canvas.page_box(0))
+
+    def test_the_boxes_outlive_the_field_map(self):
+        """D7: a box is five numbers and nothing invalidates it. Closing the
+        map must not take the geometry with it."""
+        canvas = self.reading()
+        before = canvas.page_box(0)
+        canvas.fields().close()
+        self.assertEqual(canvas.page_box(0), before)
+
+    def test_a_drag_that_starts_off_a_page_places_nothing(self):
+        from PySide6.QtCore import QPointF
+
+        canvas = self.reading()
+        self.assertIsNone(canvas.mark_rect(QPointF(-50, -50), QPointF(10, 10)))
+
+    def test_a_page_past_the_end_has_no_box(self):
+        canvas = self.reading()
+        self.assertIsNone(canvas.page_box(canvas._layout.page_count + 5))
+
+    def test_the_drag_belongs_to_the_page_it_began_on(self):
+        """A selection dragged onto the *next* page stays on the one it
+        started from. Needs more than one page to say anything: ending in the
+        margin proves nothing, because there is no page under the end either
+        way, which is how the first version of this test passed against the
+        bug it was written for."""
+        from PySide6.QtCore import QPointF
+
+        self.win.open_paths([MANY_PAGES])
+        settle(timeout_ms=800)
+        self.win.set_read_mode(True)
+        settle(timeout_ms=1000)
+        canvas = self.win.reader.canvas
+        self.assertGreater(canvas._layout.page_count, 1)
+
+        start = canvas.to_viewport(
+            canvas._layout.from_page(0, QPointF(50, 50)))
+        end = canvas.to_viewport(
+            canvas._layout.from_page(1, QPointF(60, 60)))
+        self.assertEqual(canvas.page_at(end), 1, "the drag must end elsewhere")
+        page, _rect = canvas.mark_rect(start, end)
+        self.assertEqual(page, 0)
