@@ -389,7 +389,7 @@ first exists.
 | # | Step | Depends on | Done when | State |
 |---|---|---|---|---|
 | 3.1 | An annotation model | 2.1, 2.4 | an added note survives undo and a save | **complete** |
-| 3.2 | A tool mode in the canvas | 3.1 | the pointer selects, highlights or draws as chosen | next |
+| 3.2 | A tool mode in the canvas | 3.1 | the pointer selects, highlights or draws as chosen | next: D6, D7 and `from_displayed` settle its coordinates |
 | 3.3 | Highlight and strikethrough | 3.2 | a selection becomes a mark the file keeps | |
 | 3.4 | Sticky note | 3.2 | a note can be placed, read and edited | |
 | 3.5 | Free text and freehand | 3.3, 3.4 | both draw, save and reopen | |
@@ -570,22 +570,6 @@ needed whichever way the arrange question goes. Step 2.8.
 
 ## Still open
 
-- **Which frame a mark is stored in.** `/Rotate` and a crop carry a page-space
-  rectangle for free -- a turn changes nothing in the space and a crop only
-  rewrites the box -- but `export._scale` multiplies the space by its factor.
-  `_write_annotations` runs *after* the transform, so marks either live in the
-  source page's space and are multiplied by `row.scale` on the way out, which
-  makes a later resize carry them, or live in the output page's space and move
-  the next time the page is resized. The first is what the body 3 prose
-  claims. Neither is implemented, because nothing produces coordinates until
-  3.2 -- but the resize bug underneath it is now fixed, so a mark stored in
-  source space would behave exactly as the page's existing annotations do.
-- **Where the canvas gets a page's displayed box.** `from_displayed` needs one,
-  and `fields_in` already computes it per page -- but inside a *field* map, and
-  a page with no widgets still needs its box to place a mark. Either `FieldMap`
-  grows a `box_of(page)`, which is honest about it holding what the reader read
-  rather than only the fields, or the canvas keeps the boxes beside it. Not
-  decided; opening the same bytes a second time is the option to avoid.
 - **Whether this application's name still describes it.** Not part of this work,
   but it is the same premise change, and D1 and D13 deliberately pinned the
   `QSettings` scope so a rename cannot orphan saved state. A rename would also
@@ -701,6 +685,33 @@ where a good one was -- not at whether the operation is a fill or a rearrange:
 What is *not* claimed: that any of this preserves a signature. Nothing here
 can, because qpdf rewrites and a signature survives only an append or a byte
 copy. The decision is about which lie not to tell.
+
+**6. A mark is kept in the source page's space, and scaled on the way out.**
+`/Rotate` and a crop carry a page-space rectangle for free -- a turn changes
+nothing in the space, and a crop only rewrites the box -- so a mark stored
+there follows its content through both without being touched. A resize is the
+exception, because `export._scale` multiplies the space by its factor, so
+`_write_annotations` multiplies a mark's rectangle by `row.scale` as it writes.
+
+The alternative was to store what the canvas hands back, which is the *output*
+page's space, and that is wrong in a way that only shows up later: every mark
+on a page moves the next time that page is resized. Storing in source space is
+also what makes a mark behave exactly like the annotations the file already
+carries, now that those survive a resize with their geometry scaled.
+
+**7. A page's displayed box reaches the canvas as plain data, beside the field
+map rather than through it.** `from_displayed` needs
+`(left, bottom, width, height, rotation)` per page, and `fields_in` already
+computes exactly that and throws it away, so the boxes are kept from that same
+pass -- one open of the document, no extra cost.
+
+They are *not* reached through a `FieldMap.box_of()`, although that is where
+the open document lives. A box is five numbers. It needs no document open and
+nothing invalidates it, so putting it behind `FieldMap` would let `close()`
+destroy data that has no reason to die, and would make a page with no widgets
+depend on a form-field object to place a mark. It would also turn the D19 fast
+path's `set_field_map(None)` -- which means the bytes could not be read for the
+*form* -- into marks silently not working.
 
 ## Done
 
