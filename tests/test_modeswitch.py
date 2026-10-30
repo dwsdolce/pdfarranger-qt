@@ -442,3 +442,158 @@ class TestTheStatusBarSaysWhereYouAre(unittest.TestCase):
         self.win.close_document()
         settle(timeout_ms=300)
         self.assertEqual(self.text(), "No document")
+
+
+FORMS = os.path.join(HERE, "exporter", "forms.pdf")
+
+
+class TestFillingAFieldLeavesTheReaderAlone(unittest.TestCase):
+    """Filling a field used to rebuild the reader's whole document.
+
+    `model.touch` is what the grid needs -- its thumbnails are drawn from a
+    rewritten copy with the old value baked in -- but it also emits
+    `contents_changed`, which the reader rebuilt on. The canvas composites
+    fields from the values the window holds rather than from the file, so the
+    reader never needed one: the rebuild bought nothing and cost the 682 ms a
+    rewrite takes on a large form.
+
+    It also lost the reader's place. A fresh document is laid out from
+    `provisional_sizes` until the measuring pass catches up, that layout is
+    shorter than the real one, and the scrollbar is clamped into it -- from
+    500 of 933 to 0 of 739, measured, and the range came back while the
+    position did not.
+    """
+
+    def setUp(self):
+        from PySide6.QtWidgets import QApplication  # noqa: F401
+
+        from pdfarranger_qt.mainwindow import MainWindow
+
+        self.win = MainWindow()
+        self.win.resize(900, 700)
+        self.win.show()
+        self.win.open_paths([FORMS])
+        settle(timeout_ms=600)
+        self.win.set_read_mode(True)
+        settle(timeout_ms=900)
+        self.rebuilds = 0
+        self._real_load = self.win._load_reader
+        self.win._load_reader = self._counted
+
+    def _counted(self, *args, **kwargs):
+        self.rebuilds += 1
+        return self._real_load(*args, **kwargs)
+
+    def tearDown(self):
+        self.win.modified = False
+        self.win.close()
+
+    def scrolled_down(self):
+        bar = self.win.reader.canvas.verticalScrollBar()
+        bar.setValue(max(1, bar.maximum() // 2))
+        settle(timeout_ms=300)
+        return self.win.reader.canvas.position()
+
+    def a_field(self, kind):
+        fields = self.win.reader.canvas.fields()
+        self.assertIsNotNone(fields, "the fixture has no form")
+        found = [f for f in fields.on_page(0) if f.kind == kind]
+        self.assertTrue(found, f"the fixture has no {kind} field")
+        return found[0]
+
+    def test_ticking_a_box_does_not_rebuild_the_document(self):
+        self.win.field_pressed(self.a_field("/Btn"))
+        settle(timeout_ms=600)
+        self.assertEqual(self.rebuilds, 0)
+
+    def test_typing_in_a_field_does_not_rebuild_the_document(self):
+        self.win.field_edited(self.a_field("/Tx"), "something typed")
+        settle(timeout_ms=600)
+        self.assertEqual(self.rebuilds, 0)
+
+    def test_the_reader_stays_where_it_was(self):
+        before = self.scrolled_down()
+        self.win.field_pressed(self.a_field("/Btn"))
+        settle(timeout_ms=600)
+        after = self.win.reader.canvas.position()
+        self.assertEqual(after[0], before[0])
+        self.assertAlmostEqual(after[1], before[1], delta=1.0)
+
+    def test_the_new_value_is_what_the_canvas_draws(self):
+        """Not rebuilding is only safe because the value never came from the
+        document in the first place."""
+        field = self.a_field("/Btn")
+        canvas = self.win.reader.canvas
+        before = canvas.field_values(field)
+        self.win.field_pressed(field)
+        settle(timeout_ms=600)
+        self.assertNotEqual(canvas.field_values(field), before)
+
+    def test_the_snapshot_is_marked_stale_all_the_same(self):
+        """Left showing, not left pretending it is current: the next entry
+        into read mode rebuilds it."""
+        self.win.field_pressed(self.a_field("/Btn"))
+        settle(timeout_ms=600)
+        self.assertTrue(self.win._reader_stale)
+
+    def test_an_edit_to_the_pages_still_rebuilds(self):
+        """The suppression is for field values alone. A real page edit has to
+        go through, or the reader would disagree with the document."""
+        self.win.model.rotate([0], 90)
+        settle(timeout_ms=900)
+        self.assertEqual(self.rebuilds, 1)
+
+
+class TestARebuildKeepsThePlace(unittest.TestCase):
+    """And when a rebuild is genuine, it should still not move the reader."""
+
+    def setUp(self):
+        from PySide6.QtWidgets import QApplication  # noqa: F401
+
+        from pdfarranger_qt.mainwindow import MainWindow
+
+        self.win = MainWindow()
+        self.win.resize(900, 700)
+        self.win.show()
+        self.win.open_paths([MANY_PAGES])
+        settle(timeout_ms=600)
+        self.win.set_read_mode(True)
+        settle(timeout_ms=900)
+
+    def tearDown(self):
+        self.win.modified = False
+        self.win.close()
+
+    def test_rotating_one_page_does_not_move_the_reader_off_another(self):
+        """Rotating page one makes the widest page landscape, so fit-width
+        drops the zoom and every page shrinks -- the scrollbar range moves
+        under the reader even though the page being read did not change.
+        Measured on a 14 page form: 6055 of 9600 became 4592 of 7217, the
+        same 230 points into the same page.
+        """
+        canvas = self.win.reader.canvas
+        canvas.go_to_page(2)
+        settle(timeout_ms=400)
+        bar = canvas.verticalScrollBar()
+        bar.setValue(bar.value() + 120)
+        settle(timeout_ms=400)
+        before = canvas.position()
+
+        self.win.model.rotate([0], 90)
+        settle(timeout_ms=1200)
+
+        after = canvas.position()
+        self.assertEqual(after[0], before[0])
+        self.assertAlmostEqual(after[1], before[1], delta=2.0)
+
+    def test_the_position_survives_the_provisional_layout(self):
+        """The restore runs before the pages have been measured, so it lands
+        on a guess; the measuring pass has to carry it rather than re-anchor
+        on whichever page the guess left under the viewport."""
+        canvas = self.win.reader.canvas
+        canvas.go_to_page(3)
+        settle(timeout_ms=400)
+        before = canvas.position()
+        self.win.model.rotate([0], 90)
+        settle(timeout_ms=1200)
+        self.assertEqual(canvas.position()[0], before[0])

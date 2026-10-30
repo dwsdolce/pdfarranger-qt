@@ -181,6 +181,9 @@ class MainWindow(QMainWindow):
         #: Set when an edit happens while reading, so the snapshot is rebuilt
         #: on the next entry rather than on every keystroke.
         self._reader_stale = True
+        #: Set while an edit is one the reader can already show without being
+        #: rebuilt. See `_field_filled`.
+        self._reader_keeps_showing = False
         #: Zoom to restore when double-click toggles fit back off.
         self._zoom_before_fit: Optional[float] = None
 
@@ -1506,6 +1509,9 @@ class MainWindow(QMainWindow):
         self.act_facing.setChecked(bool(on))
 
     def _load_reader(self) -> bool:
+        # Where the reader is, so that rebuilding does not also move it. Only
+        # while reading: entering read mode has its own idea of where to open.
+        where = self.reader.canvas.position() if self.read_mode else None
         QApplication.setOverrideCursor(Qt.WaitCursor)
         try:
             ok = self.reader.load(self.model.pages, self.docs.files_for_export(),
@@ -1519,12 +1525,13 @@ class MainWindow(QMainWindow):
             # Carry any active Find over, so entering read mode keeps the
             # highlights rather than silently dropping them.
             self.reader.search(self.search.query)
+            self.reader.canvas.go_to_position(where)
         return ok
 
     def _invalidate_reader(self):
         """An edit happened; the snapshot no longer matches the page list."""
         self._reader_stale = True
-        if self.read_mode:
+        if self.read_mode and not self._reader_keeps_showing:
             # Showing right now, so it has to be rebuilt immediately or the
             # reader would silently disagree with the document.
             self._load_reader()
@@ -2955,8 +2962,7 @@ class MainWindow(QMainWindow):
         self.model.form_values.set(page.nfile, field.name, text)
         if 0 < page.nfile <= len(self.docs.docs):
             self.docs.docs[page.nfile - 1].forget_render_copy()
-        self.model.touch(range(len(self.model.pages)))
-        self._mark_modified()
+        self._field_filled()
         self.reader.canvas.viewport().update()
 
     def field_pressed(self, field):
@@ -2977,11 +2983,35 @@ class MainWindow(QMainWindow):
         # next wanted, and the reader never comes here at all.
         if 0 < page.nfile <= len(self.docs.docs):
             self.docs.docs[page.nfile - 1].forget_render_copy()
-        self.model.touch(range(len(self.model.pages)))
-        self._mark_modified()
+        self._field_filled()
         # The page bitmap is unchanged -- only which appearance is drawn over
         # it -- so a repaint is the whole of showing it.
         self.reader.canvas.viewport().update()
+
+    def _field_filled(self):
+        """Tell everything that a field's value changed.
+
+        `model.touch` is what the *grid* needs: its thumbnails are drawn from
+        a rewritten copy with the old value baked in. But touching also emits
+        `contents_changed`, and the reader listens to that and rebuilds its
+        whole document -- which it does not need. The canvas composites fields
+        from the values held here rather than from the file, which is the
+        entire reason a tick is a repaint: 1 ms against the 682 ms a rewrite
+        costs on a large form. Rebuilding also lost the reader's place, since
+        a fresh document is laid out from provisional page sizes and the
+        scrollbar is clamped into the shorter range.
+
+        So the reader is marked stale and left showing what it has. It is
+        already right, because it draws the value itself; the snapshot is
+        rebuilt on the next entry into read mode, or by the next edit that
+        really does change the pages.
+        """
+        self._reader_keeps_showing = True
+        try:
+            self.model.touch(range(len(self.model.pages)))
+        finally:
+            self._reader_keeps_showing = False
+        self._mark_modified()
 
     @staticmethod
     def _toggled(field, current):

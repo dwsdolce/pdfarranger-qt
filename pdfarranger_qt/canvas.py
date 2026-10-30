@@ -1021,6 +1021,8 @@ class PageCanvas(QAbstractScrollArea):
         #: True while the scrollbar is being moved by us rather than by the
         #: person reading, so that it does not read as scrolling.
         self._anchoring = False
+        #: A position to hold while the page sizes are still being measured.
+        self._anchor_position = None
         self.verticalScrollBar().valueChanged.connect(self._scrolled)
         self.horizontalScrollBar().valueChanged.connect(lambda _v: self.viewport().update())
 
@@ -1067,6 +1069,7 @@ class PageCanvas(QAbstractScrollArea):
         self.viewport().update()
         if sizes:
             self._emit_current()
+        self._anchor_position = None
         self._start_measuring(len(sizes), known=known)
 
     #: Pages measured per tick while the real sizes are gathered. At 1.8 ms a
@@ -1109,7 +1112,9 @@ class PageCanvas(QAbstractScrollArea):
             # they are still. Re-anchoring mid-scroll would snap the view to
             # the top of the current page and fight the drag, and a few pixels
             # of drift while moving is not noticeable.
-            page = self._page_filling_the_viewport() if self.settled() else -1
+            anchor = self._anchor_position
+            page = -1 if anchor is not None else (
+                self._page_filling_the_viewport() if self.settled() else -1)
             was_settled = self.settled()
             self._anchoring = True
             try:
@@ -1119,7 +1124,9 @@ class PageCanvas(QAbstractScrollArea):
                 self._update_ranges()
             finally:
                 self._anchoring = False
-            if page >= 0:
+            if anchor is not None:
+                self.go_to_position(anchor)
+            elif page >= 0:
                 self.go_to_page(page)
             if was_settled and self._settle.isActive():
                 # Nothing the reader did; do not make them wait for a settle
@@ -1128,6 +1135,7 @@ class PageCanvas(QAbstractScrollArea):
             self.viewport().update()
         if end >= count:
             self._measure.stop()
+            self._anchor_position = None
 
     def shutdown(self):
         """Stop the render thread and join it.
@@ -1364,6 +1372,60 @@ class PageCanvas(QAbstractScrollArea):
         finally:
             self._anchoring = False
         self._emit_current()
+
+    def position(self) -> "Optional[Tuple[int, float]]":
+        """Where the reader is: a page, and how far into it in page points.
+
+        Against a page rather than as a scrollbar value, because the value
+        does not survive a reload. A rebuilt document is laid out from
+        `provisional_sizes` until the measuring pass catches up, and that
+        layout is shorter than the real one, so the scrollbar range shrinks
+        and Qt clamps the position to fit it -- to zero, from anywhere past
+        the provisional end. The range comes back; the position does not.
+        """
+        if not self._layout.page_count:
+            return None
+        page = self._page_filling_the_viewport()
+        if page < 0:
+            return None
+        into = (self.verticalScrollBar().value()
+                - self._layout.page_rect(page).top()) / max(self._layout.zoom,
+                                                            1e-9)
+        return (page, into)
+
+    def go_to_position(self, position) -> None:
+        """Put the reader back where `position` says, as near as the layout allows.
+
+        Approximate while the sizes are still provisional, and corrected by
+        the measuring pass, which re-anchors on the page filling the viewport
+        -- the page this just restored.
+        """
+        if position is None or not self._layout.page_count:
+            return
+        page, into = position
+        page = min(max(page, 0), self._layout.page_count - 1)
+        # First for its side effects: in single-page mode the window has to
+        # move before the scrollbar can be set inside it.
+        self.go_to_page(page)
+        bar = self.verticalScrollBar()
+        # Absolute rather than added to what `go_to_page` left, which is a
+        # margin *above* the page top -- adding there lands a whole margin
+        # short, and the margin grows with the zoom.
+        where = self._layout.page_rect(page).top() + into * self._layout.zoom
+        # Not motion, for the reason given in `go_to_page`.
+        self._anchoring = True
+        try:
+            bar.setValue(int(round(where)))
+        finally:
+            self._anchoring = False
+        self._emit_current()
+        if self._measure.isActive():
+            # The sizes are still provisional, so this landed on a guess: page
+            # eight's top is not known until page eight has been measured.
+            # Held as the anchor so the measuring pass restores it again on
+            # every chunk, instead of re-anchoring on whichever page the guess
+            # happened to leave under the viewport.
+            self._anchor_position = position
 
     def next_page(self):
         self.go_to_page(max(0, self.current_page()) + 1)

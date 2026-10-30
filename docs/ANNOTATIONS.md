@@ -792,6 +792,45 @@ removed, both of the *size* assertions still pass, because the renderer draws
 at whatever size it is asked for; only comparing the pixels catches an image
 that was squashed into the new shape rather than turned into it.
 
+**2026-10-29 — filling a field threw the reader back to the top.** Reported
+from use: every click on a tick box, and every text edit, jumped the view to
+the start of the document.
+
+The cause was worse than the symptom. `canvas._paint_fields` already says what
+was meant to happen -- *"a tick is then a repaint, which is what makes editing
+possible at all: the alternative is rewriting the document for every change,
+measured at 682 ms on a large form against 1 ms to change the value"* -- and
+the wiring defeated it. Both fill handlers call `model.touch`, which the
+*grid* needs because its thumbnails come from a rewritten copy with the old
+value baked in. Touching also emits `contents_changed`, `_invalidate_reader`
+listens to that, and in read mode it rebuilt the whole in-memory export. So
+every tick paid the 682 ms the design exists to avoid.
+
+Losing the place was the visible half. A rebuilt document is laid out from
+`provisional_sizes` until the measuring pass catches up, that layout is
+shorter than the real one, and the scrollbar is clamped into it. Measured on a
+form whose pages had been edited: 500 of 933 became 0 of 739, and when the
+range came back to 933 the position stayed at 0. On an *unedited* document it
+never showed, because D19's fast path hands the canvas known page sizes and
+the range never moves -- which is why it looked fine on a form just opened.
+
+Two fixes. A fill now goes through `_field_filled`, which marks the snapshot
+stale and leaves the reader showing what it has; that is safe only because the
+canvas composites fields from the values the window holds rather than from the
+file, so the reader was never out of date to begin with. And `_load_reader`
+now restores where the reader was, for the rebuilds that are real -- rotating
+a page while reading should not send you to page one either.
+
+The restore needed two corrections that only measurement found. It runs before
+the pages have been measured, so it lands on a guess, and the measuring pass
+then re-anchored on whichever page the guess left under the viewport: rotating
+a page while reading page 8 of 14 ended on page 7 at a *negative* offset. The
+pass now carries the restore target instead. And `go_to_page` lands a margin
+*above* the page top, so adding the offset to it fell exactly one margin
+short, by an amount that grows with the zoom; the restore is absolute. Page 8
+at 230.1 points comes back as page 8 at 230.1 points across a rotate that
+moved the scrollbar from 6055 of 9600 to 4592 of 7217.
+
 **2026-10-29 — and the rest of what a resize dropped.** The annotations were
 the bug worth naming; everything else on the page dictionary went the same way
 and for the same reason. Measured: `/AA`, `/ArtBox`, `/B`, `/BleedBox`,
