@@ -199,6 +199,109 @@ content, and the result rendered by this application's own renderer — 0 ink in
 that field's rectangle before, 4814 after, reading correctly in the form's own
 embedded font. A tick box set the same way went from 0 to 278.
 
+### Tab order is in the file, and it is not the order we hold
+
+Raised from use: *is there an order to the fields, and should Tab navigate
+them?* Yes to both, and the order we currently hold is the wrong one.
+
+A file carries order in three places that need not agree. The `/Annots` array
+on each page, which is creation order and is what `fields_in` returns. The
+`/AcroForm /Fields` tree, which is the naming hierarchy. And the page's
+`/Tabs`, which is the one that actually *declares* traversal: `/R` row, `/C`
+column, `/S` structure, plus `/A` article and `/W` widget. Absent, the spec
+leaves it to the viewer.
+
+Acrobat reads `/Tabs` and follows it; Page Properties writes it. Where it is
+absent Acrobat falls back to an accessibility preference, *"use document
+structure for tab order when no explicit tab order is specified"*, so two
+installations can tab the same file differently -- and a checker counts a page
+that has annotations and no `/Tabs`, or a `/Tabs` that is not `/S`, as a
+failure.
+
+What the corpus declares, against how closely each page's `/Annots` order
+matches plain reading order:
+
+| file | `/Tabs` | tagged | widgets | `/Annots` order as reading order |
+| --- | --- | --- | --- | --- |
+| ao239 | `/R` | no | 196 | 96% |
+| f1040 | `/S` | yes | 199 | 79% |
+| fw4 | `/S` | yes | 48 | 95% |
+| i-9 | `/S` | yes | 130 | 87% |
+| fw9 | `/S` | yes | 23 | 70% |
+| sf3107 | `/S` | yes | 470 | 46% |
+| f1099msc | `/S` | yes | 179 | 9% |
+| vba-21-526ez | `/S` | yes | 388 | 5% |
+| sf86 | none | yes | 6,852 | 4% |
+
+So `/Annots` order is not a usable fallback -- on four of these it is close to
+random -- and `/S` is what real forms declare, which means the order lives in
+the structure tree.
+
+Measured on a four page insurance form from the owner's own records, which
+declares `/Tabs /S` on every page and whose 86 widgets are *all* reachable
+from the tag tree through `/OBJR`, so nothing has to be guessed. Structure
+order equals `/Annots` order on three of its four pages and agrees 21% on the
+fourth. The first eight fields of that page each way, as (y, x):
+
+    /Annots    (583,41) (583,369) (535,41) (535,204) (535,369) (328,50) (312,50) (296,50)
+    structure  (583,41) (583,369) (535,41) (535,204) (535,369) (440,50) (424,50) (408,50)
+
+Identical for five fields, and then the array jumps down the page while the
+structure carries on in reading order. Tabbing by the array would skip a block
+of fields and return to them later -- on the one page where not noticing is
+easiest.
+
+**Today Tab does something worse than nothing.** There is no `Key_Tab`
+handling anywhere; the editor is a bare `QLineEdit` over the field, so Tab
+takes Qt's default focus-next-child, `editingFinished` fires, and the value is
+committed and the editor closed. Measured: focus lands back on the canvas, out
+of the form entirely, and the next field has to be clicked.
+
+Doing it properly needs a *focused field* in the canvas -- there is only
+`_editing` now, which exists for text fields alone, so Tab-to-a-tick-box has
+nothing to hold -- the `/OBJR` walk above for `/S`, row order as the fallback
+where nothing is declared, Shift+Tab, wrapping across pages, and scrolling the
+target into view, which `go_to_position` now makes straightforward.
+
+It is the same structure tree a resize cannot keep (`/StructParents`, recorded
+under the resize work), so resizing one of these forms costs it its tab order
+as well as its tagging. The two are one piece of work, not two.
+
+### The export leaves a tagged form untagged
+
+Found while sizing the tab-order work, and the reason it cannot be done yet.
+
+Every tagged document loses `/StructTreeRoot` through the export. Not only
+when a page is scaled -- that case was recorded with the resize work -- but on
+a plain pass with no edits at all. Measured:
+
+| file | tagged before | tagged after | still claims |
+| --- | --- | --- | --- |
+| i-9 | yes | **no** | `/Tabs /S` |
+| f1040 | yes | **no** | `/Tabs /S` |
+| fw4 | yes | **no** | `/Tabs /S` |
+| sf3107 | yes | **no** | `/Tabs /S` |
+
+On i-9 the 138 `/OBJR` references the tree used to make become none. The pages
+keep their `/Tabs /S` and their `/StructParents`, so the output goes on
+declaring that its tab order comes from a structure that is no longer in the
+file. An honest loss would be bad; a dangling claim is worse, because a
+checker and a screen reader both believe the declaration.
+
+Two things follow. Tab order cannot be read from the document the reader is
+showing once anything has been edited, which is what blocks 2.11. And --
+much more than a tab-order problem -- **every form this application saves
+comes out untagged**, which is the accessibility structure stripped from
+exactly the government and insurance forms where it is expected of them.
+
+It is real work rather than a line. Carrying a tree across a page list that
+can be reordered, cut and merged means remapping the parent tree, renumbering
+`/StructParents` as pages move, and pruning the elements belonging to pages
+that did not survive -- the same shape of problem as D20's outline remapping,
+and for the same reason: a structure that refers to pages by index cannot
+simply be copied. Hence its own step rather than being dragged in behind a
+feature it was hiding under.
+
 ### Where it gets hard
 
 None of these occur in the form at hand, which is luck rather than
@@ -307,6 +410,8 @@ cheaper than a flag every caller has to remember.
 | 2.7 | Refuse to fill a field in a signed document | 2.3 | a signed form says why rather than invalidating a signature | **complete** |
 | 2.8 | Strip the remains of a signature on export | -- | a derived document is honestly unsigned instead of claiming a signature over bytes that are gone | **complete** |
 | 2.9 | Refuse to save over a signed source, and say the signature will not carry | 2.7, 2.8 | Save on a signed document offers Save As; a derived save says the signature is gone | **complete** |
+| 2.10 | Carry the structure tree through the export | -- | a tagged form saved from here is still tagged, and `/Tabs /S` still means something | |
+| 2.11 | Tab between fields, in the order the file declares | 2.5, 2.10 | Tab and Shift+Tab walk a form the way Acrobat walks it, honouring `/Tabs` | |
 
 **2.1 has a precedent.** D20 settled how the outline is owned in the undo state
 beside the page list, keyed by a stable page id so reordering costs nothing and
