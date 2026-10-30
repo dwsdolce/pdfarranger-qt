@@ -15,7 +15,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  pdfarranger\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-30 02:22+0000\n"
+"POT-Creation-Date: 2026-10-30 19:37+0000\n"
 "PO-Revision-Date: 2025-07-09 08:35+0200\n"
 "Last-Translator: Sebastian Scherch\n"
 "Language: de\n"
@@ -1980,6 +1980,11 @@ msgstr "_Hervorheben"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
+msgid "Strike_through"
+msgstr "_Durchstreichen"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
 msgid "_Note"
 msgstr "_Notiz"
 
@@ -2064,6 +2069,11 @@ msgstr "Gehe zu Seite…"
 #: pdfarranger_qt/mainwindow.py
 msgid "Fullscreen"
 msgstr "Vollbild"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Add Mark"
+msgstr "Markierung hinzufügen"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py

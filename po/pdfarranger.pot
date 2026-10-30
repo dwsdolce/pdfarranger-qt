@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pdfarranger-qt VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/dwsdolce/pdfarranger-qt/issues\n"
-"POT-Creation-Date: 2026-10-30 02:22+0000\n"
+"POT-Creation-Date: 2026-10-30 19:37+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1511,6 +1511,10 @@ msgid "_Highlight"
 msgstr ""
 
 #: pdfarranger_qt/mainwindow.py
+msgid "Strike_through"
+msgstr ""
+
+#: pdfarranger_qt/mainwindow.py
 msgid "_Note"
 msgstr ""
 
@@ -1580,6 +1584,10 @@ msgstr ""
 
 #: pdfarranger_qt/mainwindow.py
 msgid "Fullscreen"
+msgstr ""
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Add Mark"
 msgstr ""
 
 #: pdfarranger_qt/mainwindow.py

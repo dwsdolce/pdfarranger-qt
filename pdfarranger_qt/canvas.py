@@ -81,6 +81,7 @@ from PySide6.QtWidgets import (
 )
 
 from . import forms as forms_module
+from . import markup
 from .fieldlayer import AppearanceRenderer
 from .i18n import gettext_ as _
 from .render import ANNOTATIONS, DEFAULT_CACHE_PIXELS, BytesDocument, Renderer
@@ -945,9 +946,10 @@ class PageCanvas(QAbstractScrollArea):
     field_refused = Signal(object)
     #: The pointer's job changed: the new tool's name.
     tool_changed = Signal(str)
-    #: A markup gesture finished: ``(tool, page, rect)``, the rectangle already
-    #: in the page's own space. What is made of it belongs to 3.3 onwards; the
-    #: canvas reports the gesture and keeps none of it.
+    #: A markup gesture finished: ``(tool, page, rects)``, already in the
+    #: page's own space. Always a *list*: an area tool sends the one it dragged
+    #: out, a text tool one rectangle per run of text it covered. The canvas
+    #: reports the gesture and keeps none of it.
     mark_drawn = Signal(str, int, object)
 
     def __init__(self, parent=None):
@@ -998,6 +1000,11 @@ class PageCanvas(QAbstractScrollArea):
         #: Given a Field, what the application says it holds, or None to use
         #: what the document says. Set by the window, which owns the edits.
         self.field_values = None
+        #: Set by the window: the marks on a page index, as `markup`
+        #: annotations in the page's own space. Drawn here rather than waiting
+        #: for the document to be exported again, for the same reason a tick
+        #: is a repaint: a rebuild costs 682 ms and loses the reader's place.
+        self.marks = None
         #: Set by the window: whether this field's document refuses to be
         #: filled in. Asked here rather than in the handler because the canvas
         #: decides whether to put an editor over the field, and an editor that
@@ -2351,8 +2358,15 @@ class PageCanvas(QAbstractScrollArea):
     #: that reports a rectangle -- so that what each *means* stays with the
     #: step that adds it rather than being decided here.
     HIGHLIGHT = "highlight"
+    STRIKEOUT = "strikeout"
     NOTE = "note"
     DRAW = "draw"
+
+    #: Tools whose geometry is a run of *text* rather than an area. They drag
+    #: out a selection, exactly as reading does, because the quadrilaterals a
+    #: `/Highlight` wants are what a text selection already produces -- which
+    #: is why highlighting comes before the marks that need new hit-testing.
+    TEXT_TOOLS = (HIGHLIGHT, STRIKEOUT)
 
     def tool(self) -> str:
         return self._tool
@@ -2371,6 +2385,42 @@ class PageCanvas(QAbstractScrollArea):
     def marking(self) -> bool:
         """Whether a markup tool is active, as against reading."""
         return self._tool != self.SELECT
+
+    def marks_text(self) -> bool:
+        """Whether the active tool marks text, and so selects rather than drags."""
+        return self._tool in self.TEXT_TOOLS
+
+    def marks_area(self) -> bool:
+        """Whether the active tool drags out an area."""
+        return self.marking() and not self.marks_text()
+
+    def selection_quads(self):
+        """The selection as ``(page, [rect, ...])`` in the page's own space.
+
+        One rectangle per run, not one round the paragraph: a box spanning
+        three lines would cover the margins and the gaps between them, and a
+        highlight that does that is worse than none.
+
+        The page is the first one selected. A selection running across a page
+        break gives its marks to that page only, which is a limitation worth
+        stating rather than silently marking half of it.
+        """
+        if not self._selection:
+            return None
+        page = min(self._selection)
+        box = self.page_box(page)
+        height = self._layout.page_height(page)
+        if box is None or height is None:
+            return None
+        quads = []
+        for polygon in self._selection[page].bounds():
+            rect = polygon.boundingRect()
+            if rect.width() <= 0 or rect.height() <= 0:
+                continue
+            shown = (rect.left(), height - rect.bottom(),
+                     rect.right(), height - rect.top())
+            quads.append(forms_module.from_displayed(shown, box))
+        return (page, quads) if quads else None
 
     def focused_field(self):
         """The field Tab has reached, or None."""
@@ -2651,11 +2701,16 @@ class PageCanvas(QAbstractScrollArea):
                 super().mouseMoveEvent(event)
                 return
 
-        if self.marking():
+        if self.marks_area():
             # A crosshair everywhere, including over a field: the field still
             # takes the press, and a cursor that promised otherwise would be
             # the lie. The I-beam is wrong here either way.
             self.viewport().setCursor(Qt.CrossCursor)
+            super().mouseMoveEvent(event)
+            return
+        if self.marks_text():
+            # An I-beam, because this gesture *is* selecting text.
+            self.viewport().setCursor(Qt.IBeamCursor)
             super().mouseMoveEvent(event)
             return
 
@@ -2707,7 +2762,7 @@ class PageCanvas(QAbstractScrollArea):
             # A press anywhere else ends the edit, as clicking away from a
             # field does in any form.
             self.finish_editing()
-            if self.marking():
+            if self.marks_area():
                 # Only here, *after* the field check: over a field there is no
                 # markup, the field takes the press and is edited. A widget
                 # that cannot be filled falls through to this, because a field
@@ -2787,8 +2842,21 @@ class PageCanvas(QAbstractScrollArea):
             if placed is not None:
                 # A click rather than a drag arrives here as a rectangle with
                 # no width, which is what placing a sticky note is.
-                self.mark_drawn.emit(self._tool, placed[0], placed[1])
+                self.mark_drawn.emit(self._tool, placed[0], [placed[1]])
             event.accept()
+            return
+
+        if (event.button() == Qt.LeftButton and self.marks_text()
+                and self._press is not None):
+            # The selection was built by the ordinary drag above; turning it
+            # into a mark is all this tool adds.
+            super().mouseReleaseEvent(event)
+            self._press = None
+            self._selecting = False
+            found = self.selection_quads()
+            if found is not None:
+                self.mark_drawn.emit(self._tool, found[0], found[1])
+                self.clear_selection()
             return
 
         if event.button() == Qt.LeftButton and self._press is not None:
@@ -3063,12 +3131,64 @@ class PageCanvas(QAbstractScrollArea):
             # 5 draws the grid's thumbnail there instead, once there is an
             # asynchronous render worth waiting for.
             self._paint_fields(painter, index, offset, ratio)
+            self._paint_marks(painter, index, offset)
             self._paint_selection(painter, index, offset)
             self._paint_search(painter, index, offset)
         self._paint_caret(painter, offset)
         self._paint_marking(painter)
         painter.end()
         self._prefetch_around(visible)
+
+    def _paint_marks(self, painter, index: int, offset: QPointF) -> None:
+        """Draw the marks added to this page but not yet written out.
+
+        From what the window holds rather than from the file: the document on
+        screen is an export made before the mark existed, and rebuilding it
+        for every highlight is the 682 ms the form work went to such lengths
+        to avoid.
+        """
+        if self.marks is None:
+            return
+        try:
+            marks = self.marks(index)
+        except Exception:       # noqa: BLE001 - a repaint must not fail
+            return
+        if not marks:
+            return
+        box = self.page_box(index)
+        height = self._layout.page_height(index)
+        if box is None or height is None:
+            return
+        zoom = self._layout.zoom
+        page_rect = self._layout.page_rect(index)
+        painter.save()
+        painter.setPen(Qt.NoPen)
+        for mark in marks:
+            colour = QColor.fromRgbF(*(mark.colour or (1.0, 1.0, 0.0)))
+            for quad in (mark.quads or (mark.rect,)):
+                shown = forms_module.to_displayed(quad, box)
+                where = QRectF(
+                    page_rect.x() + shown[0] * zoom,
+                    page_rect.y() + (height - shown[3]) * zoom,
+                    (shown[2] - shown[0]) * zoom,
+                    (shown[3] - shown[1]) * zoom)
+                where.translate(-offset)
+                if not where.intersects(QRectF(self.viewport().rect())):
+                    continue
+                if mark.kind == markup.STRIKEOUT:
+                    thickness = max(1.0, where.height() / 15.0)
+                    line = QRectF(where.x(),
+                                  where.y() + (where.height() - thickness) / 2,
+                                  where.width(), thickness)
+                    painter.fillRect(line, colour)
+                else:
+                    # Multiplied, so the words underneath still read.
+                    painter.save()
+                    painter.setCompositionMode(
+                        QPainter.CompositionMode_Multiply)
+                    painter.fillRect(where, colour)
+                    painter.restore()
+        painter.restore()
 
     def _paint_marking(self, painter) -> None:
         """The rectangle being dragged out, while a markup tool is in use.

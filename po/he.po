@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-30 02:22+0000\n"
+"POT-Creation-Date: 2026-10-30 19:37+0000\n"
 "PO-Revision-Date: 2023-06-12 11:22+0300\n"
 "Last-Translator: Yaron Shahrabani <sh.yaron@gmail.com>\n"
 "Language: he\n"
@@ -1930,6 +1930,11 @@ msgstr "_הדגשה"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
+msgid "Strike_through"
+msgstr "_קו חוצה"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
 msgid "_Note"
 msgstr "הע_רה"
 
@@ -2015,6 +2020,11 @@ msgstr "מעבר לעמוד…"
 #: pdfarranger_qt/mainwindow.py
 msgid "Fullscreen"
 msgstr "מסך מלא"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Add Mark"
+msgstr "הוספת סימון"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py

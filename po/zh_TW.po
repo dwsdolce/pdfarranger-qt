@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-30 02:22+0000\n"
+"POT-Creation-Date: 2026-10-30 19:37+0000\n"
 "PO-Revision-Date: 2024-03-20 17:20+0800\n"
 "Last-Translator: 錢政維 <e.cwchien@gmail.com>\n"
 "Language: zh_TW\n"
@@ -1817,6 +1817,11 @@ msgstr "標示(_H)"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
+msgid "Strike_through"
+msgstr "刪除線(_K)"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
 msgid "_Note"
 msgstr "註解(_N)"
 
@@ -1902,6 +1907,11 @@ msgstr "跳至指定頁…"
 #: pdfarranger_qt/mainwindow.py
 msgid "Fullscreen"
 msgstr "全螢幕"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Add Mark"
+msgstr "加入標註"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py

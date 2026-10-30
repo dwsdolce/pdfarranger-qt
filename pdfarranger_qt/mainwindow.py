@@ -69,6 +69,7 @@ from . import (
     compress,
     dialogs,
     layers,
+    markup,
     nup,
     printing,
     raster,
@@ -132,6 +133,8 @@ class MainWindow(QMainWindow):
         self.reader.canvas.field_locked = self._field_locked
         self.reader.field_pressed.connect(self.field_pressed)
         self.reader.canvas.tool_changed.connect(self._tool_changed)
+        self.reader.mark_drawn.connect(self.mark_drawn)
+        self.reader.canvas.marks = self._marks_on_page
         self.reader.field_edited.connect(self.field_edited)
         self.reader.field_refused.connect(self.field_refused)
         # The sidebar shows the document's outline, not the reader document's
@@ -596,6 +599,8 @@ class MainWindow(QMainWindow):
         self.act_tool_select.setChecked(True)
         self.act_tool_highlight = self._markup_tool(
             self._action("_Highlight"), PageCanvas.HIGHLIGHT)
+        self.act_tool_strikeout = self._markup_tool(
+            self._action("Strike_through"), PageCanvas.STRIKEOUT)
         self.act_tool_note = self._markup_tool(
             self._action("_Note"), PageCanvas.NOTE)
         self.act_tool_draw = self._markup_tool(
@@ -715,6 +720,57 @@ class MainWindow(QMainWindow):
         self._menus.append(menu)
         parent.addMenu(menu)
         return menu
+
+    #: Which annotation each markup tool writes, and in what colour. The
+    #: colours are the ones every reader uses for these marks, so a document
+    #: marked here looks like one marked anywhere else.
+    MARK_KINDS = {
+        "highlight": (markup.HIGHLIGHT, (1.0, 0.92, 0.23)),
+        "strikeout": (markup.STRIKEOUT, (0.90, 0.22, 0.21)),
+    }
+
+    def _marks_on_page(self, index: int):
+        """The marks on a page of the *reader*, for it to draw.
+
+        By index, because that is what the canvas has; the model keeps them by
+        page uid (D20), which is what survives a reorder.
+        """
+        if not 0 <= index < len(self.model.pages):
+            return ()
+        return self.model.annotations.for_page(self.model.pages[index].uid)
+
+    def mark_drawn(self, tool: str, index: int, rects) -> None:
+        """A markup gesture finished: keep it.
+
+        The rectangles arrive in the page's own space (D6), so nothing here
+        has to know about zoom, scroll or rotation.
+        """
+        kind = self.MARK_KINDS.get(tool)
+        if kind is None or not rects or not 0 <= index < len(self.model.pages):
+            return
+        subtype, colour = kind
+        page = self.model.pages[index]
+        self.model.undo.commit(_("Add Mark"))
+        self.model.annotations.add(markup.Annotation(
+            subtype, page.uid, markup.bounding_rect(rects),
+            colour=colour, quads=rects,
+            author=None))
+        self._mark_added()
+
+    def _mark_added(self) -> None:
+        """Tell everything a mark was added, without rebuilding the reader.
+
+        The same reasoning as `_field_filled`: the canvas draws the mark from
+        what this holds, so the reader's document does not have to be made
+        again to show it.
+        """
+        self._reader_keeps_showing = True
+        try:
+            self.model.touch(range(len(self.model.pages)))
+        finally:
+            self._reader_keeps_showing = False
+        self._mark_modified()
+        self.reader.canvas.viewport().update()
 
     def _markup_tool(self, action, tool):
         """Make one already-built action an exclusive markup tool.
@@ -868,6 +924,7 @@ class MainWindow(QMainWindow):
         m.addAction(self.act_tool_select)
         m.addSeparator()
         m.addAction(self.act_tool_highlight)
+        m.addAction(self.act_tool_strikeout)
         m.addAction(self.act_tool_note)
         m.addAction(self.act_tool_draw)
 

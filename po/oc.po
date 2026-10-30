@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-30 02:22+0000\n"
+"POT-Creation-Date: 2026-10-30 19:37+0000\n"
 "PO-Revision-Date: 2026-02-15 15:16+0100\n"
 "Last-Translator: Quentin PAGÈS\n"
 "Language: oc\n"
@@ -1958,6 +1958,11 @@ msgstr "Suslin_har"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
+msgid "Strike_through"
+msgstr "_Raiat"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
 msgid "_Note"
 msgstr "_Nòta"
 
@@ -2042,6 +2047,11 @@ msgstr "Anar a la pagina…"
 #: pdfarranger_qt/mainwindow.py
 msgid "Fullscreen"
 msgstr "Ecran complet"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Add Mark"
+msgstr "Apondre una marca"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py

@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-30 02:22+0000\n"
+"POT-Creation-Date: 2026-10-30 19:37+0000\n"
 "PO-Revision-Date: 2022-09-01 00:40+0900\n"
 "Last-Translator: sicklylife <translation@sicklylife.jp>\n"
 "Language: ja\n"
@@ -1855,6 +1855,11 @@ msgstr "ハイライト(_H)"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
+msgid "Strike_through"
+msgstr "取り消し線(_K)"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
 msgid "_Note"
 msgstr "ノート(_N)"
 
@@ -1942,6 +1947,11 @@ msgstr "指定ページへ移動…"
 #: pdfarranger_qt/mainwindow.py
 msgid "Fullscreen"
 msgstr "全画面"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Add Mark"
+msgstr "マークを追加"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py

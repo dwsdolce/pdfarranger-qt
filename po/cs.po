@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  pdfarranger\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-30 02:22+0000\n"
+"POT-Creation-Date: 2026-10-30 19:37+0000\n"
 "PO-Revision-Date: 2023-07-10 15:37+0000\n"
 "Last-Translator: PavelZ\n"
 "Language: cs_CZ\n"
@@ -1967,6 +1967,11 @@ msgstr "_Zvýraznění"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
+msgid "Strike_through"
+msgstr "Pře_škrtnutí"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
 msgid "_Note"
 msgstr "Poz_námka"
 
@@ -2052,6 +2057,11 @@ msgstr "Přejít na stránku…"
 #: pdfarranger_qt/mainwindow.py
 msgid "Fullscreen"
 msgstr "Celá obrazovka"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Add Mark"
+msgstr "Přidat značku"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py

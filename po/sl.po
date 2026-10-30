@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  pdfarranger\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-30 02:22+0000\n"
+"POT-Creation-Date: 2026-10-30 19:37+0000\n"
 "PO-Revision-Date: 2023-06-06 13:27+0200\n"
 "Last-Translator: Janez G <janezgac@gmail.com>\n"
 "Language: sl_SI\n"
@@ -1964,6 +1964,11 @@ msgstr "_Poudari"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
+msgid "Strike_through"
+msgstr "Pr_ečrtano"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
 msgid "_Note"
 msgstr "_Opomba"
 
@@ -2049,6 +2054,11 @@ msgstr "Pojdi na stran…"
 #: pdfarranger_qt/mainwindow.py
 msgid "Fullscreen"
 msgstr "Celozaslonsko"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Add Mark"
+msgstr "Dodaj oznako"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py

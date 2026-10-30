@@ -48,8 +48,15 @@ import pikepdf
 #: Every subtype this module can write. Kept explicit so that an unknown kind
 #: is a failed assertion here rather than a dictionary a viewer silently drops.
 TEXT = "/Text"
+HIGHLIGHT = "/Highlight"
+STRIKEOUT = "/StrikeOut"
 
-KINDS = (TEXT,)
+KINDS = (TEXT, HIGHLIGHT, STRIKEOUT)
+
+#: Subtypes whose geometry is a run of text rather than a box, and which say
+#: so with `/QuadPoints`. `/Rect` still has to be there and has to contain
+#: them: a viewer that does not understand the subtype falls back to it.
+QUADDED = (HIGHLIGHT, STRIKEOUT)
 
 #: Bit 3 of `/F`, Print. Without it a mark shows on screen and vanishes from
 #: paper, which is not what anybody means by annotating a document.
@@ -70,17 +77,22 @@ def pdf_date(when: Optional[datetime.datetime] = None) -> str:
 class Annotation:
     """One mark, in the page coordinates of the page it belongs to."""
 
-    __slots__ = ("kind", "page", "rect", "contents", "colour", "author",
-                 "created")
+    __slots__ = ("kind", "page", "rect", "quads", "contents", "colour",
+                 "author", "created")
 
     def __init__(self, kind: str, page: int, rect: Tuple[float, ...],
                  contents: str = "", colour=None, author: Optional[str] = None,
-                 created: Optional[str] = None):
+                 created: Optional[str] = None, quads=()):
         if kind not in KINDS:
             raise ValueError(f"unknown annotation kind: {kind}")
         self.kind = kind
         self.page = page
         self.rect = tuple(float(v) for v in rect)
+        #: One rectangle per run of text, for the subtypes that mark text.
+        #: Empty for the rest. A highlight over three lines is three quads,
+        #: not one box round the paragraph -- which would cover the margins
+        #: and the lines between.
+        self.quads = tuple(tuple(float(v) for v in quad) for quad in quads or ())
         self.contents = contents
         self.colour = tuple(colour) if colour is not None else None
         self.author = author
@@ -174,11 +186,80 @@ def to_dictionary(pdf, annotation: Annotation) -> pikepdf.Dictionary:
     if annotation.kind == TEXT:
         # The icon a viewer draws. /Note is the one every viewer has.
         entry[pikepdf.Name.Name] = pikepdf.Name("/Note")
+    if annotation.kind in QUADDED:
+        entry[pikepdf.Name.QuadPoints] = pikepdf.Array(
+            [v for quad in annotation.quads for v in _quad_points(quad)])
+        entry[pikepdf.Name.CA] = TRANSPARENCY[annotation.kind]
+        entry[pikepdf.Name.AP] = pikepdf.Dictionary(
+            N=_appearance(pdf, annotation))
     if annotation.author:
         entry[pikepdf.Name.T] = pikepdf.String(annotation.author)
     if annotation.colour is not None:
         entry[pikepdf.Name.C] = pikepdf.Array([*annotation.colour])
     return pdf.make_indirect(entry)
+
+
+#: How solid each kind is drawn. A highlight has to be seen through or it
+#: hides the words it marks; a line drawn over them does not.
+TRANSPARENCY = {HIGHLIGHT: 0.4, STRIKEOUT: 1.0}
+
+
+def _quad_points(quad) -> "list[float]":
+    """One rectangle as the eight numbers `/QuadPoints` wants.
+
+    Upper-left, upper-right, lower-left, lower-right. The specification's own
+    wording describes a different order and every implementation ignores it,
+    so this follows what readers actually read.
+    """
+    left, bottom, right, top = quad
+    return [left, top, right, top, left, bottom, right, bottom]
+
+
+def _appearance(pdf, annotation):
+    """A drawing for a text mark, so the file does not depend on charity.
+
+    PDFium draws a `/Highlight` from its `/QuadPoints` with no appearance at
+    all -- measured, 1600 coloured pixels either way -- and so does Acrobat.
+    But a viewer is only *recommended* to generate one, and the markup in the
+    corpus that a real producer wrote carries one, so a file written here
+    carries one too.
+
+    Multiply, for a highlight, so the text underneath shows through rather
+    than being painted over.
+    """
+    colour = annotation.colour or (1.0, 1.0, 0.0)
+    drawing = ["/GS gs", "{} {} {} rg".format(*colour[:3])]
+    for quad in annotation.quads:
+        left, bottom, right, top = quad
+        if annotation.kind == STRIKEOUT:
+            # Through the middle, a fifteenth of the line's height thick,
+            # which is about what a pen does.
+            thickness = max(0.6, (top - bottom) / 15.0)
+            middle = (top + bottom) / 2.0
+            drawing.append("{} {} {} {} re f".format(
+                left, middle - thickness / 2, right - left, thickness))
+        else:
+            drawing.append("{} {} {} {} re f".format(
+                left, bottom, right - left, top - bottom))
+    stream = pikepdf.Stream(pdf, "\n".join(drawing).encode())
+    stream[pikepdf.Name.Type] = pikepdf.Name.XObject
+    stream[pikepdf.Name.Subtype] = pikepdf.Name.Form
+    stream[pikepdf.Name.BBox] = pikepdf.Array([*annotation.rect])
+    stream[pikepdf.Name.Resources] = pikepdf.Dictionary(
+        ExtGState=pikepdf.Dictionary(GS=pikepdf.Dictionary(
+            BM=(pikepdf.Name.Multiply if annotation.kind == HIGHLIGHT
+                else pikepdf.Name.Normal),
+            ca=TRANSPARENCY[annotation.kind])))
+    return pdf.make_indirect(stream)
+
+
+def bounding_rect(quads) -> "tuple":
+    """The box that contains every quad, which is what `/Rect` must be."""
+    lefts = [q[0] for q in quads]
+    bottoms = [q[1] for q in quads]
+    rights = [q[2] for q in quads]
+    tops = [q[3] for q in quads]
+    return (min(lefts), min(bottoms), max(rights), max(tops))
 
 
 def add_to_page(pdf, page, marks) -> int:

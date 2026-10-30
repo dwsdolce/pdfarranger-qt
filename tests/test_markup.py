@@ -422,21 +422,25 @@ class TestTheToolDecidesWhatThePointerDoes(unittest.TestCase):
     def test_a_drag_under_a_tool_reports_where_it_was(self):
         from pdfarranger_qt.canvas import PageCanvas
 
-        self.win.set_tool(PageCanvas.HIGHLIGHT)
+        # An *area* tool: highlight marks text now and so selects instead.
+        self.win.set_tool(PageCanvas.NOTE)
         # Clear of the widget at (150, 550, 298, 570), so the field does not
         # take the press instead.
         self.drag(self.viewport_point(150, 690), self.viewport_point(298, 670))
         self.assertEqual(len(self.marks), 1)
-        tool, page, rect = self.marks[0]
-        self.assertEqual((tool, page), (PageCanvas.HIGHLIGHT, 0))
-        for got, want in zip(rect, (150.0, 670.0, 298.0, 690.0)):
+        tool, page, rects = self.marks[0]
+        self.assertEqual((tool, page), (PageCanvas.NOTE, 0))
+        # Always a list: an area tool sends the one rectangle it dragged out,
+        # a text tool one per run of text it covered.
+        self.assertEqual(len(rects), 1)
+        for got, want in zip(rects[0], (150.0, 670.0, 298.0, 690.0)):
             self.assertAlmostEqual(got, want, delta=1.5)
 
     def test_over_a_field_there_is_no_markup(self):
         """The owner's rule: the field takes the press and is edited."""
         from pdfarranger_qt.canvas import PageCanvas
 
-        self.win.set_tool(PageCanvas.HIGHLIGHT)
+        self.win.set_tool(PageCanvas.NOTE)
         field = self.the_field()
         left, bottom, right, top = field.rect
         middle = self.viewport_point((left + right) / 2, (bottom + top) / 2)
@@ -452,9 +456,10 @@ class TestTheToolDecidesWhatThePointerDoes(unittest.TestCase):
         where = self.viewport_point(200, 690)
         self.drag(where, where)
         self.assertEqual(len(self.marks), 1)
-        _tool, _page, rect = self.marks[0]
-        self.assertAlmostEqual(rect[0], rect[2], delta=1.0)
-        self.assertAlmostEqual(rect[1], rect[3], delta=1.0)
+        _tool, _page, rects = self.marks[0]
+        self.assertEqual(len(rects), 1)
+        self.assertAlmostEqual(rects[0][0], rects[0][2], delta=1.0)
+        self.assertAlmostEqual(rects[0][1], rects[0][3], delta=1.0)
 
     def test_escape_puts_the_pointer_back_to_reading(self):
         from PySide6.QtCore import Qt
@@ -488,3 +493,258 @@ class TestTheToolDecidesWhatThePointerDoes(unittest.TestCase):
         still select text rather than report a mark."""
         self.drag(self.viewport_point(150, 690), self.viewport_point(298, 670))
         self.assertEqual(self.marks, [])
+
+
+TEXTED = os.path.join(os.path.dirname(TEST_PDF), "text_and_link.pdf")
+
+
+def three_lines(path):
+    """A page of three separate lines of real, selectable text.
+
+    Built rather than taken from a fixture because the point being tested is
+    that a highlight is one rectangle per *line*: `text_and_link.pdf` has a
+    single run, so against it "one box round the paragraph" and "one per run"
+    are the same answer, and the test proved nothing.
+    """
+    pdf = pikepdf.new()
+    pdf.add_blank_page(page_size=(400, 400))
+    page = pdf.pages[0]
+    font = pdf.make_indirect(pikepdf.Dictionary(
+        Type=pikepdf.Name.Font, Subtype=pikepdf.Name.Type1,
+        BaseFont=pikepdf.Name.Helvetica,
+        Encoding=pikepdf.Name.WinAnsiEncoding))
+    lines = ("The first line of the paragraph",
+             "the second line of the paragraph",
+             "and the third line here")
+    page.Contents = pdf.make_stream("\n".join(
+        "BT /F1 14 Tf 40 %d Td (%s) Tj ET" % (330 - i * 24, text)
+        for i, text in enumerate(lines)).encode())
+    page.Resources = pikepdf.Dictionary(Font=pikepdf.Dictionary(F1=font))
+    pdf.save(path)
+    pdf.close()
+    return path
+
+
+class TestAHighlightIsASelection(unittest.TestCase):
+    """Step 3.3. Highlight comes before the other marks because its geometry
+    already exists: a text selection produces the quadrilaterals a
+    `/Highlight` wants, so it needs no new hit-testing.
+
+    One rectangle per *run*, not one round the paragraph. A box spanning
+    three lines covers the margins and the gaps between them, and a highlight
+    that does that is worse than none.
+    """
+
+    def setUp(self):
+        from PySide6.QtWidgets import QApplication  # noqa: F401
+
+        from pdfarranger_qt.mainwindow import MainWindow
+
+        self.win = MainWindow()
+        self.win.resize(900, 700)
+        self.win.show()
+        self.win.open_paths([TEXTED])
+        settle(timeout_ms=1000)
+        self.win.set_read_mode(True)
+        settle(timeout_ms=1200)
+        self.canvas = self.win.reader.canvas
+
+    def tearDown(self):
+        self.win.modified = False
+        self.win.close()
+
+    def drag_over_text(self, tool):
+        from PySide6.QtCore import QPoint, QPointF, Qt
+        from PySide6.QtGui import QMouseEvent
+
+        self.win.set_tool(tool)
+
+        def at(x, y_down):
+            return self.canvas.to_viewport(
+                self.canvas._layout.from_page(0, QPointF(x, y_down)))
+
+        def send(kind, point):
+            event = QMouseEvent(
+                kind, QPointF(point),
+                self.canvas.viewport().mapToGlobal(
+                    QPoint(int(point.x()), int(point.y()))),
+                Qt.LeftButton, Qt.LeftButton, Qt.NoModifier)
+            {QMouseEvent.Type.MouseButtonPress: self.canvas.mousePressEvent,
+             QMouseEvent.Type.MouseMove: self.canvas.mouseMoveEvent,
+             QMouseEvent.Type.MouseButtonRelease:
+                 self.canvas.mouseReleaseEvent}[kind](event)
+
+        send(QMouseEvent.Type.MouseButtonPress, at(70, 85))
+        send(QMouseEvent.Type.MouseMove, at(260, 92))
+        send(QMouseEvent.Type.MouseButtonRelease, at(260, 92))
+        settle(timeout_ms=400)
+
+    def held(self):
+        return self.win.model.annotations.for_page(self.win.model.pages[0].uid)
+
+    def test_a_highlight_tool_selects_rather_than_drags_a_box(self):
+        from pdfarranger_qt.canvas import PageCanvas
+
+        self.win.set_tool(PageCanvas.HIGHLIGHT)
+        self.assertTrue(self.canvas.marks_text())
+        self.assertFalse(self.canvas.marks_area())
+
+    def test_the_selection_becomes_a_mark(self):
+        from pdfarranger_qt import markup
+        from pdfarranger_qt.canvas import PageCanvas
+
+        self.drag_over_text(PageCanvas.HIGHLIGHT)
+        marks = self.held()
+        self.assertEqual(len(marks), 1)
+        self.assertEqual(marks[0].kind, markup.HIGHLIGHT)
+        self.assertTrue(marks[0].quads)
+
+    def test_strikethrough_is_the_same_gesture(self):
+        from pdfarranger_qt import markup
+        from pdfarranger_qt.canvas import PageCanvas
+
+        self.drag_over_text(PageCanvas.STRIKEOUT)
+        self.assertEqual(self.held()[0].kind, markup.STRIKEOUT)
+
+    def test_the_rectangle_contains_every_quad(self):
+        """`/Rect` has to: a viewer that does not understand the subtype
+        falls back to it."""
+        from pdfarranger_qt.canvas import PageCanvas
+
+        self.drag_over_text(PageCanvas.HIGHLIGHT)
+        mark = self.held()[0]
+        for quad in mark.quads:
+            self.assertGreaterEqual(quad[0], mark.rect[0] - 0.01)
+            self.assertGreaterEqual(quad[1], mark.rect[1] - 0.01)
+            self.assertLessEqual(quad[2], mark.rect[2] + 0.01)
+            self.assertLessEqual(quad[3], mark.rect[3] + 0.01)
+
+    def test_the_selection_is_let_go_afterwards(self):
+        """The words are marked now; leaving them selected as well says the
+        gesture has not finished."""
+        from pdfarranger_qt.canvas import PageCanvas
+
+        self.drag_over_text(PageCanvas.HIGHLIGHT)
+        self.assertFalse(self.canvas.has_selection())
+
+    def test_marking_does_not_rebuild_the_reader(self):
+        """The canvas draws the mark from what the window holds, so the
+        document on screen does not have to be made again -- the same 682 ms
+        the form work went to such lengths to avoid."""
+        from pdfarranger_qt.canvas import PageCanvas
+
+        rebuilds = []
+        real = self.win._load_reader
+        self.win._load_reader = lambda *a, **k: (rebuilds.append(1),
+                                                 real(*a, **k))[1]
+        self.drag_over_text(PageCanvas.HIGHLIGHT)
+        self.assertEqual(rebuilds, [])
+
+    def test_it_is_drawn_before_anything_is_exported(self):
+        from PySide6.QtGui import QImage
+
+        from pdfarranger_qt.canvas import PageCanvas
+
+        def yellow():
+            shot = QImage(self.canvas.viewport().size(), QImage.Format_RGB32)
+            shot.fill(0xFFFFFFFF)
+            self.canvas.viewport().render(shot)
+            return sum(1 for y in range(0, shot.height(), 2)
+                       for x in range(0, shot.width(), 2)
+                       if shot.pixelColor(x, y).red() > 200
+                       and shot.pixelColor(x, y).blue() < 120)
+
+        self.drag_over_text(PageCanvas.HIGHLIGHT)
+        self.canvas.verticalScrollBar().setValue(0)
+        settle(timeout_ms=250)
+        self.assertGreater(yellow(), 100)
+
+    def test_undo_takes_the_mark_back(self):
+        from pdfarranger_qt.canvas import PageCanvas
+
+        self.drag_over_text(PageCanvas.HIGHLIGHT)
+        self.assertEqual(len(self.held()), 1)
+        self.win.model.undo.undo()
+        settle(timeout_ms=250)
+        self.assertEqual(len(self.held()), 0)
+
+    def test_it_reaches_the_saved_file(self):
+        import io
+
+        from pdfarranger_qt.canvas import PageCanvas
+        from pdfarranger_qt.export import export
+
+        self.drag_over_text(PageCanvas.HIGHLIGHT)
+        out = io.BytesIO()
+        export(self.win.docs.files_for_export(), list(self.win.model.pages),
+               {}, [out], annotations=self.win.model.annotations)
+        with pikepdf.open(io.BytesIO(out.getvalue())) as written:
+            marks = [a for a in written.pages[0].get(pikepdf.Name.Annots, [])
+                     if str(a.get(pikepdf.Name.Subtype)) == "/Highlight"]
+            self.assertEqual(len(marks), 1)
+            self.assertIn("/QuadPoints", marks[0])
+            self.assertIn("/AP", marks[0])
+            self.assertAlmostEqual(float(marks[0].CA), 0.4, places=3)
+
+
+class TestAHighlightFollowsTheLines(unittest.TestCase):
+    """One rectangle per run, not one round the paragraph.
+
+    A box spanning three lines covers the margins and the gaps between them.
+    `text_and_link.pdf` could not show this: it holds a single run, so both
+    answers look alike against it.
+    """
+
+    def setUp(self):
+        from PySide6.QtWidgets import QApplication  # noqa: F401
+
+        from pdfarranger_qt.mainwindow import MainWindow
+
+        self.win = MainWindow()
+        self.win.resize(900, 700)
+        self.win.show()
+        self.win.open_paths([three_lines(temp_path("threelines.pdf"))])
+        settle(timeout_ms=1000)
+        self.win.set_read_mode(True)
+        settle(timeout_ms=1200)
+        self.canvas = self.win.reader.canvas
+
+    def tearDown(self):
+        self.win.modified = False
+        self.win.close()
+
+    def select_two_lines(self):
+        from PySide6.QtCore import QPointF
+
+        self.canvas._anchor = (0, QPointF(45, 60))
+        self.canvas._extend_selection(0, QPointF(300, 130))
+        settle(timeout_ms=200)
+
+    def test_two_lines_give_two_quads(self):
+        self.select_two_lines()
+        page, quads = self.canvas.selection_quads()
+        self.assertEqual(page, 0)
+        self.assertEqual(len(quads), 2)
+
+    def test_the_gap_between_the_lines_is_not_covered(self):
+        """Which is the whole difference between this and one box: the second
+        line's top is below the first line's bottom, and nothing reaches
+        across."""
+        self.select_two_lines()
+        _page, quads = self.canvas.selection_quads()
+        ordered = sorted(quads, key=lambda q: -q[3])
+        upper, lower = ordered[0], ordered[1]
+        self.assertGreater(upper[1], lower[3],
+                           "the quads overlap, so one spans the gap")
+
+    def test_the_mark_keeps_every_quad(self):
+        from pdfarranger_qt.canvas import PageCanvas
+
+        self.win.set_tool(PageCanvas.HIGHLIGHT)
+        self.select_two_lines()
+        page, quads = self.canvas.selection_quads()
+        self.canvas.mark_drawn.emit(PageCanvas.HIGHLIGHT, page, quads)
+        settle(timeout_ms=200)
+        marks = self.win.model.annotations.for_page(self.win.model.pages[0].uid)
+        self.assertEqual(len(marks), 1)
+        self.assertEqual(len(marks[0].quads), 2)

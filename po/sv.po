@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  pdfarranger\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-30 02:22+0000\n"
+"POT-Creation-Date: 2026-10-30 19:37+0000\n"
 "PO-Revision-Date: 2026-05-24 07:36+0300\n"
 "Last-Translator: kbengs\n"
 "Language: sv\n"
@@ -1942,6 +1942,11 @@ msgstr "_Överstrykning"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
+msgid "Strike_through"
+msgstr "_Genomstruken"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
 msgid "_Note"
 msgstr "_Anteckning"
 
@@ -2024,6 +2029,11 @@ msgstr "Gå till sida…"
 #: pdfarranger_qt/mainwindow.py
 msgid "Fullscreen"
 msgstr "Helskärm"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Add Mark"
+msgstr "Lägg till markering"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py

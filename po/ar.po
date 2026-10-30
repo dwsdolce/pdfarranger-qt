@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-30 02:22+0000\n"
+"POT-Creation-Date: 2026-10-30 19:37+0000\n"
 "PO-Revision-Date: 2024-09-05 17:05+0300\n"
 "Last-Translator: Abdullah Albaroty <albaroty@gmail.com>\n"
 "Language: ar\n"
@@ -1927,6 +1927,11 @@ msgstr "_إبراز"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
+msgid "Strike_through"
+msgstr "_شطب"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
 msgid "_Note"
 msgstr "_ملاحظة"
 
@@ -2012,6 +2017,11 @@ msgstr "انتقل إلى الصفحة…"
 #: pdfarranger_qt/mainwindow.py
 msgid "Fullscreen"
 msgstr "ملء الشاشة"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Add Mark"
+msgstr "إضافة علامة"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py

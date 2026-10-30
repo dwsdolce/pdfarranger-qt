@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-30 02:22+0000\n"
+"POT-Creation-Date: 2026-10-30 19:37+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: hu\n"
@@ -1988,6 +1988,11 @@ msgstr "Ki_emelés"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
+msgid "Strike_through"
+msgstr "Át_húzás"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
 msgid "_Note"
 msgstr "_Jegyzet"
 
@@ -2073,6 +2078,11 @@ msgstr "Ugrás oldalra…"
 #: pdfarranger_qt/mainwindow.py
 msgid "Fullscreen"
 msgstr "Teljes képernyő"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Add Mark"
+msgstr "Jelölés hozzáadása"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py

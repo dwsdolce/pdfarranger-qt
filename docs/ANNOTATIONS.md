@@ -495,7 +495,7 @@ first exists.
 |---|---|---|---|---|
 | 3.1 | An annotation model | 2.1, 2.4 | an added note survives undo and a save | **complete** |
 | 3.2 | A tool mode in the canvas | 3.1 | the pointer selects, highlights or draws as chosen | **complete** |
-| 3.3 | Highlight and strikethrough | 3.2 | a selection becomes a mark the file keeps | |
+| 3.3 | Highlight and strikethrough | 3.2 | a selection becomes a mark the file keeps | **complete** |
 | 3.4 | Sticky note | 3.2 | a note can be placed, read and edited | |
 | 3.5 | Free text and freehand | 3.3, 3.4 | both draw, save and reopen | |
 
@@ -1022,6 +1022,51 @@ test's loop body never ran and it asserted nothing. The fixture now names one,
 as a real file does. That is the third no-op test in this work, and all three
 had the same shape -- a test that iterates over something the fixture does not
 have.
+
+**2026-10-30 — step 3.3.** A highlight is a text *selection*, not a dragged
+box. With the tool active the pointer behaves exactly as it does when reading
+-- the same snapping, word and line extension, an I-beam cursor -- and on
+release the selection's runs become `/QuadPoints`. That is why highlight came
+first of the marks: the geometry already existed.
+
+One rectangle per *run*, never one round the paragraph. A box spanning three
+lines covers the margins and the gaps between them, and a highlight that does
+that is worse than none.
+
+Measured end to end on a real gesture:
+
+| | |
+| --- | --- |
+| mark held | `/Highlight` rect (73, 697, 247, 710), one quad |
+| reader rebuilt | no |
+| saved `/QuadPoints` | 73 710 247 710 73 697 247 697 |
+| saved `/AP`, `/CA`, `/F` | present, 0.4, 4 |
+| rendered | 1232 yellow pixels |
+| drawn on the canvas | 696 yellow pixels, before anything was exported |
+
+**PDFium draws a `/Highlight` with no appearance stream at all** -- 1600
+coloured pixels either way -- so the reader never needed one. A file written
+here carries one regardless, because a viewer is only *recommended* to
+generate one and every markup annotation in the corpus that a real producer
+wrote has one. Multiply, so the words underneath still read; a strikethrough
+is a line a fifteenth of the run's height through the middle.
+
+The canvas draws pending marks itself rather than exporting the document
+again, which is `_field_filled`'s reasoning applied to marks: 682 ms and the
+reader's place, for something the canvas can draw from what the window already
+holds.
+
+`mark_drawn` now carries a *list* of rectangles rather than one. An area tool
+sends the single rectangle it dragged out, a text tool one per run, so one
+signal covers both without the payload changing shape by tool.
+
+**The fifth no-op test of this work, and the same cause as the other four:
+the fixture did not contain the thing the test was about.** `text_and_link.pdf`
+holds a single text run, so "one box round the paragraph" and "one per line"
+produce identical output against it, and the neutering passed. A three-line
+fixture replaced it: a two-line selection gives quads at y 60--73 and 84--97,
+and a test asserts nothing reaches across the gap between them. When a test
+passes against both versions, suspect the fixture first.
 
 **2026-10-30 — step 2.11.** Tab walks a form in the order the file declares.
 

@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-30 02:22+0000\n"
+"POT-Creation-Date: 2026-10-30 19:37+0000\n"
 "PO-Revision-Date: 2025-12-15 00:59+0700\n"
 "Last-Translator: Loc Huynh <https://github.com/hthienloc>\n"
 "Language: vi\n"
@@ -1944,6 +1944,11 @@ msgstr "_Tô sáng"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
+msgid "Strike_through"
+msgstr "Gạ_ch ngang"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
 msgid "_Note"
 msgstr "_Ghi chú"
 
@@ -2028,6 +2033,11 @@ msgstr "Đi tới trang…"
 #: pdfarranger_qt/mainwindow.py
 msgid "Fullscreen"
 msgstr "Toàn màn hình"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Add Mark"
+msgstr "Thêm dấu"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py

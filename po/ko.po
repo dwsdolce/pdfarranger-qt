@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pdfarranger - Korean\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-30 02:22+0000\n"
+"POT-Creation-Date: 2026-10-30 19:37+0000\n"
 "PO-Revision-Date: 2026-05-25 00:41+0900\n"
 "Last-Translator: VenusGirl <venusgirl@outlook.com>\n"
 "Language: ko\n"
@@ -1840,6 +1840,11 @@ msgstr "강조(_H)"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
+msgid "Strike_through"
+msgstr "취소선(_K)"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
 msgid "_Note"
 msgstr "메모(_N)"
 
@@ -1922,6 +1927,11 @@ msgstr "지정한 페이지로 이동…"
 #: pdfarranger_qt/mainwindow.py
 msgid "Fullscreen"
 msgstr "전체 화면"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Add Mark"
+msgstr "표시 추가"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py

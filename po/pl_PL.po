@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PDF-Shuffler 0.7\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-30 02:22+0000\n"
+"POT-Creation-Date: 2026-10-30 19:37+0000\n"
 "PO-Revision-Date: 2021-12-30 17:13+0100\n"
 "Last-Translator: Toratora <darex7@o2.pl>\n"
 "Language: pl_PL\n"
@@ -2013,6 +2013,11 @@ msgstr "_Zakreślenie"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
+msgid "Strike_through"
+msgstr "_Przekreślenie"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
 msgid "_Note"
 msgstr "_Notatka"
 
@@ -2100,6 +2105,11 @@ msgstr "Przejdź do strony…"
 #: pdfarranger_qt/mainwindow.py
 msgid "Fullscreen"
 msgstr "Pełny ekran"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Add Mark"
+msgstr "Dodaj adnotację"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
