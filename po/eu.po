@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-30 19:37+0000\n"
+"POT-Creation-Date: 2026-10-30 22:01+0000\n"
 "PO-Revision-Date: 2023-01-19 20:27+0100\n"
 "Last-Translator: alexgabi\n"
 "Language: eu\n"
@@ -33,6 +33,11 @@ msgstr "_Gorde"
 #, python-brace-format
 msgid "Page {}"
 msgstr "{}. orrialdea"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Empty note"
+msgstr "Ohar hutsa"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
@@ -2103,6 +2108,16 @@ msgstr "Pantaila osoa"
 #: pdfarranger_qt/mainwindow.py
 msgid "Add Mark"
 msgstr "Gehitu marka"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Delete Note"
+msgstr "Ezabatu oharra"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Edit Note"
+msgstr "Editatu oharra"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py

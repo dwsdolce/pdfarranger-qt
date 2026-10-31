@@ -65,6 +65,8 @@ from PySide6.QtGui import (
     QPainter,
     QPalette,
     QPen,
+    QPolygonF,
+    QTextCursor,
 )
 from PySide6.QtPdf import (
     QPdfDocument,
@@ -78,6 +80,7 @@ from PySide6.QtWidgets import (
     QLineEdit,
     QMenu,
     QStyle,
+    QTextEdit,
 )
 
 from . import forms as forms_module
@@ -951,6 +954,12 @@ class PageCanvas(QAbstractScrollArea):
     #: out, a text tool one rectangle per run of text it covered. The canvas
     #: reports the gesture and keeps none of it.
     mark_drawn = Signal(str, int, object)
+    #: A note's text was typed and its editor closed: ``(page, which, text)``.
+    #: The note is named by its *position* in that page's marks rather than by
+    #: the object, for the reason `structure._resolve` records positions: an
+    #: undo rebuilds every mark with `duplicate()`, so a reference held across
+    #: one points at an annotation the document no longer has.
+    note_edited = Signal(int, int, str)
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -993,6 +1002,12 @@ class PageCanvas(QAbstractScrollArea):
         #: One `forms.displayed_box` per page, for placing a mark. Plain data
         #: and separate from the field map, for the reason given in D7.
         self._boxes = []
+        #: One resize factor per page, for the same reason and from a
+        #: different place: the boxes come from the document being shown, and
+        #: the scale is the *model's* -- the document on screen has it applied
+        #: already, so nothing in the file can say what it was. See
+        #: `set_page_scales`.
+        self._scales = []
         #: Renders and caches one widget's appearance. Lives as long as the
         #: canvas: its cache is keyed by appearance, so it is worth keeping
         #: across documents that share one.
@@ -1013,6 +1028,8 @@ class PageCanvas(QAbstractScrollArea):
         self.field_locked = None
         #: ``(field, editor)`` while a text field is being typed into.
         self._editing = None
+        #: ``(page, which, editor)`` while a note is being typed into.
+        self._note = None
 
         self._tooltip = ""
         self._text = PageText()
@@ -1570,6 +1587,7 @@ class PageCanvas(QAbstractScrollArea):
     def _scrolled(self, _value):
         self._emit_current()
         self._moving()
+        self._follow_note()
         self.viewport().update()
 
     #: How long after the last scroll the view counts as settled. Long enough
@@ -2248,6 +2266,175 @@ class PageCanvas(QAbstractScrollArea):
         editor.installEventFilter(self)
         self._editing = (field, editor)
 
+    # -- sticky notes ------------------------------------------------------
+
+    #: How big a note's editor is, in logical pixels. Not derived from the
+    #: zoom: a note is prose about the page rather than part of it, and an
+    #: editor that shrank with the page would be unreadable at the zoom where
+    #: a note is most often placed.
+    NOTE_EDITOR = (240, 120)
+
+    def note_icon_rect(self, index: int, mark):
+        """Where a note's icon is in the viewport, or None if it is not drawn.
+
+        From `markup.icon_box` rather than from the rectangle, because that is
+        what a viewer draws: `markup.NOTE_SIZE` points square from the
+        rectangle's lower left, whatever size the rectangle is. For a note
+        placed here the two are the same box; for one whose page has since
+        been resized they are not, and following the rectangle would draw an
+        icon half the size of the one the saved file shows.
+
+        The icon's *page-space* box is what is turned, not its box on screen,
+        which is again what a viewer does -- it adds the 20 points in page
+        space and then turns the page. So every rotation comes out right with
+        no case analysis here.
+        """
+        box = self.page_box(index)
+        height = self._layout.page_height(index)
+        if box is None or height is None:
+            return None
+        shown = forms_module.to_displayed(
+            markup.icon_box(self.from_source(index, mark.rect)), box)
+        zoom = self._layout.zoom
+        page = self._layout.page_rect(index)
+        where = QRectF(page.x() + shown[0] * zoom,
+                       page.y() + (height - shown[3]) * zoom,
+                       (shown[2] - shown[0]) * zoom,
+                       (shown[3] - shown[1]) * zoom)
+        where.translate(-self.offset())
+        return where
+
+    def note_at(self, point: QPointF):
+        """``(page, which, mark)`` for the note under a *viewport* point.
+
+        The icon is `markup.NOTE_SIZE` points on the *page*, so it grows and
+        shrinks with the zoom like everything else: measured against PDFium
+        at 1x, 2x and 4x, it comes out 20 points square every time.
+
+        Hit-tested through `note_icon_rect`, which is also what the painter
+        uses, so what can be clicked is what can be seen by construction. Two
+        ways of saying where a note is would drift -- and they would differ
+        already, because the icon is not the mark's rectangle on a page that
+        has been resized.
+        """
+        if self.marks is None:
+            return None
+        found = self.to_page(point)
+        if found is None:
+            return None
+        index = found[0]
+        try:
+            marks = self.marks(index)
+        except Exception:       # noqa: BLE001 - a click must not raise
+            return None
+        # Last first: the most recently placed note is the one on top, which
+        # is the one `_paint_marks` draws over the others.
+        for which in range(len(marks) - 1, -1, -1):
+            mark = marks[which]
+            if mark.kind != markup.TEXT:
+                continue
+            where = self.note_icon_rect(index, mark)
+            if where is not None and where.contains(point):
+                return (index, which, mark)
+        return None
+
+    def edit_note(self, index: int, which: int):
+        """Put an editor on a note, to read it or to write it.
+
+        A real `QTextEdit` over the page rather than a dialog, for the reason
+        `edit_field` gives: a note is read and written where it is in every
+        other reader, and a widget already knows about wrapping, the
+        clipboard, input methods and right-to-left text.
+        """
+        self.finish_editing()
+        if self.marks is None:
+            return False
+        try:
+            marks = self.marks(index)
+        except Exception:       # noqa: BLE001
+            return False
+        if not 0 <= which < len(marks):
+            return False
+        mark = marks[which]
+        icon = self.note_icon_rect(index, mark)
+        if icon is None:
+            return False
+        editor = QTextEdit(self.viewport())
+        editor.setFrameShape(QFrame.Box)
+        editor.setPlainText(mark.contents or "")
+        editor.setGeometry(self._note_editor_rect(icon).toRect())
+        editor.show()
+        editor.setFocus()
+        editor.moveCursor(QTextCursor.End)
+        # Tab and Escape never reach a QTextEdit's parent: one inserts a tab
+        # into the note and the other is swallowed. Both mean "done here".
+        editor.installEventFilter(self)
+        self._note = (index, which, editor)
+        return True
+
+    def _follow_note(self) -> None:
+        """Keep an open note's editor beside its icon while the view moves.
+
+        A note is anchored to a place on a page, so an editor that stayed
+        where it was while the page scrolled away would be pointing at
+        whatever had scrolled into its place.
+        """
+        if self._note is None:
+            return
+        index, which, editor = self._note
+        if self.marks is None:
+            return
+        try:
+            marks = self.marks(index)
+        except Exception:       # noqa: BLE001 - a scroll must not raise
+            return
+        if not 0 <= which < len(marks):
+            return
+        icon = self.note_icon_rect(index, marks[which])
+        if icon is not None:
+            editor.setGeometry(self._note_editor_rect(icon).toRect())
+
+    def _note_editor_rect(self, icon: QRectF) -> QRectF:
+        """Where the editor goes: beside the icon, and inside the viewport.
+
+        Beside rather than over, so that the note being edited stays visible
+        -- it is the thing being talked about. Clamped, because a note placed
+        in the bottom right corner would otherwise open off the screen.
+        """
+        width, height = self.NOTE_EDITOR
+        area = QRectF(self.viewport().rect())
+        left = icon.right() + 6
+        top = icon.top()
+        if left + width > area.right():
+            left = max(area.left(), icon.left() - 6 - width)
+        if top + height > area.bottom():
+            top = max(area.top(), area.bottom() - height)
+        return QRectF(left, top, width, height)
+
+    def editing_note(self):
+        """``(page, which)`` for the note being typed into, or None."""
+        return self._note[:2] if self._note else None
+
+    def finish_note(self):
+        """Commit what was typed into a note and take the editor away.
+
+        Guarded against traversal the way `finish_editing` is: removing a
+        widget that holds the keyboard makes Qt look for somewhere to put it,
+        which arrives in `focusNextPrevChild` and would step the form.
+        """
+        if self._note is None:
+            return
+        index, which, editor = self._note
+        self._note = None
+        text = editor.toPlainText()
+        was, self._stepping = self._stepping, True
+        try:
+            editor.hide()
+            editor.deleteLater()
+        finally:
+            self._stepping = was
+        self.note_edited.emit(index, which, text)
+
     def focusNextPrevChild(self, forward: bool) -> bool:
         """Tab steps through the form rather than out of the canvas.
 
@@ -2274,6 +2461,17 @@ class PageCanvas(QAbstractScrollArea):
         it also means Qt's focus traversal gets Tab first unless it is taken
         here.
         """
+        if (self._note is not None and watched is self._note[2]
+                and event.type() == QEvent.Type.KeyPress
+                and event.key() in (Qt.Key_Tab, Qt.Key_Backtab,
+                                    Qt.Key_Escape)):
+            # Escape as well as Tab, and taken here rather than left to the
+            # canvas: Escape there means "stop marking up" and would leave the
+            # tool with the editor still open over the page. Return is *not*
+            # here -- a note is prose, and a paragraph break is a thing you
+            # want in one.
+            self.finish_note()
+            return True
         if (self._editing is not None and watched is self._editing[1]
                 and event.type() == QEvent.Type.KeyPress
                 and event.key() in (Qt.Key_Tab, Qt.Key_Backtab)):
@@ -2287,6 +2485,10 @@ class PageCanvas(QAbstractScrollArea):
     def finish_editing(self):
         """Commit what was typed and take the editor away.
 
+        A note's editor goes with it. Every caller means "nothing is being
+        typed into the page any more", and there is nowhere that wants one of
+        the two editors left open.
+
         Guarded against re-entry: `editingFinished` arrives again when the
         editor loses focus to its own removal, and without this the value
         would be committed twice -- two undo entries for one edit.
@@ -2297,6 +2499,7 @@ class PageCanvas(QAbstractScrollArea):
         clicking away from a field moved the focus to another one and drew a
         ring round it.
         """
+        self.finish_note()
         if self._editing is None:
             return
         field, editor = self._editing
@@ -2368,6 +2571,11 @@ class PageCanvas(QAbstractScrollArea):
     #: is why highlighting comes before the marks that need new hit-testing.
     TEXT_TOOLS = (HIGHLIGHT, STRIKEOUT)
 
+    #: Tools whose geometry is a point and a size of their own rather than an
+    #: area dragged out. A sticky note's icon is the same size wherever it
+    #: lands, so the gesture supplies a corner and nothing else.
+    POINT_TOOLS = (NOTE,)
+
     def tool(self) -> str:
         return self._tool
 
@@ -2419,7 +2627,8 @@ class PageCanvas(QAbstractScrollArea):
                 continue
             shown = (rect.left(), height - rect.bottom(),
                      rect.right(), height - rect.top())
-            quads.append(forms_module.from_displayed(shown, box))
+            quads.append(self.to_source(
+                page, forms_module.from_displayed(shown, box)))
         return (page, quads) if quads else None
 
     def focused_field(self):
@@ -2498,6 +2707,50 @@ class PageCanvas(QAbstractScrollArea):
             return self._boxes[index]
         return None
 
+    def set_page_scales(self, scales) -> None:
+        """The resize factor of every page, as the page list holds it.
+
+        A mark lives in the *source* page's space (D6) and the document on
+        screen is an export with every resize already applied, so this is the
+        one number that cannot be read back out of what is being shown. The
+        page list is the only thing that still knows it, which is why it is
+        pushed in here rather than computed from the document like the boxes.
+        """
+        self._scales = [float(s) if s else 1.0 for s in (scales or ())]
+
+    def page_scale(self, index: int) -> float:
+        """How much bigger the page on screen is than the page a mark is in."""
+        if 0 <= index < len(self._scales):
+            scale = self._scales[index]
+            return scale if scale > 0 else 1.0
+        return 1.0
+
+    def to_source(self, index: int, rect):
+        """A rectangle on the page being shown, in the source page's space.
+
+        The *last* step of placing a mark, after the crop and the turn, and it
+        is only a division because `export._scale` only multiplies: a resize
+        scales the page's whole coordinate space, content and boxes together.
+
+        Why source space rather than the space the canvas hands back, which
+        would need no arithmetic at all: a mark stored in output coordinates
+        moves the next time its page is resized, because the space it was
+        measured in is gone. D6 chose this and then went uncoded -- a note on
+        a page later scaled by half was written at its old coordinates onto
+        paper half the size, which is off the page entirely.
+        """
+        scale = self.page_scale(index)
+        if scale == 1.0:
+            return tuple(rect)
+        return tuple(v / scale for v in rect)
+
+    def from_source(self, index: int, rect):
+        """The inverse: a mark's own rectangle, on the page being shown."""
+        scale = self.page_scale(index)
+        if scale == 1.0:
+            return tuple(rect)
+        return tuple(v * scale for v in rect)
+
     def mark_rect(self, start: QPointF, end: QPointF):
         """Two *viewport* points to ``(page, rect)`` in the page's own space.
 
@@ -2524,7 +2777,39 @@ class PageCanvas(QAbstractScrollArea):
         last = self._layout.point_in_page(index, self.to_document(end))
         # Up from the bottom, which is the frame `from_displayed` expects.
         shown = (first.x(), height - first.y(), last.x(), height - last.y())
-        return index, forms_module.from_displayed(shown, box)
+        return index, self.to_source(
+            index, forms_module.from_displayed(shown, box))
+
+    def icon_rect(self, point: QPointF):
+        """One viewport point to the page-space box of a fixed-size icon.
+
+        Expanded on the *laid-out* page and only then turned back into the
+        page's own space, so that the corner under the pointer is the icon's
+        top left as drawn. Expanding it in page space instead looks right
+        until the page is turned, and then which corner lands under the
+        pointer is whatever the turn makes it: measured, the icon was drawn
+        to the *left* of the click at `/Rotate` 90, above and to the left at
+        180, and below it at 270.
+
+        A viewer draws the icon at the top left of `/Rect` in page space and
+        then turns the page, so a box chosen this way comes out under the
+        pointer here and in every other reader alike.
+        """
+        index = self.page_at(point)
+        if index is None:
+            return None
+        box = self.page_box(index)
+        height = self._layout.page_height(index)
+        if box is None or height is None:
+            return None
+        where = self._layout.point_in_page(index, self.to_document(point))
+        # Up from the bottom, which is the frame `from_displayed` expects.
+        # The icon's size is fixed on the page *as shown*, so it is expanded
+        # here and divided afterwards: on a page resized to half, a note is
+        # 40 points in the source space and comes back out at 20.
+        shown = markup.note_rect(where.x(), height - where.y())
+        return index, self.to_source(
+            index, forms_module.from_displayed(shown, box))
 
     def set_field_map(self, fields):
         """The widgets of the document being shown, drawn and hit-tested."""
@@ -2701,16 +2986,30 @@ class PageCanvas(QAbstractScrollArea):
                 super().mouseMoveEvent(event)
                 return
 
+        note = self.note_at(position)
+        if note is not None:
+            # Read without opening anything. A note's whole value is its text,
+            # and a document covered in icons you have to click one at a time
+            # to read is a filing cabinet. Before the tool branches below,
+            # because reading a note does not depend on what the pointer is
+            # for.
+            self.viewport().setCursor(Qt.PointingHandCursor)
+            self._set_tooltip(note[2].contents or _("Empty note"))
+            super().mouseMoveEvent(event)
+            return
+
         if self.marks_area():
             # A crosshair everywhere, including over a field: the field still
             # takes the press, and a cursor that promised otherwise would be
             # the lie. The I-beam is wrong here either way.
             self.viewport().setCursor(Qt.CrossCursor)
+            self._set_tooltip("")
             super().mouseMoveEvent(event)
             return
         if self.marks_text():
             # An I-beam, because this gesture *is* selecting text.
             self.viewport().setCursor(Qt.IBeamCursor)
+            self._set_tooltip("")
             super().mouseMoveEvent(event)
             return
 
@@ -2723,11 +3022,19 @@ class PageCanvas(QAbstractScrollArea):
                 self.viewport().setCursor(Qt.IBeamCursor)
             else:
                 self.viewport().unsetCursor()
-        tooltip = self.link_description(link)
-        if tooltip != self._tooltip:
-            self._tooltip = tooltip
-            self.viewport().setToolTip(tooltip)
+        self._set_tooltip(self.link_description(link))
         super().mouseMoveEvent(event)
+
+    def _set_tooltip(self, text: str) -> None:
+        """Set the viewport's tooltip, and only when it changes.
+
+        Re-setting the same text restarts Qt's hover delay, so a tooltip set
+        on every mouse move never appears at all -- which is why this is one
+        place rather than four.
+        """
+        if text != self._tooltip:
+            self._tooltip = text
+            self.viewport().setToolTip(text)
 
     def mousePressEvent(self, event):
         """Plain press starts a selection here; shifted press extends to here.
@@ -2738,10 +3045,11 @@ class PageCanvas(QAbstractScrollArea):
         a drag, which is `extend_to` and `_extend_selection` respectively.
         """
         if event.button() == Qt.LeftButton:
+            position = QPointF(event.position())
             # A form field takes the press before the text does. Clicking a
             # tick box is not the start of a selection, and treating it as one
             # would leave a stray caret in the middle of a form.
-            field = self.field_at(QPointF(event.position()))
+            field = self.field_at(position)
             if field is not None and field.fillable:
                 # Clicking a field is also *arriving* at it, so Tab carries on
                 # from there. Without this the focus stayed empty and the next
@@ -2762,17 +3070,25 @@ class PageCanvas(QAbstractScrollArea):
             # A press anywhere else ends the edit, as clicking away from a
             # field does in any form.
             self.finish_editing()
+            note = self.note_at(position)
+            if note is not None:
+                # Before placing anything, and under every tool: an icon that
+                # says "there is a note here" has to open it, or the note is
+                # write-only. With the note tool this is also what stops a
+                # second note landing on top of the first.
+                if self.edit_note(note[0], note[1]):
+                    event.accept()
+                    return
             if self.marks_area():
                 # Only here, *after* the field check: over a field there is no
                 # markup, the field takes the press and is edited. A widget
                 # that cannot be filled falls through to this, because a field
                 # you are not allowed to fill is no reason to refuse a mark on
                 # the page around it.
-                position = QPointF(event.position())
                 self._marking = (position, position)
                 event.accept()
                 return
-            self._press = QPointF(event.position())
+            self._press = position
             self._selecting = False
             found = self.to_page(self._press)
             extending = (bool(event.modifiers() & Qt.ShiftModifier)
@@ -2838,10 +3154,14 @@ class PageCanvas(QAbstractScrollArea):
             start, end = self._marking
             self._marking = None
             self.viewport().update()
-            placed = self.mark_rect(start, QPointF(event.position()))
+            if self._tool in self.POINT_TOOLS:
+                # Where the gesture *began*, and its own size: a note is
+                # placed rather than sized, so a drag with this tool means the
+                # same as a click at the corner it started from.
+                placed = self.icon_rect(start)
+            else:
+                placed = self.mark_rect(start, QPointF(event.position()))
             if placed is not None:
-                # A click rather than a drag arrives here as a rectangle with
-                # no width, which is what placing a sticky note is.
                 self.mark_drawn.emit(self._tool, placed[0], [placed[1]])
             event.accept()
             return
@@ -3165,8 +3485,12 @@ class PageCanvas(QAbstractScrollArea):
         painter.setPen(Qt.NoPen)
         for mark in marks:
             colour = QColor.fromRgbF(*(mark.colour or (1.0, 1.0, 0.0)))
+            if mark.kind == markup.TEXT:
+                self._paint_note(painter, index, mark, colour)
+                continue
             for quad in (mark.quads or (mark.rect,)):
-                shown = forms_module.to_displayed(quad, box)
+                shown = forms_module.to_displayed(
+                    self.from_source(index, quad), box)
                 where = QRectF(
                     page_rect.x() + shown[0] * zoom,
                     page_rect.y() + (height - shown[3]) * zoom,
@@ -3188,6 +3512,47 @@ class PageCanvas(QAbstractScrollArea):
                         QPainter.CompositionMode_Multiply)
                     painter.fillRect(where, colour)
                     painter.restore()
+        painter.restore()
+
+    def _paint_note(self, painter, index: int, mark, colour) -> None:
+        """Draw a sticky note's icon: a balloon, at a size the zoom sets.
+
+        Drawn here even though PDFium draws one of its own, for the reason the
+        other marks are: the bitmap on screen is an export made before the
+        note existed. Once the file is saved it is PDFium's glyph that shows,
+        so this is a balloon rather than a square -- the same thing, so that
+        saving does not visibly change the page.
+        """
+        where = self.note_icon_rect(index, mark)
+        if where is None:
+            return
+        if not where.intersects(QRectF(self.viewport().rect())):
+            return
+        painter.save()
+        painter.setRenderHint(QPainter.Antialiasing, True)
+        painter.setBrush(colour)
+        pen = QPen(QColor(90, 70, 20))
+        pen.setWidthF(max(1.0, where.width() / 16.0))
+        painter.setPen(pen)
+        # The balloon, with room under it for the tail.
+        body = QRectF(where.x(), where.y(), where.width(), where.height() * 0.78)
+        painter.drawRoundedRect(body, where.width() * 0.18,
+                                where.width() * 0.18)
+        tail = QPolygonF([
+            QPointF(body.left() + body.width() * 0.22, body.bottom() - 1),
+            QPointF(body.left() + body.width() * 0.22, where.bottom()),
+            QPointF(body.left() + body.width() * 0.50, body.bottom() - 1)])
+        painter.setPen(Qt.NoPen)
+        painter.drawPolygon(tail)
+        # Two lines of writing in it, which is what says "a note" rather than
+        # "a shape" at the size this is drawn.
+        pen = QPen(QColor(90, 70, 20))
+        pen.setWidthF(max(0.8, where.width() / 18.0))
+        painter.setPen(pen)
+        for fraction in (0.34, 0.58):
+            y = body.top() + body.height() * fraction
+            painter.drawLine(QPointF(body.left() + body.width() * 0.22, y),
+                             QPointF(body.right() - body.width() * 0.22, y))
         painter.restore()
 
     def _paint_marking(self, painter) -> None:

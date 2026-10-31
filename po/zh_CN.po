@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PDF Arranger 1.14.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-30 19:37+0000\n"
+"POT-Creation-Date: 2026-10-30 22:01+0000\n"
 "PO-Revision-Date: 2026-06-02 17:09+0800\n"
 "Last-Translator: Puqns67 <me@puqns67.icu>\n"
 "Language: zh_CN\n"
@@ -32,6 +32,11 @@ msgstr "保存（_S）"
 #, python-brace-format
 msgid "Page {}"
 msgstr "第 {} 页"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Empty note"
+msgstr "空注释"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
@@ -1876,6 +1881,16 @@ msgstr "全屏"
 #: pdfarranger_qt/mainwindow.py
 msgid "Add Mark"
 msgstr "添加标注"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Delete Note"
+msgstr "删除注释"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Edit Note"
+msgstr "编辑注释"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py

@@ -496,7 +496,7 @@ first exists.
 | 3.1 | An annotation model | 2.1, 2.4 | an added note survives undo and a save | **complete** |
 | 3.2 | A tool mode in the canvas | 3.1 | the pointer selects, highlights or draws as chosen | **complete** |
 | 3.3 | Highlight and strikethrough | 3.2 | a selection becomes a mark the file keeps | **complete** |
-| 3.4 | Sticky note | 3.2 | a note can be placed, read and edited | |
+| 3.4 | Sticky note | 3.2 | a note can be placed, read and edited | **complete** |
 | 3.5 | Free text and freehand | 3.3, 3.4 | both draw, save and reopen | |
 
 Highlight first of the marks because its geometry already exists — text
@@ -1022,6 +1022,186 @@ test's loop body never ran and it asserted nothing. The fixture now names one,
 as a real file does. That is the third no-op test in this work, and all three
 had the same shape -- a test that iterates over something the fixture does not
 have.
+
+**2026-10-30 — decision 6, coded a day after it was written.** D6 says a mark
+is kept in the *source* page's space and that `_write_annotations` multiplies
+its rectangle by `row.scale` on the way out. It did not, and nothing else did:
+`git log -S"row.scale" -- export.py` names only the original port. So marks
+were stored and written in **output** coordinates -- the alternative D6
+considered and rejected -- and they failed in precisely the way D6 predicted.
+
+| | |
+| --- | --- |
+| a note placed at | `/Rect` (120, 572, 140, 592) |
+| its page then resized by half | `/MediaBox` 306 x 396 |
+| written, before | (120, 572, 140, 592) -- off the paper entirely |
+| written, after | (60, 286, 70, 296) |
+
+The order in git is the whole of how that happened: `ff75458` wrote
+`_write_annotations` without the multiplication, and `e3fe8ed` recorded D6
+five commits later, in the present tense, describing behaviour the code did
+not have. A decision written as though it were done is worse than one left
+open, because nothing goes looking for it.
+
+**It is three places, not one, and that is why it was worth doing properly
+rather than patching the writer.** Read mode shows the *export*, so what the
+canvas hands back is already scaled: placement divides (`canvas.to_source`),
+the export multiplies (`markup.scaled`, from `add_to_page`), and the canvas
+multiplies again to draw (`canvas.from_source`). The scale reaches the canvas
+as plain data beside the page boxes, which is D7's answer and for a sharper
+reason here -- the boxes can be read out of the document being shown and the
+resize cannot, because the document on screen has it applied already. The page
+list is the only thing that still knows.
+
+Two things fell out of it that the single-page unscaled case hid.
+
+**A note's size is fixed on the page a reader draws, not in the source space**,
+so the mark holds `NOTE_SIZE / scale` and the export multiplies it back. The
+first version normalised to a flat 20 points in source space and quietly
+halved every note placed on a page shown at half size.
+
+**The icon is drawn from the rectangle's lower left, 20 points up and right,
+whatever the rectangle says** -- so `markup.icon_box` is what to draw and
+hit-test, and the rectangle is not. The two are the same box for a note placed
+here and differ for one whose page has since been resized, where following the
+rectangle drew an icon half the size of the one in the saved file.
+
+Seven tests, seven neuterings, baseline recorded first -- and the baseline
+earned its keep twice over.
+
+**Five of the seven failed on their first run against the correct code**, all
+for one reason: `written()` read "the first annotation", and
+`text_and_link.pdf` carries two `/Link` annotations of its own which the
+export writes before the marks. So five assertions were about a link's
+rectangle. A fixture holding something nobody put there is the same family as
+a fixture holding nothing -- in both the test is not about what its name says.
+
+**And one neutering passed anyway**: scaling a highlight's rectangle while
+leaving its quadrilaterals. The test read the written `/Rect`, and
+`to_dictionary` builds that from `Annotation.rect` -- so the broken version
+wrote a correct rectangle around a shape still drawn at the old size, which is
+exactly the defect, and the test could not see it. It reads `/QuadPoints` now.
+The comment claiming the rectangle would catch it was reasoning where a
+measurement was wanted.
+
+**2026-10-30 — step 3.4.** A note is *placed*, not dragged out, and it is the
+one mark whose size is not its author's to choose.
+
+Measured against PDFium, with the annotation render flag on and the page
+composited onto white:
+
+| | |
+| --- | --- |
+| a blank page | 0 ink pixels |
+| a `/Text` with no `/AP` | **1327** ink pixels |
+| the same with an `/AP` of ours | 1600 |
+| `/Rect` 20x20, 60x60, 10x10, no size at all | the icon drawn 20 x 20 points every time |
+| rendered at 1x, 2x, 4x | 20 x 20 points every time |
+| `/Name` `/Comment`, `/Note`, `/Help`, `/Key`, `/Star`, absent, nonsense | the same 1327 pixels, every one |
+
+Four decisions fall straight out of that table.
+
+**The rectangle is written at the size the icon will be** -- 20 points square,
+positioned so that the icon as drawn has its top left corner on the pointer,
+which is a sentence the turn makes less obvious than it sounds; see below. The
+specification says the size is ignored; a reader hit-tests `/Rect` all the
+same, so a rectangle of no size is a note nothing can click, and one of 120 by
+24 is a note you can click a centimetre away from.
+
+**And the icon hangs off the rectangle's *lower* left, not its upper.** The
+first reading of the measurement said upper, and a square rectangle of exactly
+the icon's size cannot tell the two apart -- which is the only kind this
+writes, so everything agreed. Re-measured against a `/Rect` 60 by 24: the icon
+sits on its *bottom* edge, 20 points tall, and the same page-space box comes
+out at `/Rotate` 0, 90, 180 and 270. A viewer adds the 20 points in page space
+and then turns the page, which is why `note_icon_rect` turns the icon's box
+rather than its own idea of a top left corner, and why no case analysis per
+angle was needed.
+
+**Nothing is written for the icon.** This is the only mark where leaving out
+the appearance stream is a decision rather than a shortcut. A highlight
+carries one because a viewer is merely *recommended* to draw the
+quadrilaterals; a note's appearance is an icon every viewer's users already
+recognise, and ours would replace a familiar balloon with a rounded box. The
+measurement says it costs nothing: 1327 pixels either way.
+
+**`/Name` is written anyway**, for the viewers that read it -- PDFium does not.
+
+**The icon scales with the zoom**, because it is 20 points *on the page*. So
+the mark's rectangle and the icon are one box, and there is one place that
+says where a note is rather than two that can drift.
+
+The text is asked for in a `QTextEdit` over the page, beside the icon rather
+than over it, which is `edit_field`'s reasoning: a note is read and written
+where it is in every other reader, and a widget already knows about wrapping,
+the clipboard, input methods and right-to-left text. Escape is taken inside
+the editor, because on the canvas it means *stop marking up* and one keystroke
+should not do both. Hovering an icon shows its text without opening anything
+-- a document covered in icons you have to click one at a time to read is a
+filing cabinet.
+
+**An empty note is removed, and a note nobody wrote leaves nothing behind.**
+Acrobat and Preview both keep an empty one; this does not, because until there
+is a command for deleting a mark, emptying one is the only way to take it
+back, and an icon claiming there is a note where there is no text is a lie on
+the page. Placed and then abandoned, the mark goes *and* the undo entry
+pushed for placing it is discarded -- so the gesture leaves no step that
+undoes nothing. The entry is taken back only when it is still the top of the
+stack, so a command run from the keyboard while the editor was open cannot be
+discarded in its place. The first text typed into a new note commits nothing
+either: the placement's entry already holds the state from before the note
+existed, so one undo takes the note and its words together.
+
+Measured end to end on a real gesture:
+
+| | |
+| --- | --- |
+| placed | `/Rect` (120, 572, 140, 592) from a click at page (120, 200) |
+| reader rebuilt | no |
+| undo entries for place-and-type | 1 |
+| abandoned empty | 0 marks, undo depth back where it started |
+| drawn on the canvas | 458 amber pixels, before anything was exported |
+| saved | `/Subtype /Text`, `/Name /Note`, `/Contents`, no `/QuadPoints` |
+| rendered from the file | 336 ink pixels where the note is, 0 there before |
+
+Twenty-one tests and seventeen neuterings. **One earlier run reported "bites"
+for a test that had never passed at all** -- worse than a test that passes
+both ways, because the harness was observing only the broken half. Proving a
+test fails against broken code proves nothing by itself; the clean run is the
+other half of the evidence. The harness records it first now and refuses to
+go on without it, and the result reads better for it: both neuterings of the
+anchor fail six of the eight subtests and leave two passing, and the two are
+the `/Rotate` zero pair, where the right answer and the wrong one are the
+same numbers.
+
+What it was failing about was real. At `/Rotate` zero a mark's rectangle and
+its place on the laid-out page are the same numbers, so an upright one-page
+fixture cannot see the turn at all -- and behind that, **a note was anchored
+in the wrong frame.** A viewer draws the icon at the top left of `/Rect` *in
+page space* and then turns the page, so expanding the rectangle in page space
+puts the icon wherever the turn sends it. Measured, for a click at the same
+spot on the same page:
+
+| | |
+| --- | --- |
+| `/Rotate` 0 | drawn with its corner on the pointer |
+| 90 | drawn **22 pixels to the left** of the pointer |
+| 180 | drawn **28 up and to the left** |
+| 270 | drawn **21 below** |
+
+The rectangle is expanded on the laid-out page now and only then turned back
+into the page's own space, which puts the corner under the pointer at every
+angle -- here and in any other reader, because both start from the same
+`/Rect` and the same `/Rotate`. `POINT_TOOLS` says in the canvas what that
+means: a tool whose geometry is a corner and a size of its own rather than an
+area dragged out.
+
+The test went with it. Its hover point was measured *down the page*, which is
+a different direction on screen once the page is turned -- which is how it
+managed to fail against correct code and look like a bug in the code. It is
+now four subtests, one per angle, each asserting the reader's page box
+actually carries that angle before trusting anything, and hit-testing a few
+*viewport* pixels in from the point that placed the note.
 
 **2026-10-30 — step 3.3.** A highlight is a text *selection*, not a dragged
 box. With the tool active the pointer behaves exactly as it does when reading

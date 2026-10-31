@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  pdfarranger\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-30 19:37+0000\n"
+"POT-Creation-Date: 2026-10-30 22:01+0000\n"
 "PO-Revision-Date: 2026-01-21 05:07+0100\n"
 "Last-Translator: Ekaterine Papava <papava.e@gtu.ge>\n"
 "Language: ka\n"
@@ -28,6 +28,11 @@ msgstr "_შენახვა"
 #, python-brace-format
 msgid "Page {}"
 msgstr "გვერდი {}"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Empty note"
+msgstr "ცარიელი შენიშვნა"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
@@ -2042,6 +2047,16 @@ msgstr "სრული ეკრანი"
 #: pdfarranger_qt/mainwindow.py
 msgid "Add Mark"
 msgstr "ნიშნის დამატება"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Delete Note"
+msgstr "შენიშვნის წაშლა"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Edit Note"
+msgstr "შენიშვნის ჩასწორება"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py

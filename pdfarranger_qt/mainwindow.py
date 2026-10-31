@@ -134,6 +134,7 @@ class MainWindow(QMainWindow):
         self.reader.field_pressed.connect(self.field_pressed)
         self.reader.canvas.tool_changed.connect(self._tool_changed)
         self.reader.mark_drawn.connect(self.mark_drawn)
+        self.reader.canvas.note_edited.connect(self.note_edited)
         self.reader.canvas.marks = self._marks_on_page
         self.reader.field_edited.connect(self.field_edited)
         self.reader.field_refused.connect(self.field_refused)
@@ -194,6 +195,12 @@ class MainWindow(QMainWindow):
         #: Set while an edit is one the reader can already show without being
         #: rebuilt. See `_field_filled`.
         self._reader_keeps_showing = False
+        #: The undo depth just after a note was placed, or None. What makes a
+        #: note abandoned with nothing in it leave no trace: the entry pushed
+        #: for placing it is taken back only if it is still the top of the
+        #: stack, so a command run from the keyboard while the editor was open
+        #: cannot be the one discarded instead.
+        self._placed_note = None
         #: Zoom to restore when double-click toggles fit back off.
         self._zoom_before_fit: Optional[float] = None
 
@@ -727,6 +734,7 @@ class MainWindow(QMainWindow):
     MARK_KINDS = {
         "highlight": (markup.HIGHLIGHT, (1.0, 0.92, 0.23)),
         "strikeout": (markup.STRIKEOUT, (0.90, 0.22, 0.21)),
+        "note": (markup.TEXT, (1.0, 0.82, 0.25)),
     }
 
     def _marks_on_page(self, index: int):
@@ -750,11 +758,83 @@ class MainWindow(QMainWindow):
             return
         subtype, colour = kind
         page = self.model.pages[index]
+        rect = markup.bounding_rect(rects)
+        quads = rects if subtype in markup.QUADDED else ()
+        if subtype == markup.TEXT:
+            # A note is placed, not sized: its icon is the same size wherever
+            # it lands. The canvas has already chosen the corner, because
+            # which corner the pointer ends up on is decided by the page's
+            # turn and the turn is the canvas's business (`icon_rect`). This
+            # only guarantees the size, and on a box that already has it the
+            # call changes nothing -- so a caller that sends a bare point
+            # still gets a note somebody can click.
+            #
+            # Divided by the page's resize, because the size that matters is
+            # the icon's on the page a reader draws and the mark is kept in
+            # the source page's space (D6). Normalising to a flat 20 here
+            # instead quietly halved a note placed on a page shown at half
+            # size.
+            scale = page.scale if page.scale else 1.0
+            rect = markup.note_rect(rect[0], rect[3],
+                                    markup.NOTE_SIZE / scale)
         self.model.undo.commit(_("Add Mark"))
         self.model.annotations.add(markup.Annotation(
-            subtype, page.uid, markup.bounding_rect(rects),
-            colour=colour, quads=rects,
+            subtype, page.uid, rect, colour=colour, quads=quads,
             author=None))
+        self._mark_added()
+        if subtype == markup.TEXT:
+            # Straight into the editor. A note with nothing in it is not a
+            # mark anyone meant to make, and asking for the text afterwards
+            # would be a second gesture for one action.
+            self._placed_note = self.model.undo.current
+            self.reader.canvas.edit_note(
+                index, len(self._marks_on_page(index)) - 1)
+
+    def note_edited(self, index: int, which: int, text: str) -> None:
+        """A note's editor closed: keep what was typed, or drop the note.
+
+        **An empty note is removed.** Until there is a command for deleting a
+        mark, emptying one is the only way to take it back, and an icon
+        claiming there is a note where there is no text is a lie on the page.
+        Placed and then abandoned, it goes with its own undo entry -- the mark
+        is removed and the entry `mark_drawn` pushed is discarded, so a note
+        nobody wrote leaves nothing behind, not even a step that undoes
+        nothing.
+        """
+        if not 0 <= index < len(self.model.pages):
+            return
+        marks = self._marks_on_page(index)
+        if not 0 <= which < len(marks):
+            return
+        mark = marks[which]
+        placed_at, self._placed_note = self._placed_note, None
+        text = text.strip()
+        if not text:
+            # Before the "nothing changed" test below, not after it: a note
+            # placed and then left empty has not *changed*, and it is exactly
+            # the one that has to go.
+            fresh = (not mark.contents
+                     and placed_at == self.model.undo.current)
+            if not fresh:
+                self.model.undo.commit(_("Delete Note"))
+            self.model.annotations.remove(mark)
+            if fresh:
+                # The entry being taken back is the one `mark_drawn` pushed
+                # for placing this note, and the state it holds is the one we
+                # have just returned to -- so the whole gesture leaves
+                # nothing behind, not even a step that undoes nothing.
+                self.model.undo.discard_last()
+            self._mark_added()
+            return
+        if text == (mark.contents or ""):
+            return
+        if mark.contents:
+            self.model.undo.commit(_("Edit Note"))
+        # No commit for the first text in a newly placed note: the "Add Mark"
+        # entry already holds the state from before it existed, so one undo
+        # takes away the note and its words together rather than leaving an
+        # empty icon behind.
+        mark.contents = text
         self._mark_added()
 
     def _mark_added(self) -> None:

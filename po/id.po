@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-30 19:37+0000\n"
+"POT-Creation-Date: 2026-10-30 22:01+0000\n"
 "PO-Revision-Date: 2023-06-08 10:00+0700\n"
 "Last-Translator: Abdul Munif Hanafi <amunifhanafi@gmail.com>\n"
 "Language: id\n"
@@ -30,6 +30,11 @@ msgstr "_Simpan"
 #, python-brace-format
 msgid "Page {}"
 msgstr "Halaman {}"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Empty note"
+msgstr "Catatan kosong"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
@@ -2098,6 +2103,16 @@ msgstr "Layar Penuh"
 #: pdfarranger_qt/mainwindow.py
 msgid "Add Mark"
 msgstr "Tambah markah"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Delete Note"
+msgstr "Hapus Catatan"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Edit Note"
+msgstr "Sunting Catatan"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py

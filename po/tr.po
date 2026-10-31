@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pdfarranger main\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-30 19:37+0000\n"
+"POT-Creation-Date: 2026-10-30 22:01+0000\n"
 "PO-Revision-Date: 2026-04-24 21:19+0300\n"
 "Last-Translator: Oğuz Ersen <oguz@ersen.moe>\n"
 "Language: tr\n"
@@ -29,6 +29,11 @@ msgstr "_Kaydet"
 #, python-brace-format
 msgid "Page {}"
 msgstr "Sayfa {}"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Empty note"
+msgstr "Boş not"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
@@ -2032,6 +2037,16 @@ msgstr "Tam Ekran"
 #: pdfarranger_qt/mainwindow.py
 msgid "Add Mark"
 msgstr "İşaret ekle"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Delete Note"
+msgstr "Notu Sil"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Edit Note"
+msgstr "Notu Düzenle"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py

@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-30 19:37+0000\n"
+"POT-Creation-Date: 2026-10-30 22:01+0000\n"
 "PO-Revision-Date: 2025-12-15 00:59+0700\n"
 "Last-Translator: Loc Huynh <https://github.com/hthienloc>\n"
 "Language: vi\n"
@@ -27,6 +27,11 @@ msgstr "_Cứu"
 #, python-brace-format
 msgid "Page {}"
 msgstr "Trang {}"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Empty note"
+msgstr "Ghi chú trống"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
@@ -2038,6 +2043,16 @@ msgstr "Toàn màn hình"
 #: pdfarranger_qt/mainwindow.py
 msgid "Add Mark"
 msgstr "Thêm dấu"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Delete Note"
+msgstr "Xoá ghi chú"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Edit Note"
+msgstr "Sửa ghi chú"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py

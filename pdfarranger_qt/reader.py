@@ -264,8 +264,14 @@ class ReaderView(QWidget):
         nothing to rewrite. The argument stays until its callers stop passing
         it.
         """
+        pages = list(pages)
+        # The page list is the only thing that knows what each page was
+        # resized by; the document being shown has it applied already. D6's
+        # other half, pushed to the canvas beside the boxes.
+        scales = [row.scale for row in pages]
         if source is not None and self._load_source(
                 *source, sizes=_sizes_of(pages)):
+            self.canvas.set_page_scales(scales)
             return True
         try:
             # No outlines: the sidebar reads the document's own tree (D20), not
@@ -287,6 +293,7 @@ class ReaderView(QWidget):
         # list, so the page list's own sizes are not this document's. The
         # canvas measures them itself, in the background.
         self._show(document, data)
+        self.canvas.set_page_scales(scales)
         return True
 
     def field_at(self, point):
@@ -368,6 +375,7 @@ class ReaderView(QWidget):
         document, self._document = self._document, None
         self.canvas.set_field_map(None)
         self.canvas.set_page_boxes([])
+        self.canvas.set_page_scales([])
         self.canvas.set_document(None)
         self.search_model.set_document(None)
         self.page_selector.setDocument(None)

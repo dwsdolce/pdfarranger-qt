@@ -422,14 +422,16 @@ class TestTheToolDecidesWhatThePointerDoes(unittest.TestCase):
     def test_a_drag_under_a_tool_reports_where_it_was(self):
         from pdfarranger_qt.canvas import PageCanvas
 
-        # An *area* tool: highlight marks text now and so selects instead.
-        self.win.set_tool(PageCanvas.NOTE)
+        # An *area* tool, and Draw is now the only one: highlight and
+        # strikethrough mark text and so select instead (3.3), and a note is
+        # placed at a corner with a size of its own (3.4).
+        self.win.set_tool(PageCanvas.DRAW)
         # Clear of the widget at (150, 550, 298, 570), so the field does not
         # take the press instead.
         self.drag(self.viewport_point(150, 690), self.viewport_point(298, 670))
         self.assertEqual(len(self.marks), 1)
         tool, page, rects = self.marks[0]
-        self.assertEqual((tool, page), (PageCanvas.NOTE, 0))
+        self.assertEqual((tool, page), (PageCanvas.DRAW, 0))
         # Always a list: an area tool sends the one rectangle it dragged out,
         # a text tool one per run of text it covered.
         self.assertEqual(len(rects), 1)
@@ -449,10 +451,14 @@ class TestTheToolDecidesWhatThePointerDoes(unittest.TestCase):
         self.assertIsNotNone(self.canvas.editing())
 
     def test_a_click_is_a_rectangle_with_no_width(self):
-        """Which is what placing a sticky note is."""
+        """What the canvas reports for a click under an *area* tool, and what
+        it means is the tool's business -- which is the whole of 3.2's
+        division. A note no longer arrives this way: 3.4 found that the corner
+        under the pointer is decided by the page's turn, so the canvas chooses
+        the box for a point tool rather than reporting the gesture raw."""
         from pdfarranger_qt.canvas import PageCanvas
 
-        self.win.set_tool(PageCanvas.NOTE)
+        self.win.set_tool(PageCanvas.DRAW)
         where = self.viewport_point(200, 690)
         self.drag(where, where)
         self.assertEqual(len(self.marks), 1)
@@ -748,3 +754,662 @@ class TestAHighlightFollowsTheLines(unittest.TestCase):
         marks = self.win.model.annotations.for_page(self.win.model.pages[0].uid)
         self.assertEqual(len(marks), 1)
         self.assertEqual(len(marks[0].quads), 2)
+
+
+
+class TestAStickyNoteIsPlaced(unittest.TestCase):
+    """Step 3.4. A note is placed rather than dragged out.
+
+    A `/Text` annotation is the one mark whose size is not its author's to
+    choose. Measured against PDFium, the icon is `markup.NOTE_SIZE` points
+    square at the top left of `/Rect` -- for a `/Rect` of 20x20, of 60x60 and
+    of no size at all, and the same 20 points whether the page is rendered at
+    1x, 2x or 4x. So the gesture supplies a point, the rectangle is written
+    at the size the icon will be, and the icon and the rectangle are one box.
+    """
+
+    def setUp(self):
+        from PySide6.QtWidgets import QApplication  # noqa: F401
+
+        from pdfarranger_qt.mainwindow import MainWindow
+
+        self.win = MainWindow()
+        self.win.resize(900, 700)
+        self.win.show()
+        self.win.open_paths([TEXTED])
+        settle(timeout_ms=1000)
+        self.win.set_read_mode(True)
+        settle(timeout_ms=1200)
+        self.canvas = self.win.reader.canvas
+        self.canvas.verticalScrollBar().setValue(0)
+        settle(timeout_ms=200)
+
+    def tearDown(self):
+        self.win.modified = False
+        self.win.close()
+
+    def at(self, x, y_down):
+        from PySide6.QtCore import QPointF
+
+        return self.canvas.to_viewport(
+            self.canvas._layout.from_page(0, QPointF(x, y_down)))
+
+    def send(self, kind, point):
+        from PySide6.QtCore import QPoint, QPointF, Qt
+        from PySide6.QtGui import QMouseEvent
+
+        event = QMouseEvent(
+            kind, QPointF(point),
+            self.canvas.viewport().mapToGlobal(
+                QPoint(int(point.x()), int(point.y()))),
+            Qt.LeftButton, Qt.LeftButton, Qt.NoModifier)
+        {QMouseEvent.Type.MouseButtonPress: self.canvas.mousePressEvent,
+         QMouseEvent.Type.MouseMove: self.canvas.mouseMoveEvent,
+         QMouseEvent.Type.MouseButtonRelease:
+             self.canvas.mouseReleaseEvent}[kind](event)
+
+    def click(self, point):
+        from PySide6.QtGui import QMouseEvent
+
+        self.send(QMouseEvent.Type.MouseButtonPress, point)
+        self.send(QMouseEvent.Type.MouseButtonRelease, point)
+        settle(timeout_ms=250)
+
+    def place(self, x=120, y_down=200, text="a note about this clause"):
+        """Place a note with the note tool and type into its editor."""
+        from pdfarranger_qt.canvas import PageCanvas
+
+        self.win.set_tool(PageCanvas.NOTE)
+        self.click(self.at(x, y_down))
+        if text is not None:
+            self.canvas._note[2].setPlainText(text)
+        self.canvas.finish_note()
+        settle(timeout_ms=250)
+
+    def held(self):
+        return self.win.model.annotations.for_page(self.win.model.pages[0].uid)
+
+    def test_the_note_tool_places_rather_than_selects(self):
+        from pdfarranger_qt.canvas import PageCanvas
+
+        self.win.set_tool(PageCanvas.NOTE)
+        self.assertTrue(self.canvas.marks_area())
+        self.assertFalse(self.canvas.marks_text())
+
+    def test_a_click_places_a_note_of_the_icon_s_size(self):
+        self.place(120, 200)
+        marks = self.held()
+        self.assertEqual(len(marks), 1)
+        self.assertEqual(marks[0].kind, markup.TEXT)
+        left, bottom, right, top = marks[0].rect
+        self.assertAlmostEqual(right - left, markup.NOTE_SIZE, places=3)
+        self.assertAlmostEqual(top - bottom, markup.NOTE_SIZE, places=3)
+
+    def test_the_point_clicked_is_the_icon_s_top_left(self):
+        """Not its centre. Every viewer anchors the icon to that corner, so a
+        note measured from anywhere else sits above where it was put."""
+        self.place(120, 200)
+        left, _bottom, _right, top = self.held()[0].rect
+        height = self.canvas._layout.page_height(0)
+        self.assertAlmostEqual(left, 120, delta=1.5)
+        self.assertAlmostEqual(height - top, 200, delta=1.5)
+
+    def test_placing_one_opens_its_editor(self):
+        """A note with nothing in it is not a mark anyone meant to make, so
+        the text is asked for as part of the same action."""
+        from pdfarranger_qt.canvas import PageCanvas
+
+        self.win.set_tool(PageCanvas.NOTE)
+        self.click(self.at(120, 200))
+        self.assertEqual(self.canvas.editing_note(), (0, 0))
+
+    def test_what_was_typed_is_kept(self):
+        self.place(text="ask legal about this")
+        self.assertEqual(self.held()[0].contents, "ask legal about this")
+
+    def test_a_note_carries_no_quadrilaterals(self):
+        """It marks a place, not a run of text, and `/QuadPoints` on a
+        `/Text` would be a claim about text it does not cover."""
+        self.place()
+        self.assertEqual(self.held()[0].quads, ())
+
+    def test_placing_and_writing_is_one_undo_step(self):
+        """The entry pushed for placing it already holds the state from
+        before the note existed, so one undo takes the note and its words
+        together rather than leaving an empty icon behind."""
+        before = self.win.model.undo.current
+        self.place()
+        self.assertEqual(self.win.model.undo.current, before + 1)
+        self.win.model.undo.undo()
+        settle(timeout_ms=250)
+        self.assertEqual(len(self.held()), 0)
+
+    def test_a_note_left_empty_leaves_nothing_behind(self):
+        """Not even an undo step that undoes nothing: the mark goes and the
+        entry placing it pushed is discarded."""
+        before = self.win.model.undo.current
+        self.place(text=None)
+        self.assertEqual(len(self.held()), 0)
+        self.assertEqual(self.win.model.undo.current, before)
+
+    def test_clicking_the_icon_opens_the_note_again(self):
+        self.place(text="the first draft")
+        self.click(self.at(125, 210))
+        self.assertEqual(self.canvas.editing_note(), (0, 0))
+        self.assertEqual(self.canvas._note[2].toPlainText(), "the first draft")
+
+    def test_the_icon_is_found_where_it_is_drawn(self):
+        self.place(120, 200)
+        found = self.canvas.note_at(self.at(125, 210))
+        self.assertIsNotNone(found)
+        self.assertEqual(found[0], 0)
+        self.assertEqual(found[1], 0)
+        self.assertIsNone(self.canvas.note_at(self.at(125, 260)),
+                          "a point well below the icon found one anyway")
+
+    def test_hovering_reads_it_without_opening_anything(self):
+        """A document covered in icons you have to click one at a time to
+        read is a filing cabinet."""
+        from PySide6.QtGui import QMouseEvent
+
+        self.place(text="read me without clicking")
+        self.send(QMouseEvent.Type.MouseMove, self.at(125, 210))
+        settle(timeout_ms=200)
+        self.assertEqual(self.canvas.viewport().toolTip(),
+                         "read me without clicking")
+        self.assertIsNone(self.canvas.editing_note())
+
+    def test_editing_the_text_keeps_the_note_in_place(self):
+        self.place(120, 200, "the first draft")
+        rect = self.held()[0].rect
+        self.canvas.edit_note(0, 0)
+        self.canvas._note[2].setPlainText("the second draft")
+        self.canvas.finish_note()
+        settle(timeout_ms=250)
+        self.assertEqual(self.held()[0].contents, "the second draft")
+        self.assertEqual(self.held()[0].rect, rect)
+
+    def test_emptying_an_existing_note_deletes_it(self):
+        """Until there is a command for deleting a mark, emptying one is the
+        only way to take it back -- and an icon claiming there is a note
+        where there is no text is a lie on the page."""
+        self.place(text="written, then thought better of")
+        self.canvas.edit_note(0, 0)
+        self.canvas._note[2].setPlainText("   ")
+        self.canvas.finish_note()
+        settle(timeout_ms=250)
+        self.assertEqual(len(self.held()), 0)
+
+    def test_a_deleted_note_comes_back_with_its_words(self):
+        self.place(text="do not lose this")
+        self.canvas.edit_note(0, 0)
+        self.canvas._note[2].setPlainText("")
+        self.canvas.finish_note()
+        settle(timeout_ms=250)
+        self.win.model.undo.undo()
+        settle(timeout_ms=250)
+        self.assertEqual([m.contents for m in self.held()],
+                         ["do not lose this"])
+
+    def test_escape_closes_the_editor_and_leaves_the_tool(self):
+        """Escape on the canvas means "stop marking up". Inside the editor it
+        means "done here", and taking it there is what stops one keystroke
+        doing both."""
+        from PySide6.QtCore import Qt
+        from PySide6.QtTest import QTest
+        from PySide6.QtWidgets import QApplication
+
+        from pdfarranger_qt.canvas import PageCanvas
+
+        self.win.set_tool(PageCanvas.NOTE)
+        self.click(self.at(120, 200))
+        self.canvas._note[2].setPlainText("typed, then escaped")
+        QTest.keyClick(QApplication.focusWidget(), Qt.Key_Escape)
+        settle(timeout_ms=250)
+        self.assertIsNone(self.canvas.editing_note())
+        self.assertEqual(self.canvas.tool(), PageCanvas.NOTE)
+        self.assertEqual(self.held()[0].contents, "typed, then escaped")
+
+    def test_placing_one_does_not_rebuild_the_reader(self):
+        rebuilds = []
+        real = self.win._load_reader
+        self.win._load_reader = lambda *a, **k: (rebuilds.append(1),
+                                                 real(*a, **k))[1]
+        self.place()
+        self.assertEqual(rebuilds, [])
+
+    def test_it_is_drawn_before_anything_is_exported(self):
+        from PySide6.QtGui import QImage
+
+        def amber():
+            shot = QImage(self.canvas.viewport().size(), QImage.Format_RGB32)
+            shot.fill(0xFFFFFFFF)
+            self.canvas.viewport().render(shot)
+            return sum(
+                1 for y in range(shot.height()) for x in range(shot.width())
+                if shot.pixelColor(x, y).red() > 200
+                and 170 < shot.pixelColor(x, y).green() < 235
+                and shot.pixelColor(x, y).blue() < 140)
+
+        blank = amber()
+        self.place()
+        self.canvas.verticalScrollBar().setValue(0)
+        settle(timeout_ms=250)
+        self.assertEqual(blank, 0)
+        self.assertGreater(amber(), 100)
+
+    def test_it_reaches_the_saved_file(self):
+        import io
+
+        from pdfarranger_qt.export import export
+
+        self.place(text="for the record")
+        out = io.BytesIO()
+        export(self.win.docs.files_for_export(), list(self.win.model.pages),
+               {}, [out], annotations=self.win.model.annotations)
+        with pikepdf.open(io.BytesIO(out.getvalue())) as written:
+            notes = [a for a in written.pages[0].get(pikepdf.Name.Annots, [])
+                     if str(a.get(pikepdf.Name.Subtype)) == "/Text"]
+            self.assertEqual(len(notes), 1)
+            self.assertEqual(str(notes[0].Contents), "for the record")
+            self.assertIn("/Name", notes[0])
+            self.assertNotIn("/QuadPoints", notes[0])
+
+    def test_the_saved_note_is_drawn_by_the_reader(self):
+        """PDFium draws a `/Text` with no appearance stream of its own --
+        measured, 1327 coloured pixels where a blank page has none -- which
+        is why this writes no `/AP`: the icon is one every viewer's users
+        already recognise, and ours would replace it with a rounded box."""
+        from PySide6.QtCore import QPoint, QSize
+        from PySide6.QtGui import QImage, QPainter
+        from PySide6.QtPdf import QPdfDocument, QPdfDocumentRenderOptions
+
+        from pdfarranger_qt.canvas import ANNOTATIONS
+        from pdfarranger_qt.export import export
+
+        self.place(120, 200, "drawn by the reader")
+        rect = self.held()[0].rect
+        out = temp_path("note-rendered.pdf")
+        export(self.win.docs.files_for_export(), list(self.win.model.pages),
+               {}, [out], annotations=self.win.model.annotations)
+
+        def ink(path):
+            document = QPdfDocument()
+            document.load(path)
+            size = document.pagePointSize(0)
+            pixels = QSize(int(size.width()), int(size.height()))
+            options = QPdfDocumentRenderOptions()
+            options.setScaledSize(pixels)
+            options.setRenderFlags(ANNOTATIONS)
+            raw = document.render(0, pixels, options)
+            flat = QImage(raw.size(), QImage.Format_RGB32)
+            flat.fill(0xFFFFFFFF)
+            painter = QPainter(flat)
+            painter.drawImage(QPoint(0, 0), raw)
+            painter.end()
+            return sum(
+                1
+                for y in range(int(size.height() - rect[3]),
+                               int(size.height() - rect[1]))
+                for x in range(int(rect[0]), int(rect[2]))
+                if flat.pixelColor(x, y).red() < 245
+                or flat.pixelColor(x, y).green() < 245
+                or flat.pixelColor(x, y).blue() < 245)
+
+        self.assertEqual(ink(TEXTED), 0,
+                         "the fixture already has ink where the note goes")
+        self.assertGreater(ink(out), 100)
+
+
+class TestANoteLandsUnderThePointer(unittest.TestCase):
+    """The turn is the whole of this (3.2's lesson, and D6's).
+
+    A viewer draws a note's icon at the top left of `/Rect` **in page space**
+    and then turns the page, so a rectangle expanded in page space puts the
+    icon wherever the turn happens to send it. Measured before the fix, for a
+    click at the same spot on the same page: drawn 22 pixels to the *left* of
+    the pointer at `/Rotate` 90, 28 up and to the left at 180, and 21 below it
+    at 270. Only at zero was the pointer on the icon's corner -- which is
+    exactly why a one-page upright fixture could not see this.
+    """
+
+    def setUp(self):
+        from PySide6.QtWidgets import QApplication  # noqa: F401
+
+        from pdfarranger_qt.mainwindow import MainWindow
+
+        self.win = MainWindow()
+        self.win.resize(900, 700)
+        self.win.show()
+
+    def tearDown(self):
+        self.win.modified = False
+        self.win.close()
+
+    def reading(self, angle):
+        self.win.open_paths([TEXTED])
+        settle(timeout_ms=900)
+        if angle:
+            self.win.model.rotate([0], angle)
+            settle(timeout_ms=400)
+        self.win.set_read_mode(True)
+        settle(timeout_ms=1300)
+        canvas = self.win.reader.canvas
+        canvas.verticalScrollBar().setValue(0)
+        settle(timeout_ms=200)
+        return canvas
+
+    def place_at(self, canvas, point):
+        from PySide6.QtCore import QPoint, QPointF, Qt
+        from PySide6.QtGui import QMouseEvent
+
+        from pdfarranger_qt.canvas import PageCanvas
+
+        self.win.set_tool(PageCanvas.NOTE)
+        for kind in (QMouseEvent.Type.MouseButtonPress,
+                     QMouseEvent.Type.MouseButtonRelease):
+            event = QMouseEvent(
+                kind, QPointF(point),
+                canvas.viewport().mapToGlobal(
+                    QPoint(int(point.x()), int(point.y()))),
+                Qt.LeftButton, Qt.LeftButton, Qt.NoModifier)
+            (canvas.mousePressEvent
+             if kind == QMouseEvent.Type.MouseButtonPress
+             else canvas.mouseReleaseEvent)(event)
+        settle(timeout_ms=250)
+        if canvas._note is not None:
+            canvas._note[2].setPlainText("under the pointer")
+            canvas.finish_note()
+            settle(timeout_ms=250)
+
+    def test_the_icon_s_corner_is_where_the_pointer_was(self):
+        from PySide6.QtCore import QPointF
+
+        for angle in (0, 90, 180, 270):
+            with self.subTest(angle=angle):
+                canvas = self.reading(angle)
+                self.assertEqual(canvas.page_box(0)[4], angle,
+                                 "the reader's page is not turned, so this "
+                                 "angle proves nothing")
+                spot = canvas.to_viewport(
+                    canvas._layout.from_page(0, QPointF(120, 200)))
+                self.place_at(canvas, spot)
+                marks = self.win.model.annotations.for_page(
+                    self.win.model.pages[0].uid)
+                self.assertEqual(len(marks), 1)
+                icon = canvas.note_icon_rect(0, marks[0])
+                self.assertAlmostEqual(icon.x(), spot.x(), delta=1.5)
+                self.assertAlmostEqual(icon.y(), spot.y(), delta=1.5)
+                self.win.modified = False
+                self.win.close()
+                self.setUp()
+
+    def test_it_is_found_a_few_pixels_inside_whatever_the_turn(self):
+        """Hit-tested in viewport pixels rather than page coordinates, because
+        a point measured down the *page* moves in a different direction on
+        screen once the page is turned -- which is how the first version of
+        this test managed to fail against correct code."""
+        from PySide6.QtCore import QPointF
+
+        for angle in (0, 90, 180, 270):
+            with self.subTest(angle=angle):
+                canvas = self.reading(angle)
+                spot = canvas.to_viewport(
+                    canvas._layout.from_page(0, QPointF(120, 200)))
+                self.place_at(canvas, spot)
+                inside = QPointF(spot.x() + 4, spot.y() + 4)
+                self.assertIsNotNone(
+                    canvas.note_at(inside),
+                    "the icon is not under the point that placed it")
+                self.win.modified = False
+                self.win.close()
+                self.setUp()
+
+
+class TestAMarkLivesInTheSourcePagesSpace(unittest.TestCase):
+    """Decision 6, which was written and then not coded for a day.
+
+    D6 says a mark is kept in the *source* page's space and multiplied by the
+    page's resize on the way out, and it says why: a mark stored in output
+    coordinates moves the next time its page is resized, because the space it
+    was measured in is gone. `_write_annotations` did not multiply, so that is
+    exactly what happened -- a note at (120, 572, 140, 592) on a page then
+    scaled by half was written there onto paper 306 by 396.
+
+    A crop and a turn really are free, as D6 claims, and that is checked
+    elsewhere: the reader's exported `/MediaBox` *is* the crop, in the original
+    page's numbers, and `/Rotate` survives into the exported page.
+    """
+
+    def setUp(self):
+        from PySide6.QtWidgets import QApplication  # noqa: F401
+
+        from pdfarranger_qt.mainwindow import MainWindow
+
+        self.win = MainWindow()
+        self.win.resize(900, 700)
+        self.win.show()
+
+    def tearDown(self):
+        self.win.modified = False
+        self.win.close()
+
+    def reading(self, scale=None):
+        self.win.open_paths([TEXTED])
+        settle(timeout_ms=900)
+        if scale is not None:
+            self.win.model.pages[0].scale = scale
+            self.win.model.touch([0])
+            settle(timeout_ms=300)
+        self.win.set_read_mode(True)
+        settle(timeout_ms=1400)
+        canvas = self.win.reader.canvas
+        canvas.verticalScrollBar().setValue(0)
+        settle(timeout_ms=200)
+        return canvas
+
+    def resize_to(self, scale):
+        self.win.set_read_mode(False)
+        settle(timeout_ms=300)
+        self.win.model.pages[0].scale = scale
+        self.win.model.touch([0])
+        settle(timeout_ms=300)
+
+    def place_note(self, canvas, x, y_down):
+        from PySide6.QtCore import QPoint, QPointF, Qt
+        from PySide6.QtGui import QMouseEvent
+
+        from pdfarranger_qt.canvas import PageCanvas
+
+        self.win.set_tool(PageCanvas.NOTE)
+        point = canvas.to_viewport(
+            canvas._layout.from_page(0, QPointF(x, y_down)))
+        for kind in (QMouseEvent.Type.MouseButtonPress,
+                     QMouseEvent.Type.MouseButtonRelease):
+            event = QMouseEvent(
+                kind, QPointF(point),
+                canvas.viewport().mapToGlobal(
+                    QPoint(int(point.x()), int(point.y()))),
+                Qt.LeftButton, Qt.LeftButton, Qt.NoModifier)
+            (canvas.mousePressEvent
+             if kind == QMouseEvent.Type.MouseButtonPress
+             else canvas.mouseReleaseEvent)(event)
+        settle(timeout_ms=250)
+        if canvas._note is not None:
+            canvas._note[2].setPlainText("in the page's own space")
+            canvas.finish_note()
+            settle(timeout_ms=250)
+        return point
+
+    def held(self):
+        return self.win.model.annotations.for_page(self.win.model.pages[0].uid)
+
+    def written(self, subtype="/Text"):
+        """``(mediabox, [rect, ...])`` for the marks of one subtype.
+
+        Filtered by subtype, because `text_and_link.pdf` carries two `/Link`
+        annotations of its own and they come out of the export first -- so
+        taking "the first annotation" reads a link's rectangle and says
+        nothing at all about the mark. Five of these tests asserted against a
+        link before this filtered.
+        """
+        import io
+
+        from pdfarranger_qt.export import export
+
+        out = io.BytesIO()
+        export(self.win.docs.files_for_export(), list(self.win.model.pages),
+               {}, [out], annotations=self.win.model.annotations)
+        with pikepdf.open(io.BytesIO(out.getvalue())) as doc:
+            page = doc.pages[0]
+            return ([float(v) for v in page.MediaBox],
+                    [[float(v) for v in a[pikepdf.Name.Rect]]
+                     for a in page.get(pikepdf.Name.Annots, [])
+                     if str(a.get(pikepdf.Name.Subtype)) == subtype])
+
+    def written_quadpoints(self, subtype="/Highlight"):
+        """`/QuadPoints` of the first mark of ``subtype`` in a real export.
+
+        Its own helper because `/Rect` cannot stand in for it: `to_dictionary`
+        builds the rectangle from `Annotation.rect`, so a version that scales
+        the rectangle and leaves the quadrilaterals writes a correct `/Rect`
+        over a shape still drawn at the old size -- and a test that reads only
+        the rectangle passes. That is what the first version of this did.
+        """
+        import io
+
+        from pdfarranger_qt.export import export
+
+        out = io.BytesIO()
+        export(self.win.docs.files_for_export(), list(self.win.model.pages),
+               {}, [out], annotations=self.win.model.annotations)
+        with pikepdf.open(io.BytesIO(out.getvalue())) as doc:
+            for annot in doc.pages[0].get(pikepdf.Name.Annots, []):
+                if str(annot.get(pikepdf.Name.Subtype)) != subtype:
+                    continue
+                points = annot.get(pikepdf.Name.QuadPoints)
+                return None if points is None else [float(v) for v in points]
+        return None
+
+    def test_a_note_stays_on_the_paper_when_its_page_is_resized(self):
+        """The defect D6 named, and the reason it named it."""
+        canvas = self.reading()
+        self.place_note(canvas, 120, 200)
+        self.assertEqual(len(self.held()), 1)
+        self.resize_to(0.5)
+        box, rects = self.written()
+        self.assertEqual(len(rects), 1)
+        left, bottom, right, top = rects[0]
+        self.assertGreaterEqual(left, box[0])
+        self.assertGreaterEqual(bottom, box[1])
+        self.assertLessEqual(right, box[2])
+        self.assertLessEqual(top, box[3],
+                             "the mark is off the top of the resized page")
+
+    def test_the_resize_moves_it_by_exactly_the_factor(self):
+        canvas = self.reading()
+        self.place_note(canvas, 120, 200)
+        before = self.held()[0].rect
+        self.resize_to(0.5)
+        _box, rects = self.written()
+        for got, want in zip(rects[0], [v * 0.5 for v in before]):
+            self.assertAlmostEqual(got, want, delta=0.5)
+
+    def test_the_mark_itself_is_not_touched_by_the_resize(self):
+        """Source space is the point: the stored rectangle is what it was, and
+        the arithmetic happens on the way out. Otherwise resizing twice
+        compounds, and resizing back does not come back."""
+        canvas = self.reading()
+        self.place_note(canvas, 120, 200)
+        before = self.held()[0].rect
+        self.resize_to(0.5)
+        self.assertEqual(self.held()[0].rect, before)
+        self.resize_to(1.0)
+        _box, rects = self.written()
+        for got, want in zip(rects[0], before):
+            self.assertAlmostEqual(got, want, delta=0.5)
+
+    def test_a_note_placed_on_a_resized_page_is_stored_undone(self):
+        """Placed on a page shown at half size, so what the canvas hands back
+        is half -- and the mark has to hold the source page's numbers."""
+        from pdfarranger_qt import markup
+
+        canvas = self.reading(scale=0.5)
+        self.assertEqual(canvas.page_scale(0), 0.5)
+        self.place_note(canvas, 60, 100)
+        left, bottom, right, top = self.held()[0].rect
+        self.assertAlmostEqual(right - left, markup.NOTE_SIZE / 0.5, delta=0.5)
+        self.assertAlmostEqual(top - bottom, markup.NOTE_SIZE / 0.5, delta=0.5)
+        _box, rects = self.written()
+        self.assertAlmostEqual(rects[0][2] - rects[0][0],
+                               markup.NOTE_SIZE, delta=0.5)
+
+    def test_it_is_placed_under_the_pointer_on_a_resized_page(self):
+        canvas = self.reading(scale=0.5)
+        point = self.place_note(canvas, 60, 100)
+        icon = canvas.note_icon_rect(0, self.held()[0])
+        self.assertAlmostEqual(icon.x(), point.x(), delta=1.5)
+        self.assertAlmostEqual(icon.y(), point.y(), delta=1.5)
+
+    def test_the_icon_is_drawn_the_size_a_viewer_draws_it(self):
+        """`markup.NOTE_SIZE` points, from the rectangle's lower left and
+        never the rectangle's own size -- which differ once the page has been
+        resized, and following the rectangle would draw an icon half the size
+        of the one in the saved file."""
+        from pdfarranger_qt import markup
+
+        canvas = self.reading()
+        self.place_note(canvas, 120, 200)
+        icon = canvas.note_icon_rect(0, self.held()[0])
+        self.assertAlmostEqual(icon.width() / canvas._layout.zoom,
+                               markup.NOTE_SIZE, delta=0.5)
+        self.resize_to(0.5)
+        canvas = self.reading_again()
+        icon = canvas.note_icon_rect(0, self.held()[0])
+        self.assertAlmostEqual(icon.width() / canvas._layout.zoom,
+                               markup.NOTE_SIZE, delta=0.5)
+
+    def reading_again(self):
+        self.win.set_read_mode(True)
+        settle(timeout_ms=1600)
+        canvas = self.win.reader.canvas
+        canvas.verticalScrollBar().setValue(0)
+        settle(timeout_ms=250)
+        return canvas
+
+    def test_a_highlight_s_quadrilaterals_are_scaled_too(self):
+        """Scaling the rectangle and leaving the quads puts the box in the
+        right place around a shape still drawn at the old size, which is the
+        mistake `_scale_annotation` exists to avoid for the marks a file
+        already carries."""
+        from PySide6.QtCore import QPointF
+
+        from pdfarranger_qt.canvas import PageCanvas
+
+        canvas = self.reading()
+        self.win.set_tool(PageCanvas.HIGHLIGHT)
+        canvas._anchor = (0, QPointF(70, 85))
+        canvas._extend_selection(0, QPointF(260, 92))
+        settle(timeout_ms=200)
+        found = canvas.selection_quads()
+        self.assertIsNotNone(found, "nothing was selected, so this proves "
+                                    "nothing about scaling quads")
+        canvas.mark_drawn.emit(PageCanvas.HIGHLIGHT, found[0], found[1])
+        settle(timeout_ms=250)
+        mark = self.held()[0]
+        self.assertTrue(mark.quads)
+        before = mark.quads[0]
+        self.resize_to(0.5)
+        _box, rects = self.written("/Highlight")
+        self.assertEqual(len(rects), 1)
+        for got, want in zip(rects[0], [v * 0.5 for v in before]):
+            self.assertAlmostEqual(got, want, delta=1.0)
+        # And the quadrilaterals themselves, which the rectangle cannot stand
+        # in for: see `written_quadpoints`.
+        left, bottom, right, top = [v * 0.5 for v in before]
+        points = self.written_quadpoints()
+        self.assertIsNotNone(points, "the highlight was written without "
+                                     "/QuadPoints, so this proves nothing")
+        for got, want in zip(points, [left, top, right, top,
+                                      left, bottom, right, bottom]):
+            self.assertAlmostEqual(got, want, delta=1.0)

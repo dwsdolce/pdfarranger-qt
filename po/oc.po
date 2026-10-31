@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-30 19:37+0000\n"
+"POT-Creation-Date: 2026-10-30 22:01+0000\n"
 "PO-Revision-Date: 2026-02-15 15:16+0100\n"
 "Last-Translator: Quentin PAGÈS\n"
 "Language: oc\n"
@@ -28,6 +28,11 @@ msgstr "_Enregistrar"
 #, python-brace-format
 msgid "Page {}"
 msgstr "Pagina {}"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Empty note"
+msgstr "Nòta voida"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
@@ -2052,6 +2057,16 @@ msgstr "Ecran complet"
 #: pdfarranger_qt/mainwindow.py
 msgid "Add Mark"
 msgstr "Apondre una marca"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Delete Note"
+msgstr "Suprimir la nòta"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Edit Note"
+msgstr "Modificar la nòta"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py

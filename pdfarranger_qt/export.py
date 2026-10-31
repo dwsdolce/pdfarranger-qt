@@ -730,8 +730,13 @@ def _write_annotations(pdf_output, pages, annotations) -> int:
             break
         marks = annotations.for_page(row.uid)
         if marks:
+            # Multiplied by the page's resize on the way out: a mark is kept
+            # in the source page's space (D6) and `_scale` has multiplied the
+            # space this page is written in. Without it a note on a page
+            # scaled by half went onto the paper at its old coordinates,
+            # which is off the page.
             written += markup.add_to_page(
-                pdf_output, pdf_output.pages[index], marks)
+                pdf_output, pdf_output.pages[index], marks, row.scale)
     return written
 
 

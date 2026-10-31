@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pdfarranger - Korean\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-30 19:37+0000\n"
+"POT-Creation-Date: 2026-10-30 22:01+0000\n"
 "PO-Revision-Date: 2026-05-25 00:41+0900\n"
 "Last-Translator: VenusGirl <venusgirl@outlook.com>\n"
 "Language: ko\n"
@@ -28,6 +28,11 @@ msgstr "저장(_S)"
 #, python-brace-format
 msgid "Page {}"
 msgstr "{} 페이지"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Empty note"
+msgstr "빈 메모"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
@@ -1932,6 +1937,16 @@ msgstr "전체 화면"
 #: pdfarranger_qt/mainwindow.py
 msgid "Add Mark"
 msgstr "표시 추가"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Delete Note"
+msgstr "메모 삭제"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Edit Note"
+msgstr "메모 편집"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py

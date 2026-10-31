@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  pdfarranger\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-30 19:37+0000\n"
+"POT-Creation-Date: 2026-10-30 22:01+0000\n"
 "PO-Revision-Date: 2023-10-22 00:28+0200\n"
 "Last-Translator: Lrss <dev@lrss.dk>\n"
 "Language: da\n"
@@ -28,6 +28,11 @@ msgstr "_Gem"
 #, python-brace-format
 msgid "Page {}"
 msgstr "Side {}"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Empty note"
+msgstr "Tom note"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
@@ -2068,6 +2073,16 @@ msgstr "Fuld skærm"
 #: pdfarranger_qt/mainwindow.py
 msgid "Add Mark"
 msgstr "Tilføj mærke"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Delete Note"
+msgstr "Slet note"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Edit Note"
+msgstr "Redigér note"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py

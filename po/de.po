@@ -15,7 +15,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  pdfarranger\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-30 19:37+0000\n"
+"POT-Creation-Date: 2026-10-30 22:01+0000\n"
 "PO-Revision-Date: 2025-07-09 08:35+0200\n"
 "Last-Translator: Sebastian Scherch\n"
 "Language: de\n"
@@ -36,6 +36,11 @@ msgstr "_Speichern"
 #, python-brace-format
 msgid "Page {}"
 msgstr "Seite {}"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Empty note"
+msgstr "Leere Notiz"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
@@ -2074,6 +2079,16 @@ msgstr "Vollbild"
 #: pdfarranger_qt/mainwindow.py
 msgid "Add Mark"
 msgstr "Markierung hinzufügen"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Delete Note"
+msgstr "Notiz löschen"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Edit Note"
+msgstr "Notiz bearbeiten"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py

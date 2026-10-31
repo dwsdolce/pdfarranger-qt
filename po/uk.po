@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: unnamed project\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-30 19:37+0000\n"
+"POT-Creation-Date: 2026-10-30 22:01+0000\n"
 "PO-Revision-Date: 2026-05-27 19:30+0300\n"
 "Last-Translator: Dymko <Dymkovych@proton.me>\n"
 "Language: uk\n"
@@ -31,6 +31,11 @@ msgstr "_Зберегти"
 #, python-brace-format
 msgid "Page {}"
 msgstr "Сторінка {}"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Empty note"
+msgstr "Порожня нотатка"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
@@ -2044,6 +2049,16 @@ msgstr "Повний екран"
 #: pdfarranger_qt/mainwindow.py
 msgid "Add Mark"
 msgstr "Додати позначку"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Delete Note"
+msgstr "Вилучити нотатку"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Edit Note"
+msgstr "Змінити нотатку"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py

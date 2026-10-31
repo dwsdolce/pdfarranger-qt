@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-30 19:37+0000\n"
+"POT-Creation-Date: 2026-10-30 22:01+0000\n"
 "PO-Revision-Date: 2023-06-12 11:22+0300\n"
 "Last-Translator: Yaron Shahrabani <sh.yaron@gmail.com>\n"
 "Language: he\n"
@@ -29,6 +29,11 @@ msgstr "_שמירה"
 #, python-brace-format
 msgid "Page {}"
 msgstr "עמוד {}"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Empty note"
+msgstr "הערה ריקה"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
@@ -2025,6 +2030,16 @@ msgstr "מסך מלא"
 #: pdfarranger_qt/mainwindow.py
 msgid "Add Mark"
 msgstr "הוספת סימון"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Delete Note"
+msgstr "מחיקת הערה"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Edit Note"
+msgstr "עריכת הערה"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py

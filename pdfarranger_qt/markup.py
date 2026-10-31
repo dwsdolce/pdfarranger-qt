@@ -62,6 +62,56 @@ QUADDED = (HIGHLIGHT, STRIKEOUT)
 #: paper, which is not what anybody means by annotating a document.
 PRINTABLE = 4
 
+#: How big a sticky note's icon is, in points. A `/Text` annotation is the one
+#: mark whose size is not its author's to choose: measured against PDFium, the
+#: icon comes out **20 by 20 points from the lower left corner of `/Rect`,
+#: upward and to the right** -- for a `/Rect` of 20x20, of 60x60, of 60x24 and
+#: of no size at all, and at `/Rotate` 0, 90, 180 and 270, which all put it on
+#: the same page-space box. 1327 coloured pixels every time.
+#:
+#: The lower left, not the upper: a 24 point tall rectangle gets an icon 20
+#: tall sitting on its *bottom* edge. A square rectangle of exactly this size
+#: cannot tell the two apart, which is what made the first reading of this
+#: "the top left" -- the box is the same either way.
+#:
+#: The rectangle is written at that size anyway, so that what the file says is
+#: there is where the icon is drawn, and a click lands on a note in this
+#: reader exactly where it would in any other.
+NOTE_SIZE = 20.0
+
+
+def icon_box(rect) -> "tuple[float, float, float, float]":
+    """The box a note's icon is actually drawn in, given its rectangle.
+
+    `NOTE_SIZE` square from the rectangle's lower left corner, which is what
+    a viewer draws whatever the rectangle says -- so this is what to hit-test
+    and what to draw, rather than the rectangle itself. The two are the same
+    box for a note placed here and different for one whose page has since been
+    resized, because the resize multiplies the rectangle and leaves the icon
+    the size it was.
+    """
+    left, bottom = rect[0], rect[1]
+    return (left, bottom, left + NOTE_SIZE, bottom + NOTE_SIZE)
+
+
+def note_rect(x: float, top: float,
+              size: float = NOTE_SIZE) -> "tuple[float, float, float, float]":
+    """The rectangle a note placed at ``(x, top)`` is stored with.
+
+    ``top`` is the top of the icon as drawn, so the rectangle runs down from
+    it: a viewer anchors the icon to the rectangle's *lower* left and draws
+    upward, and a rectangle of exactly the icon's size therefore is the icon's
+    box. Measured from the pointer rather than centred on it, because a note
+    that appears half its own height above the click is a note placed
+    somewhere you did not click.
+
+    ``size`` is the icon's size *in the space this rectangle is in*. The icon
+    is `NOTE_SIZE` on the page a reader draws, so on a page resized to half
+    the mark holds twice that: the source page's space is the output's divided
+    by the resize, and the resize multiplies it back on the way out.
+    """
+    return (x, top - size, x + size, top)
+
 
 def pdf_date(when: Optional[datetime.datetime] = None) -> str:
     """`D:YYYYMMDDHHmmSS+HH'mm'`, which is what `/M` wants."""
@@ -168,6 +218,26 @@ class Annotations:
         return f"Annotations({len(self)} on {len(self._by_page)} page(s))"
 
 
+def scaled(annotation: Annotation, factor: float) -> Annotation:
+    """``annotation`` with every coordinate multiplied by ``factor``.
+
+    A mark is kept in the source page's space (D6) and a resized page's space
+    is that one multiplied, so this is what turns the one into the other on
+    the way out. Both the rectangle and the quadrilaterals, because they are
+    in the same space and scaling one without the other puts the box in the
+    right place around a shape still drawn at the old size -- which is the
+    same mistake `export._scale_annotation` exists to avoid for the marks the
+    file already carries.
+    """
+    if factor == 1:
+        return annotation
+    copy_of = annotation.duplicate()
+    copy_of.rect = tuple(v * factor for v in annotation.rect)
+    copy_of.quads = tuple(tuple(v * factor for v in quad)
+                          for quad in annotation.quads)
+    return copy_of
+
+
 def to_dictionary(pdf, annotation: Annotation) -> pikepdf.Dictionary:
     """``annotation`` as a PDF annotation dictionary in ``pdf``.
 
@@ -184,8 +254,19 @@ def to_dictionary(pdf, annotation: Annotation) -> pikepdf.Dictionary:
         M=pikepdf.String(annotation.created),
     )
     if annotation.kind == TEXT:
-        # The icon a viewer draws. /Note is the one every viewer has.
+        # The icon a viewer draws. /Note is the one every viewer has, and
+        # PDFium draws the same glyph whatever this says -- measured, the
+        # same 1327 pixels for /Comment, /Help, /Key, /Star, for no /Name at
+        # all and for a name that is not in the specification. It is written
+        # for the viewers that do look at it.
         entry[pikepdf.Name.Name] = pikepdf.Name("/Note")
+        # No appearance stream, and this is the one mark where that is a
+        # decision rather than a shortcut. A highlight carries one because a
+        # viewer is only recommended to draw the quadrilaterals; a note's
+        # appearance is an *icon*, and every viewer already has one its users
+        # recognise. Measured: PDFium draws a note with no /AP in 1327 pixels
+        # and one with an /AP of ours in 1600 -- the stream does not rescue a
+        # file, it replaces a familiar balloon with our rounded box.
     if annotation.kind in QUADDED:
         entry[pikepdf.Name.QuadPoints] = pikepdf.Array(
             [v for quad in annotation.quads for v in _quad_points(quad)])
@@ -262,11 +343,16 @@ def bounding_rect(quads) -> "tuple":
     return (min(lefts), min(bottoms), max(rights), max(tops))
 
 
-def add_to_page(pdf, page, marks) -> int:
-    """Write ``marks`` onto one output page. Returns how many."""
+def add_to_page(pdf, page, marks, factor: float = 1.0) -> int:
+    """Write ``marks`` onto one output page. Returns how many.
+
+    ``factor`` is the page's resize, which the marks are *not* in: they are in
+    the source page's space (D6), so a page written at half size takes its
+    marks multiplied by a half.
+    """
     written = 0
     for annotation in marks:
-        entry = to_dictionary(pdf, annotation)
+        entry = to_dictionary(pdf, scaled(annotation, factor))
         if pikepdf.Name.Annots not in page:
             page[pikepdf.Name.Annots] = pdf.make_indirect(pikepdf.Array([]))
         page[pikepdf.Name.Annots].append(entry)

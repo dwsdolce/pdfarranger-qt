@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pdfarranger master\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-30 19:37+0000\n"
+"POT-Creation-Date: 2026-10-30 22:01+0000\n"
 "PO-Revision-Date: 2026-09-04 09:59+0000\n"
 "Last-Translator: Lumenman <28367232+Lumenman@users.noreply.github.com>\n"
 "Language: ru\n"
@@ -31,6 +31,11 @@ msgstr "_Сохранить"
 #, python-brace-format
 msgid "Page {}"
 msgstr "Страница {}"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Empty note"
+msgstr "Пустая заметка"
 
 #: pdfarranger_qt/canvas.py
 msgid "Open Link"
@@ -1925,6 +1930,16 @@ msgstr "Полноэкранный режим"
 #: pdfarranger_qt/mainwindow.py
 msgid "Add Mark"
 msgstr "Добавить пометку"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Delete Note"
+msgstr "Удаление заметки"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Edit Note"
+msgstr "Правка заметки"
 
 #: pdfarranger_qt/mainwindow.py
 msgid "_File"

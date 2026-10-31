@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PDF-Shuffler 0.7\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-30 19:37+0000\n"
+"POT-Creation-Date: 2026-10-30 22:01+0000\n"
 "PO-Revision-Date: 2025-05-26 10:43+0200\n"
 "Last-Translator: Heimen Stoffels <vistausss@fastmail.com>\n"
 "Language: nl\n"
@@ -32,6 +32,11 @@ msgstr "Op_slaan"
 #, python-brace-format
 msgid "Page {}"
 msgstr "Pagina {}"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Empty note"
+msgstr "Lege notitie"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
@@ -2082,6 +2087,16 @@ msgstr "Volledig scherm"
 #: pdfarranger_qt/mainwindow.py
 msgid "Add Mark"
 msgstr "Markering toevoegen"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Delete Note"
+msgstr "Notitie verwijderen"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Edit Note"
+msgstr "Notitie bewerken"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
