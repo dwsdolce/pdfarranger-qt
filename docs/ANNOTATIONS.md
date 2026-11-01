@@ -378,8 +378,8 @@ after that.
 | Cloud | Polygon | `/Polygon` `/IT /PolygonCloud`, `/BE /I` | not started |
 | Connected lines | Polygonal Line | `/PolyLine`, `/Vertices` | not started |
 | Stamps palette | the stamp's name | `/Stamp`, `/Name`, and an `/AP` we do not draw | O8 |
-| Add signature | -- | **page content, not an annotation** | O7 |
-| Add initials | -- | **page content, not an annotation** | O7 |
+| Add signature | -- | **page content, not an annotation** | not here, D13 |
+| Add initials | -- | **page content, not an annotation** | not here, D13 |
 
 Twenty tools, none of them finished. Three can write their mark and save
 it -- the note, the highlight and the strikethrough -- which is one
@@ -392,8 +392,8 @@ document, the signature is 1334 ink pixels with annotations off and 1334 with,
 the initials 463 either way. That is why they already render here with no code
 of ours, why they survived the owner's trip through a printer and a scanner,
 and why nothing in M1 to M12 reaches them -- there is no annotation to select,
-recolour or delete. Whether that is the right way for *us* to write them is
-O7.
+recolour or delete. Whether that would be the right way for *us* to write
+them was O7, and it is moot: D13 does not offer the tool.
 
 Signing with a digital ID is the one thing a user would call a tool that is
 not here at all, and is out of scope under **Not here**.
@@ -944,18 +944,42 @@ next what it needs.
 
 | # | Step | Depends on | Done when | State |
 |---|---|---|---|---|
-| 4.1 | Every mark in the test document read into the model | 3.1 | all of them round-trip through a save unchanged, and each one can be found by a click | round trip proved, model not started |
+| 4.1 | Every mark in the test document survives a save | 3.1 | every annotation in the document comes back from an export unchanged | **done 2026-10-31** |
 | 4.2 | The tool surface | 4.1 | the strip opens from the toolbar, arms a tool, shows its attributes and disarms on Escape | |
-| 4.3 | One family through: Highlight, Underline, Strikethrough | 4.2 | all three make, select, recolour, resize, delete and reopen | |
-| 4.4 | The remaining tools, one at a time | 4.3 | -- | |
+| 4.3 | One family through: Highlight, Underline, Strikethrough | 4.2 | all three make, select by clicking, recolour, resize, delete and reopen -- and those three kinds are in the model whether the user made them or the file arrived with them | |
+| 4.4 | The remaining tools, one at a time | 4.3 | each tool brings its own kinds into the model as it arrives | |
 
-**4.1 first because it has no screen.** Reading what is already in a document
-into the model is underneath M1, M2, M5, M13 and M15, it is absent today --
-`markup.Annotations.add` has exactly one caller, a user gesture -- and it can
-be proved entirely against the test document with no design decisions in it.
-Until it exists, a mark that arrived with the file can be seen and nothing
-else; what Part 1 draws comes from PDFium reading each `/AP`, and we model
-none of it.
+**4.1 first because it has no screen**, and it is done. A document that goes
+through this application comes out with every annotation it went in with:
+proved on all 180 marks in the test document, on every fixture, and on 8,697
+annotations across the validation corpus. No window, no gesture, no model.
+
+**Nothing is editable at the end of it, and that is the point.** The marks
+survive because they *travel with the page* -- `copy_foreign` carries each one
+across as the dictionary it already was, and at no point does this application
+look at a mark, understand it or hold it. `markup.Annotations` is empty for
+every document opened and `markup.Annotations.add` still has exactly one
+caller, a user gesture. Editing begins at 4.3.
+
+**Which is what lets the work go one tool at a time.** A mark is modelled by
+the step that gives it a tool: 4.3 reads `/Highlight`, `/Underline` and
+`/StrikeOut` into the model because recolouring one needs an object to
+change, and 4.4 does the same for each kind as its tool arrives. Everything
+with no tool yet stays a passenger, written back as the dictionary it came in
+as. The test document holds eighteen subtypes and `markup.KINDS` holds three;
+the gap is not a backlog, it is the sixteen kinds that nothing is asking to
+edit yet.
+
+So *lose nothing* does not wait for the model to be finished -- it is already
+true, and it stays true by construction while the model is widened one tool
+at a time.
+
+**There is an ownership question waiting at 4.3.** `markup.add_to_page`
+*appends* to a page's `/Annots`, and a page reaches export already carrying
+the annotations it was copied with. The moment a mark is both in the file and
+in the model it would be written twice, so the step that first reads a file's
+marks in has to decide what export writes from. Not yet decided, and it does
+not need to be until 4.3.
 
 **4.1 has already found one thing, before any of it was built.** Round-tripping
 `corpus/Markup Test Case.pdf` through `export()` failed outright -- qpdf
@@ -1291,53 +1315,6 @@ decided, not lost.
   work, but it is the same premise change, and D1 and D13 deliberately pinned
   the `QSettings` scope so a rename cannot orphan saved state. A rename would
   also move the macOS bundle identifier, which carries the Finder association.
-- **O7. Whether a signature or initials are written as page content, the way
-  Acrobat writes them, or as an annotation.** Reader's Fill and Sign puts the
-  drawing straight into the content stream -- measured above, and the reason
-  the owner's printed-and-scanned copy still carried it. Content is what every
-  other reader will show, and it cannot be lost by a viewer that ignores
-  annotations. But it is also the one mark in the whole set that cannot be
-  selected, recoloured, deleted or undone after a save, because there is no
-  annotation there to act on, and it edits the page itself in an application
-  whose entire premise is that it does not. A `/Stamp` with the drawing as its
-  `/AP` would behave like every other mark and go through M1, M2 and M5 for
-  free.
-
-  **Using the Signature or Initials tool locks the form**, which is a second
-  cost of the content route and easy to miss. Established by the owner's
-  trial, 2026-10-31: four files derived from one control, each differing from
-  it by a single use of the tool. The control carries 82 fields at `/Ff` 0, no
-  `/ADBE_FillSignInfo` and no drawn ink. All four of the others carry 82
-  fields at `/Ff` 1, ReadOnly, a `/Root /ADBE_FillSignInfo << /Version 100 >>`
-  and a form XObject of some 49 stroke operators added to one page's content
-  stream. Reader says it out loud: placing the drawing raises "The author of
-  this form has specified the fields which you can fill", and the save then
-  offers a certified copy. The lock follows the tool and not one spot on one
-  page -- three of the four carry a 138x46 pt signature on page 3, the fourth
-  a 48x46 pt initials block on page 4 with page 3 untouched, and all four lock
-  alike.
-
-  Nothing is signed in any of them. None is encrypted, none has `/Perms` or
-  `/DocMDP`, and no `/Sig` field holds a `/V` anywhere in the series. The lock
-  is one bit per field with nothing cryptographic behind it, and all four are
-  incremental updates, so each still physically contains its own unlocked
-  field definitions in the revision underneath. Which field the drawing goes
-  in does not matter either: the owner put the last one in an ordinary name
-  field, a `/Tx`, rather than a signature field, so the lock is not the `/Sig`
-  widget nor anything scripted behind it. What the series does not separate is
-  whether a drawing placed clear of every field would lock the form too; the
-  owner's account is that the tool was used in a field each time, and the
-  ink's page position could not be recovered from the content stream to check
-  that independently.
-
-  This application already honours `/Ff` 1 on purpose -- `FormField.fillable`
-  in `forms.py` excludes a read-only field, "the document saying no" -- so a
-  document that has been through Reader's Fill and Sign arrives here
-  unfillable, and our own refusal to fill is what the user sees. Whether to
-  copy the lock is a question separate from where the drawing goes, and it
-  arises only if the drawing goes into content: a `/Stamp` touches no field.
-
-  Not decided.
 - **O8. Which stamps, if any, this application offers.** Showing them is
   already free: 24 in the test document, every one with its own `/AP`, all
   drawn by our renderer with no code. Offering them is a different question.
@@ -1694,6 +1671,39 @@ and `forms.is_signed` had always held that an empty `/Sig` field is an
 invitation to sign rather than a signature, while `_strip_signatures` did not
 ask. Five fields across two real documents were destroyed by a save that had
 nothing to protect. The test is `/V`, everywhere.
+
+**13. The signature and initials tools are not offered.** Taken by the owner
+on 2026-10-31, closing O7. That question asked where a signature or initials
+would be written if we wrote them -- into the page's content stream, the way
+Reader's Fill and Sign does, or as a `/Stamp` with the drawing as its `/AP`.
+It does not arise: Acrobat Reader's three functions are Read, Fill Forms and
+Review, signing belongs to Fill Forms, and signing is not supported here. A
+tool we do not offer has no placement to choose.
+
+The measurements O7 collected are kept as evidence rather than discarded,
+because they explain a document rather than a design. Reader's Fill and Sign
+writes the drawing into the content stream, which is why it survives printing
+and scanning and why it renders here with no code of ours. And **using the
+tool locks the form**: established by the owner's trial of four files derived
+from one control, each differing by a single use of the tool. The control
+carries 82 fields at `/Ff` 0 and no `/ADBE_FillSignInfo`; all four others
+carry 82 fields at `/Ff` 1, ReadOnly, a `/Root /ADBE_FillSignInfo << /Version
+100 >>` and a form XObject of some 49 stroke operators in one page's content.
+The lock follows the tool rather than a place on a page -- three put a 138x46
+pt signature on page 3, the fourth a 48x46 pt initials block on page 4 with
+page 3 untouched, and all four lock alike -- and the field type is irrelevant,
+the last one going into an ordinary `/Tx` name field. Nothing is signed in any
+of them: no encryption, no `/Perms`, no `/DocMDP`, and no `/Sig` field holding
+a `/V` anywhere in the series. One bit per field, with nothing cryptographic
+behind it.
+
+**We never write that lock, and we go on honouring it.** Not writing it
+follows from not having the tool. Honouring it is older and separate:
+`FormField.fillable` excludes a read-only field because that is the document
+saying no, so a form that has been through Reader's Fill and Sign arrives
+here unfillable and our refusal is what the user sees. Dropping that would
+make a document Acrobat locked fillable here, which is the opposite of the
+rule.
 
 ## Done
 
