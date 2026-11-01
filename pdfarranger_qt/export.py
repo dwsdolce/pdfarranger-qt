@@ -467,13 +467,40 @@ def _append_page(current_page, copied_pages, pdf_output, row):
     if not duplicate and all(a.is_indirect for a in annots):
         new_page.Annots = pikepdf.Array(
             [pdf_output.copy_foreign(a) for a in annots])
-        return
-    # A duplicate, or a page whose annotations are written inline and so
-    # cannot be copied one at a time.
-    pdf_temp = pikepdf.Pdf.new()
-    pdf_temp.pages.append(current_page)
-    indirect_annots = pdf_temp.make_indirect(pdf_temp.pages[0].Annots)
-    new_page.Annots = pdf_output.copy_foreign(indirect_annots)
+    else:
+        # A duplicate, or a page whose annotations are written inline and so
+        # cannot be copied one at a time.
+        pdf_temp = pikepdf.Pdf.new()
+        pdf_temp.pages.append(current_page)
+        indirect_annots = pdf_temp.make_indirect(pdf_temp.pages[0].Annots)
+        new_page.Annots = pdf_output.copy_foreign(indirect_annots)
+
+
+def _repoint_annotations(pdf_output) -> None:
+    """Aim each annotation's ``/P`` at the page it is actually on.
+
+    ``/P`` is an indirect reference to the annotation's own page, so copying
+    an annotation copies that page too -- and the passenger it drags in is
+    not the one the output's tree holds, which arrives by the separate route
+    of ``pages.append``. The reference stays a valid reference to an object
+    that is no longer a page, which a reader looking up an annotation's page
+    by ``/P`` instead of by walking ``/Annots`` cannot follow. Measured across
+    the fixtures before this: 164 annotations arriving with every ``/P``
+    resolving and leaving with all 164 aimed at an orphan.
+
+    Called at the end of a transform pass rather than while pages are being
+    copied, because a page object is not final until that pass is done:
+    scaling builds a new page and assigns it over the old one, so a reference
+    fixed up any earlier names exactly what got discarded.
+
+    The key is optional, and the forty-six annotations in the markup sample
+    that arrive without one stay without one. Adding it would be its own
+    unasked-for change, which is the thing this is here to stop.
+    """
+    for page in pdf_output.pages:
+        for annot in page.obj.get(pikepdf.Name.Annots) or []:
+            if pikepdf.Name.P in annot:
+                annot[pikepdf.Name.P] = page.obj
 
 
 #: How deep a field tree is walked looking for the root. A widget is often its
@@ -530,6 +557,10 @@ def _strip_signatures(pdf_output) -> int:
                     or _field_kind(annot) != pikepdf.Name.Sig):
                 kept.append(annot)
                 continue
+            if not _is_signed_field(annot):
+                # Nothing has been signed here, so there is nothing to strip.
+                kept.append(annot)
+                continue
             stripped += 1
             _blank_signature(annot)
             if _has_drawing(annot):
@@ -541,6 +572,35 @@ def _strip_signatures(pdf_output) -> int:
         if len(kept) != len(annots):
             page[pikepdf.Name.Annots] = pikepdf.Array(kept)
     return stripped
+
+
+def _is_signed_field(annot) -> bool:
+    """Whether this ``/Sig`` field has been signed, or is waiting to be.
+
+    The rule the rest of this codebase already states, in
+    ``forms.signatures_in``: *an empty ``/Sig`` field is a placeholder for a
+    future signer and locks nothing*. ``forms.is_signed`` decides on the same
+    basis, and it is what the window asks before refusing to fill a field.
+
+    Until 2026-10-31 this function did not exist and the strip ran on every
+    ``/Sig`` widget, signed or not, which destroyed form fields that nobody
+    had touched. Measured across the corpus: three visible signature lines on
+    a VA disability form, carrying no appearance stream, were deleted
+    outright by opening the file and saving it, and two placeholders in the
+    markup sample came out as blank ``/Stamp`` annotations that could never
+    be signed. In both cases ``/V`` was absent -- no signature, no
+    certification, nothing to protect.
+
+    Inherited like the rest of a field's attributes, so it is looked for up
+    the tree and not only on the widget.
+    """
+    node, depth = annot, 0
+    while node is not None and depth < _FIELD_DEPTH:
+        if pikepdf.Name.V in node:
+            return node[pikepdf.Name.V] is not None
+        node = node.get(pikepdf.Name.Parent)
+        depth += 1
+    return False
 
 
 def _blank_signature(annot) -> None:
@@ -665,7 +725,16 @@ def _restore_acroform(pdf_input, pdf_output):
                         into[key] = pdf_output.copy_foreign(
                             pdf.make_indirect(entry))
             elif name not in resources:
-                resources[name] = value
+                # Not only dictionaries live under /DR. A squiggly underline
+                # puts a tiling Pattern *stream* there, and assigning it
+                # straight across leaves an object owned by the input in the
+                # output, which qpdf refuses at save time with "unexpected
+                # object id encountered in getCompressibleObjGens". Every form
+                # document in the corpus had dictionaries only, so this went
+                # unseen until a document carried one.
+                resources[name] = (
+                    pdf_output.copy_foreign(pdf.make_indirect(value))
+                    if value.is_indirect else value)
     if len(resources):
         acroform[pikepdf.Name.DR] = resources
     pdf_output.Root[pikepdf.Name.AcroForm] = pdf_output.make_indirect(acroform)
@@ -803,6 +872,10 @@ def _copy_n_transform(pdf_input, pdf_output, pages, quit_flag=None,
                 pdf_output.pages[i].add_underlay(layer_page, rect)
             # Remove the temporarily added page
             del pdf_output.pages[i + 1]
+
+    # Last, because every step above can replace a page object and an
+    # annotation's /P has to name the one that survived.
+    _repoint_annotations(pdf_output)
 
 
 def get_max_pdf_version(pdf_list: List[pikepdf.Pdf]) -> str:
@@ -1067,6 +1140,10 @@ def _transform_job(pdf_output: pikepdf.Pdf, pages: List[Page], quit_flag=None) -
                 pdf_output.pages[i].add_underlay(pdf_output.pages[i + 1], rect)
             # Remove the temporarily added page
             del pdf_output.pages[i + 1]
+
+    # Last, because every step above can replace a page object and an
+    # annotation's /P has to name the one that survived.
+    _repoint_annotations(pdf_output)
 
 
 def _ensure_trailer_size(pdf_output: pikepdf.Pdf) -> None:
