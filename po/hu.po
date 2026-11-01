@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-30 22:01+0000\n"
+"POT-Creation-Date: 2026-11-01 05:00+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: hu\n"
@@ -2173,6 +2173,11 @@ msgstr "Új_ra: %s"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
+msgid "Signed — read only"
+msgstr "Aláírva — csak olvasható"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
 #, python-format
 msgid "%d page selected"
 msgid_plural "%d pages selected"
@@ -2289,6 +2294,23 @@ msgstr "Nem sikerült új ablakot nyitni."
 #: pdfarranger_qt/mainwindow.py
 msgid "Open"
 msgstr "Megnyitás"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid ""
+"%s is signed. A signed document is read only and cannot be combined with "
+"another, so open it on its own."
+msgstr ""
+"A(z) %s alá van írva. Az aláírt dokumentum csak olvasható, és nem "
+"egyesíthető másikkal, ezért nyissa meg önmagában."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "This document is signed, so it is read only and nothing can be added to it."
+msgstr ""
+"Ez a dokumentum alá van írva, ezért csak olvasható, és semmit sem lehet "
+"hozzáadni."
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py

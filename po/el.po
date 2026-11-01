@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PDF Arranger 1.9.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-30 22:01+0000\n"
+"POT-Creation-Date: 2026-11-01 05:00+0000\n"
 "PO-Revision-Date: 2023-06-12 10:30+0300\n"
 "Last-Translator: Manussos Pulinakis "
 "<38626261+manussos@users.noreply.github.com>\n"
@@ -2203,6 +2203,11 @@ msgstr "Επανάλη_ψη %s"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
+msgid "Signed — read only"
+msgstr "Υπογεγραμμένο — μόνο για ανάγνωση"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
 #, python-format
 msgid "%d page selected"
 msgid_plural "%d pages selected"
@@ -2319,6 +2324,23 @@ msgstr "Δεν ήταν δυνατό το άνοιγμα νέου παραθύρ
 #: pdfarranger_qt/mainwindow.py
 msgid "Open"
 msgstr "Άνοιγμα"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid ""
+"%s is signed. A signed document is read only and cannot be combined with "
+"another, so open it on its own."
+msgstr ""
+"Το %s είναι υπογεγραμμένο. Ένα υπογεγραμμένο έγγραφο είναι μόνο για ανάγνωση"
+" και δεν μπορεί να συνδυαστεί με άλλο, γι' αυτό ανοίξτε το μόνο του."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "This document is signed, so it is read only and nothing can be added to it."
+msgstr ""
+"Αυτό το έγγραφο είναι υπογεγραμμένο, επομένως είναι μόνο για ανάγνωση και "
+"δεν μπορεί να προστεθεί τίποτα σε αυτό."
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py

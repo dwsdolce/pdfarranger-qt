@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PDF-Shuffler 0.7\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-30 22:01+0000\n"
+"POT-Creation-Date: 2026-11-01 05:00+0000\n"
 "PO-Revision-Date: 2021-12-30 17:13+0100\n"
 "Last-Translator: Toratora <darex7@o2.pl>\n"
 "Language: pl_PL\n"
@@ -2203,6 +2203,11 @@ msgstr "_Ponów %s"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
+msgid "Signed — read only"
+msgstr "Podpisany — tylko do odczytu"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
 #, python-format
 msgid "%d page selected"
 msgid_plural "%d pages selected"
@@ -2327,6 +2332,23 @@ msgstr "Nie udało się otworzyć nowego okna."
 #: pdfarranger_qt/mainwindow.py
 msgid "Open"
 msgstr "Otwórz"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid ""
+"%s is signed. A signed document is read only and cannot be combined with "
+"another, so open it on its own."
+msgstr ""
+"%s jest podpisany. Podpisany dokument jest tylko do odczytu i nie można go "
+"łączyć z innym, więc otwórz go osobno."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "This document is signed, so it is read only and nothing can be added to it."
+msgstr ""
+"Ten dokument jest podpisany, więc jest tylko do odczytu i nie można nic do "
+"niego dodać."
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py

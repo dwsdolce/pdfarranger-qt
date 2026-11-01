@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  pdfarranger\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-30 22:01+0000\n"
+"POT-Creation-Date: 2026-11-01 05:00+0000\n"
 "PO-Revision-Date: 2026-01-21 05:07+0100\n"
 "Last-Translator: Ekaterine Papava <papava.e@gtu.ge>\n"
 "Language: ka\n"
@@ -2131,6 +2131,11 @@ msgstr "%s-ის გამეო_რება"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
+msgid "Signed — read only"
+msgstr "ხელმოწერილი — მხოლოდ კითხვისთვის"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
 #, python-format
 msgid "%d page selected"
 msgid_plural "%d pages selected"
@@ -2245,6 +2250,23 @@ msgstr "ახალი ფანჯრის გახსნა შეუძლ
 #: pdfarranger_qt/mainwindow.py
 msgid "Open"
 msgstr "გახსნა"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid ""
+"%s is signed. A signed document is read only and cannot be combined with "
+"another, so open it on its own."
+msgstr ""
+"%s ხელმოწერილია. ხელმოწერილი დოკუმენტი მხოლოდ კითხვისთვისაა და სხვასთან ვერ "
+"გაერთიანდება, ამიტომ ცალკე გახსენით."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "This document is signed, so it is read only and nothing can be added to it."
+msgstr ""
+"ეს დოკუმენტი ხელმოწერილია, ამიტომ მხოლოდ კითხვისთვისაა და მას ვერაფერს "
+"დაამატებთ."
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py

@@ -1258,6 +1258,50 @@ class MainWindow(QMainWindow):
             self.reader_toolbar.setVisible(self.read_mode)
         self._update_page_total()
         self._retitle()
+        if self.read_only:
+            # Last of all, because this is the stronger rule. Read mode above
+            # says the grid is not on screen; this says the document will not
+            # be written at all, which also takes away Save, the exports and
+            # the way back to Arrange.
+            for act in self._writing_actions():
+                act.setEnabled(False)
+            self.act_arrange_mode.setEnabled(False)
+            self.status_mode.setText(_("Signed — read only"))
+
+    @property
+    def read_only(self) -> bool:
+        """Whether this session refuses every change and every write.
+
+        A signature, and nothing else so far. A document built here is a new
+        one, so nothing we write can carry a signature over -- and rather
+        than hand back a copy whose signature is broken, or silently gone,
+        the application becomes a reader for as long as the document is open.
+
+        A signed document is never in company: the three routes that would
+        put another file beside it refuse to, so this is in practice a
+        question about one document even though it is asked of the set.
+        """
+        return bool(self._signed_sources())
+
+    def _writing_actions(self):
+        """Every command a read-only document refuses.
+
+        ``_editing_actions`` narrows File down to the few commands that
+        write, because reading a document is no reason to stop saving it. A
+        signed one is a different matter, so here the filter is inverted:
+        every File command is refused except the few that plainly write
+        nothing. Built as an exclusion rather than a list so that a command
+        added later is refused by default -- the safe direction to be wrong
+        in, for a rule whose whole purpose is to stop a file being written.
+        """
+        allowed = {self.act_new_window, self.act_open, self.act_print,
+                   self.act_close, self.act_quit}
+        allowed.update(self.recent_menu.actions())
+        out = list(self._editing_actions())
+        for title, actions in self._shortcut_groups():
+            if title == "File":
+                out.extend(a for a in actions if a not in allowed)
+        return out
 
     def _uid_of_page(self, page):
         """The identity of the page at a position, for a bookmark added there."""
@@ -1581,6 +1625,10 @@ class MainWindow(QMainWindow):
         Opening several files at once is a merge, so the result is marked
         modified: there is no single file it could be saved back to.
         """
+        if len(paths) > 1 and self._signed_paths(paths):
+            # Before the reset, so a refused merge leaves what was open alone.
+            self._refuses_company(paths)
+            return False
         self._reset_document()
         if not self._load_paths(paths):
             return False
@@ -1957,12 +2005,18 @@ class MainWindow(QMainWindow):
         paths, _f = QFileDialog.getOpenFileNames(
             self, _("Import"), self.source_dir, IMPORT_FILTER)
         if paths:
+            if self._refuses_company(paths):
+                return
             rows = self.view.selected_rows()
             at = rows[-1] + 1 if rows else None
             if self._load_paths(paths, at):
                 self._mark_modified()
 
     def _import_files_at(self, paths, row):
+        # A drop does not go through the menu, so the action being greyed out
+        # does not stop it. This is where that route is closed.
+        if self._refuses_company(paths):
+            return
         if self._load_paths(paths, row if row >= 0 else None):
             self._mark_modified()
 
@@ -1977,6 +2031,53 @@ class MainWindow(QMainWindow):
                   else set(range(1, len(self.docs.docs) + 1)))
         return [doc for number, doc in enumerate(self.docs.docs, start=1)
                 if number in wanted and getattr(doc, "signed", False)]
+
+    def _signed_paths(self, paths):
+        """Which of these files carry a signature, asked before loading.
+
+        A file that cannot be read, or that wants a password, answers no: the
+        loader is about to say so properly, and refusing it here would report
+        the wrong reason.
+        """
+        import pikepdf
+
+        from . import forms
+
+        found = []
+        for path in paths:
+            try:
+                with pikepdf.open(path) as pdf:
+                    if forms.is_signed(pdf):
+                        found.append(path)
+            except Exception:  # noqa: BLE001 - the loader reports its own
+                continue
+        return found
+
+    def _refuses_company(self, paths) -> bool:
+        """Whether these files may not be loaded beside anything else.
+
+        A signed document is read-only, so it can neither be merged with
+        another nor have one added to it: either way the result would be a
+        document that cannot be saved, assembled out of files that could.
+        Refused at the point the user asks, rather than by greying out the
+        commands afterwards, so the reason is given once in words.
+
+        Says nothing about opening a signed document on its own, which is the
+        supported way to read one.
+        """
+        signed = self._signed_paths(paths)
+        if signed:
+            QMessageBox.information(self, APP_NAME, _(
+                "%s is signed. A signed document is read only and cannot be "
+                "combined with another, so open it on its own.")
+                % os.path.basename(signed[0]))
+            return True
+        if self.read_only:
+            QMessageBox.information(self, APP_NAME, _(
+                "This document is signed, so it is read only and nothing can "
+                "be added to it."))
+            return True
+        return False
 
     def _signed_file_at(self, path) -> bool:
         """Whether ``path`` is the file one of the signed sources came from."""

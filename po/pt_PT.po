@@ -13,7 +13,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  pdfarranger\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-30 22:01+0000\n"
+"POT-Creation-Date: 2026-11-01 05:00+0000\n"
 "PO-Revision-Date: 2025-08-29 21:18+0100\n"
 "Last-Translator: Hugo Carvalho <hugokarvalho@hotmail.com>\n"
 "Language: pt_PT\n"
@@ -2161,6 +2161,11 @@ msgstr "_Refazer %s"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
+msgid "Signed — read only"
+msgstr "Assinado — apenas leitura"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
 #, python-format
 msgid "%d page selected"
 msgid_plural "%d pages selected"
@@ -2279,6 +2284,23 @@ msgstr "Não foi possível abrir uma nova janela."
 #: pdfarranger_qt/mainwindow.py
 msgid "Open"
 msgstr "Abrir"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid ""
+"%s is signed. A signed document is read only and cannot be combined with "
+"another, so open it on its own."
+msgstr ""
+"%s está assinado. Um documento assinado é apenas de leitura e não pode ser "
+"combinado com outro, pelo que deve abri-lo sozinho."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "This document is signed, so it is read only and nothing can be added to it."
+msgstr ""
+"Este documento está assinado, pelo que é apenas de leitura e nada lhe pode "
+"ser adicionado."
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py

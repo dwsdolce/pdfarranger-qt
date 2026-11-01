@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PDF-Shuffler 0.7\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-30 22:01+0000\n"
+"POT-Creation-Date: 2026-11-01 05:00+0000\n"
 "PO-Revision-Date: 2025-05-26 10:43+0200\n"
 "Last-Translator: Heimen Stoffels <vistausss@fastmail.com>\n"
 "Language: nl\n"
@@ -2171,6 +2171,11 @@ msgstr "Opnieu_w %s"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
+msgid "Signed — read only"
+msgstr "Ondertekend — alleen-lezen"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
 #, python-format
 msgid "%d page selected"
 msgid_plural "%d pages selected"
@@ -2287,6 +2292,23 @@ msgstr "Kon geen nieuw venster openen."
 #: pdfarranger_qt/mainwindow.py
 msgid "Open"
 msgstr "Openen"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid ""
+"%s is signed. A signed document is read only and cannot be combined with "
+"another, so open it on its own."
+msgstr ""
+"%s is ondertekend. Een ondertekend document is alleen-lezen en kan niet met "
+"een ander worden samengevoegd; open het daarom afzonderlijk."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "This document is signed, so it is read only and nothing can be added to it."
+msgstr ""
+"Dit document is ondertekend en daarom alleen-lezen; er kan niets aan worden "
+"toegevoegd."
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py

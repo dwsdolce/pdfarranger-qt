@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-30 22:01+0000\n"
+"POT-Creation-Date: 2026-11-01 05:00+0000\n"
 "PO-Revision-Date: 2023-06-08 10:00+0700\n"
 "Last-Translator: Abdul Munif Hanafi <amunifhanafi@gmail.com>\n"
 "Language: id\n"
@@ -2189,6 +2189,11 @@ msgstr "_Ulangi %s"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
+msgid "Signed — read only"
+msgstr "Ditandatangani — hanya baca"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
 #, python-format
 msgid "%d page selected"
 msgid_plural "%d pages selected"
@@ -2305,6 +2310,23 @@ msgstr "Tidak dapat membuka jendela baru."
 #: pdfarranger_qt/mainwindow.py
 msgid "Open"
 msgstr "Buka"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid ""
+"%s is signed. A signed document is read only and cannot be combined with "
+"another, so open it on its own."
+msgstr ""
+"%s ditandatangani. Dokumen yang ditandatangani bersifat hanya baca dan tidak"
+" dapat digabungkan dengan yang lain, jadi bukalah sendiri."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "This document is signed, so it is read only and nothing can be added to it."
+msgstr ""
+"Dokumen ini ditandatangani, sehingga bersifat hanya baca dan tidak ada yang "
+"dapat ditambahkan padanya."
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py

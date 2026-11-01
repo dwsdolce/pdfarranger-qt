@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pdfarranger master\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-30 22:01+0000\n"
+"POT-Creation-Date: 2026-11-01 05:00+0000\n"
 "PO-Revision-Date: 2026-09-04 09:59+0000\n"
 "Last-Translator: Lumenman <28367232+Lumenman@users.noreply.github.com>\n"
 "Language: ru\n"
@@ -2004,6 +2004,11 @@ msgstr "О_тменить: %s"
 msgid "_Redo %s"
 msgstr "_Повторить: %s"
 
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Signed — read only"
+msgstr "Подписан — только чтение"
+
 #: pdfarranger_qt/mainwindow.py
 #, python-format
 msgid "%d page selected"
@@ -2108,6 +2113,23 @@ msgstr "Не удалось открыть новое окно."
 #: pdfarranger_qt/mainwindow.py
 msgid "Open"
 msgstr "Открыть"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid ""
+"%s is signed. A signed document is read only and cannot be combined with "
+"another, so open it on its own."
+msgstr ""
+"%s подписан. Подписанный документ доступен только для чтения и не может быть"
+" объединён с другим, поэтому откройте его отдельно."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "This document is signed, so it is read only and nothing can be added to it."
+msgstr ""
+"Этот документ подписан, поэтому он доступен только для чтения и в него "
+"ничего нельзя добавить."
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py

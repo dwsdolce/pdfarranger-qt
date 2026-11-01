@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-30 22:01+0000\n"
+"POT-Creation-Date: 2026-11-01 05:00+0000\n"
 "PO-Revision-Date: 2025-12-15 00:59+0700\n"
 "Last-Translator: Loc Huynh <https://github.com/hthienloc>\n"
 "Language: vi\n"
@@ -2127,6 +2127,11 @@ msgstr "_Làm lại %s"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
+msgid "Signed — read only"
+msgstr "Đã ký — chỉ đọc"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
 #, python-format
 msgid "%d page selected"
 msgid_plural "%d pages selected"
@@ -2241,6 +2246,21 @@ msgstr "Không mở được cửa sổ mới."
 #: pdfarranger_qt/mainwindow.py
 msgid "Open"
 msgstr "Mở"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid ""
+"%s is signed. A signed document is read only and cannot be combined with "
+"another, so open it on its own."
+msgstr ""
+"%s đã được ký. Tài liệu đã ký ở chế độ chỉ đọc và không thể kết hợp với tài "
+"liệu khác, vì vậy hãy mở riêng nó."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "This document is signed, so it is read only and nothing can be added to it."
+msgstr "Tài liệu này đã được ký nên ở chế độ chỉ đọc và không thể thêm gì vào đó."
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py

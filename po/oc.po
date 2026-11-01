@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-30 22:01+0000\n"
+"POT-Creation-Date: 2026-11-01 05:00+0000\n"
 "PO-Revision-Date: 2026-02-15 15:16+0100\n"
 "Last-Translator: Quentin PAGÈS\n"
 "Language: oc\n"
@@ -2141,6 +2141,11 @@ msgstr "_Refar %s"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
+msgid "Signed — read only"
+msgstr "Signat — lectura sola"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
 #, python-format
 msgid "%d page selected"
 msgid_plural "%d pages selected"
@@ -2257,6 +2262,23 @@ msgstr "Impossible de dobrir una fenèstra novèla."
 #: pdfarranger_qt/mainwindow.py
 msgid "Open"
 msgstr "Dobrir"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid ""
+"%s is signed. A signed document is read only and cannot be combined with "
+"another, so open it on its own."
+msgstr ""
+"%s es signat. Un document signat es en lectura sola e pòt pas èsser combinat"
+" amb un autre ; dobrissètz-lo solet."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "This document is signed, so it is read only and nothing can be added to it."
+msgstr ""
+"Aqueste document es signat, es donc en lectura sola e i se pòt pas apondre "
+"res."
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py

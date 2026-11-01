@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  pdfarranger\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-30 22:01+0000\n"
+"POT-Creation-Date: 2026-11-01 05:00+0000\n"
 "PO-Revision-Date: 2023-07-10 15:37+0000\n"
 "Last-Translator: PavelZ\n"
 "Language: cs_CZ\n"
@@ -2153,6 +2153,11 @@ msgstr "Z_novu %s"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
+msgid "Signed — read only"
+msgstr "Podepsáno — jen pro čtení"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
 #, python-format
 msgid "%d page selected"
 msgid_plural "%d pages selected"
@@ -2271,6 +2276,21 @@ msgstr "Nepodařilo se otevřít nové okno."
 #: pdfarranger_qt/mainwindow.py
 msgid "Open"
 msgstr "Otevřít"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid ""
+"%s is signed. A signed document is read only and cannot be combined with "
+"another, so open it on its own."
+msgstr ""
+"%s je podepsán. Podepsaný dokument je jen pro čtení a nelze jej spojit s "
+"jiným, otevřete jej proto samostatně."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "This document is signed, so it is read only and nothing can be added to it."
+msgstr "Tento dokument je podepsán, je proto jen pro čtení a nelze do něj nic přidat."
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py

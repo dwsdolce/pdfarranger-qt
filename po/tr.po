@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pdfarranger main\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-30 22:01+0000\n"
+"POT-Creation-Date: 2026-11-01 05:00+0000\n"
 "PO-Revision-Date: 2026-04-24 21:19+0300\n"
 "Last-Translator: Oğuz Ersen <oguz@ersen.moe>\n"
 "Language: tr\n"
@@ -2121,6 +2121,11 @@ msgstr "_Yinele %s"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
+msgid "Signed — read only"
+msgstr "İmzalı — salt okunur"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
 #, python-format
 msgid "%d page selected"
 msgid_plural "%d pages selected"
@@ -2235,6 +2240,21 @@ msgstr "Yeni bir pencere açılamadı."
 #: pdfarranger_qt/mainwindow.py
 msgid "Open"
 msgstr "Aç"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid ""
+"%s is signed. A signed document is read only and cannot be combined with "
+"another, so open it on its own."
+msgstr ""
+"%s imzalı. İmzalı bir belge salt okunurdur ve başka bir belgeyle "
+"birleştirilemez, bu nedenle tek başına açın."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "This document is signed, so it is read only and nothing can be added to it."
+msgstr "Bu belge imzalı olduğundan salt okunurdur ve ona hiçbir şey eklenemez."
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py

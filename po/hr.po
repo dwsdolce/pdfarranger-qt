@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  pdfarranger\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-30 22:01+0000\n"
+"POT-Creation-Date: 2026-11-01 05:00+0000\n"
 "PO-Revision-Date: 2023-06-06 13:27+0200\n"
 "Last-Translator: Milo Ivir <mail@milotype.de>\n"
 "Language: hr\n"
@@ -2165,6 +2165,11 @@ msgstr "_Ponovi %s"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
+msgid "Signed — read only"
+msgstr "Potpisano — samo za čitanje"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
 #, python-format
 msgid "%d page selected"
 msgid_plural "%d pages selected"
@@ -2283,6 +2288,23 @@ msgstr "Nije bilo moguće otvoriti novi prozor."
 #: pdfarranger_qt/mainwindow.py
 msgid "Open"
 msgstr "Otvori"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid ""
+"%s is signed. A signed document is read only and cannot be combined with "
+"another, so open it on its own."
+msgstr ""
+"%s je potpisan. Potpisani dokument samo je za čitanje i ne može se spojiti s"
+" drugim, stoga ga otvorite zasebno."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "This document is signed, so it is read only and nothing can be added to it."
+msgstr ""
+"Ovaj je dokument potpisan, stoga je samo za čitanje i ništa mu se ne može "
+"dodati."
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py

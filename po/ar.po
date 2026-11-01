@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-30 22:01+0000\n"
+"POT-Creation-Date: 2026-11-01 05:00+0000\n"
 "PO-Revision-Date: 2024-09-05 17:05+0300\n"
 "Last-Translator: Abdullah Albaroty <albaroty@gmail.com>\n"
 "Language: ar\n"
@@ -2112,6 +2112,11 @@ msgstr "أ_عد %s"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
+msgid "Signed — read only"
+msgstr "موقَّع — للقراءة فقط"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
 #, python-format
 msgid "%d page selected"
 msgid_plural "%d pages selected"
@@ -2238,6 +2243,21 @@ msgstr "تعذر فتح نافذة جديدة."
 #: pdfarranger_qt/mainwindow.py
 msgid "Open"
 msgstr "فتح"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid ""
+"%s is signed. A signed document is read only and cannot be combined with "
+"another, so open it on its own."
+msgstr ""
+"المستند %s موقَّع. المستند الموقَّع للقراءة فقط ولا يمكن دمجه مع مستند آخر، "
+"لذا افتحه بمفرده."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "This document is signed, so it is read only and nothing can be added to it."
+msgstr "هذا المستند موقَّع، لذا فهو للقراءة فقط ولا يمكن إضافة أي شيء إليه."
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py

@@ -15,7 +15,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  pdfarranger\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-30 22:01+0000\n"
+"POT-Creation-Date: 2026-11-01 05:00+0000\n"
 "PO-Revision-Date: 2025-07-09 08:35+0200\n"
 "Last-Translator: Sebastian Scherch\n"
 "Language: de\n"
@@ -2163,6 +2163,11 @@ msgstr "_Wiederholen: %s"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
+msgid "Signed — read only"
+msgstr "Signiert — schreibgeschützt"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
 #, python-format
 msgid "%d page selected"
 msgid_plural "%d pages selected"
@@ -2281,6 +2286,23 @@ msgstr "Es konnte kein neues Fenster geöffnet werden."
 #: pdfarranger_qt/mainwindow.py
 msgid "Open"
 msgstr "Öffnen"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid ""
+"%s is signed. A signed document is read only and cannot be combined with "
+"another, so open it on its own."
+msgstr ""
+"%s ist signiert. Ein signiertes Dokument ist schreibgeschützt und kann nicht"
+" mit einem anderen kombiniert werden; öffnen Sie es daher allein."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "This document is signed, so it is read only and nothing can be added to it."
+msgstr ""
+"Dieses Dokument ist signiert und daher schreibgeschützt; es kann nichts "
+"hinzugefügt werden."
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py

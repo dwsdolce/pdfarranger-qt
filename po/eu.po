@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-30 22:01+0000\n"
+"POT-Creation-Date: 2026-11-01 05:00+0000\n"
 "PO-Revision-Date: 2023-01-19 20:27+0100\n"
 "Last-Translator: alexgabi\n"
 "Language: eu\n"
@@ -2193,6 +2193,11 @@ msgstr "_Berregin %s"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
+msgid "Signed — read only"
+msgstr "Sinatuta — irakurtzeko soilik"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
 #, python-format
 msgid "%d page selected"
 msgid_plural "%d pages selected"
@@ -2309,6 +2314,23 @@ msgstr "Ezin izan da leiho berri bat ireki."
 #: pdfarranger_qt/mainwindow.py
 msgid "Open"
 msgstr "Ireki"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid ""
+"%s is signed. A signed document is read only and cannot be combined with "
+"another, so open it on its own."
+msgstr ""
+"%s sinatuta dago. Sinatutako dokumentu bat irakurtzeko soilik da eta ezin da"
+" beste batekin konbinatu; ireki ezazu bakarrik."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "This document is signed, so it is read only and nothing can be added to it."
+msgstr ""
+"Dokumentu hau sinatuta dago, beraz irakurtzeko soilik da eta ezin zaio ezer "
+"gehitu."
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py

@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-30 22:01+0000\n"
+"POT-Creation-Date: 2026-11-01 05:00+0000\n"
 "PO-Revision-Date: 2022-09-01 00:40+0900\n"
 "Last-Translator: sicklylife <translation@sicklylife.jp>\n"
 "Language: ja\n"
@@ -2043,6 +2043,11 @@ msgstr "%s をやり直す(_R)"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
+msgid "Signed — read only"
+msgstr "署名済み — 読み取り専用"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
 #, python-format
 msgid "%d page selected"
 msgid_plural "%d pages selected"
@@ -2158,6 +2163,19 @@ msgstr "新しいウィンドウを開けませんでした。"
 #: pdfarranger_qt/mainwindow.py
 msgid "Open"
 msgstr "開く"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid ""
+"%s is signed. A signed document is read only and cannot be combined with "
+"another, so open it on its own."
+msgstr "%s は署名されています。署名された文書は読み取り専用で、他の文書と結合できません。単独で開いてください。"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "This document is signed, so it is read only and nothing can be added to it."
+msgstr "この文書は署名されているため読み取り専用で、何も追加できません。"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py

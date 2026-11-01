@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-30 22:01+0000\n"
+"POT-Creation-Date: 2026-11-01 05:00+0000\n"
 "PO-Revision-Date: 2025-09-28 16:51+0000\n"
 "Last-Translator: Sveinn í Felli <sv1@fellsnet.is>\n"
 "Language: is\n"
@@ -2141,6 +2141,11 @@ msgstr "Endu_rtaka %s"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
+msgid "Signed — read only"
+msgstr "Undirritað — skrifvarið"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
 #, python-format
 msgid "%d page selected"
 msgid_plural "%d pages selected"
@@ -2257,6 +2262,21 @@ msgstr "Tókst ekki að opna nýjan glugga."
 #: pdfarranger_qt/mainwindow.py
 msgid "Open"
 msgstr "Opna"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid ""
+"%s is signed. A signed document is read only and cannot be combined with "
+"another, so open it on its own."
+msgstr ""
+"%s er undirritað. Undirritað skjal er skrifvarið og ekki er hægt að sameina "
+"það öðru, opnaðu það því eitt og sér."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "This document is signed, so it is read only and nothing can be added to it."
+msgstr "Þetta skjal er undirritað og því skrifvarið; engu er hægt að bæta við það."
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py

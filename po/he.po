@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-30 22:01+0000\n"
+"POT-Creation-Date: 2026-11-01 05:00+0000\n"
 "PO-Revision-Date: 2023-06-12 11:22+0300\n"
 "Last-Translator: Yaron Shahrabani <sh.yaron@gmail.com>\n"
 "Language: he\n"
@@ -2116,6 +2116,11 @@ msgstr "ביצוע מ_חדש %s"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
+msgid "Signed — read only"
+msgstr "חתום — לקריאה בלבד"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
 #, python-format
 msgid "%d page selected"
 msgid_plural "%d pages selected"
@@ -2236,6 +2241,21 @@ msgstr "לא ניתן היה לפתוח חלון חדש."
 #: pdfarranger_qt/mainwindow.py
 msgid "Open"
 msgstr "פתיחה"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid ""
+"%s is signed. A signed document is read only and cannot be combined with "
+"another, so open it on its own."
+msgstr ""
+"%s חתום. מסמך חתום הוא לקריאה בלבד ולא ניתן לשלב אותו עם מסמך אחר, לכן פתחו "
+"אותו לבדו."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "This document is signed, so it is read only and nothing can be added to it."
+msgstr "מסמך זה חתום, ולכן הוא לקריאה בלבד ולא ניתן להוסיף לו דבר."
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
