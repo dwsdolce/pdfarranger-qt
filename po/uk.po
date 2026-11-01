@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: unnamed project\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-01 05:00+0000\n"
+"POT-Creation-Date: 2026-11-01 21:09+0000\n"
 "PO-Revision-Date: 2026-05-27 19:30+0300\n"
 "Last-Translator: Dymko <Dymkovych@proton.me>\n"
 "Language: uk\n"
@@ -1946,29 +1946,10 @@ msgstr "Знайти попереднє"
 msgid "Find All"
 msgstr "Знайти все"
 
-#: pdfarranger_qt/mainwindow.py
-msgid "_Select"
-msgstr "_Обрати"
-
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
-msgid "_Highlight"
-msgstr "_Виділення"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
-msgid "Strike_through"
-msgstr "_Закреслення"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
-msgid "_Note"
-msgstr "_Нотатка"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
-msgid "_Draw"
-msgstr "_Малювання"
+msgid "Markup _Tools"
+msgstr "_Інструменти розмітки"
 
 #: pdfarranger_qt/mainwindow.py
 msgid "Select _Range"
@@ -2097,13 +2078,12 @@ msgid "Arrange"
 msgstr "Упорядкувати"
 
 #: pdfarranger_qt/mainwindow.py
+msgid "_Select"
+msgstr "_Обрати"
+
+#: pdfarranger_qt/mainwindow.py
 msgid "_Booklet"
 msgstr "_Буклет"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
-msgid "Markup"
-msgstr "Розмітка"
 
 #: pdfarranger_qt/mainwindow.py
 msgid "_View"
@@ -2815,6 +2795,126 @@ msgid "Bottom right"
 msgstr "Знизу праворуч"
 
 # machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Pointer"
+msgstr "Вказівник"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Comment"
+msgstr "Коментар"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Text markup"
+msgstr "Розмітка тексту"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Drawing"
+msgstr "Малювання"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Select"
+msgstr "Позначити"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Pan"
+msgstr "Панорамування"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Add a comment"
+msgstr "Додати коментар"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Replace selected text"
+msgstr "Замінити позначений текст"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Insert text"
+msgstr "Вставити текст"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Add text comment"
+msgstr "Додати текстове поле"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Attach file"
+msgstr "Долучити файл"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Highlight"
+msgstr "Виділення"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Underline"
+msgstr "Підкреслення"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Strikethrough"
+msgstr "Закреслення"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Draw"
+msgstr "Малювати"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Line"
+msgstr "Лінія"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Arrow"
+msgstr "Стрілка"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Rectangle"
+msgstr "Прямокутник"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Circle"
+msgstr "Коло"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Text callout"
+msgstr "Текстова виноска"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Polygon"
+msgstr "Багатокутник"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Cloud"
+msgstr "Хмара"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Connected lines"
+msgstr "Сполучені лінії"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Stamps palette"
+msgstr "Палітра штампів"
+
+# machine translation, unreviewed
 #: pdfarranger_qt/viewer.py
 msgid "Viewer default"
 msgstr "Типово у переглядачі"
@@ -3251,4 +3351,24 @@ msgstr "Показувати заголовок замість імені фай
 #~ msgstr[0] "%d сторінка збігається"
 #~ msgstr[1] "%d сторінки збігаються"
 #~ msgstr[2] "%d сторінок збігається"
+
+# machine translation, unreviewed
+#~ msgid "_Highlight"
+#~ msgstr "_Виділення"
+
+# machine translation, unreviewed
+#~ msgid "Strike_through"
+#~ msgstr "_Закреслення"
+
+# machine translation, unreviewed
+#~ msgid "_Note"
+#~ msgstr "_Нотатка"
+
+# machine translation, unreviewed
+#~ msgid "_Draw"
+#~ msgstr "_Малювання"
+
+# machine translation, unreviewed
+#~ msgid "Markup"
+#~ msgstr "Розмітка"
 

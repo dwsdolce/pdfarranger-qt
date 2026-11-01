@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PDF-Shuffler 0.7\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-01 05:00+0000\n"
+"POT-Creation-Date: 2026-11-01 21:09+0000\n"
 "PO-Revision-Date: 2025-05-26 10:43+0200\n"
 "Last-Translator: Heimen Stoffels <vistausss@fastmail.com>\n"
 "Language: nl\n"
@@ -1982,29 +1982,10 @@ msgstr "Vorige zoeken"
 msgid "Find All"
 msgstr "Alles zoeken"
 
-#: pdfarranger_qt/mainwindow.py
-msgid "_Select"
-msgstr "_Selecteren"
-
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
-msgid "_Highlight"
-msgstr "_Markeren"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
-msgid "Strike_through"
-msgstr "_Doorhalen"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
-msgid "_Note"
-msgstr "_Notitie"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
-msgid "_Draw"
-msgstr "_Tekenen"
+msgid "Markup _Tools"
+msgstr "Markerings_gereedschap"
 
 #: pdfarranger_qt/mainwindow.py
 msgid "Select _Range"
@@ -2135,13 +2116,12 @@ msgid "Arrange"
 msgstr "Ordenen"
 
 #: pdfarranger_qt/mainwindow.py
+msgid "_Select"
+msgstr "_Selecteren"
+
+#: pdfarranger_qt/mainwindow.py
 msgid "_Booklet"
 msgstr "_Boekje"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
-msgid "Markup"
-msgstr "Markeringen"
 
 #: pdfarranger_qt/mainwindow.py
 msgid "_View"
@@ -2849,6 +2829,126 @@ msgid "Bottom right"
 msgstr "Rechtsonder"
 
 # machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Pointer"
+msgstr "Aanwijzer"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Comment"
+msgstr "Opmerking"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Text markup"
+msgstr "Tekstmarkering"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Drawing"
+msgstr "Tekening"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Select"
+msgstr "Selecteren"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Pan"
+msgstr "Verschuiven"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Add a comment"
+msgstr "Opmerking toevoegen"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Replace selected text"
+msgstr "Geselecteerde tekst vervangen"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Insert text"
+msgstr "Tekst invoegen"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Add text comment"
+msgstr "Tekstvak toevoegen"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Attach file"
+msgstr "Bestand bijvoegen"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Highlight"
+msgstr "Markeren"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Underline"
+msgstr "Onderstrepen"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Strikethrough"
+msgstr "Doorhalen"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Draw"
+msgstr "Tekenen"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Line"
+msgstr "Lijn"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Arrow"
+msgstr "Pijl"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Rectangle"
+msgstr "Rechthoek"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Circle"
+msgstr "Cirkel"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Text callout"
+msgstr "Tekstballon"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Polygon"
+msgstr "Veelhoek"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Cloud"
+msgstr "Wolk"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Connected lines"
+msgstr "Verbonden lijnen"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Stamps palette"
+msgstr "Stempelpalet"
+
+# machine translation, unreviewed
 #: pdfarranger_qt/viewer.py
 msgid "Viewer default"
 msgstr "Standaard van weergaveprogramma"
@@ -3266,4 +3366,24 @@ msgstr "De titel tonen in plaats van de bestandsnaam"
 #~ msgid_plural "%d pages match"
 #~ msgstr[0] "%d pagina komt overeen"
 #~ msgstr[1] "%d pagina's komen overeen"
+
+# machine translation, unreviewed
+#~ msgid "_Highlight"
+#~ msgstr "_Markeren"
+
+# machine translation, unreviewed
+#~ msgid "Strike_through"
+#~ msgstr "_Doorhalen"
+
+# machine translation, unreviewed
+#~ msgid "_Note"
+#~ msgstr "_Notitie"
+
+# machine translation, unreviewed
+#~ msgid "_Draw"
+#~ msgstr "_Tekenen"
+
+# machine translation, unreviewed
+#~ msgid "Markup"
+#~ msgstr "Markeringen"
 

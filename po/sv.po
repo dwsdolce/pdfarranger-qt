@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  pdfarranger\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-01 05:00+0000\n"
+"POT-Creation-Date: 2026-11-01 21:09+0000\n"
 "PO-Revision-Date: 2026-05-24 07:36+0300\n"
 "Last-Translator: kbengs\n"
 "Language: sv\n"
@@ -1936,29 +1936,10 @@ msgstr "Sök föregående"
 msgid "Find All"
 msgstr "Sök alla"
 
-#: pdfarranger_qt/mainwindow.py
-msgid "_Select"
-msgstr "_Markera"
-
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
-msgid "_Highlight"
-msgstr "_Överstrykning"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
-msgid "Strike_through"
-msgstr "_Genomstruken"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
-msgid "_Note"
-msgstr "_Anteckning"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
-msgid "_Draw"
-msgstr "_Rita"
+msgid "Markup _Tools"
+msgstr "Markerings_verktyg"
 
 #: pdfarranger_qt/mainwindow.py
 msgid "Select _Range"
@@ -2087,13 +2068,12 @@ msgid "Arrange"
 msgstr "Ordna"
 
 #: pdfarranger_qt/mainwindow.py
+msgid "_Select"
+msgstr "_Markera"
+
+#: pdfarranger_qt/mainwindow.py
 msgid "_Booklet"
 msgstr "_Häfte"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
-msgid "Markup"
-msgstr "Markeringar"
 
 #: pdfarranger_qt/mainwindow.py
 msgid "_View"
@@ -2797,6 +2777,126 @@ msgid "Bottom right"
 msgstr "Nere till höger"
 
 # machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Pointer"
+msgstr "Pekare"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Comment"
+msgstr "Kommentar"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Text markup"
+msgstr "Textmarkering"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Drawing"
+msgstr "Ritning"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Select"
+msgstr "Välj"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Pan"
+msgstr "Panorera"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Add a comment"
+msgstr "Lägg till en kommentar"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Replace selected text"
+msgstr "Ersätt markerad text"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Insert text"
+msgstr "Infoga text"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Add text comment"
+msgstr "Lägg till textruta"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Attach file"
+msgstr "Bifoga fil"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Highlight"
+msgstr "Markera"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Underline"
+msgstr "Understruken"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Strikethrough"
+msgstr "Genomstruken"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Draw"
+msgstr "Rita"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Line"
+msgstr "Linje"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Arrow"
+msgstr "Pil"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Rectangle"
+msgstr "Rektangel"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Circle"
+msgstr "Cirkel"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Text callout"
+msgstr "Textbubbla"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Polygon"
+msgstr "Polygon"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Cloud"
+msgstr "Moln"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Connected lines"
+msgstr "Förbundna linjer"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Stamps palette"
+msgstr "Stämpelpalett"
+
+# machine translation, unreviewed
 #: pdfarranger_qt/viewer.py
 msgid "Viewer default"
 msgstr "Visningsprogrammets standard"
@@ -3233,4 +3333,24 @@ msgstr "Visa titeln i stället för filnamnet"
 #~ msgid_plural "%d pages match"
 #~ msgstr[0] "%d sida matchar"
 #~ msgstr[1] "%d sidor matchar"
+
+# machine translation, unreviewed
+#~ msgid "_Highlight"
+#~ msgstr "_Överstrykning"
+
+# machine translation, unreviewed
+#~ msgid "Strike_through"
+#~ msgstr "_Genomstruken"
+
+# machine translation, unreviewed
+#~ msgid "_Note"
+#~ msgstr "_Anteckning"
+
+# machine translation, unreviewed
+#~ msgid "_Draw"
+#~ msgstr "_Rita"
+
+# machine translation, unreviewed
+#~ msgid "Markup"
+#~ msgstr "Markeringar"
 

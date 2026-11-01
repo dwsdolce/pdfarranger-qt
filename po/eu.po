@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-01 05:00+0000\n"
+"POT-Creation-Date: 2026-11-01 21:09+0000\n"
 "PO-Revision-Date: 2023-01-19 20:27+0100\n"
 "Last-Translator: alexgabi\n"
 "Language: eu\n"
@@ -2002,29 +2002,10 @@ msgstr "Bilatu aurrekoa"
 msgid "Find All"
 msgstr "Bilatu guztiak"
 
-#: pdfarranger_qt/mainwindow.py
-msgid "_Select"
-msgstr "_Hautatu"
-
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
-msgid "_Highlight"
-msgstr "_Nabarmendu"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
-msgid "Strike_through"
-msgstr "Ma_rratua"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
-msgid "_Note"
-msgstr "_Oharra"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
-msgid "_Draw"
-msgstr "_Marraztu"
+msgid "Markup _Tools"
+msgstr "_Markatze-tresnak"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
@@ -2155,15 +2136,14 @@ msgstr "_Atera"
 msgid "Arrange"
 msgstr "Antolatu"
 
+#: pdfarranger_qt/mainwindow.py
+msgid "_Select"
+msgstr "_Hautatu"
+
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
 msgid "_Booklet"
 msgstr "_Liburuxka"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
-msgid "Markup"
-msgstr "Markaketa"
 
 #: pdfarranger_qt/mainwindow.py
 msgid "_View"
@@ -2867,6 +2847,126 @@ msgid "Bottom right"
 msgstr "Behean eskuinean"
 
 # machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Pointer"
+msgstr "Erakuslea"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Comment"
+msgstr "Iruzkina"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Text markup"
+msgstr "Testu-markaketa"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Drawing"
+msgstr "Marrazkia"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Select"
+msgstr "Hautatu"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Pan"
+msgstr "Mugitu"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Add a comment"
+msgstr "Gehitu iruzkina"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Replace selected text"
+msgstr "Ordeztu hautatutako testua"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Insert text"
+msgstr "Txertatu testua"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Add text comment"
+msgstr "Gehitu testu-koadroa"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Attach file"
+msgstr "Erantsi fitxategia"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Highlight"
+msgstr "Nabarmendu"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Underline"
+msgstr "Azpimarra"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Strikethrough"
+msgstr "Marratua"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Draw"
+msgstr "Marraztu"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Line"
+msgstr "Marra"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Arrow"
+msgstr "Gezia"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Rectangle"
+msgstr "Laukizuzena"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Circle"
+msgstr "Zirkulua"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Text callout"
+msgstr "Testu-deia"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Polygon"
+msgstr "Poligonoa"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Cloud"
+msgstr "Hodeia"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Connected lines"
+msgstr "Lotutako marrak"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Stamps palette"
+msgstr "Zigilu-paleta"
+
+# machine translation, unreviewed
 #: pdfarranger_qt/viewer.py
 msgid "Viewer default"
 msgstr "Ikustailearen lehenetsia"
@@ -3267,4 +3367,24 @@ msgstr "Erakutsi izenburua fitxategi-izenaren ordez"
 #~ msgid_plural "%d pages match"
 #~ msgstr[0] "Orrialde %d bat dator"
 #~ msgstr[1] "%d orrialde bat datoz"
+
+# machine translation, unreviewed
+#~ msgid "_Highlight"
+#~ msgstr "_Nabarmendu"
+
+# machine translation, unreviewed
+#~ msgid "Strike_through"
+#~ msgstr "Ma_rratua"
+
+# machine translation, unreviewed
+#~ msgid "_Note"
+#~ msgstr "_Oharra"
+
+# machine translation, unreviewed
+#~ msgid "_Draw"
+#~ msgstr "_Marraztu"
+
+# machine translation, unreviewed
+#~ msgid "Markup"
+#~ msgstr "Markaketa"
 

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-01 05:00+0000\n"
+"POT-Creation-Date: 2026-11-01 21:09+0000\n"
 "PO-Revision-Date: 2026-02-15 15:16+0100\n"
 "Last-Translator: Quentin PAGÈS\n"
 "Language: oc\n"
@@ -1952,29 +1952,10 @@ msgstr "Recercar lo precedent"
 msgid "Find All"
 msgstr "Recercar tot"
 
-#: pdfarranger_qt/mainwindow.py
-msgid "_Select"
-msgstr "_Seleccionar"
-
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
-msgid "_Highlight"
-msgstr "Suslin_har"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
-msgid "Strike_through"
-msgstr "_Raiat"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
-msgid "_Note"
-msgstr "_Nòta"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
-msgid "_Draw"
-msgstr "_Dessenhar"
+msgid "Markup _Tools"
+msgstr "_Aisinas d’anotacion"
 
 #: pdfarranger_qt/mainwindow.py
 msgid "Select _Range"
@@ -2105,13 +2086,12 @@ msgid "Arrange"
 msgstr "Ordenar"
 
 #: pdfarranger_qt/mainwindow.py
+msgid "_Select"
+msgstr "_Seleccionar"
+
+#: pdfarranger_qt/mainwindow.py
 msgid "_Booklet"
 msgstr "_Libret"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
-msgid "Markup"
-msgstr "Marcatge"
 
 #: pdfarranger_qt/mainwindow.py
 msgid "_View"
@@ -2815,6 +2795,126 @@ msgid "Bottom right"
 msgstr "En bas a drecha"
 
 # machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Pointer"
+msgstr "Puntador"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Comment"
+msgstr "Comentari"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Text markup"
+msgstr "Anotacion de tèxte"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Drawing"
+msgstr "Dessenh"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Select"
+msgstr "Seleccionar"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Pan"
+msgstr "Desplaçar"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Add a comment"
+msgstr "Apondre un comentari"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Replace selected text"
+msgstr "Remplaçar lo tèxte seleccionat"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Insert text"
+msgstr "Inserir de tèxte"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Add text comment"
+msgstr "Apondre una zòna de tèxte"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Attach file"
+msgstr "Jónher un fichièr"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Highlight"
+msgstr "Suslinhar"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Underline"
+msgstr "Soslinhar"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Strikethrough"
+msgstr "Raiat"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Draw"
+msgstr "Dessenhar"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Line"
+msgstr "Linha"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Arrow"
+msgstr "Sageta"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Rectangle"
+msgstr "Rectangle"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Circle"
+msgstr "Cercle"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Text callout"
+msgstr "Legenda de tèxte"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Polygon"
+msgstr "Poligòn"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Cloud"
+msgstr "Nívol"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Connected lines"
+msgstr "Linhas connectadas"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Stamps palette"
+msgstr "Paleta de timbres"
+
+# machine translation, unreviewed
 #: pdfarranger_qt/viewer.py
 msgid "Viewer default"
 msgstr "Per defaut del visualizador"
@@ -3256,4 +3356,24 @@ msgstr "Mostrar lo títol puslèu que lo nom del fichièr"
 #~ msgid_plural "%d pages match"
 #~ msgstr[0] "%d pagina correspond"
 #~ msgstr[1] "%d paginas correspondon"
+
+# machine translation, unreviewed
+#~ msgid "_Highlight"
+#~ msgstr "Suslin_har"
+
+# machine translation, unreviewed
+#~ msgid "Strike_through"
+#~ msgstr "_Raiat"
+
+# machine translation, unreviewed
+#~ msgid "_Note"
+#~ msgstr "_Nòta"
+
+# machine translation, unreviewed
+#~ msgid "_Draw"
+#~ msgstr "_Dessenhar"
+
+# machine translation, unreviewed
+#~ msgid "Markup"
+#~ msgstr "Marcatge"
 

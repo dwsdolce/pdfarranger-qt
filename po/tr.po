@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pdfarranger main\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-01 05:00+0000\n"
+"POT-Creation-Date: 2026-11-01 21:09+0000\n"
 "PO-Revision-Date: 2026-04-24 21:19+0300\n"
 "Last-Translator: Oğuz Ersen <oguz@ersen.moe>\n"
 "Language: tr\n"
@@ -1934,29 +1934,10 @@ msgstr "Öncekini Bul"
 msgid "Find All"
 msgstr "Tümünü Bul"
 
-#: pdfarranger_qt/mainwindow.py
-msgid "_Select"
-msgstr "_Seç"
-
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
-msgid "_Highlight"
-msgstr "_Vurgula"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
-msgid "Strike_through"
-msgstr "_Üstü çizili"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
-msgid "_Note"
-msgstr "_Not"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
-msgid "_Draw"
-msgstr "_Çiz"
+msgid "Markup _Tools"
+msgstr "İşaretleme _araçları"
 
 #: pdfarranger_qt/mainwindow.py
 msgid "Select _Range"
@@ -2085,13 +2066,12 @@ msgid "Arrange"
 msgstr "Yerleştir"
 
 #: pdfarranger_qt/mainwindow.py
+msgid "_Select"
+msgstr "_Seç"
+
+#: pdfarranger_qt/mainwindow.py
 msgid "_Booklet"
 msgstr "_Kitapçık"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
-msgid "Markup"
-msgstr "İşaretleme"
 
 #: pdfarranger_qt/mainwindow.py
 msgid "_View"
@@ -2785,6 +2765,126 @@ msgid "Bottom right"
 msgstr "Sağ alt"
 
 # machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Pointer"
+msgstr "İşaretçi"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Comment"
+msgstr "Yorum"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Text markup"
+msgstr "Metin işaretleme"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Drawing"
+msgstr "Çizim"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Select"
+msgstr "Seç"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Pan"
+msgstr "Kaydır"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Add a comment"
+msgstr "Yorum ekle"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Replace selected text"
+msgstr "Seçili metni değiştir"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Insert text"
+msgstr "Metin ekle"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Add text comment"
+msgstr "Metin kutusu ekle"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Attach file"
+msgstr "Dosya ekle"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Highlight"
+msgstr "Vurgula"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Underline"
+msgstr "Altı çizili"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Strikethrough"
+msgstr "Üstü çizili"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Draw"
+msgstr "Çiz"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Line"
+msgstr "Çizgi"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Arrow"
+msgstr "Ok"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Rectangle"
+msgstr "Dikdörtgen"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Circle"
+msgstr "Daire"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Text callout"
+msgstr "Metin balonu"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Polygon"
+msgstr "Çokgen"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Cloud"
+msgstr "Bulut"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Connected lines"
+msgstr "Bağlı çizgiler"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Stamps palette"
+msgstr "Damga paleti"
+
+# machine translation, unreviewed
 #: pdfarranger_qt/viewer.py
 msgid "Viewer default"
 msgstr "Görüntüleyici öntanımlısı"
@@ -3215,4 +3315,24 @@ msgstr "Dosya adı yerine başlığı göster"
 #~ msgid "%d page matches"
 #~ msgid_plural "%d pages match"
 #~ msgstr[0] "%d sayfa eşleşiyor"
+
+# machine translation, unreviewed
+#~ msgid "_Highlight"
+#~ msgstr "_Vurgula"
+
+# machine translation, unreviewed
+#~ msgid "Strike_through"
+#~ msgstr "_Üstü çizili"
+
+# machine translation, unreviewed
+#~ msgid "_Note"
+#~ msgstr "_Not"
+
+# machine translation, unreviewed
+#~ msgid "_Draw"
+#~ msgstr "_Çiz"
+
+# machine translation, unreviewed
+#~ msgid "Markup"
+#~ msgstr "İşaretleme"
 

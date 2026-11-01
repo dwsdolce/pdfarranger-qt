@@ -14,7 +14,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  pdfarranger\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-01 05:00+0000\n"
+"POT-Creation-Date: 2026-11-01 21:09+0000\n"
 "PO-Revision-Date: 2026-04-03 11:36-0300\n"
 "Last-Translator: Óscar Fernández Díaz <oscfdezdz@tuta.io>\n"
 "Language: es\n"
@@ -1958,29 +1958,10 @@ msgstr "Buscar anterior"
 msgid "Find All"
 msgstr "Buscar todo"
 
-#: pdfarranger_qt/mainwindow.py
-msgid "_Select"
-msgstr "_Seleccionar"
-
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
-msgid "_Highlight"
-msgstr "_Resaltar"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
-msgid "Strike_through"
-msgstr "_Tachado"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
-msgid "_Note"
-msgstr "_Nota"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
-msgid "_Draw"
-msgstr "_Dibujar"
+msgid "Markup _Tools"
+msgstr "_Herramientas de marcado"
 
 #: pdfarranger_qt/mainwindow.py
 msgid "Select _Range"
@@ -2111,13 +2092,12 @@ msgid "Arrange"
 msgstr "Organizar"
 
 #: pdfarranger_qt/mainwindow.py
+msgid "_Select"
+msgstr "_Seleccionar"
+
+#: pdfarranger_qt/mainwindow.py
 msgid "_Booklet"
 msgstr "_Folleto"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
-msgid "Markup"
-msgstr "Marcado"
 
 #: pdfarranger_qt/mainwindow.py
 msgid "_View"
@@ -2821,6 +2801,126 @@ msgid "Bottom right"
 msgstr "Abajo a la derecha"
 
 # machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Pointer"
+msgstr "Puntero"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Comment"
+msgstr "Comentario"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Text markup"
+msgstr "Marcado de texto"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Drawing"
+msgstr "Dibujo"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Select"
+msgstr "Seleccionar"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Pan"
+msgstr "Desplazar"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Add a comment"
+msgstr "Añadir un comentario"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Replace selected text"
+msgstr "Sustituir el texto seleccionado"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Insert text"
+msgstr "Insertar texto"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Add text comment"
+msgstr "Añadir cuadro de texto"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Attach file"
+msgstr "Adjuntar archivo"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Highlight"
+msgstr "Resaltar"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Underline"
+msgstr "Subrayado"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Strikethrough"
+msgstr "Tachado"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Draw"
+msgstr "Dibujar"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Line"
+msgstr "Línea"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Arrow"
+msgstr "Flecha"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Rectangle"
+msgstr "Rectángulo"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Circle"
+msgstr "Círculo"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Text callout"
+msgstr "Llamada de texto"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Polygon"
+msgstr "Polígono"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Cloud"
+msgstr "Nube"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Connected lines"
+msgstr "Líneas conectadas"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Stamps palette"
+msgstr "Paleta de sellos"
+
+# machine translation, unreviewed
 #: pdfarranger_qt/viewer.py
 msgid "Viewer default"
 msgstr "Ajuste del visor"
@@ -3260,4 +3360,24 @@ msgstr "Mostrar el título en lugar del nombre del archivo"
 #~ msgid_plural "%d pages match"
 #~ msgstr[0] "%d página coincide"
 #~ msgstr[1] "%d páginas coinciden"
+
+# machine translation, unreviewed
+#~ msgid "_Highlight"
+#~ msgstr "_Resaltar"
+
+# machine translation, unreviewed
+#~ msgid "Strike_through"
+#~ msgstr "_Tachado"
+
+# machine translation, unreviewed
+#~ msgid "_Note"
+#~ msgstr "_Nota"
+
+# machine translation, unreviewed
+#~ msgid "_Draw"
+#~ msgstr "_Dibujar"
+
+# machine translation, unreviewed
+#~ msgid "Markup"
+#~ msgstr "Marcado"
 

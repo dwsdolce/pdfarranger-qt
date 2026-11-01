@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-01 05:00+0000\n"
+"POT-Creation-Date: 2026-11-01 21:09+0000\n"
 "PO-Revision-Date: 2022-09-01 00:40+0900\n"
 "Last-Translator: sicklylife <translation@sicklylife.jp>\n"
 "Language: ja\n"
@@ -1849,29 +1849,10 @@ msgstr "前を検索"
 msgid "Find All"
 msgstr "すべて検索"
 
-#: pdfarranger_qt/mainwindow.py
-msgid "_Select"
-msgstr "選択(_S)"
-
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
-msgid "_Highlight"
-msgstr "ハイライト(_H)"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
-msgid "Strike_through"
-msgstr "取り消し線(_K)"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
-msgid "_Note"
-msgstr "ノート(_N)"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
-msgid "_Draw"
-msgstr "描画(_D)"
+msgid "Markup _Tools"
+msgstr "マークアップツール(_T)"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
@@ -2005,15 +1986,14 @@ msgstr "抜き出し(_E)"
 msgid "Arrange"
 msgstr "並べ替え"
 
+#: pdfarranger_qt/mainwindow.py
+msgid "_Select"
+msgstr "選択(_S)"
+
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
 msgid "_Booklet"
 msgstr "小冊子(_B)"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
-msgid "Markup"
-msgstr "マークアップ"
 
 #: pdfarranger_qt/mainwindow.py
 msgid "_View"
@@ -2707,6 +2687,126 @@ msgid "Bottom right"
 msgstr "右下"
 
 # machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Pointer"
+msgstr "ポインター"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Comment"
+msgstr "コメント"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Text markup"
+msgstr "テキストマークアップ"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Drawing"
+msgstr "図形"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Select"
+msgstr "選択"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Pan"
+msgstr "パン"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Add a comment"
+msgstr "コメントを追加"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Replace selected text"
+msgstr "選択したテキストを置換"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Insert text"
+msgstr "テキストを挿入"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Add text comment"
+msgstr "テキストボックスを追加"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Attach file"
+msgstr "ファイルを添付"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Highlight"
+msgstr "ハイライト"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Underline"
+msgstr "下線"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Strikethrough"
+msgstr "取り消し線"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Draw"
+msgstr "描画"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Line"
+msgstr "直線"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Arrow"
+msgstr "矢印"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Rectangle"
+msgstr "長方形"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Circle"
+msgstr "円"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Text callout"
+msgstr "テキスト吹き出し"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Polygon"
+msgstr "多角形"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Cloud"
+msgstr "雲形"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Connected lines"
+msgstr "連結線"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Stamps palette"
+msgstr "スタンプパレット"
+
+# machine translation, unreviewed
 #: pdfarranger_qt/viewer.py
 msgid "Viewer default"
 msgstr "ビューアーの既定"
@@ -3089,4 +3189,24 @@ msgstr "ファイル名ではなくタイトルを表示する"
 #~ msgid "%d page matches"
 #~ msgid_plural "%d pages match"
 #~ msgstr[0] "%d ページが一致"
+
+# machine translation, unreviewed
+#~ msgid "_Highlight"
+#~ msgstr "ハイライト(_H)"
+
+# machine translation, unreviewed
+#~ msgid "Strike_through"
+#~ msgstr "取り消し線(_K)"
+
+# machine translation, unreviewed
+#~ msgid "_Note"
+#~ msgstr "ノート(_N)"
+
+# machine translation, unreviewed
+#~ msgid "_Draw"
+#~ msgstr "描画(_D)"
+
+# machine translation, unreviewed
+#~ msgid "Markup"
+#~ msgstr "マークアップ"
 

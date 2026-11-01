@@ -38,7 +38,6 @@ from PySide6.QtCore import (
 )
 from PySide6.QtGui import (
     QAction,
-    QActionGroup,
     QDesktopServices,
     QFontMetrics,
     QKeySequence,
@@ -77,6 +76,7 @@ from . import (
     repair,
     stamp,
     theme,
+    tools,
     viewer,
 )
 from .core import DocumentSet, Page, PDFDocError
@@ -91,6 +91,7 @@ from .recent import RecentFiles
 from .render import Renderer
 from .search import SearchIndex
 from .settings import app_settings
+from .toolstrip import ToolStrip
 from .view import PageView
 
 PDF_FILTER = "PDF files (*.pdf)"
@@ -132,7 +133,13 @@ class MainWindow(QMainWindow):
         self.reader.canvas.field_values = self._field_value
         self.reader.canvas.field_locked = self._field_locked
         self.reader.field_pressed.connect(self.field_pressed)
-        self.reader.canvas.tool_changed.connect(self._tool_changed)
+        #: The markup tools, floating over the reader rather than docked
+        #: beside it: this is a page arranger and the strip is a guest.
+        self.tool_strip = ToolStrip(self.reader)
+        self.tool_strip.hide()
+        self.tool_strip.moved.connect(
+            lambda where: self.settings.setValue(
+                "reader/markup-tools-at", where))
         self.reader.mark_drawn.connect(self.mark_drawn)
         self.reader.canvas.note_edited.connect(self.note_edited)
         self.reader.canvas.marks = self._marks_on_page
@@ -295,6 +302,10 @@ class MainWindow(QMainWindow):
                 # overwritten the next time Qt rebuilt it.
                 bar.setWindowTitle(_(msgid))
         self._apply_static_tips()
+        # The strip's tools are not built through `_action`, so they carry no
+        # msgid property and the sweep above does not reach them. It labels
+        # itself from its own declaration instead.
+        self.tool_strip.retranslate()
         # Everything derived rather than fixed -- the undo verb, the page
         # counts, the mode label -- is recomputed rather than translated.
         self._refresh_state()
@@ -591,27 +602,14 @@ class MainWindow(QMainWindow):
         self.act_find_all = self._action("Find All", mnemonic=False)
         self.act_find_all.triggered.connect(self.find_all)
 
-        # Markup tools. Exclusive, like any tool palette, and the names are
-        # the canvas's own so that nothing has to translate between them.
-        from .canvas import PageCanvas
-
-        self.markup_tools = QActionGroup(self)
-        self.markup_tools.setExclusive(True)
-        # `self._action(...)` at each site rather than inside the helper: the
-        # template is extracted by matching the *called name*, so a label
-        # passed to a helper of any other name never reaches po/ at all. Three
-        # of these did exactly that, and the catalogue gate passed them.
-        self.act_tool_select = self._markup_tool(
-            self._action("_Select"), PageCanvas.SELECT)
-        self.act_tool_select.setChecked(True)
-        self.act_tool_highlight = self._markup_tool(
-            self._action("_Highlight"), PageCanvas.HIGHLIGHT)
-        self.act_tool_strikeout = self._markup_tool(
-            self._action("Strike_through"), PageCanvas.STRIKEOUT)
-        self.act_tool_note = self._markup_tool(
-            self._action("_Note"), PageCanvas.NOTE)
-        self.act_tool_draw = self._markup_tool(
-            self._action("_Draw"), PageCanvas.DRAW)
+        # The markup tools live in a floating strip of their own (4.2), not
+        # in a menu: a flat list cannot say which tool is armed, what each one
+        # carries, or group twenty of them. The strip is summoned from here.
+        self.act_markup_tools = self._action("Markup _Tools")
+        self.act_markup_tools.setCheckable(True)
+        self.act_markup_tools.setChecked(
+            self.settings.value("reader/markup-tools", False, type=bool))
+        self.act_markup_tools.toggled.connect(self.show_markup_tools)
 
         self.act_preferences = self._action("Preferences")
         self.act_preferences.triggered.connect(self.edit_preferences)
@@ -852,32 +850,39 @@ class MainWindow(QMainWindow):
         self._mark_modified()
         self.reader.canvas.viewport().update()
 
-    def _markup_tool(self, action, tool):
-        """Make one already-built action an exclusive markup tool.
+    def keyPressEvent(self, event):
+        """Escape disarms the strip.
 
-        Takes the action rather than its msgid, so that the label stays inside
-        a `self._action(...)` call where the template extractor can see it.
+        A tool is a mode, so there has to be a way out of it that is not
+        choosing a different one. This sees the key only when nothing nearer
+        wanted it: the canvas takes Escape first when a field has focus, when
+        a mark is being drawn or when there is a selection to clear, each of
+        which is what the key meant at that moment.
         """
-        action.setCheckable(True)
-        action.setData(tool)
-        self.markup_tools.addAction(action)
-        action.triggered.connect(lambda _checked, t=tool: self.set_tool(t))
-        return action
+        if (event.key() == Qt.Key_Escape and self.tool_strip.isVisible()
+                and self.tool_strip.armed() != tools.DEFAULT):
+            self.tool_strip.disarm()
+            return
+        super().keyPressEvent(event)
+
+    def show_markup_tools(self, on: bool) -> None:
+        """Open or close the strip.
+
+        Placed on first opening rather than on construction, because where it
+        goes depends on the size of a reader that has not been laid out yet.
+        """
+        self.settings.setValue("reader/markup-tools", bool(on))
+        if on and self.act_markup_tools.isEnabled():
+            self.tool_strip.place(
+                self.settings.value("reader/markup-tools-at"))
+            self.tool_strip.show()
+            self.tool_strip.raise_()
+        else:
+            self.tool_strip.hide()
 
     def set_tool(self, tool: str) -> None:
         """Choose what the pointer does in the reader."""
         self.reader.canvas.set_tool(tool)
-
-    def _tool_changed(self, tool: str) -> None:
-        """Keep the palette showing what the canvas is actually doing.
-
-        The canvas changes tool on its own when Escape is pressed, so the
-        menu cannot be the only place the choice lives.
-        """
-        for action in self.markup_tools.actions():
-            if action.data() == tool:
-                action.setChecked(True)
-                break
 
     def _build_menus(self):
         # Strong references to every menu; see _menu().
@@ -1000,14 +1005,6 @@ class MainWindow(QMainWindow):
         booklet_menu.addAction(self.act_gen_booklet)
         booklet_menu.addAction(self.act_split_booklet)
 
-        m = self._menu(bar, "Markup", mnemonic=False, role="Markup")
-        m.addAction(self.act_tool_select)
-        m.addSeparator()
-        m.addAction(self.act_tool_highlight)
-        m.addAction(self.act_tool_strikeout)
-        m.addAction(self.act_tool_note)
-        m.addAction(self.act_tool_draw)
-
         m = self._menu(bar, "_View", role="View")
         m.addAction(self.act_arrange_mode)
         m.addAction(self.act_continuous)
@@ -1018,6 +1015,8 @@ class MainWindow(QMainWindow):
         m.addAction(self.act_first_page)
         m.addAction(self.act_last_page)
         m.addAction(self.act_go_to_page)
+        m.addSeparator()
+        m.addAction(self.act_markup_tools)
         m.addSeparator()
         m.addAction(self.act_zoom_in)
         m.addAction(self.act_zoom_out)
@@ -1097,6 +1096,7 @@ class MainWindow(QMainWindow):
         # only appears for documents that already have some has to be openable
         # without hunting through a menu.
         self.reader_toolbar.addAction(self.act_bookmarks)
+        self.reader_toolbar.addAction(self.act_markup_tools)
         self.reader_toolbar.addSeparator()
         self.reader_toolbar.addAction(self.act_zoom_fit)
         self.reader_toolbar.addAction(self.act_zoom_fit_width)
@@ -1258,6 +1258,13 @@ class MainWindow(QMainWindow):
             self.reader_toolbar.setVisible(self.read_mode)
         self._update_page_total()
         self._retitle()
+        self.act_markup_tools.setEnabled(self.read_mode and has_pages)
+        if self.act_markup_tools.isChecked():
+            # Checked is the *preference*, kept across a trip to the grid and
+            # across sessions. Whether the strip is on screen is a separate
+            # question: arranging is not a mode its tools act in, and there is
+            # nothing to mark up before a document is open.
+            self.show_markup_tools(True)
         if self.read_only:
             # Last of all, because this is the stronger rule. Read mode above
             # says the grid is not on screen; this says the document will not

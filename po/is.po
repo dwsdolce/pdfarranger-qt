@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-01 05:00+0000\n"
+"POT-Creation-Date: 2026-11-01 21:09+0000\n"
 "PO-Revision-Date: 2025-09-28 16:51+0000\n"
 "Last-Translator: Sveinn í Felli <sv1@fellsnet.is>\n"
 "Language: is\n"
@@ -1952,29 +1952,10 @@ msgstr "Finna fyrra"
 msgid "Find All"
 msgstr "Finna allt"
 
-#: pdfarranger_qt/mainwindow.py
-msgid "_Select"
-msgstr "_Velja"
-
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
-msgid "_Highlight"
-msgstr "_Áherslulitun"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
-msgid "Strike_through"
-msgstr "_Yfirstrikun"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
-msgid "_Note"
-msgstr "_Minnispunktur"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
-msgid "_Draw"
-msgstr "_Teikna"
+msgid "Markup _Tools"
+msgstr "Merkinga_verkfæri"
 
 #: pdfarranger_qt/mainwindow.py
 msgid "Select _Range"
@@ -2105,13 +2086,12 @@ msgid "Arrange"
 msgstr "Raða"
 
 #: pdfarranger_qt/mainwindow.py
+msgid "_Select"
+msgstr "_Velja"
+
+#: pdfarranger_qt/mainwindow.py
 msgid "_Booklet"
 msgstr "_Bæklingur"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
-msgid "Markup"
-msgstr "Merkingar"
 
 #: pdfarranger_qt/mainwindow.py
 msgid "_View"
@@ -2813,6 +2793,126 @@ msgid "Bottom right"
 msgstr "Neðst til hægri"
 
 # machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Pointer"
+msgstr "Bendill"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Comment"
+msgstr "Athugasemd"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Text markup"
+msgstr "Textamerkingar"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Drawing"
+msgstr "Teikning"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Select"
+msgstr "Velja"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Pan"
+msgstr "Hliðra"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Add a comment"
+msgstr "Bæta við athugasemd"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Replace selected text"
+msgstr "Skipta út völdum texta"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Insert text"
+msgstr "Setja inn texta"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Add text comment"
+msgstr "Bæta við textareit"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Attach file"
+msgstr "Hengja skrá við"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Highlight"
+msgstr "Áherslulita"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Underline"
+msgstr "Undirstrikun"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Strikethrough"
+msgstr "Yfirstrikun"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Draw"
+msgstr "Teikna"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Line"
+msgstr "Lína"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Arrow"
+msgstr "Ör"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Rectangle"
+msgstr "Ferhyrningur"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Circle"
+msgstr "Hringur"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Text callout"
+msgstr "Textabóla"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Polygon"
+msgstr "Marghyrningur"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Cloud"
+msgstr "Ský"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Connected lines"
+msgstr "Tengdar línur"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Stamps palette"
+msgstr "Stimpilspjald"
+
+# machine translation, unreviewed
 #: pdfarranger_qt/viewer.py
 msgid "Viewer default"
 msgstr "Sjálfgefið í skoðara"
@@ -3225,4 +3325,24 @@ msgstr "Sýna titilinn í stað skráarnafnsins"
 #~ msgid_plural "%d pages match"
 #~ msgstr[0] "%d síða passar"
 #~ msgstr[1] "%d síður passa"
+
+# machine translation, unreviewed
+#~ msgid "_Highlight"
+#~ msgstr "_Áherslulitun"
+
+# machine translation, unreviewed
+#~ msgid "Strike_through"
+#~ msgstr "_Yfirstrikun"
+
+# machine translation, unreviewed
+#~ msgid "_Note"
+#~ msgstr "_Minnispunktur"
+
+# machine translation, unreviewed
+#~ msgid "_Draw"
+#~ msgstr "_Teikna"
+
+# machine translation, unreviewed
+#~ msgid "Markup"
+#~ msgstr "Merkingar"
 

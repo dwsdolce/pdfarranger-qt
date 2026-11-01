@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pdfarranger-qt VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/dwsdolce/pdfarranger-qt/issues\n"
-"POT-Creation-Date: 2026-11-01 05:00+0000\n"
+"POT-Creation-Date: 2026-11-01 21:09+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1507,23 +1507,7 @@ msgid "Find All"
 msgstr ""
 
 #: pdfarranger_qt/mainwindow.py
-msgid "_Select"
-msgstr ""
-
-#: pdfarranger_qt/mainwindow.py
-msgid "_Highlight"
-msgstr ""
-
-#: pdfarranger_qt/mainwindow.py
-msgid "Strike_through"
-msgstr ""
-
-#: pdfarranger_qt/mainwindow.py
-msgid "_Note"
-msgstr ""
-
-#: pdfarranger_qt/mainwindow.py
-msgid "_Draw"
+msgid "Markup _Tools"
 msgstr ""
 
 #: pdfarranger_qt/mainwindow.py
@@ -1635,11 +1619,11 @@ msgid "Arrange"
 msgstr ""
 
 #: pdfarranger_qt/mainwindow.py
-msgid "_Booklet"
+msgid "_Select"
 msgstr ""
 
 #: pdfarranger_qt/mainwindow.py
-msgid "Markup"
+msgid "_Booklet"
 msgstr ""
 
 #: pdfarranger_qt/mainwindow.py
@@ -2217,6 +2201,102 @@ msgstr ""
 
 #: pdfarranger_qt/stamp.py
 msgid "Bottom right"
+msgstr ""
+
+#: pdfarranger_qt/tools.py
+msgid "Pointer"
+msgstr ""
+
+#: pdfarranger_qt/tools.py
+msgid "Comment"
+msgstr ""
+
+#: pdfarranger_qt/tools.py
+msgid "Text markup"
+msgstr ""
+
+#: pdfarranger_qt/tools.py
+msgid "Drawing"
+msgstr ""
+
+#: pdfarranger_qt/tools.py
+msgid "Select"
+msgstr ""
+
+#: pdfarranger_qt/tools.py
+msgid "Pan"
+msgstr ""
+
+#: pdfarranger_qt/tools.py
+msgid "Add a comment"
+msgstr ""
+
+#: pdfarranger_qt/tools.py
+msgid "Replace selected text"
+msgstr ""
+
+#: pdfarranger_qt/tools.py
+msgid "Insert text"
+msgstr ""
+
+#: pdfarranger_qt/tools.py
+msgid "Add text comment"
+msgstr ""
+
+#: pdfarranger_qt/tools.py
+msgid "Attach file"
+msgstr ""
+
+#: pdfarranger_qt/tools.py
+msgid "Highlight"
+msgstr ""
+
+#: pdfarranger_qt/tools.py
+msgid "Underline"
+msgstr ""
+
+#: pdfarranger_qt/tools.py
+msgid "Strikethrough"
+msgstr ""
+
+#: pdfarranger_qt/tools.py
+msgid "Draw"
+msgstr ""
+
+#: pdfarranger_qt/tools.py
+msgid "Line"
+msgstr ""
+
+#: pdfarranger_qt/tools.py
+msgid "Arrow"
+msgstr ""
+
+#: pdfarranger_qt/tools.py
+msgid "Rectangle"
+msgstr ""
+
+#: pdfarranger_qt/tools.py
+msgid "Circle"
+msgstr ""
+
+#: pdfarranger_qt/tools.py
+msgid "Text callout"
+msgstr ""
+
+#: pdfarranger_qt/tools.py
+msgid "Polygon"
+msgstr ""
+
+#: pdfarranger_qt/tools.py
+msgid "Cloud"
+msgstr ""
+
+#: pdfarranger_qt/tools.py
+msgid "Connected lines"
+msgstr ""
+
+#: pdfarranger_qt/tools.py
+msgid "Stamps palette"
 msgstr ""
 
 #: pdfarranger_qt/viewer.py

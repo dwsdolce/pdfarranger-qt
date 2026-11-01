@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-01 05:00+0000\n"
+"POT-Creation-Date: 2026-11-01 21:09+0000\n"
 "PO-Revision-Date: 2024-09-05 17:05+0300\n"
 "Last-Translator: Abdullah Albaroty <albaroty@gmail.com>\n"
 "Language: ar\n"
@@ -1921,29 +1921,10 @@ msgstr "ابحث عن السابق"
 msgid "Find All"
 msgstr "ابحث عن الكل"
 
-#: pdfarranger_qt/mainwindow.py
-msgid "_Select"
-msgstr "_حدد"
-
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
-msgid "_Highlight"
-msgstr "_إبراز"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
-msgid "Strike_through"
-msgstr "_شطب"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
-msgid "_Note"
-msgstr "_ملاحظة"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
-msgid "_Draw"
-msgstr "_رسم"
+msgid "Markup _Tools"
+msgstr "أدوات ال_تحشية"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
@@ -2074,15 +2055,14 @@ msgstr "ا_ستخرج"
 msgid "Arrange"
 msgstr "رتّب"
 
+#: pdfarranger_qt/mainwindow.py
+msgid "_Select"
+msgstr "_حدد"
+
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
 msgid "_Booklet"
 msgstr "_كتيب"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
-msgid "Markup"
-msgstr "التوضيحات"
 
 #: pdfarranger_qt/mainwindow.py
 msgid "_View"
@@ -2810,6 +2790,126 @@ msgid "Bottom right"
 msgstr "أسفل اليمين"
 
 # machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Pointer"
+msgstr "مؤشر"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Comment"
+msgstr "تعليق"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Text markup"
+msgstr "تحشية نصية"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Drawing"
+msgstr "رسم"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Select"
+msgstr "تحديد"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Pan"
+msgstr "تحريك"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Add a comment"
+msgstr "إضافة تعليق"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Replace selected text"
+msgstr "استبدال النص المحدد"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Insert text"
+msgstr "إدراج نص"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Add text comment"
+msgstr "إضافة مربع نص"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Attach file"
+msgstr "إرفاق ملف"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Highlight"
+msgstr "تمييز"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Underline"
+msgstr "تسطير"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Strikethrough"
+msgstr "يتوسطه خط"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Draw"
+msgstr "رسم"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Line"
+msgstr "خط"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Arrow"
+msgstr "سهم"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Rectangle"
+msgstr "مستطيل"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Circle"
+msgstr "دائرة"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Text callout"
+msgstr "وسيلة شرح نصية"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Polygon"
+msgstr "مضلع"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Cloud"
+msgstr "سحابة"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Connected lines"
+msgstr "خطوط متصلة"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Stamps palette"
+msgstr "لوحة الأختام"
+
+# machine translation, unreviewed
 #: pdfarranger_qt/viewer.py
 msgid "Viewer default"
 msgstr "مبدئي العارض"
@@ -3207,4 +3307,24 @@ msgstr "أظهر العنوان بدل اسم الملف"
 #~ msgstr[3] "‏%d صفحات مطابقة"
 #~ msgstr[4] "‏%d صفحة مطابقة"
 #~ msgstr[5] "‏%d صفحة مطابقة"
+
+# machine translation, unreviewed
+#~ msgid "_Highlight"
+#~ msgstr "_إبراز"
+
+# machine translation, unreviewed
+#~ msgid "Strike_through"
+#~ msgstr "_شطب"
+
+# machine translation, unreviewed
+#~ msgid "_Note"
+#~ msgstr "_ملاحظة"
+
+# machine translation, unreviewed
+#~ msgid "_Draw"
+#~ msgstr "_رسم"
+
+# machine translation, unreviewed
+#~ msgid "Markup"
+#~ msgstr "التوضيحات"
 

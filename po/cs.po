@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  pdfarranger\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-01 05:00+0000\n"
+"POT-Creation-Date: 2026-11-01 21:09+0000\n"
 "PO-Revision-Date: 2023-07-10 15:37+0000\n"
 "Last-Translator: PavelZ\n"
 "Language: cs_CZ\n"
@@ -1961,29 +1961,10 @@ msgstr "Najít předchozí"
 msgid "Find All"
 msgstr "Najít vše"
 
-#: pdfarranger_qt/mainwindow.py
-msgid "_Select"
-msgstr "Vybra_t"
-
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
-msgid "_Highlight"
-msgstr "_Zvýraznění"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
-msgid "Strike_through"
-msgstr "Pře_škrtnutí"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
-msgid "_Note"
-msgstr "Poz_námka"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
-msgid "_Draw"
-msgstr "_Kreslení"
+msgid "Markup _Tools"
+msgstr "Nástroje _značek"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
@@ -2115,15 +2096,14 @@ msgstr "_Extrahovat"
 msgid "Arrange"
 msgstr "Uspořádat"
 
+#: pdfarranger_qt/mainwindow.py
+msgid "_Select"
+msgstr "Vybra_t"
+
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
 msgid "_Booklet"
 msgstr "_Brožura"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
-msgid "Markup"
-msgstr "Poznámky"
 
 #: pdfarranger_qt/mainwindow.py
 msgid "_View"
@@ -2832,6 +2812,126 @@ msgid "Bottom right"
 msgstr "Vpravo dole"
 
 # machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Pointer"
+msgstr "Ukazatel"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Comment"
+msgstr "Komentář"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Text markup"
+msgstr "Značky textu"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Drawing"
+msgstr "Kreslení"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Select"
+msgstr "Vybrat"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Pan"
+msgstr "Posun"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Add a comment"
+msgstr "Přidat komentář"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Replace selected text"
+msgstr "Nahradit vybraný text"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Insert text"
+msgstr "Vložit text"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Add text comment"
+msgstr "Přidat textové pole"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Attach file"
+msgstr "Připojit soubor"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Highlight"
+msgstr "Zvýraznění"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Underline"
+msgstr "Podtržení"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Strikethrough"
+msgstr "Přeškrtnutí"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Draw"
+msgstr "Kreslit"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Line"
+msgstr "Čára"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Arrow"
+msgstr "Šipka"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Rectangle"
+msgstr "Obdélník"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Circle"
+msgstr "Kruh"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Text callout"
+msgstr "Textová bublina"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Polygon"
+msgstr "Mnohoúhelník"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Cloud"
+msgstr "Oblak"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Connected lines"
+msgstr "Spojené čáry"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Stamps palette"
+msgstr "Paleta razítek"
+
+# machine translation, unreviewed
 #: pdfarranger_qt/viewer.py
 msgid "Viewer default"
 msgstr "Výchozí nastavení prohlížeče"
@@ -3229,4 +3329,24 @@ msgstr "Zobrazit název místo jména souboru"
 #~ msgstr[0] "%d stránka odpovídá"
 #~ msgstr[1] "%d stránky odpovídají"
 #~ msgstr[2] "%d stránek odpovídá"
+
+# machine translation, unreviewed
+#~ msgid "_Highlight"
+#~ msgstr "_Zvýraznění"
+
+# machine translation, unreviewed
+#~ msgid "Strike_through"
+#~ msgstr "Pře_škrtnutí"
+
+# machine translation, unreviewed
+#~ msgid "_Note"
+#~ msgstr "Poz_námka"
+
+# machine translation, unreviewed
+#~ msgid "_Draw"
+#~ msgstr "_Kreslení"
+
+# machine translation, unreviewed
+#~ msgid "Markup"
+#~ msgstr "Poznámky"
 

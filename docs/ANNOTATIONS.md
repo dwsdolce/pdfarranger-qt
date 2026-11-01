@@ -500,6 +500,17 @@ disabled in arrange mode and enabled in read mode -- the opposite of what the
 markup actions do today, so they have to stop being treated as document-editing
 commands by `_editing_actions`.
 
+**It is a column, and that is load-bearing.** Reader's strip runs *down* the
+left edge, families open *sideways* from it, and the tail is the bottom of the
+column. Written down because it was once left out of this section and then got
+re-derived wrongly from the word "below": a tail is the *end* of the strip, and
+only on a vertical strip is the end underneath. On a row the tail would be at
+the right-hand end, and "grows below" would describe a second row instead.
+
+A page is also taller than it is wide, so a column sits in a margin where a row
+lies across the text, and a flyout that opens to the side never covers the
+families it is an alternative to.
+
 **Families, as split buttons.** Twenty tools do not fit in a row, so they are
 grouped and each group is one button: the button carries the icon of the tool
 last used in that family and re-arms it, while the arrow beside it opens a

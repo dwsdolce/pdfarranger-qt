@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  pdfarranger\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-01 05:00+0000\n"
+"POT-Creation-Date: 2026-11-01 21:09+0000\n"
 "PO-Revision-Date: 2023-06-06 13:27+0200\n"
 "Last-Translator: Janez G <janezgac@gmail.com>\n"
 "Language: sl_SI\n"
@@ -17,7 +17,6 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: pdfarranger-qt tools/merge_translations.py\n"
 "Generated-By: Babel 2.18.0\n"
 
 #: pdfarranger_qt/app.py pdfarranger_qt/mainwindow.py
@@ -1958,29 +1957,10 @@ msgstr "Najdi prejšnje"
 msgid "Find All"
 msgstr "Najdi vse"
 
-#: pdfarranger_qt/mainwindow.py
-msgid "_Select"
-msgstr "_Izberi"
-
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
-msgid "_Highlight"
-msgstr "_Poudari"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
-msgid "Strike_through"
-msgstr "Pr_ečrtano"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
-msgid "_Note"
-msgstr "_Opomba"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
-msgid "_Draw"
-msgstr "_Riši"
+msgid "Markup _Tools"
+msgstr "O_rodja za označevanje"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
@@ -2111,15 +2091,14 @@ msgstr "Izvleci"
 msgid "Arrange"
 msgstr "Razporedi"
 
+#: pdfarranger_qt/mainwindow.py
+msgid "_Select"
+msgstr "_Izberi"
+
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
 msgid "_Booklet"
 msgstr "_Knjižica"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
-msgid "Markup"
-msgstr "Označevanje"
 
 #: pdfarranger_qt/mainwindow.py
 msgid "_View"
@@ -2833,6 +2812,126 @@ msgid "Bottom right"
 msgstr "Spodaj desno"
 
 # machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Pointer"
+msgstr "Kazalec"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Comment"
+msgstr "Komentar"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Text markup"
+msgstr "Označevanje besedila"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Drawing"
+msgstr "Risanje"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Select"
+msgstr "Izberi"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Pan"
+msgstr "Premakni"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Add a comment"
+msgstr "Dodaj komentar"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Replace selected text"
+msgstr "Zamenjaj izbrano besedilo"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Insert text"
+msgstr "Vstavi besedilo"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Add text comment"
+msgstr "Dodaj besedilno polje"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Attach file"
+msgstr "Pripni datoteko"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Highlight"
+msgstr "Poudari"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Underline"
+msgstr "Podčrtano"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Strikethrough"
+msgstr "Prečrtano"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Draw"
+msgstr "Riši"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Line"
+msgstr "Črta"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Arrow"
+msgstr "Puščica"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Rectangle"
+msgstr "Pravokotnik"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Circle"
+msgstr "Krog"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Text callout"
+msgstr "Besedilni oblaček"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Polygon"
+msgstr "Mnogokotnik"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Cloud"
+msgstr "Oblak"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Connected lines"
+msgstr "Povezane črte"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Stamps palette"
+msgstr "Paleta žigov"
+
+# machine translation, unreviewed
 #: pdfarranger_qt/viewer.py
 msgid "Viewer default"
 msgstr "Privzeto v pregledovalniku"
@@ -3232,4 +3331,24 @@ msgstr "Pokaži naslov namesto imena datoteke"
 #~ msgstr[1] "%d strani se ujemata"
 #~ msgstr[2] "%d strani se ujemajo"
 #~ msgstr[3] "%d strani se ujema"
+
+# machine translation, unreviewed
+#~ msgid "_Highlight"
+#~ msgstr "_Poudari"
+
+# machine translation, unreviewed
+#~ msgid "Strike_through"
+#~ msgstr "Pr_ečrtano"
+
+# machine translation, unreviewed
+#~ msgid "_Note"
+#~ msgstr "_Opomba"
+
+# machine translation, unreviewed
+#~ msgid "_Draw"
+#~ msgstr "_Riši"
+
+# machine translation, unreviewed
+#~ msgid "Markup"
+#~ msgstr "Označevanje"
 

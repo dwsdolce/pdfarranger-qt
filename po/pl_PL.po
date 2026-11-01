@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PDF-Shuffler 0.7\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-01 05:00+0000\n"
+"POT-Creation-Date: 2026-11-01 21:09+0000\n"
 "PO-Revision-Date: 2021-12-30 17:13+0100\n"
 "Last-Translator: Toratora <darex7@o2.pl>\n"
 "Language: pl_PL\n"
@@ -2007,29 +2007,10 @@ msgstr "Znajdź poprzednie"
 msgid "Find All"
 msgstr "Znajdź wszystkie"
 
-#: pdfarranger_qt/mainwindow.py
-msgid "_Select"
-msgstr "Zaznacz"
-
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
-msgid "_Highlight"
-msgstr "_Zakreślenie"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
-msgid "Strike_through"
-msgstr "_Przekreślenie"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
-msgid "_Note"
-msgstr "_Notatka"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
-msgid "_Draw"
-msgstr "_Rysowanie"
+msgid "Markup _Tools"
+msgstr "_Narzędzia adiustacji"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
@@ -2164,15 +2145,14 @@ msgstr "_Wyodrębnij"
 msgid "Arrange"
 msgstr "Porządkuj"
 
+#: pdfarranger_qt/mainwindow.py
+msgid "_Select"
+msgstr "Zaznacz"
+
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
 msgid "_Booklet"
 msgstr "_Broszura"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
-msgid "Markup"
-msgstr "Adnotacje"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
@@ -2893,6 +2873,126 @@ msgid "Bottom right"
 msgstr "Prawy dolny"
 
 # machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Pointer"
+msgstr "Wskaźnik"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Comment"
+msgstr "Komentarz"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Text markup"
+msgstr "Adiustacja tekstu"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Drawing"
+msgstr "Rysowanie"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Select"
+msgstr "Zaznacz"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Pan"
+msgstr "Przesuń"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Add a comment"
+msgstr "Dodaj komentarz"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Replace selected text"
+msgstr "Zastąp zaznaczony tekst"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Insert text"
+msgstr "Wstaw tekst"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Add text comment"
+msgstr "Dodaj pole tekstowe"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Attach file"
+msgstr "Załącz plik"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Highlight"
+msgstr "Wyróżnienie"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Underline"
+msgstr "Podkreślenie"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Strikethrough"
+msgstr "Przekreślenie"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Draw"
+msgstr "Rysuj"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Line"
+msgstr "Linia"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Arrow"
+msgstr "Strzałka"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Rectangle"
+msgstr "Prostokąt"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Circle"
+msgstr "Okrąg"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Text callout"
+msgstr "Objaśnienie tekstowe"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Polygon"
+msgstr "Wielokąt"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Cloud"
+msgstr "Chmurka"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Connected lines"
+msgstr "Linie łamane"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Stamps palette"
+msgstr "Paleta stempli"
+
+# machine translation, unreviewed
 #: pdfarranger_qt/viewer.py
 msgid "Viewer default"
 msgstr "Domyślne przeglądarki"
@@ -3291,4 +3391,24 @@ msgstr "Pokaż tytuł zamiast nazwy pliku"
 #~ msgstr[0] "%d strona pasuje"
 #~ msgstr[1] "%d strony pasują"
 #~ msgstr[2] "%d stron pasuje"
+
+# machine translation, unreviewed
+#~ msgid "_Highlight"
+#~ msgstr "_Zakreślenie"
+
+# machine translation, unreviewed
+#~ msgid "Strike_through"
+#~ msgstr "_Przekreślenie"
+
+# machine translation, unreviewed
+#~ msgid "_Note"
+#~ msgstr "_Notatka"
+
+# machine translation, unreviewed
+#~ msgid "_Draw"
+#~ msgstr "_Rysowanie"
+
+# machine translation, unreviewed
+#~ msgid "Markup"
+#~ msgstr "Adnotacje"
 

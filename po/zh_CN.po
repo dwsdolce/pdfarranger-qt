@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PDF Arranger 1.14.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-01 05:00+0000\n"
+"POT-Creation-Date: 2026-11-01 21:09+0000\n"
 "PO-Revision-Date: 2026-06-02 17:09+0800\n"
 "Last-Translator: Puqns67 <me@puqns67.icu>\n"
 "Language: zh_CN\n"
@@ -1778,29 +1778,10 @@ msgstr "查找上一个"
 msgid "Find All"
 msgstr "查找全部"
 
-#: pdfarranger_qt/mainwindow.py
-msgid "_Select"
-msgstr "选择（_S）"
-
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
-msgid "_Highlight"
-msgstr "高亮(_H)"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
-msgid "Strike_through"
-msgstr "删除线(_K)"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
-msgid "_Note"
-msgstr "注释(_N)"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
-msgid "_Draw"
-msgstr "绘制(_D)"
+msgid "Markup _Tools"
+msgstr "标记工具(_T)"
 
 #: pdfarranger_qt/mainwindow.py
 msgid "Select _Range"
@@ -1929,13 +1910,12 @@ msgid "Arrange"
 msgstr "整理"
 
 #: pdfarranger_qt/mainwindow.py
+msgid "_Select"
+msgstr "选择（_S）"
+
+#: pdfarranger_qt/mainwindow.py
 msgid "_Booklet"
 msgstr "小册子（_B）"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
-msgid "Markup"
-msgstr "标注"
 
 #: pdfarranger_qt/mainwindow.py
 msgid "_View"
@@ -2625,6 +2605,126 @@ msgid "Bottom right"
 msgstr "右下"
 
 # machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Pointer"
+msgstr "指针"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Comment"
+msgstr "注释"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Text markup"
+msgstr "文本标记"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Drawing"
+msgstr "绘制"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Select"
+msgstr "选择"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Pan"
+msgstr "平移"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Add a comment"
+msgstr "添加注释"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Replace selected text"
+msgstr "替换所选文本"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Insert text"
+msgstr "插入文本"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Add text comment"
+msgstr "添加文本框"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Attach file"
+msgstr "附加文件"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Highlight"
+msgstr "高亮"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Underline"
+msgstr "下划线"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Strikethrough"
+msgstr "删除线"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Draw"
+msgstr "绘图"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Line"
+msgstr "直线"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Arrow"
+msgstr "箭头"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Rectangle"
+msgstr "矩形"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Circle"
+msgstr "圆形"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Text callout"
+msgstr "文本标注"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Polygon"
+msgstr "多边形"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Cloud"
+msgstr "云形"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Connected lines"
+msgstr "连接线"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Stamps palette"
+msgstr "图章面板"
+
+# machine translation, unreviewed
 #: pdfarranger_qt/viewer.py
 msgid "Viewer default"
 msgstr "阅读器默认"
@@ -3037,4 +3137,24 @@ msgstr "显示标题而非文件名"
 #~ msgid "%d page matches"
 #~ msgid_plural "%d pages match"
 #~ msgstr[0] "%d 页匹配"
+
+# machine translation, unreviewed
+#~ msgid "_Highlight"
+#~ msgstr "高亮(_H)"
+
+# machine translation, unreviewed
+#~ msgid "Strike_through"
+#~ msgstr "删除线(_K)"
+
+# machine translation, unreviewed
+#~ msgid "_Note"
+#~ msgstr "注释(_N)"
+
+# machine translation, unreviewed
+#~ msgid "_Draw"
+#~ msgstr "绘制(_D)"
+
+# machine translation, unreviewed
+#~ msgid "Markup"
+#~ msgstr "标注"
 

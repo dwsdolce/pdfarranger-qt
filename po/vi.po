@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-01 05:00+0000\n"
+"POT-Creation-Date: 2026-11-01 21:09+0000\n"
 "PO-Revision-Date: 2025-12-15 00:59+0700\n"
 "Last-Translator: Loc Huynh <https://github.com/hthienloc>\n"
 "Language: vi\n"
@@ -1938,29 +1938,10 @@ msgstr "Tìm ngược"
 msgid "Find All"
 msgstr "Tìm tất cả"
 
-#: pdfarranger_qt/mainwindow.py
-msgid "_Select"
-msgstr "_Lựa chọn"
-
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
-msgid "_Highlight"
-msgstr "_Tô sáng"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
-msgid "Strike_through"
-msgstr "Gạ_ch ngang"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
-msgid "_Note"
-msgstr "_Ghi chú"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
-msgid "_Draw"
-msgstr "_Vẽ"
+msgid "Markup _Tools"
+msgstr "_Công cụ đánh dấu"
 
 #: pdfarranger_qt/mainwindow.py
 msgid "Select _Range"
@@ -2091,13 +2072,12 @@ msgid "Arrange"
 msgstr "Sắp xếp"
 
 #: pdfarranger_qt/mainwindow.py
+msgid "_Select"
+msgstr "_Lựa chọn"
+
+#: pdfarranger_qt/mainwindow.py
 msgid "_Booklet"
 msgstr "_Tập sách nhỏ"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
-msgid "Markup"
-msgstr "Đánh dấu"
 
 #: pdfarranger_qt/mainwindow.py
 msgid "_View"
@@ -2793,6 +2773,126 @@ msgid "Bottom right"
 msgstr "Dưới phải"
 
 # machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Pointer"
+msgstr "Con trỏ"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Comment"
+msgstr "Chú thích"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Text markup"
+msgstr "Đánh dấu văn bản"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Drawing"
+msgstr "Bản vẽ"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Select"
+msgstr "Chọn"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Pan"
+msgstr "Kéo xem"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Add a comment"
+msgstr "Thêm chú thích"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Replace selected text"
+msgstr "Thay thế văn bản đã chọn"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Insert text"
+msgstr "Chèn văn bản"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Add text comment"
+msgstr "Thêm hộp văn bản"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Attach file"
+msgstr "Đính kèm tệp"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Highlight"
+msgstr "Tô sáng"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Underline"
+msgstr "Gạch chân"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Strikethrough"
+msgstr "Gạch ngang"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Draw"
+msgstr "Vẽ"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Line"
+msgstr "Đường thẳng"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Arrow"
+msgstr "Mũi tên"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Rectangle"
+msgstr "Hình chữ nhật"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Circle"
+msgstr "Hình tròn"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Text callout"
+msgstr "Chú giải văn bản"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Polygon"
+msgstr "Đa giác"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Cloud"
+msgstr "Đám mây"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Connected lines"
+msgstr "Đường nối"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Stamps palette"
+msgstr "Bảng con dấu"
+
+# machine translation, unreviewed
 #: pdfarranger_qt/viewer.py
 msgid "Viewer default"
 msgstr "Mặc định của trình xem"
@@ -3203,4 +3303,24 @@ msgstr "Hiện tiêu đề thay cho tên tập tin"
 #~ msgid "%d page matches"
 #~ msgid_plural "%d pages match"
 #~ msgstr[0] "%d trang khớp"
+
+# machine translation, unreviewed
+#~ msgid "_Highlight"
+#~ msgstr "_Tô sáng"
+
+# machine translation, unreviewed
+#~ msgid "Strike_through"
+#~ msgstr "Gạ_ch ngang"
+
+# machine translation, unreviewed
+#~ msgid "_Note"
+#~ msgstr "_Ghi chú"
+
+# machine translation, unreviewed
+#~ msgid "_Draw"
+#~ msgstr "_Vẽ"
+
+# machine translation, unreviewed
+#~ msgid "Markup"
+#~ msgstr "Đánh dấu"
 

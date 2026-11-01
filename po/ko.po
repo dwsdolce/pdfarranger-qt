@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pdfarranger - Korean\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-01 05:00+0000\n"
+"POT-Creation-Date: 2026-11-01 21:09+0000\n"
 "PO-Revision-Date: 2026-05-25 00:41+0900\n"
 "Last-Translator: VenusGirl <venusgirl@outlook.com>\n"
 "Language: ko\n"
@@ -1834,29 +1834,10 @@ msgstr "이전 찾기"
 msgid "Find All"
 msgstr "모두 찾기"
 
-#: pdfarranger_qt/mainwindow.py
-msgid "_Select"
-msgstr "선택(_S)"
-
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
-msgid "_Highlight"
-msgstr "강조(_H)"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
-msgid "Strike_through"
-msgstr "취소선(_K)"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
-msgid "_Note"
-msgstr "메모(_N)"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
-msgid "_Draw"
-msgstr "그리기(_D)"
+msgid "Markup _Tools"
+msgstr "마크업 도구(_T)"
 
 #: pdfarranger_qt/mainwindow.py
 msgid "Select _Range"
@@ -1985,13 +1966,12 @@ msgid "Arrange"
 msgstr "정리"
 
 #: pdfarranger_qt/mainwindow.py
+msgid "_Select"
+msgstr "선택(_S)"
+
+#: pdfarranger_qt/mainwindow.py
 msgid "_Booklet"
 msgstr "소책자(_B)"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
-msgid "Markup"
-msgstr "마크업"
 
 #: pdfarranger_qt/mainwindow.py
 msgid "_View"
@@ -2681,6 +2661,126 @@ msgid "Bottom right"
 msgstr "오른쪽 아래"
 
 # machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Pointer"
+msgstr "포인터"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Comment"
+msgstr "주석"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Text markup"
+msgstr "텍스트 마크업"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Drawing"
+msgstr "그리기 도구"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Select"
+msgstr "선택"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Pan"
+msgstr "이동"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Add a comment"
+msgstr "주석 추가"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Replace selected text"
+msgstr "선택한 텍스트 바꾸기"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Insert text"
+msgstr "텍스트 삽입"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Add text comment"
+msgstr "텍스트 상자 추가"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Attach file"
+msgstr "파일 첨부"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Highlight"
+msgstr "강조 표시"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Underline"
+msgstr "밑줄"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Strikethrough"
+msgstr "취소선"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Draw"
+msgstr "그리기"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Line"
+msgstr "선"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Arrow"
+msgstr "화살표"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Rectangle"
+msgstr "사각형"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Circle"
+msgstr "원"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Text callout"
+msgstr "텍스트 설명선"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Polygon"
+msgstr "다각형"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Cloud"
+msgstr "구름"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Connected lines"
+msgstr "연결선"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Stamps palette"
+msgstr "스탬프 팔레트"
+
+# machine translation, unreviewed
 #: pdfarranger_qt/viewer.py
 msgid "Viewer default"
 msgstr "뷰어 기본값"
@@ -3111,4 +3211,24 @@ msgstr "파일 이름 대신 제목 보이기"
 #~ msgid "%d page matches"
 #~ msgid_plural "%d pages match"
 #~ msgstr[0] "%d페이지 일치"
+
+# machine translation, unreviewed
+#~ msgid "_Highlight"
+#~ msgstr "강조(_H)"
+
+# machine translation, unreviewed
+#~ msgid "Strike_through"
+#~ msgstr "취소선(_K)"
+
+# machine translation, unreviewed
+#~ msgid "_Note"
+#~ msgstr "메모(_N)"
+
+# machine translation, unreviewed
+#~ msgid "_Draw"
+#~ msgstr "그리기(_D)"
+
+# machine translation, unreviewed
+#~ msgid "Markup"
+#~ msgstr "마크업"
 

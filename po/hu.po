@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-01 05:00+0000\n"
+"POT-Creation-Date: 2026-11-01 21:09+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: hu\n"
@@ -17,7 +17,6 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: pdfarranger-qt tools/merge_translations.py\n"
 "Generated-By: Babel 2.18.0\n"
 
 #: pdfarranger_qt/app.py pdfarranger_qt/mainwindow.py
@@ -1982,29 +1981,10 @@ msgstr "Előző keresése"
 msgid "Find All"
 msgstr "Az összes keresése"
 
-#: pdfarranger_qt/mainwindow.py
-msgid "_Select"
-msgstr "_Kijelölés"
-
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
-msgid "_Highlight"
-msgstr "Ki_emelés"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
-msgid "Strike_through"
-msgstr "Át_húzás"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
-msgid "_Note"
-msgstr "_Jegyzet"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
-msgid "_Draw"
-msgstr "_Rajzolás"
+msgid "Markup _Tools"
+msgstr "_Jelölőeszközök"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
@@ -2135,15 +2115,14 @@ msgstr "Ki_bontás"
 msgid "Arrange"
 msgstr "Rendezés"
 
+#: pdfarranger_qt/mainwindow.py
+msgid "_Select"
+msgstr "_Kijelölés"
+
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
 msgid "_Booklet"
 msgstr "_Füzet"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
-msgid "Markup"
-msgstr "Jelölés"
 
 #: pdfarranger_qt/mainwindow.py
 msgid "_View"
@@ -2849,6 +2828,126 @@ msgid "Bottom right"
 msgstr "Jobb alul"
 
 # machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Pointer"
+msgstr "Mutató"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Comment"
+msgstr "Megjegyzés"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Text markup"
+msgstr "Szövegjelölés"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Drawing"
+msgstr "Rajz"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Select"
+msgstr "Kijelölés"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Pan"
+msgstr "Mozgatás"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Add a comment"
+msgstr "Megjegyzés hozzáadása"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Replace selected text"
+msgstr "Kijelölt szöveg cseréje"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Insert text"
+msgstr "Szöveg beszúrása"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Add text comment"
+msgstr "Szövegdoboz hozzáadása"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Attach file"
+msgstr "Fájl csatolása"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Highlight"
+msgstr "Kiemelés"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Underline"
+msgstr "Aláhúzás"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Strikethrough"
+msgstr "Áthúzás"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Draw"
+msgstr "Rajzolás"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Line"
+msgstr "Vonal"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Arrow"
+msgstr "Nyíl"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Rectangle"
+msgstr "Téglalap"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Circle"
+msgstr "Kör"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Text callout"
+msgstr "Szöveges buborék"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Polygon"
+msgstr "Sokszög"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Cloud"
+msgstr "Felhő"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Connected lines"
+msgstr "Összekötött vonalak"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Stamps palette"
+msgstr "Bélyegzőpaletta"
+
+# machine translation, unreviewed
 #: pdfarranger_qt/viewer.py
 msgid "Viewer default"
 msgstr "A megjelenítő alapértelmezése"
@@ -3253,4 +3352,24 @@ msgstr "A cím megjelenítése a fájlnév helyett"
 #~ msgid_plural "%d pages match"
 #~ msgstr[0] "%d oldal egyezik"
 #~ msgstr[1] "%d oldal egyezik"
+
+# machine translation, unreviewed
+#~ msgid "_Highlight"
+#~ msgstr "Ki_emelés"
+
+# machine translation, unreviewed
+#~ msgid "Strike_through"
+#~ msgstr "Át_húzás"
+
+# machine translation, unreviewed
+#~ msgid "_Note"
+#~ msgstr "_Jegyzet"
+
+# machine translation, unreviewed
+#~ msgid "_Draw"
+#~ msgstr "_Rajzolás"
+
+# machine translation, unreviewed
+#~ msgid "Markup"
+#~ msgstr "Jelölés"
 

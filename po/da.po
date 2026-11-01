@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  pdfarranger\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-01 05:00+0000\n"
+"POT-Creation-Date: 2026-11-01 21:09+0000\n"
 "PO-Revision-Date: 2023-10-22 00:28+0200\n"
 "Last-Translator: Lrss <dev@lrss.dk>\n"
 "Language: da\n"
@@ -1967,29 +1967,10 @@ msgstr "Find forrige"
 msgid "Find All"
 msgstr "Find alle"
 
-#: pdfarranger_qt/mainwindow.py
-msgid "_Select"
-msgstr "_Makering"
-
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
-msgid "_Highlight"
-msgstr "_Fremhævning"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
-msgid "Strike_through"
-msgstr "_Gennemstregning"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
-msgid "_Note"
-msgstr "_Note"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
-msgid "_Draw"
-msgstr "_Tegn"
+msgid "Markup _Tools"
+msgstr "Opmærknings_værktøjer"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
@@ -2121,15 +2102,14 @@ msgstr "_Udtræk"
 msgid "Arrange"
 msgstr "Ordn"
 
+#: pdfarranger_qt/mainwindow.py
+msgid "_Select"
+msgstr "_Makering"
+
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
 msgid "_Booklet"
 msgstr "_Hæfte"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
-msgid "Markup"
-msgstr "Opmærkning"
 
 #: pdfarranger_qt/mainwindow.py
 msgid "_View"
@@ -2834,6 +2814,126 @@ msgid "Bottom right"
 msgstr "Nederst til højre"
 
 # machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Pointer"
+msgstr "Markør"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Comment"
+msgstr "Kommentar"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Text markup"
+msgstr "Tekstopmærkning"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Drawing"
+msgstr "Tegning"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Select"
+msgstr "Vælg"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Pan"
+msgstr "Panorér"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Add a comment"
+msgstr "Tilføj en kommentar"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Replace selected text"
+msgstr "Erstat markeret tekst"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Insert text"
+msgstr "Indsæt tekst"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Add text comment"
+msgstr "Tilføj tekstfelt"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Attach file"
+msgstr "Vedhæft fil"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Highlight"
+msgstr "Fremhæv"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Underline"
+msgstr "Understregning"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Strikethrough"
+msgstr "Gennemstregning"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Draw"
+msgstr "Tegn"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Line"
+msgstr "Linje"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Arrow"
+msgstr "Pil"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Rectangle"
+msgstr "Rektangel"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Circle"
+msgstr "Cirkel"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Text callout"
+msgstr "Tekstboble"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Polygon"
+msgstr "Polygon"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Cloud"
+msgstr "Sky"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Connected lines"
+msgstr "Forbundne linjer"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Stamps palette"
+msgstr "Stempelpalet"
+
+# machine translation, unreviewed
 #: pdfarranger_qt/viewer.py
 msgid "Viewer default"
 msgstr "Fremviserens standard"
@@ -3236,4 +3336,24 @@ msgstr "Vis titlen frem for filnavnet"
 #~ msgid_plural "%d pages match"
 #~ msgstr[0] "%d side matcher"
 #~ msgstr[1] "%d sider matcher"
+
+# machine translation, unreviewed
+#~ msgid "_Highlight"
+#~ msgstr "_Fremhævning"
+
+# machine translation, unreviewed
+#~ msgid "Strike_through"
+#~ msgstr "_Gennemstregning"
+
+# machine translation, unreviewed
+#~ msgid "_Note"
+#~ msgstr "_Note"
+
+# machine translation, unreviewed
+#~ msgid "_Draw"
+#~ msgstr "_Tegn"
+
+# machine translation, unreviewed
+#~ msgid "Markup"
+#~ msgstr "Opmærkning"
 

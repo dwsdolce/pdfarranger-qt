@@ -478,22 +478,6 @@ class TestTheToolDecidesWhatThePointerDoes(unittest.TestCase):
             QKeyEvent(QKeyEvent.Type.KeyPress, Qt.Key_Escape, Qt.NoModifier))
         self.assertEqual(self.canvas.tool(), PageCanvas.SELECT)
 
-    def test_the_menu_follows_the_canvas(self):
-        """Escape changes the tool without going through the menu, so the
-        menu cannot be the only place the choice lives."""
-        from PySide6.QtCore import Qt
-        from PySide6.QtGui import QKeyEvent
-
-        from pdfarranger_qt.canvas import PageCanvas
-
-        self.win.set_tool(PageCanvas.HIGHLIGHT)
-        checked = [a for a in self.win.markup_tools.actions() if a.isChecked()]
-        self.assertEqual([a.data() for a in checked], [PageCanvas.HIGHLIGHT])
-        self.canvas.keyPressEvent(
-            QKeyEvent(QKeyEvent.Type.KeyPress, Qt.Key_Escape, Qt.NoModifier))
-        checked = [a for a in self.win.markup_tools.actions() if a.isChecked()]
-        self.assertEqual([a.data() for a in checked], [PageCanvas.SELECT])
-
     def test_reading_is_untouched_while_no_tool_is_chosen(self):
         """The whole of body 1 and 2 happens in this mode, so a drag here must
         still select text rather than report a mark."""

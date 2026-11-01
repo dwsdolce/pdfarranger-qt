@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PDF Arranger 1.9.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-01 05:00+0000\n"
+"POT-Creation-Date: 2026-11-01 21:09+0000\n"
 "PO-Revision-Date: 2023-06-12 10:30+0300\n"
 "Last-Translator: Manussos Pulinakis "
 "<38626261+manussos@users.noreply.github.com>\n"
@@ -2011,29 +2011,10 @@ msgstr "Εύρεση προηγούμενου"
 msgid "Find All"
 msgstr "Εύρεση όλων"
 
-#: pdfarranger_qt/mainwindow.py
-msgid "_Select"
-msgstr "Επιλο_γή"
-
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
-msgid "_Highlight"
-msgstr "_Επισήμανση"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
-msgid "Strike_through"
-msgstr "Διαγ_ράμμιση"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
-msgid "_Note"
-msgstr "_Σημείωση"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
-msgid "_Draw"
-msgstr "Σχε_δίαση"
+msgid "Markup _Tools"
+msgstr "_Εργαλεία επισημάνσεων"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
@@ -2165,15 +2146,14 @@ msgstr "Ε_ξαγωγή τμήματος"
 msgid "Arrange"
 msgstr "Τακτοποίηση"
 
+#: pdfarranger_qt/mainwindow.py
+msgid "_Select"
+msgstr "Επιλο_γή"
+
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
 msgid "_Booklet"
 msgstr "_Φυλλάδιο"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
-msgid "Markup"
-msgstr "Επισημάνσεις"
 
 #: pdfarranger_qt/mainwindow.py
 msgid "_View"
@@ -2880,6 +2860,126 @@ msgid "Bottom right"
 msgstr "Κάτω δεξιά"
 
 # machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Pointer"
+msgstr "Δείκτης"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Comment"
+msgstr "Σχόλιο"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Text markup"
+msgstr "Επισήμανση κειμένου"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Drawing"
+msgstr "Σχεδίαση"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Select"
+msgstr "Επιλογή"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Pan"
+msgstr "Μετακίνηση"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Add a comment"
+msgstr "Προσθήκη σχολίου"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Replace selected text"
+msgstr "Αντικατάσταση επιλεγμένου κειμένου"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Insert text"
+msgstr "Εισαγωγή κειμένου"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Add text comment"
+msgstr "Προσθήκη πλαισίου κειμένου"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Attach file"
+msgstr "Επισύναψη αρχείου"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Highlight"
+msgstr "Επισήμανση"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Underline"
+msgstr "Υπογράμμιση"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Strikethrough"
+msgstr "Διακριτή διαγραφή"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Draw"
+msgstr "Σχεδίαση"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Line"
+msgstr "Γραμμή"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Arrow"
+msgstr "Βέλος"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Rectangle"
+msgstr "Ορθογώνιο"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Circle"
+msgstr "Κύκλος"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Text callout"
+msgstr "Επεξήγηση κειμένου"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Polygon"
+msgstr "Πολύγωνο"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Cloud"
+msgstr "Σύννεφο"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Connected lines"
+msgstr "Συνδεδεμένες γραμμές"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
+msgid "Stamps palette"
+msgstr "Παλέτα σφραγίδων"
+
+# machine translation, unreviewed
 #: pdfarranger_qt/viewer.py
 msgid "Viewer default"
 msgstr "Προεπιλογή προβολέα"
@@ -3278,4 +3378,24 @@ msgstr "Εμφάνιση του τίτλου αντί του ονόματος α
 #~ msgid_plural "%d pages match"
 #~ msgstr[0] "%d σελίδα ταιριάζει"
 #~ msgstr[1] "%d σελίδες ταιριάζουν"
+
+# machine translation, unreviewed
+#~ msgid "_Highlight"
+#~ msgstr "_Επισήμανση"
+
+# machine translation, unreviewed
+#~ msgid "Strike_through"
+#~ msgstr "Διαγ_ράμμιση"
+
+# machine translation, unreviewed
+#~ msgid "_Note"
+#~ msgstr "_Σημείωση"
+
+# machine translation, unreviewed
+#~ msgid "_Draw"
+#~ msgstr "Σχε_δίαση"
+
+# machine translation, unreviewed
+#~ msgid "Markup"
+#~ msgstr "Επισημάνσεις"
 
