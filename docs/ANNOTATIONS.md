@@ -2,12 +2,14 @@
 
 **Issue:** [#14](https://github.com/dwsdolce/pdfarranger-qt/issues/14)
 
-**Status:** IN PROGRESS — bodies 1 and 2 **complete**, body 3 at one of five. Tick
-boxes and single-line text fields can both be filled in; what is typed shows,
-survives undo and reaches the saved file with a drawing for it. Only the guard
-A signed document refuses to be filled in or saved over, and a document
-derived from one is honestly unsigned. Body 3 has its model: a mark is owned,
-undoable and saved. What puts one on the page is next.
+**Status:** IN PROGRESS — Parts 1 and 2 **complete**. Tick boxes and
+single-line text fields can both be filled in; what is typed shows, survives
+undo and reaches the saved file with a drawing for it. A signed document
+refuses to be filled in or saved over, and a document derived from one is
+honestly unsigned. Part 3 built the markup model and four of its five steps,
+and is closed short: nothing it made can be reached by a user, and the tools
+it was scoped around were picked before the requirements existed. Part 4 is
+the markup work proper.
 
 A filled insurance form was opened in this application and came up blank. Every
 answer typed into it was missing — text, ticks, the lot — with nothing on screen
@@ -350,18 +352,24 @@ writes the tool's own name into `/Subj` besides -- so a file records which tool
 made each mark, and showing a document back with the right tool against each
 mark is reading, not guessing. Every row below was read off the test document.
 
+The state column says what the tool can do *here*, or else names the decision
+or open item that governs it. It does not report which step shipped something:
+that is the step table's job, and a step was never scoped as a whole tool.
+**Writes only** means the tool can make its mark and save it, and nothing
+after that.
+
 | tool | `/Subj` it writes | what is written | state |
 |---|---|---|---|
-| Add a comment | Sticky Note | `/Text`, `/Name /Comment` | **3.4, done** |
+| Add a comment | Sticky Note | `/Text`, `/Name /Comment` | writes only |
 | Insert text | Inserted Text | `/Caret` | D9, not started |
 | Replace selected text | Inserted Text + Cross-Out | `/Caret` `/IT /Replace` **and** `/StrikeOut` `/IT /StrikeOutTextEdit`, joined by `/IRT` + `/RT /Group` | D9, not started |
-| Add text comment | Text Box | `/FreeText` | 3.5 |
+| Add text comment | Text Box | `/FreeText` | not started |
 | Text callout | Callout | `/FreeText` `/IT /FreeTextCallout`, `/CL`, `/LE /OpenArrow` | not started |
 | Attach file | -- | `/FileAttachment`, `/Name /Paperclip`, `/FS /EF` | not started |
-| Highlight | Highlight | `/Highlight`, `/QuadPoints`, `/CA` | **3.3, done** |
+| Highlight | Highlight | `/Highlight`, `/QuadPoints`, `/CA` | writes only |
 | Underline | Underline | `/Underline`, `/QuadPoints` | not started |
-| Strikethrough | Cross-Out | `/StrikeOut`, `/QuadPoints`, no `/IT` | **3.3, done** |
-| Draw | Pencil | `/Ink`, `/InkList`, `/BS /W` | 3.5 |
+| Strikethrough | Cross-Out | `/StrikeOut`, `/QuadPoints`, no `/IT` | writes only |
+| Draw | Pencil | `/Ink`, `/InkList`, `/BS /W` | not started |
 | Line | Line | `/Line`, `/L` | not started |
 | Arrow | Line | `/Line` `/IT /LineArrow`, `/LE [/None /OpenArrow]`, `/BS /W` | not started |
 | Rectangle | Rectangle | `/Square`, `/RD` | not started |
@@ -373,8 +381,12 @@ mark is reading, not guessing. Every row below was read off the test document.
 | Add signature | -- | **page content, not an annotation** | O7 |
 | Add initials | -- | **page content, not an annotation** | O7 |
 
-Twenty tools, three of them done. Eighteen write an annotation; the last two
-do not, and that is the whole of what makes them different. Placing a stored
+Twenty tools, none of them finished. Three can write their mark and save
+it -- the note, the highlight and the strikethrough -- which is one
+requirement out of the fifteen below; what they make cannot afterwards be
+selected, deleted or reopened, because M1 and M14 are shared by all twenty and
+neither exists yet. Eighteen write an annotation; the last two do not, and
+that is the whole of what makes them different. Placing a stored
 signature or initials writes **page content**: measured on page 3 of the test
 document, the signature is 1334 ink pixels with annotations off and 1334 with,
 the initials 463 either way. That is why they already render here with no code
@@ -398,20 +410,43 @@ above is what they are for.
 
 | kind | count | geometry | state |
 |---|---|---|---|
-| `/Widget` | 86 | -- | bodies 1 and 2 |
+| `/Widget` | 86 | -- | Parts 1 and 2 |
 | `/Popup` | 41 | a rectangle beside its parent | no tool writes it; made with its parent, shown by M6 |
 | `/Stamp` | 24 | a rectangle | not started |
-| `/Link` | 5 | -- | body 1 |
-| `/Text` | 2 | a point | **3.4, done** |
-| `/FreeText` | 2 | a box; one of them with a `/CL` callout line | 3.5 |
+| `/Link` | 5 | -- | Part 1 |
+| `/Text` | 2 | a point | writes only |
+| `/FreeText` | 2 | a box; one of them with a `/CL` callout line | not started |
 | `/Caret` | 3 | a point and `/RD` | not started |
 | `/Line` | 2 | `/L`, and `/LE` endings for an arrow | not started |
 | `/Polygon` | 2 | `/Vertices`, and `/BE` for a cloud | not started |
-| `/Highlight` `/Underline` `/StrikeOut` | 4 | `/QuadPoints` | **3.3 covers two of three** |
+| `/Highlight` `/Underline` `/StrikeOut` | 4 | `/QuadPoints` | two of the three write only |
 | `/Square` `/Circle` | 2 | `/Rect` and `/RD` | not started |
-| `/Ink` | 1 | `/InkList` | 3.5 |
+| `/Ink` | 1 | `/InkList` | not started |
 | `/PolyLine` | 1 | `/Vertices` | not started |
 | `/FileAttachment` | 1 | a point, and a file embedded in the document | not started |
+
+**A second document, made to exercise the attributes.**
+`corpus/Markup Test Case.pdf` is the first document with the owner's personal
+information removed, and it carries variations the first did not. Four things
+in it settle questions that were previously argued rather than measured.
+
+*Thickness is written only when it is changed.* The arrow carries `/BS /W 5`;
+the plain line carries no `/BS` at all. So an attribute at its default is
+absent from the file, and reading a mark back has to treat a missing key as
+the default rather than as zero.
+
+*Opacity belongs to the highlight alone.* `/CA 0.4` on both highlights, and
+nothing on the underline, the strikeout or the squiggly -- which is exactly
+the split `markup.TRANSPARENCY` already encodes.
+
+*Both meanings of `/IRT` are now in one file.* A `/Text` with `/IRT` and no
+`/RT`, which is a reply; and a `/StrikeOut` with `/IRT` and `/RT /Group`,
+which is half a Replace pair. M9's trap can now be tested rather than argued.
+
+*A `/DA` names a font that is not one of the standard 14.* One `/FreeText`
+carries `/Baskerville 20 Tf`, the callout `/Helv 12`. D8's embedding question
+has a case waiting in the corpus, and `/DR` carries the font to resolve it
+against.
 
 **Seeing them is nearly free, and that is measured.** All 44 *marks* carry an
 `/AP`, and PDFium draws from it. The 41 `/Popup` entries carry none and need
@@ -443,10 +478,84 @@ So a document someone has commented on still arrives looking almost pristine:
 the icons land in the right places and not one word of what was written can be
 read. That is a *display* gap, not an editing one, and M6 is what closes it --
 which makes it the first thing worth building rather than part of the editing
-body.
+work.
 
 The rest is editing, and the plan currently names five of the fifteen markup
 kinds.
+
+### Where the tools live
+
+A menu cannot hold this. The application has one today -- five actions in a
+Markup menu -- and it is the wrong shape twice over. It is swept into
+`_editing_actions`, so it is disabled in read mode, which is the only mode its
+tools act in. And a flat list cannot express twenty tools, the attributes each
+carries, or which one is armed. What follows was read off Reader and then
+decided for here; where the two differ, the reason is given.
+
+**A floating strip, summoned from the toolbar.** Reader's tool list is
+permanent furniture because marking up is what Reader is for. Here it is a
+guest: this application is a page arranger, so the strip is opened and closed
+from a toolbar button, floats over the reader, and can be moved. The button is
+disabled in arrange mode and enabled in read mode -- the opposite of what the
+markup actions do today, so they have to stop being treated as document-editing
+commands by `_editing_actions`.
+
+**Families, as split buttons.** Twenty tools do not fit in a row, so they are
+grouped and each group is one button: the button carries the icon of the tool
+last used in that family and re-arms it, while the arrow beside it opens a
+flyout listing the family with a tick on the current choice. Reader's grouping,
+read off its tool list:
+
+| family | tools |
+|---|---|
+| pointer | Select, Pan |
+| comment | Add a comment, Replace selected text, Insert text, Add text comment, Attach file |
+| text markup | Highlight, Underline, Strikethrough |
+| drawing | Draw, Line, Arrow, Rectangle, Circle, Text callout, Polygon, Cloud, Connected lines, Stamps palette |
+| signature | a picker of stored signatures and initials |
+
+Two things fall out of that table. It groups by **what the gesture is**, not by
+what the mark carries or what it is anchored to -- a third answer to the
+grouping question D10 left open, and the only one with a shipping product
+behind it. And it puts **Text callout** among the shapes while **Add text
+comment** sits with the comments, though both write `/FreeText`: the tool is
+the unit, not the subtype, and a family is not a subtype either.
+
+**Attributes in the tail.** Below the family buttons the strip grows the armed
+tool's own controls -- a colour swatch for anything that makes a coloured mark,
+a thickness button for the line-based ones, an `Aa` opening a font panel for
+the text-bearing ones. With Select armed the tail is empty, because nothing is
+being made. The alternatives were weighed: a fixed options bar under the main
+toolbar, as Inkscape and GIMP have it; a docked inspector, as Figma and
+Illustrator have it; the controls inside the flyout; and a bar beside the mark,
+as Word has it. The tail wins for *arming* because before the gesture there is
+no mark to put a bar beside, and because a tool is a mode that persists -- so
+its attributes persist with it, which is what a tail expresses and a transient
+bar does not.
+
+**A tool is a mode.** Choosing one arms it, and it stays armed through mark
+after mark until another tool is chosen or Escape is pressed.
+
+**One declaration behind all of it.** Each tool is described once -- family,
+icon, label, what it writes, which attributes it carries -- and the strip, the
+flyout, the tail and the controls on a selected mark are generated from that
+description. This is not tidiness. Using Reader turns up new attributes faster
+than they can be designed -- a squiggly underline, a fill behind a text box, a
+dash pattern -- and the declaration is what makes each of those a row rather
+than a panel. It is also what makes one tool at a time cheap: a tool becomes a
+declaration plus a gesture.
+
+**What we are not copying.** Reader offers four routes to a mark's colour: the
+swatch on the floating toolbar over the selection, the swatch in the tail with
+the mark selected, the right-click menu's *Properties*, and the properties
+dialog itself. That is twenty years of accretion. The question here is which
+one or two are canonical, and it is not yet decided.
+
+**Reader's, and deliberately not in the plan:** a right-click menu on a mark, a
+comment panel listing every mark in the document, and *Set status* with a
+*Review History* tab -- accepted, rejected, completed. The last is not an
+attribute but a review workflow between people, recorded here so that it does
+not leak into the attribute design.
 
 ### What every mark needs, whatever kind it is
 
@@ -480,9 +589,39 @@ unit: deleting a replacement takes its icon, its insertion mark and its
 strikethrough together, which is what M9 describes and what makes the three
 pieces read as one thing.
 
-**M3. A colour, chosen before or after.** Reader carries one current colour at
-the foot of its tool list, and it colours the next mark of any kind -- icon,
-strikeout, text box, shape. A selected mark's colour can be changed afterwards.
+**M3. Attributes, chosen before or after.** Reader carries one current colour
+at the foot of its tool list, and it colours the next mark of any kind -- icon,
+strikeout, text box, shape. A selected mark's colour can be changed afterwards,
+and the two are the same control appearing in two places. The palette is
+fixed: twenty-one swatches, seven hues over a pastel row and a greyscale row,
+with a tick on the current one. No picker, no hex entry.
+
+Colour is not alone. A highlight also carries **opacity**, which Reader shows
+as 40% and which is the `/CA` this application already writes as
+`markup.TRANSPARENCY`. A mark can be **locked**, which refuses the handles and
+the delete. A line-based mark carries **thickness**, behind its own button in
+the tail. A text box carries a **fill**, which Reader ties to the box colour.
+Which attributes a tool has is part of what the tool declares.
+
+An attribute can change *what is written* rather than how it looks: Reader's
+underline can be squiggly, and in the file that is not a styled `/Underline`
+but the separate `/Squiggly` subtype. The declaration has to carry both kinds,
+and a family's flyout may therefore list what are really sibling subtypes.
+
+Measured in `corpus/Markup Test Case.pdf`, and it carries a twist worth having
+before the declaration is designed. A squiggly underline is written
+`/Subtype /Squiggly` with `/Subj Underline` **and `/IT /Underline`** -- so
+`/IT` is doing the opposite of its usual job here. Everywhere else it
+discriminates between tools that share a subtype; on a `/Squiggly` it names
+the tool a *different* subtype came from. Either way the rule that holds is
+the one that matters: the file records which tool made the mark, so a squiggly
+reads back as the Underline tool rather than as a fourth entry in the
+family.
+
+**Where the defaults come from.** Reader's properties dialog carries *Make
+Properties Default*, so the mark in front of you sets what the next one will
+look like. That is one mechanism instead of a preferences page per tool, and
+it is why the same control appears in the tail and on a selected mark.
 
 **M4. An author and two timestamps.** `/T`, `/CreationDate` and `/M` are on
 every mark in the file, and Reader shows the author and the time beside the
@@ -538,7 +677,7 @@ annotation and the grouping, not the glyph.
 `/SBApproved` and an `/AP` we would not be drawing ourselves.
 
 **M11. Stored signatures and initials.** Reader keeps them and places them on
-the page. Distinct from body 2's signature work, which is about *not* breaking
+the page. Distinct from Part 2's signature work, which is about *not* breaking
 a document someone else signed.
 
 **M12. File attachments.** `/FileAttachment` with `/Name /Paperclip` and the
@@ -576,15 +715,37 @@ argument that deletes it as one (M2). What a move writes is already understood
 `/CL` and `/RD` the kind carries, which is the same list the resize work of
 2026-10-29 already scales.
 
+A text markup is the awkward one. Reader puts two round grips on a selected
+highlight, and dragging one does not stretch a rectangle: it re-runs the text
+selection between the two points and rebuilds `/QuadPoints` from whatever is
+now covered. So a resize is two different operations depending on the kind,
+and only one of them is geometry.
+
+**M15. Changing a mark uses the surface that made it.** Clicking a mark gives
+back what its tool gave when it was made -- the same editor, the same
+attribute controls -- and on a text-bearing mark a double click goes to the
+text. There is no separate editing mode to design: M1's selection is a second
+door into the tool's own surface. Seen in Reader on a text-bearing mark and on
+a highlight, which has no text at all, so it is not a property of the
+text-bearing kinds.
+
 ### The test
 
 Load that document, see every annotation in it, and be able to edit every one.
-Seeing it is measured above and nearly done. Editing it is M1 to M12, and the
+Seeing it is measured above and nearly done. Editing it is M1 to M15, and the
 user interface need not resemble Reader's -- only the functionality.
+
+**And lose nothing.** The owner's standard, 2026-10-31: "I would just like to
+be able to do the markup and not lose anything when it is opened in our tool."
+That is stronger than editing, and it applies to every mark including the ones
+no tool of ours will ever make. A document that goes through this application
+and comes out with a mark changed, dropped or flattened has failed the test
+even if every tool worked. It is also the one part of the test that can be
+run without a user interface, which is why it is Part 4's first step.
 
 ## Plan
 
-Three bodies of work. Each step is useful on its own, and the risky ones come
+Four parts. Each step is useful on its own, and the risky ones come
 after the model they depend on is proved.
 
 ### 1. Show what is in the file
@@ -759,14 +920,82 @@ first exists.
 | 3.2 | A tool mode in the canvas | 3.1 | the pointer selects, highlights or draws as chosen | **complete** |
 | 3.3 | Highlight and strikethrough | 3.2 | a selection becomes a mark the file keeps | **complete** |
 | 3.4 | Sticky note | 3.2 | a note can be placed, read and edited | **complete** |
-| 3.5 | Free text and freehand | 3.3, 3.4 | both draw, save and reopen | |
+| 3.5 | Free text and freehand | 3.3, 3.4 | -- | **superseded by Part 4** |
 
 Highlight first of the marks because its geometry already exists — text
 selection produces the quadrilaterals a `/Highlight` wants, so it needs no new
 hit-testing. Freehand last because it is the only one whose appearance is not
 derived from something already on the page.
 
+**Closed short, 2026-10-31.** Four of these five shipped and none of them
+reaches a user: the Markup menu is swept into `_editing_actions` and disabled
+in read mode, which is the only mode its tools act in. What 3.1 to 3.4 leave
+behind is a model that works -- a mark is owned, undoable and saved -- and
+three tools' worth of writing code with no surface and none of the fourteen
+shared requirements under them. 3.5 is superseded rather than finished: it
+paired free text with freehand because both looked cheap, which is the
+reasoning the tool inventory replaced. Part 4 continues the work.
+
+### 4. Create and edit markup
+
+What Part 3 was trying to be, ordered so that nothing has to be specified
+before something needs it. Each step is useful alone, and each one tells the
+next what it needs.
+
+| # | Step | Depends on | Done when | State |
+|---|---|---|---|---|
+| 4.1 | Every mark in the test document read into the model | 3.1 | all of them round-trip through a save unchanged, and each one can be found by a click | round trip proved, model not started |
+| 4.2 | The tool surface | 4.1 | the strip opens from the toolbar, arms a tool, shows its attributes and disarms on Escape | |
+| 4.3 | One family through: Highlight, Underline, Strikethrough | 4.2 | all three make, select, recolour, resize, delete and reopen | |
+| 4.4 | The remaining tools, one at a time | 4.3 | -- | |
+
+**4.1 first because it has no screen.** Reading what is already in a document
+into the model is underneath M1, M2, M5, M13 and M15, it is absent today --
+`markup.Annotations.add` has exactly one caller, a user gesture -- and it can
+be proved entirely against the test document with no design decisions in it.
+Until it exists, a mark that arrived with the file can be seen and nothing
+else; what Part 1 draws comes from PDFium reading each `/AP`, and we model
+none of it.
+
+**4.1 has already found one thing, before any of it was built.** Round-tripping
+`corpus/Markup Test Case.pdf` through `export()` failed outright -- qpdf
+refusing the save with "unexpected object id encountered in
+getCompressibleObjGens" -- for every page, while plain pikepdf saved the same
+file without complaint. `_restore_acroform` copies `/DR` entries one level
+down when they are dictionaries, and assigns anything else straight across
+from the input document; a squiggly underline puts a tiling Pattern *stream*
+in `/DR`, so the output ended up owning an object it did not own. Fixed by
+copying it like the rest. With that done the round trip loses no markup at
+all: all 44 marks come back with every attribute identical -- subtype, `/IT`,
+`/Subj`, colour, opacity, quads, border, flags, `/IRT` and `/RT`.
+
+The two `/Sig` widgets were a second finding and not, as first written here, D5
+working correctly. They had never been signed, and turning them into read-only
+`/Stamp` annotations destroyed two fields that were waiting for a signer. See
+*What this application does with a signature*, below.
+
+This is the shape 4.1's test should take: load, export, and compare the
+annotations on both sides key by key. No window, no gesture, and it would have
+caught the bug above the first time a document with a pattern resource went
+through.
+
+**4.3 is the text-markup family rather than Comment**, which amends D10; the
+argument is recorded there.
+
+**4.4 is deliberately not a list.** What each tool needs is written down when
+that tool is built, not before. The declaration in *Where the tools live* is
+what keeps that honest: a tool that turns out to need an attribute nobody
+anticipated costs a row, and the inventory can keep growing without becoming
+a specification.
+
 ### Not here
+
+**The review workflow** — *Set status* with its accepted, rejected and
+completed states, and the *Review History* tab that shows them over time — is
+out, by the owner, 2026-10-31. This application replaces much of Acrobat
+Reader and not all of it: a round trip between reviewers is a large body of
+work whose users are better served by Acrobat, and the aim here is to make
+markup and keep it, not to run a review.
 
 **Reader features** — attachments, signature status, a thumbnail panel, view-only
 rotation, dark mode — are [Issue #15](https://github.com/dwsdolce/pdfarranger-qt/issues/15).
@@ -792,7 +1021,7 @@ produce a signature no document validator would trust.
 
 Reader does do it, so this is a deliberate departure from the yardstick D1 sets
 rather than a gap in it. Three reasons. It is a body of work the size of
-bodies 1 and 2, not a step inside one. It is security-sensitive in a way
+Parts 1 and 2, not a step inside one. It is security-sensitive in a way
 nothing else here is: a signature covering bytes other than the ones the
 author saw is worse than no signature. And it is the counterpart of signature
 *validation*, already out under D1 on the same shape of argument -- a
@@ -958,6 +1187,66 @@ check -- and whether it lies at all depends on whether page 1 happened to be in
 the selection. That is an accident, not a policy, and stripping the remains is
 needed whichever way the arrange question goes. Step 2.8.
 
+### What this application does with a signature (owner, 2026-10-31)
+
+Two rules. The first was a bug the whole time; the second is the owner's
+decision about what this application is for.
+
+**An unsigned signature field is a form field, and a save leaves it alone.**
+`_strip_signatures` ran on every `/Sig` widget without ever asking whether
+anything had been signed, and `_has_drawing` then decided which of two wrong
+things happened to it. Measured across every signature field in the validation
+corpus:
+
+| signed | has a drawing | visible | what the save did | documents |
+| --- | --- | --- | --- | --- |
+| yes | no | no | deleted | DCFSA x2, LOC x2 |
+| **no** | yes | yes | **blank `/Stamp`** | Markup Test Case x2 |
+| **no** | no | yes | **deleted** | vba-21-526ez-are x3 |
+
+Only the first row is right. The second turned two placeholders into stamps
+that can never be signed -- their appearance streams decode to zero bytes, so
+the drawing the conversion exists to preserve was not there. The third is
+worse: three visible signature lines on a VA disability benefits form, 314 x 13
+points each, carrying no appearance stream at all, were deleted outright by
+opening the file and saving it. Neither document had been signed. Neither had
+`/Perms`. There was nothing to protect.
+
+The rule now is `/V`, which is the one `forms.signatures_in` has always stated
+-- *"an empty `/Sig` field is a placeholder for a future signer and locks
+nothing"* -- and `forms.is_signed` has always used. Two parts of this codebase
+disagreed, and the documented one was right.
+
+**A signed document is read-only, and this application does not sign.** The
+reasoning is already above: a conforming tool appends or copies bytes, export
+only rebuilds, so nothing written here can carry a signature over. Rather than
+hand back a copy whose signature is broken -- which no reader can tell from
+tampering -- a signed document opens as a reader and stays one.
+
+So Save, Save As, all seven export commands, Edit Properties, Repair and the
+way back to Arrange mode are refused. Open, Close, New Window, Find and Print
+remain: printing goes through `raster.render_pages` and draws *images* onto a
+`QPainter`, so what leaves here is pixels and nothing in a bitmap can carry a
+signature structure.
+
+The set of refused commands is built by *exclusion* from the File menu, the
+inverse of `_editing_actions`' filter, so a command added later is refused by
+default. For a rule whose purpose is to stop a file being written, that is the
+safe direction to be wrong in.
+
+**And a signed document is never in company.** The three routes that put a
+second file into a session each refuse one: a multi-file Open containing a
+signed file is refused before `_reset_document`, so what was already open
+survives; Import is refused; and a drop is refused in `_import_files_at`,
+which matters because a drop never consults the menu and a greyed-out action
+would not have stopped it. The reverse is refused too -- nothing joins a
+session that already holds a signed document. So "is this session signed?" is
+in practice a question about one document.
+
+This gives up the second-signer workflow, where a form signed by one party
+waits for another. Acrobat supports it; we do not, because we do not sign at
+all, so it was never ours to give up.
+
 ## Still open
 
 Numbered so they can be referred to without ambiguity. A number is assigned
@@ -1012,7 +1301,43 @@ decided, not lost.
   annotation there to act on, and it edits the page itself in an application
   whose entire premise is that it does not. A `/Stamp` with the drawing as its
   `/AP` would behave like every other mark and go through M1, M2 and M5 for
-  free. Not decided.
+  free.
+
+  **Using the Signature or Initials tool locks the form**, which is a second
+  cost of the content route and easy to miss. Established by the owner's
+  trial, 2026-10-31: four files derived from one control, each differing from
+  it by a single use of the tool. The control carries 82 fields at `/Ff` 0, no
+  `/ADBE_FillSignInfo` and no drawn ink. All four of the others carry 82
+  fields at `/Ff` 1, ReadOnly, a `/Root /ADBE_FillSignInfo << /Version 100 >>`
+  and a form XObject of some 49 stroke operators added to one page's content
+  stream. Reader says it out loud: placing the drawing raises "The author of
+  this form has specified the fields which you can fill", and the save then
+  offers a certified copy. The lock follows the tool and not one spot on one
+  page -- three of the four carry a 138x46 pt signature on page 3, the fourth
+  a 48x46 pt initials block on page 4 with page 3 untouched, and all four lock
+  alike.
+
+  Nothing is signed in any of them. None is encrypted, none has `/Perms` or
+  `/DocMDP`, and no `/Sig` field holds a `/V` anywhere in the series. The lock
+  is one bit per field with nothing cryptographic behind it, and all four are
+  incremental updates, so each still physically contains its own unlocked
+  field definitions in the revision underneath. Which field the drawing goes
+  in does not matter either: the owner put the last one in an ordinary name
+  field, a `/Tx`, rather than a signature field, so the lock is not the `/Sig`
+  widget nor anything scripted behind it. What the series does not separate is
+  whether a drawing placed clear of every field would lock the form too; the
+  owner's account is that the tool was used in a field each time, and the
+  ink's page position could not be recovered from the content stream to check
+  that independently.
+
+  This application already honours `/Ff` 1 on purpose -- `FormField.fillable`
+  in `forms.py` excludes a read-only field, "the document saying no" -- so a
+  document that has been through Reader's Fill and Sign arrives here
+  unfillable, and our own refusal to fill is what the user sees. Whether to
+  copy the lock is a question separate from where the drawing goes, and it
+  arises only if the drawing goes into content: a `/Stamp` touches no field.
+
+  Not decided.
 - **O8. Which stamps, if any, this application offers.** Showing them is
   already free: 24 in the test document, every one with its own `/AP`, all
   drawn by our renderer with no code. Offering them is a different question.
@@ -1021,7 +1346,11 @@ decided, not lost.
   Public Release, Not For Public Release, For Comment, Void, Preliminary
   Results, Information Only), 4 Sign Here (Sign Here, Initial Here, Witness,
   Accepted) and 5 Dynamic (Revised, Reviewed, Confidential, Received,
-  Approved). The names are a convention we can follow, but the *artwork* is
+  Approved). Measured in `corpus/Markup Test Case.pdf`, where all 24 carry the
+convention in `/Name` itself: `/SBApproved`, `/SHSignHere`, `/#DRevised` and
+so on, so the family is readable off the name and a document's stamps can be
+shown back by family without a lookup table. The names are a convention we can
+follow, but the *artwork* is
   Adobe's and cannot be copied, so offering any stamp at all means drawing our
   own. The dynamic five need more than artwork: their appearance bakes in the
   author and the moment of placement -- the test document's read "REVISED 9:45
@@ -1048,16 +1377,33 @@ decided, not lost.
   changes none of this; marks behave the same under both, and the mode governs
   only whether a drag on bare page selects text or scrolls.
 
-  What it costs, and Reader pays it too: text whose every pixel lies under a
-  mark cannot be selected at all, because there is nowhere to start. A word
-  inside a highlight is unreachable.
+  What it costs: text whose every pixel lies under a mark cannot be selected,
+  because there is nowhere to start -- a word inside a highlight is
+  unreachable. Reader does not simply pay that, which is how this was first
+  written here. A mark's right-click menu carries **Enable Text Selection**,
+  which makes that one mark transparent to the pointer so the text under it
+  can be taken. The cost is real but remediable, and the remedy is per mark
+  rather than a mode.
 
   So this is no longer a question about how to build it but whether to copy it,
-  and the cost above is the only reason not to. Two things stand either way:
-  the scrolling half of Pan is not needed, since the wheel, the trackpad, the
-  scrollbars and the keyboard already do it in every mode; and mark over mark
-  needs its own rule, where topmost-first is what 3.4's note hit-testing
-  already does. Not decided.
+  and the cost above is the only reason not to. One thing stands either way:
+  mark over mark needs its own rule, where topmost-first is what 3.4's note
+  hit-testing already does.
+
+  **The scrolling half of Pan has a reader after all.** It was written off
+  here on the grounds that the wheel, the trackpad, the scrollbars and the
+  keyboard already scroll in every mode. That holds for a mouse and not for a
+  finger. A touchscreen has no wheel and no trackpad, and this app handles no
+  touch at all -- nothing under `pdfarranger_qt/` mentions `QTouchEvent` or a
+  gesture -- so a finger arrives as a synthesised left-button drag. Under the
+  rule above that drag on bare page selects text, which leaves a touchscreen
+  with no way to scroll the page by finger. Pan is that way. This is the
+  owner's reason, 2026-10-31, and it is a reason to have the mode that does
+  not depend on copying Reader: Pan earns its place as the touch scroll
+  gesture whether or not the click rule is copied. What it leaves open is
+  whether to answer touch with the mode or with real touch handling -- a
+  one-finger drag that scrolls while Select stays Select -- which is now part
+  of O9. Not decided.
 
 ## Decisions (owner, 2026-10-28)
 
@@ -1232,7 +1578,7 @@ unembedded base-14 in any of the evidence is `/AcroForm /DR /Font /Helv` as a
 
 The other alternative was Latin-only for now, with non-Latin refused where it
 is typed. Rejected because a reader that ships 33 catalogues and cannot take a
-comment in the user's own language is the same failure body 1 exists to fix --
+comment in the user's own language is the same failure Part 1 exists to fix --
 a document whose content is invisible -- and because the saving is bytes rather
 than work, now that Qt does the subsetting.
 
@@ -1305,9 +1651,126 @@ Comment rather than after it: looking at Comment "in detail" means looking at
 the two in the test document, and those are not in the model until something
 reads them in.
 
+**Amended 2026-10-31: Comment is not first after all.** Further use of Reader
+turned up more of what a comment needs -- rich text with colour and size
+varying inside one comment, a fill behind the text box, a popup carrying
+author, time and replies -- while the text-markup family needs attributes and
+nothing else. Highlight, Underline and Strikethrough go first, as Part 4's
+step 4.3. They exercise the whole spine: arming a tool, the attribute tail,
+hit-testing by ink, selection, the grips, recolouring, deletion and reopening
+-- with no text editor anywhere in it. Comment follows, against a spine that
+already works.
+
+What is written above about what Comment teaches still stands; it is the order
+that changed, and for a reason the original argument did not weigh. A spine is
+cheaper to prove with a tool that cannot hide a flaw behind an editor, and
+Comment is the tool most able to hide one.
+
+**11. A signed document is read-only, and this application does not sign.**
+Taken by the owner on 2026-10-31, after the corpus showed what a save was
+doing to signature fields. The reasoning is in *What this application does
+with a signature*: nothing written here can carry a signature over, so the
+choice is between handing back a copy whose signature is broken and not
+writing one at all. The second is a single invariant -- a signed document
+produces no output file -- which is testable in one line and has no properties
+of a derived copy to get right.
+
+The earlier shape of this, a SaveAs producing an unsigned copy with each
+signature's appearance kept as a `/Stamp`, was considered and dropped. It
+needed a judgement about what that copy looked like, whether it misled a later
+reader who would see a signature-shaped mark with no validity panel behind it,
+and what to do when there was no appearance to keep -- which is every real
+sample we have, all four being invisible at `/Rect [0 0 0 0]`. Three
+judgements, each a place to be quietly wrong.
+
+Acrobat's own instruction for a signed version is *"save a copy and reopen to
+edit"*, and the two certified samples declare `DocMDP P=1`, no changes
+permitted. Declining to derive anything from them is consistent with what
+their authors wrote.
+
+**12. An unsigned signature field is a form field.** Taken the same day, and
+less a decision than the correction of a disagreement: `forms.signatures_in`
+and `forms.is_signed` had always held that an empty `/Sig` field is an
+invitation to sign rather than a signature, while `_strip_signatures` did not
+ask. Five fields across two real documents were destroyed by a save that had
+nothing to protect. The test is `/V`, everywhere.
+
 ## Done
 
-**2026-10-28 — body 1, steps 1.1 to 1.3.** Annotations drawn in all three render
+**2026-10-31 — every fixture in one place.** The 49 data files the tests open
+moved to `tests/fixtures`, reached through `support.FIXTURES` so no module
+knows the layout. Two tests that wrote scratch files *beside* a fixture now
+use `temp_path`, which matters once a test globs that folder. One casualty
+found afterwards: `test_export_destinations` built its own path to
+`tests/exporter/outlines.pdf` and guarded it with `skipTest("fixture
+missing")`, so the move switched that test off instead of breaking it. A guard
+that fails open is how a moved file stays unnoticed; the path is now
+`FIXTURES` and the guard is gone.
+
+**2026-10-31 — a document comes back the way it went in.** `tests/test_roundtrip.py`
+opens every PDF under `tests/fixtures`, exports it, reopens the bytes and
+compares every annotation key by key, all the way down, including the
+appearance stream each mark draws itself with. Field objects are compared in
+their own right, so a widget's `/FT`, `/T`, `/Ff` and the `/Kids` that make it
+a group are checked rather than assumed.
+
+Three things are not values and are set aside: `/StructParent`, an index into
+a tree that gets rebuilt, and `/Length`, `/Filter` and `/DecodeParms`, which
+describe how a stream is encoded and not what it draws -- the comparison
+hashes *decoded* bytes.
+
+The part worth keeping is how references are read. **A reference that points
+down is compared by value; one that points up is compared by which object it
+names.** A page is its index, a field its position in the tree. Expanding an
+upward reference walks back over ground already covered -- from a widget it
+climbs to the root field and back down every branch -- so each annotation ends
+up carrying a serialisation of the whole document. Measured on a 136-page
+form: five megabytes per annotation, 6,858 of them, 32 GiB and about three
+hours. Compared by name instead, with each object reduced to a digest and
+composed by digest, the same document takes 28 characters per annotation, 190
+MiB and 2.3 seconds. Comparing a parent by position is also what enforces the
+radio-group property: two widgets that shared a parent must still share one.
+
+With the back-edges gone the graph is acyclic, so the depth limit is a
+malformed-document guard rather than a working one, and a test fails if it
+ever fires. Before this it fired 31,518 times inside a *single* annotation,
+which meant the comparison was silently truncating, and what it truncated
+depended on which annotation reached the object first.
+
+**2026-10-31 — an annotation knows which page it is on.** Every exported
+document got `/P` wrong: the fixtures arrived with 164 resolving and none
+dangling, and left with none resolving and all 164 aimed at an orphan. Across
+the corpus it was 8,697. Copying an annotation copies the page it names, and
+that passenger is not the page the output's tree holds. The first fix, applied
+where the annotation is copied, changed nothing -- `_apply_geom_transform`
+scales a page by building a new one and assigning it over the old, so a
+reference fixed up any earlier names exactly what that pass discarded. The
+repoint is now the last act of both transform passes.
+
+A reference that resolves to a perfectly good dictionary which simply is not a
+page any more is invisible to anything that only walks `/Annots`, which is why
+this survived every existing test and was first read here as harmless
+renumbering.
+
+**2026-10-31 — a signature field nobody signed survives a save.** Decision 12.
+`_strip_signatures` now asks `/V` before it strips. Five fields across two
+real documents stop being destroyed: three visible signature lines on a VA
+disability form that were deleted outright, and two placeholders in the markup
+sample that became blank `/Stamp` annotations. The corpus went from five
+documents differing after a round trip to four, and the four that remain are
+the genuinely signed ones losing their signature, which is what 2.8 is for.
+
+**2026-10-31 — a signed document is read-only.** Decision 11. Save, Save As,
+the seven export commands, Edit Properties, Repair and Arrange mode are all
+refused, and the three routes that would put another file beside a signed one
+refuse it at the point of asking rather than by greying out a menu. Most of it
+was wiring: `_editing_actions` already derives every modifying command from
+the menus by role, and the new `_writing_actions` inverts its File filter.
+`tests/test_signed.py` covers it with a synthesised signed document, including
+the two premises that keep the rest honest -- opening a signed document alone
+still works, and two plain documents still merge.
+
+**2026-10-28 — Part 1, steps 1.1 to 1.3.** Annotations drawn in all three render
 paths; form fields visible through the rewritten copy; `/AcroForm` rebuilt
 on export so a saved form keeps its fields. Verified on the four-page insurance
 form that prompted the work: 15 of 15 filled fields on page three draw, a ticked
@@ -1327,7 +1790,7 @@ outline. A click finds the field under it. Tick boxes fill in, undo, and reach
 the saved file with `/V` on the field and `/AS` on every widget of it.
 
 Form fields are now drawn as a layer over the page instead of being rewritten
-into the document -- which supersedes how body 1 displayed them, for a reason
+into the document -- which supersedes how Part 1 displayed them, for a reason
 that is about 2.5 rather than 2.3: the state has to live in memory, because a
 keystroke cannot cost a 682 ms re-save. The `/Subtype` rewrite stays where
 there is no canvas to composite in: the grid's thumbnails and the output paths.
@@ -1342,7 +1805,7 @@ places it loads a document; only the new code had it wrong.
 widgets span pages; a real government form turned out to contain one. A
 validation corpus of six public forms from three producers is recorded in
 [VALIDATION-CORPUS.md](VALIDATION-CORPUS.md), and measuring it corrected three
-assumptions body 2 would otherwise have been built on.
+assumptions Part 2 would otherwise have been built on.
 
 **2026-10-29 — the corpus, extended.** Nine forms from four producers, measured
 against an enumeration of the specification's form surface by
@@ -1353,7 +1816,7 @@ is inherited and can sit between the widget and the root, so reading it off the
 root called 1,053 radio buttons typeless.
 
 **2026-10-29 — a form on a turned page was drawn in the wrong place.** Found
-while preparing 3.2, and a fault in body 2 rather than a complication for body
+while preparing 3.2, and a fault in Part 2 rather than a complication for Part
 3. A widget's `/Rect` is written in the page's own space; the canvas works in
 the frame the page is *laid out* in, which is cropped and turned by `/Rotate`.
 The two agree only at zero. Measured with a black square at a known coordinate
@@ -1370,7 +1833,7 @@ So on any page carrying a rotation the fields were drawn and clicked in the
 wrong place, mirrored across both axes at 180 degrees. Not an exotic file
 either: scanned documents carry `/Rotate` constantly, and this application's
 own Rotate command produces one, so a form the user had just turned behaved
-this way. Every body 2 test used an unturned page, which is why it went through
+this way. Every Part 2 test used an unturned page, which is why it went through
 green CI.
 
 The rectangles are now converted as they are read, against the same box the
@@ -1470,7 +1933,7 @@ exporter unchanged in the port.
 it stayed on the old one. A probe page carrying eight annotations, scaled by
 half: eight in, none out -- the form field among them, so resizing a filled
 form silently emptied it. Found while deciding which frame a mark should be
-stored in, and a bug in the port rather than a question for body 3.
+stored in, and a bug in the port rather than a question for Part 3.
 
 The same probe through three other implementations, each wrong a different
 way:
@@ -1960,7 +2423,7 @@ public forms, and the insurance form whose two empty signature fields leave it
 fillable.
 
 **2026-10-29 — a stamp is not a field.** `fields_in` accepted `/Stamp` as well
-as `/Widget`, which was right while body 1 showed the reader the copy with the
+as `/Widget`, which was right while Part 1 showed the reader the copy with the
 widgets rewritten into stamps. The reader composites the fields itself now and
 is handed the export or the source file, both carrying real widgets, so the
 only thing that exception still caught was *genuine* stamp annotations. Two
@@ -1981,3 +2444,21 @@ saved file with a drawing for it, and a value the file never drew gets one too,
 which most text fields in the corpus need. Verified on the insurance form:
 typed into an empty field, saw it, saved it, read back `/V` and a generated
 `/AP`, and undo removed it.
+
+**2026-10-31 — a document with a squiggly underline could not be saved at
+all.** Found by round-tripping the second test document through `export()`
+before building anything that needs it: every page failed with qpdf's
+"unexpected object id encountered in getCompressibleObjGens", while plain
+pikepdf saved the same file. Bisecting the document narrowed it to `/AcroForm`
+-- removing either that or `/Annots` made it save -- and the clearer error
+underneath was `ForeignObjectError`. `_restore_acroform` walks `/DR` one level
+down and copies dictionary entries with `copy_foreign`, but assigns everything
+else straight across from the input; Acrobat puts a tiling Pattern stream
+under `/DR` when a squiggly underline is made, so the output document held an
+object belonging to the input. Every form in the corpus until now had
+dictionaries only under `/DR`, which is why it went unseen. The fix copies a
+non-dictionary entry the same way as the rest. Verified by comparing all 44
+marks before and after: subtype, `/IT`, `/Subj`, colour, opacity, quads,
+border, flags and both `/IRT` forms come back identical. Two `/Sig` widgets
+also changed, which was read here as D5 working correctly and was not; it is
+the defect the entry of 2026-10-31 describes.
