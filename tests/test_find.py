@@ -27,13 +27,13 @@ import os
 import unittest
 
 from PySide6.QtCore import QRectF
-from support import HERE, TEXT_PDF
+from support import FIXTURES, TEXT_PDF
 
 from pdfarranger_qt.find import Query, TextSearch
 from pdfarranger_qt.render import MemoryDocument
 
 #: Two lines of text, so context has something to collapse and elide.
-LINK_PDF = os.path.join(HERE, "text_and_link.pdf")
+LINK_PDF = os.path.join(FIXTURES, "text_and_link.pdf")
 
 
 class TestQuery(unittest.TestCase):

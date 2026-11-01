@@ -33,11 +33,11 @@ which is a better test than one hit per page would have been.
 import os
 import unittest
 
-from support import HERE, settle
+from support import FIXTURES, settle
 
 from pdfarranger_qt.find import Query
 
-MANY_PAGES = os.path.join(HERE, "exporter", "outlines.pdf")
+MANY_PAGES = os.path.join(FIXTURES, "exporter", "outlines.pdf")
 
 
 class FindWindow(unittest.TestCase):

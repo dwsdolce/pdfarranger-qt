@@ -25,13 +25,13 @@ import os
 import unittest
 
 from PySide6.QtCore import QUrl
-from support import HERE, MESSAGE_BOXES, TEST_PDF, TEXT_PDF, settle
+from support import FIXTURES, HERE, MESSAGE_BOXES, TEST_PDF, TEXT_PDF, settle
 
 from pdfarranger_qt.core import DocumentSet
 from pdfarranger_qt.reader import ReaderView
 
 #: Four pages, and the only fixture with a real bookmark tree.
-OUTLINE_PDF = os.path.join(HERE, "exporter", "outlines.pdf")
+OUTLINE_PDF = os.path.join(FIXTURES, "exporter", "outlines.pdf")
 
 
 class TestReaderView(unittest.TestCase):
@@ -1268,8 +1268,8 @@ class TestBookmarkPanel(unittest.TestCase):
     document that has none is a real thing to want to do.
     """
 
-    WITH_BOOKMARKS = os.path.join(HERE, "exporter", "outlines.pdf")
-    WITHOUT = os.path.join(HERE, "test.pdf")
+    WITH_BOOKMARKS = os.path.join(FIXTURES, "exporter", "outlines.pdf")
+    WITHOUT = os.path.join(FIXTURES, "test.pdf")
 
     def setUp(self):
         from pdfarranger_qt.mainwindow import MainWindow

@@ -37,7 +37,7 @@ from PySide6.QtCore import (
 from PySide6.QtGui import QKeyEvent, QKeySequence, QMouseEvent
 from PySide6.QtPdf import QPdfLinkModel
 from PySide6.QtWidgets import QApplication
-from support import HERE, TEXT_PDF, settle, temp_path
+from support import FIXTURES, TEXT_PDF, settle, temp_path
 
 from pdfarranger_qt.canvas import (
     DEFAULT_MARGIN,
@@ -54,8 +54,8 @@ from pdfarranger_qt.export import get_in_memory_pdf
 from pdfarranger_qt.find import Query, TextSearch
 from pdfarranger_qt.render import MemoryDocument
 
-OUTLINE_PDF = os.path.join(HERE, "exporter", "outlines.pdf")
-LINK_PDF = os.path.join(HERE, "text_and_link.pdf")
+OUTLINE_PDF = os.path.join(FIXTURES, "exporter", "outlines.pdf")
+LINK_PDF = os.path.join(FIXTURES, "text_and_link.pdf")
 
 LETTER = QSizeF(612, 792)
 A4 = QSizeF(595, 842)

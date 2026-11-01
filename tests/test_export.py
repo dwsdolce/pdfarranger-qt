@@ -20,7 +20,7 @@ import os
 import unittest
 
 import pikepdf
-from support import TEST_PDF, QtDocumentTestCase
+from support import QtDocumentTestCase, temp_path
 
 from pdfarranger_qt.core import Dims, Sides
 from pdfarranger_qt.export import export
@@ -283,8 +283,7 @@ class TestThePageTreeIsBalanced(unittest.TestCase):
 
         pdf = self.document()
         balance_page_tree(pdf)
-        out = os.path.join(os.path.dirname(TEST_PDF), "..", "balanced-tmp.pdf")
-        out = os.path.abspath(out)
+        out = temp_path("balanced.pdf")
         self.addCleanup(lambda: os.path.exists(out) and os.remove(out))
         pdf.save(out)
         with pikepdf.open(out) as written:

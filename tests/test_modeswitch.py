@@ -26,9 +26,9 @@ not come back having changed it.
 import os
 import unittest
 
-from support import HERE, settle
+from support import FIXTURES, settle
 
-MANY_PAGES = os.path.join(HERE, "exporter", "outlines.pdf")
+MANY_PAGES = os.path.join(FIXTURES, "exporter", "outlines.pdf")
 
 
 class TestTheCurrentPageFollows(unittest.TestCase):
@@ -444,7 +444,7 @@ class TestTheStatusBarSaysWhereYouAre(unittest.TestCase):
         self.assertEqual(self.text(), "No document")
 
 
-FORMS = os.path.join(HERE, "exporter", "forms.pdf")
+FORMS = os.path.join(FIXTURES, "exporter", "forms.pdf")
 
 
 class TestFillingAFieldLeavesTheReaderAlone(unittest.TestCase):

@@ -28,9 +28,9 @@ import unittest
 
 from PySide6.QtCore import QUrl
 from PySide6.QtGui import QFileOpenEvent
-from support import HERE, settle
+from support import FIXTURES, HERE, settle
 
-PDF = os.path.join(HERE, "exporter", "outlines.pdf")
+PDF = os.path.join(FIXTURES, "exporter", "outlines.pdf")
 
 
 class TestTheApplicationHearsTheDesktop(unittest.TestCase):
@@ -129,7 +129,7 @@ class TestWhereADesktopDocumentLands(unittest.TestCase):
         """A *different* document. Asking for the one already open is ignored,
         which is what stops the process launched to open it opening it again --
         see TestTheRunawayCannotHappenAgain."""
-        other = os.path.join(HERE, "test.pdf")
+        other = os.path.join(FIXTURES, "test.pdf")
         self.win.open_paths([PDF])
         settle(timeout_ms=400)
         self.win.modified = False
@@ -254,7 +254,7 @@ class TestTheRunawayCannotHappenAgain(unittest.TestCase):
         self.win.open_paths([PDF])
         settle(timeout_ms=400)
         self.win.modified = False
-        other = os.path.join(HERE, "test.pdf")
+        other = os.path.join(FIXTURES, "test.pdf")
         self.open(other)
         self.assertEqual(self.spawned, [[other]])
 
@@ -290,7 +290,7 @@ class TestTheRunawayCannotHappenAgain(unittest.TestCase):
         self.win.open_paths([PDF])
         settle(timeout_ms=400)
         self.win.modified = False
-        self.open(os.path.join(HERE, "test.pdf"), app=_Exhausted())
+        self.open(os.path.join(FIXTURES, "test.pdf"), app=_Exhausted())
         self.assertEqual(self.spawned, [])
 
 

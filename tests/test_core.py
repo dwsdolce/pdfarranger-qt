@@ -20,7 +20,7 @@ import os
 import unittest
 
 import pikepdf
-from support import TEST_PDF, QtDocumentTestCase
+from support import TEST_PDF, QtDocumentTestCase, temp_path
 
 from pdfarranger_qt.core import Dims, Page, Sides
 from pdfarranger_qt.model import contiguous_blocks
@@ -174,7 +174,7 @@ class TestPageSizesAreReadTheFastWay(unittest.TestCase):
 
         from pdfarranger_qt.core import DocumentSet
 
-        path = os.path.join(os.path.dirname(TEST_PDF), "boxes-tmp.pdf")
+        path = temp_path("boxes.pdf")
         self.addCleanup(lambda: os.path.exists(path) and os.remove(path))
         self.make(path, [
             ((0, 0, 612, 792), None, 0),            # plain

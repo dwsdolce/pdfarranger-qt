@@ -24,7 +24,7 @@ heading -- are answerable exactly rather than by poking a widget.
 import os
 import unittest
 
-from support import HERE, settle
+from support import FIXTURES, settle
 
 from pdfarranger_qt.outline import (
     BOLD,
@@ -34,7 +34,7 @@ from pdfarranger_qt.outline import (
     from_pdf_outline,
 )
 
-OUTLINE_PDF = os.path.join(HERE, "exporter", "outlines.pdf")
+OUTLINE_PDF = os.path.join(FIXTURES, "exporter", "outlines.pdf")
 
 
 def sample() -> Outline:

@@ -25,9 +25,9 @@ import os
 import unittest
 
 import pikepdf
-from support import HERE, settle
+from support import FIXTURES, settle
 
-FORMS = os.path.join(HERE, "exporter", "forms.pdf")
+FORMS = os.path.join(FIXTURES, "exporter", "forms.pdf")
 
 
 def form_with(order=None, places=((10, 300), (10, 200), (200, 300))):

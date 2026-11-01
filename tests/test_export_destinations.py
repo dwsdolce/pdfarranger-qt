@@ -28,7 +28,7 @@ import os
 import unittest
 
 import pikepdf
-from support import temp_path
+from support import FIXTURES, temp_path
 
 from pdfarranger_qt.core import DocumentSet
 from pdfarranger_qt.export import export
@@ -234,10 +234,7 @@ class TestExistingBehaviourIsUnchanged(DestinationCase):
     """The fixtures that always passed must keep passing."""
 
     def test_a_plain_document_round_trips(self):
-        plain = os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                             "exporter", "outlines.pdf")
-        if not os.path.isfile(plain):
-            self.skipTest("fixture missing")
+        plain = os.path.join(FIXTURES, "exporter", "outlines.pdf")
         docs = DocumentSet()
         self.addCleanup(docs.cleanup)
         pages = docs.add_file(plain)

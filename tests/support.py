@@ -34,12 +34,16 @@ from pdfarranger_qt.model import PageListModel
 from pdfarranger_qt.render import Renderer
 
 HERE = os.path.dirname(os.path.abspath(__file__))
+
+#: Every data file a test opens. One place, so that a fixture is never
+#: mistaken for a module and a module never has to know the layout.
+FIXTURES = os.path.join(HERE, "fixtures")
 ROOT = os.path.dirname(HERE)
 
 #: Two pages of vector graphics: a green triangle and a red one.
-TEST_PDF = os.path.join(HERE, "test.pdf")
+TEST_PDF = os.path.join(FIXTURES, "test.pdf")
 #: Has a real text layer, for search and text extraction.
-TEXT_PDF = os.path.join(HERE, "test_raster_image_text.pdf")
+TEXT_PDF = os.path.join(FIXTURES, "test_raster_image_text.pdf")
 
 
 def settle(condition=None, timeout_ms=8000, step_ms=50):
