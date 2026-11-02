@@ -51,8 +51,18 @@ def _pikepdf_meta_is_valid(meta):
     """
     Return true if m is a valid PikePDF meta data value.
     PikePDF pass meta data to re.sub which only accept str or byte-like object.
+
+    **Every container is looked inside, not only a list.** XMP has three of
+    them -- a bag, a sequence and an alternative -- and pikepdf hands a bag
+    back as a *set*. Testing only `list` meant a set was passed to `re.sub`
+    whole, which raises, so a perfectly good value was called invalid and the
+    caller then deleted it: `dc:subject` of `{'508'}` was destroyed on every
+    save of a document that had one. The point of this guard is to skip the
+    values pikepdf cannot handle, not to throw away the ones it can.
     """
-    if not isinstance(meta, list):
+    if isinstance(meta, (str, bytes)):
+        meta = [meta]
+    elif not isinstance(meta, (list, tuple, set, frozenset)):
         meta = [meta]
     for s in meta:
         try:
@@ -62,13 +72,38 @@ def _pikepdf_meta_is_valid(meta):
     return True
 
 
+def _mappable(docinfo):
+    """``docinfo`` reduced to the entries pikepdf can turn into XMP.
+
+    It warns about every other one and discards it, and that warning reaches
+    the user: a save of any document carrying `/Trapped` -- which pikepdf
+    has no mapping for -- raised a dialog saying the field "has no XMP
+    equivalent, so it was discarded". There is nothing the reader of that
+    message can do, and nothing is in fact lost: `pdf:Trapped` is already in
+    the XMP and stays there. All that goes is the copy in `/Info`, which
+    pikepdf rebuilds from the XMP and which the format has deprecated.
+
+    So the unconvertible entries are not offered. Asking for a conversion
+    that cannot happen and then silencing the complaint would hide the ones
+    that matter along with this one.
+    """
+    try:
+        from pikepdf.models.metadata import PdfMetadata
+
+        known = {str(name) for _uri, _key, name, _conv
+                 in PdfMetadata.DOCINFO_MAPPING}
+    except Exception:  # noqa: BLE001 - a pikepdf that names them differently
+        return docinfo
+    return {str(k): v for k, v in docinfo.items() if str(k) in known}
+
+
 def load_from_docinfo(meta, doc):
     """
     wrapper of pikepdf.models.PdfMetadata.load_from_docinfo with a workaround
     for https://github.com/pikepdf/pikepdf/issues/100 & 162
     """
     try:
-        meta.load_from_docinfo(doc.docinfo)
+        meta.load_from_docinfo(_mappable(doc.docinfo))
     except (NotImplementedError, TypeError):
         # DocumentInfo cannot be loaded and will be lost. Not a that big issue.
         traceback.print_exc()

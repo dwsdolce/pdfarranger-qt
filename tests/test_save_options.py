@@ -238,3 +238,121 @@ class TestObjectStreamsAreAlwaysWritten(unittest.TestCase):
                           if isinstance(obj, pikepdf.Stream)
                           and str(obj.get("/Type", "")) == "/ObjStm")
         self.assertGreater(streams, 0, "no object streams were written")
+
+
+class TestMetadataSurvivesTheSave(unittest.TestCase):
+    """A value this application cannot read is skipped; one it can is kept.
+
+    `metadata._pikepdf_meta_is_valid` exists because pikepdf passes a value
+    to `re.sub`, which some of them are not acceptable to, and the caller
+    *deletes* whatever it reports as invalid. So a false answer there is not
+    a value left alone, it is a value destroyed.
+
+    It tested only for a `list`. XMP has three containers -- a bag, a
+    sequence and an alternative -- and pikepdf hands a bag back as a `set`,
+    which went to `re.sub` whole and raised. Measured across the fixtures
+    and the validation corpus, that was eating `dc:creator` and `dc:subject`
+    from eight documents on every save: the author of a file, thrown away by
+    a guard meant to protect it.
+    """
+
+    def test_a_bag_is_looked_inside(self):
+        from pdfarranger_qt import metadata
+
+        self.assertTrue(metadata._pikepdf_meta_is_valid({"508"}))
+        self.assertTrue(metadata._pikepdf_meta_is_valid({"CQF", "other"}))
+
+    def test_every_container_is_looked_inside(self):
+        from pdfarranger_qt import metadata
+
+        for value in (["a", "b"], ("a",), frozenset({"a"}), "plain"):
+            with self.subTest(value=value):
+                self.assertTrue(metadata._pikepdf_meta_is_valid(value))
+
+    def test_what_pikepdf_cannot_read_is_still_refused(self):
+        """The guard still has its job: these raise inside `re.sub`, and
+        reporting them as valid would move the failure rather than skip it."""
+        from pdfarranger_qt import metadata
+
+        for value in (None, 3, [3], {3}, [None]):
+            with self.subTest(value=value):
+                self.assertFalse(metadata._pikepdf_meta_is_valid(value))
+
+    def test_a_bag_reaches_the_saved_file(self):
+        """Through the merge, which is what deleted it."""
+        import pikepdf
+
+        from pdfarranger_qt import metadata
+
+        path = temp_path("bagged.pdf")
+        pdf = pikepdf.Pdf.new()
+        pdf.add_blank_page(page_size=(200, 200))
+        with pdf.open_metadata() as meta:
+            meta["{http://purl.org/dc/elements/1.1/}subject"] = {"508"}
+            meta["{http://purl.org/dc/elements/1.1/}creator"] = {"CQF"}
+        pdf.save(path)
+        pdf.close()
+
+        with pikepdf.open(path) as doc:
+            merged = metadata.merge_doc({}, [doc])
+        self.assertEqual(
+            merged.get("{http://purl.org/dc/elements/1.1/}subject"), {"508"})
+        self.assertEqual(
+            merged.get("{http://purl.org/dc/elements/1.1/}creator"), {"CQF"})
+
+    def test_a_field_pikepdf_cannot_map_is_not_offered_to_it(self):
+        """`/Trapped` has no entry in pikepdf's docinfo-to-XMP table, so it
+        warned and discarded on every save of a document carrying one -- and
+        that warning reached the user as a dialog about a field they had
+        never heard of and could do nothing about.
+
+        Nothing was lost: `pdf:Trapped` is in the XMP already. So the entry
+        is simply not offered for conversion, rather than the complaint
+        being silenced, which would have hidden the fields that do matter.
+        """
+        import warnings
+
+        import pikepdf
+
+        from pdfarranger_qt import metadata
+
+        path = temp_path("trapped.pdf")
+        pdf = pikepdf.Pdf.new()
+        pdf.add_blank_page(page_size=(200, 200))
+        with pdf.open_metadata() as meta:
+            meta["{http://ns.adobe.com/pdf/1.3/}Trapped"] = "False"
+        pdf.docinfo["/Trapped"] = pikepdf.Name("/False")
+        pdf.docinfo["/Title"] = "kept"
+        pdf.save(path)
+        pdf.close()
+
+        with pikepdf.open(path) as doc:
+            with warnings.catch_warnings(record=True) as caught:
+                warnings.simplefilter("always")
+                merged = metadata.merge_doc({}, [doc])
+        self.assertEqual([str(c.message) for c in caught], [])
+        self.assertEqual(
+            merged.get("{http://ns.adobe.com/pdf/1.3/}Trapped"), "False")
+
+    def test_the_fields_it_can_map_still_reach_the_metadata(self):
+        """The filter must not become a way of losing the mappable ones."""
+        import pikepdf
+
+        from pdfarranger_qt import metadata
+
+        path = temp_path("mappable.pdf")
+        pdf = pikepdf.Pdf.new()
+        pdf.add_blank_page(page_size=(200, 200))
+        pdf.docinfo["/Title"] = "a title"
+        pdf.docinfo["/Author"] = "an author"
+        pdf.docinfo["/Trapped"] = pikepdf.Name("/False")
+        pdf.save(path)
+        pdf.close()
+
+        with pikepdf.open(path) as doc:
+            merged = metadata.merge_doc({}, [doc])
+        self.assertEqual(merged.get("{http://purl.org/dc/elements/1.1/}title"),
+                         "a title")
+        self.assertEqual(
+            merged.get("{http://purl.org/dc/elements/1.1/}creator"),
+            ["an author"])
