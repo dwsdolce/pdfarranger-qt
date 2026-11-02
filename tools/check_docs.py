@@ -68,6 +68,30 @@ NUMBERED = re.compile(r"(?:§\s?\d+|[Ss]ection\s+\d+)(?!\.\d)")
 #: and the second kind renumbers whenever a document is split.
 DECISION = re.compile(r"\bD\d{1,3}\b")
 
+#: The same citation spelled out instead of abbreviated. A number is the
+#: obvious way to point at a document and not the only one: "decision 13",
+#: "requirement M13", "highlight step 4" and "see *Where the tools live*" all
+#: reach out of the code into something that can be renamed, renumbered or
+#: deleted without it. **The code has to stand on its own**, whether the
+#: pointer is a number or a sentence.
+#:
+#: `see *Title*` is included because a work document's headings are quoted
+#: that way -- which also catches a source file pointing at another source
+#: file's docstring heading. That is milder, since both move in the same
+#: commit, but it decays the same way and there is no reason to allow it.
+#:
+#: **A bare requirement id is not caught, on purpose.** The documents write
+#: them as `M13`, and no pattern separates that from "M1 Pro", "M2 Max" or a
+#: model number, so the guard would cry wolf on hardware names in comments
+#: about rendering. Only the spelled-out form is matched. A guard that fires
+#: on innocent text gets switched off, which costs more than the hole.
+CITATION = re.compile(
+    r"(?i)\b(?:decision\s+\d+"
+    r"|requirement\s+M?\d+"
+    r"|(?:plan|highlight|underline|strikethrough|comment|draw)\s+step\s+\d+"
+    r"|step\s+\d+\s+of\s+the"
+    r"|see\s+\*)")
+
 
 def python_files():
     for top in SOURCES:
@@ -140,6 +164,21 @@ TWICE = re.compile(r"^\s*[-*] \[[x~]\].*\bDone\.")
 UNTICKED = re.compile(r"^\s*[-*] \[ \]")
 
 
+#: A list declaring what its steps are cited as, which is how a document
+#: says "my steps run 1 to 8". The guard reads these rather than trying to
+#: work out where each list begins and ends: a declaration is one line to
+#: change when a list grows, and a citation checked against it cannot
+#: quietly outlive a renumber.
+DECLARED = re.compile(
+    r"Cited as \*\*(\w+) step (\d+)\*\* to \*\*\w+ step (\d+)\*\*")
+
+#: A step cited in prose. Numbers are used rather than descriptions on
+#: purpose -- a number can be searched for and "the step that settles colour"
+#: cannot -- and the cost of that choice is that a renumber leaves citations
+#: pointing at the wrong thing. This is what pays the cost.
+CITED_STEP = re.compile(r"\b(\w+) step (\d+)\b")
+
+
 def lines_of(name):
     for number, raw in enumerate(read(name).splitlines(), 1):
         yield number, CODE_SPAN.sub("", raw)
@@ -158,6 +197,20 @@ def check_the_checks():
         bad.append("DECISION no longer matches a decision citation")
     if DECISION.search("the D20 of it") is None:
         bad.append("DECISION missed a bare citation")
+    for cited in ("as decision 13 records", "requirement M13 asks for this",
+                  "see highlight step 4", "step 3 of the markup plan",
+                  "see *Where the tools live*"):
+        if not CITATION.search(cited):
+            bad.append(f"CITATION no longer matches {cited!r}")
+    for innocent in ("one step 3 pixels wide", "the M1 Pro", "a 13 step ramp",
+                     "see the note above", "steps 3 and 4 of the algorithm",
+                     "which is M13"):
+        if CITATION.search(innocent):
+            bad.append(f"CITATION now rejects {innocent!r}")
+    if not DECLARED.search("Cited as **plan step 1** to **plan step 4**"):
+        bad.append("DECLARED no longer matches a list's declaration")
+    if CITED_STEP.findall("highlight step 4") != [("highlight", "4")]:
+        bad.append("CITED_STEP no longer matches a named citation")
     if not UNNAMED.search("blocked on #8 for now"):
         bad.append("UNNAMED no longer matches a bare number")
     for allowed in ("see Issue #8", "see Pull Request #2", "see PR #2",
@@ -175,7 +228,8 @@ def check_source_stands_alone():
     for pattern, why in (
             (DOCUMENT, "cites a document, which may be renamed or deleted"),
             (NUMBERED, "cites a numbered section, and numbers move"),
-            (DECISION, "cites a decision by number; say what it decided")):
+            (DECISION, "cites a decision by number; say what it decided"),
+            (CITATION, "points into a document; say the fact instead")):
         for where in offenders(pattern):
             bad.append(f"{where}: {why}")
     return bad
@@ -218,6 +272,43 @@ def check_documents_hang_together():
     return bad
 
 
+def check_steps_can_be_found():
+    """Every cited step exists in the list it names.
+
+    Two numbering systems were in this tree before this check: a markup
+    plan of four steps and one tool's order of eight, both written as
+    "step 4". A third was about to arrive with the next tool, and twenty
+    more after that. So a citation names its list -- `plan step 4`,
+    `highlight step 4` -- and this is what stops the number in it rotting.
+    """
+    bad = []
+    for name in documents():
+        body = read(name)
+        declared = {who.lower(): (int(first), int(last))
+                    for who, first, last in DECLARED.findall(body)}
+        # A ratchet, not a sweep. A document that has declared its lists is
+        # checked; one that has not is left alone until it does. The older
+        # notes carry a third numbering of their own -- "phase 7 step 2" --
+        # from the port, and renumbering history to satisfy a guard would be
+        # rewriting the record rather than keeping it.
+        if not declared:
+            continue
+        for number, line in lines_of(name):
+            for who, step in CITED_STEP.findall(line):
+                if who.lower() in ("the", "a", "this", "each", "one", "next",
+                                   "first", "last", "same", "its", "no"):
+                    continue
+                if who.lower() not in declared:
+                    bad.append(f"{name}:{number} cites {who} step {step}, "
+                               f"and no list says what {who}'s steps are")
+                    continue
+                first, last = declared[who.lower()]
+                if not first <= int(step) <= last:
+                    bad.append(f"{name}:{number} cites {who} step {step}, "
+                               f"and that list runs {first} to {last}")
+    return bad
+
+
 def check_how_things_are_marked_done():
     """One notation, and status lives in Issues rather than in a document."""
     bad = []
@@ -243,6 +334,7 @@ def main():
         return 2
     problems = (check_source_stands_alone()
                 + check_documents_hang_together()
+                + check_steps_can_be_found()
                 + check_how_things_are_marked_done())
     if problems:
         print(f"{len(problems)} problem(s):")

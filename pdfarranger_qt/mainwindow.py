@@ -3799,7 +3799,8 @@ class MainWindow(QMainWindow):
         # flush these, because QSettings syncs from its destructor and from an
         # idle event loop. It is here for the exit that is not normal -- if the
         # process aborts during interpreter shutdown, as it does when a thread
-        # outlives the window (see *Shutting down*), the destructor never runs.
+        # outlives the window -- Qt calls qFatal from ~QThread for a thread
+        # still running -- the destructor never runs.
         # Cheap, and the alternative is losing the window position to a crash.
         self.settings.sync()
         self.search.invalidate()

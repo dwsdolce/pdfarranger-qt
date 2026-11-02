@@ -239,7 +239,7 @@ after mark until another tool is chosen or Escape is pressed. *Armed* is a
 word for this document and not for the interface: it means the mode is set
 and the next gesture on the page will use that tool. Not *selected*, which
 in this application already means selected pages, selected text and -- from
-step 3 -- a selected mark.
+highlight step 3 -- a selected mark.
 
 Because arming sets a mode rather than lighting up a panel, **Escape returns
 to Select whether the strip is open or not.** Closing the strip does not
@@ -524,7 +524,7 @@ clicks that were meant for the page.
 
 ## Highlight
 
-The first tool through, and the one the plan's step 3 builds. Everything here
+The first tool through, and the one plan step 3 builds. Everything here
 was read off `corpus/Markup Highlight.pdf` and the owner's notes on Acrobat.
 
 `/Subtype /Highlight` with `/QuadPoints` -- thirteen quads on the first
@@ -612,6 +612,7 @@ mark, the swatch in the bar changes the one you clicked.
 ### Building it, in order
 
 Each step is usable before the next, and each tells the next what it needs.
+Cited as **highlight step 1** to **highlight step 8**.
 
 1. **Hold the marks.** A page's annotations read into a session table with
    uids -- enough to hit-test and to know what is there. Nothing written.
@@ -646,9 +647,24 @@ Each step is usable before the next, and each tells the next what it needs.
 4. **Colour and opacity**, which is where our appearance replaces the one
    Acrobat wrote: an `/AP` that still draws the old colour is worse than one
    we generated.
-5. **Delete**, taking the status chain and the replies with it.
-6. **The right-click menu.**
-7. **The properties form**, last, because General and Review History are
+5. **The handles, and resizing by them.** Grips at the two extremes of the
+   run; dragging one re-runs the selection between the new pair of points
+   and rebuilds `/QuadPoints` from whatever is now covered, rather than
+   stretching the quads that are there -- a highlight is a run of text and
+   not a box. This was in the plan's acceptance and in M13 from the start
+   and was missing from this list, which is the omission, not the design.
+
+   After colour rather than before it, although resizing raises no question
+   of its own and colour does. Both change a mark that already exists, so
+   whichever comes first has to answer what export writes from, and colour
+   is the better place to answer it: it has to face replacing the `/AP` the
+   producer wrote, so it settles the question completely instead of only as
+   far as geometry. The work left here is then small, because dragging a
+   grip is `textlayer.quads` recomputed from a new pair of points, and that
+   is machinery highlight step 2 already built.
+6. **Delete**, taking the status chain and the replies with it.
+7. **The right-click menu.**
+8. **The properties form**, last, because General and Review History are
    read-only views of what the earlier steps put in place.
 
 ## The test
@@ -672,6 +688,15 @@ to be specified
 before something needs it. Each step is useful alone, and each one tells the
 next what it needs.
 
+Cited as **plan step 1** to **plan step 4**. Each tool has an order of its
+own, cited by the tool's name -- **highlight step 1** and so on -- because
+"step 4" alone will mean one of twenty-odd different things before this is
+finished. Numbers rather than descriptions, deliberately: a number can be
+found in a document and "the step that settles colour" cannot, and the churn
+of renumbering is cheaper than the search. `tools/check_docs.py` fails a
+citation to a step that does not exist, which is what a renumber leaves
+behind.
+
 | # | Step | Depends on | Done when | State |
 |---|---|---|---|---|
 | 1 | Every mark in the test document survives a save | marks being drawn | every annotation in the document comes back from an export unchanged | **done 2026-10-31** |
@@ -679,7 +704,7 @@ next what it needs.
 | 3 | One family through: Highlight, Underline, Strikethrough | 2 | all three make, select by clicking, recolour, resize, delete and reopen -- and those three kinds are in the model whether the user made them or the file arrived with them | |
 | 4 | The remaining tools, one at a time | 3 | each tool brings its own kinds into the model as it arrives | |
 
-**step 1 first because it has no screen**, and it is done. A document that goes
+**Plan step 1 first because it has no screen**, and it is done. A document that goes
 through this application comes out with every annotation it went in with:
 proved on all 180 marks in the test document, on every fixture, and on 8,697
 annotations across the validation corpus. No window, no gesture, no model.
@@ -689,12 +714,12 @@ survive because they *travel with the page* -- `copy_foreign` carries each one
 across as the dictionary it already was, and at no point does this application
 look at a mark, understand it or hold it. `markup.Annotations` is empty for
 every document opened and `markup.Annotations.add` still has exactly one
-caller, a user gesture. Editing begins at step 3.
+caller, a user gesture. Editing begins at plan step 3.
 
 **Which is what lets the work go one tool at a time.** A mark is modelled by
-the step that gives it a tool: step 3 reads `/Highlight`, `/Underline` and
+the step that gives it a tool: plan step 3 reads `/Highlight`, `/Underline` and
 `/StrikeOut` into the model because recolouring one needs an object to
-change, and step 4 does the same for each kind as its tool arrives. Everything
+change, and plan step 4 does the same for each kind as its tool arrives. Everything
 with no tool yet stays a passenger, written back as the dictionary it came in
 as. The test document holds eighteen subtypes and `markup.KINDS` holds three;
 the gap is not a backlog, it is the sixteen kinds that nothing is asking to
@@ -704,14 +729,14 @@ So *lose nothing* does not wait for the model to be finished -- it is already
 true, and it stays true by construction while the model is widened one tool
 at a time.
 
-**There is an ownership question waiting at step 3.** `markup.add_to_page`
+**There is an ownership question waiting at plan step 3.** `markup.add_to_page`
 *appends* to a page's `/Annots`, and a page reaches export already carrying
 the annotations it was copied with. The moment a mark is both in the file and
 in the model it would be written twice, so the step that first reads a file's
 marks in has to decide what export writes from. Not yet decided, and it does
-not need to be until step 3.
+not need to be until plan step 3.
 
-**step 1 has already found one thing, before any of it was built.** Round-tripping
+**Plan step 1 has already found one thing, before any of it was built.** Round-tripping
 `corpus/Markup Test Case.pdf` through `export()` failed outright -- qpdf
 refusing the save with "unexpected object id encountered in
 getCompressibleObjGens" -- for every page, while plain pikepdf saved the same
@@ -729,15 +754,15 @@ working correctly. They had never been signed, and turning them into read-only
 `/Stamp` annotations destroyed two fields that were waiting for a signer. See
 *What this application does with a signature*, below.
 
-This is the shape step 1's test should take: load, export, and compare the
+This is the shape plan step 1's test should take: load, export, and compare the
 annotations on both sides key by key. No window, no gesture, and it would have
 caught the bug above the first time a document with a pattern resource went
 through.
 
-**step 3 is the text-markup family rather than Comment**, which amends decision 4; the
+**Plan step 3 is the text-markup family rather than Comment**, which amends decision 4; the
 argument is recorded there.
 
-**step 4 is deliberately not a list.** What each tool needs is written down when
+**Plan step 4 is deliberately not a list.** What each tool needs is written down when
 that tool is built, not before. The declaration in *Where the tools live* is
 what keeps that honest: a tool that turns out to need an attribute nobody
 anticipated costs a row, and the inventory can keep growing without becoming
@@ -988,9 +1013,8 @@ reads them in.
 turned up more of what a comment needs -- rich text with colour and size
 varying inside one comment, a fill behind the text box, a popup carrying
 author, time and replies -- while the text-markup family needs attributes and
-nothing else. Highlight, Underline and Strikethrough go first, as this
-plan's
-step step 3. They exercise the whole spine: arming a tool, the attribute tail,
+nothing else. Highlight, Underline and Strikethrough go first, as
+plan step 3. They exercise the whole spine: arming a tool, the attribute tail,
 hit-testing by ink, selection, the grips, recolouring, deletion and reopening
 -- with no text editor anywhere in it. Comment follows, against a spine that
 already works.
@@ -1165,7 +1189,7 @@ Nothing read from the snapshot has to outlive it, and when the document
 changes the selection should go anyway -- the canvas already drops its
 search hits on `contents_changed` for the same reason. The correlation is
 not avoided, it is deferred to the step that first *edits* a mark the file
-brought, which is the same ownership question step 4 has to answer whatever
+brought, which is the same ownership question highlight step 4 has to answer whatever
 is decided here.
 
 **13. The outline is the same whether a mark is hovered or selected.**
@@ -1224,13 +1248,13 @@ different question from what its gesture is.
 
 ## Done
 
-**2026-11-01 — step 2, the tool surface.** A floating column over the
+**2026-11-01 — plan step 2, the tool surface.** A floating column over the
 reader, summoned from a toolbar button that is enabled while reading and
 disabled while arranging. Twenty tools in four families, declared once in
 `tools.py`; the strip, the flyouts and the tick are generated from that list.
 Every tool can be armed and none of them does anything, which is the point:
 what a tool makes arrives with its gesture and its attributes, one tool at a
-time, from step 3.
+time, from plan step 3.
 
 The five-action Markup menu is gone. It was swept into `_editing_actions`, so
 it was disabled in read mode -- the only mode its tools act in -- and a flat

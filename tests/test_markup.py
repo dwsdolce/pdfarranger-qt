@@ -1491,7 +1491,7 @@ class TestANoteLandsUnderThePointer(unittest.TestCase):
 
 
 class TestAMarkLivesInTheSourcePagesSpace(unittest.TestCase):
-    """Decision 6, which was written and then not coded for a day.
+    """Written down and then not coded for a day.
 
     A mark is kept in the *source* page's space and multiplied by the page's
     resize on the way out, for a reason: a mark stored in output

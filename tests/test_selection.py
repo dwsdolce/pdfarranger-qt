@@ -221,9 +221,9 @@ class TestTheOutlineUnderThePointer(SelectionCase):
         self.assertIsNone(self.canvas.hovered_mark())
 
     def test_hovering_and_selecting_look_identical(self):
-        """Acrobat's answer, and decision 13. The outline says how far a mark
-        reaches, which does not change according to whether you have
-        committed to it -- what tells the two apart is the bar of buttons.
+        """Acrobat's answer. The outline says how far a mark reaches, which
+        does not change according to whether you have committed to it --
+        what tells the two apart is the bar of buttons.
 
         Rendered rather than reasoned about: a faded hover was what this
         replaced, and only the pixels can say the fade is gone.
