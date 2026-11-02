@@ -21,7 +21,17 @@ classifiers = [
     "Topic :: Utilities",
 ]
 dependencies = [
-    "PySide6>=6.8",
+    # Not >=6.8 any more. 6.11.1 crashes on launch on macOS 27.2, on a
+    # use-after-free in `qt_mac_cgImageFormatForImage()`: it builds the colour
+    # space
+    # in a local `QCFType<CGColorSpaceRef>` and returns a structure holding
+    # only the raw pointer, which the QCFType then releases. Before 27.2 the
+    # system sRGB colour space was never actually deallocated, so the bug was
+    # harmless; now it is a pointer authentication trap in CoreGraphics,
+    # reached through *any* `QImage::toCGImage()` -- the wait cursor on
+    # startup, but equally every page this reader paints. Reproduced here on
+    # 6.11.1 and confirmed gone on 6.11.2, which carries the fix.
+    "PySide6>=6.11.2",
     "pikepdf>=8.0",
     "img2pdf>=0.4.2",
     # Never imported by name: it arrives as the return type of
