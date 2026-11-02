@@ -33,9 +33,21 @@ from support import FIXTURES, settle
 
 PDF = os.path.join(FIXTURES, "markup.pdf")
 
+#: A highlight Acrobat wrote, carrying a note with a reply and a status
+#: chain, beside two that carry nothing. Produced by marking up a document
+#: in Reader rather than assembled here: a fixture built from this
+#: application's own understanding of `/IRT` and `/State` could only confirm
+#: that its reader agrees with its writer.
+NOTED = os.path.join(FIXTURES, "markup_highlight.pdf")
+
 
 class SelectionCase(unittest.TestCase):
     """A window reading the markup sample, which carries 180 annotations."""
+
+    #: Which document to read. A case that needs a particular shape of mark
+    #: builds its own rather than hoping the sample has one.
+    def document(self):
+        return PDF
 
     def setUp(self):
         from PySide6.QtWidgets import QApplication  # noqa: F401
@@ -45,7 +57,7 @@ class SelectionCase(unittest.TestCase):
         self.win = MainWindow()
         self.win.resize(900, 700)
         self.win.show()
-        self.win.open_paths([PDF])
+        self.win.open_paths([self.document()])
         settle(timeout_ms=1200)
         self.win.set_read_mode(True)
         settle(timeout_ms=1600)
@@ -269,14 +281,25 @@ class TestTheButtonsBesideIt(SelectionCase):
         settle(timeout_ms=150)
         self.assertFalse(self.win.mark_buttons.isVisible())
 
-    def test_all_three_are_there_and_none_of_them_acts(self):
-        """Each is turned on by the step that builds it. One that acted now
-        would be a second, half-built way into work that step has to do."""
+    def test_all_three_are_there(self):
         buttons = self.win.mark_buttons.buttons
         self.assertEqual(list(buttons), ["comment", "colour", "delete"])
-        for name, button in buttons.items():
+
+    def test_only_the_ones_with_a_step_behind_them_act(self):
+        """Each is turned on by the step that builds it. One that acted
+        before then would be a second, half-built way into work that step
+        has to do properly.
+
+        Colour was turned on by the step that built the palette. Comment
+        waits for the note work and delete for the step that has to take a
+        mark's status chain and its replies with it, so both are still
+        drawn and refused.
+        """
+        buttons = self.win.mark_buttons.buttons
+        self.assertTrue(buttons["colour"].isEnabled())
+        for name in ("comment", "delete"):
             with self.subTest(button=name):
-                self.assertFalse(button.isEnabled())
+                self.assertFalse(buttons[name].isEnabled())
 
     def test_it_sits_clear_of_the_mark(self):
         _mark, where = self.a_mark()
@@ -323,6 +346,149 @@ class TestADocumentChangeLetsGo(SelectionCase):
         self.canvas.set_document(None)
         self.assertIsNone(self.canvas.selected_mark())
         self.assertEqual(len(self.canvas._file_marks), 0)
+
+
+class TestAMarkThatCarriesANote(SelectionCase):
+    """Selecting a mark means being able to see what it is.
+
+    A highlight somebody has written about must not look like one nobody
+    has. Reader draws a badge at its top left whether or not it is picked,
+    and shows the note at the pointer. This step was marked done without
+    either, which made a note invisible until you happened to hover.
+    """
+
+    def document(self):
+        return NOTED
+
+    def a_noted_mark(self):
+        for mark, mine in self.canvas.marks_on(0):
+            if not mine and mark.has_note():
+                return mark
+        self.fail("the fixture is supposed to carry a noted mark")
+
+    def test_the_model_knows_a_note_is_there(self):
+        mark = self.a_noted_mark()
+        self.assertTrue(mark.contents)
+        self.assertFalse(mark.parent, "a reply is not a note of its own")
+
+    def test_a_reply_is_not_mistaken_for_a_note(self):
+        """A reply and a status change carry contents too -- 'Completed set
+        by dws' -- so a mark is only noted when nothing is above it."""
+        found = self.canvas._file_marks.for_page(1)
+        children = [m for m in found if m.parent]
+        self.assertTrue(children, "the fixture has no chain to test")
+        for child in children:
+            with self.subTest(contents=child.contents[:20]):
+                self.assertFalse(child.has_note())
+
+    def test_the_badge_sits_off_the_marks_corner(self):
+        mark = self.a_noted_mark()
+        badge = self.canvas._badge_rect(0, mark)
+        self.assertIsNotNone(badge)
+        top = max(self.canvas.mark_boxes(mark), key=lambda q: q[3])
+        where = self.canvas.quad_on_screen(0, top, scaled=False)
+        self.assertLess(badge.left(), where.left())
+        self.assertLess(badge.top(), where.top())
+
+    def test_the_badge_can_be_pointed_at(self):
+        mark = self.a_noted_mark()
+        badge = self.canvas._badge_rect(0, mark)
+        found = self.canvas.note_badge_at(badge.center())
+        self.assertIsNotNone(found)
+        self.assertIs(found[1], mark)
+
+    def test_a_mark_with_no_note_has_no_badge(self):
+        for mark, mine in self.canvas.marks_on(0):
+            if mine or mark.has_note():
+                continue
+            with self.subTest(index=mark.index):
+                badge = self.canvas._badge_rect(0, mark)
+                if badge is not None:
+                    self.assertIsNone(
+                        self.canvas.note_badge_at(badge.center()))
+
+    def test_the_counts_read_the_current_status(self):
+        """A chain of Accepted then a reply then Completed is one reply and
+        one status, not two: the chain is a history and the status is the
+        state it arrived at."""
+        mark = self.a_noted_mark()
+        chain = self.canvas._file_marks.children(mark)
+        statuses = [m for m in chain if m.is_status()]
+        replies, current = self.canvas._file_marks.thread(mark)
+        self.assertGreaterEqual(len(statuses), 1)
+        self.assertEqual(current, statuses[-1].state)
+        self.assertEqual(len(replies),
+                         len([m for m in chain if m.is_reply()]))
+
+    def test_the_summary_says_who_and_what(self):
+        mark = self.a_noted_mark()
+        summary = self.canvas.note_summary(mark)
+        self.assertIn(mark.author, summary)
+        self.assertIn(mark.contents, summary)
+        _replies, current = self.canvas._file_marks.thread(mark)
+        if current:
+            self.assertIn("1", summary.splitlines()[0])
+
+    def inside(self, mark):
+        return self.canvas.quad_on_screen(
+            0, self.canvas.mark_boxes(mark)[0], scaled=False).center()
+
+    def test_pointing_at_the_mark_shows_the_note(self):
+        """Over the whole mark, not only the badge, because that is where
+        the pointer goes."""
+        from PySide6.QtGui import QMouseEvent
+
+        mark = self.a_noted_mark()
+        self.send(QMouseEvent.Type.MouseMove, self.inside(mark))
+        self.assertIsNotNone(self.canvas._note_panel)
+        self.assertIs(self.canvas._note_panel[0], mark)
+
+    def test_leaving_the_mark_takes_it_away(self):
+        from PySide6.QtCore import QPointF
+        from PySide6.QtGui import QMouseEvent
+
+        mark = self.a_noted_mark()
+        at = self.inside(mark)
+        self.send(QMouseEvent.Type.MouseMove, at)
+        self.assertIsNotNone(self.canvas._note_panel)
+        self.send(QMouseEvent.Type.MouseMove,
+                  QPointF(at.x(), at.y() + 300))
+        self.assertIsNone(self.canvas._note_panel)
+
+    def test_a_mark_with_no_note_shows_no_panel(self):
+        from PySide6.QtGui import QMouseEvent
+
+        bare = [m for m, mine in self.canvas.marks_on(0)
+                if not mine and not m.has_note()]
+        for mark in bare:
+            with self.subTest(index=mark.index):
+                self.send(QMouseEvent.Type.MouseMove, self.inside(mark))
+                self.assertIsNone(self.canvas._note_panel)
+
+    def test_the_panel_is_drawn_rather_than_left_to_a_tooltip(self):
+        """A tooltip waits for the pointer to settle and then vanishes on
+        its own, which is why the note appeared to show nothing at all.
+        Rendered rather than reasoned about: only the pixels can say it is
+        on screen."""
+        from PySide6.QtGui import QImage, QMouseEvent
+
+        mark = self.a_noted_mark()
+        viewport = self.canvas.viewport()
+
+        def painted():
+            image = QImage(viewport.size(), QImage.Format_ARGB32)
+            image.fill(0xFFFFFFFF)
+            viewport.render(image)
+            return image
+
+        self.send(QMouseEvent.Type.MouseMove, self.inside(mark))
+        settle(timeout_ms=150)
+        with_panel = painted()
+        self.canvas._show_note_panel(None, self.inside(mark))
+        settle(timeout_ms=150)
+        without = painted()
+        self.assertNotEqual(with_panel, without,
+                            "the panel left no mark on the viewport")
 
 
 if __name__ == "__main__":

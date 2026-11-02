@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PDF-Shuffler 0.7\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-01 21:09+0000\n"
+"POT-Creation-Date: 2026-11-02 22:42+0000\n"
 "PO-Revision-Date: 2021-12-30 17:13+0100\n"
 "Last-Translator: Toratora <darex7@o2.pl>\n"
 "Language: pl_PL\n"
@@ -69,6 +69,24 @@ msgstr "Kopiuj"
 #: pdfarranger_qt/canvas.py
 msgid "Select All"
 msgstr "Zaznacz wszystko"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+#, python-format
+msgid "%d Reply"
+msgstr "%d odpowiedź"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+#, python-format
+msgid "%d Replies"
+msgstr "%d odpowiedzi"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+#, python-format
+msgid "%d Status"
+msgstr "%d status"
 
 #: pdfarranger_qt/core.py pdfarranger_qt/mainwindow.py
 msgid "Image files are only supported with img2pdf"
@@ -332,12 +350,12 @@ msgid "Size"
 msgstr "Rozmiar"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/dialogs.py
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/toolstrip.py
 msgid "Colour"
 msgstr "Kolor"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/dialogs.py
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/toolstrip.py
 msgid "Opacity"
 msgstr "Krycie"
 
@@ -2099,6 +2117,11 @@ msgstr "Dodaj adnotację"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
+msgid "Change Mark"
+msgstr "Zmień znacznik"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
 msgid "Delete Note"
 msgstr "Usuń notatkę"
 
@@ -2384,6 +2407,7 @@ msgstr "Zapisać przed kontynuowaniem?"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py pdfarranger_qt/reader.py
+#: pdfarranger_qt/toolstrip.py
 msgid "Delete"
 msgstr "Usuń"
 
@@ -2637,6 +2661,111 @@ msgstr "Duplikuj"
 #: pdfarranger_qt/mainwindow.py
 msgid "Rotate"
 msgstr "Obróć"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Blue"
+msgstr "Niebieski"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Green"
+msgstr "Zielony"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Yellow"
+msgstr "Żółty"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Orange"
+msgstr "Pomarańczowy"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Red"
+msgstr "Czerwony"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Fuchsia"
+msgstr "Fuksja"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Purple"
+msgstr "Fioletowy"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Light Blue"
+msgstr "Jasnoniebieski"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Light Green"
+msgstr "Jasnozielony"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Light Yellow"
+msgstr "Jasnożółty"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Light Orange"
+msgstr "Jasnopomarańczowy"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Light Red"
+msgstr "Jasnoczerwony"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Light Fuchsia"
+msgstr "Jasna fuksja"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Light Purple"
+msgstr "Jasnofioletowy"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "White"
+msgstr "Biały"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Pale Grey"
+msgstr "Blady szary"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Light Grey"
+msgstr "Jasnoszary"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Medium Grey"
+msgstr "Średni szary"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Dark Grey"
+msgstr "Ciemnoszary"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Darker Grey"
+msgstr "Ciemniejszy szary"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Black"
+msgstr "Czarny"
 
 #: pdfarranger_qt/metadata.py
 msgid "Title"
@@ -2903,7 +3032,7 @@ msgid "Pan"
 msgstr "Przesuń"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/tools.py
+#: pdfarranger_qt/tools.py pdfarranger_qt/toolstrip.py
 msgid "Add a comment"
 msgstr "Dodaj komentarz"
 
@@ -2991,6 +3120,11 @@ msgstr "Linie łamane"
 #: pdfarranger_qt/tools.py
 msgid "Stamps palette"
 msgstr "Paleta stempli"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/toolstrip.py
+msgid "Comment colour"
+msgstr "Kolor komentarza"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/viewer.py

@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-01 21:09+0000\n"
+"POT-Creation-Date: 2026-11-02 22:42+0000\n"
 "PO-Revision-Date: 2023-06-08 10:00+0700\n"
 "Last-Translator: Abdul Munif Hanafi <amunifhanafi@gmail.com>\n"
 "Language: id\n"
@@ -66,6 +66,24 @@ msgstr "Salin"
 #: pdfarranger_qt/canvas.py
 msgid "Select All"
 msgstr "Pilih Semua"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+#, python-format
+msgid "%d Reply"
+msgstr "%d balasan"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+#, python-format
+msgid "%d Replies"
+msgstr "%d balasan"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+#, python-format
+msgid "%d Status"
+msgstr "%d status"
 
 #: pdfarranger_qt/core.py pdfarranger_qt/mainwindow.py
 msgid "Image files are only supported with img2pdf"
@@ -330,12 +348,12 @@ msgid "Size"
 msgstr "Ukuran"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/dialogs.py
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/toolstrip.py
 msgid "Colour"
 msgstr "Warna"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/dialogs.py
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/toolstrip.py
 msgid "Opacity"
 msgstr "Kelegapan"
 
@@ -2087,6 +2105,11 @@ msgstr "Tambah markah"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
+msgid "Change Mark"
+msgstr "Ubah Tanda"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
 msgid "Delete Note"
 msgstr "Hapus Catatan"
 
@@ -2361,6 +2384,7 @@ msgstr "Simpan sebelum melanjutkan?"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py pdfarranger_qt/reader.py
+#: pdfarranger_qt/toolstrip.py
 msgid "Delete"
 msgstr "Hapus"
 
@@ -2609,6 +2633,111 @@ msgstr "Duplikat"
 #: pdfarranger_qt/mainwindow.py
 msgid "Rotate"
 msgstr "Putar"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Blue"
+msgstr "Biru"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Green"
+msgstr "Hijau"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Yellow"
+msgstr "Kuning"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Orange"
+msgstr "Oranye"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Red"
+msgstr "Merah"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Fuchsia"
+msgstr "Fuchsia"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Purple"
+msgstr "Ungu"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Light Blue"
+msgstr "Biru muda"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Light Green"
+msgstr "Hijau muda"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Light Yellow"
+msgstr "Kuning muda"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Light Orange"
+msgstr "Oranye muda"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Light Red"
+msgstr "Merah muda"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Light Fuchsia"
+msgstr "Fuchsia muda"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Light Purple"
+msgstr "Ungu muda"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "White"
+msgstr "Putih"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Pale Grey"
+msgstr "Abu-abu pucat"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Light Grey"
+msgstr "Abu-abu muda"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Medium Grey"
+msgstr "Abu-abu sedang"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Dark Grey"
+msgstr "Abu-abu tua"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Darker Grey"
+msgstr "Abu-abu lebih tua"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Black"
+msgstr "Hitam"
 
 #: pdfarranger_qt/metadata.py
 msgid "Title"
@@ -2874,7 +3003,7 @@ msgid "Pan"
 msgstr "Geser"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/tools.py
+#: pdfarranger_qt/tools.py pdfarranger_qt/toolstrip.py
 msgid "Add a comment"
 msgstr "Tambah komentar"
 
@@ -2962,6 +3091,11 @@ msgstr "Garis terhubung"
 #: pdfarranger_qt/tools.py
 msgid "Stamps palette"
 msgstr "Palet stempel"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/toolstrip.py
+msgid "Comment colour"
+msgstr "Warna komentar"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/viewer.py

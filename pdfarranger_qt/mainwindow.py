@@ -142,6 +142,10 @@ class MainWindow(QMainWindow):
         self._arming = False
         self.tool_strip.armed_changed.connect(self._tool_armed)
         self.reader.canvas.tool_changed.connect(self._canvas_tool_changed)
+        # The strip sits over the reader, which scrolls by blitting, so it
+        # has to be told to redraw itself when the page under it moves.
+        self.reader.canvas.verticalScrollBar().valueChanged.connect(
+            lambda _v: self.tool_strip.isVisible() and self.tool_strip.refresh())
         self.tool_strip.moved.connect(
             lambda where: self.settings.setValue(
                 "reader/markup-tools-at", where))
@@ -156,6 +160,16 @@ class MainWindow(QMainWindow):
         #: by the step that builds it.
         self.mark_buttons = MarkButtons(self.reader.canvas.viewport())
         self.reader.canvas.set_mark_buttons(self.mark_buttons)
+        self.mark_buttons.recoloured.connect(self.mark_recoloured)
+        self.mark_buttons.faded.connect(self.mark_faded)
+        #: What the next mark will be made in, once the tail's swatch has
+        #: been used. None until then, so each tool keeps the colour readers
+        #: expect of it rather than everything starting out yellow.
+        self.armed_colour = None
+        self.armed_opacity = None
+        self.tool_strip.colour_armed.connect(self._colour_armed)
+        self.tool_strip.opacity_armed.connect(self._opacity_armed)
+        self.reader.canvas.mark_selected.connect(self._selected_mark_changed)
         self.reader.canvas.note_edited.connect(self.note_edited)
         self.reader.canvas.marks = self._marks_on_page
         self.reader.field_edited.connect(self.field_edited)
@@ -741,9 +755,13 @@ class MainWindow(QMainWindow):
         parent.addMenu(menu)
         return menu
 
-    #: Which annotation each markup tool writes, and in what colour. The
-    #: colours are the ones every reader uses for these marks, so a document
-    #: marked here looks like one marked anywhere else.
+    #: Which annotation each markup tool writes, and the colour it starts
+    #: out in. The colours are the ones every reader uses for these marks, so
+    #: a document marked here looks like one marked anywhere else -- but only
+    #: until the swatch in the strip's tail is used, after which there is one
+    #: current colour and it colours whatever is made next, of any kind.
+    #: Reader works the same way: a single colour at the foot of its tool
+    #: list, not a palette per tool.
     MARK_KINDS = {
         "highlight": (markup.HIGHLIGHT, (1.0, 0.92, 0.23)),
         "strikeout": (markup.STRIKEOUT, (0.90, 0.22, 0.21)),
@@ -819,6 +837,8 @@ class MainWindow(QMainWindow):
         if kind is None or not rects or not 0 <= index < len(self.model.pages):
             return
         subtype, colour = kind
+        if self.armed_colour is not None:
+            colour = self.armed_colour
         page = self.model.pages[index]
         rect = markup.bounding_rect(rects)
         quads = rects if subtype in markup.QUADDED else ()
@@ -842,6 +862,7 @@ class MainWindow(QMainWindow):
         self.model.undo.commit(_("Add Mark"))
         self.model.annotations.add(markup.Annotation(
             subtype, page.uid, rect, colour=colour, quads=quads,
+            opacity=self.armed_opacity,
             author=markup.default_author()))
         self._mark_added()
         if subtype == markup.TEXT:
@@ -851,6 +872,113 @@ class MainWindow(QMainWindow):
             self._placed_note = self.model.undo.current
             self.reader.canvas.edit_note(
                 index, len(self._marks_on_page(index)) - 1)
+
+    def _colour_armed(self, colour) -> None:
+        """The tail's swatch was used.
+
+        It does two jobs, and which one depends on whether a mark is picked.
+        With one selected it changes *that* mark, which is what Reader does
+        and is why the swatch is shown with the pointer armed at all. With
+        nothing selected it arms the colour the next mark will be made in.
+        """
+        if self.reader.canvas.selected_mark() is not None:
+            self._change_mark(colour=tuple(colour))
+            return
+        self.armed_colour = tuple(colour)
+
+    def _opacity_armed(self, opacity: float) -> None:
+        if self.reader.canvas.selected_mark() is not None:
+            self._change_mark(opacity=float(opacity))
+            return
+        self.armed_opacity = float(opacity)
+
+    def _selected_mark_changed(self, _selected: bool) -> None:
+        """Tell the buttons, and the tail's swatch, what is selected.
+
+        The swatch follows the selection so that the tick in the palette
+        marks the colour of the mark you picked. Letting go puts back the
+        colour armed for the next one.
+        """
+        found = self.reader.canvas.selected_mark()
+        if found is None:
+            self.tool_strip.unfollow()
+            return
+        mark = found[1]
+        self.tool_strip.follow(
+            mark.colour,
+            markup.solidity(mark) if isinstance(mark, markup.Annotation)
+            else mark.opacity)
+        self.mark_buttons.set_mark(
+            mark.colour,
+            markup.solidity(mark) if isinstance(mark, markup.Annotation)
+            else mark.opacity)
+
+    def mark_recoloured(self, colour) -> None:
+        """A colour was picked for the selected mark."""
+        self._change_mark(colour=tuple(colour))
+
+    def mark_faded(self, opacity: float) -> None:
+        """An opacity was set for the selected mark."""
+        self._change_mark(opacity=float(opacity))
+
+    def _change_mark(self, **fields) -> None:
+        """Record a change to the selected mark and show it.
+
+        A mark of the user's is changed where it lives, in the model. One the
+        file brought is *not*: its own dictionary stays the producer's, and
+        the change is held beside it in `mark_edits` until export patches the
+        handful of keys it names.
+        """
+        found = self.reader.canvas.selected_mark()
+        if found is None:
+            return
+        index, mark = found
+        if not 0 <= index < len(self.model.pages):
+            return
+        uid = self.model.pages[index].uid
+        self.model.undo.commit(_("Change Mark"))
+        if isinstance(mark, markup.Annotation):
+            for name, value in fields.items():
+                setattr(mark, name, value)
+            self.mark_buttons.set_mark(mark.colour, markup.solidity(mark))
+            self._mark_added()
+            return
+        self.model.mark_edits.change(uid, mark.index, **fields)
+        for name, value in fields.items():
+            setattr(mark, name, value)
+        self.mark_buttons.set_mark(mark.colour, mark.opacity)
+        # Only this page: a mark changed on one page is not a reason to
+        # re-render every thumbnail in the document, and `_mark_added` touches
+        # them all because adding a mark was the only thing that got here.
+        #
+        # And without rebuilding the reader. Touching a page tells it the
+        # snapshot is stale, which is true of a page's geometry and not of
+        # this: the change is shown by re-rendering the one page below, and a
+        # rebuild would throw that away along with the selection it belongs
+        # to -- measured, 499 ms to undo work that cost 25.
+        self._reader_keeps_showing = True
+        try:
+            self.model.touch([index])
+        finally:
+            self._reader_keeps_showing = False
+        self._mark_modified()
+        self._show_mark_edits(index, uid)
+
+    def _show_mark_edits(self, index: int, uid: int) -> None:
+        """Re-render one page so a change to its marks can be seen.
+
+        The marks a document arrived with are drawn into the page bitmap by
+        PDFium, so a recoloured one cannot be painted over: the page has to
+        come from a document that carries the change. One page rather than
+        the document, which is 1.1 to 6.5 ms against 1180 ms on a book of
+        1590 pages.
+        """
+        data = self.reader.document_bytes()
+        if data is None:
+            return
+        self.reader.canvas.repaint_edited(
+            index, markup.one_page_with_edits(
+                data, index, self.model.mark_edits.for_page(uid)))
 
     def note_edited(self, index: int, which: int, text: str) -> None:
         """A note's editor closed: keep what was typed, or drop the note.
@@ -1847,7 +1975,21 @@ class MainWindow(QMainWindow):
             # highlights rather than silently dropping them.
             self.reader.search(self.search.query)
             self.reader.canvas.go_to_position(where)
+            # And the changes made to the marks the document arrived with.
+            # The snapshot is built from the sources, so it shows those marks
+            # exactly as the file has them; a recolour lives in the model and
+            # has to be put back over the top every time the snapshot is
+            # rebuilt, or the colour reverts whenever anything else is edited.
+            self._show_all_mark_edits()
         return ok
+
+    def _show_all_mark_edits(self) -> None:
+        """Re-render every page whose marks have been changed."""
+        if not self.model.mark_edits:
+            return
+        for index, row in enumerate(self.model.pages):
+            if self.model.mark_edits.for_page(row.uid):
+                self._show_mark_edits(index, row.uid)
 
     def _invalidate_reader(self):
         """An edit happened; the snapshot no longer matches the page list."""
@@ -2242,6 +2384,7 @@ class MainWindow(QMainWindow):
                 form_values=self.model.form_values,
                 # And the marks added to it, which are owned the same way.
                 annotations=self.model.annotations,
+                mark_edits=self.model.mark_edits,
                 # A subset of the pages keeps only the bookmarks that still
                 # have somewhere to point; a whole document keeps everything,
                 # including the headings the user put there deliberately.

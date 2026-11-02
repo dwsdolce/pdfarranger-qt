@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PDF Arranger 1.14.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-01 21:09+0000\n"
+"POT-Creation-Date: 2026-11-02 22:42+0000\n"
 "PO-Revision-Date: 2026-06-02 17:09+0800\n"
 "Last-Translator: Puqns67 <me@puqns67.icu>\n"
 "Language: zh_CN\n"
@@ -68,6 +68,24 @@ msgstr "复制"
 #: pdfarranger_qt/canvas.py
 msgid "Select All"
 msgstr "全选"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+#, python-format
+msgid "%d Reply"
+msgstr "%d 条回复"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+#, python-format
+msgid "%d Replies"
+msgstr "%d 条回复"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+#, python-format
+msgid "%d Status"
+msgstr "%d 个状态"
 
 #: pdfarranger_qt/core.py pdfarranger_qt/mainwindow.py
 msgid "Image files are only supported with img2pdf"
@@ -314,12 +332,12 @@ msgid "Size"
 msgstr "大小"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/dialogs.py
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/toolstrip.py
 msgid "Colour"
 msgstr "颜色"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/dialogs.py
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/toolstrip.py
 msgid "Opacity"
 msgstr "不透明度"
 
@@ -1865,6 +1883,11 @@ msgstr "添加标注"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
+msgid "Change Mark"
+msgstr "更改标记"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
 msgid "Delete Note"
 msgstr "删除注释"
 
@@ -2127,6 +2150,7 @@ msgstr "继续前先保存吗？"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py pdfarranger_qt/reader.py
+#: pdfarranger_qt/toolstrip.py
 msgid "Delete"
 msgstr "删除"
 
@@ -2370,6 +2394,111 @@ msgstr "生成副本"
 #: pdfarranger_qt/mainwindow.py
 msgid "Rotate"
 msgstr "旋转"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Blue"
+msgstr "蓝色"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Green"
+msgstr "绿色"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Yellow"
+msgstr "黄色"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Orange"
+msgstr "橙色"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Red"
+msgstr "红色"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Fuchsia"
+msgstr "品红"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Purple"
+msgstr "紫色"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Light Blue"
+msgstr "浅蓝色"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Light Green"
+msgstr "浅绿色"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Light Yellow"
+msgstr "浅黄色"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Light Orange"
+msgstr "浅橙色"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Light Red"
+msgstr "浅红色"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Light Fuchsia"
+msgstr "浅品红"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Light Purple"
+msgstr "浅紫色"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "White"
+msgstr "白色"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Pale Grey"
+msgstr "淡灰色"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Light Grey"
+msgstr "浅灰色"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Medium Grey"
+msgstr "中灰色"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Dark Grey"
+msgstr "深灰色"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Darker Grey"
+msgstr "更深的灰色"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Black"
+msgstr "黑色"
 
 #: pdfarranger_qt/metadata.py
 msgid "Title"
@@ -2635,7 +2764,7 @@ msgid "Pan"
 msgstr "平移"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/tools.py
+#: pdfarranger_qt/tools.py pdfarranger_qt/toolstrip.py
 msgid "Add a comment"
 msgstr "添加注释"
 
@@ -2723,6 +2852,11 @@ msgstr "连接线"
 #: pdfarranger_qt/tools.py
 msgid "Stamps palette"
 msgstr "图章面板"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/toolstrip.py
+msgid "Comment colour"
+msgstr "批注颜色"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/viewer.py

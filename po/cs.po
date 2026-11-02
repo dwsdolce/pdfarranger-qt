@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  pdfarranger\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-01 21:09+0000\n"
+"POT-Creation-Date: 2026-11-02 22:42+0000\n"
 "PO-Revision-Date: 2023-07-10 15:37+0000\n"
 "Last-Translator: PavelZ\n"
 "Language: cs_CZ\n"
@@ -61,6 +61,24 @@ msgstr "Kopírovat"
 #: pdfarranger_qt/canvas.py
 msgid "Select All"
 msgstr "Vybrat vše"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+#, python-format
+msgid "%d Reply"
+msgstr "%d odpověď"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+#, python-format
+msgid "%d Replies"
+msgstr "%d odpovědí"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+#, python-format
+msgid "%d Status"
+msgstr "%d stav"
 
 #: pdfarranger_qt/core.py pdfarranger_qt/mainwindow.py
 msgid "Image files are only supported with img2pdf"
@@ -322,12 +340,12 @@ msgid "Size"
 msgstr "Velikost"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/dialogs.py
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/toolstrip.py
 msgid "Colour"
 msgstr "Barva"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/dialogs.py
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/toolstrip.py
 msgid "Opacity"
 msgstr "Krytí"
 
@@ -2051,6 +2069,11 @@ msgstr "Přidat značku"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
+msgid "Change Mark"
+msgstr "Změnit značku"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
 msgid "Delete Note"
 msgstr "Odstranit poznámku"
 
@@ -2325,6 +2348,7 @@ msgstr "Uložit před pokračováním?"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py pdfarranger_qt/reader.py
+#: pdfarranger_qt/toolstrip.py
 msgid "Delete"
 msgstr "Smazat"
 
@@ -2577,6 +2601,111 @@ msgstr "Duplikovat"
 #: pdfarranger_qt/mainwindow.py
 msgid "Rotate"
 msgstr "Otočit"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Blue"
+msgstr "Modrá"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Green"
+msgstr "Zelená"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Yellow"
+msgstr "Žlutá"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Orange"
+msgstr "Oranžová"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Red"
+msgstr "Červená"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Fuchsia"
+msgstr "Fuchsiová"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Purple"
+msgstr "Fialová"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Light Blue"
+msgstr "Světle modrá"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Light Green"
+msgstr "Světle zelená"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Light Yellow"
+msgstr "Světle žlutá"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Light Orange"
+msgstr "Světle oranžová"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Light Red"
+msgstr "Světle červená"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Light Fuchsia"
+msgstr "Světle fuchsiová"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Light Purple"
+msgstr "Světle fialová"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "White"
+msgstr "Bílá"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Pale Grey"
+msgstr "Bledě šedá"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Light Grey"
+msgstr "Světle šedá"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Medium Grey"
+msgstr "Středně šedá"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Dark Grey"
+msgstr "Tmavě šedá"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Darker Grey"
+msgstr "Tmavší šedá"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Black"
+msgstr "Černá"
 
 #: pdfarranger_qt/metadata.py
 msgid "Title"
@@ -2842,7 +2971,7 @@ msgid "Pan"
 msgstr "Posun"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/tools.py
+#: pdfarranger_qt/tools.py pdfarranger_qt/toolstrip.py
 msgid "Add a comment"
 msgstr "Přidat komentář"
 
@@ -2930,6 +3059,11 @@ msgstr "Spojené čáry"
 #: pdfarranger_qt/tools.py
 msgid "Stamps palette"
 msgstr "Paleta razítek"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/toolstrip.py
+msgid "Comment colour"
+msgstr "Barva komentáře"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/viewer.py

@@ -48,6 +48,8 @@ from typing import Dict, List, Optional, Tuple
 
 import pikepdf
 
+from .i18n import N_
+
 #: Every subtype this module can write. Kept explicit so that an unknown kind
 #: is a failed assertion here rather than a dictionary a viewer silently drops.
 TEXT = "/Text"
@@ -159,12 +161,12 @@ class Annotation:
     """One mark, in the page coordinates of the page it belongs to."""
 
     __slots__ = ("kind", "page", "rect", "quads", "contents", "colour",
-                 "author", "created", "name")
+                 "opacity", "author", "created", "name")
 
     def __init__(self, kind: str, page: int, rect: Tuple[float, ...],
                  contents: str = "", colour=None, author: Optional[str] = None,
                  created: Optional[str] = None, quads=(),
-                 name: Optional[str] = None):
+                 name: Optional[str] = None, opacity=None):
         if kind not in KINDS:
             raise ValueError(f"unknown annotation kind: {kind}")
         self.kind = kind
@@ -184,6 +186,10 @@ class Annotation:
         self.quads = tuple(tuple(float(v) for v in quad) for quad in quads or ())
         self.contents = contents
         self.colour = tuple(colour) if colour is not None else None
+        #: How solid this one mark is. None means "whatever this kind is
+        #: usually drawn at", which is what every mark made before the tail
+        #: had an opacity slider meant and still means.
+        self.opacity = float(opacity) if opacity is not None else None
         self.author = author
         self.created = created or pdf_date()
 
@@ -255,6 +261,177 @@ class Annotations:
 
     def __repr__(self):  # pragma: no cover - debugging aid
         return f"Annotations({len(self)} on {len(self._by_page)} page(s))"
+
+
+def one_page_with_edits(data, index: int, edits) -> "Optional[bytes]":
+    """``data``'s page ``index`` on its own, with ``edits`` applied.
+
+    For showing a change at once. The page a reader is looking at has its
+    annotations baked into the bitmap PDFium draws, so a recoloured mark
+    cannot be painted over the old one -- the page has to be rendered from a
+    document that carries the change. Rewriting the whole document to do that
+    is what makes it slow: measured on a 1590-page book, patching and saving
+    the file costs 1180 ms against 1.1 to 6.5 ms for lifting the one page out
+    and patching that.
+
+    Returns None when there is nothing to show differently, so the caller can
+    put the page back on the ordinary render path rather than keeping a
+    document that says the same as the original.
+    """
+    import io
+    import warnings
+
+    if not edits:
+        return None
+    try:
+        with pikepdf.open(io.BytesIO(data)) as whole:
+            if not 0 <= index < len(whole.pages):
+                return None
+            one = pikepdf.Pdf.new()
+            one.pages.append(whole.pages[index])
+            page = one.pages[0].obj
+            at, changed = 0, 0
+            for annot in page.get(pikepdf.Name.Annots) or []:
+                try:
+                    subtype = str(annot.get(pikepdf.Name.Subtype, ""))
+                except Exception:  # noqa: BLE001 - unreadable is not markup
+                    continue
+                if subtype in ("/Widget", "/Popup", "/Link"):
+                    continue
+                edit = edits.get(at)
+                at += 1
+                if not edit:
+                    continue
+                if edit.get("colour") is not None:
+                    annot[pikepdf.Name.C] = pikepdf.Array([*edit["colour"]])
+                if edit.get("opacity") is not None:
+                    annot[pikepdf.Name.CA] = float(edit["opacity"])
+                if pikepdf.Name.AP in annot:
+                    # The stream the producer wrote still draws the old
+                    # colour, and every reader falls back to `/QuadPoints`
+                    # when there is none.
+                    del annot[pikepdf.Name.AP]
+                changed += 1
+            if not changed:
+                return None
+            out = io.BytesIO()
+            with warnings.catch_warnings():
+                # `PageCopyWarning`, raised by `save`: the widgets travel
+                # with the page but this document has no `/AcroForm` for them
+                # to hang off, and Acrobat may not display them. Acrobat
+                # never sees it. It is rasterised once, here, and thrown
+                # away -- and the page comes out *identical*: rendered from
+                # the whole document and from this copy, 0 of 484,704 pixels
+                # differ, with all 15 widgets and all 15 of their appearance
+                # streams present either way.
+                #
+                # pikepdf names `add_pages_from` as the remedy and neither of
+                # its modes serves. The default raises "stream objects cannot
+                # be cloned" against a document whose form resources hold a
+                # stream, the same shape as the `/DR` pattern that once broke
+                # export. `forms="strip"` succeeds and removes all 15
+                # widgets, so the page would render without its fields --
+                # worse than the warning it silences.
+                warnings.simplefilter("ignore", pikepdf.PageCopyWarning)
+                one.save(out)
+            one.close()
+            return out.getvalue()
+    except Exception:  # noqa: BLE001 - a page that will not patch is shown
+        return None    # as it was, which is better than not shown at all
+
+
+class MarkEdits:
+    """Changes to the marks a document arrived with, by page.
+
+    `Annotations` holds what the user *made*; this holds what the user
+    *changed* about what was already there, and the two are deliberately
+    different things. A mark the file brought keeps its own dictionary as the
+    source of truth for every key nobody has touched -- `/NM`, `/Popup`,
+    `/RC`, `/Subj`, `/T`, the `/IRT` chains, the lot -- and export rewrites
+    only the handful of keys named here. Replacing the mark instead would
+    lose every key this application does not model, which is most of them.
+
+    **Keyed by `(page uid, index)`**, where the index counts the markup
+    annotations on that page in the order the file has them. The page uid for
+    the reason `Annotations` uses it: a reorder or an undo must not move an
+    edit onto a different page, and a duplicated page gets a uid of its own,
+    so recolouring a mark on one copy leaves the other alone.
+
+    The index is a position, and a position is the wrong name for a *mark*:
+    deleting one takes its status chain and its replies with it, everything
+    after shifts, and an undo shifts them back, so the same number means a
+    different mark from one moment to the next. This is not that. It is a
+    position in the source document, which this application never edits, so
+    nothing renumbers it. Export reads the same pages in the same order and
+    `marks_in` enumerates them the same way, which is measured
+    -- the markup sample comes through an export with its annotations in the
+    same order and the same count, 64, 64, 27 and 25 across its four pages.
+
+    Widgets, popups and links are not counted, so stripping an unsigned
+    signature widget on the way out cannot shift an edit onto its neighbour.
+    """
+
+    __slots__ = ("_by_page",)
+
+    #: What may be changed about a mark the file brought. Anything not here
+    #: is left exactly as the producer wrote it.
+    FIELDS = ("colour", "opacity")
+
+    def __init__(self, by_page=None):
+        self._by_page: Dict[int, Dict[int, dict]] = {}
+        for uid, marks in (by_page or {}).items():
+            kept = {n: dict(edit) for n, edit in marks.items() if edit}
+            if kept:
+                self._by_page[uid] = kept
+
+    def duplicate(self) -> "MarkEdits":
+        return MarkEdits(self._by_page)
+
+    def change(self, uid: int, index: int, **fields) -> None:
+        """Record ``fields`` against one mark, merging with what is there."""
+        unknown = set(fields) - set(self.FIELDS)
+        if unknown:
+            raise ValueError(f"not an editable attribute: {sorted(unknown)}")
+        edit = self._by_page.setdefault(uid, {}).setdefault(index, {})
+        edit.update({k: v for k, v in fields.items() if v is not None})
+        if not edit:
+            self.forget(uid, index)
+
+    def forget(self, uid: int, index: int) -> None:
+        marks = self._by_page.get(uid)
+        if not marks or index not in marks:
+            return
+        del marks[index]
+        if not marks:
+            del self._by_page[uid]
+
+    def of(self, uid: int, index: int) -> dict:
+        """What has been changed about one mark. Empty when nothing has."""
+        return dict(self._by_page.get(uid, {}).get(index, {}))
+
+    def for_page(self, uid: int) -> Dict[int, dict]:
+        return {n: dict(edit)
+                for n, edit in self._by_page.get(uid, {}).items()}
+
+    def pages(self):
+        return self._by_page.keys()
+
+    def clear(self):
+        self._by_page.clear()
+
+    def __bool__(self):
+        return bool(self._by_page)
+
+    def __len__(self):
+        return sum(len(marks) for marks in self._by_page.values())
+
+    def __eq__(self, other):
+        if not isinstance(other, MarkEdits):
+            return NotImplemented
+        return self._by_page == other._by_page
+
+    def __repr__(self):  # pragma: no cover - debugging aid
+        return f"MarkEdits({len(self)} on {len(self._by_page)} page(s))"
 
 
 def scaled(annotation: Annotation, factor: float) -> Annotation:
@@ -345,7 +522,7 @@ def to_dictionary(pdf, annotation: Annotation, page=None) -> pikepdf.Dictionary:
     if annotation.kind in QUADDED:
         entry[pikepdf.Name.QuadPoints] = pikepdf.Array(
             [v for quad in annotation.quads for v in _quad_points(quad)])
-        entry[pikepdf.Name.CA] = TRANSPARENCY[annotation.kind]
+        entry[pikepdf.Name.CA] = solidity(annotation)
         entry[pikepdf.Name.AP] = pikepdf.Dictionary(
             N=_appearance(pdf, annotation))
     if annotation.author:
@@ -355,9 +532,89 @@ def to_dictionary(pdf, annotation: Annotation, page=None) -> pikepdf.Dictionary:
     return pdf.make_indirect(entry)
 
 
-#: How solid each kind is drawn. A highlight has to be seen through or it
-#: hides the words it marks; a line drawn over them does not.
+#: The colours a mark can be given, as Acrobat offers them: seven hues, the
+#: same seven lightened, and a greyscale row, laid out three rows of seven.
+#:
+#: **Sampled from the picker itself, after converting it out of Display P3.**
+#: A screenshot taken on a Mac carries a P3 profile, and reading its pixels as
+#: though they were sRGB is wrong by up to 59 of 255 -- Light blue samples
+#: `#73E2FB` raw against the `#38E5FF` Acrobat actually writes. Converted, the
+#: eight of these that appear in Acrobat-written documents in the corpus match
+#: what is in those files to within one unit, four of them exactly: Blue,
+#: Magenta, Purple and Light blue land on the nose, and Red, Orange, Light red
+#: and Light green are one off in a single channel. Eight confirmations that
+#: the other thirteen are right too.
+#:
+#: The names are Reader's own, read off its tooltips rather than guessed:
+#: the second row is "Light" plus the hue above it throughout, the sixth hue
+#: is Fuchsia and not Magenta, and the greys run White, Pale, Light, Medium,
+#: Dark, Darker, Black. Shown as tooltips here too, and therefore translated.
+#:
+#: They were taken out once, on the reasoning that Reader shows no name *on*
+#: a swatch and nobody would ever see them, and put back when it turned out
+#: Reader does put one in its tooltip. Both the removal and the first set of
+#: names were assumptions that reading the tooltips replaced.
+PALETTE = (
+    (N_("Blue"), (0.0745, 0.4510, 0.9098)),
+    (N_("Green"), (0.0235, 0.5412, 0.1059)),
+    (N_("Yellow"), (1.0, 0.7569, 0.0118)),
+    (N_("Orange"), (1.0, 0.3804, 0.0039)),
+    (N_("Red"), (0.8588, 0.2000, 0.1490)),
+    (N_("Fuchsia"), (0.7529, 0.2157, 0.7686)),
+    (N_("Purple"), (0.5882, 0.2627, 0.9882)),
+
+    (N_("Light Blue"), (0.2196, 0.8980, 1.0)),
+    (N_("Light Green"), (0.7725, 0.9843, 0.4431)),
+    (N_("Light Yellow"), (0.9922, 0.9569, 0.5216)),
+    (N_("Light Orange"), (1.0, 0.6627, 0.4824)),
+    (N_("Light Red"), (0.9686, 0.3961, 0.3922)),
+    (N_("Light Fuchsia"), (0.9843, 0.5333, 1.0)),
+    (N_("Light Purple"), (0.8627, 0.6667, 1.0)),
+
+    (N_("White"), (1.0, 1.0, 1.0)),
+    (N_("Pale Grey"), (0.8, 0.8, 0.8)),
+    (N_("Light Grey"), (0.6667, 0.6667, 0.6667)),
+    (N_("Medium Grey"), (0.4627, 0.4627, 0.4627)),
+    (N_("Dark Grey"), (0.2667, 0.2667, 0.2667)),
+    (N_("Darker Grey"), (0.2, 0.2, 0.2)),
+    (N_("Black"), (0.0, 0.0, 0.0)),
+)
+
+#: How the palette is laid out, which the popup follows and nothing else
+#: depends on.
+PALETTE_COLUMNS = 7
+
+
+def nearest_swatch(colour):
+    """The index of the palette entry closest to ``colour``, or None.
+
+    A mark the file brought may be any colour at all -- Acrobat has a wheel
+    and sliders behind the same button, and other producers have their own --
+    so the tick in the popup marks the nearest cell rather than only an exact
+    one. Compared as plain distance in RGB, which is enough to pick the right
+    cell out of twenty-one that are far apart.
+    """
+    if colour is None:
+        return None
+    best, distance = None, None
+    for n, (_name, swatch) in enumerate(PALETTE):
+        span = sum((a - b) ** 2 for a, b in zip(colour, swatch))
+        if distance is None or span < distance:
+            best, distance = n, span
+    return best
+
+
+#: How solid each kind is drawn when nobody has said otherwise. A highlight
+#: has to be seen through or it hides the words it marks; a line drawn over
+#: them does not.
 TRANSPARENCY = {HIGHLIGHT: 0.4, STRIKEOUT: 1.0}
+
+
+def solidity(annotation) -> float:
+    """``/CA`` for a mark: its own, or what its kind is usually drawn at."""
+    if getattr(annotation, "opacity", None) is not None:
+        return float(annotation.opacity)
+    return TRANSPARENCY.get(annotation.kind, 1.0)
 
 
 def _quad_points(quad) -> "list[float]":
@@ -405,7 +662,7 @@ def _appearance(pdf, annotation):
         ExtGState=pikepdf.Dictionary(GS=pikepdf.Dictionary(
             BM=(pikepdf.Name.Multiply if annotation.kind == HIGHLIGHT
                 else pikepdf.Name.Normal),
-            ca=TRANSPARENCY[annotation.kind])))
+            ca=solidity(annotation))))
     return pdf.make_indirect(stream)
 
 
@@ -465,13 +722,19 @@ class Mark:
     from stays the source of truth for every key nobody has touched.
     """
 
-    __slots__ = ("uid", "page", "subtype", "rect", "quads", "colour",
-                 "opacity", "contents", "name", "parent", "state", "hidden")
+    __slots__ = ("uid", "page", "index", "subtype", "rect", "quads", "colour",
+                 "opacity", "contents", "author", "name", "parent", "state",
+                 "hidden")
 
     def __init__(self, page, subtype, rect, quads=(), colour=None,
                  opacity=None, contents="", name=None, parent=None,
-                 state=None, hidden=False):
+                 state=None, hidden=False, index=-1, author=""):
         self.uid = next(_mark_uids)
+        #: Where this mark sits among the markup annotations on its page, in
+        #: the order the file has them. What `MarkEdits` keys an edit by, and
+        #: the one thing about a mark that export can find again: it reads
+        #: the same pages with the same enumeration.
+        self.index = index
         self.page = page
         self.subtype = subtype
         self.rect = tuple(rect)
@@ -479,6 +742,8 @@ class Mark:
         self.colour = colour
         self.opacity = opacity
         self.contents = contents
+        #: `/T`, who made it. Shown beside a note's text, as Reader shows it.
+        self.author = author
         #: `/NM`, when the producer wrote one. Not used for identity -- see
         #: `_mark_uids` -- but it is how a child names its parent.
         self.name = name
@@ -511,6 +776,16 @@ class Mark:
             found.append((min(xs), min(ys), max(xs), max(ys)))
         return found or [self.rect]
 
+    def has_note(self) -> bool:
+        """Whether this mark carries a popup note of its own.
+
+        The text is `/Contents` on the mark; a mark with none is a mark
+        nobody has written anything about. A reply or a status change has
+        contents too -- "Completed set by dws" -- which is why this is only
+        ever asked of a mark that is neither.
+        """
+        return bool(self.contents) and not self.parent
+
     def is_status(self) -> bool:
         return self.state is not None
 
@@ -537,11 +812,18 @@ def marks_in(pdf) -> "list[Mark]":
     """
     found = []
     for number, page in enumerate(pdf.pages, start=1):
+        at = 0
         for annot in page.obj.get(pikepdf.Name.Annots) or []:
             try:
                 subtype = str(annot.get(pikepdf.Name.Subtype, ""))
-                if subtype in ("/Widget", "/Popup", "/Link"):
-                    continue
+            except Exception:  # noqa: BLE001 - unreadable is not markup
+                continue
+            if subtype in ("/Widget", "/Popup", "/Link"):
+                # Not counted. A widget can be removed on the way out --
+                # `export._strip_signatures` does exactly that -- and an
+                # index that counted it would then name the mark next door.
+                continue
+            try:
                 rect = [_number(v, 0.0) for v in
                         annot.get(pikepdf.Name.Rect, [0, 0, 0, 0])]
                 raw = annot.get(pikepdf.Name.QuadPoints) or []
@@ -551,6 +833,7 @@ def marks_in(pdf) -> "list[Mark]":
                 parent = annot.get(pikepdf.Name.IRT)
                 found.append(Mark(
                     page=number,
+                    index=at,
                     subtype=subtype,
                     rect=rect,
                     quads=quads,
@@ -558,6 +841,7 @@ def marks_in(pdf) -> "list[Mark]":
                             if colour is not None else None),
                     opacity=_number(annot.get(pikepdf.Name.CA)),
                     contents=str(annot.get(pikepdf.Name.Contents, "")),
+                    author=str(annot.get(pikepdf.Name.T, "")),
                     name=(str(annot[pikepdf.Name.NM])
                           if pikepdf.Name.NM in annot else None),
                     parent=(str(parent[pikepdf.Name.NM])
@@ -569,6 +853,11 @@ def marks_in(pdf) -> "list[Mark]":
                 ))
             except Exception:  # noqa: BLE001 - one bad mark is not the page
                 continue
+            finally:
+                # Counted even when reading the mark failed, so that one
+                # unreadable annotation does not slide every mark after it
+                # one place along and hand their edits to their neighbours.
+                at += 1
     return found
 
 
@@ -619,6 +908,24 @@ class MarkMap:
                 if mark.uid == uid:
                     return mark
         return None
+
+    def thread(self, mark: Mark) -> "tuple":
+        """``(replies, status)`` for a mark, as a reader counts them.
+
+        **The chain is a history and the status is a state.** A mark whose
+        chain reads `Accepted` then a reply then `Completed` has *one*
+        status, Completed, and one reply -- which is what Reader says, "(1
+        Reply / 1 Status)", against the two status changes the chain
+        actually holds. Each later change points at the one before it, so
+        the last is the current one and the rest are how it got there.
+
+        The whole chain is still `children`, and the properties form shows
+        it as Review History.
+        """
+        found = self.children(mark)
+        replies = [m for m in found if m.is_reply()]
+        statuses = [m for m in found if m.is_status()]
+        return replies, (statuses[-1].state if statuses else None)
 
     def children(self, mark: Mark) -> List[Mark]:
         """The replies and status changes hanging off ``mark``.

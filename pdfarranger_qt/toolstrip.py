@@ -35,22 +35,22 @@ some.
 from typing import Dict, Optional
 
 import qtawesome as qta
-from PySide6.QtCore import QEvent, QPoint, QPointF, Qt, Signal
-from PySide6.QtGui import QAction, QActionGroup, QPainter, QPolygonF
+from PySide6.QtCore import QEvent, QPoint, QPointF, QRectF, Qt, Signal
+from PySide6.QtGui import QAction, QActionGroup, QColor, QPainter, QPen, QPolygonF
 from PySide6.QtWidgets import (
     QFrame,
+    QGridLayout,
     QHBoxLayout,
+    QLabel,
     QMenu,
     QSizePolicy,
-    QStyle,
-    QStyleOptionToolButton,
-    QStylePainter,
+    QSlider,
     QToolButton,
     QVBoxLayout,
     QWidget,
 )
 
-from . import tools
+from . import markup, tools
 from .i18n import N_
 from .i18n import gettext_ as _
 
@@ -101,8 +101,14 @@ class FamilyButton(QToolButton):
         self.setAutoRaise(True)
         self._menu = QMenu(self)
         self._menu.installEventFilter(self)
-        self.setMenu(self._menu)
+        # Deliberately not `setMenu`: that is what makes the style draw an
+        # arrow, and the flyout is opened from `mousePressEvent` anyway.
+        # `menu()` below keeps every caller working.
         self.actions_by_tool: Dict[str, QAction] = {}
+
+    def menu(self):
+        """The family's flyout. Held privately so no arrow is drawn for it."""
+        return self._menu
 
     def add(self, action: QAction) -> None:
         self._menu.addAction(action)
@@ -116,26 +122,25 @@ class FamilyButton(QToolButton):
     #: still what you read.
     CORNER = 0.22
 
-    def paintEvent(self, _event):
-        """Draw the button, with a corner mark rather than Qt's arrow.
+    def paintEvent(self, event):
+        """Qt draws the button; this adds Acrobat's corner mark on top.
 
         Qt marks a button that has a menu with an arrow of its own. On a
         split button that arrow earned its place by showing you the second
         target to aim at; with the whole button opening the family there is
         no second target, and at this size it reads as a shape stuck to the
-        tool's glyph rather than as a sign.
+        tool's glyph rather than as a sign. So the menu is held privately
+        and never given to `setMenu`, which is what the arrow is drawn for,
+        and a small filled triangle goes in the bottom right corner instead.
 
-        So the style's indicator is stripped and a small filled triangle is
-        drawn into the bottom right corner instead, which is what Acrobat
-        puts there. In the same colour as the glyph above it, armed or not,
-        because it belongs to the icon and not to the background.
+        **Qt still paints the button.** This drew the whole thing itself at
+        first, through `QStylePainter.drawComplexControl` on an option with
+        the menu bits cleared -- and the strip carries a stylesheet, so the
+        button is painted by `QStyleSheetStyle`, which that path does not
+        reliably reach. The family buttons came out blank until something
+        forced a repaint. Adding to Qt's painting cannot fail that way.
         """
-        option = QStyleOptionToolButton()
-        self.initStyleOption(option)
-        option.features &= ~QStyleOptionToolButton.HasMenu
-        option.subControls &= ~QStyle.SC_ToolButtonMenu
-        painter = QStylePainter(self)
-        painter.drawComplexControl(QStyle.CC_ToolButton, option)
+        super().paintEvent(event)
         if not self.actions_by_tool:
             return
         palette = self.palette()
@@ -146,12 +151,11 @@ class FamilyButton(QToolButton):
         corner = QPolygonF([QPointF(right, bottom - size),
                             QPointF(right, bottom),
                             QPointF(right - size, bottom)])
-        painter.save()
+        painter = QPainter(self)
         painter.setRenderHint(QPainter.Antialiasing, True)
         painter.setPen(Qt.NoPen)
         painter.setBrush(colour)
         painter.drawPolygon(corner)
-        painter.restore()
 
     def mousePressEvent(self, event):
         """Open the flyout ourselves, wherever on the button the press landed.
@@ -292,6 +296,10 @@ class ToolStrip(QFrame):
     #: Where the strip was left, once a drag finishes. The window remembers
     #: it; the strip does not know what settings are.
     moved = Signal(QPoint)
+    #: The colour the next mark should be made in, chosen from the tail.
+    colour_armed = Signal(tuple)
+    #: And its opacity, 0 to 1.
+    opacity_armed = Signal(float)
 
     def __init__(self, parent: Optional[QWidget] = None):
         super().__init__(parent)
@@ -328,6 +336,19 @@ class ToolStrip(QFrame):
         self.tail_layout.setSpacing(4)
         self.tail.setVisible(False)
         outer.addWidget(self.tail)
+        #: The colour the next mark will be made in. One colour for every
+        #: kind rather than one per kind: Reader carries a single current
+        #: colour at the foot of its tool list and it colours whatever is
+        #: made next, icon or highlight or shape alike.
+        self.swatch = _Swatch((1.0, 0.7569, 0.0118), _("Colour"), self.tail)
+        self.swatch.setFixedSize(_Swatch.TAIL, _Swatch.TAIL)
+        self.swatch.clicked.connect(self._open_palette)
+        self.tail_layout.addWidget(self.swatch)
+        self.tail_layout.addStretch(1)
+        self._palette = None
+        self._opacity = 0.4
+        #: What the swatch showed before it started following a selection.
+        self._before = None
 
         if parent is not None:
             parent.installEventFilter(self)
@@ -399,6 +420,66 @@ class ToolStrip(QFrame):
                palette.alternateBase().color().name()))
         self._show_armed()
 
+    def armed_colour(self):
+        """``(colour, opacity)`` the next mark should be made in."""
+        return self.swatch.colour, self._opacity
+
+    def follow(self, colour, opacity) -> None:
+        """Show a selected mark's colour, remembering what was there.
+
+        While a mark is picked the swatch shows *that mark's* colour, so the
+        tick in the popup marks what the mark is rather than what the next
+        one would be. What the next one would be is put aside and restored by
+        `unfollow`, or picking a colour for a selected mark would quietly
+        become the colour of every mark made afterwards.
+        """
+        if self._before is None:
+            self._before = (self.swatch.colour, self._opacity)
+        if colour is not None:
+            self.swatch.set_colour(tuple(colour))
+        if opacity is not None:
+            self._opacity = float(opacity)
+        self.refresh()
+
+    def unfollow(self) -> None:
+        """Nothing is selected any more: show the next mark's colour again."""
+        if self._before is None:
+            return
+        colour, opacity = self._before
+        self._before = None
+        self.swatch.set_colour(colour)
+        self._opacity = opacity
+        self.refresh()
+
+    def _open_palette(self) -> None:
+        if self._palette is None:
+            self._palette = ColourPopup(self)
+            self._palette.chosen.connect(self._colour_picked)
+            self._palette.faded.connect(self._opacity_picked)
+        at = self.swatch.mapToGlobal(QPoint(self.swatch.width() + GAP, 0))
+        self._palette.show_for(self.swatch.colour, self._opacity, at)
+
+    def _colour_picked(self, colour) -> None:
+        self.swatch.set_colour(tuple(colour))
+        self.colour_armed.emit(tuple(colour))
+
+    def _opacity_picked(self, opacity: float) -> None:
+        self._opacity = float(opacity)
+        self.opacity_armed.emit(float(opacity))
+
+    def _show_tail(self) -> None:
+        """Show the armed tool's own controls.
+
+        Shown under *every* tool, the pointer included. It was hidden for the
+        pointer at first, on the reasoning that nothing is being made so
+        there is nothing to set an attribute of -- but the swatch does two
+        jobs, and the second one is changing the mark you have selected,
+        which is exactly what you do with the pointer armed. Observed in
+        Reader: the swatch is there with Select armed and with a tool armed
+        alike.
+        """
+        self.tail.setVisible(True)
+
     def _show_armed(self) -> None:
         """Each family button in the colour its state calls for."""
         for family, button in self.buttons.items():
@@ -426,6 +507,20 @@ class ToolStrip(QFrame):
     def armed(self) -> str:
         """Which tool is armed. Never empty: Select is a tool like any other."""
         return self._armed
+
+    def refresh(self) -> None:
+        """Repaint the whole strip, not only whatever just changed.
+
+        The strip floats over a scrolling view, and Qt scrolls that view by
+        blitting its backing store. A sibling drawn on top of it can be left
+        holding stale pixels, and only the widget that asked for a repaint
+        gets one -- so changing the swatch's colour repainted the swatch and
+        left the family buttons above it blank until the window was raised
+        and lowered.
+        """
+        self.update()
+        for child in self.findChildren(QWidget):
+            child.update()
 
     def close_flyouts(self, keep=None) -> None:
         """Close every family's flyout but ``keep``'s.
@@ -455,6 +550,9 @@ class ToolStrip(QFrame):
         if name != self._armed:
             self._armed = name
             self.armed_changed.emit(name)
+        # After `_armed` is set, not before: the tail shows what the *armed*
+        # tool brings, and reading it first showed the previous tool's.
+        self._show_tail()
 
     def disarm(self) -> None:
         """Back to the pointer, which is what Escape means here."""
@@ -516,13 +614,17 @@ class MarkButtons(QWidget):
     pointer -- the right-click menu and the properties form are the long way
     round to the same places and arrive at their own steps.
 
-    **None of the three does anything yet.** Each belongs to a later step --
-    the comment to the note work, the swatch to colour and opacity, delete to
-    the step that has to take a mark's status chain and replies with it --
-    and a button that acts before that step exists would be a second,
-    half-built way in. They are drawn, they are disabled, and the step that
-    builds each one turns its own on.
+    The swatch is live: it opens the palette and the opacity slider. The
+    other two are drawn and disabled, because each belongs to a later step --
+    the comment to the note work, delete to the step that has to take a
+    mark's status chain and its replies with it -- and a button that acts
+    before its step exists would be a second, half-built way in.
     """
+
+    #: A colour was picked for the selected mark.
+    recoloured = Signal(tuple)
+    #: An opacity was set for it, 0 to 1.
+    faded = Signal(float)
 
     #: Air between the mark and the bar, in pixels.
     CLEARANCE = 8
@@ -553,8 +655,25 @@ class MarkButtons(QWidget):
             button.setToolTip(_(label))
             layout.addWidget(button)
             self.buttons[name] = button
+        self.palette_popup = ColourPopup(self)
+        self.palette_popup.chosen.connect(self.recoloured)
+        self.palette_popup.faded.connect(self.faded)
+        self.buttons["colour"].setEnabled(True)
+        self.buttons["colour"].clicked.connect(self._open_palette)
+        #: What the selected mark is, so the popup can tick and read it.
+        self._colour = None
+        self._opacity = None
         self._restyle()
         self.hide()
+
+    def set_mark(self, colour, opacity) -> None:
+        """What the selected mark looks like now, for the popup to show."""
+        self._colour, self._opacity = colour, opacity
+
+    def _open_palette(self) -> None:
+        button = self.buttons["colour"]
+        below = button.mapToGlobal(QPoint(0, button.height() + 2))
+        self.palette_popup.show_for(self._colour, self._opacity, below)
 
     def _restyle(self) -> None:
         colour = self.palette().buttonText().color()
@@ -598,3 +717,147 @@ class MarkButtons(QWidget):
         self.move(left, above)
         self.show()
         self.raise_()
+
+
+class ColourPopup(QWidget):
+    """The twenty-one colours and the opacity slider, as Acrobat shows them.
+
+    Three rows of seven -- hues, the same hues lightened, and a greyscale row
+    -- with a tick on the one in use, and a slider underneath reading in
+    percent. Acrobat puts a gear in the corner that opens the properties
+    form; that is left for the step which builds the form.
+
+    A popup rather than a menu: a menu closes on the first click, and the
+    slider needs to be dragged.
+    """
+
+    #: A colour was chosen. Sent as the choice is made, not when the popup
+    #: closes, because the change shows on the page behind it.
+    chosen = Signal(tuple)
+    #: The slider moved and was let go. On release rather than on every step:
+    #: each one re-renders the page behind, and a drag would ask for sixty of
+    #: those a second.
+    faded = Signal(float)
+
+    #: How big each cell is, and the gap between them.
+    CELL = 26
+    GAP = 4
+
+    def __init__(self, parent=None):
+        super().__init__(parent, Qt.Popup)
+        self.setAutoFillBackground(True)
+        outer = QVBoxLayout(self)
+        outer.setContentsMargins(12, 10, 12, 10)
+        outer.setSpacing(8)
+        title = QLabel(_("Comment colour"), self)
+        font = title.font()
+        font.setBold(True)
+        title.setFont(font)
+        outer.addWidget(title)
+
+        grid = QGridLayout()
+        grid.setSpacing(self.GAP)
+        self.cells = []
+        for n, (name, colour) in enumerate(markup.PALETTE):
+            cell = _Swatch(colour, _(name), self)
+            cell.clicked.connect(
+                lambda _checked=False, rgb=colour: self.chosen.emit(rgb))
+            grid.addWidget(cell, n // markup.PALETTE_COLUMNS,
+                           n % markup.PALETTE_COLUMNS)
+            self.cells.append(cell)
+        outer.addLayout(grid)
+
+        row = QHBoxLayout()
+        row.setSpacing(8)
+        row.addWidget(QLabel(_("Opacity"), self))
+        self.slider = QSlider(Qt.Horizontal, self)
+        self.slider.setRange(0, 100)
+        self.slider.setValue(100)
+        self.slider.sliderReleased.connect(
+            lambda: self.faded.emit(self.slider.value() / 100.0))
+        # Keyboard and click-on-the-groove move it without a drag, and
+        # neither sends sliderReleased.
+        self.slider.actionTriggered.connect(self._nudged)
+        row.addWidget(self.slider, 1)
+        self.percent = QLabel("100%", self)
+        self.percent.setMinimumWidth(44)
+        self.percent.setAlignment(Qt.AlignRight | Qt.AlignVCenter)
+        row.addWidget(self.percent)
+        self.slider.valueChanged.connect(
+            lambda v: self.percent.setText(f"{v}%"))
+        outer.addLayout(row)
+
+    def _nudged(self, action):
+        if action != QSlider.SliderMove:
+            self.faded.emit(self.slider.value() / 100.0)
+
+    def show_for(self, colour, opacity, at) -> None:
+        """Open at ``at``, ticking ``colour`` and reading ``opacity``."""
+        chosen = markup.nearest_swatch(colour)
+        for n, cell in enumerate(self.cells):
+            cell.set_chosen(n == chosen)
+        value = 100 if opacity is None else max(0, min(100, round(opacity * 100)))
+        self.slider.blockSignals(True)
+        self.slider.setValue(value)
+        self.slider.blockSignals(False)
+        self.percent.setText(f"{value}%")
+        self.adjustSize()
+        self.move(at)
+        self.show()
+
+
+class _Swatch(QToolButton):
+    """One cell of the palette, with a tick when it is the one in use.
+
+    Also the strip's tail swatch, which is the same thing a size larger and
+    never ticked: it *is* the current colour rather than one of the choices.
+    """
+
+    #: How big the one in the tail is. Bigger than a cell because it stands
+    #: alone and has to read as the current colour rather than as a choice.
+    TAIL = 22
+
+    def __init__(self, colour, label, parent=None):
+        super().__init__(parent)
+        self.colour = tuple(colour)
+        self._chosen = False
+        self.setToolTip(label)
+        self.setFixedSize(ColourPopup.CELL, ColourPopup.CELL)
+        self.setFocusPolicy(Qt.NoFocus)
+        self.setAutoRaise(True)
+
+    def set_colour(self, colour) -> None:
+        self.colour = tuple(colour)
+        self.update()
+
+    def set_chosen(self, chosen: bool) -> None:
+        if chosen != self._chosen:
+            self._chosen = chosen
+            self.update()
+
+    def paintEvent(self, _event):
+        """The colour, and a tick drawn in whichever of black or white shows.
+
+        White has to be outlined or it is a hole in the popup, and the tick on
+        a dark cell has to be light -- the palette runs from white to black,
+        so neither a fixed outline colour nor a fixed tick colour works for
+        all twenty-one.
+        """
+        painter = QPainter(self)
+        painter.setRenderHint(QPainter.Antialiasing, True)
+        fill = QColor.fromRgbF(*self.colour)
+        painter.setBrush(fill)
+        light = sum(self.colour) / 3 > 0.6
+        painter.setPen(QPen(QColor(0, 0, 0, 60) if light else Qt.NoPen))
+        painter.drawRoundedRect(QRectF(0.5, 0.5, self.width() - 1,
+                                       self.height() - 1), 3, 3)
+        if not self._chosen:
+            return
+        pen = QPen(QColor(0, 0, 0) if light else QColor(255, 255, 255))
+        pen.setWidthF(2.0)
+        pen.setCapStyle(Qt.RoundCap)
+        painter.setPen(pen)
+        w, h = self.width(), self.height()
+        painter.drawPolyline(QPolygonF([
+            QPointF(w * 0.27, h * 0.52), QPointF(w * 0.43, h * 0.70),
+            QPointF(w * 0.74, h * 0.31)]))

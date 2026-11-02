@@ -150,6 +150,7 @@ class ReaderView(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
         self._document: Optional[MemoryDocument] = None
+        self._data: Optional[bytes] = None
 
         self.canvas = PageCanvas(self)
         self.canvas.field_pressed.connect(self.field_pressed)
@@ -326,6 +327,15 @@ class ReaderView(QWidget):
         self._show(document, data, sizes)
         return True
 
+    def document_bytes(self):
+        """The bytes of the document being shown, or None.
+
+        Kept so a page can be lifted out of it and re-rendered with a change
+        applied; the canvas holds the same buffer for its text layer, and
+        QByteArray shares rather than copies.
+        """
+        return self._data
+
     def _show(self, document, data=None, sizes=None):
         """Bind a document to every model, then drop the previous one.
 
@@ -337,6 +347,9 @@ class ReaderView(QWidget):
         previous = self._document
         previous_fields = self.canvas.fields()
         self._document = document
+        #: The same bytes the canvas is given, kept so one page can be
+        #: lifted out and re-rendered with a change to its marks applied.
+        self._data = data
         # From the document being *shown*, so the rectangles are in the
         # coordinates on screen: a rotated or cropped page has been through
         # the export by now, and the source's rectangles are in a space

@@ -29,7 +29,7 @@ from PySide6.QtCore import QAbstractListModel, QModelIndex, Qt, Signal
 
 from .core import Dims, Page, Sides
 from .forms import FormValues
-from .markup import Annotations
+from .markup import Annotations, MarkEdits
 from .outline import Outline
 from .render import RenderTask
 
@@ -53,6 +53,15 @@ class UndoState:
     Here for the reason the outline and the form values are: one history, so
     adding a note and deleting the page under it cannot disagree about what
     the document is.
+    """
+    mark_edits: Optional["MarkEdits"] = None
+    """What has been changed about the marks the document arrived with.
+
+    Beside the marks the user added rather than inside them, because the two
+    are different things: one is content this application owns, the other is
+    a handful of keys overlaid on a dictionary the producer still owns. On
+    the same stack for the reason everything else is -- recolouring a mark
+    and deleting the page under it come off one history.
     """
     form_values: Optional["FormValues"] = None
     """What had been typed into the document's form fields.
@@ -84,6 +93,7 @@ class UndoManager:
             list(self.model.selected_rows()),
             self.model.outline.duplicate(),
             self.model.annotations.duplicate(),
+            self.model.mark_edits.duplicate(),
             self.model.form_values.duplicate(),
         )
 
@@ -164,6 +174,7 @@ class PageListModel(QAbstractListModel):
         export time, which is what makes them editable at all."""
         self.form_values = FormValues()
         self.annotations = Annotations()
+        self.mark_edits = MarkEdits()
         """What has been typed into the form, as an overlay on what the
         documents already say. Owned here for the same reason as the outline:
         it has to survive undo, and it has to be written on save."""
@@ -541,6 +552,8 @@ class PageListModel(QAbstractListModel):
             self.outline = state.outline.duplicate()
         if state.annotations is not None:
             self.annotations = state.annotations.duplicate()
+        if state.mark_edits is not None:
+            self.mark_edits = state.mark_edits.duplicate()
         if state.form_values is not None:
             self.form_values = state.form_values.duplicate()
         self._key_rows.clear()

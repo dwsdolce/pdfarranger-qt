@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pdfarranger-qt VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/dwsdolce/pdfarranger-qt/issues\n"
-"POT-Creation-Date: 2026-11-01 21:09+0000\n"
+"POT-Creation-Date: 2026-11-02 22:42+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -54,6 +54,21 @@ msgstr ""
 
 #: pdfarranger_qt/canvas.py
 msgid "Select All"
+msgstr ""
+
+#: pdfarranger_qt/canvas.py
+#, python-format
+msgid "%d Reply"
+msgstr ""
+
+#: pdfarranger_qt/canvas.py
+#, python-format
+msgid "%d Replies"
+msgstr ""
+
+#: pdfarranger_qt/canvas.py
+#, python-format
+msgid "%d Status"
 msgstr ""
 
 #: pdfarranger_qt/core.py pdfarranger_qt/mainwindow.py
@@ -278,11 +293,11 @@ msgstr ""
 msgid "Size"
 msgstr ""
 
-#: pdfarranger_qt/dialogs.py
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/toolstrip.py
 msgid "Colour"
 msgstr ""
 
-#: pdfarranger_qt/dialogs.py
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/toolstrip.py
 msgid "Opacity"
 msgstr ""
 
@@ -1579,6 +1594,10 @@ msgid "Add Mark"
 msgstr ""
 
 #: pdfarranger_qt/mainwindow.py
+msgid "Change Mark"
+msgstr ""
+
+#: pdfarranger_qt/mainwindow.py
 msgid "Delete Note"
 msgstr ""
 
@@ -1805,6 +1824,7 @@ msgid "Save before continuing?"
 msgstr ""
 
 #: pdfarranger_qt/mainwindow.py pdfarranger_qt/reader.py
+#: pdfarranger_qt/toolstrip.py
 msgid "Delete"
 msgstr ""
 
@@ -2008,6 +2028,90 @@ msgstr ""
 
 #: pdfarranger_qt/mainwindow.py
 msgid "Rotate"
+msgstr ""
+
+#: pdfarranger_qt/markup.py
+msgid "Blue"
+msgstr ""
+
+#: pdfarranger_qt/markup.py
+msgid "Green"
+msgstr ""
+
+#: pdfarranger_qt/markup.py
+msgid "Yellow"
+msgstr ""
+
+#: pdfarranger_qt/markup.py
+msgid "Orange"
+msgstr ""
+
+#: pdfarranger_qt/markup.py
+msgid "Red"
+msgstr ""
+
+#: pdfarranger_qt/markup.py
+msgid "Fuchsia"
+msgstr ""
+
+#: pdfarranger_qt/markup.py
+msgid "Purple"
+msgstr ""
+
+#: pdfarranger_qt/markup.py
+msgid "Light Blue"
+msgstr ""
+
+#: pdfarranger_qt/markup.py
+msgid "Light Green"
+msgstr ""
+
+#: pdfarranger_qt/markup.py
+msgid "Light Yellow"
+msgstr ""
+
+#: pdfarranger_qt/markup.py
+msgid "Light Orange"
+msgstr ""
+
+#: pdfarranger_qt/markup.py
+msgid "Light Red"
+msgstr ""
+
+#: pdfarranger_qt/markup.py
+msgid "Light Fuchsia"
+msgstr ""
+
+#: pdfarranger_qt/markup.py
+msgid "Light Purple"
+msgstr ""
+
+#: pdfarranger_qt/markup.py
+msgid "White"
+msgstr ""
+
+#: pdfarranger_qt/markup.py
+msgid "Pale Grey"
+msgstr ""
+
+#: pdfarranger_qt/markup.py
+msgid "Light Grey"
+msgstr ""
+
+#: pdfarranger_qt/markup.py
+msgid "Medium Grey"
+msgstr ""
+
+#: pdfarranger_qt/markup.py
+msgid "Dark Grey"
+msgstr ""
+
+#: pdfarranger_qt/markup.py
+msgid "Darker Grey"
+msgstr ""
+
+#: pdfarranger_qt/markup.py
+msgid "Black"
 msgstr ""
 
 #: pdfarranger_qt/metadata.py
@@ -2227,7 +2331,7 @@ msgstr ""
 msgid "Pan"
 msgstr ""
 
-#: pdfarranger_qt/tools.py
+#: pdfarranger_qt/tools.py pdfarranger_qt/toolstrip.py
 msgid "Add a comment"
 msgstr ""
 
@@ -2297,6 +2401,10 @@ msgstr ""
 
 #: pdfarranger_qt/tools.py
 msgid "Stamps palette"
+msgstr ""
+
+#: pdfarranger_qt/toolstrip.py
+msgid "Comment colour"
 msgstr ""
 
 #: pdfarranger_qt/viewer.py

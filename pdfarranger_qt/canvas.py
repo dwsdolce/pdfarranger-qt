@@ -47,7 +47,10 @@ import time
 from typing import List, Optional, Sequence, Tuple
 
 from PySide6.QtCore import (
+    QBuffer,
+    QByteArray,
     QEvent,
+    QIODevice,
     QObject,
     QPointF,
     QRectF,
@@ -725,6 +728,78 @@ class AsynchronousPages(QObject):
         #: just produced rather than by a second render, and they stand in for
         #: the pages too slow to render inline.
         self._proxies: collections.OrderedDict = collections.OrderedDict()
+        #: Pages whose marks have been changed, as a one-page document each.
+        #: `{index: (bytes, QPdfDocument or None)}`.
+        #:
+        #: A change to a mark the file brought cannot be drawn over the page,
+        #: because the mark is already *in* the bitmap: PDFium renders a page
+        #: and its annotations together, so the old colour is underneath and
+        #: nothing painted on top will hide it. The page has to be rendered
+        #: again from a document that has the change in it.
+        #:
+        #: One page at a time rather than the whole document, which is the
+        #: difference between imperceptible and not. Measured on the 1590-page
+        #: Handbook: patching and saving the whole file to change one colour
+        #: costs 1180 ms, while lifting that single page into a document of
+        #: its own, patching it and saving costs 1.1 to 6.5 ms.
+        self._edited: dict = {}
+        #: What has been rendered for those pages, by `(index, w, h)`. Kept
+        #: here rather than in the shared cache because the worker never sees
+        #: these documents, and because an edit has to drop exactly one page's
+        #: bitmaps without disturbing the pages around it.
+        self._edited_images: dict = {}
+
+    def set_edited(self, index: int, data: Optional[bytes]) -> None:
+        """Render ``index`` from ``data``, a one-page document, or stop.
+
+        Passing None puts the page back to being rendered from the document
+        everything else comes from.
+        """
+        if data is None:
+            self._edited.pop(index, None)
+        else:
+            self._edited[index] = (data, None)
+        for key in [k for k in self._edited_images if k[0] == index]:
+            del self._edited_images[key]
+
+    def clear_edited(self) -> None:
+        self._edited.clear()
+        self._edited_images.clear()
+
+    def _edited_image(self, index: int, size: QSize) -> Optional[QImage]:
+        """The bitmap for an edited page, rendered from its own document."""
+        held = self._edited.get(index)
+        if held is None:
+            return None
+        key = (index, size.width(), size.height())
+        image = self._edited_images.get(key)
+        if image is not None:
+            return image
+        data, document = held
+        if document is None:
+            document = QPdfDocument()
+            array = QByteArray(data)
+            buffer = QBuffer(array)
+            buffer.open(QIODevice.ReadOnly)
+            # The device overload returns nothing -- only `load(str)` returns
+            # an error -- so the document has to be asked afterwards. Checking
+            # the return value treated every successful load as a failure and
+            # silently dropped the page back to its old colour.
+            document.load(buffer)
+            if document.pageCount() < 1:
+                self._edited.pop(index, None)
+                return None
+            # The buffer and the array have to outlive the document, which
+            # reads from them lazily; QPdfDocument does not take a copy.
+            self._edited[index] = (data, (document, array, buffer))
+        else:
+            document = document[0]
+        image = PageRenderTask((0, size.width(), size.height()), 0, size) \
+            .render(_ThisThread(document))
+        if image is None or image.isNull():
+            return None
+        self._edited_images[key] = image
+        return image
 
     def set_document(self, document, data: Optional[bytes] = None):
         """Point at a new document. ``data`` is what the render thread parses.
@@ -739,6 +814,7 @@ class AsynchronousPages(QObject):
         self._slow.clear()
         self._document = document
         self._documents.set_data(data)
+        self.clear_edited()
 
     def clear(self):
         self._renderer.invalidate()
@@ -789,6 +865,9 @@ class AsynchronousPages(QObject):
         """
         if size.width() <= 0 or size.height() <= 0:
             return None
+        edited = self._edited_image(index, size)
+        if edited is not None:
+            return edited
         key = (index, size.width(), size.height())
         image = self._renderer.get(key)
         if image is not None:
@@ -1100,6 +1179,8 @@ class PageCanvas(QAbstractScrollArea):
         #: selection but not selected: it says "there is a mark here, and
         #: this is how far it reaches" before you commit to picking it up.
         self._hovered = None
+        #: The note being shown beside the pointer, as ``(mark, point)``.
+        self._note_panel = None
         #: What is selected, as ``(page, mark)``. A mark of the user's is an
         #: `Annotation`; one of the file's is a `Mark`; both have `rect` and
         #: `quads`, which is all selection needs of them.
@@ -1162,10 +1243,25 @@ class PageCanvas(QAbstractScrollArea):
         # same buffer rather than a copy of the file, so a second reader of
         # the document on screen costs its parse structures and nothing more.
         self._glyphs.set_document(data)
+        # What was selected, as `(page, index)`, so it can be found again in
+        # the map about to be read. A snapshot is rebuilt whenever anything
+        # is edited, and losing the mark you had picked because a *different*
+        # page was rotated is the kind of thing nobody reports and everybody
+        # notices.
+        was = None
+        if self._selected is not None:
+            page, mark = self._selected
+            if not isinstance(mark, markup.Annotation):
+                was = (page, mark.index)
         self._selected = None
         self._hovered = None
         self._file_marks = (markup.MarkMap.read(io.BytesIO(data)) if data
                             else markup.MarkMap())
+        if was is not None:
+            for mark in self._file_marks.visible(was[0] + 1):
+                if mark.index == was[1]:
+                    self._selected = (was[0], mark)
+                    break
         self._document = document
         self.clear_selection()
         self.clear_caret()
@@ -2941,6 +3037,17 @@ class PageCanvas(QAbstractScrollArea):
         """``(page, mark)`` for what is selected, or None."""
         return self._selected
 
+    def repaint_edited(self, index: int, data) -> None:
+        """Show ``index`` as it is now, rendered from a one-page document.
+
+        ``data`` is that document's bytes, or None to go back to rendering
+        the page from the document everything else comes from. The window
+        builds it, because only the window knows what has been changed; the
+        canvas only knows where to put the result.
+        """
+        self._pages.set_edited(index, data)
+        self.viewport().update()
+
     def set_mark_buttons(self, widget) -> None:
         """The bar to show beside a selected mark, or None for none."""
         self._mark_buttons = widget
@@ -3262,6 +3369,21 @@ class PageCanvas(QAbstractScrollArea):
             self._set_tooltip(note[2].contents or _("Empty note"))
             super().mouseMoveEvent(event)
             return
+
+        # A note hanging off a highlight reads the same way. The badge is
+        # what says there is one; this is what says what it says, and it
+        # answers over the whole mark rather than only over the badge,
+        # because that is where the pointer goes.
+        carried = self.note_badge_at(position) or self._marked_note_at(position)
+        if carried is not None:
+            # Drawn, not a tooltip. Reader puts a panel at the pointer and
+            # leaves it there; a tooltip waits for the pointer to settle,
+            # vanishes on its own and is easy to miss entirely -- which is
+            # what it did.
+            self._show_note_panel(carried[1], position)
+            super().mouseMoveEvent(event)
+            return
+        self._show_note_panel(None, position)
 
         if self.marks_area():
             # A crosshair everywhere, including over a field: the field still
@@ -3771,10 +3893,15 @@ class PageCanvas(QAbstractScrollArea):
             # Over the marks, not among them: the outline belongs to the
             # interface and a mark drawn afterwards must not cover it.
             self._paint_selected(painter, index, offset)
+            self._paint_note_badges(painter, index, offset)
             self._paint_selection(painter, index, offset)
             self._paint_search(painter, index, offset)
         self._paint_caret(painter, offset)
         self._paint_marking(painter)
+        # Last, and outside the page loop: the panel sits at the pointer in
+        # viewport coordinates and belongs over everything, including a mark
+        # on the page below the one it describes.
+        self._paint_note_panel(painter)
         painter.end()
         self._prefetch_around(visible)
 
@@ -3832,6 +3959,162 @@ class PageCanvas(QAbstractScrollArea):
     #: Both are plain dials: nothing downstream depends on either.
     OUTLINE = 2.5
     OUTLINE_RADIUS = 3.0
+
+    #: How big the badge on a mark carrying a note is, in pixels. A piece of
+    #: interface rather than something on the paper, so it does not grow with
+    #: the zoom -- the same reasoning as the selection outline.
+    NOTE_BADGE = 13
+
+    def _paint_note_badges(self, painter, index: int, offset: QPointF) -> None:
+        """Mark every annotation that carries a note.
+
+        At the top left of the mark, shown whether or not it is selected,
+        which is what Reader does: a highlight somebody has written about
+        must not look like one nobody has. Without it a note is invisible
+        until the pointer happens to cross the mark.
+
+        Only the marks the *file* brought. A mark made here cannot have a
+        note yet, because nothing in this application writes one, and when
+        something does it will carry `contents` and arrive here with
+        everything else.
+        """
+        marks = [m for m in self._file_marks.visible(index + 1)
+                 if m.subtype in self.SELECTABLE and m.has_note()]
+        if not marks:
+            return
+        viewport = QRectF(self.viewport().rect())
+        painter.save()
+        painter.setRenderHint(QPainter.Antialiasing, True)
+        for mark in marks:
+            where = self._badge_rect(index, mark, offset)
+            if where is None or not where.intersects(viewport):
+                continue
+            colour = QColor.fromRgbF(*(mark.colour or (1.0, 0.82, 0.25)))
+            painter.setPen(QPen(QColor(255, 255, 255), 1.5))
+            painter.setBrush(colour.darker(120))
+            painter.drawEllipse(where)
+            # Three lines, which is what a speech balloon reduces to at this
+            # size: a drawn balloon at 13 pixels is a smudge.
+            painter.setPen(QPen(QColor(255, 255, 255), 1.2))
+            step = where.height() / 4.0
+            for n in (1, 2, 3):
+                y = where.top() + step * n
+                inset = where.width() * (0.22 if n == 2 else 0.28)
+                painter.drawLine(QPointF(where.left() + inset, y),
+                                 QPointF(where.right() - inset, y))
+        painter.restore()
+
+    def _badge_rect(self, index: int, mark, offset=None):
+        """Where a mark's note badge sits: off its top left corner."""
+        boxes = self.mark_boxes(mark)
+        if not boxes:
+            return None
+        top = max(boxes, key=lambda q: q[3])
+        where = self.quad_on_screen(index, top, offset, scaled=False)
+        if where is None:
+            return None
+        size = float(self.NOTE_BADGE)
+        return QRectF(where.left() - size * 0.62, where.top() - size * 0.5,
+                      size, size)
+
+    def note_badge_at(self, point: QPointF):
+        """The mark whose note badge is under a viewport point, or None."""
+        index = self.page_at(point)
+        if index is None:
+            return None
+        for mark in self._file_marks.visible(index + 1):
+            if mark.subtype not in self.SELECTABLE or not mark.has_note():
+                continue
+            where = self._badge_rect(index, mark)
+            if where is not None and where.contains(point):
+                return (index, mark)
+        return None
+
+    def _marked_note_at(self, point: QPointF):
+        """The mark under a point, if it carries a note. Otherwise None."""
+        found = self.mark_at(point)
+        if found is None:
+            return None
+        mark = found[1]
+        if isinstance(mark, markup.Annotation) or not mark.has_note():
+            return None
+        return found
+
+    #: How wide the panel may get before its text wraps, in pixels.
+    NOTE_PANEL_WIDTH = 260
+
+    def _show_note_panel(self, mark, at) -> None:
+        """Show a mark's note beside the pointer, or take it away."""
+        panel = None if mark is None else (mark, QPointF(at))
+        was = self._note_panel
+        self._note_panel = panel
+        if (was is None) != (panel is None) or (
+                panel is not None and was is not None and was[0] is not mark):
+            self.viewport().update()
+        elif panel is not None:
+            self.viewport().update()
+
+    def _paint_note_panel(self, painter) -> None:
+        """Reader's hover panel: who wrote it, the counts, and the text."""
+        if self._note_panel is None:
+            return
+        mark, at = self._note_panel
+        head, _, body = self.note_summary(mark).partition("\n")
+        metrics = painter.fontMetrics()
+        width = min(self.NOTE_PANEL_WIDTH,
+                    max(metrics.horizontalAdvance(head),
+                        metrics.horizontalAdvance(body)) + 24)
+        text = QRectF(0, 0, width - 24, 10_000)
+        flags = int(Qt.TextWordWrap)
+        body_box = metrics.boundingRect(text.toRect(), flags, body)
+        height = metrics.height() + body_box.height() + 22
+        where = QRectF(at.x() + 16, at.y() + 16, width, height)
+        viewport = QRectF(self.viewport().rect())
+        if where.right() > viewport.right():
+            where.moveLeft(max(0.0, at.x() - width - 16))
+        if where.bottom() > viewport.bottom():
+            where.moveTop(max(0.0, at.y() - height - 16))
+        painter.save()
+        painter.setRenderHint(QPainter.Antialiasing, True)
+        painter.setPen(QPen(QColor(0, 0, 0, 40)))
+        painter.setBrush(QColor(255, 253, 240))
+        painter.drawRoundedRect(where, 4, 4)
+        inner = where.adjusted(12, 8, -12, -8)
+        painter.setPen(QColor(90, 90, 90))
+        bold = painter.font()
+        bold.setBold(True)
+        painter.setFont(bold)
+        painter.drawText(QRectF(inner.left(), inner.top(), inner.width(),
+                                metrics.height()), int(Qt.AlignLeft), head)
+        bold.setBold(False)
+        painter.setFont(bold)
+        painter.setPen(QColor(20, 20, 20))
+        painter.drawText(QRectF(inner.left(),
+                                inner.top() + metrics.height() + 4,
+                                inner.width(), body_box.height()),
+                         flags, body)
+        painter.restore()
+
+    def note_summary(self, mark) -> str:
+        """What a mark's note says, as Reader's panel puts it.
+
+        Author and the counts on one line, the text beneath. The counts read
+        the *current* status rather than every change in the chain, which is
+        what Reader shows and what `MarkMap.thread` answers.
+        """
+        replies, status = self._file_marks.thread(mark)
+        parts = []
+        if replies:
+            parts.append(_("%d Reply") % len(replies) if len(replies) == 1
+                         else _("%d Replies") % len(replies))
+        if status:
+            parts.append(_("%d Status") % 1)
+        who = mark.author if getattr(mark, "author", None) else ""
+        head = who
+        if parts:
+            head = f"{who} ({' / '.join(parts)})" if who \
+                else f"({' / '.join(parts)})"
+        return f"{head}\n{mark.contents}" if head else mark.contents
 
     def _paint_selected(self, painter, index: int, offset: QPointF) -> None:
         """Outline the mark under the pointer, and the one that is selected.

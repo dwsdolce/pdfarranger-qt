@@ -782,6 +782,61 @@ def _write_form_values(pdf_output, pages, form_values):
                                pdf_output)
 
 
+def _edit_annotations(pdf_output, pages, edits) -> int:
+    """Apply the changes made to the marks a document arrived with.
+
+    **Patched, never replaced.** A mark the file brought keeps its own
+    dictionary: `/NM`, `/Popup`, `/RC`, `/Subj`, `/T`, `/CreationDate` and
+    the `/IRT` chains are the producer's and survive untouched, and only the
+    keys actually changed are rewritten. Writing a fresh annotation from what
+    this application models would drop every key it does not model, which is
+    most of them, and the standard this work is held to is that a document
+    comes out with nothing lost.
+
+    The mark is found by its position among the markup annotations on the
+    page -- the enumeration `markup.marks_in` uses, skipping widgets, popups
+    and links so that `_strip_signatures` removing a widget above cannot
+    slide an edit onto a different mark.
+
+    `/AP` goes when the colour or the opacity changes, because the appearance
+    the producer wrote still draws the old one, and an appearance that
+    disagrees with `/C` is worse than none: every reader draws a highlight
+    from its `/QuadPoints` when there is no stream to prefer.
+    """
+    if not edits:
+        return 0
+    changed = 0
+    for index, row in enumerate(pages):
+        if index >= len(pdf_output.pages):
+            break
+        wanted = edits.for_page(row.uid)
+        if not wanted:
+            continue
+        page = pdf_output.pages[index].obj
+        at = 0
+        for annot in page.get(pikepdf.Name.Annots) or []:
+            try:
+                subtype = str(annot.get(pikepdf.Name.Subtype, ""))
+            except Exception:  # noqa: BLE001 - unreadable is not markup
+                continue
+            if subtype in ("/Widget", "/Popup", "/Link"):
+                continue
+            edit = wanted.get(at)
+            at += 1
+            if not edit:
+                continue
+            colour = edit.get("colour")
+            if colour is not None:
+                annot[pikepdf.Name.C] = pikepdf.Array([*colour])
+            opacity = edit.get("opacity")
+            if opacity is not None:
+                annot[pikepdf.Name.CA] = float(opacity)
+            if pikepdf.Name.AP in annot:
+                del annot[pikepdf.Name.AP]
+            changed += 1
+    return changed
+
+
 def _write_annotations(pdf_output, pages, annotations) -> int:
     """Put the marks the user added onto the pages being written.
 
@@ -887,7 +942,8 @@ def get_max_pdf_version(pdf_list: List[pikepdf.Pdf]) -> str:
 def export_doc(pdf_input, pages, mdata, files_out, quit_flag=None,
                test_mode=False, output_password=None, with_outlines=False,
                options: "SaveOptions" = None, source_names=None, outline=None,
-               prune_outline=False, form_values=None, annotations=None):
+               prune_outline=False, form_values=None, annotations=None,
+               mark_edits=None):
     """Same as export() but taking already-opened pikepdf.Pdf objects.
 
     ``outline`` is the document's own bookmark tree. When given it is
@@ -912,6 +968,10 @@ def export_doc(pdf_input, pages, mdata, files_out, quit_flag=None,
     # After the form, because a mark is added to the page rather than to the
     # form, and the page's /Annots must already hold whatever travelled with it.
     _write_annotations(pdf_output, pages, annotations)
+    # After the marks of our own, and on the ones that travelled with the
+    # pages: these are changes to what was already there, so there has to be
+    # something there to change.
+    _edit_annotations(pdf_output, pages, mark_edits)
     # Last of all, because it indexes the annotations that actually arrived:
     # a signature taken out above must not leave an /OBJR naming it, and a
     # mark added above has no structure and should gain none.
@@ -1225,7 +1285,7 @@ def export(files: List[Tuple[str, str]], pages: List[Page], mdata: dict,
            source_names: Optional[List[str]] = None,
            outline=None, prune_outline: bool = False,
            options: Optional["SaveOptions"] = None, form_values=None,
-           annotations=None) -> str:
+           annotations=None, mark_edits=None) -> str:
     """Write ``pages`` to ``files_out``.
 
     ``files`` is the ``(copyname, password)`` list from ``DocumentSet``; a page's
@@ -1266,7 +1326,8 @@ def export(files: List[Tuple[str, str]], pages: List[Page], mdata: dict,
                        output_password=output_password, options=options,
                        source_names=source_names, outline=outline,
                        prune_outline=prune_outline, form_values=form_values,
-                       annotations=annotations)
+                       annotations=annotations,
+                       mark_edits=mark_edits)
     finally:
         warnings.showwarning = backup
         for pdf in pdf_input:

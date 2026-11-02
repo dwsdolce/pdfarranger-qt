@@ -225,8 +225,16 @@ the unit, not the subtype, and a family is not a subtype either.
 **Attributes in the tail.** Below the family buttons the strip grows the armed
 tool's own controls -- a colour swatch for anything that makes a coloured mark,
 a thickness button for the line-based ones, an `Aa` opening a font panel for
-the text-bearing ones. With Select armed the tail is empty, because nothing is
-being made. The alternatives were weighed: a fixed options bar under the main
+the text-bearing ones.
+
+The swatch is shown under *every* tool, the pointer included. This said the
+opposite at first -- with Select armed nothing is being made, so there is
+nothing to set an attribute of -- and that is wrong because the swatch has a
+second job: it changes the mark you have *selected*, which is what you do
+with the pointer armed. Observed in Reader, 2026-11-02: the swatch is there
+with Select armed and with a tool armed alike, and picking a colour while a
+highlight is selected recolours that highlight rather than arming the next
+one. The alternatives were weighed: a fixed options bar under the main
 toolbar, as Inkscape and GIMP have it; a docked inspector, as Figma and
 Illustrator have it; the controls inside the flyout; and a bar beside the mark,
 as Word has it. The tail wins for *arming* because before the gesture there is
@@ -453,6 +461,24 @@ object carries no appearance at all, is marked `/Open false`, and sits at
 `/Rect [612, 539.9, 796, 631.9]` against a 612-wide page -- entirely off the
 paper. It is a placeholder saying where Acrobat should put *its* window.
 
+**The chain is a history and the status is a state.** Observed 2026-11-02 on
+a highlight whose chain reads `Accepted` -> reply -> `Completed`: the panel
+Reader shows at the pointer says "(1 Reply / 1 Status)", counting the
+*current* status rather than the two in the chain, and the opened pop-up
+shows one status row with a tick. Review History shows both, with times --
+"dws: Accepted, 11/1/26, 2:33:27 PM" and "dws: Completed, 11/1/26,
+2:37:03 PM". So three surfaces say three different true things: how many
+statuses there are *now* (one), what it is (Completed), and how it got there
+(the chain). The last is the properties form, highlight step 9.
+
+**The pop-up is a thread, not a text box.** Author and time at the top, the
+note's own text editable in place with Cancel and Post, the current status
+on a row of its own, and then each reply beneath with its own author, date
+and editor. Reply is reached from the note's menu or from the mark's
+right-click menu, which also carries Delete Thread, Set status, Copy Text,
+Enable Text Selection, Open comment panel, Open all Pop-Ups, Minimize
+Pop-Ups, Make current properties default and Properties.
+
 So **a popup note is viewer chrome, and no appearance-stream renderer will
 ever draw it**. PDFium draws the highlight and nothing else, which is why a
 noted mark looks unremarked here. Whatever shows it, we draw ourselves from
@@ -612,7 +638,7 @@ mark, the swatch in the bar changes the one you clicked.
 ### Building it, in order
 
 Each step is usable before the next, and each tells the next what it needs.
-Cited as **highlight step 1** to **highlight step 8**.
+Cited as **highlight step 1** to **highlight step 9**.
 
 1. **Hold the marks.** A page's annotations read into a session table with
    uids -- enough to hit-test and to know what is there. Nothing written.
@@ -632,7 +658,25 @@ Cited as **highlight step 1** to **highlight step 8**.
    the first thing the uid table buys. The selected-mark border belongs
    here: Acrobat draws one round each quadrilateral, and drawing it needs a
    hit test, a selected-mark state and the rules for leaving it.
+
    **done 2026-11-02**
+
+   It was marked done once before it was. A mark that carries a note was
+   drawn exactly like one that does not, and Reader draws two things it did
+   not: a badge at the mark's top left whenever there is a note, shown
+   selected or not, and a panel at the pointer with the author, the counts
+   and the text. That is *displaying* a mark correctly, which is this step,
+   and not creating one, which is highlight step 8 -- selecting a mark you
+   cannot tell has a note is half the step.
+
+   Nothing new was needed to read it: `Mark.contents` holds the text and
+   `MarkMap.children` walks the chain, both built in highlight step 1 and
+   until then unused. `Mark` gained `/T` so the panel can say who wrote it,
+   and `MarkMap.thread` answers the counts the way a reader states them.
+
+   The panel is drawn rather than left to a tooltip. A tooltip waits for
+   the pointer to settle and then vanishes on its own, and the first
+   attempt used one -- which showed, in practice, nothing at all.
 
    Clicking a mark picks it up under the pointer and under any text-markup
    tool -- pressing on a highlight with the highlighter armed means *that
@@ -646,8 +690,39 @@ Cited as **highlight step 1** to **highlight step 8**.
    it, which is decision 14.
 4. **Colour and opacity**, which is where our appearance replaces the one
    Acrobat wrote: an `/AP` that still draws the old colour is worse than one
-   we generated.
-5. **The handles, and resizing by them.** Grips at the two extremes of the
+   we generated. **done 2026-11-02**
+
+   Twenty-one swatches and an opacity slider, reached from two places: the
+   tail arms the next mark, the bar changes the one you picked, and both
+   open the same popup. The ownership question this step was waiting on is
+   decision 17, the palette is decision 18, and showing a change without
+   rebuilding the document is decision 19.
+5. **Open what was written in Reader.** Save a document this application
+   has marked up -- one it created a highlight in, and one it recoloured a
+   mark the file already had -- and open both in Reader. Check that the
+   marks are there, in the right colour at the right opacity, that they are
+   still selectable and editable *there*, that a comment thread on a
+   recoloured mark still reads, and that nothing else about the document
+   moved.
+
+   **This cannot be automated here and should not be faked.** There is no
+   Reader on the machines that run the suite, and the round trip that is
+   automated -- plan step 1, every annotation out and back -- compares this
+   application's output against this application's reading. That is exactly
+   the comparison that cannot notice the two agreeing on something wrong.
+
+   It belongs after colour because colour is the first step that changes a
+   mark the document arrived with, and because it *removes the appearance
+   stream the producer wrote*: the saved file now asks Reader to draw the
+   mark from its quadrilaterals. Every reader is supposed to, and "supposed
+   to" is why this step exists.
+
+   **Repeated after every later step that writes**, rather than done once.
+   Resizing rewrites `/QuadPoints`, deleting takes a status chain and its
+   replies out of the file, and each of those is a new way for a document
+   to come out subtly wrong in a tool this project cannot run.
+
+6. **The handles, and resizing by them.** Grips at the two extremes of the
    run; dragging one re-runs the selection between the new pair of points
    and rebuilds `/QuadPoints` from whatever is now covered, rather than
    stretching the quads that are there -- a highlight is a run of text and
@@ -662,9 +737,29 @@ Cited as **highlight step 1** to **highlight step 8**.
    far as geometry. The work left here is then small, because dragging a
    grip is `textlayer.quads` recomputed from a new pair of points, and that
    is machinery highlight step 2 already built.
-6. **Delete**, taking the status chain and the replies with it.
-7. **The right-click menu.**
-8. **The properties form**, last, because General and Review History are
+7. **Delete**, taking the status chain and the replies with it.
+8. **The right-click menu, and the pop-up note with it.** *Open Pop-Up
+   Note* is one of its entries, so this is where a note on a mark is made
+   rather than a step of its own: the note has no surface until the menu
+   that opens it exists. The bar's comment button is the same action from
+   the other direction and is turned on here too.
+
+   This is the work three other places defer to. The bar's first button is
+   drawn and disabled waiting for it; decision 10 leaves `/Popup` and `/RC`
+   unwritten for it; decision 14 names it. What the format wants is already
+   settled in *The popup note* -- the text is `/Contents` on the mark, the
+   `/Popup` is viewer chrome with no appearance of its own -- and
+   `canvas.edit_note` already edits a sticky note's text, so the editor
+   exists.
+
+   What it has to decide rather than inherit is whether `/RC` is written
+   beside `/Contents`. That is the rich text question, and a comment is
+   where it first bites.
+
+   A note the *file* brought needs none of this and already survives: it
+   comes through an export untouched because a mark is patched rather than
+   replaced, which is decision 17 and is what highlight step 5 checks.
+9. **The properties form**, last, because General and Review History are
    read-only views of what the earlier steps put in place.
 
 ## The test
@@ -830,6 +925,75 @@ follow, but the *artwork* is
   pm, Oct 30, 2026" and "REVIEWED By ... at 9:45 pm, Oct 30, 2026" -- which is
   generated at placement, not picked from a palette. So the choice runs from
   none, through a small set of our own, to all three families. Not decided.
+
+- **O6. Whether to offer a Fill in form fields family.** It appeared in
+  Reader during this work -- not in any earlier run, so it arrived with a
+  version update, 2026-11-02 -- as a sixth family button between the drawing
+  tools and the signature pen. Its flyout holds six: **Type text** (the
+  default, ticked), **Crossmark**, **Checkmark**, **Dot**, **Circle around**
+  and **Cross out**.
+
+  It is markup pretending to be form filling, which is why it is a question
+  rather than an entry in *The tools*. The six are the marks somebody makes
+  on a *printed* form -- an X in a box, a tick, a ring round a choice -- and
+  Reader offers them for documents whose "fields" are lines on the paper
+  rather than `/Widget` annotations. So it overlaps this application twice
+  over: the five that are not Type text are ordinary drawing marks with
+  fixed shapes, and the forms layer already fills the fields that really are
+  fields.
+
+  What makes it worth considering rather than dismissing: it is the honest
+  answer to a form that has no fields, and this application meets those --
+  the signature work turned up a disability form whose signature lines were
+  drawn on, not declared. Whether that is a family of its own, or six stamps
+  under *Stamps palette*, or nothing at all, is undecided. Nothing in the
+  plan depends on it.
+
+  **Reader shows it only on a document with no fillable fields**, which is
+  the thing that makes it coherent. Observed 2026-11-02: the family is there
+  on the Handbook and absent on the Devoted Health form. What separates
+  them, measured, is not whether there is an `/AcroForm` -- both have one --
+  but whether it holds anything::
+
+      ARRL 2021 Handbook        /AcroForm, 0 fields,  0 widgets  -> shown
+      Devoted Health C-SNP      /AcroForm, 82 fields, 86 widgets -> absent
+
+  So the tool is offered exactly where clicking a field is impossible,
+  which is the case it exists for. Reader is reported to withhold it on a
+  signed or permission-restricted document too; that part is not verified
+  here.
+
+  **Nothing in the format restricts them**, and it is worth being clear
+  that the rule is Reader's and not the PDF specification's. The six are
+  ordinary resizable graphical annotations -- a checkmark and a crossmark
+  are `/Stamp`, the ring is `/Square` or `/Circle`, the cross-out is
+  `/Line`, the typed text is `/FreeText` -- and they sit perfectly happily
+  beside fields. `markup.pdf` is the proof: 82 fields, and its first page
+  carries 15 widgets alongside 25 markup annotations including `/Square`,
+  `/Line`, `/FreeText`, `/Ink` and five `/Stamp`s. Reader opens it and draws
+  all of it. What Reader declines to do is *create* them there.
+
+  **The restriction makes sense as a guardrail.** On a form with real
+  fields, drawing a tick beside a checkbox gives a page that looks filled in
+  and holds no data -- the `/V` is still empty. Reader's business is getting
+  that data back out, so it steers you to the field rather than letting you
+  draw a picture of filling it. On a flat document there is no field to
+  mislead anyone and the tools come back.
+
+  So the open question is really two. Whether to offer the six at all, and
+  whether to adopt the guardrail with them. The exposure here is the same --
+  the forms layer fills real fields, and a checkmark drawn over a real
+  checkbox would produce the same hollow document -- but the stakes are
+  lower, because this is a page arranger that reads rather than a pipeline
+  that harvests form data.
+
+  That makes the first question sharper rather than easier. The six marks
+  are only worth having on a document this application's forms layer can do
+  nothing with, and the forms layer already answers for every document that
+  has fields -- so the overlap is smaller than it first looked, and so is
+  the audience. A page of boxes drawn in ink is still a page of boxes drawn
+  in ink, and a rectangle tool plus a checkmark stamp would cover it without
+  a family of its own.
 
 - **O5. Whether to copy Reader's rule for what a click on the page means.** The
   rule itself is now known, having been got wrong twice here first. It has two
@@ -1244,6 +1408,102 @@ with the area tools -- which also means a press over a mark does not belong
 to it, because there is no region being drawn across the mark. Its place in
 the Drawing *family* is about where it sits in the strip, which is a
 different question from what its gesture is.
+
+
+**17. A mark the file brought is patched, never replaced.** The question
+this step was waiting on: what export writes from once a mark is both in the
+file and in the model. Export copies the page's annotations as it always
+has, and afterwards rewrites `/C`, `/CA` and `/AP` on the ones that have
+been changed. Everything else is the producer's and survives untouched --
+`/NM`, `/Popup`, `/RC`, `/Subj`, `/T`, `/CreationDate`, the `/IRT` chains.
+
+Writing a fresh annotation from what this application models instead would
+drop every key it does not model, which is most of them, and the standard
+this work is held to is that a document comes out with nothing lost. So
+there was never really a choice, only a question badly asked.
+
+**The change is keyed by `(page uid, index)`**, where the index counts the
+markup annotations on the page in the order the file has them. Widgets,
+popups and links are not counted, so stripping an unsigned signature widget
+on the way out cannot slide a change onto the mark next door.
+
+Decision 9 rejects a position as a mark's identity, and for a *mark* that
+still holds: deleting one takes its status chain and its replies with it,
+everything after shifts, and an undo shifts them back. This is a position in
+the *source*, which this application never edits, so nothing renumbers it.
+Export reads the same pages in the same order and `marks_in` enumerates them
+the same way -- measured, the markup sample comes through an export with its
+annotations in the same order and the same count, 64, 64, 27 and 25 across
+its four pages.
+
+The alternative keys were measured and do not work. Only 43.1% of the markup
+annotations across the fixtures and corpus carry a `/NM` of their own, 128
+of 297, so a name cannot be it.
+
+**18. The palette is Reader's, sampled and converted.** Twenty-one colours:
+seven hues, the same seven lightened, and a greyscale row. Taken from a
+screenshot of the picker, and **converted out of Display P3 before being
+read**, which is the whole of it: a screenshot taken on a Mac carries a P3
+profile, and reading its pixels as sRGB is wrong by up to 59 of 255 -- Light
+blue samples `#73E2FB` raw against the `#38E5FF` Reader actually writes.
+
+Converted, the eight of these that appear in Reader-written documents in the
+corpus match what is in those files to within one unit, four of them exactly:
+Blue, Magenta, Purple and Light blue land on the nose, and Red, Orange,
+Light red and Light green are one off in a single channel. Eight independent
+confirmations that the other thirteen are right too -- and without the
+conversion every colour this application wrote would have been visibly wrong.
+
+The names are Reader's own, read off its tooltips rather than guessed: the
+second row is "Light" plus the hue above it throughout, the sixth hue is
+Fuchsia and not Magenta, and the greys run White, Pale, Light, Medium, Dark,
+Darker, Black. Shown as tooltips here too, and therefore translated.
+
+Three assumptions were corrected on the way. The names were taken out
+entirely, on the reasoning that Reader shows no name *on* a swatch and
+nobody would ever see them -- it puts one in the tooltip. Then the first set
+of names was invented from the colours, and reading the tooltips replaced
+most of the second and third rows. Only the first row survived guessing, and
+even that had Magenta for Fuchsia.
+
+**19. A change is shown by re-rendering one page, not the document.** The
+marks a document arrived with are drawn into the page bitmap by PDFium --
+page and annotations together -- so a recoloured mark cannot be painted over
+the old one. The page has to come from a document that carries the change.
+
+Rewriting the whole document to do that is what makes it slow. Measured on
+the 1590-page Handbook: patching and saving the file to change one colour
+costs 1180 ms, while lifting that one page into a document of its own,
+patching it and saving costs 1.1 to 6.5 ms. So an edited page is rendered
+from a one-page document built for it, and the rest of the book is never
+touched. End to end, a colour change and the repaint that follows it measure
+10 to 25 ms.
+
+Reader does not do this -- it keeps the page raster and the annotations as
+separate live objects and redraws the one object. That is not open to us:
+PDFium bakes annotations into the page bitmap, and drawing them ourselves
+instead would mean owning all eighteen subtypes, which is exactly what
+*lose nothing* says we must not require. Making one page cheap enough to
+redraw whole reaches the same place by a different road.
+
+**20. One current colour, and the swatch does two jobs.** Reader carries a
+single colour at the foot of its tool list and it colours whatever is made
+next, of any kind -- not a palette per tool. Until the swatch is used each
+tool keeps the colour readers expect of it, yellow for a highlight and red
+for a strikeout, rather than everything starting out the same.
+
+The same swatch also changes the mark you have *selected*, which is why it
+is shown with the pointer armed and not only with a tool armed. While a mark
+is selected the swatch shows that mark's colour, so the tick in the popup
+marks what the mark is rather than what the next one would be, and letting
+go puts back the colour armed for the next one. Observed in Reader and then
+confirmed by the owner: selecting with Select and selecting with Highlight
+behave identically, and changing the colour from either the tail or the bar
+changes the selected mark whichever tool is armed.
+
+`Annotation` grew an `opacity` of its own for this. `/CA` had been fixed per
+kind, so the slider had nowhere to write -- and changing a mark's opacity
+would have raised on `__slots__`.
 
 
 ## Done
