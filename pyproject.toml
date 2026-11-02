@@ -33,6 +33,14 @@ dependencies = [
     # SP_* standard pixmaps have no glyph for a highlighter, an arrow or a
     # polygon, and render blank on macOS besides.
     "qtawesome>=1.3",
+    # The loose character box, which is the box a text markup covers: the
+    # font's ascent and descent rather than the glyph's ink. Qt PDF is PDFium
+    # too, but it links it statically with hidden visibility -- not one
+    # FPDF_* symbol is exported -- so there is nothing to call. Measured
+    # against Acrobat's own highlights, this reproduces all 42 of their
+    # quadrilaterals to within 0.06 points; Qt's ink-tight boxes run 2 to 6
+    # points short and vary run by run.
+    "pypdfium2>=4.0",
     "python-dateutil>=2.8",
     "packaging>=23.0",
 ]

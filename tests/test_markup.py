@@ -142,6 +142,28 @@ class TestItReachesTheSavedFile(unittest.TestCase):
             self.assertEqual(self.texts_on(pdf, 0), [])
             self.assertEqual(self.texts_on(pdf, 1), ["on page two"])
 
+    def test_its_page_pointer_is_a_reference_to_that_page(self):
+        """`/P` has to point at the page, not contain it.
+
+        Written as a direct object it is a copy of the page's entire
+        dictionary tucked inside the annotation, and qpdf refuses to save
+        the result -- so every mark vanished, silently, from every export.
+        Exercised through `_write` because the mistake was in the caller:
+        `add_to_page` is handed a `pikepdf.Page` wrapper, and a unit test
+        that passes the object underneath it cannot see this at all.
+        """
+        win = self.window()
+        win.model.annotations.add(note(win.model.pages[1].uid, "on page two"))
+        with self.saved(win) as pdf:
+            marks = [a for a in pdf.pages[1].get("/Annots", [])
+                     if str(a.get("/Subtype")) == "/Text"]
+            self.assertEqual(len(marks), 1)
+            self.assertIn("/P", marks[0])
+            self.assertTrue(marks[0]["/P"].is_indirect,
+                            "the page is copied into the mark, not pointed at")
+            self.assertEqual(marks[0]["/P"].objgen,
+                             pdf.pages[1].obj.objgen)
+
     def test_it_follows_its_page_when_the_order_changes(self):
         """The whole reason for keying by uid rather than by index."""
         win = self.window()
@@ -233,6 +255,211 @@ class TestItSurvivesUndo(unittest.TestCase):
         self.assertEqual(len(win.model.pages), 2, "the pages are untouched")
         self.assertEqual(len(win.model.annotations), 0,
                          "and the note is gone, off the same stack")
+
+
+def two_pages_of_lines(path):
+    """Two pages that both carry text, for the gesture to try to cross."""
+    pdf = pikepdf.new()
+    font = pdf.make_indirect(pikepdf.Dictionary(
+        Type=pikepdf.Name.Font, Subtype=pikepdf.Name.Type1,
+        BaseFont=pikepdf.Name.Helvetica,
+        Encoding=pikepdf.Name.WinAnsiEncoding))
+    for which in ("first", "second"):
+        pdf.add_blank_page(page_size=(400, 300))
+        page = pdf.pages[-1]
+        page.Contents = pdf.make_stream("\n".join(
+            "BT /F1 14 Tf 40 %d Td (the %s page line %d) Tj ET"
+            % (240 - i * 24, which, i) for i in range(4)).encode())
+        page.Resources = pikepdf.Dictionary(Font=pikepdf.Dictionary(F1=font))
+    pdf.save(path)
+    pdf.close()
+    return path
+
+
+class TestAMarkBelongsToOnePage(unittest.TestCase):
+    """A highlight stops at the page edge; a text selection does not.
+
+    Deliberately different, and Acrobat does the same: reading runs on, so a
+    selection crosses a page break, while a mark is a thing *on a page* and
+    has nowhere to go when the page ends. The feedback used to disagree with
+    that -- it was the reader's selection, so dragging past the bottom lit up
+    the next page and then marked only this one.
+    """
+
+    def setUp(self):
+        from PySide6.QtWidgets import QApplication  # noqa: F401
+
+        from pdfarranger_qt.mainwindow import MainWindow
+
+        self.win = MainWindow()
+        self.win.resize(900, 700)
+        self.win.show()
+        self.win.open_paths([two_pages_of_lines(temp_path("twopages.pdf"))])
+        settle(timeout_ms=1000)
+        self.win.set_read_mode(True)
+        settle(timeout_ms=1400)
+        self.canvas = self.win.reader.canvas
+        self.canvas.verticalScrollBar().setValue(0)
+        settle(timeout_ms=250)
+
+    def tearDown(self):
+        self.win.modified = False
+        self.win.close()
+
+    def send(self, kind, point):
+        from PySide6.QtCore import QPoint, QPointF, Qt
+        from PySide6.QtGui import QMouseEvent
+
+        event = QMouseEvent(
+            kind, QPointF(point),
+            self.canvas.viewport().mapToGlobal(
+                QPoint(int(point.x()), int(point.y()))),
+            Qt.LeftButton, Qt.LeftButton, Qt.NoModifier)
+        {QMouseEvent.Type.MouseButtonPress: self.canvas.mousePressEvent,
+         QMouseEvent.Type.MouseMove: self.canvas.mouseMoveEvent,
+         QMouseEvent.Type.MouseButtonRelease:
+             self.canvas.mouseReleaseEvent}[kind](event)
+
+    def drag_off_the_bottom(self):
+        """From the first page's top line to well below the page's last."""
+        from PySide6.QtCore import QPointF
+        from PySide6.QtGui import QMouseEvent
+
+        from pdfarranger_qt.canvas import PageCanvas
+
+        self.win.set_tool(PageCanvas.HIGHLIGHT)
+        first = self.canvas.to_viewport(
+            self.canvas._layout.from_page(0, QPointF(45, 55)))
+        page_rect = self.canvas._layout.page_rect(0)
+        below = self.canvas.to_viewport(
+            QPointF(page_rect.center().x(), page_rect.bottom() + 120))
+        self.send(QMouseEvent.Type.MouseButtonPress, first)
+        self.send(QMouseEvent.Type.MouseMove, below)
+        shown = self.canvas._preview
+        self.send(QMouseEvent.Type.MouseButtonRelease, below)
+        settle(timeout_ms=300)
+        return shown, below
+
+    def test_the_drag_leaves_the_page_and_the_mark_does_not(self):
+        shown, below = self.drag_off_the_bottom()
+        self.assertIsNotNone(self.canvas.page_at(below),
+                             "the drag did not reach past the first page, so "
+                             "this proves nothing about the boundary")
+        self.assertNotEqual(self.canvas.page_at(below), 0,
+                            "the pointer is still on the first page")
+        self.assertTrue(shown, "the drag marked nothing at all")
+
+    def test_every_quad_is_on_the_page_the_drag_began_on(self):
+        self.drag_off_the_bottom()
+        first = self.win.model.pages[0].uid
+        second = self.win.model.pages[1].uid
+        self.assertEqual(len(self.win.model.annotations.for_page(second)), 0,
+                         "the second page took a mark from a drag that began "
+                         "on the first")
+        marks = self.win.model.annotations.for_page(first)
+        self.assertEqual(len(marks), 1)
+        height = float(self.win.model.pages[0].size[1])
+        for quad in marks[0].quads:
+            self.assertGreaterEqual(quad[1], 0.0)
+            self.assertLessEqual(quad[3], height)
+
+    def test_the_feedback_stops_where_the_mark_does(self):
+        """The defect this gesture exists to remove: what is shown while the
+        pointer is past the page is exactly what is kept."""
+        shown, _below = self.drag_off_the_bottom()
+        kept = self.win.model.annotations.for_page(
+            self.win.model.pages[0].uid)[0]
+        self.assertEqual(
+            [tuple(self.canvas.to_source(0, quad)) for quad in shown],
+            [tuple(quad) for quad in kept.quads])
+
+
+class TestAMarkIsWrittenWithTheKeysAReaderExpects(unittest.TestCase):
+    """Measured against the `/Highlight` Acrobat wrote into the Handbook.
+
+    It carries `/AP /C /CA /Contents /CreationDate /F /M /NM /P /Popup
+    /QuadPoints /RC /Rect /Subj /Subtype /T /Type`. Ours wrote ten of those,
+    so a mark made here was missing who made it, when, what kind a reader
+    should call it, and any name a reply could point at. `/Popup` and `/RC`
+    are not here: both appear only when a mark has a comment.
+    """
+
+    def mark(self, **kwargs):
+        from pdfarranger_qt import markup
+
+        fields = dict(quads=[(36, 600, 300, 614)],
+                      colour=(1.0, 0.92, 0.23),
+                      author=markup.default_author())
+        fields.update(kwargs)
+        return markup.Annotation(markup.HIGHLIGHT, 1, (36, 600, 300, 614),
+                                 **fields)
+
+    def written(self, mark):
+        """``(dictionary, page)``, with the document kept alive.
+
+        Held on the case rather than dropped: the dictionary is an indirect
+        object *in* that document, so letting it be collected destroys every
+        object in it and the assertion fails against "object of type
+        destroyed" rather than against a missing key.
+        """
+        from pdfarranger_qt import markup
+
+        self.pdf = pikepdf.Pdf.new()
+        self.pdf.add_blank_page(page_size=(612, 792))
+        page = self.pdf.pages[0].obj
+        return markup.to_dictionary(self.pdf, mark, page=page), page
+
+    def test_it_says_who_made_it(self):
+        entry, _page = self.written(self.mark())
+        self.assertIn("/T", entry)
+        self.assertTrue(str(entry["/T"]),
+                        "the author key is there and empty, which is no "
+                        "better than its being absent")
+
+    def test_it_says_when_it_was_made_as_well_as_when_it_changed(self):
+        """A reader sorts its comment list by one and shows the other."""
+        entry, _page = self.written(self.mark())
+        self.assertIn("/CreationDate", entry)
+        self.assertIn("/M", entry)
+
+    def test_it_says_what_a_reader_should_call_it(self):
+        from pdfarranger_qt import markup
+
+        for kind in markup.KINDS:
+            with self.subTest(kind=kind):
+                mark = markup.Annotation(kind, 1, (36, 600, 300, 614))
+                entry, _page = self.written(mark)
+                self.assertEqual(str(entry["/Subj"]), markup.SUBJECTS[kind])
+
+    def test_it_points_at_the_page_it_is_on(self):
+        entry, page = self.written(self.mark())
+        self.assertEqual(entry["/P"], page)
+
+    def test_it_can_be_named(self):
+        """A reply and a status change are separate annotations that name the
+        mark they answer, so a mark with no name cannot be replied to."""
+        mark = self.mark()
+        entry, _page = self.written(mark)
+        self.assertTrue(str(entry["/NM"]))
+        self.assertEqual(str(entry["/NM"]), mark.name)
+
+    def test_two_marks_are_named_differently(self):
+        self.assertNotEqual(self.mark().name, self.mark().name)
+
+    def test_its_name_survives_being_copied(self):
+        """Which is what undo does to every mark on every commit."""
+        mark = self.mark()
+        self.assertEqual(mark.duplicate().name, mark.name)
+
+    def test_an_uncommented_mark_says_nothing(self):
+        """Written unconditionally, `/Contents` is an empty note against a
+        mark whose whole point was that it had nothing to add."""
+        entry, _page = self.written(self.mark())
+        self.assertNotIn("/Contents", entry)
+
+    def test_a_commented_mark_says_what_was_typed(self):
+        entry, _page = self.written(self.mark(contents="a note"))
+        self.assertEqual(str(entry["/Contents"]), "a note")
 
 
 if __name__ == "__main__":
@@ -703,41 +930,102 @@ class TestAHighlightFollowsTheLines(unittest.TestCase):
         self.win.modified = False
         self.win.close()
 
-    def select_two_lines(self):
+    def send(self, kind, point):
+        from PySide6.QtCore import QPoint, QPointF, Qt
+        from PySide6.QtGui import QMouseEvent
+
+        event = QMouseEvent(
+            kind, QPointF(point),
+            self.canvas.viewport().mapToGlobal(
+                QPoint(int(point.x()), int(point.y()))),
+            Qt.LeftButton, Qt.LeftButton, Qt.NoModifier)
+        {QMouseEvent.Type.MouseButtonPress: self.canvas.mousePressEvent,
+         QMouseEvent.Type.MouseMove: self.canvas.mouseMoveEvent,
+         QMouseEvent.Type.MouseButtonRelease:
+             self.canvas.mouseReleaseEvent}[kind](event)
+
+    def highlight_two_lines(self):
+        """Arm the highlighter and drag, and report what the drag showed.
+
+        Through the mouse handlers rather than by calling the geometry
+        directly. The gesture used to be driven here by setting the canvas's
+        selection anchor and reading `selection_quads`, which stopped being
+        the path a pointer takes the moment marking up got a gesture of its
+        own -- so the tests went on passing against code nothing called.
+        """
+        from PySide6.QtGui import QMouseEvent
+
+        from pdfarranger_qt.canvas import PageCanvas
+
+        self.win.set_tool(PageCanvas.HIGHLIGHT)
+        first, second = self.lines()[:2]
+        self.send(QMouseEvent.Type.MouseButtonPress, self.on_line(first, 0.0))
+        self.send(QMouseEvent.Type.MouseMove, self.on_line(second, 1.0))
+        shown = self.canvas._preview
+        self.send(QMouseEvent.Type.MouseButtonRelease,
+                  self.on_line(second, 1.0))
+        settle(timeout_ms=200)
+        return shown
+
+    def lines(self):
+        """The page's lines of type, top down, as ``(left, bottom, right, top)``.
+
+        Measured from the page rather than written down as viewport
+        coordinates: a point that lands on the second line only because of
+        where the window happened to open is a test of the window.
+        """
+        bands = []
+        for left, bottom, right, top, _blank in self.canvas._glyphs.boxes(0):
+            if bands and abs(bands[-1][3] - top) < 0.5:
+                bands[-1] = (min(bands[-1][0], left), min(bands[-1][1], bottom),
+                             max(bands[-1][2], right), max(bands[-1][3], top))
+            else:
+                bands.append((left, bottom, right, top))
+        return sorted(bands, key=lambda b: -b[3])
+
+    def on_line(self, band, across):
+        """A viewport point on ``band``, ``across`` of the way along it."""
         from PySide6.QtCore import QPointF
 
-        self.canvas._anchor = (0, QPointF(45, 60))
-        self.canvas._extend_selection(0, QPointF(300, 130))
-        settle(timeout_ms=200)
+        left, bottom, right, top = band
+        x = left + (right - left) * across
+        height = self.canvas._layout.page_height(0)
+        return self.canvas.to_viewport(self.canvas._layout.from_page(
+            0, QPointF(x, height - (bottom + top) / 2)))
 
     def test_two_lines_give_two_quads(self):
-        self.select_two_lines()
-        page, quads = self.canvas.selection_quads()
-        self.assertEqual(page, 0)
-        self.assertEqual(len(quads), 2)
+        self.assertEqual(len(self.highlight_two_lines()), 2)
 
     def test_the_gap_between_the_lines_is_not_covered(self):
         """Which is the whole difference between this and one box: the second
         line's top is below the first line's bottom, and nothing reaches
         across."""
-        self.select_two_lines()
-        _page, quads = self.canvas.selection_quads()
+        quads = self.highlight_two_lines()
         ordered = sorted(quads, key=lambda q: -q[3])
         upper, lower = ordered[0], ordered[1]
         self.assertGreater(upper[1], lower[3],
                            "the quads overlap, so one spans the gap")
 
     def test_the_mark_keeps_every_quad(self):
-        from pdfarranger_qt.canvas import PageCanvas
-
-        self.win.set_tool(PageCanvas.HIGHLIGHT)
-        self.select_two_lines()
-        page, quads = self.canvas.selection_quads()
-        self.canvas.mark_drawn.emit(PageCanvas.HIGHLIGHT, page, quads)
-        settle(timeout_ms=200)
+        self.highlight_two_lines()
         marks = self.win.model.annotations.for_page(self.win.model.pages[0].uid)
         self.assertEqual(len(marks), 1)
         self.assertEqual(len(marks[0].quads), 2)
+
+    def test_what_the_drag_showed_is_what_it_kept(self):
+        """The reason the gesture stopped borrowing the reader's selection.
+
+        The feedback used to be that selection -- which runs across pages and
+        is drawn tight to the ink -- while the mark was a filtered, differently
+        measured subset of it, so the band you dragged was never the band you
+        got. One list now, drawn by the painter that draws finished marks.
+        """
+        shown = self.highlight_two_lines()
+        kept = self.win.model.annotations.for_page(
+            self.win.model.pages[0].uid)[0]
+        self.assertEqual(
+            [tuple(self.canvas.to_source(0, quad)) for quad in shown],
+            [tuple(quad) for quad in kept.quads])
 
 
 
@@ -1366,19 +1654,30 @@ class TestAMarkLivesInTheSourcePagesSpace(unittest.TestCase):
         right place around a shape still drawn at the old size, which is the
         mistake `_scale_annotation` exists to avoid for the marks a file
         already carries."""
-        from PySide6.QtCore import QPointF
+        from PySide6.QtCore import QPoint, QPointF, Qt
+        from PySide6.QtGui import QMouseEvent
 
         from pdfarranger_qt.canvas import PageCanvas
 
         canvas = self.reading()
         self.win.set_tool(PageCanvas.HIGHLIGHT)
-        canvas._anchor = (0, QPointF(70, 85))
-        canvas._extend_selection(0, QPointF(260, 92))
-        settle(timeout_ms=200)
-        found = canvas.selection_quads()
-        self.assertIsNotNone(found, "nothing was selected, so this proves "
-                                    "nothing about scaling quads")
-        canvas.mark_drawn.emit(PageCanvas.HIGHLIGHT, found[0], found[1])
+
+        def send(kind, point):
+            event = QMouseEvent(
+                kind, point,
+                canvas.viewport().mapToGlobal(
+                    QPoint(int(point.x()), int(point.y()))),
+                Qt.LeftButton, Qt.LeftButton, Qt.NoModifier)
+            {QMouseEvent.Type.MouseButtonPress: canvas.mousePressEvent,
+             QMouseEvent.Type.MouseMove: canvas.mouseMoveEvent,
+             QMouseEvent.Type.MouseButtonRelease:
+                 canvas.mouseReleaseEvent}[kind](event)
+
+        send(QMouseEvent.Type.MouseButtonPress, QPointF(70, 85))
+        send(QMouseEvent.Type.MouseMove, QPointF(260, 92))
+        self.assertTrue(canvas._preview, "the drag marked nothing, so this "
+                                         "proves nothing about scaling quads")
+        send(QMouseEvent.Type.MouseButtonRelease, QPointF(260, 92))
         settle(timeout_ms=250)
         mark = self.held()[0]
         self.assertTrue(mark.quads)

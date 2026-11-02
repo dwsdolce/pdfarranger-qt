@@ -615,10 +615,23 @@ Each step is usable before the next, and each tells the next what it needs.
 
 1. **Hold the marks.** A page's annotations read into a session table with
    uids -- enough to hit-test and to know what is there. Nothing written.
+   `markup.MarkMap` and `markup.marks_in`. **done 2026-11-01**
 2. **Arm the canvas from the strip.** Highlight armed, drag over text, mark
-   made. The strip drove nothing until now.
+   made. The strip drove nothing until now. **done 2026-11-01**
+
+   Two things were found by using it rather than by planning it. The feedback
+   was the reader's text selection, which runs across pages, while the mark
+   it produced stopped at the page, so the band shown was never the band
+   kept; marking up now has a gesture of its own and one list of
+   quadrilaterals serves as both. And the band was too short, because Qt's
+   selection bounds are tight to the ink, which is decision 11. Writing the
+   mark with the keys a reader expects came out of the same session and is
+   decision 10.
 3. **Select an existing one**, including a mark the file brought, which is
-   the first thing the uid table buys.
+   the first thing the uid table buys. This is where the selected-mark
+   border belongs: Acrobat draws one round each quadrilateral, and drawing
+   it needs a hit test, a selected-mark state and the rules for leaving it,
+   which is this step and not a decoration that can be added before it.
 4. **Colour and opacity**, which is where our appearance replaces the one
    Acrobat wrote: an `/AP` that still draws the old colour is worse than one
    we generated.
@@ -1043,6 +1056,80 @@ between.
 If a delta ever has to survive a save and reopen -- pending edits, or marks
 changed in one window and exported from another -- `/NM` becomes the answer
 and we would be assigning one. Nothing in this plan needs that.
+
+**10. A mark is written with the keys a reader expects, and `/NM` is one of
+them.** Measured against the Acrobat highlight on page 15 of the Handbook,
+which writes `/AP /C /CA /Contents /CreationDate /F /M /NM /P /Popup
+/QuadPoints /RC /Rect /Subj /Subtype /T /Type`. Ours wrote ten of those; it
+now writes `/CreationDate`, `/NM`, `/P`, `/Subj` and `/T` as well.
+
+`/CreationDate` separately from `/M`, because a reader sorts its comment list
+by one and shows the other, and with only `/M` written both answers were the
+same. `/Subj` is the producer's own word for the kind, read out of the corpus
+rather than invented -- "Highlight" in seven files, "Cross-Out" in four,
+"Sticky Note" in seven -- and not translated, because a reader groups and
+filters by it and a translated one sorts into a category of its own in every
+other language. `/T` is the login name: the `/Info` dictionary of these
+documents is empty, so there is no name in the document to inherit, and
+Acrobat falls back the same way when its identity setting is unset. `/P`
+because `export._repoint_annotations` rewrites `/P` on every annotation that
+has one, after the transform passes have replaced the page objects, so a mark
+without `/P` is left out of the fixing rather than left correct.
+
+`/Contents` is now written only when there is something to say. Written
+unconditionally, an uncommented highlight carried an empty one, and a reader
+that lists comments listed it -- an empty note against a mark whose whole
+point was that it had nothing to add.
+
+This does not reopen decision 9. That decision is about what a *session
+delta* is keyed by -- a change to a mark the file brought, held in memory
+until the document is saved -- and the answer is still a session uid, with
+nothing written to a document somebody only looked at. `/NM` here is the
+identity of a mark we are writing, inside the file we are writing it into,
+because a reply and a status change are separate annotations that name the
+mark they answer: a mark that cannot be named cannot be replied to. It is
+minted when the mark is made rather than on the way out, so that a save does
+not rename it, and `duplicate()` carries it so undo and redo are the same
+mark rather than a succession of new ones.
+
+Still not written: `/Popup` and `/RC`. Both appear only because a mark has a
+comment -- confirmed by adding one to the Handbook highlight, which brought
+`/Contents`, `/RC` and a `/Popup` object with it -- so both arrive with the
+note work rather than with the mark.
+
+
+**11. A mark's quadrilaterals are built from PDFium's loose character box,
+through a second copy of PDFium.** Qt's `QPdfSelection.bounds()` gives one
+polygon per run, tight to the ink, so a line with no descender comes out
+shorter than the line above it and a larger word makes its own run a
+different height again. Acrobat uses the box built from the font's ascent and
+descent instead: against the forty-two quadrilaterals it wrote into
+`Markup Highlight.pdf`, the union of the loose boxes under each one matched
+its `/QuadPoints` exactly, to the hundredth of a point, on every one. The
+ink-tight boxes over the same characters ran 2 to 6 points short.
+
+There is no single factor to apply instead, because a line may hold several
+sizes of type and Acrobat gives each its own quadrilateral -- on one page its
+quads are 12.99, 13.34, 14.56 and 26.69 points tall.
+
+Qt PDF *is* PDFium, but it links it statically with hidden visibility: of the
+232 symbols its framework exports, not one is an `FPDF_*` function, and the
+nine that mention PDFium are Qt's own private methods taking PDFium handles
+the public API never hands out. So the choice was a second PDFium that
+exports its API, or parsing the content stream ourselves -- text matrices,
+`/FontDescriptor` ascents, Type3 and CID fonts, and the standard 14 fonts
+that carry no descriptor at all -- to recompute what PDFium has already
+computed correctly. The dependency is `pypdfium2`, and the duplication is
+only the library: it reads the same bytes the canvas already holds for its
+render thread, because PDFium takes a pointer rather than a copy, and it
+builds a text layer for the page being marked alone rather than for the
+document.
+
+Where the quadrilaterals break is in `textlayer`, with the measurements that
+settled each rule. One consequence is visible: because only the armed page's
+glyphs are loaded, the gesture stops at the page edge, which is what Acrobat
+does for a highlight and the opposite of what it does for a selection.
+
 
 ## Done
 

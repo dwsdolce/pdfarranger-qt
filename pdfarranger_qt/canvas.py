@@ -88,6 +88,7 @@ from . import markup
 from .fieldlayer import AppearanceRenderer
 from .i18n import gettext_ as _
 from .render import ANNOTATIONS, DEFAULT_CACHE_PIXELS, BytesDocument, Renderer
+from .textlayer import TextLayer
 
 #: Gap between consecutive pages, and around the column, in logical pixels at
 #: zoom 1. Scaled with the zoom so the layout looks the same at every size.
@@ -1062,6 +1063,21 @@ class PageCanvas(QAbstractScrollArea):
         self._selection: dict = {}
         self._selecting = False
         self._press = None
+        #: The glyphs of the page being marked, at the height a mark wants.
+        #: Separate from `_text` above, which is Qt's ink-tight boxes and is
+        #: what *reading* selects by: a mark is not a selection and must not
+        #: be built out of one. See `textlayer`.
+        self._glyphs = TextLayer()
+        #: A text markup gesture in progress, as ``(page, anchor, pointer)``
+        #: with both points in the page's own space.
+        self._text_mark = None
+        #: Its quadrilaterals, recomputed as the pointer moves and drawn as
+        #: the feedback. The *same* list the gesture emits when it ends, so
+        #: what is shown and what is kept cannot drift apart.
+        self._preview: tuple = ()
+        #: {tool: (annotation kind, colour)}, pushed in by the window so the
+        #: preview is drawn in the colour the finished mark will have.
+        self._mark_styles: dict = {}
         self.viewport().setMouseTracking(True)
         self.setFrameShape(QFrame.NoFrame)
         self.viewport().setAutoFillBackground(True)
@@ -1116,6 +1132,10 @@ class PageCanvas(QAbstractScrollArea):
                                   cover=self._layout.cover)
         self._pages.set_document(document, data)
         self._text.set_document(document)
+        # The bytes, not the QPdfDocument: PDFium is handed a pointer to this
+        # same buffer rather than a copy of the file, so a second reader of
+        # the document on screen costs its parse structures and nothing more.
+        self._glyphs.set_document(data)
         self._document = document
         self.clear_selection()
         self.clear_caret()
@@ -2587,6 +2607,8 @@ class PageCanvas(QAbstractScrollArea):
             return
         self._tool = tool
         self._marking = None
+        self._text_mark = None
+        self._preview = ()
         self.viewport().unsetCursor()
         self.viewport().update()
         self.tool_changed.emit(tool)
@@ -2782,6 +2804,77 @@ class PageCanvas(QAbstractScrollArea):
         return index, self.to_source(
             index, forms_module.from_displayed(shown, box))
 
+    def set_mark_styles(self, styles) -> None:
+        """``{tool: (kind, colour)}``, so a preview looks like its mark."""
+        self._mark_styles = dict(styles or {})
+
+    def page_point(self, index: int, point: QPointF):
+        """One viewport point in ``index``'s own space, or None.
+
+        The same three frames `mark_rect` crosses, for a point rather than a
+        rectangle. Not clamped to the page, and deliberately: the text layer
+        answers with the character nearest whatever it is given, so a drag
+        that runs off the bottom takes the last line rather than stopping
+        dead -- and cannot reach the page below, because that page's glyphs
+        are not in this layer.
+        """
+        box = self.page_box(index)
+        height = self._layout.page_height(index)
+        if box is None or height is None:
+            return None
+        here = self._layout.point_in_page(index, self.to_document(point))
+        flat = (here.x(), height - here.y(), here.x(), height - here.y())
+        left, bottom, _right, _top = forms_module.from_displayed(flat, box)
+        return (left, bottom)
+
+    def _mark_quads(self):
+        """What the gesture in flight covers, in the page's own space."""
+        if self._text_mark is None:
+            return ()
+        index, start, end = self._text_mark
+        try:
+            return tuple(self._glyphs.quads(index, start, end))
+        except Exception:       # noqa: BLE001 - a drag must not raise
+            return ()
+
+    def _track_mark(self, point: QPointF) -> None:
+        """Move the far end of the gesture and rebuild what it covers."""
+        if self._text_mark is None:
+            return
+        index, start, _end = self._text_mark
+        here = self.page_point(index, point)
+        if here is None:
+            return
+        self._text_mark = (index, start, here)
+        quads = self._mark_quads()
+        if quads != self._preview:
+            self._preview = quads
+            self.viewport().update()
+
+    def _preview_marks(self, index: int):
+        """The gesture in flight, as a mark, so it is drawn like one.
+
+        Through `_paint_marks` rather than a painter of its own. The feedback
+        used to be the reader's text selection, which crosses pages and is
+        drawn tight to the ink, while the mark it produced stopped at the
+        page and covered the line: what you saw was never what you got. One
+        list of quadrilaterals now, drawn by one piece of code, so the two
+        cannot disagree again.
+        """
+        if not self._preview or self._text_mark is None:
+            return ()
+        if self._text_mark[0] != index:
+            return ()
+        style = self._mark_styles.get(self._tool)
+        if style is None:
+            return ()
+        kind, colour = style
+        if kind not in markup.QUADDED:
+            return ()
+        quads = tuple(self.to_source(index, quad) for quad in self._preview)
+        return (markup.Annotation(kind, index, markup.bounding_rect(quads),
+                                  colour=colour, quads=quads),)
+
     def icon_rect(self, point: QPointF):
         """One viewport point to the page-space box of a fixed-size icon.
 
@@ -2971,6 +3064,10 @@ class PageCanvas(QAbstractScrollArea):
             self.viewport().update()
             return
 
+        if self._text_mark is not None and event.buttons() & Qt.LeftButton:
+            self._track_mark(position)
+            return
+
         if self._press is not None and event.buttons() & Qt.LeftButton:
             if (position - self._press).manhattanLength() > QApplication.startDragDistance():
                 self._selecting = True
@@ -3090,6 +3187,24 @@ class PageCanvas(QAbstractScrollArea):
                 self._marking = (position, position)
                 event.accept()
                 return
+            if self.marks_text():
+                # Its own gesture, not the reader's. Marking up text and
+                # selecting it look alike and are not: a selection runs across
+                # pages and a mark belongs to one, so building the mark out of
+                # the selection showed you more than you were going to get.
+                index = self.page_at(position)
+                here = (self.page_point(index, position)
+                        if index is not None else None)
+                if here is None:
+                    event.accept()
+                    return
+                if self._selection:
+                    self.clear_selection()
+                self._text_mark = (index, here, here)
+                self._preview = self._mark_quads()
+                self.viewport().update()
+                event.accept()
+                return
             self._press = position
             self._selecting = False
             found = self.to_page(self._press)
@@ -3168,17 +3283,17 @@ class PageCanvas(QAbstractScrollArea):
             event.accept()
             return
 
-        if (event.button() == Qt.LeftButton and self.marks_text()
-                and self._press is not None):
-            # The selection was built by the ordinary drag above; turning it
-            # into a mark is all this tool adds.
-            super().mouseReleaseEvent(event)
-            self._press = None
-            self._selecting = False
-            found = self.selection_quads()
-            if found is not None:
-                self.mark_drawn.emit(self._tool, found[0], found[1])
-                self.clear_selection()
+        if event.button() == Qt.LeftButton and self._text_mark is not None:
+            index = self._text_mark[0]
+            quads = self._preview
+            self._text_mark = None
+            self._preview = ()
+            self.viewport().update()
+            if quads:
+                self.mark_drawn.emit(
+                    self._tool, index,
+                    [self.to_source(index, quad) for quad in quads])
+            event.accept()
             return
 
         if event.button() == Qt.LeftButton and self._press is not None:
@@ -3305,6 +3420,10 @@ class PageCanvas(QAbstractScrollArea):
             self.focus_field(None)
             return
 
+        if key == Qt.Key_Escape and self._text_mark is not None:
+            self._text_mark = None
+            self._preview = ()
+            self.viewport().update()
         if key == Qt.Key_Escape and self.marking():
             # Out of the tool first. Escape with a tool active means "stop
             # marking up", which is what it means in every editor; a selection
@@ -3469,12 +3588,11 @@ class PageCanvas(QAbstractScrollArea):
         for every highlight is the 682 ms the form work went to such lengths
         to avoid.
         """
-        if self.marks is None:
-            return
         try:
-            marks = self.marks(index)
+            marks = list(self.marks(index) or ()) if self.marks else []
         except Exception:       # noqa: BLE001 - a repaint must not fail
-            return
+            marks = []
+        marks += self._preview_marks(index)
         if not marks:
             return
         box = self.page_box(index)

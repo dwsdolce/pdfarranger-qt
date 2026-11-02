@@ -41,7 +41,9 @@ is carried by both exactly as the annotations already in the file are.
 
 import copy
 import datetime
+import getpass
 import itertools
+import uuid
 from typing import Dict, List, Optional, Tuple
 
 import pikepdf
@@ -58,6 +60,15 @@ KINDS = (TEXT, HIGHLIGHT, STRIKEOUT)
 #: so with `/QuadPoints`. `/Rect` still has to be there and has to contain
 #: them: a viewer that does not understand the subtype falls back to it.
 QUADDED = (HIGHLIGHT, STRIKEOUT)
+
+#: What a reader calls each kind in a comment list. Not translated: these are
+#: the strings producers actually write, read out of the corpus rather than
+#: invented -- `/Highlight` is "Highlight" in seven files, `/StrikeOut` is
+#: "Cross-Out" in four and `/Text` is "Sticky Note" in seven. A reader groups
+#: and filters its comment list by this, so a translated one would sort into
+#: a category of its own in every other language.
+SUBJECTS = {HIGHLIGHT: "Highlight", STRIKEOUT: "Cross-Out",
+            TEXT: "Sticky Note"}
 
 #: Bit 3 of `/F`, Print. Without it a mark shows on screen and vanishes from
 #: paper, which is not what anybody means by annotating a document.
@@ -125,20 +136,47 @@ def pdf_date(when: Optional[datetime.datetime] = None) -> str:
             + f"{sign}{minutes // 60:02d}'{minutes % 60:02d}'")
 
 
+def default_author() -> str:
+    """Who to put on a mark: the account making it.
+
+    The login name, because the document has nothing better to offer -- the
+    `/Info` dictionary of the files in the corpus is empty, so there is no
+    name in the document to inherit. Acrobat has an identity setting of its
+    own and falls back the same way.
+
+    Tolerant of having no answer: `getpass.getuser` reads four environment
+    variables before it asks the password database, and raises if none of
+    them has anything. A mark with no author is a mark; a traceback while
+    placing one is not.
+    """
+    try:
+        return getpass.getuser() or ""
+    except Exception:       # noqa: BLE001 - no login name is not an error
+        return ""
+
+
 class Annotation:
     """One mark, in the page coordinates of the page it belongs to."""
 
     __slots__ = ("kind", "page", "rect", "quads", "contents", "colour",
-                 "author", "created")
+                 "author", "created", "name")
 
     def __init__(self, kind: str, page: int, rect: Tuple[float, ...],
                  contents: str = "", colour=None, author: Optional[str] = None,
-                 created: Optional[str] = None, quads=()):
+                 created: Optional[str] = None, quads=(),
+                 name: Optional[str] = None):
         if kind not in KINDS:
             raise ValueError(f"unknown annotation kind: {kind}")
         self.kind = kind
         self.page = page
         self.rect = tuple(float(v) for v in rect)
+        #: The mark's `/NM`, its name within the file. Made here rather than
+        #: at export so that it survives a save: a name minted on the way out
+        #: would be a different one every time, and anything pointing at the
+        #: mark -- a reply, a status change -- would be pointing at a name
+        #: that no longer exists. `duplicate` copies it, so undo and redo
+        #: carry the same mark rather than a succession of new ones.
+        self.name = name or str(uuid.uuid4())
         #: One rectangle per run of text, for the subtypes that mark text.
         #: Empty for the rest. A highlight over three lines is three quads,
         #: not one box round the paragraph -- which would cover the margins
@@ -239,21 +277,57 @@ def scaled(annotation: Annotation, factor: float) -> Annotation:
     return copy_of
 
 
-def to_dictionary(pdf, annotation: Annotation) -> pikepdf.Dictionary:
+def to_dictionary(pdf, annotation: Annotation, page=None) -> pikepdf.Dictionary:
     """``annotation`` as a PDF annotation dictionary in ``pdf``.
 
     Indirect, because a page's ``/Annots`` is an array of references and an
     inline dictionary there is reachable only through that one page -- which
     stops working the moment anything wants to point at the mark.
+
+    ``page`` is the output page object this mark is going onto, for `/P`.
+    Optional so that a caller only interested in the dictionary -- a test
+    comparing what a mark writes -- need not build a page to get one.
     """
     entry = pikepdf.Dictionary(
         Type=pikepdf.Name.Annot,
         Subtype=pikepdf.Name(annotation.kind),
         Rect=pikepdf.Array([*annotation.rect]),
-        Contents=pikepdf.String(annotation.contents),
         F=PRINTABLE,
         M=pikepdf.String(annotation.created),
+        # When the mark was made, as against `/M`, when it was last touched.
+        # A reader sorts its comment list by one and shows the other, and
+        # with only `/M` written both answers were the same.
+        CreationDate=pikepdf.String(annotation.created),
+        # The mark's name in the file. A reply or a status change is a
+        # separate annotation that refers to the mark it answers, so a mark
+        # that cannot be named cannot be replied to.
+        NM=pikepdf.String(annotation.name),
     )
+    subject = SUBJECTS.get(annotation.kind)
+    if subject:
+        entry[pikepdf.Name.Subj] = pikepdf.String(subject)
+    if annotation.contents:
+        # Only when there is something to say. Written unconditionally, an
+        # uncommented highlight carries an empty `/Contents`, and a reader
+        # that lists comments lists it -- an empty note against a mark whose
+        # whole point was that it had nothing to add.
+        entry[pikepdf.Name.Contents] = pikepdf.String(annotation.contents)
+    if page is not None:
+        # The page the mark is on. Readers use it to answer "which page is
+        # this comment on" without searching every `/Annots`, and ours has
+        # to be right: `export._repoint_annotations` rewrites `/P` on every
+        # annotation that has one, after the transform passes have replaced
+        # the page objects, so a mark without `/P` is simply left out of the
+        # fixing rather than left correct.
+        #
+        # Only when it is a reference. `/P` written as a direct object is
+        # not a pointer at the page, it is a *copy* of the page's whole
+        # dictionary inside the annotation -- which qpdf refuses to save, so
+        # every mark silently failed to reach the file. `add_to_page` is
+        # handed a `pikepdf.Page` wrapper rather than the object underneath
+        # it, which is where the direct copy came from.
+        if getattr(page, "is_indirect", False):
+            entry[pikepdf.Name.P] = page
     if annotation.kind == TEXT:
         # The icon a viewer draws. /Note is the one every viewer has, and
         # PDFium draws the same glyph whatever this says -- measured, the
@@ -352,8 +426,12 @@ def add_to_page(pdf, page, marks, factor: float = 1.0) -> int:
     marks multiplied by a half.
     """
     written = 0
+    # The object, not the `pikepdf.Page` wrapper around it: `/P` has to be a
+    # reference to the page, and a wrapper assigned into a dictionary writes
+    # the page out again inside the annotation.
+    target = getattr(page, "obj", page)
     for annotation in marks:
-        entry = to_dictionary(pdf, scaled(annotation, factor))
+        entry = to_dictionary(pdf, scaled(annotation, factor), page=target)
         if pikepdf.Name.Annots not in page:
             page[pikepdf.Name.Annots] = pdf.make_indirect(pikepdf.Array([]))
         page[pikepdf.Name.Annots].append(entry)

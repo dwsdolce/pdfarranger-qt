@@ -275,5 +275,65 @@ class TestTheMenuIsGone(StripCase):
                          self.win._editing_actions())
 
 
+class TestTheStripAndTheCanvasAgree(StripCase):
+    """What the strip shows and what the pointer does, kept in step.
+
+    Two signals face each other: the strip tells the canvas which tool is
+    armed, and the canvas tells the strip when it changes tool by itself,
+    which it does when Escape ends a gesture. The canvas cannot tell those
+    apart -- an unbuilt tool and a disarm both arrive as SELECT -- so arming
+    Arrow used to send the canvas to SELECT and then be told by the canvas to
+    go back to the pointer. The tool did not stay picked.
+    """
+
+    def canvas(self):
+        return self.win.reader.canvas
+
+    def test_a_built_tool_changes_what_the_pointer_does(self):
+        self.strip.arm("highlight")
+        self.assertEqual(self.canvas().tool(), "highlight")
+        self.assertTrue(self.canvas().marking())
+
+    def test_an_unbuilt_tool_stays_armed_and_leaves_the_canvas_reading(self):
+        """The mode is set; there is simply nothing behind it yet."""
+        from pdfarranger_qt.canvas import PageCanvas
+
+        self.strip.arm("cloud")
+        self.assertEqual(self.strip.armed(), "cloud")
+        self.assertEqual(self.canvas().tool(), PageCanvas.SELECT)
+
+    def test_the_canvas_disarming_itself_moves_the_strip(self):
+        """Escape inside a gesture is the canvas's, so the strip cannot be
+        the only place the armed tool lives."""
+        from pdfarranger_qt import tools
+        from pdfarranger_qt.canvas import PageCanvas
+
+        self.strip.arm("highlight")
+        self.canvas().set_tool(PageCanvas.SELECT)
+        self.assertEqual(self.strip.armed(), tools.DEFAULT)
+
+    def test_escape_puts_an_unbuilt_tool_back_too(self):
+        """The case the canvas cannot report: it was never armed, so it has
+        no change to announce, and only the window can answer the key."""
+        from pdfarranger_qt import tools
+
+        self.strip.arm("cloud")
+        self.win.keyPressEvent(QKeyEvent(QKeyEvent.Type.KeyPress,
+                                         Qt.Key_Escape, Qt.NoModifier))
+        self.assertEqual(self.strip.armed(), tools.DEFAULT)
+
+    def test_every_unbuilt_tool_can_be_armed_and_stays(self):
+        """All sixteen of them, because the defect was in the fallback that
+        every unbuilt tool shares."""
+        from pdfarranger_qt import tools
+
+        for tool in tools.TOOLS:
+            if tool.name in self.win.CANVAS_TOOLS:
+                continue
+            with self.subTest(tool=tool.name):
+                self.strip.arm(tool.name)
+                self.assertEqual(self.strip.armed(), tool.name)
+
+
 if __name__ == "__main__":
     unittest.main()

@@ -137,12 +137,18 @@ class MainWindow(QMainWindow):
         #: beside it: this is a page arranger and the strip is a guest.
         self.tool_strip = ToolStrip(self.reader)
         self.tool_strip.hide()
+        #: True while the strip is driving the canvas, so that the canvas's
+        #: report of the change is not taken for a choice of its own.
+        self._arming = False
         self.tool_strip.armed_changed.connect(self._tool_armed)
         self.reader.canvas.tool_changed.connect(self._canvas_tool_changed)
         self.tool_strip.moved.connect(
             lambda where: self.settings.setValue(
                 "reader/markup-tools-at", where))
         self.reader.mark_drawn.connect(self.mark_drawn)
+        # So a gesture in flight is drawn in the colour it will be kept in:
+        # the preview is the mark, before it is a mark.
+        self.reader.canvas.set_mark_styles(self.MARK_KINDS)
         self.reader.canvas.note_edited.connect(self.note_edited)
         self.reader.canvas.marks = self._marks_on_page
         self.reader.field_edited.connect(self.field_edited)
@@ -753,19 +759,33 @@ class MainWindow(QMainWindow):
         A tool nobody has built yet leaves the canvas reading, which is what
         it was doing before. The strip still shows it armed -- the mode is
         set, there is simply nothing behind it.
+
+        The canvas's answer is ignored while this runs, because the canvas
+        cannot distinguish "the strip chose me" from "I disarmed myself". It
+        reports SELECT for both, and without this an unbuilt tool armed the
+        strip, sent the canvas to SELECT, and was told by the canvas to go
+        back to the pointer -- so the tool you picked did not stay picked.
         """
         from .canvas import PageCanvas
 
-        self.reader.canvas.set_tool(
-            self.CANVAS_TOOLS.get(name, PageCanvas.SELECT))
+        self._arming = True
+        try:
+            self.reader.canvas.set_tool(
+                self.CANVAS_TOOLS.get(name, PageCanvas.SELECT))
+        finally:
+            self._arming = False
 
     def _canvas_tool_changed(self, tool: str) -> None:
         """Keep the strip showing what the pointer is actually doing.
 
         The canvas disarms itself when Escape is pressed, so the strip cannot
-        be the only place the choice lives. Only a tool the canvas implements
-        comes back this way, and arming is idempotent, so this cannot loop.
+        be the only place the choice lives. This is for *that* -- a change the
+        canvas made on its own -- and `_tool_armed` shuts it off for the
+        changes the strip asked for, which would otherwise come straight back
+        as an instruction to undo them.
         """
+        if self._arming:
+            return
         for armed, canvas_name in self.CANVAS_TOOLS.items():
             if canvas_name == tool:
                 self.tool_strip.arm(armed)
@@ -815,7 +835,7 @@ class MainWindow(QMainWindow):
         self.model.undo.commit(_("Add Mark"))
         self.model.annotations.add(markup.Annotation(
             subtype, page.uid, rect, colour=colour, quads=quads,
-            author=None))
+            author=markup.default_author()))
         self._mark_added()
         if subtype == markup.TEXT:
             # Straight into the editor. A note with nothing in it is not a
