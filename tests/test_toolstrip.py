@@ -335,5 +335,135 @@ class TestTheStripAndTheCanvasAgree(StripCase):
                 self.assertEqual(self.strip.armed(), tool.name)
 
 
+class TestTheFamilyButtonIsOneTarget(StripCase):
+    """It began as a split button and that is what made it hard to use.
+
+    The icon re-armed the tool last used from the family and a narrow arrow
+    beside it opened the family. Two targets in one 28-pixel button is a
+    target you have to aim at: the arrow's edge is invisible, and missing it
+    armed a tool instead of showing you the choice.
+    """
+
+    def press(self, button, where=None):
+        from PySide6.QtCore import QPoint, QPointF, Qt
+        from PySide6.QtGui import QMouseEvent
+
+        if where is None:
+            where = QPointF(button.width() / 2, button.height() / 2)
+        button.mousePressEvent(QMouseEvent(
+            QMouseEvent.Type.MouseButtonPress, where,
+            button.mapToGlobal(QPoint(int(where.x()), int(where.y()))),
+            Qt.LeftButton, Qt.LeftButton, Qt.NoModifier))
+        settle(timeout_ms=100)
+
+    def setUp(self):
+        super().setUp()
+        # Shown, so the buttons have geometry of their own. Hidden, every one
+        # of them reports the same rectangle and a point maps inside all four
+        # -- which is not a thing that can happen on screen, but is exactly
+        # how a test of "which button is under this point" lies to itself.
+        self.open_strip()
+
+    def tearDown(self):
+        self.strip.close_flyouts()
+        super().tearDown()
+
+    def test_a_press_anywhere_on_it_opens_the_family(self):
+        from PySide6.QtCore import QPointF
+
+        button = self.strip.buttons["drawing"]
+        for x, y, corner in ((1, 1, "top left"),
+                             (button.width() / 2, button.height() / 2,
+                              "middle"),
+                             (button.width() - 2, button.height() - 2,
+                              "bottom right")):
+            with self.subTest(corner=corner):
+                self.strip.close_flyouts()
+                self.press(button, QPointF(x, y))
+                self.assertTrue(button.menu().isVisible())
+
+    def test_it_does_not_offer_a_second_target(self):
+        """`MenuButtonPopup` draws a divider, and a divider is a promise that
+        the two sides of the button do different things."""
+        from PySide6.QtWidgets import QToolButton
+
+        for family, button in self.strip.buttons.items():
+            with self.subTest(family=family):
+                self.assertEqual(button.popupMode(),
+                                 QToolButton.InstantPopup)
+
+    def test_only_one_family_is_open_at_a_time(self):
+        first = self.strip.buttons["text markup"]
+        second = self.strip.buttons["drawing"]
+        self.press(first)
+        self.assertTrue(first.menu().isVisible())
+        second.open_flyout()
+        settle(timeout_ms=100)
+        self.assertFalse(first.menu().isVisible())
+        self.assertTrue(second.menu().isVisible())
+
+    def test_a_press_on_another_family_reaches_it(self):
+        """An open menu grabs the mouse, so without the filter the press that
+        lands on the next family down is swallowed to close the menu and the
+        second family needs a second click.
+
+        What is asserted is the handover -- the press taken, the open family
+        closed, the other one asked to open -- and not that its menu is then
+        on screen. Qt will not raise a second popup while the first is still
+        tearing down under the offscreen platform the suite runs on, though
+        it does on a real one; `test_only_one_family_is_open_at_a_time`
+        covers the showing.
+        """
+        from PySide6.QtCore import QEvent, QPoint, QPointF, Qt
+        from PySide6.QtGui import QMouseEvent
+
+        first = self.strip.buttons["text markup"]
+        second = self.strip.buttons["drawing"]
+        asked = []
+        second.open_flyout = lambda: asked.append(True)
+        self.press(first)
+        self.assertTrue(first.menu().isVisible())
+        middle = QPointF(second.width() / 2, second.height() / 2)
+        onto = second.mapToGlobal(QPoint(int(middle.x()), int(middle.y())))
+        taken = first.eventFilter(first.menu(), QMouseEvent(
+            QEvent.MouseButtonPress, QPointF(onto), QPointF(onto),
+            Qt.LeftButton, Qt.LeftButton, Qt.NoModifier))
+        settle(timeout_ms=100)
+        self.assertTrue(taken, "the menu kept the press")
+        self.assertFalse(first.menu().isVisible())
+        self.assertEqual(asked, [True],
+                         "the other family was never asked to open")
+
+    def test_a_press_on_nothing_in_particular_is_left_alone(self):
+        """Only a press over another family is taken. Anywhere else, the
+        menu does what a menu does."""
+        from PySide6.QtCore import QEvent, QPointF, Qt
+        from PySide6.QtGui import QMouseEvent
+
+        button = self.strip.buttons["drawing"]
+        self.press(button)
+        far = QPointF(self.win.width() + 500, self.win.height() + 500)
+        taken = button.eventFilter(button.menu(), QMouseEvent(
+            QEvent.MouseButtonPress, far, far,
+            Qt.LeftButton, Qt.LeftButton, Qt.NoModifier))
+        self.assertFalse(taken)
+
+    def test_pressing_the_open_family_closes_it(self):
+        from PySide6.QtCore import QEvent, QPoint, QPointF, Qt
+        from PySide6.QtGui import QMouseEvent
+
+        button = self.strip.buttons["drawing"]
+        self.press(button)
+        self.assertTrue(button.menu().isVisible())
+        middle = QPointF(button.width() / 2, button.height() / 2)
+        onto = button.mapToGlobal(QPoint(int(middle.x()), int(middle.y())))
+        taken = button.eventFilter(button.menu(), QMouseEvent(
+            QEvent.MouseButtonPress, QPointF(onto), QPointF(onto),
+            Qt.LeftButton, Qt.LeftButton, Qt.NoModifier))
+        settle(timeout_ms=100)
+        self.assertTrue(taken)
+        self.assertFalse(button.menu().isVisible())
+
+
 if __name__ == "__main__":
     unittest.main()

@@ -489,6 +489,28 @@ class Mark:
         self.state = state
         self.hidden = hidden
 
+    def boxes(self) -> "list[tuple]":
+        """The quadrilaterals as ``(left, bottom, right, top)`` rectangles.
+
+        `/QuadPoints` is eight numbers -- four corners -- and is kept that way
+        above, because that is what the file says and a corner is not ours to
+        throw away. This is the reading of them that drawing and clicking
+        want, and it is the bounding box of each: a quadrilateral may in
+        principle lean, though no producer in the corpus writes one that
+        does, and a box round a leaning one is still the right thing to aim a
+        click at.
+
+        Falls back to `/Rect` for the kinds that have no quadrilaterals, so a
+        caller can ask any mark where it is without asking what kind it is.
+        """
+        found = []
+        for quad in self.quads:
+            if len(quad) < 8:
+                continue
+            xs, ys = quad[0::2], quad[1::2]
+            found.append((min(xs), min(ys), max(xs), max(ys)))
+        return found or [self.rect]
+
     def is_status(self) -> bool:
         return self.state is not None
 

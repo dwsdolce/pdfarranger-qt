@@ -41,6 +41,7 @@ two is how a hit test ends up half a page out on an external monitor.
 
 import bisect
 import collections
+import io
 import math
 import time
 from typing import List, Optional, Sequence, Tuple
@@ -961,6 +962,10 @@ class PageCanvas(QAbstractScrollArea):
     #: undo rebuilds every mark with `duplicate()`, so a reference held across
     #: one points at an annotation the document no longer has.
     note_edited = Signal(int, int, str)
+    #: Whether a mark is selected. The mark itself is not sent: what is
+    #: selected is the canvas's own state and `selected_mark` answers for it,
+    #: while this is what the buttons beside it listen to.
+    mark_selected = Signal(bool)
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -1078,6 +1083,27 @@ class PageCanvas(QAbstractScrollArea):
         #: {tool: (annotation kind, colour)}, pushed in by the window so the
         #: preview is drawn in the colour the finished mark will have.
         self._mark_styles: dict = {}
+        #: The marks the document on screen already carried, for clicking on.
+        #: Read from *that* document rather than from the sources it was made
+        #: from: its pages are the ones being shown, its coordinates are the
+        #: ones drawn in, and no mapping is needed in either direction. The
+        #: price is that nothing read here outlives the next export, which
+        #: costs nothing while selecting changes no data -- and `clear_marks`
+        #: drops it when the document does, exactly as the search hits are
+        #: dropped for the same reason.
+        self._file_marks = markup.MarkMap()
+        #: The three buttons shown beside a selected mark. Built by the
+        #: window, as the tool strip is, and placed from here because only
+        #: the canvas knows where the mark has got to after a scroll.
+        self._mark_buttons = None
+        #: What the pointer is over, as ``(page, mark)``. Outlined like a
+        #: selection but not selected: it says "there is a mark here, and
+        #: this is how far it reaches" before you commit to picking it up.
+        self._hovered = None
+        #: What is selected, as ``(page, mark)``. A mark of the user's is an
+        #: `Annotation`; one of the file's is a `Mark`; both have `rect` and
+        #: `quads`, which is all selection needs of them.
+        self._selected = None
         self.viewport().setMouseTracking(True)
         self.setFrameShape(QFrame.NoFrame)
         self.viewport().setAutoFillBackground(True)
@@ -1136,6 +1162,10 @@ class PageCanvas(QAbstractScrollArea):
         # same buffer rather than a copy of the file, so a second reader of
         # the document on screen costs its parse structures and nothing more.
         self._glyphs.set_document(data)
+        self._selected = None
+        self._hovered = None
+        self._file_marks = (markup.MarkMap.read(io.BytesIO(data)) if data
+                            else markup.MarkMap())
         self._document = document
         self.clear_selection()
         self.clear_caret()
@@ -1285,6 +1315,10 @@ class PageCanvas(QAbstractScrollArea):
             after = QPointF(before.x(), fraction * self._layout.content_size().height())
         self._scroll_so(after, anchor)
         self.viewport().update()
+        # The mark is a different size and in a different place now, and the
+        # bar beside it is neither: it is interface, drawn at one size over
+        # whatever the page has become.
+        self._place_mark_buttons()
 
     def zoom_to_width(self):
         """Fit the width, and keep fitting it as the window changes.
@@ -1598,6 +1632,7 @@ class PageCanvas(QAbstractScrollArea):
         # A window dragged wider under fit-to-width should re-fit rather than
         # keep the old scale, which is why the mode is remembered.
         self._reapply_fit()
+        self._place_mark_buttons()
 
     def _page_arrived(self, index: int):
         """A render finished. Repaint only if it is on screen."""
@@ -2851,6 +2886,130 @@ class PageCanvas(QAbstractScrollArea):
             self._preview = quads
             self.viewport().update()
 
+    #: Subtypes a click can land on. The text markups are areas you can aim
+    #: at; a note is reached by its icon, which `note_at` already answers for.
+    SELECTABLE = ("/Highlight", "/StrikeOut", "/Underline", "/Squiggly")
+
+    def marks_on(self, index: int):
+        """Every mark on a page that a click could be aimed at.
+
+        Both kinds, in the order they are drawn: the document's own first and
+        the user's over them, so that a mark made on top of one that was
+        already there is the one a click finds.
+        """
+        found = [(mark, False) for mark in self._file_marks.visible(index + 1)
+                 if mark.subtype in self.SELECTABLE]
+        if self.marks is not None:
+            try:
+                mine = self.marks(index) or ()
+            except Exception:   # noqa: BLE001 - a click must not raise
+                mine = ()
+            found += [(mark, True) for mark in mine
+                      if mark.kind in self.SELECTABLE]
+        return found
+
+    @staticmethod
+    def mark_boxes(mark):
+        """Where a mark is, as ``(left, bottom, right, top)`` rectangles.
+
+        The one place that knows the two kinds carry their geometry
+        differently: a mark of the user's is an `Annotation` whose quads are
+        already rectangles, while one read out of the file is a `Mark` whose
+        quads are the four corners `/QuadPoints` holds.
+        """
+        if isinstance(mark, markup.Annotation):
+            return list(mark.quads) or [mark.rect]
+        return mark.boxes()
+
+    def mark_at(self, point: QPointF):
+        """The mark under a *viewport* point, or None.
+
+        Last one first, so the topmost is found: marks are drawn in order and
+        the one drawn last is the one a reader sees on top.
+        """
+        index = self.page_at(point)
+        if index is None:
+            return None
+        for mark, is_mine in reversed(self.marks_on(index)):
+            for quad in self.mark_boxes(mark):
+                where = self.quad_on_screen(index, quad, scaled=is_mine)
+                if where is not None and where.contains(point):
+                    return (index, mark)
+        return None
+
+    def selected_mark(self):
+        """``(page, mark)`` for what is selected, or None."""
+        return self._selected
+
+    def set_mark_buttons(self, widget) -> None:
+        """The bar to show beside a selected mark, or None for none."""
+        self._mark_buttons = widget
+        self._place_mark_buttons()
+
+    def _place_mark_buttons(self) -> None:
+        """Put the bar where the mark is now, or take it away.
+
+        Called whenever the mark could have moved under it -- a scroll, a
+        zoom, a resize -- because the bar floats over the viewport and the
+        page underneath does not.
+        """
+        if self._mark_buttons is None:
+            return
+        if self._selected is None:
+            self._mark_buttons.hide()
+            return
+        self._mark_buttons.show_for(self.selection_on_screen())
+
+    def _hover_mark(self, found) -> None:
+        """Note the mark under the pointer, repainting only when it changes.
+
+        A move event arrives for every pixel, and the hit test runs over
+        every quadrilateral on the page -- 180 marks on a page of the markup
+        sample -- so repainting unconditionally would redraw the page
+        continuously while the pointer merely crossed it.
+        """
+        if found == self._hovered:
+            return
+        self._hovered = found
+        self.viewport().update()
+
+    def hovered_mark(self):
+        """``(page, mark)`` for what the pointer is over, or None."""
+        return self._hovered
+
+    def select_mark(self, found) -> None:
+        """Select ``(page, mark)``, or None for nothing."""
+        if found == self._selected:
+            return
+        self._selected = found
+        self.viewport().update()
+        self._place_mark_buttons()
+        self.mark_selected.emit(found is not None)
+
+    def clear_marks(self) -> None:
+        """Forget the document's own marks and anything selected among them."""
+        self._file_marks = markup.MarkMap()
+        self._hovered = None
+        self.select_mark(None)
+
+    def selection_on_screen(self):
+        """The selected mark's quadrilaterals as viewport rectangles.
+
+        Empty when nothing is selected or its page is not laid out. What the
+        border is drawn round and what the buttons are placed against, so
+        that both are measured from one answer.
+        """
+        if self._selected is None:
+            return []
+        index, mark = self._selected
+        is_mine = isinstance(mark, markup.Annotation)
+        found = []
+        for quad in self.mark_boxes(mark):
+            where = self.quad_on_screen(index, quad, scaled=is_mine)
+            if where is not None:
+                found.append(where)
+        return found
+
     def _preview_marks(self, index: int):
         """The gesture in flight, as a mark, so it is drawn like one.
 
@@ -3059,6 +3218,13 @@ class PageCanvas(QAbstractScrollArea):
         """
         position = QPointF(event.position())
 
+        # Under every tool, and before anything else looks at the pointer:
+        # knowing a mark is there does not depend on what you would do to it.
+        # Not while a gesture is running, though -- a drag is making a mark,
+        # and outlining the ones it passes over is noise.
+        self._hover_mark(None if event.buttons() & Qt.LeftButton
+                         else self.mark_at(position))
+
         if self._marking is not None and event.buttons() & Qt.LeftButton:
             self._marking = (self._marking[0], position)
             self.viewport().update()
@@ -3185,6 +3351,22 @@ class PageCanvas(QAbstractScrollArea):
                 # you are not allowed to fill is no reason to refuse a mark on
                 # the page around it.
                 self._marking = (position, position)
+                event.accept()
+                return
+            # A mark under the pointer takes the press, before reading or
+            # marking does. A mark is not the page: clicking one picks it up,
+            # in this reader and in every other, and that is as true with the
+            # highlighter armed as with the pointer -- pressing on a
+            # highlight means *that highlight*, not the start of a second one
+            # over the top of it.
+            #
+            # Not under an area tool, which is the one case where a press
+            # over a mark plausibly means the page beneath it: a rectangle or
+            # an arrow is drawn across whatever happens to be there, so that
+            # branch above has already taken the press.
+            picked = self.mark_at(position)
+            self.select_mark(picked)
+            if picked is not None:
                 event.accept()
                 return
             if self.marks_text():
@@ -3424,6 +3606,14 @@ class PageCanvas(QAbstractScrollArea):
             self._text_mark = None
             self._preview = ()
             self.viewport().update()
+        if key == Qt.Key_Escape and self._selected is not None:
+            # Before the window gets the key: with a mark picked, Escape
+            # means "not that one" rather than "put the pointer back", the
+            # same way it clears a text selection before it does anything
+            # larger.
+            self.select_mark(None)
+            event.accept()
+            return
         if key == Qt.Key_Escape and self.marking():
             # Out of the tool first. Escape with a tool active means "stop
             # marking up", which is what it means in every editor; a selection
@@ -3512,6 +3702,11 @@ class PageCanvas(QAbstractScrollArea):
         bar = self.verticalScrollBar()
         bar.setValue(bar.value() + delta * self.viewport().height())
 
+    def scrollContentsBy(self, dx: int, dy: int):
+        """The page moved under the bar, so the bar moves with it."""
+        super().scrollContentsBy(dx, dy)
+        self._place_mark_buttons()
+
     def wheelEvent(self, event):
         """Ctrl+wheel zooms about the cursor, as the grid does.
 
@@ -3573,6 +3768,9 @@ class PageCanvas(QAbstractScrollArea):
             # asynchronous render worth waiting for.
             self._paint_fields(painter, index, offset, ratio)
             self._paint_marks(painter, index, offset)
+            # Over the marks, not among them: the outline belongs to the
+            # interface and a mark drawn afterwards must not cover it.
+            self._paint_selected(painter, index, offset)
             self._paint_selection(painter, index, offset)
             self._paint_search(painter, index, offset)
         self._paint_caret(painter, offset)
@@ -3595,12 +3793,6 @@ class PageCanvas(QAbstractScrollArea):
         marks += self._preview_marks(index)
         if not marks:
             return
-        box = self.page_box(index)
-        height = self._layout.page_height(index)
-        if box is None or height is None:
-            return
-        zoom = self._layout.zoom
-        page_rect = self._layout.page_rect(index)
         painter.save()
         painter.setPen(Qt.NoPen)
         for mark in marks:
@@ -3609,14 +3801,9 @@ class PageCanvas(QAbstractScrollArea):
                 self._paint_note(painter, index, mark, colour)
                 continue
             for quad in (mark.quads or (mark.rect,)):
-                shown = forms_module.to_displayed(
-                    self.from_source(index, quad), box)
-                where = QRectF(
-                    page_rect.x() + shown[0] * zoom,
-                    page_rect.y() + (height - shown[3]) * zoom,
-                    (shown[2] - shown[0]) * zoom,
-                    (shown[3] - shown[1]) * zoom)
-                where.translate(-offset)
+                where = self.quad_on_screen(index, quad, offset)
+                if where is None:
+                    continue
                 if not where.intersects(QRectF(self.viewport().rect())):
                     continue
                 if mark.kind == markup.STRIKEOUT:
@@ -3633,6 +3820,91 @@ class PageCanvas(QAbstractScrollArea):
                     painter.fillRect(where, colour)
                     painter.restore()
         painter.restore()
+
+    #: The colour a selected mark is outlined in. Acrobat's, so that a
+    #: document marked up here and opened there looks the same when something
+    #: is picked: a blue border round every quadrilateral, not a box round the
+    #: mark as a whole -- a highlight over three lines is outlined three
+    #: times, and the margins between the lines stay outside it.
+    SELECTED = (41, 115, 215)
+
+    #: How thick that outline is, in pixels, and how round its corners are.
+    #: Both are plain dials: nothing downstream depends on either.
+    OUTLINE = 2.5
+    OUTLINE_RADIUS = 3.0
+
+    def _paint_selected(self, painter, index: int, offset: QPointF) -> None:
+        """Outline the mark under the pointer, and the one that is selected.
+
+        **The same outline for both**, which is Acrobat's answer and is the
+        right one: the outline says how far the mark reaches, and that does
+        not change according to whether you have committed to it. A faded
+        version was tried first and reads as a worse selection rather than as
+        a different state.
+
+        What tells the two apart is the bar of buttons, which appears only
+        for the mark that is actually selected.
+
+        The same mark is drawn once when it is both, so two pens do not land
+        on top of each other and come out heavier than either.
+        """
+        marks = [m for m in (self._hovered, self._selected) if m is not None]
+        if len(marks) == 2 and marks[0] == marks[1]:
+            marks.pop()
+        viewport = QRectF(self.viewport().rect())
+        painter.save()
+        painter.setRenderHint(QPainter.Antialiasing, True)
+        painter.setBrush(Qt.NoBrush)
+        pen = QPen(QColor(*self.SELECTED))
+        # A width that does not grow with the zoom: this is a piece of the
+        # interface drawn over the page, not something on the paper.
+        pen.setWidthF(self.OUTLINE)
+        painter.setPen(pen)
+        for where_page, mark in marks:
+            if where_page != index:
+                continue
+            is_mine = isinstance(mark, markup.Annotation)
+            for quad in self.mark_boxes(mark):
+                where = self.quad_on_screen(index, quad, offset,
+                                            scaled=is_mine)
+                if where is None or not where.intersects(viewport):
+                    continue
+                painter.drawRoundedRect(where.adjusted(-1, -1, 1, 1),
+                                        self.OUTLINE_RADIUS,
+                                        self.OUTLINE_RADIUS)
+        painter.restore()
+
+    def quad_on_screen(self, index: int, quad, offset=None, scaled=True):
+        """One of a mark's quadrilaterals as a viewport rectangle, or None.
+
+        ``scaled`` says which space the quadrilateral arrived in, and it is
+        not a detail: a mark the *user* made is kept in the source page's
+        space and has to be multiplied by the page's resize, while a mark read
+        out of the document on screen is already in that document's space --
+        it went through the resize when the export was made. Putting the one
+        through the other's path moves it by the resize factor, which is
+        invisible at 100% and wrong everywhere else.
+
+        Drawing and hit-testing share this so that what a click lands on is
+        measured the same way as what was drawn. Factored out when selection
+        arrived, because a second copy of this arithmetic is a second place
+        for the two to disagree -- which is the mistake the drag's feedback
+        had already made once.
+        """
+        box = self.page_box(index)
+        height = self._layout.page_height(index)
+        if box is None or height is None:
+            return None
+        zoom = self._layout.zoom
+        page_rect = self._layout.page_rect(index)
+        shown = forms_module.to_displayed(
+            self.from_source(index, quad) if scaled else tuple(quad), box)
+        where = QRectF(page_rect.x() + shown[0] * zoom,
+                       page_rect.y() + (height - shown[3]) * zoom,
+                       (shown[2] - shown[0]) * zoom,
+                       (shown[3] - shown[1]) * zoom)
+        where.translate(-(self.offset() if offset is None else offset))
+        return where
 
     def _paint_note(self, painter, index: int, mark, colour) -> None:
         """Draw a sticky note's icon: a balloon, at a size the zoom sets.

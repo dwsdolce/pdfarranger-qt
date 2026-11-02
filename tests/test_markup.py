@@ -462,6 +462,58 @@ class TestAMarkIsWrittenWithTheKeysAReaderExpects(unittest.TestCase):
         self.assertEqual(str(entry["/Contents"]), "a note")
 
 
+class TestWhereAMarkTheFileBroughtIs(unittest.TestCase):
+    """`Mark.quads` is not `Annotation.quads`, and that cost a gesture.
+
+    `/QuadPoints` is four corners -- eight numbers -- and a `Mark` keeps them
+    that way, because that is what the file says. An `Annotation` holds
+    rectangles, because that is what this application makes. The first hit
+    test treated the two alike and produced quadrilaterals of zero height,
+    so nothing on any page was clickable and nothing said why.
+    """
+
+    def a_mark(self, **kwargs):
+        from pdfarranger_qt.markup import Mark
+
+        fields = dict(page=1, subtype="/Highlight", rect=(10, 20, 110, 40))
+        fields.update(kwargs)
+        return Mark(**fields)
+
+    def test_four_corners_become_one_rectangle(self):
+        # Upper-left, upper-right, lower-left, lower-right, as readers write
+        # them -- and deliberately not in corner order, because the reading
+        # must not depend on which corner comes first.
+        mark = self.a_mark(quads=[(10, 40, 110, 40, 10, 20, 110, 20)])
+        self.assertEqual(mark.boxes(), [(10, 20, 110, 40)])
+
+    def test_every_quadrilateral_is_read(self):
+        mark = self.a_mark(quads=[(0, 10, 50, 10, 0, 0, 50, 0),
+                                  (0, 30, 80, 30, 0, 20, 80, 20)])
+        self.assertEqual(mark.boxes(), [(0, 0, 50, 10), (0, 20, 80, 30)])
+
+    def test_a_leaning_quadrilateral_gives_the_box_round_it(self):
+        """No producer in the corpus writes one, and a box round it is still
+        the right thing to aim a click at."""
+        mark = self.a_mark(quads=[(12, 42, 110, 38, 10, 22, 108, 18)])
+        self.assertEqual(mark.boxes(), [(10, 18, 110, 42)])
+
+    def test_a_mark_with_no_quadrilaterals_falls_back_to_its_rectangle(self):
+        """So a caller can ask any mark where it is without first asking
+        what kind it is: a note and a stamp have no quadrilaterals at all."""
+        self.assertEqual(self.a_mark(subtype="/Text").boxes(),
+                         [(10, 20, 110, 40)])
+
+    def test_the_two_kinds_are_read_by_one_piece_of_code(self):
+        from pdfarranger_qt import markup
+        from pdfarranger_qt.canvas import PageCanvas
+
+        mine = markup.Annotation(markup.HIGHLIGHT, 1, (10, 20, 110, 40),
+                                 quads=[(10, 20, 110, 40)])
+        theirs = self.a_mark(quads=[(10, 40, 110, 40, 10, 20, 110, 20)])
+        self.assertEqual(PageCanvas.mark_boxes(mine),
+                         PageCanvas.mark_boxes(theirs))
+
+
 if __name__ == "__main__":
     unittest.main()
 

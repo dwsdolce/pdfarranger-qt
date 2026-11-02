@@ -628,10 +628,21 @@ Each step is usable before the next, and each tells the next what it needs.
    mark with the keys a reader expects came out of the same session and is
    decision 10.
 3. **Select an existing one**, including a mark the file brought, which is
-   the first thing the uid table buys. This is where the selected-mark
-   border belongs: Acrobat draws one round each quadrilateral, and drawing
-   it needs a hit test, a selected-mark state and the rules for leaving it,
-   which is this step and not a decoration that can be added before it.
+   the first thing the uid table buys. The selected-mark border belongs
+   here: Acrobat draws one round each quadrilateral, and drawing it needs a
+   hit test, a selected-mark state and the rules for leaving it.
+   **done 2026-11-02**
+
+   Clicking a mark picks it up under the pointer and under any text-markup
+   tool -- pressing on a highlight with the highlighter armed means *that
+   highlight*, not the start of a second one over it. The area tools keep
+   the press, because a rectangle or an arrow is drawn across whatever is
+   underneath. Escape and a click on bare paper let go.
+
+   The outline also appears when the pointer is merely over a mark, under
+   every tool, which is decision 13. The three buttons beside a selected
+   mark are drawn and disabled; each is turned on by the step that builds
+   it, which is decision 14.
 4. **Colour and opacity**, which is where our appearance replaces the one
    Acrobat wrote: an `/AP` that still draws the old colour is worse than one
    we generated.
@@ -1129,6 +1140,86 @@ Where the quadrilaterals break is in `textlayer`, with the measurements that
 settled each rule. One consequence is visible: because only the armed page's
 glyphs are loaded, the gesture stops at the page edge, which is what Acrobat
 does for a highlight and the opposite of what it does for a selection.
+
+
+**12. A mark is hit-tested against the document on screen, not correlated
+back to the source.** The reader shows an export snapshot, and the canvas
+already holds it as bytes for the render thread. Its annotations are in the
+coordinates being drawn in, on the page indices being shown, so clicking one
+needs no mapping in either direction -- `markup.MarkMap`, which had been
+built and left without a caller, is pointed at those bytes.
+
+The alternative was to read the *sources* and map back: a page-index to
+`(nfile, npage)` table pushed into the canvas, a cached map per source
+document, and the inverse of every transform export applies. Measured, the
+two things that would have made it work do not. Only 43.1% of the markup
+annotations across the fixtures and corpus carry a `/NM` of their own -- 128
+of 297 -- so a name cannot be the key. Position does survive an export, with
+count and order identical on all four pages of the markup sample, but that
+is a 1:1 export: nothing shows it holds when `_strip_signatures` drops a
+widget, and a duplicated page maps two output pages onto one source page,
+which is the case `test_structure` already names as impossible to answer.
+
+What makes the cheap answer correct is that **selecting changes no data**.
+Nothing read from the snapshot has to outlive it, and when the document
+changes the selection should go anyway -- the canvas already drops its
+search hits on `contents_changed` for the same reason. The correlation is
+not avoided, it is deferred to the step that first *edits* a mark the file
+brought, which is the same ownership question step 4 has to answer whatever
+is decided here.
+
+**13. The outline is the same whether a mark is hovered or selected.**
+Acrobat draws one outline, and passing the pointer over a mark draws it
+exactly as picking the mark up does. The outline answers "how far does this
+mark reach", and that does not change according to whether you have
+committed to it.
+
+A faded version of it was tried first, on the reasoning that hovering is the
+lesser state and should look lesser. Measured against Acrobat's own, ours
+came out paler *and* wider -- a dominant (144, 176, 224) in 4 to 5 pixel
+strokes against Acrobat's (32, 112, 192) in one -- and it read as a worse
+selection rather than as a different thing. What distinguishes the two
+states is the bar of buttons, which appears only for the mark that is
+selected.
+
+**14. The buttons beside a selected mark are drawn before they act.** Three
+of them, as Acrobat shows: add a comment, a colour swatch, delete. Each
+belongs to a later step -- the comment to the note work, the swatch to
+colour and opacity, delete to the step that has to take a mark's status
+chain and its replies with it -- so each is drawn and disabled, and the step
+that builds one turns its own on.
+
+Drawn now rather than added later because the bar is the feedback that tells
+a selected mark from a hovered one under decision 13, so the selection is
+not finished without it. A button that acted before its step existed would
+be a second, half-built way into work that step has to do properly.
+
+**15. The family buttons open their family from anywhere on the button.**
+They began as split buttons -- the icon re-arming the tool last used from
+that family, a narrow arrow beside it opening the family -- which is what
+Reader does. Two targets in one 28-pixel button is a target you have to aim
+at: the arrow is a few pixels wide, its edge is invisible, and missing it
+arms a tool instead of showing you the choice.
+
+So the whole button does the one thing, and the tool it would have re-armed
+is the one already ticked when the family opens. Three consequences follow.
+The popup mode is `InstantPopup`, because the divider a split button draws
+is a promise that its two halves differ. Qt's menu indicator is painted out
+and a small filled triangle drawn into the bottom right corner instead,
+which is the mark Acrobat puts there. And the button filters events on its
+own menu, so that a press landing on another family reaches *that* family:
+an open menu grabs the mouse, and without this the press was swallowed to
+close the menu and the next family needed a second click. Reacting after
+the menu closed was tried and is too late twice over -- the click is spent,
+and the release from it dismisses whatever the handler opened.
+
+**16. A stamp is placed, not dragged out.** It has a size of its own, like a
+sticky note's icon, so the gesture supplies a corner and nothing else. When
+it is built it belongs in `PageCanvas.POINT_TOOLS` beside the note, and not
+with the area tools -- which also means a press over a mark does not belong
+to it, because there is no region being drawn across the mark. Its place in
+the Drawing *family* is about where it sits in the strip, which is a
+different question from what its gesture is.
 
 
 ## Done

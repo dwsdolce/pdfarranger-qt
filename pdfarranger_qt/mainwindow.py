@@ -91,7 +91,7 @@ from .recent import RecentFiles
 from .render import Renderer
 from .search import SearchIndex
 from .settings import app_settings
-from .toolstrip import ToolStrip
+from .toolstrip import MarkButtons, ToolStrip
 from .view import PageView
 
 PDF_FILTER = "PDF files (*.pdf)"
@@ -149,6 +149,13 @@ class MainWindow(QMainWindow):
         # So a gesture in flight is drawn in the colour it will be kept in:
         # the preview is the mark, before it is a mark.
         self.reader.canvas.set_mark_styles(self.MARK_KINDS)
+        #: What you can do to the mark that is selected. A child of the
+        #: viewport rather than of the reader, because it is placed from the
+        #: rectangles the canvas reports and those are in viewport
+        #: coordinates. None of its three buttons acts yet; each is turned on
+        #: by the step that builds it.
+        self.mark_buttons = MarkButtons(self.reader.canvas.viewport())
+        self.reader.canvas.set_mark_buttons(self.mark_buttons)
         self.reader.canvas.note_edited.connect(self.note_edited)
         self.reader.canvas.marks = self._marks_on_page
         self.reader.field_edited.connect(self.field_edited)

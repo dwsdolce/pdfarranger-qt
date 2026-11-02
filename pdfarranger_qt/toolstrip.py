@@ -36,7 +36,7 @@ from typing import Dict, Optional
 
 import qtawesome as qta
 from PySide6.QtCore import QEvent, QPoint, QPointF, Qt, Signal
-from PySide6.QtGui import QAction, QActionGroup, QPainter
+from PySide6.QtGui import QAction, QActionGroup, QPainter, QPolygonF
 from PySide6.QtWidgets import (
     QFrame,
     QHBoxLayout,
@@ -44,12 +44,14 @@ from PySide6.QtWidgets import (
     QSizePolicy,
     QStyle,
     QStyleOptionToolButton,
+    QStylePainter,
     QToolButton,
     QVBoxLayout,
     QWidget,
 )
 
 from . import tools
+from .i18n import N_
 from .i18n import gettext_ as _
 
 #: Where the glyphs come from. Material Design Icons, as qtawesome names them.
@@ -75,19 +77,30 @@ def icon_for(name: str, colour):
 class FamilyButton(QToolButton):
     """One family, as a split button.
 
-    The button carries the icon of the tool last used in that family and
-    re-arms it; the arrow beside it opens the family with a tick on the
-    current choice. Read off Reader, which is the only shipping answer to
-    "how do twenty tools fit in a row".
+    The button carries the icon of the tool last used in that family, and
+    pressing it anywhere opens the family with a tick on the current choice.
+
+    It began as a split button, with the icon re-arming the remembered tool
+    and a narrow arrow beside it opening the family -- which is what Reader
+    does, and Reader is the only shipping answer to "how do twenty tools fit
+    in a row". Two targets in one button is a target you have to aim at: the
+    arrow is a few pixels wide, you cannot see where it ends, and missing it
+    arms a tool instead of showing you the choice. So the whole button does
+    the one thing, and the remembered tool is the one already ticked when the
+    family opens.
     """
 
     def __init__(self, family: str, parent=None):
         super().__init__(parent)
         self.family = family
-        self.setPopupMode(QToolButton.MenuButtonPopup)
+        # No separate arrow section: the style draws a split button with a
+        # divider when the popup is a MenuButtonPopup, and a divider is a
+        # promise that the two sides do different things.
+        self.setPopupMode(QToolButton.InstantPopup)
         self.setToolButtonStyle(Qt.ToolButtonIconOnly)
         self.setAutoRaise(True)
         self._menu = QMenu(self)
+        self._menu.installEventFilter(self)
         self.setMenu(self._menu)
         self.actions_by_tool: Dict[str, QAction] = {}
 
@@ -97,23 +110,58 @@ class FamilyButton(QToolButton):
         if self.defaultAction() is None:
             self.setDefaultAction(action)
 
-    def _arrow_rect(self):
-        """Where the style put the menu arrow, which is what opens the flyout."""
+    #: How big the corner triangle is, as a fraction of the button's shorter
+    #: side. Acrobat's is a few pixels on a button of this size: enough to
+    #: say "there is more here", small enough that the tool's own glyph is
+    #: still what you read.
+    CORNER = 0.22
+
+    def paintEvent(self, _event):
+        """Draw the button, with a corner mark rather than Qt's arrow.
+
+        Qt marks a button that has a menu with an arrow of its own. On a
+        split button that arrow earned its place by showing you the second
+        target to aim at; with the whole button opening the family there is
+        no second target, and at this size it reads as a shape stuck to the
+        tool's glyph rather than as a sign.
+
+        So the style's indicator is stripped and a small filled triangle is
+        drawn into the bottom right corner instead, which is what Acrobat
+        puts there. In the same colour as the glyph above it, armed or not,
+        because it belongs to the icon and not to the background.
+        """
         option = QStyleOptionToolButton()
         self.initStyleOption(option)
-        return self.style().subControlRect(
-            QStyle.CC_ToolButton, option, QStyle.SC_ToolButtonMenu, self)
+        option.features &= ~QStyleOptionToolButton.HasMenu
+        option.subControls &= ~QStyle.SC_ToolButtonMenu
+        painter = QStylePainter(self)
+        painter.drawComplexControl(QStyle.CC_ToolButton, option)
+        if not self.actions_by_tool:
+            return
+        palette = self.palette()
+        colour = (palette.highlightedText().color() if self.isChecked()
+                  else palette.buttonText().color())
+        size = max(4.0, min(self.width(), self.height()) * self.CORNER)
+        right, bottom = self.width() - 2.0, self.height() - 2.0
+        corner = QPolygonF([QPointF(right, bottom - size),
+                            QPointF(right, bottom),
+                            QPointF(right - size, bottom)])
+        painter.save()
+        painter.setRenderHint(QPainter.Antialiasing, True)
+        painter.setPen(Qt.NoPen)
+        painter.setBrush(colour)
+        painter.drawPolygon(corner)
+        painter.restore()
 
     def mousePressEvent(self, event):
-        """Open the flyout ourselves when the arrow is pressed.
+        """Open the flyout ourselves, wherever on the button the press landed.
 
         `showMenu` is not virtual, so overriding it does nothing: Qt's own
         implementation runs and places the menu under the button, on top of
         the families below it. Catching the press before Qt sees it is the
         only way to choose where the menu goes.
         """
-        if (event.button() == Qt.LeftButton
-                and self._arrow_rect().contains(event.position().toPoint())):
+        if event.button() == Qt.LeftButton:
             self.open_flyout()
             event.accept()
             return
@@ -130,9 +178,42 @@ class FamilyButton(QToolButton):
         if strip is None:
             self._menu.popup(self.mapToGlobal(self.rect().topRight()))
             return
+        strip.close_flyouts(self)
         top = self.mapToGlobal(self.rect().topLeft()).y()
         right = strip.mapToGlobal(strip.rect().topRight()).x()
         self._menu.popup(QPoint(right + GAP, top))
+
+    def eventFilter(self, watched, event):
+        """Let a press on another family reach that family.
+
+        An open menu grabs the mouse, so the press that lands on the next
+        family down never arrives at that button: the menu takes it, closes
+        itself, and the second family needs a second click. Moving between
+        families with one press each is what a row of menus does everywhere.
+
+        Watching the *menu* rather than reacting once it has closed, because
+        by then the click is spent -- and a menu opened from `aboutToHide` is
+        dismissed a moment later by the release of the very click that opened
+        it. Taking the press here consumes it, so there is no release to
+        arrive at a menu that never saw the press.
+
+        Pressing the family that is already open closes it, which is what a
+        button that opens a menu does.
+        """
+        if watched is self._menu and event.type() == QEvent.MouseButtonPress:
+            strip = self.parentWidget()
+            where = event.globalPosition().toPoint()
+            if self.rect().contains(self.mapFromGlobal(where)):
+                self._menu.close()
+                return True
+            for button in (strip.buttons.values() if strip else ()):
+                if button is self:
+                    continue
+                if button.rect().contains(button.mapFromGlobal(where)):
+                    self._menu.close()
+                    button.open_flyout()
+                    return True
+        return super().eventFilter(watched, event)
 
 
 class Grip(QWidget):
@@ -346,6 +427,16 @@ class ToolStrip(QFrame):
         """Which tool is armed. Never empty: Select is a tool like any other."""
         return self._armed
 
+    def close_flyouts(self, keep=None) -> None:
+        """Close every family's flyout but ``keep``'s.
+
+        One family open at a time: two of them side by side say that both are
+        in play, and the whole point of the strip is that exactly one tool is.
+        """
+        for button in self.buttons.values():
+            if button is not keep and button.menu().isVisible():
+                button.menu().close()
+
     def arm(self, name: str) -> None:
         """Arm a tool, and leave it armed.
 
@@ -414,3 +505,96 @@ class ToolStrip(QFrame):
         if watched is self.parentWidget() and event.type() == QEvent.Resize:
             self.move(self.clamped(self.pos()))
         return super().eventFilter(watched, event)
+
+
+class MarkButtons(QWidget):
+    """The three things you can do to the mark that is selected.
+
+    Acrobat shows these the moment a highlight is picked: add a comment, a
+    colour swatch, and delete. A small bar floating beside the mark rather
+    than a menu you go looking for, because the mark is already under the
+    pointer -- the right-click menu and the properties form are the long way
+    round to the same places and arrive at their own steps.
+
+    **None of the three does anything yet.** Each belongs to a later step --
+    the comment to the note work, the swatch to colour and opacity, delete to
+    the step that has to take a mark's status chain and replies with it --
+    and a button that acts before that step exists would be a second,
+    half-built way in. They are drawn, they are disabled, and the step that
+    builds each one turns its own on.
+    """
+
+    #: Air between the mark and the bar, in pixels.
+    CLEARANCE = 8
+
+    #: What each button is, in the order Acrobat shows them.
+    BUTTONS = (
+        ("comment", "comment-plus-outline", N_("Add a comment")),
+        ("colour", "palette-outline", N_("Colour")),
+        ("delete", "trash-can-outline", N_("Delete")),
+    )
+
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.setAutoFillBackground(True)
+        self.setFocusPolicy(Qt.NoFocus)
+        # A tool window so it floats over the page without taking focus from
+        # the canvas, which still has to answer Escape and the arrow keys.
+        layout = QHBoxLayout(self)
+        layout.setContentsMargins(4, 4, 4, 4)
+        layout.setSpacing(2)
+        self.buttons: Dict[str, QToolButton] = {}
+        for name, _glyph, label in self.BUTTONS:
+            button = QToolButton(self)
+            button.setAutoRaise(True)
+            button.setFocusPolicy(Qt.NoFocus)
+            button.setEnabled(False)
+            button.setProperty("mark_action", name)
+            button.setToolTip(_(label))
+            layout.addWidget(button)
+            self.buttons[name] = button
+        self._restyle()
+        self.hide()
+
+    def _restyle(self) -> None:
+        colour = self.palette().buttonText().color()
+        for name, glyph, _label in self.BUTTONS:
+            self.buttons[name].setIcon(icon_for(glyph, colour))
+
+    def retranslate(self) -> None:
+        for name, _glyph, label in self.BUTTONS:
+            self.buttons[name].setToolTip(_(label))
+
+    def changeEvent(self, event):
+        """The same two events the strip rebuilds for, for the same reasons."""
+        if event.type() == QEvent.PaletteChange:
+            self._restyle()
+        elif event.type() == QEvent.LanguageChange:
+            self.retranslate()
+        super().changeEvent(event)
+
+    def show_for(self, rects) -> None:
+        """Put the bar beside the rectangles a selected mark covers.
+
+        Above the topmost one, which is where Acrobat puts it, and below the
+        mark instead when there is no room above -- a bar off the top of the
+        viewport is a bar nobody can press. Held inside the viewport
+        horizontally for the same reason.
+        """
+        if not rects:
+            self.hide()
+            return
+        self.adjustSize()
+        top = min(rects, key=lambda r: r.top())
+        left = int(top.center().x() - self.width() / 2)
+        above = int(top.top() - self.height() - self.CLEARANCE)
+        below = int(max(r.bottom() for r in rects) + self.CLEARANCE)
+        where = self.parentWidget().rect() if self.parentWidget() else None
+        if above < 0:
+            above = below
+        if where is not None:
+            left = max(0, min(left, where.width() - self.width()))
+            above = max(0, min(above, where.height() - self.height()))
+        self.move(left, above)
+        self.show()
+        self.raise_()
