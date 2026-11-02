@@ -2,8 +2,8 @@
 
     tools/bench_export.py <file.pdf>
 
-D15 has the reader showing an export of the edited page list rather than the
-source, rebuilt whenever the snapshot goes stale, so entering read mode pays for
+The reader shows an export of the edited page list rather than the source,
+rebuilt whenever the snapshot goes stale, so entering read mode pays for
 a whole document before it draws a page. tools/bench_render.py measures the
 drawing; this measures getting the document.
 

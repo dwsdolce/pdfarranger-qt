@@ -112,7 +112,7 @@ class TestDoctests(unittest.TestCase):
 
 
 class TestPageIdentity(unittest.TestCase):
-    """A page keeps an identity that survives editing (D20).
+    """A page keeps an identity that survives editing.
 
     Bookmarks need something to point at. Not the index, which every reorder
     invalidates; not the object, because UndoManager.snapshot rebuilds the whole

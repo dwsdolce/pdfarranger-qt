@@ -72,6 +72,15 @@ jobs:
       - name: Compile the message catalogues
         run: python tools/build_mo.py
 
+      # Documentation hygiene, and the rule that the source never refers to
+      # the documentation tree. A tool rather than a test, because a test that
+      # reads that tree is a test that depends on it -- and the whole point is
+      # that deleting the tree changes nothing about the application or the
+      # suite. Runs before the suite so a stale reference is reported in
+      # seconds rather than after eleven minutes.
+      - name: Check the documentation
+        run: python tools/check_docs.py
+
       # The gate the first version of this workflow deliberately left out,
       # because `ruff check` reported 108 findings and starting red teaches
       # nobody anything. Those are cleaned up now -- 98 mechanically, ten by

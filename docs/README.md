@@ -42,6 +42,7 @@ number at the top and moves to `completed/` when the Issue closes.
 | [completed/PDF24-COMPARISON.md](completed/PDF24-COMPARISON.md) | **Complete** — every tool from PDF24's list judged worth having is built. Scored against its live menus; eight features came out of it. |
 | [completed/COMPRESSION.md](completed/COMPRESSION.md) | **Complete** — [Issue #8](https://github.com/dwsdolce/pdfarranger-qt/issues/8) is closed. What PDF24, Acrobat and Ghostscript offer, the measurements that set the defaults, and what compressing a real 1,590-page book actually did. |
 | [completed/I18N.md](completed/I18N.md) | **Complete** — the [Internationalisation milestone](https://github.com/dwsdolce/pdfarranger-qt/milestone/1) is closed. The translated interface that was not one, and what filling 33 catalogues took. |
+| [MARKUP.md](MARKUP.md) | **Open** — [Issue #16](https://github.com/dwsdolce/pdfarranger-qt/issues/16). Making a mark, changing one that is already there, and losing nothing on the way. The twenty tools and the strip they live in, what each one writes, the popup note and the properties form, and the plan that takes them one at a time. |
 | [ANNOTATIONS.md](ANNOTATIONS.md) | **Open** — [Issue #14](https://github.com/dwsdolce/pdfarranger-qt/issues/14). A filled form that displayed blank. Why no annotation is drawn, why form fields need more than a render flag, what saving one costs, and the decisions that put showing and authoring them in scope. |
 
 ## Where to put a new thing

@@ -17,8 +17,8 @@
 """Where the reader's pages sit, and how to get between the two coordinate
 spaces they live in.
 
-Phase 7 step 1. `QPdfView` exposes neither text selection nor link following
-(D16), and both need to turn a point on screen into a point on a page. So does
+Phase 7 step 1. `QPdfView` exposes neither text selection nor link
+following, and both need to turn a point on screen into a point on a page. So does
 scrolling to a bookmark, and so does drawing a search highlight. This is that
 mapping, kept apart from the widget that will paint it because it is pure
 arithmetic and worth testing as such.
@@ -636,7 +636,7 @@ class PageRenderTask:
     """One page of the reader's document at one size.
 
     No angle, crop or hide: the reader shows an export with the edits already
-    applied (D15), so there is nothing left to apply. That asymmetry with the
+    applied, so there is nothing left to apply. That asymmetry with the
     grid's RenderTask is why the worker asks the *task* to render itself.
     """
 
@@ -921,8 +921,8 @@ class PageCanvas(QAbstractScrollArea):
     """The reader's page view: a scrolling column that we own.
 
     Phase 7 step 1. Replaces `QPdfView`, which is a closed widget exposing
-    neither selection nor links (D16) and no way to control what it caches. The
-    engine underneath is unchanged (D18) -- this is a widget, not a renderer.
+    neither selection nor links and no way to control what it caches. The
+    engine underneath is unchanged -- this is a widget, not a renderer.
 
     Everything here is a thin layer over `PageLayout`. The widget's job is to
     turn a scroll position into a band of document pixels, ask the layout which
@@ -1000,7 +1000,8 @@ class PageCanvas(QAbstractScrollArea):
         #: ``(start, current)`` in viewport points while a mark is being drawn.
         self._marking = None
         #: One `forms.displayed_box` per page, for placing a mark. Plain data
-        #: and separate from the field map, for the reason given in D7.
+        #: and separate from the field map, because a page with no widgets
+        #: still has a box and a mark can be placed on it.
         self._boxes = []
         #: One resize factor per page, for the same reason and from a
         #: different place: the boxes come from the document being shown, and
@@ -2695,7 +2696,7 @@ class PageCanvas(QAbstractScrollArea):
     def set_page_boxes(self, boxes) -> None:
         """The laid-out box of every page, for placing a mark.
 
-        Plain data, kept here rather than reached through the field map (D7):
+        Plain data, kept here rather than reached through the field map:
         a page with no widgets still needs its box, and closing the field map
         must not take the geometry with it.
         """
@@ -2710,7 +2711,7 @@ class PageCanvas(QAbstractScrollArea):
     def set_page_scales(self, scales) -> None:
         """The resize factor of every page, as the page list holds it.
 
-        A mark lives in the *source* page's space (D6) and the document on
+        A mark lives in the *source* page's space and the document on
         screen is an export with every resize already applied, so this is the
         one number that cannot be read back out of what is being shown. The
         page list is the only thing that still knows it, which is why it is
@@ -2735,9 +2736,10 @@ class PageCanvas(QAbstractScrollArea):
         Why source space rather than the space the canvas hands back, which
         would need no arithmetic at all: a mark stored in output coordinates
         moves the next time its page is resized, because the space it was
-        measured in is gone. D6 chose this and then went uncoded -- a note on
-        a page later scaled by half was written at its old coordinates onto
-        paper half the size, which is off the page entirely.
+        measured in is gone. Keeping the mark in source space was settled
+        early and then went uncoded for a while -- a note on a page later
+        scaled by half was written at its old coordinates onto paper half the
+        size, which is off the page entirely.
         """
         scale = self.page_scale(index)
         if scale == 1.0:
@@ -2754,7 +2756,7 @@ class PageCanvas(QAbstractScrollArea):
     def mark_rect(self, start: QPointF, end: QPointF):
         """Two *viewport* points to ``(page, rect)`` in the page's own space.
 
-        The rectangle a mark is stored with (D6). Three frames are crossed on
+        The rectangle a mark is stored with. Three frames are crossed on
         the way: viewport pixels to document pixels, document pixels to the
         laid-out page's frame -- which runs *down* from the top left, where a
         PDF rectangle runs up from the bottom -- and then back through the

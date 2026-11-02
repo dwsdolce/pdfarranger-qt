@@ -472,7 +472,7 @@ class PageView(QListView):
     def _escalate_to_system_drag(self):
         """Convert the in-window gesture into a QDrag carrying the pages.
 
-        The hand-rolled gesture (D9) owns reordering inside the viewport, where
+        The hand-rolled gesture owns reordering inside the viewport, where
         it can draw an insertion caret. Once the pointer leaves, only a real
         system drag can reach another window, so the two are chained rather than
         chosen between.

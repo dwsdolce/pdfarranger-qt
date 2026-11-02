@@ -14,10 +14,10 @@
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-"""Read mode: a continuous-scroll page view (D14).
+"""Read mode: a continuous-scroll page view.
 
 Not an editor. Nothing here touches the page list -- it renders a snapshot of
-it, so what you read is what you would get if you saved (D15).
+it, so what you read is what you would get if you saved.
 
 Why a snapshot and not the renderer's own ``QPdfDocument``: a ``Page`` in this
 port is a *reference* into an immutable temp copy plus geometry -- angle, scale,
@@ -112,9 +112,9 @@ class ReaderView(QWidget):
 
     Was a `QPdfView`, which did continuous scroll, the zoom modes, navigation
     and search highlighting -- and nothing else. Text selection, link following
-    and facing pages are not exposed by it at all (D16), and neither is any
+    and facing pages are not exposed by it at all, and neither is any
     control over what it renders or caches, so phase 7 replaced it with a view
-    of our own. The engine is unchanged (D18): this swapped the widget, not the
+    of our own. The engine is unchanged: this swapped the widget, not the
     renderer.
 
     Still deliberately thin. The canvas owns the geometry and the painting; this
@@ -135,7 +135,7 @@ class ReaderView(QWidget):
     #: A bookmark command is about to change the outline; the argument labels
     #: the undo entry. The window snapshots on this, because it owns the undo
     #: stack -- the outline shares the page list's history rather than keeping
-    #: one of its own (D20).
+    #: one of its own.
     outline_edit_begun = Signal(str)
     #: The outline changed, so the document is modified.
     outline_edited = Signal()
@@ -168,7 +168,7 @@ class ReaderView(QWidget):
         self.canvas.set_search_model(self.search_model)
 
         # Ours, not QPdfBookmarkModel: that reads whatever document the reader
-        # is showing and cannot be edited (D20).
+        # is showing and cannot be edited.
         self.bookmarks = OutlineModel(self)
         #: Given a page uid, where that page is *now*. Set by the window, which
         #: is the only thing that knows the page list. Without it a bookmark
@@ -246,7 +246,7 @@ class ReaderView(QWidget):
 
     def load(self, pages, files, source_names=None, source=None,
              forms_present=False) -> bool:
-        """Render ``pages`` to an in-memory PDF and show it (D15).
+        """Render ``pages`` to an in-memory PDF and show it.
 
         Returns False if the export or the load failed, leaving whatever was
         showing in place rather than blanking the view.
@@ -266,15 +266,16 @@ class ReaderView(QWidget):
         """
         pages = list(pages)
         # The page list is the only thing that knows what each page was
-        # resized by; the document being shown has it applied already. D6's
-        # other half, pushed to the canvas beside the boxes.
+        # resized by; the document being shown has it applied already. The
+        # other half of keeping a mark in source space, pushed to the canvas
+        # beside the boxes.
         scales = [row.scale for row in pages]
         if source is not None and self._load_source(
                 *source, sizes=_sizes_of(pages)):
             self.canvas.set_page_scales(scales)
             return True
         try:
-            # No outlines: the sidebar reads the document's own tree (D20), not
+            # No outlines: the sidebar reads the document's own tree, not
             # this export's, so building one here is work thrown away on every
             # mode switch -- and on a 1590 page book that is not free.
             data = get_in_memory_pdf(list(pages), files,
@@ -345,7 +346,7 @@ class ReaderView(QWidget):
         fields, boxes = (forms_module.read_document(data) if data
                          else (None, []))
         self.canvas.set_field_map(fields)
-        # Beside the map, not through it (D7): a page with no widgets still
+        # Beside the map, not through it: a page with no widgets still
         # needs its box to place a mark on.
         self.canvas.set_page_boxes(boxes)
         self.canvas.set_document(document.document, data, sizes)
@@ -580,7 +581,7 @@ class ReaderView(QWidget):
     #
     # The commands mutate the outline through the model, which snapshots first
     # by way of `outline_edit_begun`. Nothing here touches undo itself: the
-    # outline rides the page list's stack (D20), and that stack belongs to the
+    # outline rides the page list's stack, and that stack belongs to the
     # window.
 
     def current_uid(self):
@@ -912,7 +913,7 @@ class ReaderView(QWidget):
 
 
 class OutlineModel(QAbstractItemModel):
-    """A tree over the document's own `Outline` (D20).
+    """A tree over the document's own `Outline`.
 
     Replaces `QPdfBookmarkModel`, which reads whatever document the reader
     happens to be showing and cannot be edited. This one is a view of the

@@ -180,7 +180,8 @@ class TestTheReaderShowsThem(unittest.TestCase):
         return win
 
     def test_an_unmodified_form_is_read_from_the_working_copy(self):
-        """D19's fast path, pointed at the document as it really is.
+        """The fast path that opens the source file directly for read mode,
+        pointed at the document as it really is.
 
         It used to hand over the rewritten copy, because the page renderer
         would draw no field otherwise. The reader draws them itself now, over
@@ -202,7 +203,7 @@ class TestTheReaderShowsThem(unittest.TestCase):
         self.assertEqual(len(fields), 1)
 
     def test_a_plain_document_still_takes_the_fast_path_unchanged(self):
-        """D19 must not pay for a feature it does not use."""
+        """A document with no fields must not pay for one that has them."""
         from pdfarranger_qt.mainwindow import MainWindow
 
         win = MainWindow()
@@ -1522,7 +1523,7 @@ class TestASignedDocumentRefusesAFill(unittest.TestCase):
 
 
 class TestExportLeavesNoSignatureBehind(unittest.TestCase):
-    """2.8's done-when, and a bug that was there whichever way D5 had gone.
+    """A bug that was there whichever way the arrange question had gone.
 
     A document built by export is a new one. The bytes a `/ByteRange` names
     are gone, `/Perms` does not survive a new root and neither does `/DSS` --
@@ -1662,7 +1663,7 @@ class TestExportLeavesNoSignatureBehind(unittest.TestCase):
 
 
 class TestSavingADocumentThatWasSigned(unittest.TestCase):
-    """2.9's done-when, and the other half of D5.
+    """The other half of refusing an edit in place while allowing a copy.
 
     Filling is refused and arranging is not, so what is left is the save: a
     new file may be written, the file that carries the signature may not be
@@ -1697,8 +1698,9 @@ class TestSavingADocumentThatWasSigned(unittest.TestCase):
     def test_saving_over_a_signed_file_is_refused(self):
         """It would leave a broken signature where a good one was.
 
-        Which is the one thing D5 says never to do, and the only thing a
-        reader could not tell from tampering.
+        Which is the one thing never to do: overwrite a signed file in
+        place, and leave behind the only thing a reader could not tell from
+        tampering.
         """
         win = self.window(signed())
         before = os.path.getsize(self.path)

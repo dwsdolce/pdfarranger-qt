@@ -965,9 +965,9 @@ THEMES = [("system", N_("System")), ("light", N_("Light")), ("dark", N_("Dark"))
 class PreferencesDialog(BaseDialog):
     """Application preferences.
 
-    Everything is here because decision D4 dropped the hand-edited ``config.ini``
-    the GTK version pointed users at -- including the keyboard shortcuts, which
-    upstream only exposed by editing that file (see D11).
+    Everything is here because this application has no hand-edited
+    ``config.ini`` of the kind the GTK version pointed users at -- including
+    the keyboard shortcuts, which upstream only exposed by editing that file.
     """
 
     def __init__(self, values: dict, actions=None, parent=None):
@@ -1206,7 +1206,7 @@ class EncryptionPasswordDialog(BaseDialog):
 
 
 class ShortcutsDialog(BaseDialog):
-    """Editable list of action shortcuts (D11), in its own scrollable window.
+    """Editable list of action shortcuts, in its own scrollable window.
 
     Keyed on the action's object name, so a rebinding survives the action being
     recreated. Qt's own ``QKeySequence`` text is stored, not the GTK

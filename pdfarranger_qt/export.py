@@ -707,7 +707,7 @@ def _restore_acroform(pdf_input, pdf_output):
             continue
         # Not /SigFlags. It says a signature exists and that the file should
         # be saved by appending, and neither is true of a document built from
-        # scratch with the signatures taken out of it (D5).
+        # scratch with the signatures taken out of it.
         for key in (pikepdf.Name.DA, pikepdf.Name.Q,
                     pikepdf.Name.NeedAppearances):
             if key in source and key not in acroform:
@@ -800,7 +800,7 @@ def _write_annotations(pdf_output, pages, annotations) -> int:
         marks = annotations.for_page(row.uid)
         if marks:
             # Multiplied by the page's resize on the way out: a mark is kept
-            # in the source page's space (D6) and `_scale` has multiplied the
+            # in the source page's space and `_scale` has multiplied the
             # space this page is written in. Without it a note on a page
             # scaled by half went onto the paper at its old coordinates,
             # which is off the page.
@@ -890,7 +890,7 @@ def export_doc(pdf_input, pages, mdata, files_out, quit_flag=None,
                prune_outline=False, form_values=None, annotations=None):
     """Same as export() but taking already-opened pikepdf.Pdf objects.
 
-    ``outline`` is the document's own bookmark tree (D20). When given it is
+    ``outline`` is the document's own bookmark tree. When given it is
     written as it stands, which is what makes a bookmark edit survive a save;
     without it the outline is rebuilt from the source files as it always was, so
     every caller that has no such tree behaves exactly as before.
@@ -903,7 +903,7 @@ def export_doc(pdf_input, pages, mdata, files_out, quit_flag=None,
         return
     # Before the form is rebuilt, so that what is rebuilt cannot name a
     # signature field: a document assembled here is a new one, and the only
-    # honest thing it can say about a signature is nothing (D5).
+    # honest thing it can say about a signature is nothing.
     _strip_signatures(pdf_output)
     # After the pages, because it is built from the widgets that actually
     # arrived rather than from the ones the inputs had.
@@ -1237,7 +1237,7 @@ def export(files: List[Tuple[str, str]], pages: List[Page], mdata: dict,
     from every document, True keeps the first document's information via the
     pikepdf Job interface. Ignored on pikepdf < 8.
 
-    ``outline`` is the document's edited bookmark tree (D20), written in place
+    ``outline`` is the document's edited bookmark tree, written in place
     of one rebuilt from the sources. It reaches only the merging path: the
     ``preserve_first_document`` path hands the whole job to pikepdf, which keeps
     the first document's outline and gives us nowhere to put ours. That

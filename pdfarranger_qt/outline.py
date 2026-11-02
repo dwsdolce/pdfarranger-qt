@@ -14,7 +14,7 @@
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-"""An outline the document owns, so bookmarks can be edited (D20).
+"""An outline the document owns, so bookmarks can be edited.
 
 Upstream has none of this: `exporter_outlines.py` only *preserves* an outline
 through an export, deriving it at save time by reading the source files back.
@@ -77,7 +77,7 @@ class Bookmark:
         Kept because dropping it throws data away: a bookmark into the middle of
         a page comes back pointing at the top of it, on every bookmark in a book
         that had them. The *page* still comes from the uid, so reordering costs
-        nothing (D20); only the position within it is remembered here.
+        nothing; only the position within it is remembered here.
 
         Re-homing clears it -- a position on the old page means nothing on the
         new one -- and Add sets it from the selection, so a bookmark made from a

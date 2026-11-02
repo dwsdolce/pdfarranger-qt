@@ -1,0 +1,1070 @@
+# Markup
+
+**Issue:** [#16](https://github.com/dwsdolce/pdfarranger-qt/issues/16)
+
+Making a mark, changing one that is already there, and losing nothing on the
+way. Showing what a file already carries is a different body of work with a
+document of its own; this one begins where that ends.
+
+The owner's standard, in his words: *make the markup and not lose anything
+when it is opened in our tool.*
+
+## Where this stands
+
+A document goes through this application and comes out with every annotation
+it went in with, measured on 8,697 annotations across the validation corpus.
+Three defects were found proving it, each of them a change made by nothing
+more than opening a file and saving it.
+
+The strip the tools are chosen from is built, and every one of its twenty
+tools can be armed. **No tool does anything yet.** What a tool makes is
+decided one tool at a time, together with its gesture and its attributes,
+starting with Highlight.
+
+
+## The tools, and what each one writes
+
+A user picks a *tool*, not a subtype, so this is the list that decides what
+gets built; the subtype survey below is the evidence under it. The two are not
+the same list and do not line up one to one. **Replace selected text** is one
+tool that writes *two* annotations. **`/StrikeOut`** is one subtype serving two
+tools. **`/FreeText`**, **`/Line`** and **`/Polygon`** each serve two.
+
+What separates tools sharing a subtype is `/IT`, the intent, and Acrobat
+writes the tool's own name into `/Subj` besides -- so a file records which tool
+made each mark, and showing a document back with the right tool against each
+mark is reading, not guessing. Every row below was read off the test document.
+
+The state column says what the tool can do *here*, or else names the decision
+or open item that governs it. It does not report which step shipped something:
+that is the step table's job, and a step was never scoped as a whole tool.
+**Writes only** means the tool can make its mark and save it, and nothing
+after that.
+
+| tool | `/Subj` it writes | what is written | state |
+|---|---|---|---|
+| Add a comment | Sticky Note | `/Text`, `/Name /Comment` | writes only |
+| Insert text | Inserted Text | `/Caret` | decision 3, not started |
+| Replace selected text | Inserted Text + Cross-Out | `/Caret` `/IT /Replace` **and** `/StrikeOut` `/IT /StrikeOutTextEdit`, joined by `/IRT` + `/RT /Group` | decision 3, not started |
+| Add text comment | Text Box | `/FreeText` | not started |
+| Text callout | Callout | `/FreeText` `/IT /FreeTextCallout`, `/CL`, `/LE /OpenArrow` | not started |
+| Attach file | -- | `/FileAttachment`, `/Name /Paperclip`, `/FS /EF` | not started |
+| Highlight | Highlight | `/Highlight`, `/QuadPoints`, `/CA` | writes only |
+| Underline | Underline | `/Underline`, `/QuadPoints` | not started |
+| Strikethrough | Cross-Out | `/StrikeOut`, `/QuadPoints`, no `/IT` | writes only |
+| Draw | Pencil | `/Ink`, `/InkList`, `/BS /W` | not started |
+| Line | Line | `/Line`, `/L` | not started |
+| Arrow | Line | `/Line` `/IT /LineArrow`, `/LE [/None /OpenArrow]`, `/BS /W` | not started |
+| Rectangle | Rectangle | `/Square`, `/RD` | not started |
+| Circle | Oval | `/Circle`, `/RD` | not started |
+| Polygon | Polygon | `/Polygon`, `/Vertices` | not started |
+| Cloud | Polygon | `/Polygon` `/IT /PolygonCloud`, `/BE /I` | not started |
+| Connected lines | Polygonal Line | `/PolyLine`, `/Vertices` | not started |
+| Stamps palette | the stamp's name | `/Stamp`, `/Name`, and an `/AP` we do not draw | O4 |
+| Add signature | -- | **page content, not an annotation** | not here |
+| Add initials | -- | **page content, not an annotation** | not here |
+
+Twenty tools, none of them finished. Three can write their mark and save
+it -- the note, the highlight and the strikethrough -- which is one
+requirement out of the fifteen below; what they make cannot afterwards be
+selected, deleted or reopened, because M1 and M14 are shared by all twenty and
+neither exists yet. Eighteen write an annotation; the last two do not, and
+that is the whole of what makes them different. Placing a stored
+signature or initials writes **page content**: measured on page 3 of the test
+document, the signature is 1334 ink pixels with annotations off and 1334 with,
+the initials 463 either way. That is why they already render here with no code
+of ours, why they survived the owner's trip through a printer and a scanner,
+and why nothing in M1 to M12 reaches them -- there is no annotation to select,
+recolour or delete. Whether that would be the right way for *us* to write
+them was once an open question, and it is moot: this application does not
+sign, so the tool is not offered at all.
+
+Signing with a digital ID is the one thing a user would call a tool that is
+not here at all, and is out of scope under **Not here**.
+
+Everything a tool needs *around* it -- selecting a mark, deleting it, its
+colour, its author and times, its comment and replies, and the font and style
+of the text-bearing ones -- is not per-tool and is M1 to M12 below.
+
+## The evidence underneath
+
+The same document counted the other way, by what is in the file rather than by
+what made it. This is where the counts and the measurements live; the table
+above is what they are for.
+
+| kind | count | geometry | state |
+|---|---|---|---|
+| `/Widget` | 86 | -- | Parts 1 and 2 |
+| `/Popup` | 41 | a rectangle beside its parent | no tool writes it; made with its parent, shown by M6 |
+| `/Stamp` | 24 | a rectangle | not started |
+| `/Link` | 5 | -- | drawn already |
+| `/Text` | 2 | a point | writes only |
+| `/FreeText` | 2 | a box; one of them with a `/CL` callout line | not started |
+| `/Caret` | 3 | a point and `/RD` | not started |
+| `/Line` | 2 | `/L`, and `/LE` endings for an arrow | not started |
+| `/Polygon` | 2 | `/Vertices`, and `/BE` for a cloud | not started |
+| `/Highlight` `/Underline` `/StrikeOut` | 4 | `/QuadPoints` | two of the three write only |
+| `/Square` `/Circle` | 2 | `/Rect` and `/RD` | not started |
+| `/Ink` | 1 | `/InkList` | not started |
+| `/PolyLine` | 1 | `/Vertices` | not started |
+| `/FileAttachment` | 1 | a point, and a file embedded in the document | not started |
+
+**A second document, made to exercise the attributes.**
+`corpus/Markup Test Case.pdf` is the first document with the owner's personal
+information removed, and it carries variations the first did not. Four things
+in it settle questions that were previously argued rather than measured.
+
+*Thickness is written only when it is changed.* The arrow carries `/BS /W 5`;
+the plain line carries no `/BS` at all. So an attribute at its default is
+absent from the file, and reading a mark back has to treat a missing key as
+the default rather than as zero.
+
+*Opacity belongs to the highlight alone.* `/CA 0.4` on both highlights, and
+nothing on the underline, the strikeout or the squiggly -- which is exactly
+the split `markup.TRANSPARENCY` already encodes.
+
+*Both meanings of `/IRT` are now in one file.* A `/Text` with `/IRT` and no
+`/RT`, which is a reply; and a `/StrikeOut` with `/IRT` and `/RT /Group`,
+which is half a Replace pair. M9's trap can now be tested rather than argued.
+
+*A `/DA` names a font that is not one of the standard 14.* One `/FreeText`
+carries `/Baskerville 20 Tf`, the callout `/Helv 12`. decision 2's embedding question
+has a case waiting in the corpus, and `/DR` carries the font to resolve it
+against.
+
+**Seeing them is nearly free, and that is measured.** All 44 *marks* carry an
+`/AP`, and PDFium draws from it. The 41 `/Popup` entries carry none and need
+none; they are where a mark's words are shown, not a drawing of their own.
+Page one through this application's own render flag comes to 335,231 ink
+pixels without annotations and 395,184 with -- and what appears is the highlight, the
+underline, the strikeouts, both note icons, the free text, the callout, the
+ink, the arrow, the polygon, the cloud, the connected lines, the square, the
+circle, the carets, the paperclip and all six stamps, with no new code at all.
+The form *values* are the one exception and come out blank, which is the
+PDFium behaviour the rewritten rendering copy already exists to answer.
+
+**But seeing a mark is not reading it, and that is measured too.** Seven
+marks in that file carry words. Five of them paint nothing but an icon: both
+`/Text` notes, both `/Caret` marks -- one an insertion, one the replacement
+for a struck-out phrase -- and the `/FileAttachment`. Their words are in `/Contents` and `/RC`, which a viewer
+shows in a popup, and PDFium draws no popups. Only the two `/FreeText` marks
+put their words on the page -- the same split as M6, since free text is the
+one kind with no `/Popup` to put them in.
+
+| | marks | `/Contents` | where the words are |
+| --- | --- | --- | --- |
+| `/FreeText` | 2 | 17 and 19 characters | drawn on the page |
+| `/Text` | 2 | 17 and 20 characters | **a popup we do not have** |
+| `/Caret` | 2 | 21 and 22 characters | **a popup we do not have** |
+| `/FileAttachment` | 1 | 39 characters | **a popup we do not have** |
+
+So a document someone has commented on still arrives looking almost pristine:
+the icons land in the right places and not one word of what was written can be
+read. That is a *display* gap, not an editing one, and M6 is what closes it --
+which makes it the first thing worth building rather than part of the editing
+work.
+
+The rest is editing, and the plan currently names five of the fifteen markup
+kinds.
+
+## Where the tools live
+
+A menu cannot hold this. The application has one today -- five actions in a
+Markup menu -- and it is the wrong shape twice over. It is swept into
+`_editing_actions`, so it is disabled in read mode, which is the only mode its
+tools act in. And a flat list cannot express twenty tools, the attributes each
+carries, or which one is armed. What follows was read off Reader and then
+decided for here; where the two differ, the reason is given.
+
+**A floating strip, summoned from the toolbar.** Reader's tool list is
+permanent furniture because marking up is what Reader is for -- and cannot
+reliably be put away: the preference that remembers a collapsed tools pane
+has been broken in Acrobat's Modern Viewer since 2023 by Adobe's own
+account, and *"permanently close tools pane"* is an open request on their
+feature site. Here it is a guest: this application is a page arranger, so the
+strip is opened and closed from a toolbar button, floats over the reader, and
+can be moved. Open or closed, and where it was dragged to, are remembered
+between sessions; a remembered position is clamped back inside the reader, so
+shrinking the window cannot leave the strip somewhere nobody can reach it. The button is
+disabled in arrange mode and enabled in read mode -- the opposite of what the
+markup actions do today, so they have to stop being treated as document-editing
+commands by `_editing_actions`.
+
+**It is a column, and that is load-bearing.** Reader's strip runs *down* the
+left edge, families open *sideways* from it, and the tail is the bottom of the
+column. Written down because it was once left out of this section and then got
+re-derived wrongly from the word "below": a tail is the *end* of the strip, and
+only on a vertical strip is the end underneath. On a row the tail would be at
+the right-hand end, and "grows below" would describe a second row instead.
+
+A page is also taller than it is wide, so a column sits in a margin where a row
+lies across the text, and a flyout that opens to the side never covers the
+families it is an alternative to.
+
+**Families, as split buttons.** Twenty tools do not fit in a row, so they are
+grouped and each group is one button: the button carries the icon of the tool
+last used in that family and re-arms it, while the arrow beside it opens a
+flyout listing the family with a tick on the current choice. Reader's grouping,
+read off its tool list:
+
+| family | tools |
+|---|---|
+| pointer | Select, Pan |
+| comment | Add a comment, Replace selected text, Insert text, Add text comment, Attach file |
+| text markup | Highlight, Underline, Strikethrough |
+| drawing | Draw, Line, Arrow, Rectangle, Circle, Text callout, Polygon, Cloud, Connected lines, Stamps palette |
+| signature | a picker of stored signatures and initials |
+
+Two things fall out of that table. It groups by **what the gesture is**, not by
+what the mark carries or what it is anchored to -- a third answer to the
+grouping question decision 4 left open, and the only one with a shipping product
+behind it. And it puts **Text callout** among the shapes while **Add text
+comment** sits with the comments, though both write `/FreeText`: the tool is
+the unit, not the subtype, and a family is not a subtype either.
+
+**Attributes in the tail.** Below the family buttons the strip grows the armed
+tool's own controls -- a colour swatch for anything that makes a coloured mark,
+a thickness button for the line-based ones, an `Aa` opening a font panel for
+the text-bearing ones. With Select armed the tail is empty, because nothing is
+being made. The alternatives were weighed: a fixed options bar under the main
+toolbar, as Inkscape and GIMP have it; a docked inspector, as Figma and
+Illustrator have it; the controls inside the flyout; and a bar beside the mark,
+as Word has it. The tail wins for *arming* because before the gesture there is
+no mark to put a bar beside, and because a tool is a mode that persists -- so
+its attributes persist with it, which is what a tail expresses and a transient
+bar does not.
+
+**A tool is a mode.** Choosing one arms it, and it stays armed through mark
+after mark until another tool is chosen or Escape is pressed. *Armed* is a
+word for this document and not for the interface: it means the mode is set
+and the next gesture on the page will use that tool. Not *selected*, which
+in this application already means selected pages, selected text and -- from
+step 3 -- a selected mark.
+
+Because arming sets a mode rather than lighting up a panel, **Escape returns
+to Select whether the strip is open or not.** Closing the strip does not
+clear the mode, so a tool can be armed with nothing on screen saying so,
+which is the state where a way out matters most.
+
+**The armed family is filled with the accent colour**, as Reader fills it.
+With every flyout shut, that is the only thing on screen saying which tool a
+drag would use.
+
+**One declaration behind all of it.** Each tool is described once -- family,
+icon, label, what it writes, which attributes it carries -- and the strip, the
+flyout, the tail and the controls on a selected mark are generated from that
+description. This is not tidiness. Using Reader turns up new attributes faster
+than they can be designed -- a squiggly underline, a fill behind a text box, a
+dash pattern -- and the declaration is what makes each of those a row rather
+than a panel. It is also what makes one tool at a time cheap: a tool becomes a
+declaration plus a gesture.
+
+**What we are not copying.** Reader offers four routes to a mark's colour: the
+swatch on the floating toolbar over the selection, the swatch in the tail with
+the mark selected, the right-click menu's *Properties*, and the properties
+dialog itself. That is twenty years of accretion. The question here is which
+one or two are canonical, and it is not yet decided.
+
+**Reader's, and deliberately not in the plan:** a right-click menu on a mark, a
+comment panel listing every mark in the document, and *Set status* with a
+*Review History* tab -- accepted, rejected, completed. The last is not an
+attribute but a review workflow between people, recorded here so that it does
+not leak into the attribute design.
+
+## What every mark needs, whatever kind it is
+
+**M1. Selected by clicking its ink.** Every kind, not only the ones we
+author: a mark that can be seen and not selected cannot be edited, recoloured
+or removed. By the ink and not by `/Rect` -- on page 1 of the test document
+the 25 marks make 25 overlapping pairs by bounding box and a handful by ink,
+so the choice is between a thicket and something nearly unambiguous. An
+unfilled shape is its outline, so the inside of an empty rectangle is not the
+rectangle. Which gesture belongs to the mark and which to the text under it is
+O5.
+
+The same test runs on *hover*, and that is not a refinement -- it is what
+makes O5's rule usable. The pointer says in advance what the next gesture will
+do: an I-beam over text, an arrow over a mark. Without it, "start on the ink"
+is a rule nobody can see. And the test needs a tolerance, because a hairline
+`/Line` hit to the exact pixel is unhittable; Reader appears to have one. That
+tolerance belongs in *device* pixels rather than page points, or it shrinks
+with the zoom and a mark becomes harder to grab the further out you are.
+
+`CanvasView.mouseMoveEvent` already has the shape of this -- it hit-tests on
+hover and sets a pointing hand over a note, a crosshair under an area tool, an
+I-beam where there is text. What changes is `note_at`, which today finds only
+the notes *we* made, only `/Text`, and by rectangle.
+
+**M2. Deleted, and a grouped mark deleted whole.** There is no delete anywhere
+in the plan today, and the note work shipped with emptying one as the only
+way to
+take one back. Reader puts delete in a small toolbar on the selected mark,
+beside edit and colour. A mark joined to another by `/RT /Group` goes as a
+unit: deleting a replacement takes its icon, its insertion mark and its
+strikethrough together, which is what M9 describes and what makes the three
+pieces read as one thing.
+
+**M3. Attributes, chosen before or after.** Reader carries one current colour
+at the foot of its tool list, and it colours the next mark of any kind -- icon,
+strikeout, text box, shape. A selected mark's colour can be changed afterwards,
+and the two are the same control appearing in two places. The palette is
+fixed: twenty-one swatches, seven hues over a pastel row and a greyscale row,
+with a tick on the current one. No picker, no hex entry.
+
+Colour is not alone. A highlight also carries **opacity**, which Reader shows
+as 40% and which is the `/CA` this application already writes as
+`markup.TRANSPARENCY`. A mark can be **locked**, which refuses the handles and
+the delete. A line-based mark carries **thickness**, behind its own button in
+the tail. A text box carries a **fill**, which Reader ties to the box colour.
+Which attributes a tool has is part of what the tool declares.
+
+An attribute can change *what is written* rather than how it looks: Reader's
+underline can be squiggly, and in the file that is not a styled `/Underline`
+but the separate `/Squiggly` subtype. The declaration has to carry both kinds,
+and a family's flyout may therefore list what are really sibling subtypes.
+
+Measured in `corpus/Markup Test Case.pdf`, and it carries a twist worth having
+before the declaration is designed. A squiggly underline is written
+`/Subtype /Squiggly` with `/Subj Underline` **and `/IT /Underline`** -- so
+`/IT` is doing the opposite of its usual job here. Everywhere else it
+discriminates between tools that share a subtype; on a `/Squiggly` it names
+the tool a *different* subtype came from. Either way the rule that holds is
+the one that matters: the file records which tool made the mark, so a squiggly
+reads back as the Underline tool rather than as a fourth entry in the
+family.
+
+**Where the defaults come from.** Reader's properties dialog carries *Make
+Properties Default*, so the mark in front of you sets what the next one will
+look like. That is one mechanism instead of a preferences page per tool, and
+it is why the same control appears in the tail and on a selected mark.
+
+**M4. An author and two timestamps.** `/T`, `/CreationDate` and `/M` are on
+every mark in the file, and Reader shows the author and the time beside the
+text. `/NM` gives each one a name that survives a save.
+
+**M5. Preserved when we cannot edit it.** Anything unrecognised keeps its
+dictionary, its `/AP` and its geometry through a save and through rotate, crop,
+resize and reorder. This is largely done -- the 2026-10-29 work carries
+`/InkList`, `/L`, `/Vertices`, `/CL`, `/RD`, `/Border` and `/BS /W` through a
+resize -- and it is what makes partial support honest rather than lossy.
+
+**M6. A comment, opened and closed.** 39 `/Popup` annotations, one per markup
+mark, each `/Open false`. Every kind carries one *except* `/FreeText` and
+`/FileAttachment`, which is the format's own split: a free text mark's words
+are already on the page, so it has nothing to pop up. decision 2 settles how those
+words are drawn; this is about the other fourteen kinds.
+
+**M7. Replies.** One of the two `/Text` marks carries `/IRT`, and Reader's
+popup offers "Add a reply" under the author's name. Comments are threads, not
+single notes.
+
+## What the text-bearing kinds need beyond that
+
+**M8. Rich text, not a string.** This is the largest gap between the plan and
+the file. Reader sets font family, size, colour, bold, italic, underline,
+strikethrough, superscript and subscript -- and it sets them *per run*: the
+test document's free text reads "This **is** a" in three different styles and
+ends with a letter in a different colour again. The file carries that as `/RC`,
+an XHTML fragment, with `/DS` for the default style; the `/DA` on that mark is
+`0.2196 0.898 1 rg /Baskerville 20 Tf`, a family that is not one of the base
+14. The `Annotation` model holds one `contents` string and one colour, so it
+cannot represent any of this.
+
+**M9. Text marks built from a selection, one of which is a pair.** Insert
+text is a single `/Caret` at a point. Replace selected text is *two*
+annotations joined into one object: a `/Caret` with `/IT /Replace` carrying
+the typed replacement, and a `/StrikeOut` with `/IT /StrikeOutTextEdit` whose
+`/IRT` names that caret and whose `/RT` is `/Group`. Measured on a replacement
+made for this purpose, both written in the same second.
+
+`/RT` is what separates the two uses of `/IRT`, and both are in the file: with
+`/RT /Group` it means one object, and with `/RT` absent -- the default `/R` --
+it is a reply, which is how a `/Text` note in the same document hangs off a
+`/Caret`. Reading `/IRT` without reading `/RT` would turn every grouped pair
+into a thread. The icon is not what distinguishes these three tools; both
+`/Text` marks carry `/Name /Comment` and the carets draw from their own `/AP`,
+so what separates a comment, an insertion and a replacement is the extra
+annotation and the grouping, not the glyph.
+
+## What sits in the same tools without being markup
+
+**M10. A stamps palette.** 24 in the test file, carrying names like
+`/SBApproved` and an `/AP` we would not be drawing ourselves.
+
+**M11. Stored signatures and initials.** Reader keeps them and places them on
+the page. Distinct from the signature work, which is about *not* breaking
+a document someone else signed.
+
+**M12. File attachments.** `/FileAttachment` with `/Name /Paperclip` and the
+file itself embedded through `/FS /EF`.
+
+**M14. The marks already in the document are read into the model.** Nothing
+does this today. `forms.py` reads `/Annots` for widgets and `structure.py` for
+tagging, the exporter copies them page by page, and the only
+`annotations.add()` in the application is the handler for a mark drawn in this
+session. So the 44 marks in the test document do not exist as objects here at
+all: PDFium draws them from their `/AP` and we hold nothing. Observed in the
+running application -- the pointer shows an I-beam over text and does not
+change over an annotation, because there is nothing to hit-test against.
+
+This is the prerequisite under M1, M2, M3, M6, M7 and M13. Every one of them
+applies today only to marks made since the file was opened, which is to say
+not to a document anybody sends you.
+
+It is not a small read. `Annotation` holds `kind`, `page`, `rect`, `quads`,
+`contents`, `colour`, `author` and `created`; the marks in that file carry
+`/Vertices`, `/InkList`, `/L`, `/LE`, `/CL`, `/IT`, `/RT`, `/IRT`, `/RC`,
+`/DA`, `/DS`, `/BE`, `/BS`, `/Name`, `/RD` and `/FS` besides. So either the
+model grows a representation of every kind, or each mark keeps the dictionary
+it came from and our edits overlay it. Only the second cannot lose a key we
+never thought to model, which is M5's argument applied to the marks we *can*
+edit rather than the ones we cannot.
+
+**M13. Moved and resized after it is made.** Nothing above says a mark can be
+repositioned, and without it a misplaced mark can only be deleted and drawn
+again. Reader moves any of them and resizes the ones with a box; a `/Text`
+icon moves but does not resize, since its size is not its author's (decision 1 and
+`markup.NOTE_SIZE`). Moving a grouped mark moves the group, by the same
+argument that deletes it as one (M2). What a move writes is already understood
+-- `/Rect` and whichever of `/QuadPoints`, `/InkList`, `/L`, `/Vertices`,
+`/CL` and `/RD` the kind carries, which is the same list the resize work of
+2026-10-29 already scales.
+
+A text markup is the awkward one. Reader puts two round grips on a selected
+highlight, and dragging one does not stretch a rectangle: it re-runs the text
+selection between the two points and rebuilds `/QuadPoints` from whatever is
+now covered. So a resize is two different operations depending on the kind,
+and only one of them is geometry.
+
+**M15. Changing a mark uses the surface that made it.** Clicking a mark gives
+back what its tool gave when it was made -- the same editor, the same
+attribute controls -- and on a text-bearing mark a double click goes to the
+text. There is no separate editing mode to design: M1's selection is a second
+door into the tool's own surface. Seen in Reader on a text-bearing mark and on
+a highlight, which has no text at all, so it is not a property of the
+text-bearing kinds.
+## The popup note
+
+Every markup kind can carry one, and it works the same way for all of them.
+Measured on a highlight with a note, a reply and two status changes.
+
+**The text is `/Contents` on the mark**, not on the `/Popup`. The `/Popup`
+object carries no appearance at all, is marked `/Open false`, and sits at
+`/Rect [612, 539.9, 796, 631.9]` against a 612-wide page -- entirely off the
+paper. It is a placeholder saying where Acrobat should put *its* window.
+
+So **a popup note is viewer chrome, and no appearance-stream renderer will
+ever draw it**. PDFium draws the highlight and nothing else, which is why a
+noted mark looks unremarked here. Whatever shows it, we draw ourselves from
+the parent's fields.
+
+Acrobat writes the text twice: `/Contents` as plain text and `/RC` as rich
+text, 306 characters of it for a fourteen-character note.
+
+**Replies are visible marks in their own right.** A reply is a `/Text`
+annotation with `/IRT` pointing at the mark and `/F 28` -- Print, NoZoom,
+NoRotate -- so it draws a comment icon anchored to the top left of the
+parent's rectangle. Adding one changed 72 pixels on the page. It is page
+content, not chrome, and it has to survive and render whether or not we ever
+let anyone write one.
+
+**A status change is a hidden child.** Also a `/Text` annotation with
+`/IRT`, but carrying `/State` and `/StateModel /Review`, and `/F 30` -- the
+same flags *with* Hidden. It never draws.
+
+**`/RT` does not tell the two apart.** It is absent on replies and on
+statuses alike, which the specification reads as a reply. The discriminator
+is the presence of `/State`.
+
+**The status history is a chain, not a list.** The first change points at the
+mark; each later one points at **the link before it**. Walking only the
+mark's direct children finds the first change and misses every one after it.
+
+```
+/Highlight
+  |-- /Text  /State Accepted    -> the highlight   hidden
+  |     \-- /Text  /State Completed -> that link   hidden
+  \-- /Text  reply              -> the highlight   visible, icon on the mark
+```
+
+## The properties form
+
+Three tabs and a footer, and only one of the tabs varies by kind.
+
+**Appearance** is the tool's own: colour and opacity for a highlight,
+thickness for a line, a font panel for a text box. It is the only part a tool
+supplies, which is what lets a new tool arrive as a few rows rather than a
+dialog.
+
+**General** is three keys, the same for every kind and read-only in Acrobat:
+Author is `/T`, Subject is `/Subj`, Date modified is `/M`. `/CreationDate`
+sits beside them.
+
+**Review History** is the chain above, read back. Its rows are *derived*, not
+stored: Acrobat composes `{/T}: {/State}, {/M}` and prints
+*"dws: Accepted, 11/1/26, 2:33:27 PM"*. The `/Contents` each link carries --
+19 and 20 characters in the sample, matching "Accepted set by dws" and
+"Completed set by dws" -- is a sentence Acrobat generates for other viewers
+and does not itself display. Nothing here is editable; the only writable
+thing is setting a new status, which appends another link.
+
+**The footer shows on all three tabs.** *Locked* is `/F` bit 8, taking `/F`
+from 4 to 132. *Make Properties Default* writes nothing to the file: it is
+the application's own preference for what the next mark gets.
+
+## The right-click menu
+
+One menu for every mark: Open Pop-Up Note, Delete, Set status with its five
+states, Copy Text, Enable Text Selection, Hide comment panel, Make current
+properties default, Properties. The two text entries are conditional on there
+being text under the mark.
+
+*Enable Text Selection* is the per-mark remedy for a highlight swallowing
+clicks that were meant for the page.
+
+## Highlight
+
+The first tool through, and the one the plan's step 3 builds. Everything here
+was read off `corpus/Markup Highlight.pdf` and the owner's notes on Acrobat.
+
+`/Subtype /Highlight` with `/QuadPoints` -- thirteen quads on the first
+sample, because a highlight spans paragraphs and columns -- a `/Rect`
+enclosing them, `/C` for colour, `/CA` for opacity, `/F 4` for Print, and
+`/Subj Highlight`. It covers text only, never pictures.
+
+### What a highlight can contain
+
+**The tool is armed first and the drag makes the mark.** There is no step
+where an existing selection becomes a highlight: Reader requires the tool
+before the gesture, so a selection made while reading never turns into one.
+That is also why the right-click menu offers *Enable Text Selection* -- once
+marks are on a page they swallow clicks meant for the text underneath.
+
+**A highlight is an index range on one page.** Both ends of the drag resolve
+to character indices and everything between them is taken. The index order
+is the order the text is *stored in*, which is not always the order it is
+read in, and when the two differ the highlight covers text the eye did not
+sweep.
+
+Measured on page 7 of the ARRL Handbook, whose three columns are stored
+**column 1, then column 3, then column 2**:
+
+| the drag | what is highlighted | because |
+|---|---|---|
+| column 1 → column 2 | part of 1, **all of 3**, part of 2 | 3 lies between them in the index |
+| column 1 → foot of column 3 | part of 1 and all of 3, **no** 2 | 2 comes after 3, so it is not in the range yet |
+| the same, carried to the page end | 2 joins as well | the range now runs past 3's last character |
+| column 1, straight down | column 1 alone, until the page end | then both other columns are inside the range |
+
+A drag from the middle of column 1 to the middle of column 2 selects all 78
+of column 3's runs along with the 36 and 28 it was asked for: 4,630
+characters. **Reader does exactly the same on the same page**, which settles
+that this is the file's own reading order and not a defect in either tool.
+Reordering it would be overruling what the document says about itself, which
+is wrong wherever that order is deliberate -- a sidebar, a caption, a pull
+quote.
+
+**Underline and Strikethrough behave identically.** Same gesture -- tool
+armed, then drag -- same index range over the file's stored order, same clamp
+to the page, same handles. They differ only in what they write: `/Underline`
+and `/StrikeOut` over the same `/QuadPoints`, and no `/CA`, because opacity
+belongs to the highlight alone.
+
+**It stops at the page edge.** `/QuadPoints` live in one page's coordinate
+space and the annotation lives in that page's `/Annots`, so a highlight
+cannot span pages however anyone feels about it. The drag that makes one
+therefore stops at the boundary rather than carrying on, and the handles that
+reshape it cannot be dragged past either end of that page's text. Reader does
+the same.
+
+This is where the highlight gesture and ordinary text selection part company:
+**text selection deliberately crosses page breaks** -- a reader that stops at
+one is not much of a reader -- and the highlight tool's drag deliberately does
+not.
+
+**Its appearance is three forms deep.** The `/AP /N` sets the opacity and a
+`/BM /Multiply` blend, calls a transparency-group form, which calls a third
+holding the actual fills. The innermost form's `/BBox` is in *page*
+coordinates with a `/Matrix` translating it to the origin, which is how the
+chain lines up with `/Rect`. Worth knowing before anyone tries to write one.
+
+**In the tool's Appearance tab:** colour from the twenty-one swatches, and
+opacity by slider or by a percentage field. Acrobat's five colour pickers --
+wheel, sliders, named colours, spectrum, crayons -- are the macOS picker and
+are not copied; fixed swatches with no picker was settled earlier.
+
+**Selected by clicking it with the tool armed**, which puts handles at the
+extremes of the run. Dragging one re-runs the text selection and rebuilds
+`/QuadPoints` rather than stretching the old quads, because a highlight is a
+run of text and not a box.
+
+**What a click produces depends on what is armed.** With Highlight armed,
+clicking a mark raises a floating bar over it -- *add a comment*, a colour
+swatch, *delete* -- the mini-toolbar pattern, and a shortcut to three things
+the right-click menu also offers. With Select armed there is no bar, only the
+selection. **Right-click works in both**, so the menu is the surface that is
+always there.
+
+That puts two of Reader's four routes to colour in from the start, and they
+are the two worth having: the swatch in the strip's tail arms the *next*
+mark, the swatch in the bar changes the one you clicked.
+
+### Building it, in order
+
+Each step is usable before the next, and each tells the next what it needs.
+
+1. **Hold the marks.** A page's annotations read into a session table with
+   uids -- enough to hit-test and to know what is there. Nothing written.
+2. **Arm the canvas from the strip.** Highlight armed, drag over text, mark
+   made. The strip drove nothing until now.
+3. **Select an existing one**, including a mark the file brought, which is
+   the first thing the uid table buys.
+4. **Colour and opacity**, which is where our appearance replaces the one
+   Acrobat wrote: an `/AP` that still draws the old colour is worse than one
+   we generated.
+5. **Delete**, taking the status chain and the replies with it.
+6. **The right-click menu.**
+7. **The properties form**, last, because General and Review History are
+   read-only views of what the earlier steps put in place.
+
+## The test
+
+Load that document, see every annotation in it, and be able to edit every one.
+Seeing it is measured above and nearly done. Editing it is M1 to M15, and the
+user interface need not resemble Reader's -- only the functionality.
+
+**And lose nothing.** The owner's standard, 2026-10-31: "I would just like to
+be able to do the markup and not lose anything when it is opened in our tool."
+That is stronger than editing, and it applies to every mark including the ones
+no tool of ours will ever make. A document that goes through this application
+and comes out with a mark changed, dropped or flattened has failed the test
+even if every tool worked. It is also the one part of the test that can be
+run without a user interface, which is why it is this plan's first step.
+
+## Plan
+
+What the earlier markup plan was trying to be, ordered so that nothing has
+to be specified
+before something needs it. Each step is useful alone, and each one tells the
+next what it needs.
+
+| # | Step | Depends on | Done when | State |
+|---|---|---|---|---|
+| 1 | Every mark in the test document survives a save | marks being drawn | every annotation in the document comes back from an export unchanged | **done 2026-10-31** |
+| 2 | The tool surface | 1 | the strip opens from the toolbar, arms a tool, has a tail for the attributes to arrive in, and disarms on Escape | **done 2026-11-01** |
+| 3 | One family through: Highlight, Underline, Strikethrough | 2 | all three make, select by clicking, recolour, resize, delete and reopen -- and those three kinds are in the model whether the user made them or the file arrived with them | |
+| 4 | The remaining tools, one at a time | 3 | each tool brings its own kinds into the model as it arrives | |
+
+**step 1 first because it has no screen**, and it is done. A document that goes
+through this application comes out with every annotation it went in with:
+proved on all 180 marks in the test document, on every fixture, and on 8,697
+annotations across the validation corpus. No window, no gesture, no model.
+
+**Nothing is editable at the end of it, and that is the point.** The marks
+survive because they *travel with the page* -- `copy_foreign` carries each one
+across as the dictionary it already was, and at no point does this application
+look at a mark, understand it or hold it. `markup.Annotations` is empty for
+every document opened and `markup.Annotations.add` still has exactly one
+caller, a user gesture. Editing begins at step 3.
+
+**Which is what lets the work go one tool at a time.** A mark is modelled by
+the step that gives it a tool: step 3 reads `/Highlight`, `/Underline` and
+`/StrikeOut` into the model because recolouring one needs an object to
+change, and step 4 does the same for each kind as its tool arrives. Everything
+with no tool yet stays a passenger, written back as the dictionary it came in
+as. The test document holds eighteen subtypes and `markup.KINDS` holds three;
+the gap is not a backlog, it is the sixteen kinds that nothing is asking to
+edit yet.
+
+So *lose nothing* does not wait for the model to be finished -- it is already
+true, and it stays true by construction while the model is widened one tool
+at a time.
+
+**There is an ownership question waiting at step 3.** `markup.add_to_page`
+*appends* to a page's `/Annots`, and a page reaches export already carrying
+the annotations it was copied with. The moment a mark is both in the file and
+in the model it would be written twice, so the step that first reads a file's
+marks in has to decide what export writes from. Not yet decided, and it does
+not need to be until step 3.
+
+**step 1 has already found one thing, before any of it was built.** Round-tripping
+`corpus/Markup Test Case.pdf` through `export()` failed outright -- qpdf
+refusing the save with "unexpected object id encountered in
+getCompressibleObjGens" -- for every page, while plain pikepdf saved the same
+file without complaint. `_restore_acroform` copies `/DR` entries one level
+down when they are dictionaries, and assigns anything else straight across
+from the input document; a squiggly underline puts a tiling Pattern *stream*
+in `/DR`, so the output ended up owning an object it did not own. Fixed by
+copying it like the rest. With that done the round trip loses no markup at
+all: all 44 marks come back with every attribute identical -- subtype, `/IT`,
+`/Subj`, colour, opacity, quads, border, flags, `/IRT` and `/RT`.
+
+The two `/Sig` widgets were a second finding and not, as first written here,
+the signature rule
+working correctly. They had never been signed, and turning them into read-only
+`/Stamp` annotations destroyed two fields that were waiting for a signer. See
+*What this application does with a signature*, below.
+
+This is the shape step 1's test should take: load, export, and compare the
+annotations on both sides key by key. No window, no gesture, and it would have
+caught the bug above the first time a document with a pattern resource went
+through.
+
+**step 3 is the text-markup family rather than Comment**, which amends decision 4; the
+argument is recorded there.
+
+**step 4 is deliberately not a list.** What each tool needs is written down when
+that tool is built, not before. The declaration in *Where the tools live* is
+what keeps that honest: a tool that turns out to need an attribute nobody
+anticipated costs a row, and the inventory can keep growing without becoming
+a specification.
+
+## Still open
+
+Numbered within this document. A number is assigned once and never
+reused: when an item is settled it leaves this list and becomes a
+numbered decision below, so a gap means something was decided, not
+lost.
+
+- **O1. Whether free text is typed on the page or in a popup.** The note's
+  editor is a fixed 240 by 120 panel beside the icon, which suits a mark whose
+  content is hidden behind an icon, and it is written and works at any zoom.
+  Free text is *on the page*, so the expectation is to see it at page size, in
+  position, while typing -- a `QTextEdit` positioned and scaled to the box at
+  the current zoom, which is more work and is the only one of the two that can
+  show what the file will actually contain, now that decision 2 fixes the font and the
+  size is ours. Either way the size is a length in the source page's space
+  under decision 1, so it divides going in and multiplies coming out exactly as the
+  note's icon does, or text drawn on a half-size page exports at half the point
+  size.
+
+  Every tool examined types on the page. Reader's own help says to click where
+  you want the text and type, and to double-click the box to edit it again;
+  pdf.js uses a `contentEditable` div whose padding is scaled by the page's
+  zoom; Apple bakes the clip, the border and per-glyph positions into the
+  `/AP`. The format leans the same way -- `/FreeText` is one of only two kinds
+  in the test document with no `/Popup`, out of fifteen, because its words are
+  already on the page. None of that settles where *typing* happens, which is
+  ours to choose and reaches the file either way. Not decided.
+
+- **O2. What one freehand mark is.** One drag, one `/Ink`, or a pencil that
+  stays down and accumulates strokes into a single annotation until the tool
+  changes, which is what Acrobat does. `/InkList` holds either -- measured,
+  PDFium draws two strokes in one annotation at exactly twice the ink of one,
+  3840 pixels against 1920 -- so this is a question about the gesture and the
+  undo stack rather than about the format. Accumulating needs a notion of the
+  mark currently being added to, and every mark so far is one gesture, one
+  commit. Not decided.
+
+- **O3. Whether a free text mark has a border.** PDFium draws one unasked-for:
+  2064 pixels on a `/Rect` 180 by 80 with empty contents, its bounds exactly
+  the rectangle. An `/AP` of ours replaces it, so the frame becomes ours to
+  choose or to leave out, and a comment box with a visible frame reads as a
+  form field where one without reads as writing on the page. Not decided.
+
+- **O4. Which stamps, if any, this application offers.** Showing them is
+  already free: 24 in the test document, every one with its own `/AP`, all
+  drawn by our renderer with no code. Offering them is a different question.
+  Reader's palette holds 22 in three families -- 13 Standard Business
+  (Approved, Rejected, Not Approved, Draft, Final, Completed, Confidential, For
+  Public Release, Not For Public Release, For Comment, Void, Preliminary
+  Results, Information Only), 4 Sign Here (Sign Here, Initial Here, Witness,
+  Accepted) and 5 Dynamic (Revised, Reviewed, Confidential, Received,
+  Approved). Measured in `corpus/Markup Test Case.pdf`, where all 24 carry the
+convention in `/Name` itself: `/SBApproved`, `/SHSignHere`, `/#DRevised` and
+so on, so the family is readable off the name and a document's stamps can be
+shown back by family without a lookup table. The names are a convention we can
+follow, but the *artwork* is
+  Adobe's and cannot be copied, so offering any stamp at all means drawing our
+  own. The dynamic five need more than artwork: their appearance bakes in the
+  author and the moment of placement -- the test document's read "REVISED 9:45
+  pm, Oct 30, 2026" and "REVIEWED By ... at 9:45 pm, Oct 30, 2026" -- which is
+  generated at placement, not picked from a palette. So the choice runs from
+  none, through a small set of our own, to all three families. Not decided.
+
+- **O5. Whether to copy Reader's rule for what a click on the page means.** The
+  rule itself is now known, having been got wrong twice here first. It has two
+  parts and they fit together.
+
+  **Marks are hit by their drawn ink, not by `/Rect`.** To take an arrow you
+  must click a pixel of the arrow. This matters more than it sounds: measured
+  on page 1 of the test document, the 25 marks make 25 overlapping pairs by
+  bounding box and at most a handful by ink -- four pairs found, sharing
+  between 1 and 26 pixels, with two marks the per-mark isolation could not
+  resolve, so four is a floor rather than a count. Bounding boxes would make
+  the page a thicket; ink makes it nearly unambiguous. An unfilled shape is its
+  outline, so the inside of an empty rectangle is not the rectangle.
+
+  **Where the gesture starts decides what it is.** Start on a mark's ink and
+  the gesture belongs to the mark -- select it, move it. Start anywhere else
+  and it is a text selection, which then runs *through* marks freely: dragging
+  across a highlight selects the words under it. The mode, Select against Pan,
+  changes none of this; marks behave the same under both, and the mode governs
+  only whether a drag on bare page selects text or scrolls.
+
+  What it costs: text whose every pixel lies under a mark cannot be selected,
+  because there is nowhere to start -- a word inside a highlight is
+  unreachable. Reader does not simply pay that, which is how this was first
+  written here. A mark's right-click menu carries **Enable Text Selection**,
+  which makes that one mark transparent to the pointer so the text under it
+  can be taken. The cost is real but remediable, and the remedy is per mark
+  rather than a mode.
+
+  So this is no longer a question about how to build it but whether to copy it,
+  and the cost above is the only reason not to. One thing stands either way:
+  mark over mark needs its own rule, where topmost-first is what the note
+  hit-testing already does.
+
+  **The scrolling half of Pan has a reader after all.** It was written off
+  here on the grounds that the wheel, the trackpad, the scrollbars and the
+  keyboard already scroll in every mode. That holds for a mouse and not for a
+  finger. A touchscreen has no wheel and no trackpad, and this app handles no
+  touch at all -- nothing under `pdfarranger_qt/` mentions `QTouchEvent` or a
+  gesture -- so a finger arrives as a synthesised left-button drag. Under the
+  rule above that drag on bare page selects text, which leaves a touchscreen
+  with no way to scroll the page by finger. Pan is that way. This is the
+  owner's reason, 2026-10-31, and it is a reason to have the mode that does
+  not depend on copying Reader: Pan earns its place as the touch scroll
+  gesture whether or not the click rule is copied. What it leaves open is
+  whether to answer touch with the mode or with real touch handling -- a
+  one-finger drag that scrolls while Select stays Select -- which is now part
+  of O5. Not decided.
+
+## Decisions
+
+Taken for this work and recorded with it, numbered within this
+document. Nothing in the source cites them: where one matters to
+understanding the code, the fact is in the comment.
+
+**1. A mark is kept in the source page's space, and scaled on the way out.**
+`/Rotate` and a crop carry a page-space rectangle for free -- a turn changes
+nothing in the space, and a crop only rewrites the box -- so a mark stored
+there follows its content through both without being touched. A resize is the
+exception, because `export._scale` multiplies the space by its factor, so
+`_write_annotations` multiplies a mark's rectangle by `row.scale` as it writes.
+
+The alternative was to store what the canvas hands back, which is the *output*
+page's space, and that is wrong in a way that only shows up later: every mark
+on a page moves the next time that page is resized. Storing in source space is
+also what makes a mark behave exactly like the annotations the file already
+carries, now that those survive a resize with their geometry scaled.
+
+**2. A free text mark's appearance is drawn by `QPdfWriter`, which embeds the
+font it used.** The viewer cannot be left to draw it. Measured against PDFium
+on a `/Rect` 180 by 80 whose border alone comes to 2064 pixels, its own
+generated appearance draws Latin text at +954 and *nothing at all* for Greek,
+Cyrillic, Hebrew, Arabic, Japanese, Chinese and Georgian -- +0, the border and
+no more -- and every one of those has a catalogue in `po/`. Writing the stream
+by hand against standard-14 Helvetica fails worse rather than better: WinAnsi
+draws the bytes as Latin glyphs instead of dropping them, so eight Greek
+letters sent as sixteen UTF-8 bytes come to 1876 pixels where eight letters
+cost 1217, and the mark is silently *wrong* instead of silently absent.
+
+`QPdfWriter` is the same answer `stamp.py` reached for the same reason, and the
+reasoning is already in its docstring: placing text needs the string's width,
+which needs font metrics, which means shipping an AFM table that is Latin-1
+only. Qt has the metrics and the face, takes Unicode, and embeds a subset of
+whatever was drawn, so no font library is needed -- `fontTools` is not a
+dependency and is not installed. The work is lifting Qt's content stream and
+font resources into a Form XObject whose `/BBox` and `/Matrix` fit `/Rect`,
+which is close to what `layers.paste_as_layer` already does for a stamp.
+
+The font is embedded **always**, not only when the text needs it. The
+alternative was a base-14 Helvetica path for WinAnsi-encodable text and an
+embedded subset for the rest, which is this plus a branch -- and that branch
+has to be re-decided every time the text is *edited*, which is exactly where
+pdf.js has an open bug: editing an annotation to text its font cannot encode
+updates `/Contents` and leaves the old appearance behind. Regenerating through
+`QPdfWriter` on every edit means that class of bug cannot happen. It is also
+what Apple does, measured in the corpus: 14 `/FreeText` marks written by
+`Quartz PDFContext`, every one carrying a subsetted `/AAAAAD+Helvetica` as
+`/TrueType` with a `FontFile2` in its own `/AP`, even for plain ASCII. The only
+unembedded base-14 in any of the evidence is `/AcroForm /DR /Font /Helv` as a
+*form* default, in documents whose producer controls the content to Latin.
+
+The other alternative was Latin-only for now, with non-Latin refused where it
+is typed. Rejected because a reader that ships 33 catalogues and cannot take a
+comment in the user's own language is the same failure as a mark that does
+not draw --
+a document whose content is invisible -- and because the saving is bytes rather
+than work, now that Qt does the subsetting.
+
+Two consequences. `has_fonts()` is False under the offscreen platform, so a
+free text appearance is tested in the world the stamp tests already live in.
+And the appearance's font object must not alias an `/AcroForm /DR` font with an
+identical `BaseFont` name and a different font program, or Acrobat Reader warns
+that the embedded font cannot be extracted.
+
+**3. Comment, Insert Text and Replace Text are all three offered.** Taken by
+the owner on 2026-10-30: they are heavily used when reviewing a document and
+their meaning is long established, so a reader that shows them and cannot make
+them is a reader somebody has to leave to answer a review.
+
+The question nearly went the wrong way, and the reason is worth keeping. From
+the screen the three look like three icons, so it was first written down as
+whether a note's icon is the author's to choose. They are not three icons:
+both `/Text` marks in the test document carry `/Name /Comment`, the carets
+draw from their own `/AP` and use no `/Name` at all, and what differs between
+them on screen is the colour. The distinction is carried by *structure*, and
+M9 records it -- a comment is one `/Text`; an insertion is one `/Caret`; a
+replacement is **two** annotations, a `/Caret` with `/IT /Replace` holding the
+typed text and a `/StrikeOut` with `/IT /StrikeOutTextEdit` whose `/IRT` names
+it and whose `/RT` is `/Group`.
+
+Two consequences fall out of that and are already in the requirements. The
+model has to represent a *group*, not only a mark, because deleting a
+replacement takes its icon, its insertion mark and its strikethrough together
+(M2). And `/IRT` must never be read without `/RT`: the same key makes a reply
+when `/RT` is absent, which is how a `/Text` note in the same file hangs off a
+`/Caret`, so reading one without the other turns every grouped pair into a
+thread (M9).
+
+What this does not decide is the icon a note is written with. PDFium ignores
+`/Name` -- measured, the same 1327 pixels for seven different values
+and for none -- so offering a choice would mean drawing the icon ourselves,
+and nothing in this decision needs that. The `/Name /Note` already written
+stands.
+
+**4. The work goes one tool at a time, starting with where the tools live
+and then with Comment.** Taken by the owner on 2026-10-30, and it replaces
+what O4 was asking. O4 weighed three orderings -- M6 first, free text
+first, or
+freehand alone -- and all three ranked the work by *cost*. This ranks it by
+what each piece teaches, and does the cheap thing second.
+
+First the place a user finds the tools at all, because a tool nobody can reach
+is not a tool, and because twenty of them will not fit wherever the first one
+goes. Then one tool at a time, or at least one class at a time -- the
+text-related marks, the graphical ones, and so on -- rather than by subtype or
+by what happens to be cheap.
+
+Comment is first of the tools because it is the one that will surface the most
+that is still unsettled: rich text (M8), how attributes are chosen and applied
+(M3), the author and times shown beside it (M4), the popup it is read in (M6)
+and the replies under it (M7). It is also the kind already furthest along, so
+what it teaches is paid for once and spent on the other nineteen.
+
+How the rest are grouped is deliberately not settled. Two splits present
+themselves -- by what a mark is *anchored to*, which puts Highlight,
+Underline, Strikethrough, Insert text and Replace text together because they
+share a text selection and its hit-testing; or by what a mark *carries*, which
+puts Comment with Add text comment and Text callout because they share the
+rich-text machinery. Comment is first under either, so the question can wait
+until Comment has been built and has shown which of the two it leaned on.
+
+Two consequences. Free text and freehand as a single step, as the earlier
+plan had it --
+together, because both were cheap -- does not survive this, and the step table
+below is rebuilt around tools once the grouping is known. And M14 comes with
+Comment rather than after it: looking at Comment "in detail" means looking at
+the two in the test document, and those are not in the model until something
+reads them in.
+
+**Amended 2026-10-31: Comment is not first after all.** Further use of Reader
+turned up more of what a comment needs -- rich text with colour and size
+varying inside one comment, a fill behind the text box, a popup carrying
+author, time and replies -- while the text-markup family needs attributes and
+nothing else. Highlight, Underline and Strikethrough go first, as this
+plan's
+step step 3. They exercise the whole spine: arming a tool, the attribute tail,
+hit-testing by ink, selection, the grips, recolouring, deletion and reopening
+-- with no text editor anywhere in it. Comment follows, against a spine that
+already works.
+
+What is written above about what Comment teaches still stands; it is the order
+that changed, and for a reason the original argument did not weigh. A spine is
+cheaper to prove with a tool that cannot hide a flaw behind an editor, and
+Comment is the tool most able to hide one.
+
+**5. Set status and Review History are in scope**, reversing the
+2026-10-31 entry that put the review workflow out. What changed is the
+measurement: a status is not a workflow, it is two keys. Setting one appends
+a hidden `/Text` annotation carrying `/State` and `/StateModel /Review`, and
+the history is that chain read back -- there is nothing to edit, nothing to
+synchronise between people, and no round trip to run. Acrobat itself offers
+no way to change a history, only to add to it.
+
+Showing it is derived rather than stored: Acrobat's row is composed from the
+annotation's own `/T`, `/State` and `/M`, which its properties dialog prints
+as *"dws: Accepted, 11/1/26, 2:33:27 PM"*. The `/Contents` each link carries
+is a sentence Acrobat generates for other viewers and does not itself
+display, so none of this costs a translatable string in the history view.
+
+**6. Deleting a mark deletes what hangs off it.** Its status chain, its
+replies, and the `/Popup` object each of those owns. A status link points at
+the link before it rather than at the mark, so removing one has to follow the
+chain and not take a single step -- deleting the first link of a two-step
+history would otherwise orphan the second. Taken by the owner on 2026-11-01,
+with the alternative being annotations whose `/IRT` resolves to nothing,
+which is what this project has already seen once with `/P`.
+
+**7. A mark the file brought is amended, never rebuilt.** The model owns the
+kinds it understands and everything else rides through as the dictionary it
+arrived as. An edit changes the keys the user changed -- set `/C`, regenerate
+the `/AP` that would otherwise draw the old colour -- and leaves the rest
+alone.
+
+The alternative was to rebuild an annotation from our own fields once we
+owned its kind. That is lossy for every mark it owns, in proportion to how
+much of the format the model does not model: a highlight we fully support
+still carries `/NM`, `/RC`, `/Subj`, `/CreationDate`, `/Popup` and whatever
+its producer invented, and 306 characters of rich text have nowhere to live
+in an `Annotation` that holds one string and one colour. Rebuilding also
+makes the thing we are least ready to model -- `/RC` -- a precondition for
+holding a mark that has one.
+
+The two do not converge even at full coverage, because coverage is of
+*kinds* and the loss is of *keys*. Taken 2026-11-01.
+
+**8. The model holds the edits, not the marks.** An untouched annotation
+stays in the file and is resolved on demand for drawing and hit-testing; the
+model gains an entry only when something about it changes.
+
+Undo decided this. `Annotations` is snapshotted onto the undo stack on every
+edit of anything, and it is cheap because it is sparse -- a document nobody
+has marked holds an empty one. Reading every annotation in would end that:
+the markup sample would copy 180 entries per undo and the Handbook thousands.
+Holding deltas keeps it sparse, makes undo of an edit mean *drop the delta*
+with nothing to restore, and gives the overlay the same shape as the typed
+form values it sits beside.
+
+**9. A mark is identified by a uid this session assigns.** Allocated when a
+page's annotations are first read, carried through a snapshot, exactly as
+`Page.uid` works for pages.
+
+Not `/NM`: a delta never has to outlive the session, because the moment the
+document is saved the edit is in the file and there is nothing left to key.
+So nothing is written to a document that was only looked at. Not position
+either -- our own operations invalidate it, since deleting a mark takes its
+status chain and its replies with it and everything after shifts, and undo
+shifts them back, so a delta keyed by position names a different mark in
+between.
+
+If a delta ever has to survive a save and reopen -- pending edits, or marks
+changed in one window and exported from another -- `/NM` becomes the answer
+and we would be assigning one. Nothing in this plan needs that.
+
+## Done
+
+**2026-11-01 — step 2, the tool surface.** A floating column over the
+reader, summoned from a toolbar button that is enabled while reading and
+disabled while arranging. Twenty tools in four families, declared once in
+`tools.py`; the strip, the flyouts and the tick are generated from that list.
+Every tool can be armed and none of them does anything, which is the point:
+what a tool makes arrives with its gesture and its attributes, one tool at a
+time, from step 3.
+
+The five-action Markup menu is gone. It was swept into `_editing_actions`, so
+it was disabled in read mode -- the only mode its tools act in -- and a flat
+list could not say which tool was armed or hold twenty of them.
+
+Three things the building of it turned up. `QToolButton.showMenu` is **not
+virtual**, so overriding it does nothing and Qt places a flyout under the
+button, on top of the families below; the press has to be intercepted
+instead. A label declared in a table reaches **no catalogue at all** unless it
+is marked with `i18n.N_`, which is the trap `mainwindow` already carries a
+comment about -- twenty tool labels were silently untranslatable until a
+language-change test caught them. And the settings store is scoped to the
+**process**, not to a test, so a strip left open in one test floats over the
+top left of the reader in every window built afterwards, exactly where other
+tests start the drags that make their marks.

@@ -27,7 +27,7 @@ none of them does anything yet: what a tool *makes* is decided one tool at a
 time, starting at step 4.3, and a tool arrives with its gesture and its
 attributes together. So there is no attribute column here. Adding twenty
 tools' worth of attributes before building one would be deciding what nobody
-is building (D10).
+is building.
 
 Families are Reader's own grouping, which groups by **what the gesture is**
 rather than by what the mark carries. That is why `Text callout` sits with the
@@ -35,7 +35,7 @@ shapes while `Add text comment` sits with the comments, though both write
 `/FreeText`: the tool is the unit, and a family is not a subtype.
 
 The signature family is not here. Reader offers stored signatures and
-initials; this application does not sign, so there is no such tool (D13).
+initials; this application does not sign, so there is no such tool.
 
 Icons are Material Design Icons through ``qtawesome``, named as it names them.
 The same set and the same library as the other Qt application in this family,

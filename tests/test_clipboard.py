@@ -25,7 +25,7 @@ from pdfarranger_qt.core import Dims, Page, Sides
 
 
 class TestClipboardFormat(unittest.TestCase):
-    """D5: the wire format is upstream's, so both versions can interoperate."""
+    """The wire format is upstream's, so both versions can interoperate."""
 
     def roundtrip(self, pages):
         from pdfarranger_qt import clipboard

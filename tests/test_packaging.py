@@ -103,7 +103,7 @@ class TestPackaging(unittest.TestCase):
         self.assertEqual(self.pyproject()["project"]["urls"]["Homepage"], PROJECT_URL)
 
     def test_every_build_script_can_forward_allow_drift(self):
-        """`build_mo.py` refuses to build on catalogue drift (D23).
+        """`build_mo.py` refuses to build on catalogue drift.
 
         Right for a release and in the way for a local build while a string is
         still in flight, so there has to be a way past it -- and it is a flag

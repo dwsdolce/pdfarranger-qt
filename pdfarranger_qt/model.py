@@ -40,7 +40,7 @@ class UndoState:
     pages: List[Page]
     selection: List[int] = field(default_factory=list)
     outline: Optional["Outline"] = None
-    """The bookmark tree as it stood (D20).
+    """The bookmark tree as it stood.
 
     In the same snapshot as the pages, deliberately, so there is one history
     rather than two that can disagree: undoing a rename and undoing a rotation
@@ -48,7 +48,7 @@ class UndoState:
     are restored together.
     """
     annotations: Optional["Annotations"] = None
-    """The marks the user has added (D20's keying, by page uid).
+    """The marks the user has added (by page uid).
 
     Here for the reason the outline and the form values are: one history, so
     adding a note and deleting the page under it cannot disagree about what
@@ -160,7 +160,7 @@ class PageListModel(QAbstractListModel):
         super().__init__(parent)
         self.pages: List[Page] = []
         self.outline = Outline()
-        """The document's bookmarks (D20). Owned here rather than derived at
+        """The document's bookmarks. Owned here rather than derived at
         export time, which is what makes them editable at all."""
         self.form_values = FormValues()
         self.annotations = Annotations()
@@ -288,7 +288,7 @@ class PageListModel(QAbstractListModel):
             del self.pages[first : last + 1]
             self.endRemoveRows()
         self._key_rows.clear()
-        # Bookmarks pointing at the pages just removed become dangling (D20).
+        # Bookmarks pointing at the pages just removed become dangling.
         self.sync_outline()
         self.contents_changed.emit()
 
@@ -345,7 +345,7 @@ class PageListModel(QAbstractListModel):
         rows = sorted(set(rows))
         if not rows:
             return
-        # New pages, so new identities (D20): a bookmark on the original must
+        # New pages, so new identities: a bookmark on the original must
         # not silently point at the copy as well.
         copies = [self.pages[r].duplicate(new_identity=True) for r in rows]
         self.insert_pages(rows[-1] + 1, copies)
@@ -506,7 +506,7 @@ class PageListModel(QAbstractListModel):
         return added
 
     def sync_outline(self):
-        """Let the outline notice pages that have gone (D20).
+        """Let the outline notice pages that have gone.
 
         Called after anything that can shrink the list. The bookmarks are kept
         and marked dangling rather than deleted -- their titles may have been

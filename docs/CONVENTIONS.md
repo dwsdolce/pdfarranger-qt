@@ -15,8 +15,30 @@ in full, every time.
 |---|---|---|
 | A GitHub issue | `Issue #12` | Never a bare `#12`. The `#` stays so GitHub still links it. |
 | A pull request | `Pull Request #2`, then `PR #2` | The long form on first mention in a document, the short one after. |
-| A decision | `D20` | An identifier, not a position — it keeps its number for ever, even when superseded. |
+| A decision | `D20` | An identifier, not a position — it keeps its number for ever, even when superseded. **In documents only.** |
 | A phase of the port | `phase 5` | **Only 0–7, and only as a date.** See below. |
+
+**The source never refers to this directory.** Not a filename, not a section,
+not a decision number, in code or in a comment. Deleting the whole tree must
+leave the application and its test suite untouched — which is something you can
+run: move it aside and the suite still collects 1,807 tests.
+
+The reason is decay. A comment saying *"see the design notes"* is only as
+durable as the notes, and documents get renamed, split, merged and deleted. The
+project has paid for that three times: nine comments citing a section that had
+drifted into the next one, silently, for months; then one document becoming
+eight and every reference needing rewriting; then a hundred and eleven
+decision citations pointing into two registers at once, so the same `D5` meant
+the clipboard format in one and a signature rule in the other.
+
+So the reasoning lives where the code is. Where a measurement justifies a
+choice, the number goes in the docstring — *"the worst page costs 247 ms"* —
+not a pointer to where it was written down.
+
+`tools/check_docs.py` enforces this, along with the documents' own internal
+consistency. It is a **tool and not a test**, which is the rule applied to
+itself: a test that reads this tree is a test that depends on it. CI runs it
+as its own step.
 
 **Work after the port is named, not numbered.** It used to be "phase 8" and
 "phase 9". Once each had a file of its own the ordinal earned nothing, and it

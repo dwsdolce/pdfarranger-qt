@@ -102,8 +102,8 @@ IMPORT_FILTER = ("PDF and images (*.pdf *.png *.jpg *.jpeg *.tif *.tiff *.bmp *.
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
-        # Locked by decision D1: this scope must not change,
-        # or saved geometry and zoom are silently orphaned.
+        # The settings scope is fixed permanently: moving it would silently
+        # orphan saved geometry and zoom.
         self.settings = app_settings()
         self.docs = DocumentSet()
         self.renderer = Renderer(self)
@@ -137,6 +137,8 @@ class MainWindow(QMainWindow):
         #: beside it: this is a page arranger and the strip is a guest.
         self.tool_strip = ToolStrip(self.reader)
         self.tool_strip.hide()
+        self.tool_strip.armed_changed.connect(self._tool_armed)
+        self.reader.canvas.tool_changed.connect(self._canvas_tool_changed)
         self.tool_strip.moved.connect(
             lambda where: self.settings.setValue(
                 "reader/markup-tools-at", where))
@@ -146,13 +148,13 @@ class MainWindow(QMainWindow):
         self.reader.field_edited.connect(self.field_edited)
         self.reader.field_refused.connect(self.field_refused)
         # The sidebar shows the document's outline, not the reader document's
-        # (D20), so the window keeps the two in step.
+        #, so the window keeps the two in step.
         self.model.outline_changed.connect(self._refresh_outline)
         self.reader.page_of_uid = self._page_of_uid
         self.reader.uid_of_page = self._uid_of_page
         # Bookmark commands live on the tree, undo lives here. The reader says
         # what it is about to do and the window records it, so a bookmark edit
-        # and a page edit come off one stack (D20).
+        # and a page edit come off one stack.
         self.reader.outline_edit_begun.connect(self.model.undo.commit)
         self.reader.outline_edited.connect(self._outline_edited)
         self.reader.set_outline_width(
@@ -463,7 +465,7 @@ class MainWindow(QMainWindow):
 
         # -- arrange ------------------------------------------------------
         # Moving a page a long way. Cut and paste can do it, but a pasted page
-        # is a *new* page with a new uid (D20), so its bookmarks stay behind
+        # is a *new* page with a new uid, so its bookmarks stay behind
         # dangling -- these keep the page itself and carry them along.
         self.act_move_to_start = self._action("Move to Start", mnemonic=False)
         self.act_move_to_start.setShortcut(QKeySequence("Ctrl+Shift+Home"))
@@ -735,11 +737,46 @@ class MainWindow(QMainWindow):
         "note": (markup.TEXT, (1.0, 0.82, 0.25)),
     }
 
+    #: Strip tool -> the canvas's own name for it. Only the tools that have
+    #: been built appear: the strip offers twenty and the canvas implements
+    #: four, because a tool arrives with its gesture one at a time.
+    CANVAS_TOOLS = {
+        "highlight": "highlight",
+        "strikethrough": "strikeout",
+        "comment": "note",
+        "draw": "draw",
+    }
+
+    def _tool_armed(self, name: str) -> None:
+        """The strip armed a tool, so the pointer changes meaning.
+
+        A tool nobody has built yet leaves the canvas reading, which is what
+        it was doing before. The strip still shows it armed -- the mode is
+        set, there is simply nothing behind it.
+        """
+        from .canvas import PageCanvas
+
+        self.reader.canvas.set_tool(
+            self.CANVAS_TOOLS.get(name, PageCanvas.SELECT))
+
+    def _canvas_tool_changed(self, tool: str) -> None:
+        """Keep the strip showing what the pointer is actually doing.
+
+        The canvas disarms itself when Escape is pressed, so the strip cannot
+        be the only place the choice lives. Only a tool the canvas implements
+        comes back this way, and arming is idempotent, so this cannot loop.
+        """
+        for armed, canvas_name in self.CANVAS_TOOLS.items():
+            if canvas_name == tool:
+                self.tool_strip.arm(armed)
+                return
+        self.tool_strip.arm(tools.DEFAULT)
+
     def _marks_on_page(self, index: int):
         """The marks on a page of the *reader*, for it to draw.
 
         By index, because that is what the canvas has; the model keeps them by
-        page uid (D20), which is what survives a reorder.
+        page uid, which is what survives a reorder.
         """
         if not 0 <= index < len(self.model.pages):
             return ()
@@ -748,7 +785,7 @@ class MainWindow(QMainWindow):
     def mark_drawn(self, tool: str, index: int, rects) -> None:
         """A markup gesture finished: keep it.
 
-        The rectangles arrive in the page's own space (D6), so nothing here
+        The rectangles arrive in the page's own space, so nothing here
         has to know about zoom, scroll or rotation.
         """
         kind = self.MARK_KINDS.get(tool)
@@ -769,7 +806,7 @@ class MainWindow(QMainWindow):
             #
             # Divided by the page's resize, because the size that matters is
             # the icon's on the page a reader draws and the mark is kept in
-            # the source page's space (D6). Normalising to a flat 20 here
+            # the source page's space. Normalising to a flat 20 here
             # instead quietly halved a note placed on a page shown at half
             # size.
             scale = page.scale if page.scale else 1.0
@@ -851,15 +888,19 @@ class MainWindow(QMainWindow):
         self.reader.canvas.viewport().update()
 
     def keyPressEvent(self, event):
-        """Escape disarms the strip.
+        """Escape puts the pointer back, whether the strip is up or not.
 
-        A tool is a mode, so there has to be a way out of it that is not
-        choosing a different one. This sees the key only when nothing nearer
-        wanted it: the canvas takes Escape first when a field has focus, when
-        a mark is being drawn or when there is a selection to clear, each of
-        which is what the key meant at that moment.
+        Arming a tool sets a mode. Closing the strip does not clear it, so a
+        tool can be armed with nothing on screen saying so -- which is the
+        state where a way out matters most. Tested on the mode rather than on
+        the panel for that reason.
+
+        It sees the key only when nothing nearer wanted it: the canvas takes
+        Escape first when a field has focus, when a mark is being drawn, or
+        when there is a selection to clear, each of which is what the key
+        meant at that moment.
         """
-        if (event.key() == Qt.Key_Escape and self.tool_strip.isVisible()
+        if (event.key() == Qt.Key_Escape
                 and self.tool_strip.armed() != tools.DEFAULT):
             self.tool_strip.disarm()
             return
@@ -1319,7 +1360,7 @@ class MainWindow(QMainWindow):
     def _page_of_uid(self, uid):
         """Where the page with this identity is *now*, or None if it has gone.
 
-        A bookmark names a page rather than a position (D20), so following one
+        A bookmark names a page rather than a position, so following one
         is a lookup rather than an index.
         """
         for row, page in enumerate(self.model.pages):
@@ -1547,7 +1588,7 @@ class MainWindow(QMainWindow):
             self.viewer_prefs = viewer.Preferences()
 
     def _load_outline(self):
-        """Read the bookmarks out of the loaded files (D20).
+        """Read the bookmarks out of the loaded files.
 
         From the source documents, once, rather than from whatever the reader
         happens to be showing: read mode shows an in-memory export when anything
@@ -1658,7 +1699,7 @@ class MainWindow(QMainWindow):
         self.set_read_mode(True)
         return True
 
-    # -- read mode (D14) ---------------------------------------------------
+    # -- read mode ---------------------------------------------------
 
     def set_arrange_mode(self, on: bool):
         """The toggle the user sees: checked means arranging."""
@@ -1668,7 +1709,7 @@ class MainWindow(QMainWindow):
         """Swap the central widget between the grid and the reader.
 
         Entering re-exports the page list if anything changed since the last
-        time (D15), so what is read always matches what would be saved.
+        time, so what is read always matches what would be saved.
         """
         if on and not self.model.rowCount():
             # Nothing to read, but reading is the mode this application is in:
@@ -2107,7 +2148,7 @@ class MainWindow(QMainWindow):
         # document built here is a new one, so overwriting leaves a broken
         # signature where a good one was, which no reader can tell from
         # tampering. Deriving a new file is allowed, and is what Acrobat tells
-        # you to do as well -- "save a copy and reopen" (D5).
+        # you to do as well -- "save a copy and reopen".
         if self._signed_file_at(self.current_path):
             QMessageBox.information(self, APP_NAME, _(
                 "This document is signed. Saving over it would leave a broken "
@@ -2140,7 +2181,7 @@ class MainWindow(QMainWindow):
                         mark_saved=False, outline=self.model.outline)
 
     def _write(self, files_out, pages, mark_saved=True, outline=None) -> bool:
-        """Write ``pages`` out. ``outline`` is the document's bookmarks (D20).
+        """Write ``pages`` out. ``outline`` is the document's bookmarks.
 
         Given for a full save and for an export of a *selection* alike, so that
         a renamed bookmark exports under the name you gave it rather than the
@@ -2238,7 +2279,7 @@ class MainWindow(QMainWindow):
         self._outline_asked_for = False
         self.search.invalidate()
         # The outline goes with the document it came from. It is not derived
-        # from the page list any more (D20), so emptying the pages does not
+        # from the page list any more, so emptying the pages does not
         # empty it, and closing a file used to leave its whole tree sitting in
         # the sidebar. Both callers want this: opening replaces it a moment
         # later, closing should end with nothing.
@@ -2427,7 +2468,7 @@ class MainWindow(QMainWindow):
 
         The point of these commands over cut and paste, on a document too long
         to scroll: they move the pages themselves, so a page keeps its identity
-        and the bookmarks pointing at it come along (D20). A pasted page is a
+        and the bookmarks pointing at it come along. A pasted page is a
         new page and leaves them behind dangling.
         """
         rows = self.view.selected_rows()
@@ -3235,7 +3276,7 @@ class MainWindow(QMainWindow):
 
         A signature is the only reason so far. Asked of the source document
         rather than of the one on screen, because the one on screen is an
-        export and export does not carry a signature over (D5).
+        export and export does not carry a signature over.
         """
         page = self._page_for_field(field)
         if page is None:

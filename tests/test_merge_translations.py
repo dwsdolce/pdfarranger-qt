@@ -91,7 +91,7 @@ class MergeTestCase(unittest.TestCase):
 
 
 class TestHumanWorkIsNeverOverwritten(MergeTestCase):
-    """The rule the whole exercise rests on -- see D22."""
+    """The rule the whole exercise rests on."""
 
     def test_an_existing_translation_is_left_alone(self):
         written, _refused, occupied, _unknown = self.fill({"_Open": "_Etwas anderes"})

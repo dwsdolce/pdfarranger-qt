@@ -63,8 +63,9 @@ def has_widgets(pdf) -> bool:
     """Whether any page carries a form field with something to draw.
 
     The question the whole feature is gated on. A document with no fields --
-    which is nearly all of them -- must not pay for a second copy, and D19's
-    fast path into read mode has to survive untouched for those.
+    which is nearly all of them -- must not pay for a second copy, and the
+    fast path that opens the source file directly for read mode, skipping the
+    export, has to survive untouched for those.
     """
     for page in pdf.pages:
         for annot in page.get(pikepdf.Name.Annots, []):
@@ -574,7 +575,7 @@ def boxes_in(pdf) -> "list[tuple]":
 
     Plain data: five numbers a page, holding no reference to the document it
     came from. That is the whole reason it is returned beside the field map
-    rather than looked up through it (D7) -- a mark can be placed on a page
+    rather than looked up through it -- a mark can be placed on a page
     that carries no widgets, and closing the field map must not take the
     geometry with it.
     """

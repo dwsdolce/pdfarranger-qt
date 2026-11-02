@@ -14,7 +14,7 @@
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-"""Translation, on gettext (decision D2).
+"""Translation, on gettext.
 
 The upstream `po/` catalogue is reused as-is -- 33 languages -- so message ids
 must stay byte-identical to the GTK application's wherever a string is unchanged.

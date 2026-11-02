@@ -16,12 +16,12 @@
 
 """Marks the user adds to a document, owned by the application until it saves.
 
-The same shape as `forms.FormValues`, for the same reasons (D2): the state
+The same shape as `forms.FormValues`, for the same reasons: the state
 lives in memory, rides the undo stack beside the pages and the outline, and is
 written only at export. Nothing is added to a source document, which stays the
 immutable copy everything else reads.
 
-**Keyed by page uid, not by index** -- D20's lesson, learned for bookmarks and
+**Keyed by page uid, not by index** -- the lesson bookmarks taught, and
 exactly as true here. An index is invalidated by every reorder, and an object
 reference is invalidated by the next undo, because `UndoManager.snapshot`
 rebuilds the page list with `duplicate()`. The uid survives both, and the
@@ -41,6 +41,7 @@ is carried by both exactly as the annotations already in the file are.
 
 import copy
 import datetime
+import itertools
 from typing import Dict, List, Optional, Tuple
 
 import pikepdf
@@ -221,7 +222,7 @@ class Annotations:
 def scaled(annotation: Annotation, factor: float) -> Annotation:
     """``annotation`` with every coordinate multiplied by ``factor``.
 
-    A mark is kept in the source page's space (D6) and a resized page's space
+    A mark is kept in the source page's space and a resized page's space
     is that one multiplied, so this is what turns the one into the other on
     the way out. Both the rectangle and the quadrilaterals, because they are
     in the same space and scaling one without the other puts the box in the
@@ -347,7 +348,7 @@ def add_to_page(pdf, page, marks, factor: float = 1.0) -> int:
     """Write ``marks`` onto one output page. Returns how many.
 
     ``factor`` is the page's resize, which the marks are *not* in: they are in
-    the source page's space (D6), so a page written at half size takes its
+    the source page's space, so a page written at half size takes its
     marks multiplied by a half.
     """
     written = 0
@@ -358,3 +359,187 @@ def add_to_page(pdf, page, marks, factor: float = 1.0) -> int:
         page[pikepdf.Name.Annots].append(entry)
         written += 1
     return written
+
+
+#: Identity for a mark the file brought, handed out as a page's annotations
+#: are first read. Session-local on purpose: a change to one of these is held
+#: as an overlay until the document is saved, and once it is saved the change
+#: is in the file and there is nothing left to key. So nothing is written to a
+#: document somebody only looked at.
+#:
+#: Not the position in `/Annots`, which our own edits invalidate -- deleting a
+#: mark takes its status chain and its replies with it, everything after
+#: shifts, and undo shifts them back, so a position names a different mark in
+#: between. The same reasoning as `Page.uid`, for the same reason.
+_mark_uids = itertools.count(1)
+
+#: Bit 2 of `/F`, Hidden. A status change carries it and a reply does not,
+#: which is why one of them draws a comment icon on the page and the other
+#: never appears.
+HIDDEN = 2
+
+
+class Mark:
+    """One annotation the document already had, as this application sees it.
+
+    Deliberately *not* an `Annotation`. That is the overlay of what the user
+    made; this is a reading of what was there, and the dictionary it was read
+    from stays the source of truth for every key nobody has touched.
+    """
+
+    __slots__ = ("uid", "page", "subtype", "rect", "quads", "colour",
+                 "opacity", "contents", "name", "parent", "state", "hidden")
+
+    def __init__(self, page, subtype, rect, quads=(), colour=None,
+                 opacity=None, contents="", name=None, parent=None,
+                 state=None, hidden=False):
+        self.uid = next(_mark_uids)
+        self.page = page
+        self.subtype = subtype
+        self.rect = tuple(rect)
+        self.quads = tuple(tuple(q) for q in quads)
+        self.colour = colour
+        self.opacity = opacity
+        self.contents = contents
+        #: `/NM`, when the producer wrote one. Not used for identity -- see
+        #: `_mark_uids` -- but it is how a child names its parent.
+        self.name = name
+        #: The `/NM` of the mark this one hangs off, for a reply or a status.
+        self.parent = parent
+        #: `/State`, which is what tells a status change from a reply. `/RT`
+        #: does not: it is absent on both, which the format reads as a reply.
+        self.state = state
+        self.hidden = hidden
+
+    def is_status(self) -> bool:
+        return self.state is not None
+
+    def is_reply(self) -> bool:
+        return self.parent is not None and self.state is None
+
+    def __repr__(self):  # pragma: no cover - debugging aid
+        return (f"Mark({self.subtype}, page={self.page}, uid={self.uid}, "
+                f"rect={self.rect})")
+
+
+def _number(value, default=None):
+    try:
+        return float(value)
+    except Exception:  # noqa: BLE001 - a key we cannot read is a key we skip
+        return default
+
+
+def marks_in(pdf) -> "list[Mark]":
+    """Every annotation in a document, as `Mark`s, in page order.
+
+    Form widgets are left out: a field is an annotation, but it is the forms
+    layer's business and it is reached by a different click.
+    """
+    found = []
+    for number, page in enumerate(pdf.pages, start=1):
+        for annot in page.obj.get(pikepdf.Name.Annots) or []:
+            try:
+                subtype = str(annot.get(pikepdf.Name.Subtype, ""))
+                if subtype in ("/Widget", "/Popup", "/Link"):
+                    continue
+                rect = [_number(v, 0.0) for v in
+                        annot.get(pikepdf.Name.Rect, [0, 0, 0, 0])]
+                raw = annot.get(pikepdf.Name.QuadPoints) or []
+                quads = [tuple(_number(v, 0.0) for v in raw[at:at + 8])
+                         for at in range(0, len(raw) - 7, 8)]
+                colour = annot.get(pikepdf.Name.C)
+                parent = annot.get(pikepdf.Name.IRT)
+                found.append(Mark(
+                    page=number,
+                    subtype=subtype,
+                    rect=rect,
+                    quads=quads,
+                    colour=(tuple(_number(v, 0.0) for v in colour)
+                            if colour is not None else None),
+                    opacity=_number(annot.get(pikepdf.Name.CA)),
+                    contents=str(annot.get(pikepdf.Name.Contents, "")),
+                    name=(str(annot[pikepdf.Name.NM])
+                          if pikepdf.Name.NM in annot else None),
+                    parent=(str(parent[pikepdf.Name.NM])
+                            if parent is not None
+                            and pikepdf.Name.NM in parent else None),
+                    state=(str(annot[pikepdf.Name.State])
+                           if pikepdf.Name.State in annot else None),
+                    hidden=bool(int(annot.get(pikepdf.Name.F, 0)) & HIDDEN),
+                ))
+            except Exception:  # noqa: BLE001 - one bad mark is not the page
+                continue
+    return found
+
+
+class MarkMap:
+    """Which mark is under a point, per page of one source document.
+
+    Built once per document and kept, for the reason `forms.FieldMap` is:
+    a click asks on every press, and the markup sample carries 180
+    annotations on four pages.
+
+    The document is *not* held open. Unlike a field, nothing here renders an
+    appearance out of it -- the reader draws the marks from the copy it is
+    showing -- so the file is read once and let go.
+    """
+
+    __slots__ = ("_by_page",)
+
+    def __init__(self, marks=()):
+        self._by_page: Dict[int, List[Mark]] = {}
+        for mark in marks:
+            self._by_page.setdefault(mark.page, []).append(mark)
+
+    @classmethod
+    def read(cls, source) -> "MarkMap":
+        """From a path. An empty map if it cannot be read."""
+        try:
+            with pikepdf.open(source) as pdf:
+                return cls(marks_in(pdf))
+        except Exception:  # noqa: BLE001 - a click simply finds nothing
+            return cls()
+
+    def for_page(self, page: int) -> List[Mark]:
+        """Every mark on a 1-based page of the source, drawable ones first."""
+        return list(self._by_page.get(page, ()))
+
+    def visible(self, page: int) -> List[Mark]:
+        """The ones a click could plausibly be aimed at.
+
+        A status change is hidden by its `/F` and draws nothing, so it can
+        never be what was clicked -- it is reached through the mark it hangs
+        off instead.
+        """
+        return [m for m in self.for_page(page) if not m.hidden]
+
+    def by_uid(self, uid: int) -> Optional[Mark]:
+        for marks in self._by_page.values():
+            for mark in marks:
+                if mark.uid == uid:
+                    return mark
+        return None
+
+    def children(self, mark: Mark) -> List[Mark]:
+        """The replies and status changes hanging off ``mark``.
+
+        Follows the chain rather than taking one step: the first status
+        change points at the mark, and each later one points at *the link
+        before it*, so a single step finds the first and misses the rest.
+        """
+        if mark.name is None:
+            return []
+        found, frontier = [], {mark.name}
+        while frontier:
+            names = set()
+            for marks in self._by_page.values():
+                for other in marks:
+                    if other.parent in frontier and other not in found:
+                        found.append(other)
+                        if other.name is not None:
+                            names.add(other.name)
+            frontier = names
+        return found
+
+    def __len__(self):
+        return sum(len(v) for v in self._by_page.values())

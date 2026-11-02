@@ -34,7 +34,7 @@ there, it is *absent*, and there is nothing for a translation to attach to.
 Syncing adds what the template has and retires what it no longer mentions, the
 way ``msgmerge`` would.
 
-Three rules, from D22:
+Three rules, from the decision to fill the catalogues by machine:
 
 **Human translation always wins.** Only an empty message is ever filled. A
 string somebody wrote is never replaced, reworded or reordered -- which is why

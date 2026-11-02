@@ -831,7 +831,7 @@ class TestOutlineStylesAndState:
     #
     # It is gone rather than repaired because `rebuild_outlines` is no longer on
     # any path that saves a file. Every save and export now supplies the
-    # document's own outline (D20) and goes through `write_outline`, which
+    # document's own outline and goes through `write_outline`, which
     # preserves all three -- setting bold and italic through pikepdf's API and
     # writing /C into the dictionary afterwards, which is the way around the
     # limitation. That is covered end to end by TestBookmarkAppearance in

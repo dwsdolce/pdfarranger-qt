@@ -10,8 +10,12 @@ Anything not here is still open.
 > application, which ended at phase 7. Nothing is added here now: a decision
 > taken for a piece of work since then lives in that work's own document, dated
 > and numbered within it, the way [ANNOTATIONS.md](ANNOTATIONS.md) carries its
-> own. These twenty-five keep their numbers for ever because fourteen of them
-> are cited by name in the source, and because a closed register cannot rot.
+> own. These twenty-five keep their numbers because a closed register cannot
+> rot. They are **not** cited from the source: a hundred and eleven such
+> citations were removed on 2026-11-01, and `tools/check_docs.py` now refuses
+> them. Two registers used the same `D<n>` form -- this one and the running
+> number each work document keeps -- so the same citation meant the clipboard
+> format in one and a signature rule in the other.
 
 ## Decisions
 

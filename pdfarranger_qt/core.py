@@ -340,7 +340,7 @@ class Page(BasePage):
         self.uid = next(_page_uids)
         """Identity that survives editing, for anything pointing *at* a page.
 
-        Bookmarks need it (D20). Not the index, which every reorder invalidates,
+        Bookmarks need it. Not the index, which every reorder invalidates,
         and not the object, which `UndoManager.snapshot` replaces wholesale --
         it rebuilds the list with `duplicate()`, so after one undo an object
         reference would name an orphan. `duplicate()` carries the uid across, so
@@ -956,7 +956,7 @@ class DocumentSet:
     def source_if_unmodified(self, pages) -> Optional[Tuple[str, str]]:
         """``(copyname, password)`` if ``pages`` is a 1:1 view of one source.
 
-        Read mode shows an in-memory export of the edited page list (D15), which
+        Read mode shows an in-memory export of the edited page list, which
         on a large document costs seconds and gigabytes. When
         nothing has been edited that export reproduces a file that already
         exists, so the reader can open it instead. Returns None when it cannot,

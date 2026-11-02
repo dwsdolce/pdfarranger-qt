@@ -319,7 +319,7 @@ class FileDocuments:
 class BytesDocument:
     """One `QPdfDocument` over a buffer, built on the render thread.
 
-    The reader's document (D15) lives on the GUI thread, bound to the search,
+    The reader's document lives on the GUI thread, bound to the search,
     bookmark and page-selector models. QPdfDocument is not thread-safe and the
     worker deliberately builds its own documents, so the *bytes* cross the
     thread boundary and a second document is parsed from them here. QByteArray

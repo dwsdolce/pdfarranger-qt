@@ -827,7 +827,7 @@ class TestTheResultAddsUp(unittest.TestCase):
 
 
 class TestWhereTheResultLands(QtDocumentTestCase):
-    """D25: a new temporary document, with the pages moved to it.
+    """A new temporary document, with the pages moved to it.
 
     The test that matters here is the undo one. It fails against the obvious
     implementation -- rewriting the images inside the file the page already
@@ -876,7 +876,8 @@ class TestWhereTheResultLands(QtDocumentTestCase):
             self.assertEqual(len(pdf.pages), 3)
 
     def test_undo_restores_the_pixels(self):
-        """The whole reason for D25, and it fails against an in-place rewrite."""
+        """The whole reason for a new document rather than an in-place
+        rewrite, and it fails against one."""
         original = self.image_bytes(self.pages[0].copyname)
         self.model.undo.commit("Compress")
         self.balanced()

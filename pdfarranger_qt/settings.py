@@ -24,7 +24,7 @@ import os
 
 from PySide6.QtCore import QSettings
 
-#: Unchanged from before the rename (decision D1): moving it would orphan saved
+#: Unchanged from before the rename: moving it would orphan saved
 #: window geometry, zoom and shortcuts. On Windows this is
 #: ``HKEY_CURRENT_USER\\Software\\pdfarranger``.
 ORGANISATION = "pdfarranger"

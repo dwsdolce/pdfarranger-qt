@@ -14,7 +14,7 @@
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-"""The document's own bookmark tree (D20).
+"""The document's own bookmark tree.
 
 Pure data, no pikepdf and no Qt, so the awkward questions -- what survives an
 edit, what a dangling entry means, what happens to the children of a deleted
@@ -243,7 +243,7 @@ class TestBuilding(unittest.TestCase):
 
 
 class TestOutlineThroughEditing(unittest.TestCase):
-    """The outline through a document's life (D20).
+    """The outline through a document's life.
 
     The behaviour David asked for: edits, including undo, keep the bookmarks
     right. Driven through a real window, because the interesting part is the
@@ -318,7 +318,7 @@ class TestOutlineThroughEditing(unittest.TestCase):
         self.assertEqual(len(self.win.model.pages), 4)
 
     def test_duplicating_a_page_does_not_duplicate_its_bookmarks(self):
-        """The copy is a new page with its own identity (D20)."""
+        """The copy is a new page with its own identity."""
         self.win.view.set_selected_rows([0])
         self.win.model.undo.commit("Duplicate")
         self.win.model.duplicate([0])
@@ -332,7 +332,7 @@ class TestOutlineThroughEditing(unittest.TestCase):
         A *copy* of the fixture, because importing the same path again reuses
         the document already loaded -- one source, one outline read, and the
         second set of pages are duplicates whose bookmarks stay with the first
-        (D20). Two different files is the case this is about.
+       . Two different files is the case this is about.
         """
         import shutil
         import tempfile
@@ -750,7 +750,7 @@ class TestBookmarkCommands(unittest.TestCase):
 
 
 class TestOutlineSurvivesASave(unittest.TestCase):
-    """Edit, save, reload: the tree comes back (D20, step 8).
+    """Edit, save, reload: the tree comes back.
 
     The test the whole design exists for. Until the outline was written on save
     every bookmark command worked, marked the document modified, undid
@@ -902,7 +902,7 @@ class TestOutlineSurvivesASave(unittest.TestCase):
 
 
 class TestDragToReNest(unittest.TestCase):
-    """Drag inside the outline tree (D20, the ninth step).
+    """Drag inside the outline tree.
 
     Driven through the model's drop handler rather than by synthesising drag
     events: what is worth testing is where an entry lands and that one drag is
@@ -1037,7 +1037,7 @@ class TestDragToReNest(unittest.TestCase):
 class TestClosingADocument(unittest.TestCase):
     """The outline goes with the document it came from.
 
-    It is not derived from the page list any more (D20), so emptying the pages
+    It is not derived from the page list any more, so emptying the pages
     does not empty it: closing a file left its whole tree sitting in the
     sidebar, still editable, still saveable into the next document opened.
     """
@@ -1091,7 +1091,7 @@ class TestMovingPagesALongWay(unittest.TestCase):
 
     David's case: relocating one page in a 1300 page book without scrolling to
     the far end. Cut and paste can do the move, but a pasted page is a *new*
-    page with a new uid (D20) -- so its bookmarks stay behind, dangling, which
+    page with a new uid -- so its bookmarks stay behind, dangling, which
     is what he found. These commands move the pages themselves, so identity and
     bookmarks survive. That is the property worth testing, not the arithmetic.
     """
@@ -1191,7 +1191,7 @@ class TestMovingPagesALongWay(unittest.TestCase):
         """The behaviour David hit, on record.
 
         Not a complaint about cut and paste: a pasted page really is a new page
-        (D20), the clipboard is a cross-process byte format (D5), and bookmarks
+       , the clipboard is a cross-process byte format, and bookmarks
         staying with the original is the same rule that stops Duplicate
         duplicating them. It is simply not a move -- and on a document too long
         to scroll, a move is what you wanted.

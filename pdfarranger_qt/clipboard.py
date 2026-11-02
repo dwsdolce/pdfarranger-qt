@@ -16,7 +16,7 @@
 
 """The page clipboard format.
 
-Byte-for-byte the GTK application's (decision D5), so the Qt and GTK versions can
+Byte-for-byte the GTK application's, so the Qt and GTK versions can
 copy and paste pages to each other while both exist. The payload is plain text::
 
     pdfarranger-clipboard\\n

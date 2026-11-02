@@ -29,7 +29,8 @@ value here is optional, and an unset one is removed rather than written as a
 default, so opening and saving a file does not silently give it opinions it
 did not have.
 
-This pairs with D20. Having made the outline editable, "open with the
+This pairs with the outline being the document's own. Having made it
+editable, "open with the
 bookmarks showing" is the setting that makes an authored outline visible
 without the reader hunting for it.
 """

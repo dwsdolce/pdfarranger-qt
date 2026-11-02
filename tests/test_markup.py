@@ -179,7 +179,7 @@ class TestItReachesTheSavedFile(unittest.TestCase):
 
 
 class TestItSurvivesUndo(unittest.TestCase):
-    """3.1's done-when, on the same stack as everything else (D2)."""
+    """3.1's done-when, on the same stack as everything else."""
 
     def window(self):
         from pdfarranger_qt.mainwindow import MainWindow
@@ -247,7 +247,7 @@ class TestFromThePointerToThePage(unittest.TestCase):
     """The seam a mark is placed through (3.2).
 
     A drag happens in viewport pixels; a mark is kept in the page's own space
-    (D6). Three frames are crossed between them, and the one that used to be
+   . Three frames are crossed between them, and the one that used to be
     missing is the turn: a widget's rectangle and the canvas's frame agree
     only at `/Rotate` zero.
     """
@@ -308,7 +308,7 @@ class TestFromThePointerToThePage(unittest.TestCase):
         self.assertIsNotNone(canvas.page_box(0))
 
     def test_the_boxes_outlive_the_field_map(self):
-        """D7: a box is five numbers and nothing invalidates it. Closing the
+        """A box is five numbers and nothing invalidates it. Closing the
         map must not take the geometry with it."""
         canvas = self.reading()
         before = canvas.page_box(0)
@@ -1046,7 +1046,7 @@ class TestAStickyNoteIsPlaced(unittest.TestCase):
 
 
 class TestANoteLandsUnderThePointer(unittest.TestCase):
-    """The turn is the whole of this (3.2's lesson, and D6's).
+    """The turn is the whole of this.
 
     A viewer draws a note's icon at the top left of `/Rect` **in page space**
     and then turns the page, so a rectangle expanded in page space puts the
@@ -1153,14 +1153,14 @@ class TestANoteLandsUnderThePointer(unittest.TestCase):
 class TestAMarkLivesInTheSourcePagesSpace(unittest.TestCase):
     """Decision 6, which was written and then not coded for a day.
 
-    D6 says a mark is kept in the *source* page's space and multiplied by the
-    page's resize on the way out, and it says why: a mark stored in output
+    A mark is kept in the *source* page's space and multiplied by the page's
+    resize on the way out, for a reason: a mark stored in output
     coordinates moves the next time its page is resized, because the space it
     was measured in is gone. `_write_annotations` did not multiply, so that is
     exactly what happened -- a note at (120, 572, 140, 592) on a page then
     scaled by half was written there onto paper 306 by 396.
 
-    A crop and a turn really are free, as D6 claims, and that is checked
+    A crop and a turn really are free, and that is checked
     elsewhere: the reader's exported `/MediaBox` *is* the crop, in the original
     page's numbers, and `/Rotate` survives into the exported page.
     """
@@ -1276,7 +1276,7 @@ class TestAMarkLivesInTheSourcePagesSpace(unittest.TestCase):
         return None
 
     def test_a_note_stays_on_the_paper_when_its_page_is_resized(self):
-        """The defect D6 named, and the reason it named it."""
+        """The defect that keeping a mark in source space exists to prevent."""
         canvas = self.reading()
         self.place_note(canvas, 120, 200)
         self.assertEqual(len(self.held()), 1)

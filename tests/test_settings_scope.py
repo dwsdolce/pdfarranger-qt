@@ -127,7 +127,7 @@ class TestSettingsScope(unittest.TestCase):
             self.assertTrue(under_test())
 
     def test_production_scope_is_unchanged(self):
-        """Decision D1: the real scope must not move, or settings are orphaned."""
+        """The real scope must not move, or settings are orphaned."""
         self.assertEqual(ORGANISATION, "pdfarranger")
         self.assertEqual(APPLICATION, "pdfarranger_qt")
 

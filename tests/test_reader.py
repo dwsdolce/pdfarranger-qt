@@ -18,7 +18,7 @@
 
 The reader is a Qt widget over PDFium, so the assertions worth making are about
 wiring rather than pixels — above all that what it shows is the *edited* page
-list and not the source file, which is what D15 turns on.
+list and not the source file, which is the whole point of read mode.
 """
 
 import os
@@ -87,7 +87,7 @@ class TestReaderView(unittest.TestCase):
     def test_the_sidebar_shows_the_outline_it_is_given(self):
         """The reader no longer derives one from the document it displays.
 
-        The outline belongs to the document now (D20) and is handed in, so the
+        The outline belongs to the document now and is handed in, so the
         sidebar shows the same tree whether the reader is showing the source
         file or an in-memory export of an edited page list.
         """
@@ -151,7 +151,7 @@ class TestReaderView(unittest.TestCase):
 
 
 class TestReaderShowsTheEdits(unittest.TestCase):
-    """D15: the reader renders the page list, not the file on disk."""
+    """The reader renders the page list, not the file on disk."""
 
     def setUp(self):
         from pdfarranger_qt.mainwindow import MainWindow

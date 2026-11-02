@@ -99,7 +99,7 @@ def view_of(dest):
 
     ``("XYZ", 100.0, 700.0, None)``, ``("Fit",)`` and so on, or None when there
     is nothing to say. The *page* is not in here: that comes from the bookmark's
-    page uid, so reordering stays free (D20) and only the position on the page
+    page uid, so reordering stays free and only the position on the page
     is remembered.
 
     Plain values rather than pikepdf objects, so `outline.py` can hold one
@@ -566,7 +566,7 @@ def rebuild_outlines(pdf_input, pdf_output, pages, source_names=None):
 
 
 def read_outline(pdf_input, pages, source_names=None):
-    """Read the outline out of the *source* documents, as an editable tree (D20).
+    """Read the outline out of the *source* documents, as an editable tree.
 
     The counterpart of `rebuild_outlines`, which derives an outline at export
     time by reading the sources and remapping their destinations into the
@@ -586,7 +586,7 @@ def read_outline(pdf_input, pages, source_names=None):
 
     # Where each source page ended up, if it did. First copy wins: a duplicated
     # page is a new page with its own identity, and bookmarks stay with the
-    # original (D20).
+    # original.
     uid_of = {}
     for row in pages:
         uid_of.setdefault((row.nfile - 1, row.npage - 1), row.uid)
@@ -713,7 +713,7 @@ def read_outline(pdf_input, pages, source_names=None):
 
 
 def write_outline(pdf_output, outline, pages, source_names=None, prune=False):
-    """Write the document's own outline into the output (D20).
+    """Write the document's own outline into the output.
 
     The counterpart of `read_outline`, and what replaces `rebuild_outlines`
     once the document owns its bookmarks: the outline that gets saved is the

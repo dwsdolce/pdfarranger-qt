@@ -1044,7 +1044,7 @@ class TestLinkTooltips(unittest.TestCase):
 class TestSelection(unittest.TestCase):
     """Selecting and copying text (phase 7 step 4).
 
-    QPdfView exposed none of this (D16). The awkward part is not the dragging
+    QPdfView exposed none of this. The awkward part is not the dragging
     but QPdfDocument.getSelection, which wants a glyph under *both* ends: the
     exact box of a line selects it, a generous rectangle around the same line
     selects nothing. Points are snapped onto the nearest run first, so these
@@ -1708,7 +1708,7 @@ class TestFacingSurvivesADocument(unittest.TestCase):
     """Facing pages belongs to the reader, not to the document.
 
     set_document() rebuilds the layout, and a new document arrives whenever an
-    edit makes the snapshot stale (D15) as well as at startup. Dropping the
+    edit makes the snapshot stale as well as at startup. Dropping the
     facing flag there meant the remembered setting was applied to an empty
     layout and thrown away the moment a document loaded: the menu said facing,
     the pages said otherwise, and toggling twice was the only way to fix it.

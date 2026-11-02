@@ -95,7 +95,7 @@ class TestEveryToolIsReachable(StripCase):
         self.assertEqual(len(tools.TOOLS), 20)
 
     def test_no_signature_tool_is_offered(self):
-        """D13: this application does not sign, so there is no such tool."""
+        """This application does not sign, so there is no such tool."""
         from pdfarranger_qt import tools
 
         names = " ".join(t.name + " " + t.label for t in tools.TOOLS).lower()
@@ -159,14 +159,34 @@ class TestArmingIsAMode(StripCase):
         self.strip.disarm()
         self.assertEqual(self.strip.armed(), tools.DEFAULT)
 
-    def test_escape_disarms(self):
+    def escape(self):
         """Through the window, because the strip never takes focus."""
+        self.win.keyPressEvent(QKeyEvent(
+            QKeyEvent.Type.KeyPress, Qt.Key_Escape, Qt.NoModifier))
+
+    def test_escape_disarms(self):
         from pdfarranger_qt import tools
 
         self.open_strip()
         self.strip.arm("draw")
-        self.win.keyPressEvent(QKeyEvent(
-            QKeyEvent.Type.KeyPress, Qt.Key_Escape, Qt.NoModifier))
+        self.escape()
+        self.assertEqual(self.strip.armed(), tools.DEFAULT)
+
+    def test_escape_disarms_with_the_strip_closed(self):
+        """Closing the strip does not clear the mode, so Escape still must.
+
+        Otherwise a tool stays armed with nothing on screen saying so, and
+        the way out of it has gone with the panel.
+        """
+        from pdfarranger_qt import tools
+
+        self.open_strip()
+        self.strip.arm("draw")
+        self.win.act_markup_tools.setChecked(False)
+        settle(timeout_ms=100)
+        self.assertFalse(self.strip.isVisible())
+        self.assertEqual(self.strip.armed(), "draw")
+        self.escape()
         self.assertEqual(self.strip.armed(), tools.DEFAULT)
 
 

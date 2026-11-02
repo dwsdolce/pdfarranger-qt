@@ -758,7 +758,7 @@ def _write(obj, data: bytes, encoding, image: Image.Image):
         del obj["/Decode"]
 
 
-# ------------------------------------------------------- the page list (D25)
+# ------------------------------------------------------- the page list
 
 
 def apply(pages: Sequence[Page], docs: DocumentSet,

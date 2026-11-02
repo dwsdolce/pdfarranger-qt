@@ -274,7 +274,7 @@ class TestTabWalksTheForm(unittest.TestCase):
 
 
 class TestTheReaderSeesTheSameOrderAsTheFile(unittest.TestCase):
-    """The reader shows an export of the edited page list (D15), so the order
+    """The reader shows an export of the edited page list, so the order
     it computes comes from that export's structure tree -- which is why 2.11
     needed 2.10 first."""
 
