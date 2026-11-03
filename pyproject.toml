@@ -20,6 +20,15 @@ classifiers = [
     "Programming Language :: Python :: 3",
     "Topic :: Utilities",
 ]
+# **A floor is a version this project has actually tested, not a guess at how
+# far back it would work.** CI installs the newest of everything against these
+# floors, so anything below them is a compatibility claim no run has ever
+# exercised -- and 2026-11-02 showed what that is worth: pikepdf returns
+# `dc:creator` as a set up to 10.11 and a list from 10.17, a difference inside
+# one major that a floor of >=8.0 silently promised to tolerate. The floors
+# are raised when the tested set moves, which is the cost of saying only what
+# is true. Measured against the set CI resolved on 2026-11-02, which the
+# working venv now matches exactly.
 dependencies = [
     # Not >=6.8 any more. 6.11.1 crashes on launch on macOS 27.2, on a
     # use-after-free in `qt_mac_cgImageFormatForImage()`: it builds the colour
@@ -30,19 +39,22 @@ dependencies = [
     # harmless; now it is a pointer authentication trap in CoreGraphics,
     # reached through *any* `QImage::toCGImage()` -- the wait cursor on
     # startup, but equally every page this reader paints. Reproduced here on
-    # 6.11.1 and confirmed gone on 6.11.2, which carries the fix.
-    "PySide6>=6.11.2",
-    "pikepdf>=8.0",
-    "img2pdf>=0.4.2",
+    # 6.11.1 and confirmed gone on 6.11.2, which carries the fix. The floor
+    # is above 6.11.2 because it is the tested version and not the oldest
+    # workable one; 6.11.2 is recorded as where the fix landed, which is the
+    # fact worth keeping whatever the floor says.
+    "PySide6>=6.12.0",
+    "pikepdf>=10.17.0",
+    "img2pdf>=0.6.3",
     # Never imported by name: it arrives as the return type of
     # `pikepdf.PdfImage.as_pil_image()`, which Extract Images already saves to
     # disk. Declared because that is a runtime requirement whatever it looks
     # like, and because compression will use it directly.
-    "Pillow>=10.0",
+    "Pillow>=13.0.0",
     # Material Design Icons as QIcons, and the fonts they come from. Qt's own
     # SP_* standard pixmaps have no glyph for a highlighter, an arrow or a
     # polygon, and render blank on macOS besides.
-    "qtawesome>=1.3",
+    "qtawesome>=1.4.2",
     # The loose character box, which is the box a text markup covers: the
     # font's ascent and descent rather than the glyph's ink. Qt PDF is PDFium
     # too, but it links it statically with hidden visibility -- not one
@@ -50,24 +62,24 @@ dependencies = [
     # against Acrobat's own highlights, this reproduces all 42 of their
     # quadrilaterals to within 0.06 points; Qt's ink-tight boxes run 2 to 6
     # points short and vary run by run.
-    "pypdfium2>=4.0",
-    "python-dateutil>=2.8",
-    "packaging>=23.0",
+    "pypdfium2>=5.14.0",
+    "python-dateutil>=4.0.0",
+    "packaging>=26.3",
 ]
 
 [project.optional-dependencies]
 dev = [
-    "pytest>=9.0",
-    "pytest-cov>=7.1",
-    "ruff>=0.15",
+    "pytest>=9.2.0",
+    "pytest-cov>=7.1.0",
+    "ruff>=0.17.3",
     # Also in the packaging extra below, so CI can build without pulling in the
     # test tooling. Here so that one `pip install -e ".[dev]"` covers everything
     # a developer needs, including packaging/build_win.
-    "pyinstaller>=6.0",
-    "babel>=2.12",
+    "pyinstaller>=6.22.3",
+    "babel>=2.18.0",
 ]
 packaging = [
-    "pyinstaller>=6.0",
+    "pyinstaller>=6.22.3",
 ]
 
 [project.gui-scripts]
