@@ -151,18 +151,20 @@ class MainWindow(QMainWindow):
                 "reader/markup-tools-at", where))
         self.reader.mark_drawn.connect(self.mark_drawn)
         self.reader.mark_resized.connect(self.mark_resized)
+        self.reader.mark_deleted.connect(self.mark_deleted)
         # So a gesture in flight is drawn in the colour it will be kept in:
         # the preview is the mark, before it is a mark.
         self.reader.canvas.set_mark_styles(self.MARK_KINDS)
         #: What you can do to the mark that is selected. A child of the
         #: viewport rather than of the reader, because it is placed from the
         #: rectangles the canvas reports and those are in viewport
-        #: coordinates. None of its three buttons acts yet; each is turned on
-        #: by the step that builds it.
+        #: coordinates. Comment does not act yet; it is turned on by the
+        #: step that builds it.
         self.mark_buttons = MarkButtons(self.reader.canvas.viewport())
         self.reader.canvas.set_mark_buttons(self.mark_buttons)
         self.mark_buttons.recoloured.connect(self.mark_recoloured)
         self.mark_buttons.faded.connect(self.mark_faded)
+        self.mark_buttons.deleted.connect(self.delete_selected_mark)
         #: What the next mark will be made in, once the tail's swatch has
         #: been used. None until then, so each tool keeps the colour readers
         #: expect of it rather than everything starting out yellow.
@@ -952,6 +954,80 @@ class MainWindow(QMainWindow):
         mark.quads = tuple(tuple(markup._quad_points(q)) for q in boxes)
         mark.rect = markup.bounding_rect(boxes)
         self._after_mark_change(index, uid)
+
+    def mark_deleted(self, index: int, mark) -> None:
+        """The Delete key, with a mark selected in the reader.
+
+        The window's own Delete removes *pages* and keeps that key whenever
+        no mark is selected; the canvas only emits this when one is, which
+        is what Reader does and what makes the nearer thing win.
+        """
+        self.delete_mark(index, mark)
+
+    def delete_selected_mark(self) -> None:
+        """The trash in the bar beside the selected mark."""
+        found = self.reader.canvas.selected_mark()
+        if found is not None:
+            self.delete_mark(*found)
+
+    def delete_mark(self, index: int, mark) -> None:
+        """Take a mark out, with everything that hangs off it.
+
+        **Its status chain and its replies go with it**, which is not what
+        Reader does: Reader deletes the replies, keeps the
+        status annotations and strips the `/IRT` off the one that pointed at
+        the mark. Measured on a file it wrote, that leaves two `/F`-hidden
+        `/Text` annotations recording that someone Accepted and then
+        Completed a comment that no longer exists -- unreachable in its own
+        comment panel, where the owner confirmed a deleted comment no longer
+        appears in Review History, and unreachable here, because
+        `MarkMap.visible` drops hidden marks too. Litter nobody can read.
+
+        A mark the file brought is recorded as deleted in the overlay rather
+        than removed from anything: the source document is never edited, so
+        the positions `MarkEdits` is keyed by do not move. One of the user's
+        own is removed from the model, where it lives.
+
+        The confirmation is Reader's, and only for replies -- a status
+        makes no difference to it, and neither does a note with nobody's
+        answer under it.
+        """
+        if not 0 <= index < len(self.model.pages):
+            return
+        canvas = self.reader.canvas
+        going = canvas.chain_of(mark)
+        if any(not isinstance(m, markup.Annotation) and m.is_reply()
+               for m in going) and not self._confirm_mark_delete():
+            return
+        self.model.undo.commit(_("Delete Mark"))
+        if isinstance(mark, markup.Annotation):
+            self.model.annotations.remove(mark)
+            canvas.select_mark(None)
+            self._after_mark_change(index)
+            return
+        uid = self.model.pages[index].uid
+        for one in going:
+            self.model.mark_edits.change(uid, one.index, deleted=True)
+        # Before the re-render, so the page that comes back is drawn without
+        # them *and* nothing hit-tests them any more. The map was built from
+        # the document the reader is showing and still holds them.
+        canvas.forget_marks(going)
+        self._after_mark_change(index, uid)
+
+    def _confirm_mark_delete(self) -> bool:
+        """Reader's dialog, for a mark somebody has replied to.
+
+        Not suppressible, as Reader's is not, and not shown for a mark that
+        merely carries a note or a status: what is being warned about is
+        somebody *else's* words going with yours.
+        """
+        return QMessageBox.question(
+            self, APP_NAME,
+            _("This mark has replies.")
+            + "\n" + _("Deleting this mark will also delete any replies to it."),
+            QMessageBox.Cancel | QMessageBox.Yes,
+            QMessageBox.Cancel,
+        ) == QMessageBox.Yes
 
     def _after_mark_change(self, index: int, uid=None) -> None:
         """Re-render the page and tell the rest, without rebuilding."""

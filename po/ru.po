@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pdfarranger master\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-02 23:30+0000\n"
+"POT-Creation-Date: 2026-11-03 03:39+0000\n"
 "PO-Revision-Date: 2026-09-04 09:59+0000\n"
 "Last-Translator: Lumenman <28367232+Lumenman@users.noreply.github.com>\n"
 "Language: ru\n"
@@ -1934,6 +1934,21 @@ msgstr "Добавить пометку"
 #: pdfarranger_qt/mainwindow.py
 msgid "Resize Mark"
 msgstr "Изменить размер пометки"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Delete Mark"
+msgstr "Удалить пометку"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "This mark has replies."
+msgstr "У этой пометки есть ответы."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Deleting this mark will also delete any replies to it."
+msgstr "При удалении этой пометки будут удалены и все ответы на неё."
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py

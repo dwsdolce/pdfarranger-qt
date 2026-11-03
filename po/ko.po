@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pdfarranger - Korean\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-02 23:30+0000\n"
+"POT-Creation-Date: 2026-11-03 03:39+0000\n"
 "PO-Revision-Date: 2026-05-25 00:41+0900\n"
 "Last-Translator: VenusGirl <venusgirl@outlook.com>\n"
 "Language: ko\n"
@@ -1941,6 +1941,21 @@ msgstr "표시 추가"
 #: pdfarranger_qt/mainwindow.py
 msgid "Resize Mark"
 msgstr "표시 크기 변경"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Delete Mark"
+msgstr "표시 삭제"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "This mark has replies."
+msgstr "이 표시에 답글이 있습니다."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Deleting this mark will also delete any replies to it."
+msgstr "이 표시를 삭제하면 표시에 달린 답글도 모두 삭제됩니다."
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py

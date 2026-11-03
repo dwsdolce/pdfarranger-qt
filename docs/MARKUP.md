@@ -733,6 +733,14 @@ Cited as **highlight step 1** to **highlight step 9**.
    Reader: a mark the file brought, resized here and written out, comes
    back covering the run it was dragged to.
 
+   **Repeated 2026-11-02 for the delete**, and it opens as expected in
+   Reader. A highlight carrying a reply and a two-step status chain was
+   deleted here and the document written out: the page it was on came back
+   with its two links and all fifteen widgets and nothing else -- no
+   `/Highlight`, no `/Text`, none of the four `/Popup` objects -- while the
+   highlights on the other two pages were untouched, popups and all. The
+   deletion reached one page and stopped there.
+
 6. **The handles, and resizing by them.** Two round grips, white with a
    blue ring, one at the start of the run and one at its end -- shown for a
    *selected* mark and never for a merely hovered one, which is the third
@@ -762,6 +770,17 @@ Cited as **highlight step 1** to **highlight step 9**.
    now one `markup.apply_edit`, which is the point: the next field cannot
    reach only one of them.
 7. **Delete**, taking the status chain and the replies with it.
+   **done 2026-11-02.** From the trash in the bar beside a selected mark,
+   and from the Delete key, which Reader also gives to the selected mark --
+   so the window's own Delete, which removes *pages*, keeps the key only
+   while no mark is selected. A mark with replies asks first, in Reader's
+   words and with Cancel as the default, because what is being warned about
+   is somebody else's words going with yours; a status makes no difference
+   to the dialog, and neither does a note nobody has answered. The dialog
+   is not suppressible, as Reader's is not.
+
+   *Delete Thread* belongs to the right-click menu in highlight step 8;
+   this step is the button and the key.
 8. **The right-click menu, and the pop-up note with it.** *Open Pop-Up
    Note* is one of its entries, so this is where a note on a mark is made
    rather than a step of its own: the note has no surface until the menu
@@ -1233,6 +1252,31 @@ chain and not take a single step -- deleting the first link of a two-step
 history would otherwise orphan the second. Taken by the owner on 2026-11-01,
 with the alternative being annotations whose `/IRT` resolves to nothing,
 which is what this project has already seen once with `/P`.
+
+**Reader does otherwise, and the decision stands anyway.** Measured
+2026-11-02 on a file Reader wrote after deleting a highlight that carried a
+reply and a two-step status chain:
+
+    before                                after
+      Highlight ─ Popup                     Text "Accepted"  ─ Popup
+      Text "Accepted"  IRT→Highlight        Text "Completed" IRT→"Accepted"
+      Text "Completed" IRT→"Accepted"
+      Text (reply)     IRT→Highlight
+
+The highlight, its popup, the reply and the reply's popup went. Both status
+annotations stayed, and the `/IRT` was stripped off the one that had pointed
+at the mark -- so Reader avoids the dangling reference by cutting the link,
+not by taking the annotation. What is left is two `/F`-hidden `/Text`
+annotations (`/F 30`: Hidden, Print, NoZoom, NoRotate) recording that
+somebody Accepted and then Completed a comment that no longer exists.
+
+They cannot be reached. A status is shown as Review History *under the
+comment it belongs to*, and the owner confirmed that a deleted comment no
+longer appears there; hidden annotations are not drawn, and `MarkMap.visible`
+drops them here too. Keeping them would write litter no user of either
+application can read, correct or remove. So this takes them, and Reader's
+own confirmation is honest about the difference: it promises only that
+replies go.
 
 **7. A mark the file brought is amended, never rebuilt.** The model owns the
 kinds it understands and everything else rides through as the dictionary it

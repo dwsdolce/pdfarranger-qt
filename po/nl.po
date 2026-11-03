@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PDF-Shuffler 0.7\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-02 23:30+0000\n"
+"POT-Creation-Date: 2026-11-03 03:39+0000\n"
 "PO-Revision-Date: 2025-05-26 10:43+0200\n"
 "Last-Translator: Heimen Stoffels <vistausss@fastmail.com>\n"
 "Language: nl\n"
@@ -2091,6 +2091,21 @@ msgstr "Markering toevoegen"
 #: pdfarranger_qt/mainwindow.py
 msgid "Resize Mark"
 msgstr "Markeringsgrootte wijzigen"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Delete Mark"
+msgstr "Markering verwijderen"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "This mark has replies."
+msgstr "Deze markering heeft antwoorden."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Deleting this mark will also delete any replies to it."
+msgstr "Als u deze markering verwijdert, worden ook alle antwoorden erop verwijderd."
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py

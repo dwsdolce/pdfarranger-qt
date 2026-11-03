@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-02 23:30+0000\n"
+"POT-Creation-Date: 2026-11-03 03:39+0000\n"
 "PO-Revision-Date: 2025-09-28 16:51+0000\n"
 "Last-Translator: Sveinn í Felli <sv1@fellsnet.is>\n"
 "Language: is\n"
@@ -2061,6 +2061,21 @@ msgstr "Bæta við merki"
 #: pdfarranger_qt/mainwindow.py
 msgid "Resize Mark"
 msgstr "Breyta stærð merkis"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Delete Mark"
+msgstr "Eyða merki"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "This mark has replies."
+msgstr "Þetta merki er með svör."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Deleting this mark will also delete any replies to it."
+msgstr "Ef þú eyðir þessu merki er einnig öllum svörum við því eytt."
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py

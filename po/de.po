@@ -15,7 +15,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  pdfarranger\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-02 23:30+0000\n"
+"POT-Creation-Date: 2026-11-03 03:39+0000\n"
 "PO-Revision-Date: 2025-07-09 08:35+0200\n"
 "Last-Translator: Sebastian Scherch\n"
 "Language: de\n"
@@ -2083,6 +2083,21 @@ msgstr "Markierung hinzufügen"
 #: pdfarranger_qt/mainwindow.py
 msgid "Resize Mark"
 msgstr "Markierungsgröße ändern"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Delete Mark"
+msgstr "Markierung löschen"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "This mark has replies."
+msgstr "Diese Markierung hat Antworten."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Deleting this mark will also delete any replies to it."
+msgstr "Beim Löschen dieser Markierung werden auch alle Antworten darauf gelöscht."
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py

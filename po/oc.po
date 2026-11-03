@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-02 23:30+0000\n"
+"POT-Creation-Date: 2026-11-03 03:39+0000\n"
 "PO-Revision-Date: 2026-02-15 15:16+0100\n"
 "Last-Translator: Quentin PAGÈS\n"
 "Language: oc\n"
@@ -2061,6 +2061,23 @@ msgstr "Apondre una marca"
 #: pdfarranger_qt/mainwindow.py
 msgid "Resize Mark"
 msgstr "Redimensionar la marca"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Delete Mark"
+msgstr "Suprimir la marca"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "This mark has replies."
+msgstr "Aquesta marca a de responsas."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Deleting this mark will also delete any replies to it."
+msgstr ""
+"La supression d'aquesta marca suprimirà tanben las responsas que i son "
+"ligadas."
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py

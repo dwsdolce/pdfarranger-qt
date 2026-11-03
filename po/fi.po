@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  pdfarranger\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-02 23:30+0000\n"
+"POT-Creation-Date: 2026-11-03 03:39+0000\n"
 "PO-Revision-Date: 2024-03-24 19:16+0200\n"
 "Last-Translator: \n"
 "Language: fi\n"
@@ -2085,6 +2085,21 @@ msgstr "Lisää merkintä"
 #: pdfarranger_qt/mainwindow.py
 msgid "Resize Mark"
 msgstr "Muuta merkinnän kokoa"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Delete Mark"
+msgstr "Poista merkintä"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "This mark has replies."
+msgstr "Tällä merkinnällä on vastauksia."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Deleting this mark will also delete any replies to it."
+msgstr "Merkinnän poistaminen poistaa myös kaikki siihen tulleet vastaukset."
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py

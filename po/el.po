@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PDF Arranger 1.9.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-02 23:30+0000\n"
+"POT-Creation-Date: 2026-11-03 03:39+0000\n"
 "PO-Revision-Date: 2023-06-12 10:30+0300\n"
 "Last-Translator: Manussos Pulinakis "
 "<38626261+manussos@users.noreply.github.com>\n"
@@ -2121,6 +2121,21 @@ msgstr "Προσθήκη σήμανσης"
 #: pdfarranger_qt/mainwindow.py
 msgid "Resize Mark"
 msgstr "Αλλαγή μεγέθους σήμανσης"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Delete Mark"
+msgstr "Διαγραφή σήμανσης"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "This mark has replies."
+msgstr "Αυτή η σήμανση έχει απαντήσεις."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Deleting this mark will also delete any replies to it."
+msgstr "Η διαγραφή αυτής της σήμανσης θα διαγράψει και τυχόν απαντήσεις σε αυτήν."
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py

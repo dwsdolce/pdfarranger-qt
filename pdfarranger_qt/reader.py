@@ -148,6 +148,8 @@ class ReaderView(QWidget):
     mark_drawn = Signal(str, int, object)
     #: A grip moved: ``(page, mark, quads)`` in the page's own space.
     mark_resized = Signal(int, object, object)
+    #: The selected mark is to go: ``(page, mark)``.
+    mark_deleted = Signal(int, object)
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -158,6 +160,7 @@ class ReaderView(QWidget):
         self.canvas.field_pressed.connect(self.field_pressed)
         self.canvas.mark_drawn.connect(self.mark_drawn)
         self.canvas.mark_resized.connect(self.mark_resized)
+        self.canvas.mark_deleted.connect(self.mark_deleted)
         self.canvas.field_edited.connect(self.field_edited)
         self.canvas.field_refused.connect(self.field_refused)
         self.canvas.zoom_to_width()

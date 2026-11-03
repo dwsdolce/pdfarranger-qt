@@ -302,16 +302,16 @@ class TestTheButtonsBesideIt(SelectionCase):
         before then would be a second, half-built way into work that step
         has to do properly.
 
-        Colour was turned on by the step that built the palette. Comment
-        waits for the note work and delete for the step that has to take a
-        mark's status chain and its replies with it, so both are still
-        drawn and refused.
+        Colour was turned on by the step that built the palette, and the
+        trash by the one that takes a mark with its status chain and its
+        replies. Comment still waits for the note work, so it is drawn and
+        refused.
         """
         buttons = self.win.mark_buttons.buttons
-        self.assertTrue(buttons["colour"].isEnabled())
-        for name in ("comment", "delete"):
-            with self.subTest(button=name):
-                self.assertFalse(buttons[name].isEnabled())
+        for name in ("colour", "delete"):
+            with self.subTest(button=name, acts=True):
+                self.assertTrue(buttons[name].isEnabled())
+        self.assertFalse(buttons["comment"].isEnabled())
 
     def test_it_sits_clear_of_the_mark(self):
         _mark, where = self.a_mark()
@@ -704,3 +704,172 @@ class TestTheGripsOnASelectedMark(SelectionCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class TestDeletingAMark(SelectionCase):
+    """The mark goes, and so does what hangs off it.
+
+    **Which is not what Reader does.** Reader deletes the replies, keeps
+    the status annotations and strips the `/IRT` off the one
+    that pointed at the mark: measured on a file it wrote, two `/F`-hidden
+    `/Text` annotations are left recording that someone Accepted and then
+    Completed a comment that no longer exists. Unreachable in Reader's own
+    comment panel -- the owner confirmed a deleted comment no longer appears
+    in Review History -- and unreachable here, because `MarkMap.visible`
+    drops hidden marks. So they go.
+    """
+
+    def document(self):
+        return NOTED
+
+    def uid(self):
+        return self.win.model.pages[0].uid
+
+    def a_reviewed_mark(self):
+        """The highlight that carries a reply and a status chain."""
+        found = [m for m, mine in self.canvas.marks_on(0) if not mine]
+        self.assertTrue(found, "the page carries no mark to delete")
+        mark = found[0]
+        chain = self.canvas.chain_of(mark)
+        self.assertTrue(any(m.is_reply() for m in chain[1:]),
+                        "the fixture's mark has no reply, so the dialog "
+                        "and the chain cannot be tested")
+        self.assertTrue(any(m.is_status() for m in chain[1:]),
+                        "the fixture's mark has no status chain")
+        return mark
+
+    def answering(self, button):
+        """Answer the confirmation, and record what it was asked.
+
+        `QMessageBox.question` is replaced rather than
+        `_confirm_mark_delete`: standing in for our own method would leave
+        the thing being tested unrun, and a test that never reaches the
+        dialog cannot notice it asking the wrong question or defaulting to
+        the wrong button.
+        """
+        from PySide6.QtWidgets import QMessageBox
+
+        asked = []
+        original = QMessageBox.question
+
+        def question(*args, **kwargs):
+            asked.append(args)
+            return button
+
+        QMessageBox.question = staticmethod(question)
+        self.addCleanup(setattr, QMessageBox, "question", original)
+        return asked
+
+    def test_the_chain_is_walked_and_not_stepped(self):
+        """A status change points at the link before it, so one step finds
+        the first and misses the rest."""
+        mark = self.a_reviewed_mark()
+        chain = self.canvas.chain_of(mark)
+        self.assertEqual(len(chain), 4)
+        self.assertEqual(sum(1 for m in chain[1:] if m.is_status()), 2)
+        self.assertEqual(sum(1 for m in chain[1:] if m.is_reply()), 1)
+
+    def test_every_link_is_recorded_as_deleted(self):
+        from PySide6.QtWidgets import QMessageBox
+
+        mark = self.a_reviewed_mark()
+        self.answering(QMessageBox.Yes)
+        self.win.delete_mark(0, mark)
+        settle(timeout_ms=400)
+        recorded = self.win.model.mark_edits.for_page(self.uid())
+        self.assertEqual(len(recorded), 4)
+        for index, edit in recorded.items():
+            with self.subTest(index=index):
+                self.assertTrue(edit.get("deleted"))
+
+    def test_a_mark_with_replies_asks_first(self):
+        from PySide6.QtWidgets import QMessageBox
+
+        mark = self.a_reviewed_mark()
+        asked = self.answering(QMessageBox.Yes)
+        self.win.delete_mark(0, mark)
+        settle(timeout_ms=400)
+        self.assertTrue(asked, "a mark with replies went without asking")
+        # The text, and the button the dialog lands on: Cancel, because the
+        # replies are somebody else's words and a stray Return must not take
+        # them.
+        text = asked[0][2]
+        self.assertIn("replies", text)
+        self.assertEqual(asked[0][4], QMessageBox.Cancel)
+
+    def test_cancelling_keeps_everything(self):
+        from PySide6.QtWidgets import QMessageBox
+
+        mark = self.a_reviewed_mark()
+        before = len(self.canvas.marks_on(0))
+        self.answering(QMessageBox.Cancel)
+        self.win.delete_mark(0, mark)
+        settle(timeout_ms=400)
+        self.assertEqual(len(self.canvas.marks_on(0)), before)
+        self.assertFalse(self.win.model.mark_edits.for_page(self.uid()))
+
+    def test_it_stops_being_drawn_and_stops_being_hit(self):
+        from PySide6.QtWidgets import QMessageBox
+
+        mark = self.a_reviewed_mark()
+        self.canvas.select_mark((0, mark))
+        settle(timeout_ms=200)
+        self.answering(QMessageBox.Yes)
+        self.win.delete_mark(0, mark)
+        settle(timeout_ms=600)
+        self.assertEqual(
+            [m for m, mine in self.canvas.marks_on(0) if not mine], [])
+        self.assertIsNone(self.canvas.selected_mark())
+
+    def test_the_delete_key_takes_the_selected_mark(self):
+        """And the window's own Delete, which removes *pages*, keeps the key
+        whenever no mark is selected."""
+        from PySide6.QtCore import Qt
+        from PySide6.QtGui import QKeyEvent
+        from PySide6.QtWidgets import QMessageBox
+
+        mark = self.a_reviewed_mark()
+        pages = len(self.win.model.pages)
+        self.canvas.select_mark((0, mark))
+        settle(timeout_ms=200)
+        self.answering(QMessageBox.Yes)
+        self.canvas.keyPressEvent(
+            QKeyEvent(QKeyEvent.Type.KeyPress, Qt.Key_Delete, Qt.NoModifier))
+        settle(timeout_ms=600)
+        self.assertTrue(self.win.model.mark_edits.for_page(self.uid()))
+        self.assertEqual(len(self.win.model.pages), pages,
+                         "the page went as well as the mark")
+
+    def test_the_key_is_left_alone_when_no_mark_is_selected(self):
+        """Otherwise deleting pages would lose its shortcut while reading."""
+        from PySide6.QtCore import Qt
+        from PySide6.QtGui import QKeyEvent
+
+        self.canvas.select_mark(None)
+        settle(timeout_ms=150)
+        event = QKeyEvent(QKeyEvent.Type.KeyPress, Qt.Key_Delete, Qt.NoModifier)
+        self.canvas.keyPressEvent(event)
+        self.assertFalse(event.isAccepted(),
+                         "the canvas swallowed Delete with nothing selected")
+        self.assertFalse(self.win.model.mark_edits.for_page(self.uid()))
+
+    def test_the_trash_button_is_live(self):
+        mark, where = self.a_mark()
+        self.click(where.center())
+        settle(timeout_ms=200)
+        self.assertTrue(self.win.mark_buttons.buttons["delete"].isEnabled())
+
+    def test_undo_brings_it_back(self):
+        from PySide6.QtWidgets import QMessageBox
+
+        mark = self.a_reviewed_mark()
+        before = len([m for m, mine in self.canvas.marks_on(0) if not mine])
+        self.answering(QMessageBox.Yes)
+        self.win.delete_mark(0, mark)
+        settle(timeout_ms=600)
+        self.win.undo()
+        settle(timeout_ms=1200)
+        self.assertFalse(self.win.model.mark_edits.for_page(self.uid()))
+        self.assertEqual(
+            len([m for m, mine in self.win.reader.canvas.marks_on(0)
+                 if not mine]), before)

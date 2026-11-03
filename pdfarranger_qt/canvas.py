@@ -3884,6 +3884,17 @@ class PageCanvas(QAbstractScrollArea):
             event.accept()
             return
 
+        if key in (Qt.Key_Delete, Qt.Key_Backspace):
+            # Before the page keys below, and before the window's own Delete,
+            # which removes *pages*: a selected mark is the nearer thing and
+            # Reader gives it the key. With nothing selected the event falls
+            # through untouched, so deleting pages keeps the key it has.
+            found = self.selected_mark()
+            if found is not None:
+                self.mark_deleted.emit(found[0], found[1])
+                event.accept()
+                return
+
         if not self._continuous:
             if key in (Qt.Key_Space,):
                 self.next_page()
@@ -4253,6 +4264,31 @@ class PageCanvas(QAbstractScrollArea):
     #: own space. The canvas reports the new run and keeps none of it, the
     #: same way `mark_drawn` reports a new one.
     mark_resized = Signal(int, object, object)
+
+    #: Emitted when the selected mark is to go: ``(page, mark)``. What goes
+    #: with it -- the status chain, the replies, the popups -- is the
+    #: window's business, because it owns the overlay that records it.
+    mark_deleted = Signal(int, object)
+
+    def chain_of(self, mark):
+        """``mark`` and everything hanging off it, in the order found.
+
+        The status chain and the replies, which `MarkMap.children` walks
+        transitively -- a status change points at the link before it, so one
+        step finds the first and misses the rest. A mark of the user's own
+        has nothing hanging off it yet and comes back alone.
+        """
+        if isinstance(mark, markup.Annotation):
+            return [mark]
+        return [mark] + self._file_marks.children(mark)
+
+    def forget_marks(self, marks) -> None:
+        """Stop drawing and hit-testing these, without rebuilding."""
+        self._file_marks.drop(marks)
+        found = self.selected_mark()
+        if found is not None and any(found[1] is m for m in marks):
+            self.select_mark(None)
+        self.viewport().update()
 
     def grip_at(self, point: QPointF):
         """Which grip is under a viewport point: 0 for the start, 1 for the

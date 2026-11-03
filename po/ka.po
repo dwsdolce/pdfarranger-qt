@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  pdfarranger\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-02 23:30+0000\n"
+"POT-Creation-Date: 2026-11-03 03:39+0000\n"
 "PO-Revision-Date: 2026-01-21 05:07+0100\n"
 "Last-Translator: Ekaterine Papava <papava.e@gtu.ge>\n"
 "Language: ka\n"
@@ -2051,6 +2051,21 @@ msgstr "ნიშნის დამატება"
 #: pdfarranger_qt/mainwindow.py
 msgid "Resize Mark"
 msgstr "ნიშნის ზომის შეცვლა"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Delete Mark"
+msgstr "ნიშნის წაშლა"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "This mark has replies."
+msgstr "ამ ნიშანს პასუხები აქვს."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Deleting this mark will also delete any replies to it."
+msgstr "ამ ნიშნის წაშლით მასზე გაცემული პასუხებიც წაიშლება."
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py

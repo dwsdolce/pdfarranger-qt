@@ -13,7 +13,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-02 23:30+0000\n"
+"POT-Creation-Date: 2026-11-03 03:39+0000\n"
 "PO-Revision-Date: 2024-02-24 20:47+0100\n"
 "Last-Translator: Jérôme Robert <jeromerobert@gmx.com>\n"
 "Language: fr\n"
@@ -2099,6 +2099,23 @@ msgstr "Ajouter une marque"
 #: pdfarranger_qt/mainwindow.py
 msgid "Resize Mark"
 msgstr "Redimensionner la marque"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Delete Mark"
+msgstr "Supprimer la marque"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "This mark has replies."
+msgstr "Cette marque comporte des réponses."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Deleting this mark will also delete any replies to it."
+msgstr ""
+"La suppression de cette marque supprimera également les réponses qui s'y "
+"rapportent."
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py

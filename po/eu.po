@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-02 23:30+0000\n"
+"POT-Creation-Date: 2026-11-03 03:39+0000\n"
 "PO-Revision-Date: 2023-01-19 20:27+0100\n"
 "Last-Translator: alexgabi\n"
 "Language: eu\n"
@@ -2112,6 +2112,21 @@ msgstr "Gehitu marka"
 #: pdfarranger_qt/mainwindow.py
 msgid "Resize Mark"
 msgstr "Aldatu markaren tamaina"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Delete Mark"
+msgstr "Ezabatu marka"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "This mark has replies."
+msgstr "Marka honek erantzunak ditu."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Deleting this mark will also delete any replies to it."
+msgstr "Marka hau ezabatzean, bertako erantzun guztiak ere ezabatuko dira."
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py

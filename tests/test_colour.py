@@ -223,6 +223,82 @@ class TestWhereAMarkSitsAmongItsNeighbours(unittest.TestCase):
             self.assertEqual(first.index, 0)
 
 
+class TestADeletedMarkLeavesTheFile(unittest.TestCase):
+    """What a deleted mark leaves behind in the written file.
+
+    Measured against a file Reader wrote after the same delete: it keeps
+    both status annotations and both their popups, stripping the `/IRT` off
+    the one that pointed at the mark. This takes them, so the counts below
+    differ from Reader's deliberately -- `/Text 2  /Popup 2` there, none
+    here.
+    """
+
+    def setUp(self):
+        from pdfarranger_qt.core import DocumentSet
+
+        self.docs = DocumentSet()
+        self.pages = self.docs.add_file(RUN)
+        with pikepdf.open(RUN) as pdf:
+            self.marks = [m for m in markup.marks_in(pdf) if m.page == 1]
+
+    def written(self, going):
+        from pdfarranger_qt.export import export
+
+        edits = markup.MarkEdits()
+        for mark in going:
+            edits.change(self.pages[0].uid, mark.index, deleted=True)
+        out = io.BytesIO()
+        export(self.docs.files_for_export(), list(self.pages), {}, [out],
+               mark_edits=edits)
+        return pikepdf.open(io.BytesIO(out.getvalue()))
+
+    @staticmethod
+    def kinds(pdf):
+        found = {}
+        for annot in pdf.pages[0].obj.get("/Annots") or []:
+            name = str(annot.get("/Subtype"))
+            found[name] = found.get(name, 0) + 1
+        return found
+
+    def test_the_mark_and_its_popup_both_go(self):
+        with pikepdf.open(RUN) as before:
+            was = self.kinds(before)
+        with self.written(self.marks[:1]) as after:
+            now = self.kinds(after)
+        self.assertEqual(now.get("/Highlight", 0), was["/Highlight"] - 1)
+        self.assertEqual(now.get("/Popup", 0), was["/Popup"] - 1,
+                         "the popup the mark owned stayed behind")
+
+    def test_the_chain_goes_when_every_link_is_recorded(self):
+        """The writer derives nothing: it deletes what it is told, and the
+        chain was walked once, where the marks are."""
+        with self.written(self.marks) as after:
+            now = self.kinds(after)
+        self.assertEqual(now.get("/Highlight", 0), 0)
+        self.assertEqual(now.get("/Text", 0), 0)
+        self.assertEqual(now.get("/Popup", 0), 0)
+
+    def test_nothing_else_on_the_page_is_touched(self):
+        """A deletion rebuilds `/Annots`, so everything it is not about has
+        to come through: the widgets and the links are most of the page."""
+        with pikepdf.open(RUN) as before:
+            was = self.kinds(before)
+        with self.written(self.marks) as after:
+            now = self.kinds(after)
+        for name in ("/Widget", "/Link"):
+            with self.subTest(subtype=name):
+                self.assertEqual(now.get(name, 0), was[name])
+
+    def test_a_mark_that_is_not_deleted_keeps_its_own_dictionary(self):
+        """Deleting one mark must not disturb another on the same page."""
+        with self.written(self.marks[:1]) as after:
+            left = [m for m in markup.marks_in(after) if m.page == 1]
+        self.assertEqual(len(left), len(self.marks) - 1)
+        for mark in left:
+            with self.subTest(subtype=mark.subtype):
+                self.assertIsNotNone(mark.name, "/NM was lost")
+
+
 class TestShowingAChangeWithoutRebuilding(unittest.TestCase):
     """`one_page_with_edits`: one page lifted out and patched.
 

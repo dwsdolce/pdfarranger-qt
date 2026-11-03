@@ -802,6 +802,11 @@ def _edit_annotations(pdf_output, pages, edits) -> int:
     the producer wrote still draws the old one, and an appearance that
     disagrees with `/C` is worse than none: every reader draws a highlight
     from its `/QuadPoints` when there is no stream to prefer.
+
+    A mark recorded as deleted leaves `/Annots` entirely, taking the
+    `/Popup` it owns. Its status chain and its replies are deleted too, but
+    not from here: each carries its own entry, written when the chain was
+    walked, so this writes what it is told and derives nothing.
     """
     if not edits:
         return 0
@@ -812,21 +817,7 @@ def _edit_annotations(pdf_output, pages, edits) -> int:
         wanted = edits.for_page(row.uid)
         if not wanted:
             continue
-        page = pdf_output.pages[index].obj
-        at = 0
-        for annot in page.get(pikepdf.Name.Annots) or []:
-            try:
-                subtype = str(annot.get(pikepdf.Name.Subtype, ""))
-            except Exception:  # noqa: BLE001 - unreadable is not markup
-                continue
-            if subtype in ("/Widget", "/Popup", "/Link"):
-                continue
-            edit = wanted.get(at)
-            at += 1
-            if not edit:
-                continue
-            markup.apply_edit(annot, edit)
-            changed += 1
+        changed += markup.patch_page_marks(pdf_output.pages[index].obj, wanted)
     return changed
 
 

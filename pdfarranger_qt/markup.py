@@ -295,6 +295,62 @@ def apply_edit(annot, edit) -> None:
         del annot[pikepdf.Name.AP]
 
 
+def patch_page_marks(page, edits) -> int:
+    """Apply ``edits`` to one page's annotations. Returns how many were hit.
+
+    Patch what changed and drop what was deleted, in one pass, because the
+    two readers of `MarkEdits` -- the one-page re-render and the export --
+    must not disagree about either. They were near-copies once and only one
+    of them learned about `quads`, so a resize was written correctly to the
+    file and never drawn.
+
+    **The index counts markup annotations only**, skipping widgets, popups
+    and links, which is the enumeration `marks_in` uses and the one
+    `MarkEdits` is keyed by. A popup is therefore never numbered and can
+    never carry an edit of its own: it goes when the mark that owns it goes.
+
+    Dropping is decided first and applied afterwards, in a second pass,
+    because `/Annots` does not promise that a popup follows its parent --
+    deciding and removing in one pass would keep a popup whose owner had
+    not been read yet.
+    """
+    annots = page.get(pikepdf.Name.Annots)
+    if annots is None:
+        return 0
+    kept, dropped, at, changed = [], set(), 0, 0
+    for annot in annots:
+        try:
+            subtype = str(annot.get(pikepdf.Name.Subtype, ""))
+        except Exception:  # noqa: BLE001 - unreadable is not markup
+            kept.append(annot)
+            continue
+        if subtype in ("/Widget", "/Popup", "/Link"):
+            kept.append(annot)
+            continue
+        edit = edits.get(at)
+        at += 1
+        if not edit:
+            kept.append(annot)
+            continue
+        if edit.get("deleted"):
+            dropped.add(annot.objgen)
+            popup = annot.get(pikepdf.Name.Popup)
+            if popup is not None:
+                try:
+                    dropped.add(popup.objgen)
+                except Exception:  # noqa: BLE001 - a direct popup owns nothing
+                    pass
+            changed += 1
+            continue
+        apply_edit(annot, edit)
+        kept.append(annot)
+        changed += 1
+    if dropped:
+        page[pikepdf.Name.Annots] = pikepdf.Array(
+            [a for a in kept if a.objgen not in dropped])
+    return changed
+
+
 def one_page_with_edits(data, index: int, edits) -> "Optional[bytes]":
     """``data``'s page ``index`` on its own, with ``edits`` applied.
 
@@ -322,20 +378,7 @@ def one_page_with_edits(data, index: int, edits) -> "Optional[bytes]":
             one = pikepdf.Pdf.new()
             one.pages.append(whole.pages[index])
             page = one.pages[0].obj
-            at, changed = 0, 0
-            for annot in page.get(pikepdf.Name.Annots) or []:
-                try:
-                    subtype = str(annot.get(pikepdf.Name.Subtype, ""))
-                except Exception:  # noqa: BLE001 - unreadable is not markup
-                    continue
-                if subtype in ("/Widget", "/Popup", "/Link"):
-                    continue
-                edit = edits.get(at)
-                at += 1
-                if not edit:
-                    continue
-                apply_edit(annot, edit)
-                changed += 1
+            changed = patch_page_marks(page, edits)
             if not changed:
                 return None
             out = io.BytesIO()
@@ -405,7 +448,15 @@ class MarkEdits:
     #: while `/NM`, `/Popup`, `/RC` and the `/IRT` chains stay the
     #: producer's. A resized highlight is the same mark, with the same
     #: comment thread hanging off it.
-    FIELDS = ("colour", "opacity", "quads")
+    #: `deleted` is not a key rewrite like the other three -- it removes the
+    #: annotation from `/Annots` entirely, along with the `/Popup` it owns.
+    #: It is recorded here anyway, and per mark, because everything that has
+    #: to honour it already reads this: the one-page re-render, the export,
+    #: and undo, which restores by dropping the delta with nothing else to
+    #: put back. A mark's status chain and its replies each get an entry of
+    #: their own rather than being re-derived from the parent, so the chain
+    #: is walked once, where the marks are, and not again in the writer.
+    FIELDS = ("colour", "opacity", "quads", "deleted")
 
     def __init__(self, by_page=None):
         self._by_page: Dict[int, Dict[int, dict]] = {}
@@ -977,6 +1028,24 @@ class MarkMap:
                             names.add(other.name)
             frontier = names
         return found
+
+    def drop(self, marks) -> None:
+        """Forget these marks, so nothing draws or hit-tests them again.
+
+        A deleted mark is recorded in `MarkEdits` for the file that will be
+        written, but the map was built from the document the reader is
+        showing and still holds it. Re-reading the document would answer
+        too, at the cost of rebuilding the reader -- 499 ms against the
+        milliseconds a one-page re-render costs -- and undo rebuilds it
+        anyway, which is what puts these back.
+        """
+        going = {id(mark) for mark in marks}
+        for page, found in list(self._by_page.items()):
+            left = [m for m in found if id(m) not in going]
+            if left:
+                self._by_page[page] = left
+            else:
+                del self._by_page[page]
 
     def __len__(self):
         return sum(len(v) for v in self._by_page.values())

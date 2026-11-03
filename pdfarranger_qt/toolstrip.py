@@ -614,17 +614,19 @@ class MarkButtons(QWidget):
     pointer -- the right-click menu and the properties form are the long way
     round to the same places and arrive at their own steps.
 
-    The swatch is live: it opens the palette and the opacity slider. The
-    other two are drawn and disabled, because each belongs to a later step --
-    the comment to the note work, delete to the step that has to take a
-    mark's status chain and its replies with it -- and a button that acts
-    before its step exists would be a second, half-built way in.
+    The swatch is live: it opens the palette and the opacity slider, and so
+    is the trash, which takes the mark with its status chain and its
+    replies. Comment is still drawn and disabled, because it belongs to the
+    note work, and a button that acts before its step exists would be a
+    second, half-built way in.
     """
 
     #: A colour was picked for the selected mark.
     recoloured = Signal(tuple)
     #: An opacity was set for it, 0 to 1.
     faded = Signal(float)
+    #: The selected mark is to go, with whatever hangs off it.
+    deleted = Signal()
 
     #: Air between the mark and the bar, in pixels.
     CLEARANCE = 8
@@ -660,6 +662,8 @@ class MarkButtons(QWidget):
         self.palette_popup.faded.connect(self.faded)
         self.buttons["colour"].setEnabled(True)
         self.buttons["colour"].clicked.connect(self._open_palette)
+        self.buttons["delete"].setEnabled(True)
+        self.buttons["delete"].clicked.connect(self.deleted)
         #: What the selected mark is, so the popup can tick and read it.
         self._colour = None
         self._opacity = None
