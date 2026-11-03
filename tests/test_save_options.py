@@ -279,7 +279,19 @@ class TestMetadataSurvivesTheSave(unittest.TestCase):
                 self.assertFalse(metadata._pikepdf_meta_is_valid(value))
 
     def test_a_bag_reaches_the_saved_file(self):
-        """Through the merge, which is what deleted it."""
+        """Through the merge, which is what deleted it.
+
+        Asserted on the contents and not on the container. pikepdf hands
+        `dc:creator` back as a `set` up to 10.11 and as a `list` from 10.17
+        -- the list is the better answer, because `dc:creator` is an
+        `rdf:Seq` and ordered, while `dc:subject` is an `rdf:Bag` and is
+        not. Pinning the type made this fail on every CI platform for a
+        difference the code does not care about and the user cannot see.
+
+        What it does have to catch is a value arriving as a bare string:
+        that is the loss this guards, and it would come back here as three
+        separate characters.
+        """
         import pikepdf
 
         from pdfarranger_qt import metadata
@@ -295,10 +307,13 @@ class TestMetadataSurvivesTheSave(unittest.TestCase):
 
         with pikepdf.open(path) as doc:
             merged = metadata.merge_doc({}, [doc])
-        self.assertEqual(
-            merged.get("{http://purl.org/dc/elements/1.1/}subject"), {"508"})
-        self.assertEqual(
-            merged.get("{http://purl.org/dc/elements/1.1/}creator"), {"CQF"})
+        bag = merged.get("{http://purl.org/dc/elements/1.1/}subject")
+        seq = merged.get("{http://purl.org/dc/elements/1.1/}creator")
+        for name, got in (("subject", bag), ("creator", seq)):
+            with self.subTest(field=name):
+                self.assertNotIsInstance(got, str)
+        self.assertEqual(set(bag), {"508"})
+        self.assertEqual(list(seq), ["CQF"])
 
     def test_a_field_pikepdf_cannot_map_is_not_offered_to_it(self):
         """`/Trapped` has no entry in pikepdf's docinfo-to-XMP table, so it
