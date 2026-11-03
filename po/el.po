@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PDF Arranger 1.9.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-02 22:42+0000\n"
+"POT-Creation-Date: 2026-11-02 23:30+0000\n"
 "PO-Revision-Date: 2023-06-12 10:30+0300\n"
 "Last-Translator: Manussos Pulinakis "
 "<38626261+manussos@users.noreply.github.com>\n"
@@ -2116,6 +2116,11 @@ msgstr "Πλήρης οθόνη"
 #: pdfarranger_qt/mainwindow.py
 msgid "Add Mark"
 msgstr "Προσθήκη σήμανσης"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Resize Mark"
+msgstr "Αλλαγή μεγέθους σήμανσης"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py

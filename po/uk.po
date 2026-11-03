@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: unnamed project\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-02 22:42+0000\n"
+"POT-Creation-Date: 2026-11-02 23:30+0000\n"
 "PO-Revision-Date: 2026-05-27 19:30+0300\n"
 "Last-Translator: Dymko <Dymkovych@proton.me>\n"
 "Language: uk\n"
@@ -2048,6 +2048,11 @@ msgstr "Повний екран"
 #: pdfarranger_qt/mainwindow.py
 msgid "Add Mark"
 msgstr "Додати позначку"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Resize Mark"
+msgstr "Змінити розмір позначки"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py

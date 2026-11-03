@@ -146,6 +146,8 @@ class ReaderView(QWidget):
     field_refused = Signal(object)
     #: A markup gesture finished: ``(tool, page index, rects)``.
     mark_drawn = Signal(str, int, object)
+    #: A grip moved: ``(page, mark, quads)`` in the page's own space.
+    mark_resized = Signal(int, object, object)
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -155,6 +157,7 @@ class ReaderView(QWidget):
         self.canvas = PageCanvas(self)
         self.canvas.field_pressed.connect(self.field_pressed)
         self.canvas.mark_drawn.connect(self.mark_drawn)
+        self.canvas.mark_resized.connect(self.mark_resized)
         self.canvas.field_edited.connect(self.field_edited)
         self.canvas.field_refused.connect(self.field_refused)
         self.canvas.zoom_to_width()

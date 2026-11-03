@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pdfarranger master\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-02 22:42+0000\n"
+"POT-Creation-Date: 2026-11-02 23:30+0000\n"
 "PO-Revision-Date: 2026-09-04 09:59+0000\n"
 "Last-Translator: Lumenman <28367232+Lumenman@users.noreply.github.com>\n"
 "Language: ru\n"
@@ -1929,6 +1929,11 @@ msgstr "Полноэкранный режим"
 #: pdfarranger_qt/mainwindow.py
 msgid "Add Mark"
 msgstr "Добавить пометку"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Resize Mark"
+msgstr "Изменить размер пометки"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py

@@ -263,6 +263,38 @@ class Annotations:
         return f"Annotations({len(self)} on {len(self._by_page)} page(s))"
 
 
+def apply_edit(annot, edit) -> None:
+    """Write one mark's edits onto the dictionary it arrived with.
+
+    **Shared by the preview and the export, because they drifted.** They
+    were near-copies of each other; the export grew a case for `quads` and
+    the preview did not, so a resize was written to the file correctly and
+    never shown on screen -- the page was re-rendered from a document that
+    still held the old run. One mark's worth of patching in one place is
+    what stops the next field reaching only one of them.
+
+    Patched and not replaced: everything the producer put in the dictionary
+    stays -- the thread, the author, the dates, the status chain -- and only
+    the keys named here are rewritten.
+    """
+    colour = edit.get("colour")
+    if colour is not None:
+        annot[pikepdf.Name.C] = pikepdf.Array([*colour])
+    opacity = edit.get("opacity")
+    if opacity is not None:
+        annot[pikepdf.Name.CA] = float(opacity)
+    quads = edit.get("quads")
+    if quads:
+        annot[pikepdf.Name.QuadPoints] = pikepdf.Array(
+            [v for quad in quads for v in _quad_points(quad)])
+        annot[pikepdf.Name.Rect] = pikepdf.Array([*bounding_rect(quads)])
+    if pikepdf.Name.AP in annot:
+        # The stream the producer wrote still draws the old colour over the
+        # old run, and every reader falls back to `/QuadPoints` when there
+        # is none.
+        del annot[pikepdf.Name.AP]
+
+
 def one_page_with_edits(data, index: int, edits) -> "Optional[bytes]":
     """``data``'s page ``index`` on its own, with ``edits`` applied.
 
@@ -302,15 +334,7 @@ def one_page_with_edits(data, index: int, edits) -> "Optional[bytes]":
                 at += 1
                 if not edit:
                     continue
-                if edit.get("colour") is not None:
-                    annot[pikepdf.Name.C] = pikepdf.Array([*edit["colour"]])
-                if edit.get("opacity") is not None:
-                    annot[pikepdf.Name.CA] = float(edit["opacity"])
-                if pikepdf.Name.AP in annot:
-                    # The stream the producer wrote still draws the old
-                    # colour, and every reader falls back to `/QuadPoints`
-                    # when there is none.
-                    del annot[pikepdf.Name.AP]
+                apply_edit(annot, edit)
                 changed += 1
             if not changed:
                 return None
@@ -375,7 +399,13 @@ class MarkEdits:
 
     #: What may be changed about a mark the file brought. Anything not here
     #: is left exactly as the producer wrote it.
-    FIELDS = ("colour", "opacity")
+    #:
+    #: `quads` carries geometry, and geometry is the same problem as colour:
+    #: `/QuadPoints` and `/Rect` are rewritten and the appearance dropped,
+    #: while `/NM`, `/Popup`, `/RC` and the `/IRT` chains stay the
+    #: producer's. A resized highlight is the same mark, with the same
+    #: comment thread hanging off it.
+    FIELDS = ("colour", "opacity", "quads")
 
     def __init__(self, by_page=None):
         self._by_page: Dict[int, Dict[int, dict]] = {}

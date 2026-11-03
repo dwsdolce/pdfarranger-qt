@@ -1179,6 +1179,10 @@ class PageCanvas(QAbstractScrollArea):
         #: selection but not selected: it says "there is a mark here, and
         #: this is how far it reaches" before you commit to picking it up.
         self._hovered = None
+        #: A grip being dragged, as ``(which, page, mark, anchor)`` -- the
+        #: grip's index, and the page-space point the *other* grip sits at,
+        #: which the run is rebuilt between.
+        self._dragging_grip = None
         #: The note being shown beside the pointer, as ``(mark, point)``.
         self._note_panel = None
         #: What is selected, as ``(page, mark)``. A mark of the user's is an
@@ -2739,6 +2743,7 @@ class PageCanvas(QAbstractScrollArea):
         self._tool = tool
         self._marking = None
         self._text_mark = None
+        self._dragging_grip = None
         self._preview = ()
         self.viewport().unsetCursor()
         self.viewport().update()
@@ -3127,6 +3132,20 @@ class PageCanvas(QAbstractScrollArea):
         list of quadrilaterals now, drawn by one piece of code, so the two
         cannot disagree again.
         """
+        if self._preview and self._dragging_grip is not None:
+            which, page, mark, _anchor = self._dragging_grip
+            if page != index:
+                return ()
+            kind = (mark.kind if isinstance(mark, markup.Annotation)
+                    else mark.subtype)
+            if kind not in markup.QUADDED:
+                return ()
+            quads = tuple(self.to_source(index, q) for q in self._preview)
+            del which
+            return (markup.Annotation(
+                kind, index, markup.bounding_rect(quads),
+                colour=self.DRAGGED, quads=quads,
+                opacity=self.DRAGGED_OPACITY),)
         if not self._preview or self._text_mark is None:
             return ()
         if self._text_mark[0] != index:
@@ -3337,6 +3356,14 @@ class PageCanvas(QAbstractScrollArea):
             self.viewport().update()
             return
 
+        if self._dragging_grip is not None and event.buttons() & Qt.LeftButton:
+            _which, page, _mark, anchor = self._dragging_grip
+            quads = self._grip_quads(page, anchor, position)
+            if quads != self._preview:
+                self._preview = quads
+                self.viewport().update()
+            return
+
         if self._text_mark is not None and event.buttons() & Qt.LeftButton:
             self._track_mark(position)
             return
@@ -3374,6 +3401,22 @@ class PageCanvas(QAbstractScrollArea):
         # what says there is one; this is what says what it says, and it
         # answers over the whole mark rather than only over the badge,
         # because that is where the pointer goes.
+        # A grip, or the mark it belongs to, is a thing you take hold of.
+        # The I-beam below promises that a drag here selects text, and over
+        # a mark it does not: it picks the mark up, or moves its end.
+        #
+        # The two are not the same hold, so they do not get the same cursor.
+        # Over the mark, an arrow -- this is a thing, not text. Over a grip,
+        # a diagonal resize arrow, which is what Acrobat shows and which
+        # suits where the two grips are: the start sits at the top left of
+        # the run and the end at the bottom right, so both lie on the same
+        # north-west to south-east diagonal.
+        over_grip = self.grip_at(position) is not None
+        over_mark = over_grip or self.mark_at(position) is not None
+        if over_mark and not (event.buttons() & Qt.LeftButton):
+            self.viewport().setCursor(
+                Qt.SizeFDiagCursor if over_grip else Qt.ArrowCursor)
+
         carried = self.note_badge_at(position) or self._marked_note_at(position)
         if carried is not None:
             # Drawn, not a tooltip. Reader puts a panel at the pointer and
@@ -3384,6 +3427,10 @@ class PageCanvas(QAbstractScrollArea):
             super().mouseMoveEvent(event)
             return
         self._show_note_panel(None, position)
+        if over_mark:
+            self._set_tooltip("")
+            super().mouseMoveEvent(event)
+            return
 
         if self.marks_area():
             # A crosshair everywhere, including over a field: the field still
@@ -3475,6 +3522,22 @@ class PageCanvas(QAbstractScrollArea):
                 self._marking = (position, position)
                 event.accept()
                 return
+            # A grip takes the press before the mark it belongs to, or
+            # grabbing the end of a highlight would select it again and
+            # start a text selection across it.
+            grip = self.grip_at(position)
+            if grip is not None and self._selected is not None:
+                page, mark = self._selected
+                boxes = self.mark_boxes(mark)
+                far = boxes[-1] if grip == 0 else boxes[0]
+                anchor = ((far[2], (far[1] + far[3]) / 2) if grip == 0
+                          else (far[0], (far[1] + far[3]) / 2))
+                self._dragging_grip = (grip, page, mark, anchor)
+                self._preview = self._grip_quads(page, anchor, position)
+                self.viewport().update()
+                event.accept()
+                return
+
             # A mark under the pointer takes the press, before reading or
             # marking does. A mark is not the page: clicking one picks it up,
             # in this reader and in every other, and that is as true with the
@@ -3584,6 +3647,17 @@ class PageCanvas(QAbstractScrollArea):
                 placed = self.mark_rect(start, QPointF(event.position()))
             if placed is not None:
                 self.mark_drawn.emit(self._tool, placed[0], [placed[1]])
+            event.accept()
+            return
+
+        if event.button() == Qt.LeftButton and self._dragging_grip is not None:
+            _which, page, mark, _anchor = self._dragging_grip
+            quads = self._preview
+            self._dragging_grip = None
+            self._preview = ()
+            self.viewport().update()
+            if quads:
+                self.mark_resized.emit(page, mark, [tuple(q) for q in quads])
             event.accept()
             return
 
@@ -3894,6 +3968,7 @@ class PageCanvas(QAbstractScrollArea):
             # interface and a mark drawn afterwards must not cover it.
             self._paint_selected(painter, index, offset)
             self._paint_note_badges(painter, index, offset)
+            self._paint_grips(painter, index, offset)
             self._paint_selection(painter, index, offset)
             self._paint_search(painter, index, offset)
         self._paint_caret(painter, offset)
@@ -4116,6 +4191,109 @@ class PageCanvas(QAbstractScrollArea):
                 else f"({' / '.join(parts)})"
         return f"{head}\n{mark.contents}" if head else mark.contents
 
+    #: How big a grip is, in pixels. Interface rather than paper, so it does
+    #: not grow with the zoom -- the same reasoning as the outline.
+    GRIP = 11
+
+    #: What the band being dragged is filled with, and how solid.
+    #:
+    #: **Neutral, not the mark's own colour.** A highlight is drawn by
+    #: multiplying, and the original is already in the page bitmap -- it
+    #: cannot be taken away while the drag is in flight, because PDFium drew
+    #: it there. So a band in the mark's colour multiplies with itself:
+    #: `#FF6200` over `#FF6200` comes out a deep red that belongs to
+    #: neither. Grey is Acrobat's answer and it is the right one, because a
+    #: neutral band cannot take a colour from whatever it is dragged over.
+    DRAGGED = (0.55, 0.55, 0.58)
+    DRAGGED_OPACITY = 0.45
+
+    def grips(self, offset=None):
+        """``(start, end)`` grips of the selected mark, as viewport circles.
+
+        At the two ends of the *run*, not of the bounding box: a highlight
+        over three lines starts at the left of its first line and ends at
+        the right of its last, and a box's corners are nowhere near either.
+
+        Empty when nothing is selected. Only a selected mark has them --
+        hovering one never does, which is what separates the two states
+        along with the bar.
+        """
+        if self._selected is None:
+            return []
+        index, mark = self._selected
+        is_mine = isinstance(mark, markup.Annotation)
+        if self._dragging_grip is not None and self._preview:
+            # While a grip is moving, both ends follow the run being built,
+            # so the pair reads as one band being stretched rather than a
+            # dot sliding along the edge of a shape that has not moved.
+            boxes, is_mine = list(self._preview), False
+        else:
+            boxes = self.mark_boxes(mark)
+        if not boxes:
+            return []
+        first, last = boxes[0], boxes[-1]
+        # The *top* of the run's first line and the *bottom* of its last,
+        # not the middle of either: a highlight runs from the start of some
+        # text to the end of it, and grips on the outside corners say that.
+        # Centred ones read as handles on a box being widened.
+        ends = ((first[0], first[3]), (last[2], last[1]))
+        found = []
+        for n, (x, y) in enumerate(ends):
+            quad = (x, y, x, y)
+            where = self.quad_on_screen(index, quad, offset, scaled=is_mine)
+            if where is None:
+                return []
+            size = float(self.GRIP)
+            found.append(QRectF(where.center().x() - size / 2,
+                                where.center().y() - size / 2, size, size))
+            del n
+        return found
+
+    #: Emitted when a grip drag ends: ``(page, mark, quads)`` in the page's
+    #: own space. The canvas reports the new run and keeps none of it, the
+    #: same way `mark_drawn` reports a new one.
+    mark_resized = Signal(int, object, object)
+
+    def grip_at(self, point: QPointF):
+        """Which grip is under a viewport point: 0 for the start, 1 for the
+        end, or None."""
+        for n, where in enumerate(self.grips()):
+            # A little slack: an 11-pixel circle is small to hit exactly,
+            # and missing it starts a text selection instead of a resize.
+            if where.adjusted(-3, -3, 3, 3).contains(point):
+                return n
+        return None
+
+    def _grip_quads(self, index, anchor, point):
+        """The run between ``anchor`` and a viewport ``point``.
+
+        The same call the drag that *makes* a highlight uses, which is the
+        whole reason a resize is cheap: a grip moves one end of the pair and
+        the run is built again from the text, rather than the quadrilaterals
+        being stretched. A highlight is a run of text and not a box.
+        """
+        here = self.page_point(index, point)
+        if here is None:
+            return ()
+        try:
+            return tuple(self._glyphs.quads(index, anchor, here))
+        except Exception:       # noqa: BLE001 - a drag must not raise
+            return ()
+
+    def _paint_grips(self, painter, index: int, offset: QPointF) -> None:
+        """Draw the selected mark's grips, if it is on this page."""
+        if self._selected is None or self._selected[0] != index:
+            return
+        painter.save()
+        painter.setRenderHint(QPainter.Antialiasing, True)
+        pen = QPen(QColor(*self.SELECTED))
+        pen.setWidthF(2.0)
+        painter.setPen(pen)
+        painter.setBrush(QColor(255, 255, 255))
+        for where in self.grips(offset):
+            painter.drawEllipse(where)
+        painter.restore()
+
     def _paint_selected(self, painter, index: int, offset: QPointF) -> None:
         """Outline the mark under the pointer, and the one that is selected.
 
@@ -4131,6 +4309,32 @@ class PageCanvas(QAbstractScrollArea):
         The same mark is drawn once when it is both, so two pens do not land
         on top of each other and come out heavier than either.
         """
+        if self._dragging_grip is not None and self._preview:
+            # The outline follows the run being built, so the whole band
+            # redraws as the grip moves instead of the old shape sitting
+            # there while a new one grows beside it.
+            page = self._dragging_grip[1]
+            if page != index:
+                painter.save()
+                painter.restore()
+                return
+            painter.save()
+            painter.setRenderHint(QPainter.Antialiasing, True)
+            painter.setBrush(Qt.NoBrush)
+            pen = QPen(QColor(*self.SELECTED))
+            pen.setWidthF(self.OUTLINE)
+            painter.setPen(pen)
+            viewport = QRectF(self.viewport().rect())
+            for quad in self._preview:
+                where = self.quad_on_screen(index, quad, offset, scaled=False)
+                if where is None or not where.intersects(viewport):
+                    continue
+                painter.drawRoundedRect(where.adjusted(-1, -1, 1, 1),
+                                        self.OUTLINE_RADIUS,
+                                        self.OUTLINE_RADIUS)
+            painter.restore()
+            return
+
         marks = [m for m in (self._hovered, self._selected) if m is not None]
         if len(marks) == 2 and marks[0] == marks[1]:
             marks.pop()

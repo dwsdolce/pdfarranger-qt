@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pdfarranger master\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-02 22:42+0000\n"
+"POT-Creation-Date: 2026-11-02 23:30+0000\n"
 "PO-Revision-Date: 2026-01-04 02:52+0100\n"
 "Last-Translator: Massimo Pissarello <mapi68@gmail.com>\n"
 "Language: it\n"
@@ -2058,6 +2058,11 @@ msgstr "Schermo intero"
 #: pdfarranger_qt/mainwindow.py
 msgid "Add Mark"
 msgstr "Aggiungi marcatura"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Resize Mark"
+msgstr "Ridimensiona contrassegno"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py

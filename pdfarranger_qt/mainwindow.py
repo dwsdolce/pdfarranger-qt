@@ -150,6 +150,7 @@ class MainWindow(QMainWindow):
             lambda where: self.settings.setValue(
                 "reader/markup-tools-at", where))
         self.reader.mark_drawn.connect(self.mark_drawn)
+        self.reader.mark_resized.connect(self.mark_resized)
         # So a gesture in flight is drawn in the colour it will be kept in:
         # the preview is the mark, before it is a mark.
         self.reader.canvas.set_mark_styles(self.MARK_KINDS)
@@ -920,6 +921,50 @@ class MainWindow(QMainWindow):
     def mark_faded(self, opacity: float) -> None:
         """An opacity was set for the selected mark."""
         self._change_mark(opacity=float(opacity))
+
+    def mark_resized(self, index: int, mark, quads) -> None:
+        """A grip moved, so the mark covers a different run of text.
+
+        The same route a colour change takes: a mark of the user's is
+        altered where it lives, one the file brought is changed by an
+        overlay beside its own dictionary. Geometry is no different from
+        colour in that respect -- `/QuadPoints` and `/Rect` are rewritten
+        and the appearance dropped, and the comment thread hanging off the
+        mark is untouched, because it is the same mark.
+        """
+        if not quads or not 0 <= index < len(self.model.pages):
+            return
+        if isinstance(mark, markup.Annotation):
+            self.model.undo.commit(_("Resize Mark"))
+            mark.quads = tuple(tuple(q) for q in quads)
+            mark.rect = markup.bounding_rect(mark.quads)
+            self._after_mark_change(index)
+            return
+        uid = self.model.pages[index].uid
+        self.model.undo.commit(_("Resize Mark"))
+        boxes = tuple(tuple(q) for q in quads)
+        self.model.mark_edits.change(uid, mark.index, quads=boxes)
+        # Back into the shape a `Mark` holds: `/QuadPoints` corner groups,
+        # not the rectangles the rest of this works in. Assigning the
+        # rectangles made `boxes()` fall through to `/Rect`, so a resized
+        # mark reported one box where it had a run -- and its grips, its
+        # outline and its badge all followed that wrong answer.
+        mark.quads = tuple(tuple(markup._quad_points(q)) for q in boxes)
+        mark.rect = markup.bounding_rect(boxes)
+        self._after_mark_change(index, uid)
+
+    def _after_mark_change(self, index: int, uid=None) -> None:
+        """Re-render the page and tell the rest, without rebuilding."""
+        self._reader_keeps_showing = True
+        try:
+            self.model.touch([index])
+        finally:
+            self._reader_keeps_showing = False
+        self._mark_modified()
+        if uid is not None:
+            self._show_mark_edits(index, uid)
+        else:
+            self.reader.canvas.viewport().update()
 
     def _change_mark(self, **fields) -> None:
         """Record a change to the selected mark and show it.

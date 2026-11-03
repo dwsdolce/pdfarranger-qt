@@ -33,6 +33,10 @@ from support import FIXTURES, settle
 from pdfarranger_qt import markup
 
 PDF = os.path.join(FIXTURES, "markup.pdf")
+#: A highlight over a run of thirteen lines, made in Acrobat. `markup.pdf`
+#: has one of every kind but each covers a single line, so it cannot say
+#: whether a resize shortened a run or did nothing at all.
+RUN = os.path.join(FIXTURES, "markup_highlight.pdf")
 
 
 class TestThePalette(unittest.TestCase):
@@ -254,6 +258,53 @@ class TestShowingAChangeWithoutRebuilding(unittest.TestCase):
             got = markup.marks_in(one)[self.mark.index]
             self.assertEqual(got.colour, (0.0, 1.0, 1.0))
             self.assertAlmostEqual(got.opacity, 0.25, places=4)
+
+    def a_run_of_lines(self):
+        """The thirteen-line highlight, with the file it came out of.
+
+        Every mark in `markup.pdf` covers one line, so shortening one there
+        leaves the count where it was and the test passes whatever the code
+        does.
+        """
+        with open(RUN, "rb") as handle:
+            data = handle.read()
+        with pikepdf.open(RUN) as pdf:
+            mark = [m for m in markup.marks_in(pdf) if m.page == 1][0]
+        self.assertGreater(len(mark.boxes()), 1)
+        return data, mark
+
+    def test_a_resized_mark_comes_back_with_its_new_run(self):
+        """What a resize is *for*. This path applied colour and opacity and
+        had no case for `quads` at all, so the page was re-rendered from a
+        document that still held the old run -- a resize was written to the
+        file correctly and never once seen on screen. The export patcher,
+        which did handle it, is now the same code."""
+        data, mark = self.a_run_of_lines()
+        shorter = mark.boxes()[:4]
+        patched = markup.one_page_with_edits(
+            data, 0, {mark.index: {"quads": shorter}})
+        self.assertIsNotNone(patched)
+        with pikepdf.open(io.BytesIO(patched)) as one:
+            got = markup.marks_in(one)[mark.index]
+            self.assertEqual(len(got.boxes()), len(shorter))
+            self.assertLess(len(got.boxes()), len(mark.boxes()))
+            for want, mine in zip(shorter, got.boxes()):
+                with self.subTest(box=tuple(round(v) for v in want)):
+                    for a, b in zip(want, mine):
+                        self.assertAlmostEqual(a, b, places=3)
+
+    def test_a_resize_moves_the_rectangle_that_has_to_contain_it(self):
+        """`/Rect` has to contain every quadrilateral. Left where it was, it
+        would be a rectangle around text the mark no longer covers."""
+        data, mark = self.a_run_of_lines()
+        shorter = mark.boxes()[:4]
+        patched = markup.one_page_with_edits(
+            data, 0, {mark.index: {"quads": shorter}})
+        with pikepdf.open(io.BytesIO(patched)) as one:
+            got = markup.marks_in(one)[mark.index]
+            self.assertEqual(tuple(round(v, 3) for v in got.rect),
+                             tuple(round(v, 3)
+                                   for v in markup.bounding_rect(shorter)))
 
     def test_the_appearance_the_producer_wrote_goes_with_it(self):
         """It still draws the old colour, and a stream that disagrees with

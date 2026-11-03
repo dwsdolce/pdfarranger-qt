@@ -717,14 +717,29 @@ Cited as **highlight step 1** to **highlight step 9**.
    mark from its quadrilaterals. Every reader is supposed to, and "supposed
    to" is why this step exists.
 
+   **done 2026-11-02**, for colour and opacity. `Markup Highlight Write.pdf`
+   carries both cases -- a highlight this application created, and three of
+   Reader's recoloured by it -- and opens cleanly in Reader with the marks
+   where they belong. The comment thread on a recoloured mark came through
+   whole: same note, same reply, same current status, with only `/C`
+   changed.
+
    **Repeated after every later step that writes**, rather than done once.
    Resizing rewrites `/QuadPoints`, deleting takes a status chain and its
    replies out of the file, and each of those is a new way for a document
    to come out subtly wrong in a tool this project cannot run.
 
-6. **The handles, and resizing by them.** Grips at the two extremes of the
-   run; dragging one re-runs the selection between the new pair of points
-   and rebuilds `/QuadPoints` from whatever is now covered, rather than
+   **Repeated 2026-11-02 for the resize**, and it reads correctly in
+   Reader: a mark the file brought, resized here and written out, comes
+   back covering the run it was dragged to.
+
+6. **The handles, and resizing by them.** Two round grips, white with a
+   blue ring, one at the start of the run and one at its end -- shown for a
+   *selected* mark and never for a merely hovered one, which is the third
+   state decision 13 now records. **done 2026-11-02**
+
+   Dragging one re-runs the selection between the new pair of points and
+   rebuilds `/QuadPoints` from whatever is now covered, rather than
    stretching the quads that are there -- a highlight is a run of text and
    not a box. This was in the plan's acceptance and in M13 from the start
    and was missing from this list, which is the omission, not the design.
@@ -737,6 +752,15 @@ Cited as **highlight step 1** to **highlight step 9**.
    far as geometry. The work left here is then small, because dragging a
    grip is `textlayer.quads` recomputed from a new pair of points, and that
    is machinery highlight step 2 already built.
+
+   What the drag looks like while it is in flight is decision 21. The
+   resize was recorded and written correctly from the first day it worked
+   and could not be *seen*: the one-page re-render of decision 19 applied
+   colour and opacity and had no case for the quadrilaterals, so the page
+   came back from a document that still held the old run. It and the export
+   patcher were near-copies and only one of them grew the case. They are
+   now one `markup.apply_edit`, which is the point: the next field cannot
+   reach only one of them.
 7. **Delete**, taking the status chain and the replies with it.
 8. **The right-click menu, and the pop-up note with it.** *Open Pop-Up
    Note* is one of its entries, so this is where a note on a mark is made
@@ -1366,9 +1390,25 @@ A faded version of it was tried first, on the reasoning that hovering is the
 lesser state and should look lesser. Measured against Acrobat's own, ours
 came out paler *and* wider -- a dominant (144, 176, 224) in 4 to 5 pixel
 strokes against Acrobat's (32, 112, 192) in one -- and it read as a worse
-selection rather than as a different thing. What distinguishes the two
-states is the bar of buttons, which appears only for the mark that is
-selected.
+selection rather than as a different thing.
+
+**There are three states, and the outline is only one of the differences.**
+Observed 2026-11-02 on the same mark in each::
+
+    normal      the mark, and the badge if it carries a note
+    hovered     and the outline, and the note panel at the pointer
+    selected    and the grips at the ends of the run, the bar, and the
+                note *editor* open -- the thread, not the read-only panel
+
+So what tells hovered from selected is three things, not the bar alone,
+which is what this said before the grips were seen. The panel and the
+editor show the same note and are not the same thing: hovering gives a
+read-only summary that follows the pointer, while selecting opens the
+thread with its reply box.
+
+The grips are highlight step 6. The editor is highlight step 8, so
+*selected* is not fully realised until then -- a selected mark shows its
+grips and its bar now, and will open its thread when there is one to open.
 
 **14. The buttons beside a selected mark are drawn before they act.** Three
 of them, as Acrobat shows: add a comment, a colour swatch, delete. Each
@@ -1504,6 +1544,30 @@ changes the selected mark whichever tool is armed.
 `Annotation` grew an `opacity` of its own for this. `/CA` had been fixed per
 kind, so the slider had nowhere to write -- and changing a mark's opacity
 would have raised on `__slots__`.
+
+
+**21. A drag shows the old run and the new one at once, and the new one is
+neutral.** Observed in Reader by the owner: while a grip is being dragged,
+the mark's own colour stays where it was and a grey band shows the run
+being proposed. The highlight does not move until the drag is let go, and
+then it shows exactly what the band covered.
+
+This matters here because it is also what PDFium forces. The mark a
+document arrived with is in the page bitmap for the whole drag under
+decision 19, and it cannot be taken out -- so a band drawn in the mark's
+own colour multiplies with itself, and `#FF6200` over `#FF6200` comes out a
+red that belongs to neither. A neutral band cannot take a colour from what
+it crosses. Reader's answer and the only one available are the same answer.
+
+The pointer says which hold it has, and there are three:
+
+    over bare text    an I-beam     a drag selects text
+    over the mark     an arrow      a drag picks the mark up
+    over a grip       a diagonal    a drag moves the end of the run
+
+An I-beam over any part of the mark would promise a text selection that
+pressing there does not give.
+
 
 
 ## Done

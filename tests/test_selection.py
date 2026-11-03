@@ -235,12 +235,13 @@ class TestTheOutlineUnderThePointer(SelectionCase):
     def test_hovering_and_selecting_look_identical(self):
         """Acrobat's answer. The outline says how far a mark reaches, which
         does not change according to whether you have committed to it --
-        what tells the two apart is the bar of buttons.
+        what tells the two apart is the bar of buttons and the grips.
 
         Rendered rather than reasoned about: a faded hover was what this
         replaced, and only the pixels can say the fade is gone.
         """
-        from PySide6.QtGui import QImage, QMouseEvent
+        from PySide6.QtCore import Qt
+        from PySide6.QtGui import QImage, QMouseEvent, QPainter
 
         mark, where = self.a_mark()
         viewport = self.canvas.viewport()
@@ -265,6 +266,17 @@ class TestTheOutlineUnderThePointer(SelectionCase):
         # fail for the right one.
         self.win.mark_buttons.hide()
         selected = painted()
+
+        # The grips are the other thing the two states are supposed to
+        # differ by, and unlike the bar they are painted by the canvas
+        # rather than being a child widget, so they cannot be hidden. They
+        # are blanked out of both images instead. Everything outside them
+        # must still match: that is where a fade would show.
+        for image in (hovered, selected):
+            painter = QPainter(image)
+            for grip in self.canvas.grips():
+                painter.fillRect(grip.adjusted(-2, -2, 2, 2), Qt.black)
+            painter.end()
         self.assertEqual(hovered, selected,
                          "the two states are drawn differently")
 
@@ -489,6 +501,205 @@ class TestAMarkThatCarriesANote(SelectionCase):
         without = painted()
         self.assertNotEqual(with_panel, without,
                             "the panel left no mark on the viewport")
+
+
+class TestTheGripsOnASelectedMark(SelectionCase):
+    """Two grips, and dragging one rebuilds the run from the text.
+
+    A highlight is a run of text and not a box, so a resize is not a scale:
+    moving a grip re-runs the selection between the new pair of points and
+    asks the text what is now covered. Stretching the quadrilaterals would
+    give a mark that no longer lines up with any words.
+    """
+
+    def document(self):
+        return NOTED
+
+    def a_mark(self):
+        found = [m for m, mine in self.canvas.marks_on(0) if not mine]
+        self.assertTrue(found, "the page carries no mark to pick")
+        return found[0]
+
+    def uid(self):
+        return self.win.model.pages[0].uid
+
+    def test_a_mark_only_has_grips_when_it_is_selected(self):
+        """Hovering one never shows them, which is what separates the two
+        states along with the bar."""
+        from PySide6.QtGui import QMouseEvent
+
+        mark = self.a_mark()
+        at = self.canvas.quad_on_screen(
+            0, self.canvas.mark_boxes(mark)[0], scaled=False).center()
+        self.send(QMouseEvent.Type.MouseMove, at)
+        self.assertIsNotNone(self.canvas.hovered_mark())
+        self.assertEqual(self.canvas.grips(), [])
+        self.canvas.select_mark((0, mark))
+        settle(timeout_ms=150)
+        self.assertEqual(len(self.canvas.grips()), 2)
+
+    def test_they_sit_at_the_ends_of_the_run(self):
+        """Not at the corners of the bounding box: a highlight over three
+        lines starts at the left of its first and ends at the right of its
+        last, and a box's corners are nowhere near either."""
+        mark = self.a_mark()
+        self.canvas.select_mark((0, mark))
+        settle(timeout_ms=150)
+        start, end = self.canvas.grips()
+        boxes = self.canvas.mark_boxes(mark)
+        first = self.canvas.quad_on_screen(0, boxes[0], scaled=False)
+        last = self.canvas.quad_on_screen(0, boxes[-1], scaled=False)
+        self.assertAlmostEqual(start.center().x(), first.left(), delta=2)
+        self.assertAlmostEqual(end.center().x(), last.right(), delta=2)
+        self.assertLess(start.center().y(), end.center().y())
+
+    def test_a_grip_can_be_pointed_at(self):
+        mark = self.a_mark()
+        self.canvas.select_mark((0, mark))
+        settle(timeout_ms=150)
+        for n, where in enumerate(self.canvas.grips()):
+            with self.subTest(grip=n):
+                self.assertEqual(self.canvas.grip_at(where.center()), n)
+
+    def drag_the_end_grip(self, by):
+        from PySide6.QtCore import QPointF, Qt
+        from PySide6.QtGui import QMouseEvent
+
+        mark = self.a_mark()
+        self.canvas.select_mark((0, mark))
+        settle(timeout_ms=150)
+        end = self.canvas.grips()[1].center()
+        moved = QPointF(end.x(), end.y() + by)
+        self.send(QMouseEvent.Type.MouseButtonPress, end, Qt.LeftButton)
+        self.send(QMouseEvent.Type.MouseMove, moved, Qt.LeftButton)
+        shown = self.canvas._preview
+        self.send(QMouseEvent.Type.MouseButtonRelease, moved, Qt.LeftButton)
+        settle(timeout_ms=300)
+        return mark, shown
+
+    def test_dragging_a_grip_rebuilds_the_run(self):
+        before = len(self.a_mark().boxes())
+        mark, _shown = self.drag_the_end_grip(-60)
+        kept = self.win.model.mark_edits.of(self.uid(), mark.index)
+        self.assertIn("quads", kept)
+        self.assertLess(len(kept["quads"]), before)
+
+    def test_the_mark_itself_reports_its_new_run(self):
+        """`Mark.quads` holds `/QuadPoints` corner groups, not rectangles.
+        Assigning rectangles makes `boxes()` fall through to `/Rect`, so the
+        mark reports one box where it has a run -- and its grips, outline
+        and badge all follow that wrong answer."""
+        mark, _shown = self.drag_the_end_grip(-60)
+        kept = self.win.model.mark_edits.of(self.uid(), mark.index)
+        self.assertEqual(len(mark.boxes()), len(kept["quads"]))
+        self.assertEqual(len(self.canvas.grips()), 2)
+
+    def test_it_is_a_re_run_and_not_a_stretch(self):
+        """Shortening by sixty pixels drops whole lines from the run. A
+        scaled set of quadrilaterals would keep every one of them and simply
+        make them smaller, which would no longer line up with any words."""
+        before = len(self.a_mark().boxes())
+        mark, shown = self.drag_the_end_grip(-60)
+        self.assertLess(len(shown), before)
+        for quad in shown:
+            with self.subTest(quad=tuple(round(v) for v in quad)):
+                self.assertGreater(quad[3] - quad[1], 1.0)
+
+    def a_character_clear_of(self, boxes):
+        """Where a real glyph is that the mark does not cover.
+
+        A point guessed below the mark is not the same thing: off the text
+        it reports the default cursor, so the I-beam leg would pass for the
+        wrong reason. The text layer is asked instead.
+        """
+        covered = [self.canvas.quad_on_screen(0, b, scaled=False)
+                   for b in boxes]
+        for box in self.canvas._glyphs.boxes(0):
+            if box[4]:
+                continue
+            at = self.canvas.quad_on_screen(0, box[:4], scaled=False).center()
+            if not any(r.adjusted(-4, -4, 4, 4).contains(at) for r in covered):
+                return at
+        self.skipTest("the page has no glyph outside the mark")
+
+    def test_the_pointer_says_which_hold_it_has(self):
+        """Three answers over three places. The grip resizes, so it gets a
+        diagonal resize arrow; the body of the mark is a thing to pick up, so it gets
+        a plain arrow; bare text is still text, so it keeps the I-beam. An
+        I-beam over any part of the mark would promise a text selection that
+        pressing there does not give."""
+        from PySide6.QtCore import Qt
+        from PySide6.QtGui import QMouseEvent
+
+        mark = self.a_mark()
+        self.canvas.select_mark((0, mark))
+        settle(timeout_ms=150)
+        boxes = self.canvas.mark_boxes(mark)
+        body = self.canvas.quad_on_screen(0, boxes[0], scaled=False).center()
+        grip = self.canvas.grips()[0].center()
+        bare = self.a_character_clear_of(boxes)
+        for where, want, what in (
+                (grip, Qt.SizeFDiagCursor, "a grip"),
+                (body, Qt.ArrowCursor, "the mark"),
+                (bare, Qt.IBeamCursor, "bare text")):
+            with self.subTest(over=what):
+                self.send(QMouseEvent.Type.MouseMove, where)
+                self.assertEqual(self.canvas.viewport().cursor().shape(), want)
+
+    def test_the_band_being_dragged_is_not_the_mark_s_own_colour(self):
+        """A highlight is drawn by multiplying and the original is still in
+        the page bitmap, so a band in the mark's colour multiplies with
+        itself: orange over orange comes out a red that belongs to neither.
+        A neutral band cannot take a colour from what it crosses."""
+        from PySide6.QtCore import QPointF, Qt
+        from PySide6.QtGui import QMouseEvent
+
+        mark = self.a_mark()
+        self.canvas.select_mark((0, mark))
+        settle(timeout_ms=150)
+        end = self.canvas.grips()[1].center()
+        moved = QPointF(end.x(), end.y() - 40)
+        self.send(QMouseEvent.Type.MouseButtonPress, end, Qt.LeftButton)
+        self.send(QMouseEvent.Type.MouseMove, moved, Qt.LeftButton)
+        band = self.canvas._preview_marks(0)[0]
+        self.send(QMouseEvent.Type.MouseButtonRelease, moved, Qt.LeftButton)
+        settle(timeout_ms=300)
+        self.assertNotEqual(tuple(band.colour), tuple(mark.colour))
+        self.assertEqual(len(set(round(v, 1) for v in band.colour)), 1)
+
+    def test_the_selection_survives_the_drag(self):
+        self.drag_the_end_grip(-60)
+        self.assertIsNotNone(self.canvas.selected_mark())
+
+    def test_a_grip_takes_the_press_from_the_mark_under_it(self):
+        """Or grabbing the end of a highlight would select it again and
+        start a text selection across it."""
+        from PySide6.QtCore import Qt
+        from PySide6.QtGui import QMouseEvent
+
+        mark = self.a_mark()
+        self.canvas.select_mark((0, mark))
+        settle(timeout_ms=150)
+        end = self.canvas.grips()[1].center()
+        self.send(QMouseEvent.Type.MouseButtonPress, end, Qt.LeftButton)
+        self.assertIsNotNone(self.canvas._dragging_grip)
+        self.assertFalse(self.canvas.has_selection(),
+                         "the press started a text selection as well")
+        self.send(QMouseEvent.Type.MouseButtonRelease, end, Qt.LeftButton)
+
+    def test_the_thread_survives_a_resize(self):
+        """It is the same mark, differently sized."""
+        noted = [m for m, mine in self.canvas.marks_on(0)
+                 if not mine and m.has_note()]
+        if not noted:
+            self.fail("the fixture is supposed to carry a noted mark")
+        mark = noted[0]
+        replies, status = self.canvas._file_marks.thread(mark)
+        self.win.mark_resized(0, mark, mark.boxes()[:4])
+        settle(timeout_ms=300)
+        again, now = self.canvas._file_marks.thread(mark)
+        self.assertEqual((len(again), now), (len(replies), status))
+        self.assertEqual(mark.contents, "Highlight Note")
 
 
 if __name__ == "__main__":

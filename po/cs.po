@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  pdfarranger\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-02 22:42+0000\n"
+"POT-Creation-Date: 2026-11-02 23:30+0000\n"
 "PO-Revision-Date: 2023-07-10 15:37+0000\n"
 "Last-Translator: PavelZ\n"
 "Language: cs_CZ\n"
@@ -2066,6 +2066,11 @@ msgstr "Celá obrazovka"
 #: pdfarranger_qt/mainwindow.py
 msgid "Add Mark"
 msgstr "Přidat značku"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Resize Mark"
+msgstr "Změnit velikost značky"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py

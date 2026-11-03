@@ -825,14 +825,7 @@ def _edit_annotations(pdf_output, pages, edits) -> int:
             at += 1
             if not edit:
                 continue
-            colour = edit.get("colour")
-            if colour is not None:
-                annot[pikepdf.Name.C] = pikepdf.Array([*colour])
-            opacity = edit.get("opacity")
-            if opacity is not None:
-                annot[pikepdf.Name.CA] = float(opacity)
-            if pikepdf.Name.AP in annot:
-                del annot[pikepdf.Name.AP]
+            markup.apply_edit(annot, edit)
             changed += 1
     return changed
 

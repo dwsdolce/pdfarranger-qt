@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-02 22:42+0000\n"
+"POT-Creation-Date: 2026-11-02 23:30+0000\n"
 "PO-Revision-Date: 2024-09-05 17:05+0300\n"
 "Last-Translator: Abdullah Albaroty <albaroty@gmail.com>\n"
 "Language: ar\n"
@@ -2026,6 +2026,11 @@ msgstr "ملء الشاشة"
 #: pdfarranger_qt/mainwindow.py
 msgid "Add Mark"
 msgstr "إضافة علامة"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Resize Mark"
+msgstr "تغيير حجم العلامة"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
