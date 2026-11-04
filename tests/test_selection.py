@@ -1306,7 +1306,7 @@ class TestTheNoteOnAMark(SelectionCase):
         comparison is the test.
         """
         from PySide6.QtCore import QPointF
-        from PySide6.QtGui import QColor, QImage
+        from PySide6.QtGui import QImage
 
         from pdfarranger_qt import markup
 
@@ -1323,7 +1323,7 @@ class TestTheNoteOnAMark(SelectionCase):
         keep = target.rich
         self.addCleanup(setattr, target, "rich", keep)
 
-        def ink(_whatever):
+        def shot():
             self.canvas._show_note_panel(None, QPointF(0, 0))
             settle(timeout_ms=150)
             self.canvas._show_note_panel(mark, QPointF(60, 60), 0)
@@ -1331,13 +1331,18 @@ class TestTheNoteOnAMark(SelectionCase):
             image = QImage(self.canvas.viewport().size(), QImage.Format_ARGB32)
             image.fill(0)
             self.canvas.viewport().render(image)
-            return sum(1 for y in range(60, 240) for x in range(60, 360)
-                       if QColor(image.pixel(x, y)).lightness() < 110)
+            return [image.pixel(x, y)
+                    for y in range(60, 240) for x in range(60, 360)]
 
-        with_style = ink(target)
+        # **Pixels that differ, not ink counted.** Counting dark pixels
+        # assumed styling can only add -- true of bold and underline, false
+        # of colour, which paints lighter than black and made the styled
+        # version look like *less* drawing than the plain one.
+        styled_shot = shot()
         target.rich = ""
-        self.assertGreater(with_style, ink(target),
-                           "the summary drew the same ink either way")
+        differ = sum(1 for a, b in zip(styled_shot, shot()) if a != b)
+        self.assertGreater(differ, 50,
+                           "the summary drew the same thing either way")
 
     def test_closing_the_document_takes_the_window_with_it(self):
         """The window belongs to the mark it was opened on, and closing the

@@ -733,7 +733,12 @@ class TestTheRichVersionOfWhatANoteSays(unittest.TestCase):
         self.styled = [m for m in marks if markup.rich_to_html(m.rich)]
         self.plain = [m for m in marks if m.rich and not
                       markup.rich_to_html(m.rich)]
-        if not self.styled or not self.plain:
+        # **Which of them a producer wrote.** The fixture carries our own
+        # `/RC` too now, on anything the owner edited here and saved, and
+        # what Acrobat puts in one is not what we put in one -- so the
+        # claims about Acrobat's shape are made about Acrobat's.
+        self.theirs = [m for m in marks if "APIVersion" in (m.rich or "")]
+        if not self.styled or not self.plain or not self.theirs:
             self.skipTest("the fixture carries no styled and plain pair")
 
     def test_the_fixture_is_what_these_tests_assume(self):
@@ -745,10 +750,17 @@ class TestTheRichVersionOfWhatANoteSays(unittest.TestCase):
         """
         self.assertTrue(self.styled)
         self.assertTrue(self.plain)
-        self.assertTrue(any("<span" in m.rich for m in self.plain),
-                        "no mark spans a run it did not style")
-        self.assertTrue(any("<span" not in m.rich for m in self.plain),
-                        "no mark was left as a bare paragraph")
+        self.assertTrue(
+            any(markup.rich_to_html(m.rich) for m in self.theirs),
+            "nothing Acrobat wrote in this fixture is styled")
+        self.assertTrue(
+            any("<span" not in m.rich for m in self.theirs),
+            "nothing was left as a bare paragraph")
+        self.assertTrue(
+            any(m.rich.count("<span") > 1 for m in self.theirs
+                if markup.rich_to_html(m.rich)),
+            "no styled mark of Acrobat's has more than one run, so nothing "
+            "here shows that it spans the unstyled ones too")
 
     def test_what_is_styled_comes_through(self):
         seen = set()
@@ -762,7 +774,7 @@ class TestTheRichVersionOfWhatANoteSays(unittest.TestCase):
         """A note with styling in it spans *every* run, the plain ones too.
         Keeping those spans would mark up what nobody styled."""
         dropped = False
-        for mark in self.styled + self.plain:
+        for mark in self.theirs:
             was = mark.rich.count("<span")
             html = markup.rich_to_html(mark.rich) or ""
             with self.subTest(length=len(mark.contents)):
@@ -773,8 +785,12 @@ class TestTheRichVersionOfWhatANoteSays(unittest.TestCase):
     def test_the_negative_size_and_the_alignment_are_dropped(self):
         """A negative size is not a size, and an alignment inside a line is
         not a style."""
-        for mark in self.styled:
-            html = markup.rich_to_html(mark.rich)
+        for mark in self.theirs:
+            html = markup.rich_to_html(mark.rich) or ""
+            if "<span" not in mark.rich:
+                # A note Acrobat styled nowhere is a bare paragraph: no
+                # span, and so no size to drop.
+                continue
             with self.subTest(length=len(mark.contents)):
                 self.assertIn("font-size", mark.rich)
                 self.assertNotIn("font-size", html)
@@ -1060,3 +1076,86 @@ class TestTheFormOnOneMark(unittest.TestCase):
         form._make_default()
         self.assertTrue(form.make_default)
         self.assertEqual(form.changed(), {})
+
+
+class TestTheColourOfWordsInANote(unittest.TestCase):
+    """Reader colours the words you have selected, from the note's own
+    properties form. It is a property of a *run*, not of the mark: `/C`
+    colours an icon and a pop-up's title bar, and has nothing to do with
+    this."""
+
+    def setUp(self):
+        with pikepdf.open(RUN) as pdf:
+            self.marks = [m for m in markup.marks_in(pdf) if m.page == 1]
+        self.coloured = [m for m in self.marks
+                         if "color:" in (markup.rich_to_html(m.rich) or "")]
+
+    def test_the_fixture_carries_a_coloured_run(self):
+        """Written in Reader, so what is read here is a producer's own."""
+        self.assertTrue(self.coloured,
+                        "no mark in the fixture has a coloured run")
+
+    def test_it_comes_through_on_the_way_in(self):
+        """It was dropped for a while: the list of properties kept from
+        `/RC` had no `color` in it, so Reader's colours arrived plain."""
+        for mark in self.coloured:
+            html = markup.rich_to_html(mark.rich)
+            with self.subTest(length=len(mark.contents)):
+                self.assertRegex(html, r"color:#[0-9A-Fa-f]{6}")
+
+    def test_the_editor_keeps_it(self):
+        """**Nothing here can set a colour that the editor cannot keep.**
+        The colours would otherwise go the first time anybody posted an
+        edit to a reply that had them."""
+        from PySide6.QtWidgets import QApplication  # noqa: F401
+
+        from pdfarranger_qt.notepanel import NoteEditor
+
+        for mark in self.coloured:
+            editor = NoteEditor()
+            self.addCleanup(editor.deleteLater)
+            editor.setHtml(markup.rich_to_html(mark.rich))
+            inks = {style["color"] for line in editor.runs() for _t, style in line
+                    if "color" in style}
+            with self.subTest(length=len(mark.contents)):
+                self.assertTrue(inks, "the editor lost every colour")
+                written = markup.rich_from_runs(editor.runs())
+                for ink in inks:
+                    self.assertIn("color:%s" % ink, written)
+
+    def test_text_colour_applies_to_the_selection(self):
+        from PySide6.QtGui import QTextCursor
+        from PySide6.QtWidgets import QApplication  # noqa: F401
+
+        from pdfarranger_qt.notepanel import NoteEditor
+
+        editor = NoteEditor()
+        self.addCleanup(editor.deleteLater)
+        editor.setPlainText("Add some more text.")
+        cursor = editor.textCursor()
+        cursor.setPosition(4)
+        cursor.setPosition(8, QTextCursor.MoveMode.KeepAnchor)
+        editor.setTextCursor(cursor)
+        editor.recolour(markup.PALETTE[4][1])
+        self.assertEqual(
+            [(text, style.get("color")) for text, style in editor.runs()[0]],
+            [("Add ", None), ("some", "#DB3326"), (" more text.", None)])
+
+    def test_clearing_the_formatting_takes_the_colour_with_it(self):
+        """A merge only applies what a format *sets*, and a colour has no
+        "none" to set -- so clearing has to replace the format rather than
+        merge one over it."""
+        from PySide6.QtWidgets import QApplication  # noqa: F401
+
+        from pdfarranger_qt.notepanel import NoteEditor
+
+        editor = NoteEditor()
+        self.addCleanup(editor.deleteLater)
+        editor.setPlainText("Add some more text.")
+        editor.selectAll()
+        editor.recolour(markup.PALETTE[4][1])
+        editor.restyle("bold")
+        self.assertTrue(editor.runs()[0][0][1])
+        editor.selectAll()
+        editor.restyle("clear")
+        self.assertEqual(editor.runs()[0], [("Add some more text.", {})])

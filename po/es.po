@@ -14,7 +14,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  pdfarranger\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-03 20:57+0000\n"
+"POT-Creation-Date: 2026-11-04 04:48+0000\n"
 "PO-Revision-Date: 2026-04-03 11:36-0300\n"
 "Last-Translator: Óscar Fernández Díaz <oscfdezdz@tuta.io>\n"
 "Language: es\n"
@@ -155,6 +155,11 @@ msgstr "%d respuestas"
 #, python-format
 msgid "%d Status"
 msgstr "%d estado"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py pdfarranger_qt/notepanel.py
+msgid "Status"
+msgstr "Estado"
 
 #: pdfarranger_qt/core.py pdfarranger_qt/mainwindow.py
 msgid "Image files are only supported with img2pdf"
@@ -2863,13 +2868,12 @@ msgid "Text Style"
 msgstr "Estilo de texto"
 
 #: pdfarranger_qt/notepanel.py
+msgid "Text Colour"
+msgstr "Color del texto"
+
+#: pdfarranger_qt/notepanel.py
 msgid "Clear Formatting"
 msgstr "Borrar formato"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/notepanel.py
-msgid "Status"
-msgstr "Estado"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/notepanel.py
@@ -2932,7 +2936,9 @@ msgstr "Fecha de modificación"
 
 #: pdfarranger_qt/properties.py
 msgid "The Review History lists any change of status for this comment."
-msgstr "El historial de revisión muestra cualquier cambio de estado de este comentario."
+msgstr ""
+"El historial de revisión muestra cualquier cambio de estado de este "
+"comentario."
 
 # machine translation, unreviewed
 #: pdfarranger_qt/reader.py

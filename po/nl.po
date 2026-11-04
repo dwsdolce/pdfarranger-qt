@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PDF-Shuffler 0.7\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-03 20:57+0000\n"
+"POT-Creation-Date: 2026-11-04 04:48+0000\n"
 "PO-Revision-Date: 2025-05-26 10:43+0200\n"
 "Last-Translator: Heimen Stoffels <vistausss@fastmail.com>\n"
 "Language: nl\n"
@@ -152,6 +152,11 @@ msgstr "%d reacties"
 #, python-format
 msgid "%d Status"
 msgstr "%d status"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py pdfarranger_qt/notepanel.py
+msgid "Status"
+msgstr "Status"
 
 #: pdfarranger_qt/core.py pdfarranger_qt/mainwindow.py
 msgid "Image files are only supported with img2pdf"
@@ -2891,13 +2896,12 @@ msgid "Text Style"
 msgstr "Tekststijl"
 
 #: pdfarranger_qt/notepanel.py
+msgid "Text Colour"
+msgstr "Tekstkleur"
+
+#: pdfarranger_qt/notepanel.py
 msgid "Clear Formatting"
 msgstr "Opmaak wissen"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/notepanel.py
-msgid "Status"
-msgstr "Status"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/notepanel.py

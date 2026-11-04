@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pdfarranger main\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-03 20:57+0000\n"
+"POT-Creation-Date: 2026-11-04 04:48+0000\n"
 "PO-Revision-Date: 2026-04-24 21:19+0300\n"
 "Last-Translator: Oğuz Ersen <oguz@ersen.moe>\n"
 "Language: tr\n"
@@ -149,6 +149,11 @@ msgstr "%d yanıt"
 #, python-format
 msgid "%d Status"
 msgstr "%d durum"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py pdfarranger_qt/notepanel.py
+msgid "Status"
+msgstr "Durum"
 
 #: pdfarranger_qt/core.py pdfarranger_qt/mainwindow.py
 msgid "Image files are only supported with img2pdf"
@@ -2827,13 +2832,12 @@ msgid "Text Style"
 msgstr "Metin stili"
 
 #: pdfarranger_qt/notepanel.py
+msgid "Text Colour"
+msgstr "Metin rengi"
+
+#: pdfarranger_qt/notepanel.py
 msgid "Clear Formatting"
 msgstr "Biçimi temizle"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/notepanel.py
-msgid "Status"
-msgstr "Durum"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/notepanel.py

@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-03 20:57+0000\n"
+"POT-Creation-Date: 2026-11-04 04:48+0000\n"
 "PO-Revision-Date: 2023-01-19 20:27+0100\n"
 "Last-Translator: alexgabi\n"
 "Language: eu\n"
@@ -153,6 +153,11 @@ msgstr "%d erantzun"
 #, python-format
 msgid "%d Status"
 msgstr "%d egoera"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py pdfarranger_qt/notepanel.py
+msgid "Status"
+msgstr "Egoera"
 
 #: pdfarranger_qt/core.py pdfarranger_qt/mainwindow.py
 msgid "Image files are only supported with img2pdf"
@@ -2909,13 +2914,12 @@ msgid "Text Style"
 msgstr "Testu-estiloa"
 
 #: pdfarranger_qt/notepanel.py
+msgid "Text Colour"
+msgstr "Testuaren kolorea"
+
+#: pdfarranger_qt/notepanel.py
 msgid "Clear Formatting"
 msgstr "Garbitu formatua"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/notepanel.py
-msgid "Status"
-msgstr "Egoera"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/notepanel.py
@@ -2978,7 +2982,9 @@ msgstr "Aldaketa-data"
 
 #: pdfarranger_qt/properties.py
 msgid "The Review History lists any change of status for this comment."
-msgstr "Berrikuspen-historiak iruzkin honen egoera-aldaketa guztiak zerrendatzen ditu."
+msgstr ""
+"Berrikuspen-historiak iruzkin honen egoera-aldaketa guztiak zerrendatzen "
+"ditu."
 
 # machine translation, unreviewed
 #: pdfarranger_qt/reader.py

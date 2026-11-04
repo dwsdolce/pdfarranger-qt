@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pdfarranger master\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-03 20:57+0000\n"
+"POT-Creation-Date: 2026-11-04 04:48+0000\n"
 "PO-Revision-Date: 2026-01-04 02:52+0100\n"
 "Last-Translator: Massimo Pissarello <mapi68@gmail.com>\n"
 "Language: it\n"
@@ -149,6 +149,11 @@ msgstr "%d risposte"
 #, python-format
 msgid "%d Status"
 msgstr "%d stato"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py pdfarranger_qt/notepanel.py
+msgid "Status"
+msgstr "Stato"
 
 #: pdfarranger_qt/core.py pdfarranger_qt/mainwindow.py
 msgid "Image files are only supported with img2pdf"
@@ -2861,13 +2866,12 @@ msgid "Text Style"
 msgstr "Stile del testo"
 
 #: pdfarranger_qt/notepanel.py
+msgid "Text Colour"
+msgstr "Colore del testo"
+
+#: pdfarranger_qt/notepanel.py
 msgid "Clear Formatting"
 msgstr "Cancella formattazione"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/notepanel.py
-msgid "Status"
-msgstr "Stato"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/notepanel.py

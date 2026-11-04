@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PDF Arranger 1.9.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-03 20:57+0000\n"
+"POT-Creation-Date: 2026-11-04 04:48+0000\n"
 "PO-Revision-Date: 2023-06-12 10:30+0300\n"
 "Last-Translator: Manussos Pulinakis "
 "<38626261+manussos@users.noreply.github.com>\n"
@@ -153,6 +153,11 @@ msgstr "%d απαντήσεις"
 #, python-format
 msgid "%d Status"
 msgstr "%d κατάσταση"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py pdfarranger_qt/notepanel.py
+msgid "Status"
+msgstr "Κατάσταση"
 
 #: pdfarranger_qt/core.py pdfarranger_qt/mainwindow.py
 msgid "Image files are only supported with img2pdf"
@@ -2922,13 +2927,12 @@ msgid "Text Style"
 msgstr "Στυλ κειμένου"
 
 #: pdfarranger_qt/notepanel.py
+msgid "Text Colour"
+msgstr "Χρώμα κειμένου"
+
+#: pdfarranger_qt/notepanel.py
 msgid "Clear Formatting"
 msgstr "Εκκαθάριση μορφοποίησης"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/notepanel.py
-msgid "Status"
-msgstr "Κατάσταση"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/notepanel.py

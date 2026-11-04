@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PDF Arranger 1.14.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-03 20:57+0000\n"
+"POT-Creation-Date: 2026-11-04 04:48+0000\n"
 "PO-Revision-Date: 2026-06-02 17:09+0800\n"
 "Last-Translator: Puqns67 <me@puqns67.icu>\n"
 "Language: zh_CN\n"
@@ -152,6 +152,11 @@ msgstr "%d 条回复"
 #, python-format
 msgid "%d Status"
 msgstr "%d 个状态"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py pdfarranger_qt/notepanel.py
+msgid "Status"
+msgstr "状态"
 
 #: pdfarranger_qt/core.py pdfarranger_qt/mainwindow.py
 msgid "Image files are only supported with img2pdf"
@@ -2667,13 +2672,12 @@ msgid "Text Style"
 msgstr "文字样式"
 
 #: pdfarranger_qt/notepanel.py
+msgid "Text Colour"
+msgstr "文字颜色"
+
+#: pdfarranger_qt/notepanel.py
 msgid "Clear Formatting"
 msgstr "清除格式"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/notepanel.py
-msgid "Status"
-msgstr "状态"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/notepanel.py

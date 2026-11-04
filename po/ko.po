@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pdfarranger - Korean\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-03 20:57+0000\n"
+"POT-Creation-Date: 2026-11-04 04:48+0000\n"
 "PO-Revision-Date: 2026-05-25 00:41+0900\n"
 "Last-Translator: VenusGirl <venusgirl@outlook.com>\n"
 "Language: ko\n"
@@ -148,6 +148,11 @@ msgstr "답글 %d개"
 #, python-format
 msgid "%d Status"
 msgstr "상태 %d개"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py pdfarranger_qt/notepanel.py
+msgid "Status"
+msgstr "상태"
 
 #: pdfarranger_qt/core.py pdfarranger_qt/mainwindow.py
 msgid "Image files are only supported with img2pdf"
@@ -2723,13 +2728,12 @@ msgid "Text Style"
 msgstr "텍스트 스타일"
 
 #: pdfarranger_qt/notepanel.py
+msgid "Text Colour"
+msgstr "텍스트 색상"
+
+#: pdfarranger_qt/notepanel.py
 msgid "Clear Formatting"
 msgstr "서식 지우기"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/notepanel.py
-msgid "Status"
-msgstr "상태"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/notepanel.py

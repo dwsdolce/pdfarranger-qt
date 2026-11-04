@@ -45,7 +45,15 @@ from PySide6.QtCore import (
     QTimer,
     Signal,
 )
-from PySide6.QtGui import QColor, QFont, QPainter, QTextCharFormat
+from PySide6.QtGui import (
+    QColor,
+    QFont,
+    QIcon,
+    QPainter,
+    QPixmap,
+    QTextCharFormat,
+    QTextFormat,
+)
 from PySide6.QtWidgets import (
     QFrame,
     QHBoxLayout,
@@ -60,7 +68,7 @@ from PySide6.QtWidgets import (
 
 from .i18n import N_
 from .i18n import gettext_ as _
-from .markup import parse_pdf_date
+from .markup import PALETTE, parse_pdf_date
 
 
 def when_text(value, now=None) -> str:
@@ -201,9 +209,29 @@ class NoteEditor(QTextEdit):
             act.triggered.connect(
                 lambda _checked=False, which=how: self.restyle(which))
         styles.addSeparator()
+        # **A colour for the words, not for the mark.** Reader sets this
+        # from the note's own properties form, over whatever text is
+        # selected; here it belongs beside the other things that style a
+        # run. It is the one entry in this menu Reader does not have in
+        # this place, which the owner settled on 2026-11-03.
+        inks = styles.addMenu(_("Text Colour"))
+        for name, rgb in PALETTE:
+            ink = inks.addAction(_swatch_icon(rgb), _(name))
+            ink.triggered.connect(
+                lambda _checked=False, colour=rgb: self.recolour(colour))
+        styles.addSeparator()
         clear = styles.addAction(_("Clear Formatting"))
         clear.triggered.connect(lambda: self.restyle("clear"))
         menu.exec(event.globalPos())
+
+    def recolour(self, rgb) -> None:
+        """Colour the selection, or what is typed next."""
+        fmt = QTextCharFormat()
+        fmt.setForeground(QColor.fromRgbF(*rgb[:3]))
+        cursor = self.textCursor()
+        if cursor.hasSelection():
+            cursor.mergeCharFormat(fmt)
+        self.mergeCurrentCharFormat(fmt)
 
     def _is(self, how: str) -> bool:
         """Whether what is selected already carries this."""
@@ -244,11 +272,15 @@ class NoteEditor(QTextEdit):
                  else QTextCharFormat.VerticalAlignment.AlignSubScript)
                 if on else QTextCharFormat.VerticalAlignment.AlignNormal)
         elif how == "clear":
-            fmt.setFontWeight(QFont.Weight.Normal)
-            fmt.setFontItalic(False)
-            fmt.setFontUnderline(False)
-            fmt.setVerticalAlignment(
-                QTextCharFormat.VerticalAlignment.AlignNormal)
+            # Replaced rather than merged: merging only applies what a
+            # format *sets*, so a merge can turn a style on and never off
+            # again -- the colour especially, which has no "none" to set.
+            bare = QTextCharFormat()
+            cursor = self.textCursor()
+            if cursor.hasSelection():
+                cursor.setCharFormat(bare)
+            self.setCurrentCharFormat(bare)
+            return
         cursor = self.textCursor()
         if cursor.hasSelection():
             cursor.mergeCharFormat(fmt)
@@ -275,6 +307,13 @@ class NoteEditor(QTextEdit):
             lines.append(line)
             block = block.next()
         return lines
+
+
+def _swatch_icon(rgb) -> QIcon:
+    """A filled square, so a colour's name is not the only way to tell."""
+    pixmap = QPixmap(14, 14)
+    pixmap.fill(QColor.fromRgbF(*rgb[:3]))
+    return QIcon(pixmap)
 
 
 def html_of(runs) -> Optional[str]:
@@ -318,6 +357,13 @@ def _style_of(fmt) -> dict:
         style["vertical-align"] = "super"
     elif where == QTextCharFormat.VerticalAlignment.AlignSubScript:
         style["vertical-align"] = "sub"
+    if fmt.hasProperty(QTextFormat.Property.ForegroundBrush):
+        # **Kept even though nothing here can set it.** Reader colours the
+        # words you have selected from the note's own properties form; this
+        # window has no way to ask for that, but it has every way to lose
+        # it -- the colours would go the first time anybody posted an edit
+        # to a reply that had them.
+        style["color"] = fmt.foreground().color().name().upper()
     return style
 
 

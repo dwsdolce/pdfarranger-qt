@@ -13,7 +13,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-03 20:57+0000\n"
+"POT-Creation-Date: 2026-11-04 04:48+0000\n"
 "PO-Revision-Date: 2024-02-24 20:47+0100\n"
 "Last-Translator: Jérôme Robert <jeromerobert@gmx.com>\n"
 "Language: fr\n"
@@ -154,6 +154,11 @@ msgstr "%d réponses"
 #, python-format
 msgid "%d Status"
 msgstr "%d statut"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py pdfarranger_qt/notepanel.py
+msgid "Status"
+msgstr "État"
 
 #: pdfarranger_qt/core.py pdfarranger_qt/mainwindow.py
 msgid "Image files are only supported with img2pdf"
@@ -2900,13 +2905,12 @@ msgid "Text Style"
 msgstr "Style de texte"
 
 #: pdfarranger_qt/notepanel.py
+msgid "Text Colour"
+msgstr "Couleur du texte"
+
+#: pdfarranger_qt/notepanel.py
 msgid "Clear Formatting"
 msgstr "Effacer la mise en forme"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/notepanel.py
-msgid "Status"
-msgstr "État"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/notepanel.py

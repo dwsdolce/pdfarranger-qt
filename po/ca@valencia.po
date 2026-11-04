@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-03 20:57+0000\n"
+"POT-Creation-Date: 2026-11-04 04:48+0000\n"
 "PO-Revision-Date: 2022-08-13 11:15+0200\n"
 "Last-Translator: Juanma1980 <juanma1980@gmail.com>\n"
 "Language: ca@valencia\n"
@@ -146,6 +146,11 @@ msgstr "%d respostes"
 #, python-format
 msgid "%d Status"
 msgstr "%d estat"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py pdfarranger_qt/notepanel.py
+msgid "Status"
+msgstr "Estat"
 
 #: pdfarranger_qt/core.py pdfarranger_qt/mainwindow.py
 msgid "Image files are only supported with img2pdf"
@@ -2914,13 +2919,12 @@ msgid "Text Style"
 msgstr "Estil del text"
 
 #: pdfarranger_qt/notepanel.py
+msgid "Text Colour"
+msgstr "Color del text"
+
+#: pdfarranger_qt/notepanel.py
 msgid "Clear Formatting"
 msgstr "Neteja el format"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/notepanel.py
-msgid "Status"
-msgstr "Estat"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/notepanel.py

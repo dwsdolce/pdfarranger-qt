@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-03 20:57+0000\n"
+"POT-Creation-Date: 2026-11-04 04:48+0000\n"
 "PO-Revision-Date: 2024-09-05 17:05+0300\n"
 "Last-Translator: Abdullah Albaroty <albaroty@gmail.com>\n"
 "Language: ar\n"
@@ -150,6 +150,11 @@ msgstr "%d ردود"
 #, python-format
 msgid "%d Status"
 msgstr "%d حالة"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py pdfarranger_qt/notepanel.py
+msgid "Status"
+msgstr "الحالة"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/core.py pdfarranger_qt/mainwindow.py
@@ -2852,13 +2857,12 @@ msgid "Text Style"
 msgstr "نمط النص"
 
 #: pdfarranger_qt/notepanel.py
+msgid "Text Colour"
+msgstr "لون النص"
+
+#: pdfarranger_qt/notepanel.py
 msgid "Clear Formatting"
 msgstr "مسح التنسيق"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/notepanel.py
-msgid "Status"
-msgstr "الحالة"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/notepanel.py

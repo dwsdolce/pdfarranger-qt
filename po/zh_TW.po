@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-03 20:57+0000\n"
+"POT-Creation-Date: 2026-11-04 04:48+0000\n"
 "PO-Revision-Date: 2024-03-20 17:20+0800\n"
 "Last-Translator: 錢政維 <e.cwchien@gmail.com>\n"
 "Language: zh_TW\n"
@@ -153,6 +153,11 @@ msgstr "%d 則回覆"
 #, python-format
 msgid "%d Status"
 msgstr "%d 個狀態"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py pdfarranger_qt/notepanel.py
+msgid "Status"
+msgstr "狀態"
 
 #: pdfarranger_qt/core.py pdfarranger_qt/mainwindow.py
 msgid "Image files are only supported with img2pdf"
@@ -2704,13 +2709,12 @@ msgid "Text Style"
 msgstr "文字樣式"
 
 #: pdfarranger_qt/notepanel.py
+msgid "Text Colour"
+msgstr "文字色彩"
+
+#: pdfarranger_qt/notepanel.py
 msgid "Clear Formatting"
 msgstr "清除格式"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/notepanel.py
-msgid "Status"
-msgstr "狀態"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/notepanel.py

@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-03 20:57+0000\n"
+"POT-Creation-Date: 2026-11-04 04:48+0000\n"
 "PO-Revision-Date: 2022-09-01 00:40+0900\n"
 "Last-Translator: sicklylife <translation@sicklylife.jp>\n"
 "Language: ja\n"
@@ -150,6 +150,11 @@ msgstr "返信 %d 件"
 #, python-format
 msgid "%d Status"
 msgstr "ステータス %d 件"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py pdfarranger_qt/notepanel.py
+msgid "Status"
+msgstr "ステータス"
 
 #: pdfarranger_qt/core.py pdfarranger_qt/mainwindow.py
 msgid "Image files are only supported with img2pdf"
@@ -2749,13 +2754,12 @@ msgid "Text Style"
 msgstr "文字スタイル"
 
 #: pdfarranger_qt/notepanel.py
+msgid "Text Colour"
+msgstr "文字の色"
+
+#: pdfarranger_qt/notepanel.py
 msgid "Clear Formatting"
 msgstr "書式をクリア"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/notepanel.py
-msgid "Status"
-msgstr "ステータス"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/notepanel.py

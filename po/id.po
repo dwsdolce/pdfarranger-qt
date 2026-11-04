@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-03 20:57+0000\n"
+"POT-Creation-Date: 2026-11-04 04:48+0000\n"
 "PO-Revision-Date: 2023-06-08 10:00+0700\n"
 "Last-Translator: Abdul Munif Hanafi <amunifhanafi@gmail.com>\n"
 "Language: id\n"
@@ -150,6 +150,11 @@ msgstr "%d balasan"
 #, python-format
 msgid "%d Status"
 msgstr "%d status"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py pdfarranger_qt/notepanel.py
+msgid "Status"
+msgstr "Status"
 
 #: pdfarranger_qt/core.py pdfarranger_qt/mainwindow.py
 msgid "Image files are only supported with img2pdf"
@@ -2906,13 +2911,12 @@ msgid "Text Style"
 msgstr "Gaya Teks"
 
 #: pdfarranger_qt/notepanel.py
+msgid "Text Colour"
+msgstr "Warna Teks"
+
+#: pdfarranger_qt/notepanel.py
 msgid "Clear Formatting"
 msgstr "Hapus Format"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/notepanel.py
-msgid "Status"
-msgstr "Status"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/notepanel.py

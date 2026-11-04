@@ -1017,9 +1017,9 @@ Cited as **highlight step 1** to **highlight step 9**.
    **The rich text, the per-item menus and the per-reply status are done,
    2026-11-03**, after the owner found them in Reader while trying the
    step. `/RC` is read and shown, written with the text and dropped when
-   there is none (decision 27); every item in the thread carries its own
+   there is none (decision 28); every item in the thread carries its own
    status row and menu (decision 24); and the window's menus are
-   decision 30. The question this step "has to decide rather than inherit"
+   decision 31. The question this step "has to decide rather than inherit"
    is therefore decided: `/RC` *is* written beside `/Contents`.
 
    A note the *file* brought needs none of this and already survives: it
@@ -1963,11 +1963,15 @@ mark's colour entirely. So `/AP` is dropped for a colour, an opacity or a
 resize, and kept for the text, the rich text, the author, the subject, the
 lock and the window's position -- none of which change what is drawn.
 
-**What a colour change on a `/Text` should leave behind is still open.**
-Dropping the stream is right -- it has the old colour baked in -- but
-there is then nothing to draw, and each reader's default differs. Reader
-draws no replies at all so it does not care; PDFGear and PDF24 draw a box
-in the annotation's colour; PDFium draws yellow.
+**A colour change on a `/Text` leaves nothing behind, and that is the
+answer.** Dropping the stream is right -- it has the old colour baked in
+-- and for a while a filled box in `/C` was written in its place, so that
+every reader would draw the same thing. It is not written any more:
+nothing in this application draws a reply, so nothing here uses it, and
+*what we do not use we do not write*, taken from the owner on 2026-11-03.
+What each reader does with an iconless `/Text` is then its own business:
+Reader draws no reply at all, PDFGear and PDF24 draw a box in the
+annotation's colour, PDFium draws its yellow default.
 
 **26. A reply is not page content, and the badge speaks for the thread.**
 Measured against Reader on 2026-11-03, on a document whose three replies
@@ -1992,22 +1996,47 @@ an annotation's icon when closed and of its pop-up's title bar; this
 application draws neither, so without the badge and the window the colour
 a reply carries would be invisible.
 
-**27. `/RC` is read, written with the text, and never left stale.** The
+**27. A status says what it is in the reader's own language.** The
+sentence a status change carries in `/Contents` -- *"Completed set by
+dws"* -- is translated, because Reader writes it in whatever language
+Reader is running in. It goes into the document and other applications
+read it there, which is the reason to think twice; the owner settled it
+on 2026-11-03 by pointing out that matching Reader is the whole of the
+standard here. A French user's file says it in French, as a French
+Reader's would.
+
+**28. `/RC` is read, written with the text, and never left stale.** The
 rich text is the same words as `/Contents` with their runs marked up, and
 every reader that understands it prefers it. So all three follow together:
 a note that arrives styled is *shown* styled, an edit that carries styling
 writes a new `/RC`, and an edit that carries none takes the producer's
 `/RC` away rather than leaving it to contradict the new `/Contents`. The
 styling kept is what *Text Style* can say -- bold, italic, underline,
-superscript, subscript -- and the rest of what Reader writes on every span
-is dropped on the way in: a negative font size is not a size, and an
-alignment inside a line is not a style.
+superscript, subscript and **colour** -- and the rest of what Reader writes
+on every span is dropped on the way in: a negative font size is not a size,
+and an alignment inside a line is not a style.
+
+**Colour is a property of a run, not of the mark.** Reader sets it by
+selecting words inside a note and opening that note's properties form;
+`/C`, which it also offers there, colours the annotation's icon and its
+pop-up's title bar and has nothing to do with the words. Measured
+2026-11-03 on a reply carrying `color:#0331FF` and `color:#FF3FFF`, which
+this application dropped on the way in until the property was added to the
+list -- and would then have destroyed on the first edit, because what the
+editor cannot hold it cannot write back.
+
+Setting one is *Text Colour*, inside the editor's **Text Style** menu,
+offering the same twenty-one colours as the swatch in the tool strip. It
+is the one entry there that Reader keeps somewhere else, which the owner
+settled on 2026-11-03: the menu need not match Reader's, only be useful.
+Verified by a round trip the same day -- a document styled and coloured
+here, saved, and opened in Reader, which drew every run as written.
 
 **The editor is a `QTextEdit`.** A plain one cannot hold any of this, so
 text that arrived styled would have been flattened the first time anybody
 posted an edit to it.
 
-**28. A status or a reply keeps what is in the box.** Reader treats
+**29. A status or a reply keeps what is in the box.** Reader treats
 setting a status, or pressing Reply, as a post of whatever has been typed
 into the open editor and then the action -- not as a cancel. Taken from the
 owner on 2026-11-03. So neither throws away an unposted edit, and a post
@@ -2015,7 +2044,7 @@ made on the way to an action does not close the item that action opened.
 Nothing is posted when nothing was changed: every status change would
 otherwise record an edit to the text that nobody made.
 
-**29. A lock is honoured, per annotation, and refusals are visible.**
+**30. A lock is honoured, per annotation, and refusals are visible.**
 `/F` bit 8 says the attributes and the mark's own text are not to be
 changed, and this reader chooses to be stopped by it -- no editor, no
 colour, no opacity, no resize, no delete. Not `LockedContents` (512), which
@@ -2025,7 +2054,7 @@ each writes a new annotation rather than changing the locked one, and
 refused is greyed rather than removed, which is the owner's preference over
 Reader's own behaviour, taken 2026-11-03.
 
-**30. The window's own menus act on items, and the first item is the
+**31. The window's own menus act on items, and the first item is the
 mark.** Settled with the owner on 2026-11-03, against Reader. A reply's
 line offers Reply, Delete and Set status, where Delete is the whole reply
 and its status chain. The first item's line and the window's background

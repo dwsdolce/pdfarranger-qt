@@ -93,14 +93,18 @@ UNSEEN = 30
 #: and writes these.
 STATUSES = ("None", "Accepted", "Cancelled", "Completed", "Rejected")
 
-#: The style properties a note's rich text keeps on the way in. Acrobat
+#: The style properties a note's rich text keeps on the way in. `color`
+#: is there because Reader sets it: selecting words inside a note and
+#: opening its properties colours *those words*, which is a thing the
+#: *Text Style* menu cannot do here -- measured 2026-11-03 on a reply
+#: carrying `color:#0331FF` and `color:#FF3FFF`. Acrobat
 #: writes a `<span>` round every run whether or not anything is styled, and
 #: gives each one the whole set -- including `font-size:-14.0pt`, negative,
 #: which reads as "not set", and an alignment that means nothing inside a
 #: line. Neither of those survives the trip. What is left is what the *Text
 #: Style* menu can say.
 RICH_STYLES = ("font-weight", "font-style", "text-decoration",
-               "vertical-align")
+               "vertical-align", "color")
 
 #: The values that mean "nothing is set", per property. A span carrying only
 #: these is a run with no styling, and is written out as bare text so that a
@@ -452,7 +456,7 @@ class Annotations:
         return f"Annotations({len(self)} on {len(self._by_page)} page(s))"
 
 
-def apply_edit(annot, edit, pdf=None) -> None:
+def apply_edit(annot, edit) -> None:
     """Write one mark's edits onto the dictionary it arrived with.
 
     **Shared by the preview and the export, because they drifted.** They
@@ -519,17 +523,6 @@ def apply_edit(annot, edit, pdf=None) -> None:
             flags & ~LOCKED)
     if (colour is not None or opacity is not None or quads) and (
             pikepdf.Name.AP in annot):
-        if pdf is not None and annot.get(pikepdf.Name.Subtype) == pikepdf.Name.Text:
-            # **A `/Text`'s stream is replaced, not merely dropped.** Every
-            # other kind is redrawn by the reader from `/QuadPoints` and
-            # `/C`; this one is an icon, and a reader with no appearance to
-            # draw substitutes a default of its own -- PDFium's is yellow
-            # and ignores the colour entirely. A box in the mark's own
-            # colour is what the other readers draw for one of these, and
-            # it is the one thing that makes every reader agree.
-            annot[pikepdf.Name.AP] = pikepdf.Dictionary(
-                N=_box_appearance(pdf, annot))
-            return
         # **Only when what it draws has changed.** The stream the producer
         # wrote still draws the old colour over the old run, and every
         # reader falls back to `/QuadPoints` when there is none.
@@ -543,7 +536,7 @@ def apply_edit(annot, edit, pdf=None) -> None:
         del annot[pikepdf.Name.AP]
 
 
-def patch_page_marks(page, edits, pdf=None) -> int:
+def patch_page_marks(page, edits) -> int:
     """Apply ``edits`` to one page's annotations. Returns how many were hit.
 
     Patch what changed and drop what was deleted, in one pass, because the
@@ -590,7 +583,7 @@ def patch_page_marks(page, edits, pdf=None) -> int:
                     pass
             changed += 1
             continue
-        apply_edit(annot, edit, pdf)
+        apply_edit(annot, edit)
         kept.append(annot)
         changed += 1
     if dropped:
@@ -652,7 +645,7 @@ def one_page_with_edits(data, index: int, edits,
             one = pikepdf.Pdf.new()
             one.pages.append(whole.pages[index])
             page = one.pages[0].obj
-            changed = patch_page_marks(page, edits, one)
+            changed = patch_page_marks(page, edits)
             if hide_replies:
                 changed += drop_replies(page)
             if not changed:
@@ -1053,35 +1046,6 @@ def _appearance(pdf, annotation):
             BM=(pikepdf.Name.Multiply if annotation.kind == HIGHLIGHT
                 else pikepdf.Name.Normal),
             ca=solidity(annotation))))
-    return pdf.make_indirect(stream)
-
-
-def _box_appearance(pdf, annot):
-    """A filled box the size of the annotation, in its own colour.
-
-    What PDFGear and PDF24 draw for a `/Text`, and what the owner asked for
-    on 2026-11-03. The opacity is left to the annotation's `/CA`, which
-    every reader applies to whatever the stream draws, so it is not applied
-    twice.
-    """
-    rect = [_number(v, 0.0) for v in annot.get(pikepdf.Name.Rect, [0, 0, 0, 0])]
-    width = abs(rect[2] - rect[0])
-    height = abs(rect[3] - rect[1])
-    colour = annot.get(pikepdf.Name.C)
-    paint = " ".join("%g" % _number(v, 0.0) for v in (colour or [1, 1, 0]))
-    stream = pikepdf.Stream(pdf, ("/GS gs %s rg 0 0 %g %g re f"
-                                  % (paint, width, height)).encode())
-    stream[pikepdf.Name.Type] = pikepdf.Name.XObject
-    stream[pikepdf.Name.Subtype] = pikepdf.Name.Form
-    stream[pikepdf.Name.BBox] = pikepdf.Array([0, 0, width, height])
-    # The opacity is in the stream as well as in `/CA`. A reader is only
-    # *recommended* to apply `/CA` to an appearance -- measured, PDFium
-    # drew the box fully opaque with `/CA 0.72` on the annotation -- and
-    # the same pair is what `_appearance` writes for a highlight.
-    stream[pikepdf.Name.Resources] = pikepdf.Dictionary(
-        ExtGState=pikepdf.Dictionary(GS=pikepdf.Dictionary(
-            BM=pikepdf.Name.Normal,
-            ca=_number(annot.get(pikepdf.Name.CA), 1.0))))
     return pdf.make_indirect(stream)
 
 

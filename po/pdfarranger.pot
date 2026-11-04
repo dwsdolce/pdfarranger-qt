@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pdfarranger-qt VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/dwsdolce/pdfarranger-qt/issues\n"
-"POT-Creation-Date: 2026-11-03 20:57+0000\n"
+"POT-Creation-Date: 2026-11-04 04:48+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -122,6 +122,10 @@ msgstr ""
 #: pdfarranger_qt/canvas.py
 #, python-format
 msgid "%d Status"
+msgstr ""
+
+#: pdfarranger_qt/canvas.py pdfarranger_qt/notepanel.py
+msgid "Status"
 msgstr ""
 
 #: pdfarranger_qt/core.py pdfarranger_qt/mainwindow.py
@@ -2258,11 +2262,11 @@ msgid "Text Style"
 msgstr ""
 
 #: pdfarranger_qt/notepanel.py
-msgid "Clear Formatting"
+msgid "Text Colour"
 msgstr ""
 
 #: pdfarranger_qt/notepanel.py
-msgid "Status"
+msgid "Clear Formatting"
 msgstr ""
 
 #: pdfarranger_qt/notepanel.py
