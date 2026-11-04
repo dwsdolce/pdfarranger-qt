@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  pdfarranger\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-03 03:39+0000\n"
+"POT-Creation-Date: 2026-11-03 20:57+0000\n"
 "PO-Revision-Date: 2023-07-10 15:37+0000\n"
 "Last-Translator: PavelZ\n"
 "Language: cs_CZ\n"
@@ -59,8 +59,74 @@ msgstr "Kopírovat"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
+msgid "Highlight text"
+msgstr "Zvýraznit text"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Strikethrough text"
+msgstr "Přeškrtnout text"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Add a comment to replace text"
+msgstr "Přidat komentář nahrazující text"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Add note to text"
+msgstr "Přidat poznámku k textu"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
 msgid "Select All"
 msgstr "Vybrat vše"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Open Pop-Up Note"
+msgstr "Otevřít vyskakovací poznámku"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py pdfarranger_qt/mainwindow.py
+msgid "Reply"
+msgstr "Odpovědět"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Delete Thread"
+msgstr "Odstranit vlákno"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py pdfarranger_qt/mainwindow.py pdfarranger_qt/reader.py
+#: pdfarranger_qt/toolstrip.py
+msgid "Delete"
+msgstr "Smazat"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py pdfarranger_qt/mainwindow.py
+msgid "Set status"
+msgstr "Nastavit stav"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py pdfarranger_qt/mainwindow.py
+msgid "Copy Text"
+msgstr "Kopírovat text"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Enable Text Selection"
+msgstr "Povolit výběr textu"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Make current properties default"
+msgstr "Nastavit aktuální vlastnosti jako výchozí"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py pdfarranger_qt/mainwindow.py
+msgid "Properties..."
+msgstr "Vlastnosti..."
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
@@ -315,17 +381,17 @@ msgid "Gap"
 msgstr "Mezera"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/dialogs.py
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/properties.py
 msgid "Appearance"
 msgstr "Vzhled"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/dialogs.py pdfarranger_qt/reader.py
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/notepanel.py pdfarranger_qt/reader.py
 msgid "Bold"
 msgstr "Tučné"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/dialogs.py pdfarranger_qt/reader.py
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/notepanel.py pdfarranger_qt/reader.py
 msgid "Italic"
 msgstr "Kurzíva"
 
@@ -340,12 +406,14 @@ msgid "Size"
 msgstr "Velikost"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/dialogs.py pdfarranger_qt/toolstrip.py
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/properties.py
+#: pdfarranger_qt/toolstrip.py
 msgid "Colour"
 msgstr "Barva"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/dialogs.py pdfarranger_qt/toolstrip.py
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/properties.py
+#: pdfarranger_qt/toolstrip.py
 msgid "Opacity"
 msgstr "Krytí"
 
@@ -570,7 +638,7 @@ msgid "Theme"
 msgstr "Téma"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/dialogs.py
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/properties.py
 msgid "General"
 msgstr "Obecné"
 
@@ -1942,11 +2010,6 @@ msgstr "Exportovat výběr do rastrového PD_F (jpg)…"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
-msgid "Copy Text"
-msgstr "Kopírovat text"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
 msgid "Copy _Image"
 msgstr "Kopírovat _obrázek"
 
@@ -2074,6 +2137,26 @@ msgstr "Změnit velikost značky"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
+msgid "Set Status"
+msgstr "Nastavit stav"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-brace-format
+msgid "{state} set by {author}"
+msgstr "{state} nastavil {author}"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Mark Properties"
+msgstr "Vlastnosti značky"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Edit Note"
+msgstr "Upravit poznámku"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
 msgid "Delete Mark"
 msgstr "Odstranit značku"
 
@@ -2096,11 +2179,6 @@ msgstr "Změnit značku"
 #: pdfarranger_qt/mainwindow.py
 msgid "Delete Note"
 msgstr "Odstranit poznámku"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
-msgid "Edit Note"
-msgstr "Upravit poznámku"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
@@ -2218,7 +2296,7 @@ msgid "Importing…"
 msgstr "Importuje se…"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
+#: pdfarranger_qt/mainwindow.py pdfarranger_qt/notepanel.py
 msgid "Cancel"
 msgstr "Zrušit"
 
@@ -2365,12 +2443,6 @@ msgstr "Tento dokument má neuložené změny."
 #: pdfarranger_qt/mainwindow.py
 msgid "Save before continuing?"
 msgstr "Uložit před pokračováním?"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py pdfarranger_qt/reader.py
-#: pdfarranger_qt/toolstrip.py
-msgid "Delete"
-msgstr "Smazat"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
@@ -2624,6 +2696,31 @@ msgstr "Otočit"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/markup.py
+msgid "None"
+msgstr "Žádný"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Accepted"
+msgstr "Přijato"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Cancelled"
+msgstr "Zrušeno"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Completed"
+msgstr "Dokončeno"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Rejected"
+msgstr "Odmítnuto"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
 msgid "Blue"
 msgstr "Modrá"
 
@@ -2731,7 +2828,7 @@ msgstr "Černá"
 msgid "Title"
 msgstr "Název"
 
-#: pdfarranger_qt/metadata.py
+#: pdfarranger_qt/metadata.py pdfarranger_qt/properties.py
 msgid "Subject"
 msgstr "Předmět"
 
@@ -2751,13 +2848,44 @@ msgstr "Autor"
 msgid "Creator tool"
 msgstr "Vytvořeno nástrojem"
 
-#: pdfarranger_qt/metadata.py
+#: pdfarranger_qt/metadata.py pdfarranger_qt/properties.py
 msgid "Created"
 msgstr "Vytvořeno"
 
 #: pdfarranger_qt/metadata.py
 msgid "Modified"
 msgstr "Změněno"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/notepanel.py pdfarranger_qt/tools.py
+msgid "Underline"
+msgstr "Podtržení"
+
+#: pdfarranger_qt/notepanel.py
+msgid "Superscript"
+msgstr "Horní index"
+
+#: pdfarranger_qt/notepanel.py
+msgid "Subscript"
+msgstr "Dolní index"
+
+#: pdfarranger_qt/notepanel.py
+msgid "Text Style"
+msgstr "Styl textu"
+
+#: pdfarranger_qt/notepanel.py
+msgid "Clear Formatting"
+msgstr "Vymazat formátování"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/notepanel.py
+msgid "Status"
+msgstr "Stav"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/notepanel.py
+msgid "Post"
+msgstr "Odeslat"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/nup.py
@@ -2788,6 +2916,34 @@ msgstr "9 stránek na list"
 #: pdfarranger_qt/nup.py
 msgid "16 pages per sheet"
 msgstr "16 stránek na list"
+
+#: pdfarranger_qt/properties.py
+msgid "Comment properties"
+msgstr "Vlastnosti komentáře"
+
+#: pdfarranger_qt/properties.py
+msgid "Review History"
+msgstr "Historie revizí"
+
+#: pdfarranger_qt/properties.py
+msgid "Locked"
+msgstr "Zamčeno"
+
+#: pdfarranger_qt/properties.py
+msgid "Make Properties Default"
+msgstr "Nastavit vlastnosti jako výchozí"
+
+#: pdfarranger_qt/properties.py
+msgid "Author"
+msgstr "Autor"
+
+#: pdfarranger_qt/properties.py
+msgid "Date modified"
+msgstr "Datum změny"
+
+#: pdfarranger_qt/properties.py
+msgid "The Review History lists any change of status for this comment."
+msgstr "Historie revizí uvádí každou změnu stavu tohoto komentáře."
 
 # machine translation, unreviewed
 #: pdfarranger_qt/reader.py
@@ -3019,11 +3175,6 @@ msgstr "Připojit soubor"
 #: pdfarranger_qt/tools.py
 msgid "Highlight"
 msgstr "Zvýraznění"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/tools.py
-msgid "Underline"
-msgstr "Podtržení"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/tools.py
@@ -3503,4 +3654,40 @@ msgstr "Zobrazit název místo jména souboru"
 # machine translation, unreviewed
 #~ msgid "Markup"
 #~ msgstr "Poznámky"
+
+#~ msgid "Jan"
+#~ msgstr ""
+
+#~ msgid "Feb"
+#~ msgstr ""
+
+#~ msgid "Mar"
+#~ msgstr ""
+
+#~ msgid "Apr"
+#~ msgstr ""
+
+#~ msgid "May"
+#~ msgstr ""
+
+#~ msgid "Jun"
+#~ msgstr ""
+
+#~ msgid "Jul"
+#~ msgstr ""
+
+#~ msgid "Aug"
+#~ msgstr ""
+
+#~ msgid "Sep"
+#~ msgstr ""
+
+#~ msgid "Oct"
+#~ msgstr ""
+
+#~ msgid "Nov"
+#~ msgstr ""
+
+#~ msgid "Dec"
+#~ msgstr ""
 

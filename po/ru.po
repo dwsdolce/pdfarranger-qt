@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pdfarranger master\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-03 03:39+0000\n"
+"POT-Creation-Date: 2026-11-03 20:57+0000\n"
 "PO-Revision-Date: 2026-09-04 09:59+0000\n"
 "Last-Translator: Lumenman <28367232+Lumenman@users.noreply.github.com>\n"
 "Language: ru\n"
@@ -58,9 +58,73 @@ msgstr "Перейти по ссылке"
 msgid "Copy"
 msgstr "Копировать"
 
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Highlight text"
+msgstr "Выделить текст"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Strikethrough text"
+msgstr "Зачеркнуть текст"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Add a comment to replace text"
+msgstr "Добавить комментарий для замены текста"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Add note to text"
+msgstr "Добавить заметку к тексту"
+
 #: pdfarranger_qt/canvas.py
 msgid "Select All"
 msgstr "Выделить всё"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Open Pop-Up Note"
+msgstr "Открыть всплывающую заметку"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py pdfarranger_qt/mainwindow.py
+msgid "Reply"
+msgstr "Ответить"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Delete Thread"
+msgstr "Удалить обсуждение"
+
+#: pdfarranger_qt/canvas.py pdfarranger_qt/mainwindow.py pdfarranger_qt/reader.py
+#: pdfarranger_qt/toolstrip.py
+msgid "Delete"
+msgstr "Удалить"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py pdfarranger_qt/mainwindow.py
+msgid "Set status"
+msgstr "Задать состояние"
+
+#: pdfarranger_qt/canvas.py pdfarranger_qt/mainwindow.py
+msgid "Copy Text"
+msgstr "Копировать текст"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Enable Text Selection"
+msgstr "Включить выделение текста"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Make current properties default"
+msgstr "Сделать текущие свойства стандартными"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py pdfarranger_qt/mainwindow.py
+msgid "Properties..."
+msgstr "Свойства..."
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
@@ -295,15 +359,15 @@ msgid "Gap"
 msgstr "Промежуток"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/dialogs.py
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/properties.py
 msgid "Appearance"
 msgstr "Оформление"
 
-#: pdfarranger_qt/dialogs.py pdfarranger_qt/reader.py
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/notepanel.py pdfarranger_qt/reader.py
 msgid "Bold"
 msgstr "Полужирный"
 
-#: pdfarranger_qt/dialogs.py pdfarranger_qt/reader.py
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/notepanel.py pdfarranger_qt/reader.py
 msgid "Italic"
 msgstr "Курсив"
 
@@ -318,12 +382,14 @@ msgid "Size"
 msgstr "Размер"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/dialogs.py pdfarranger_qt/toolstrip.py
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/properties.py
+#: pdfarranger_qt/toolstrip.py
 msgid "Colour"
 msgstr "Цвет"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/dialogs.py pdfarranger_qt/toolstrip.py
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/properties.py
+#: pdfarranger_qt/toolstrip.py
 msgid "Opacity"
 msgstr "Непрозрачность"
 
@@ -541,7 +607,7 @@ msgstr "Язык"
 msgid "Theme"
 msgstr "Тема"
 
-#: pdfarranger_qt/dialogs.py
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/properties.py
 msgid "General"
 msgstr "Общие"
 
@@ -1824,10 +1890,6 @@ msgid "Export Selection to _Rasterized PDF (jpg)…"
 msgstr "Экспорт выделенного фрагмента в _растеризированный PDF (jpg)…"
 
 #: pdfarranger_qt/mainwindow.py
-msgid "Copy Text"
-msgstr "Копировать текст"
-
-#: pdfarranger_qt/mainwindow.py
 msgid "Copy _Image"
 msgstr "Копировать _изображение"
 
@@ -1937,6 +1999,26 @@ msgstr "Изменить размер пометки"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
+msgid "Set Status"
+msgstr "Задать состояние"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-brace-format
+msgid "{state} set by {author}"
+msgstr "{state} — {author}"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Mark Properties"
+msgstr "Свойства пометки"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Edit Note"
+msgstr "Правка заметки"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
 msgid "Delete Mark"
 msgstr "Удалить пометку"
 
@@ -1959,11 +2041,6 @@ msgstr "Изменить пометку"
 #: pdfarranger_qt/mainwindow.py
 msgid "Delete Note"
 msgstr "Удаление заметки"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
-msgid "Edit Note"
-msgstr "Правка заметки"
 
 #: pdfarranger_qt/mainwindow.py
 msgid "_File"
@@ -2067,7 +2144,7 @@ msgstr "Открытие %s…"
 msgid "Importing…"
 msgstr "Импорт…"
 
-#: pdfarranger_qt/mainwindow.py
+#: pdfarranger_qt/mainwindow.py pdfarranger_qt/notepanel.py
 msgid "Cancel"
 msgstr "Отмена"
 
@@ -2197,11 +2274,6 @@ msgstr "В документе есть несохранённые изменен
 #: pdfarranger_qt/mainwindow.py
 msgid "Save before continuing?"
 msgstr "Сохранить перед продолжением?"
-
-#: pdfarranger_qt/mainwindow.py pdfarranger_qt/reader.py
-#: pdfarranger_qt/toolstrip.py
-msgid "Delete"
-msgstr "Удалить"
 
 #: pdfarranger_qt/mainwindow.py
 msgid "Cut"
@@ -2437,6 +2509,31 @@ msgstr "Повернуть"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/markup.py
+msgid "None"
+msgstr "Нет"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Accepted"
+msgstr "Принято"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Cancelled"
+msgstr "Отменено"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Completed"
+msgstr "Завершено"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Rejected"
+msgstr "Отклонено"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
 msgid "Blue"
 msgstr "Синий"
 
@@ -2544,7 +2641,7 @@ msgstr "Чёрный"
 msgid "Title"
 msgstr "Заголовок"
 
-#: pdfarranger_qt/metadata.py
+#: pdfarranger_qt/metadata.py pdfarranger_qt/properties.py
 msgid "Subject"
 msgstr "Тема"
 
@@ -2564,13 +2661,44 @@ msgstr "Автор"
 msgid "Creator tool"
 msgstr "Создано с помощью"
 
-#: pdfarranger_qt/metadata.py
+#: pdfarranger_qt/metadata.py pdfarranger_qt/properties.py
 msgid "Created"
 msgstr "Создан"
 
 #: pdfarranger_qt/metadata.py
 msgid "Modified"
 msgstr "Изменён"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/notepanel.py pdfarranger_qt/tools.py
+msgid "Underline"
+msgstr "Подчёркивание"
+
+#: pdfarranger_qt/notepanel.py
+msgid "Superscript"
+msgstr "Верхний индекс"
+
+#: pdfarranger_qt/notepanel.py
+msgid "Subscript"
+msgstr "Нижний индекс"
+
+#: pdfarranger_qt/notepanel.py
+msgid "Text Style"
+msgstr "Стиль текста"
+
+#: pdfarranger_qt/notepanel.py
+msgid "Clear Formatting"
+msgstr "Очистить форматирование"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/notepanel.py
+msgid "Status"
+msgstr "Состояние"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/notepanel.py
+msgid "Post"
+msgstr "Отправить"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/nup.py
@@ -2601,6 +2729,34 @@ msgstr "9 страниц на лист"
 #: pdfarranger_qt/nup.py
 msgid "16 pages per sheet"
 msgstr "16 страниц на лист"
+
+#: pdfarranger_qt/properties.py
+msgid "Comment properties"
+msgstr "Свойства комментария"
+
+#: pdfarranger_qt/properties.py
+msgid "Review History"
+msgstr "История рецензирования"
+
+#: pdfarranger_qt/properties.py
+msgid "Locked"
+msgstr "Заблокировано"
+
+#: pdfarranger_qt/properties.py
+msgid "Make Properties Default"
+msgstr "Сделать свойства стандартными"
+
+#: pdfarranger_qt/properties.py
+msgid "Author"
+msgstr "Автор"
+
+#: pdfarranger_qt/properties.py
+msgid "Date modified"
+msgstr "Дата изменения"
+
+#: pdfarranger_qt/properties.py
+msgid "The Review History lists any change of status for this comment."
+msgstr "История рецензирования показывает все изменения статуса этого комментария."
 
 #: pdfarranger_qt/reader.py
 msgid "Bookmark Colour"
@@ -2808,11 +2964,6 @@ msgstr "Вложить файл"
 #: pdfarranger_qt/tools.py
 msgid "Highlight"
 msgstr "Выделение"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/tools.py
-msgid "Underline"
-msgstr "Подчёркивание"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/tools.py
@@ -3329,4 +3480,40 @@ msgstr "Показывать заголовок вместо имени файл
 # machine translation, unreviewed
 #~ msgid "Markup"
 #~ msgstr "Разметка"
+
+#~ msgid "Jan"
+#~ msgstr ""
+
+#~ msgid "Feb"
+#~ msgstr ""
+
+#~ msgid "Mar"
+#~ msgstr ""
+
+#~ msgid "Apr"
+#~ msgstr ""
+
+#~ msgid "May"
+#~ msgstr ""
+
+#~ msgid "Jun"
+#~ msgstr ""
+
+#~ msgid "Jul"
+#~ msgstr ""
+
+#~ msgid "Aug"
+#~ msgstr ""
+
+#~ msgid "Sep"
+#~ msgstr ""
+
+#~ msgid "Oct"
+#~ msgstr ""
+
+#~ msgid "Nov"
+#~ msgstr ""
+
+#~ msgid "Dec"
+#~ msgstr ""
 

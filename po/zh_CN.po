@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PDF Arranger 1.14.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-03 03:39+0000\n"
+"POT-Creation-Date: 2026-11-03 20:57+0000\n"
 "PO-Revision-Date: 2026-06-02 17:09+0800\n"
 "Last-Translator: Puqns67 <me@puqns67.icu>\n"
 "Language: zh_CN\n"
@@ -66,8 +66,74 @@ msgstr "复制"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
+msgid "Highlight text"
+msgstr "高亮文本"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Strikethrough text"
+msgstr "为文本添加删除线"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Add a comment to replace text"
+msgstr "添加替换文本的注释"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Add note to text"
+msgstr "为文本添加注释"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
 msgid "Select All"
 msgstr "全选"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Open Pop-Up Note"
+msgstr "打开弹出注释"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py pdfarranger_qt/mainwindow.py
+msgid "Reply"
+msgstr "回复"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Delete Thread"
+msgstr "删除对话"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py pdfarranger_qt/mainwindow.py pdfarranger_qt/reader.py
+#: pdfarranger_qt/toolstrip.py
+msgid "Delete"
+msgstr "删除"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py pdfarranger_qt/mainwindow.py
+msgid "Set status"
+msgstr "设置状态"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py pdfarranger_qt/mainwindow.py
+msgid "Copy Text"
+msgstr "复制文本"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Enable Text Selection"
+msgstr "启用文本选择"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Make current properties default"
+msgstr "将当前属性设为默认"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py pdfarranger_qt/mainwindow.py
+msgid "Properties..."
+msgstr "属性..."
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
@@ -307,17 +373,17 @@ msgid "Gap"
 msgstr "间距"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/dialogs.py
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/properties.py
 msgid "Appearance"
 msgstr "外观"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/dialogs.py pdfarranger_qt/reader.py
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/notepanel.py pdfarranger_qt/reader.py
 msgid "Bold"
 msgstr "粗体"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/dialogs.py pdfarranger_qt/reader.py
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/notepanel.py pdfarranger_qt/reader.py
 msgid "Italic"
 msgstr "斜体"
 
@@ -332,12 +398,14 @@ msgid "Size"
 msgstr "大小"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/dialogs.py pdfarranger_qt/toolstrip.py
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/properties.py
+#: pdfarranger_qt/toolstrip.py
 msgid "Colour"
 msgstr "颜色"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/dialogs.py pdfarranger_qt/toolstrip.py
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/properties.py
+#: pdfarranger_qt/toolstrip.py
 msgid "Opacity"
 msgstr "不透明度"
 
@@ -555,7 +623,7 @@ msgid "Theme"
 msgstr "主题"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/dialogs.py
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/properties.py
 msgid "General"
 msgstr "常规"
 
@@ -1763,11 +1831,6 @@ msgstr "格栅化所选页面为 PNG 图片并导出为 PDF…（_R）"
 msgid "Export Selection to _Rasterized PDF (jpg)…"
 msgstr "格栅化所选页面为 JPG 图片并导出为 PDF…（_R）"
 
-# machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
-msgid "Copy Text"
-msgstr "复制文本"
-
 #: pdfarranger_qt/mainwindow.py
 msgid "Copy _Image"
 msgstr "复制图像（_I）"
@@ -1888,6 +1951,26 @@ msgstr "调整标记大小"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
+msgid "Set Status"
+msgstr "设置状态"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-brace-format
+msgid "{state} set by {author}"
+msgstr "{state}（{author}）"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Mark Properties"
+msgstr "标记属性"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Edit Note"
+msgstr "编辑注释"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
 msgid "Delete Mark"
 msgstr "删除标记"
 
@@ -1910,11 +1993,6 @@ msgstr "更改标记"
 #: pdfarranger_qt/mainwindow.py
 msgid "Delete Note"
 msgstr "删除注释"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
-msgid "Edit Note"
-msgstr "编辑注释"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
@@ -2028,7 +2106,7 @@ msgid "Importing…"
 msgstr "正在导入…"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
+#: pdfarranger_qt/mainwindow.py pdfarranger_qt/notepanel.py
 msgid "Cancel"
 msgstr "取消"
 
@@ -2167,12 +2245,6 @@ msgstr "此文档有未保存的更改。"
 #: pdfarranger_qt/mainwindow.py
 msgid "Save before continuing?"
 msgstr "继续前先保存吗？"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py pdfarranger_qt/reader.py
-#: pdfarranger_qt/toolstrip.py
-msgid "Delete"
-msgstr "删除"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
@@ -2417,6 +2489,31 @@ msgstr "旋转"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/markup.py
+msgid "None"
+msgstr "无"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Accepted"
+msgstr "已接受"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Cancelled"
+msgstr "已取消"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Completed"
+msgstr "已完成"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Rejected"
+msgstr "已拒绝"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
 msgid "Blue"
 msgstr "蓝色"
 
@@ -2524,7 +2621,7 @@ msgstr "黑色"
 msgid "Title"
 msgstr "标题"
 
-#: pdfarranger_qt/metadata.py
+#: pdfarranger_qt/metadata.py pdfarranger_qt/properties.py
 msgid "Subject"
 msgstr "主题"
 
@@ -2544,13 +2641,44 @@ msgstr "创建者"
 msgid "Creator tool"
 msgstr "创建者工具"
 
-#: pdfarranger_qt/metadata.py
+#: pdfarranger_qt/metadata.py pdfarranger_qt/properties.py
 msgid "Created"
 msgstr "已创建"
 
 #: pdfarranger_qt/metadata.py
 msgid "Modified"
 msgstr "已修改"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/notepanel.py pdfarranger_qt/tools.py
+msgid "Underline"
+msgstr "下划线"
+
+#: pdfarranger_qt/notepanel.py
+msgid "Superscript"
+msgstr "上标"
+
+#: pdfarranger_qt/notepanel.py
+msgid "Subscript"
+msgstr "下标"
+
+#: pdfarranger_qt/notepanel.py
+msgid "Text Style"
+msgstr "文字样式"
+
+#: pdfarranger_qt/notepanel.py
+msgid "Clear Formatting"
+msgstr "清除格式"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/notepanel.py
+msgid "Status"
+msgstr "状态"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/notepanel.py
+msgid "Post"
+msgstr "发布"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/nup.py
@@ -2581,6 +2709,34 @@ msgstr "每张纸 9 页"
 #: pdfarranger_qt/nup.py
 msgid "16 pages per sheet"
 msgstr "每张纸 16 页"
+
+#: pdfarranger_qt/properties.py
+msgid "Comment properties"
+msgstr "注释属性"
+
+#: pdfarranger_qt/properties.py
+msgid "Review History"
+msgstr "审阅历史记录"
+
+#: pdfarranger_qt/properties.py
+msgid "Locked"
+msgstr "锁定"
+
+#: pdfarranger_qt/properties.py
+msgid "Make Properties Default"
+msgstr "将属性设为默认值"
+
+#: pdfarranger_qt/properties.py
+msgid "Author"
+msgstr "作者"
+
+#: pdfarranger_qt/properties.py
+msgid "Date modified"
+msgstr "修改日期"
+
+#: pdfarranger_qt/properties.py
+msgid "The Review History lists any change of status for this comment."
+msgstr "审阅历史记录列出此注释的所有状态更改。"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/reader.py
@@ -2812,11 +2968,6 @@ msgstr "附加文件"
 #: pdfarranger_qt/tools.py
 msgid "Highlight"
 msgstr "高亮"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/tools.py
-msgid "Underline"
-msgstr "下划线"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/tools.py
@@ -3311,4 +3462,40 @@ msgstr "显示标题而非文件名"
 # machine translation, unreviewed
 #~ msgid "Markup"
 #~ msgstr "标注"
+
+#~ msgid "Jan"
+#~ msgstr ""
+
+#~ msgid "Feb"
+#~ msgstr ""
+
+#~ msgid "Mar"
+#~ msgstr ""
+
+#~ msgid "Apr"
+#~ msgstr ""
+
+#~ msgid "May"
+#~ msgstr ""
+
+#~ msgid "Jun"
+#~ msgstr ""
+
+#~ msgid "Jul"
+#~ msgstr ""
+
+#~ msgid "Aug"
+#~ msgstr ""
+
+#~ msgid "Sep"
+#~ msgstr ""
+
+#~ msgid "Oct"
+#~ msgstr ""
+
+#~ msgid "Nov"
+#~ msgstr ""
+
+#~ msgid "Dec"
+#~ msgstr ""
 

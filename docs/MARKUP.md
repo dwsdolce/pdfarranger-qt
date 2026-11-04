@@ -30,7 +30,7 @@ the same list and do not line up one to one. **Replace selected text** is one
 tool that writes *two* annotations. **`/StrikeOut`** is one subtype serving two
 tools. **`/FreeText`**, **`/Line`** and **`/Polygon`** each serve two.
 
-What separates tools sharing a subtype is `/IT`, the intent, and Acrobat
+What separates tools sharing a subtype is `/IT`, the intent, and Reader
 writes the tool's own name into `/Subj` besides -- so a file records which tool
 made each mark, and showing a document back with the right tool against each
 mark is reading, not guessing. Every row below was read off the test document.
@@ -179,7 +179,7 @@ decided for here; where the two differ, the reason is given.
 **A floating strip, summoned from the toolbar.** Reader's tool list is
 permanent furniture because marking up is what Reader is for -- and cannot
 reliably be put away: the preference that remembers a collapsed tools pane
-has been broken in Acrobat's Modern Viewer since 2023 by Adobe's own
+has been broken in Reader's Modern Viewer since 2023 by Adobe's own
 account, and *"permanently close tools pane"* is an open request on their
 feature site. Here it is a guest: this application is a page arranger, so the
 strip is opened and closed from a toolbar button, floats over the reader, and
@@ -459,7 +459,7 @@ Measured on a highlight with a note, a reply and two status changes.
 **The text is `/Contents` on the mark**, not on the `/Popup`. The `/Popup`
 object carries no appearance at all, is marked `/Open false`, and sits at
 `/Rect [612, 539.9, 796, 631.9]` against a 612-wide page -- entirely off the
-paper. It is a placeholder saying where Acrobat should put *its* window.
+paper. It is a placeholder saying where Reader should put *its* window.
 
 **The chain is a history and the status is a state.** Observed 2026-11-02 on
 a highlight whose chain reads `Accepted` -> reply -> `Completed`: the panel
@@ -484,8 +484,58 @@ ever draw it**. PDFium draws the highlight and nothing else, which is why a
 noted mark looks unremarked here. Whatever shows it, we draw ourselves from
 the parent's fields.
 
-Acrobat writes the text twice: `/Contents` as plain text and `/RC` as rich
+Reader writes the text twice: `/Contents` as plain text and `/RC` as rich
 text, 306 characters of it for a fourteen-character note.
+
+**`/RC` is XHTML, one `<span>` per run, and the file prefers it.** Measured
+on 2026-11-03 against a corpus document styled in Reader, with the words
+replaced by their lengths:
+
+```xml
+<?xml version="1.0"?><body xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:xfa="http://www.xfa.org/schema/xfa-data/1.0/"
+      xfa:APIVersion="Acrobat:26.2.0" xfa:spec="2.0.2">
+  <p dir="ltr">
+    <span dir="ltr" style="font-size:-14.0pt;text-align:left;
+          font-weight:normal;font-style:normal">[8 chars]</span>
+    <span … font-weight:bold …>[7 chars]</span>
+    <span … text-decoration:underline; font-weight:normal …>[14 chars]</span>
+  </p>
+</body>
+```
+
+Three things that shape what we do with it. **A note with any styling in
+it gets one span per run, the plain runs included**, each carrying the
+whole property set, so there is no "plain" run to detect -- only values to
+compare against the defaults. A note with no styling anywhere gets no span
+at all, just a bare `<p>`; measured across the twelve marks of the fixture,
+where the unstyled notes and every status link are bare and the styled ones
+run to three and four spans.
+**The size is written negative**, `font-size:-14.0pt`, which reads as
+"not set, and the default is 14"; it is copied rather than interpreted,
+and dropped on the way in because a negative size is not a size. And
+there is **no `/DS`** anywhere -- the styling is inline on the span. The
+properties seen are `font-weight`, `font-style`, `text-decoration`,
+`text-align` and `font-size`; of those only the first three say anything
+a note's reader can see, and `vertical-align` joins them for super and
+subscript.
+
+Because a viewer that understands `/RC` prefers it, writing `/Contents`
+and leaving the producer's `/RC` beside it shows the words that were
+replaced. The two are written together or not at all.
+
+The one-line summary under the pointer shows the styling as well, which
+means it is drawn through a `QTextDocument` rather than with `drawText` --
+and measured by the same document that draws it, so the box fits a note
+that wraps.
+
+**A reply carries a status of its own.** Measured 2026-11-03 on a corpus
+document with three replies under one note: the note's chain reads
+`Accepted -> Completed -> Accepted -> Completed`, and each reply has a
+separate chain beside it -- `Completed -> Completed`, `Cancelled`,
+`Cancelled`. Nothing in the format makes this special: a reply is a mark,
+and a status points at whatever it answers, so the chain walk that finds
+a mark's history finds a reply's too.
 
 **Replies are visible marks in their own right.** A reply is a `/Text`
 annotation with `/IRT` pointing at the mark and `/F 28` -- Print, NoZoom,
@@ -522,36 +572,171 @@ thickness for a line, a font panel for a text box. It is the only part a tool
 supplies, which is what lets a new tool arrive as a few rows rather than a
 dialog.
 
-**General** is three keys, the same for every kind and read-only in Acrobat:
-Author is `/T`, Subject is `/Subj`, Date modified is `/M`. `/CreationDate`
-sits beside them.
+**General** is three keys, the same for every kind: Author is `/T`, Subject
+is `/Subj`, Date modified is `/M`. `/CreationDate` sits beside them. **The
+first two are editable**, measured 2026-11-03 on a corpus document whose
+first highlight had both changed -- an earlier reading of this form as
+read-only was wrong.
+
+`/Subj` starts as the name of the tool that made the mark, and every kind
+has one. Read off `Markup Test Case.pdf`:
+
+    /Highlight  Highlight       /StrikeOut  Cross-Out    /Ink     Pencil
+    /Text       Sticky Note     /Squiggly   Underline    /Circle  Oval
+    /Caret      Inserted Text   /Square     Rectangle    /Line    Line
+    /FreeText   Callout, or Text Box
+    /Stamp      the stamp's own name -- Approved, Draft, Void, Sign Here
+
+It is free text once the form is open. **Where it surfaces in Reader is
+not known**: the owner looked in the Comments panel on 2026-11-03 and it is
+not shown there, so a guess that it labels a comment in that list was
+wrong.
 
 **Review History** is the chain above, read back. Its rows are *derived*, not
-stored: Acrobat composes `{/T}: {/State}, {/M}` and prints
+stored: Reader composes `{/T}: {/State}, {/M}` and prints
 *"dws: Accepted, 11/1/26, 2:33:27 PM"*. The `/Contents` each link carries --
 19 and 20 characters in the sample, matching "Accepted set by dws" and
-"Completed set by dws" -- is a sentence Acrobat generates for other viewers
+"Completed set by dws" -- is a sentence Reader generates for other viewers
 and does not itself display. Nothing here is editable; the only writable
 thing is setting a new status, which appends another link.
 
 **The footer shows on all three tabs.** *Locked* is `/F` bit 8, taking `/F`
-from 4 to 132. *Make Properties Default* writes nothing to the file: it is
-the application's own preference for what the next mark gets.
+from 4 to 132 -- confirmed 2026-11-03 on a locked highlight. **`LockedContents`
+(bit 10, 512) is not used**: the one checkbox sets the one flag, and nothing
+in the corpus carries the contents lock at all. *Make Properties Default*
+writes nothing to the file: it is the application's own preference for what
+the next mark gets.
+
+**A reply has a form of its own, with the same three tabs.** Measured on
+the same document 2026-11-03, where one reply was locked and given its own
+author and subject; its `/F` went from 28 to 156, the same bit on its own
+annotation.
+
+Its *Appearance* is the sticky note's, not the highlight's: an icon list --
+Checkmark, Insert Text, Circle, Comment and the rest -- with Color and
+Opacity beside it. The icon is `/Name`, and every `/Text` in the corpus
+carries `/Name /Comment`, replies and status links alike. So a reply does
+have an appearance to set; an earlier note here that it had none was
+wrong.
+
+Its *Review History* is **the reply's own**, and nothing else: on a reply
+whose chain is one link, Reader shows that one line. Which is the same
+rule the chain walk had to learn on the same day -- a reply's history
+hangs off the reply, not off the mark.
+
+So the two forms are not two models. **They write the same keys on
+whichever annotation the form was opened on**, and what differs is which
+appearance the kind has. Nothing reaches the thread: a locked mark leaves
+its replies unlocked, a renamed author leaves theirs alone, and the subject
+likewise -- not because of a rule about threads but because each reply is
+an annotation with an `/F`, a `/T`, a `/Subj` and a `/Name` of its own.
+
+**What a lock has to mean here** is a rule across the whole of highlight
+step 8, not a checkbox in highlight step 9: on a locked item the editor, *Reply*, *Set status*,
+*Delete*, the colour and the grips all have to refuse -- and per item, since
+a locked reply sits in a thread whose other items are not.
 
 ## The right-click menu
 
-One menu for every mark: Open Pop-Up Note, Delete, Set status with its five
-states, Copy Text, Enable Text Selection, Hide comment panel, Make current
-properties default, Properties. The two text entries are conditional on there
-being text under the mark.
+One menu for every mark, in five groups. Read off Reader on 2026-11-02, in
+all three of the states it has:
+
+    no comment          comment, no reply   comment with replies
+    ──────────────────  ──────────────────  ────────────────────
+    Open Pop-Up Note    Open Pop-Up Note    Open Pop-Up Note
+    ──────────────────  ──────────────────  ────────────────────
+    Delete              Reply               Reply
+    Set status      ▸   Delete              Delete Thread
+                        Set status      ▸   Set status      ▸
+    ──────────────────  ──────────────────  ────────────────────
+    Copy Text           Copy Text           Copy Text
+    Enable Text Sel.    Enable Text Sel.    Enable Text Sel.
+    ──────────────────  ──────────────────  ────────────────────
+    Make current properties default
+    Properties...
+
+So two things vary and nothing else does. **Reply appears when there is a
+comment to reply to**, and *Open Pop-Up Note* stays above it either way --
+it is how the note is reached whether or not one has been written, and it
+does not turn into Reply. **Delete becomes Delete Thread when there are
+replies**, not when there is a note, which is the same rule the deletion
+dialog follows: the word changes when somebody else's writing is at stake.
+
+*Set status* opens five, with the current one ticked, read off the owner's
+own notes on Reader rather than guessed:
+
+    None        ticked when the mark has no status
+    Accepted
+    Cancelled
+    Completed
+    Rejected
+
+*None* first and the other four alphabetical. A status is not an attribute
+of the mark: setting one appends a hidden `/Text` carrying `/State`,
+`/StateModel /Review` and an `/IRT` pointing at the last link in the chain,
+so the tick shows the *last* status rather than the only one.
+
+*Copy Text* copies the text the mark covers -- what is under its
+quadrilaterals, not whatever the page selection happens to be.
 
 *Enable Text Selection* is the per-mark remedy for a highlight swallowing
-clicks that were meant for the page.
+clicks that were meant for the page, and **without it there is no way to
+select text that a mark covers at all**. It is not a property of the mark
+and nothing about it is written: it lets the *next* click through to the
+words underneath, and lasts only until the next selection. Reader shows
+this plainly -- after it is used, the right-click menu on that spot is the
+ordinary text menu (Copy, Edit text, Export selected text, Redact text,
+Highlight text, Strikethrough text, and the two that make a comment out of
+a selection) rather than the mark's.
+
+**Three of Reader's entries are deliberately left out**: *Open comment
+panel*, *Open all Pop-Ups* and *Minimize Pop-Ups* (Cmd+7). There is no
+comment panel here and no pop-up windows for one to manage, and an entry
+for a feature with nothing behind it is not the same as a button waiting
+for the step that turns it on. Taken by the owner on 2026-11-02. They come
+back if a panel is ever wanted.
+
+## The menus inside the pop-up window
+
+Four of them, read off Reader on 2026-11-03, and they are not the same
+menu as the one on the mark.
+
+    on a reply's author line   on the first item, or the window's
+                               own background
+    ────────────────────────   ─────────────────────────────────
+    Reply                      the mark's own menu, less *Open
+    Delete                     Pop-Up Note*: Delete Thread, Copy
+    Set status            ▸    Text, Enable Text Selection, Make
+                               current properties default and
+                               Properties...
+
+*Open Pop-Up Note* is left out inside the window: the thread is already
+showing, and Reader leaves it out there too.
+
+**The first item is the comment, so its line gives the mark's menu.**
+There is no deleting it on its own: the replies hang off it, and taking
+it out is *Delete Thread*. Settled with the owner on 2026-11-03. On a
+reply, *Delete* is the whole reply and the status chain under it -- not
+the words in it, which are edited by clicking them.
+
+The other two are the text's. Reader offers an editing menu over an
+item's text whether or not that item is open for editing, with *Undo Text
+Change*, *Paste Text*, *Delete Text*, the platform's spelling and
+dictionary entries, and *Text Style* carrying Bold, Italic, Underline,
+Superscript, Subscript and Clear Formatting. **Ours has no menu over text
+that is not being edited**: clicking the text opens it, and the menu is
+the editor's. Settled with the owner on 2026-11-03 -- the entries all act
+on the text, and the text can always be reached by opening it.
+
+Inside the editor the standard entries come from Qt and are the ones every
+other text box in the application has. **The spelling and dictionary
+entries are not ours to offer**: they are services of the platform's own
+text system, which Qt does not hand us.
 
 ## Highlight
 
 The first tool through, and the one plan step 3 builds. Everything here
-was read off `corpus/Markup Highlight.pdf` and the owner's notes on Acrobat.
+was read off `corpus/Markup Highlight.pdf` and the owner's notes on Reader.
 
 `/Subtype /Highlight` with `/QuadPoints` -- thirteen quads on the first
 sample, because a highlight spans paragraphs and columns -- a `/Rect`
@@ -615,7 +800,7 @@ coordinates with a `/Matrix` translating it to the origin, which is how the
 chain lines up with `/Rect`. Worth knowing before anyone tries to write one.
 
 **In the tool's Appearance tab:** colour from the twenty-one swatches, and
-opacity by slider or by a percentage field. Acrobat's five colour pickers --
+opacity by slider or by a percentage field. Reader's five colour pickers --
 wheel, sliders, named colours, spectrum, crayons -- are the macOS picker and
 are not copied; fixed swatches with no picker was settled earlier.
 
@@ -656,7 +841,7 @@ Cited as **highlight step 1** to **highlight step 9**.
    decision 10.
 3. **Select an existing one**, including a mark the file brought, which is
    the first thing the uid table buys. The selected-mark border belongs
-   here: Acrobat draws one round each quadrilateral, and drawing it needs a
+   here: Reader draws one round each quadrilateral, and drawing it needs a
    hit test, a selected-mark state and the rules for leaving it.
 
    **done 2026-11-02**
@@ -689,7 +874,7 @@ Cited as **highlight step 1** to **highlight step 9**.
    mark are drawn and disabled; each is turned on by the step that builds
    it, which is decision 14.
 4. **Colour and opacity**, which is where our appearance replaces the one
-   Acrobat wrote: an `/AP` that still draws the old colour is worse than one
+   Reader wrote: an `/AP` that still draws the old colour is worse than one
    we generated. **done 2026-11-02**
 
    Twenty-one swatches and an opacity slider, reached from two places: the
@@ -799,11 +984,75 @@ Cited as **highlight step 1** to **highlight step 9**.
    beside `/Contents`. That is the rich text question, and a comment is
    where it first bites.
 
+   **Set status arrives with it**, settled with the owner on 2026-11-02:
+   the menu is how it is reached, and a menu whose entries do nothing is
+   not the menu. Both of those write to the file -- a note writes
+   `/Contents`, a status appends a `/Text` carrying `/IRT` and `/State` --
+   so each wants the Reader round trip of its own that the fifth step asks
+   for. The menu itself writes nothing and lands first, carrying the
+   entries already built: Delete and Delete Thread, Copy Text, and *Make
+   current properties default*, which sets what the next mark is given and
+   touches no document at all.
+
+   **The properties form is not part of this**, by the same decision. The
+   menu carries the entry that opens it and the form is built in the step
+   after, so this step stays the menu, the note and the status.
+
+   **The menu and the note are done, 2026-11-03.** The menu carries what
+   acts and draws the rest; the note is a window over the page listing the
+   mark's own text and each reply beneath it, with only the selected item
+   editable and Post refused while it is empty. *Reply* adds an empty item
+   and posting it writes a `/Text` carrying `/IRT`, `/F 28` and the parent's
+   colour. `/Popup` is now written for every mark at the geometry Reader
+   uses, a window the file left open opens on hover, and moving or resizing
+   one is recorded to `/Popup /Rect`.
+
+   **Set status is done too, 2026-11-03.** Five states, the current one
+   ticked, and choosing one appends a hidden `/Text` carrying `/State`,
+   `/StateModel /Review` and an `/IRT` pointing at *the link before it* --
+   so a status is never overwritten and Review History keeps the sequence.
+   The five are written as Reader writes them and shown translated: a
+   `/State` in another language is a status no other application matches.
+
+   **The rich text, the per-item menus and the per-reply status are done,
+   2026-11-03**, after the owner found them in Reader while trying the
+   step. `/RC` is read and shown, written with the text and dropped when
+   there is none (decision 27); every item in the thread carries its own
+   status row and menu (decision 24); and the window's menus are
+   decision 30. The question this step "has to decide rather than inherit"
+   is therefore decided: `/RC` *is* written beside `/Contents`.
+
    A note the *file* brought needs none of this and already survives: it
    comes through an export untouched because a mark is patched rather than
    replaced, which is decision 17 and is what highlight step 5 checks.
 9. **The properties form**, last, because General and Review History are
-   read-only views of what the earlier steps put in place.
+   read-only views of what the earlier steps put in place. Reached from the
+   menu above, which carries its entry from the start, and built separately
+   afterwards.
+
+   **Done 2026-11-03.** *Comment properties*: three tabs and a footer, one
+   form for every kind, opened from *Properties...* in the mark's menu and
+   in a reply's. It writes three keys and one flag -- `/T`, `/Subj` and
+   `/F` bit 8 -- and only where they differ from what it was given, so a
+   mark whose colour was touched keeps the author and the subject the
+   producer gave it.
+
+   Appearance reuses the palette the swatch in the tool strip opens, rather
+   than a second one of its own: two pickers that have to agree about
+   twenty-one colours and a slider are two things to keep in step. **The
+   icon list Reader offers for a note is not built** -- it writes `/Name`,
+   and an icon chooser that writes a name this reader does not draw would
+   make the document say one thing and the page show another. It waits for
+   the icons.
+
+   General's Author and Subject are editable, which an earlier reading of
+   this form had wrong. Review History is composed, not stored. The footer
+   is *Locked* and *Make Properties Default*, the second of which writes
+   nothing to the file.
+
+   **A locked mark opens the form** -- it is where the lock comes off --
+   and everything in it that would change the mark is refused until the box
+   is cleared, which takes effect without closing it.
 
 ## The test
 
@@ -936,7 +1185,7 @@ lost.
 
 - **O2. What one freehand mark is.** One drag, one `/Ink`, or a pencil that
   stays down and accumulates strokes into a single annotation until the tool
-  changes, which is what Acrobat does. `/InkList` holds either -- measured,
+  changes, which is what Reader does. `/InkList` holds either -- measured,
   PDFium draws two strokes in one annotation at exactly twice the ink of one,
   3840 pixels against 1920 -- so this is a question about the gesture and the
   undo stack rather than about the format. Accumulating needs a notion of the
@@ -1236,13 +1485,13 @@ Comment is the tool most able to hide one.
 measurement: a status is not a workflow, it is two keys. Setting one appends
 a hidden `/Text` annotation carrying `/State` and `/StateModel /Review`, and
 the history is that chain read back -- there is nothing to edit, nothing to
-synchronise between people, and no round trip to run. Acrobat itself offers
+synchronise between people, and no round trip to run. Reader itself offers
 no way to change a history, only to add to it.
 
-Showing it is derived rather than stored: Acrobat's row is composed from the
+Showing it is derived rather than stored: Reader's row is composed from the
 annotation's own `/T`, `/State` and `/M`, which its properties dialog prints
 as *"dws: Accepted, 11/1/26, 2:33:27 PM"*. The `/Contents` each link carries
-is a sentence Acrobat generates for other viewers and does not itself
+is a sentence Reader generates for other viewers and does not itself
 display, so none of this costs a translatable string in the history view.
 
 **6. Deleting a mark deletes what hangs off it.** Its status chain, its
@@ -1325,7 +1574,7 @@ changed in one window and exported from another -- `/NM` becomes the answer
 and we would be assigning one. Nothing in this plan needs that.
 
 **10. A mark is written with the keys a reader expects, and `/NM` is one of
-them.** Measured against the Acrobat highlight on page 15 of the Handbook,
+them.** Measured against the Reader highlight on page 15 of the Handbook,
 which writes `/AP /C /CA /Contents /CreationDate /F /M /NM /P /Popup
 /QuadPoints /RC /Rect /Subj /Subtype /T /Type`. Ours wrote ten of those; it
 now writes `/CreationDate`, `/NM`, `/P`, `/Subj` and `/T` as well.
@@ -1338,7 +1587,7 @@ rather than invented -- "Highlight" in seven files, "Cross-Out" in four,
 filters by it and a translated one sorts into a category of its own in every
 other language. `/T` is the login name: the `/Info` dictionary of these
 documents is empty, so there is no name in the document to inherit, and
-Acrobat falls back the same way when its identity setting is unset. `/P`
+Reader falls back the same way when its identity setting is unset. `/P`
 because `export._repoint_annotations` rewrites `/P` on every annotation that
 has one, after the transform passes have replaced the page objects, so a mark
 without `/P` is left out of the fixing rather than left correct.
@@ -1369,14 +1618,14 @@ note work rather than with the mark.
 through a second copy of PDFium.** Qt's `QPdfSelection.bounds()` gives one
 polygon per run, tight to the ink, so a line with no descender comes out
 shorter than the line above it and a larger word makes its own run a
-different height again. Acrobat uses the box built from the font's ascent and
+different height again. Reader uses the box built from the font's ascent and
 descent instead: against the forty-two quadrilaterals it wrote into
 `Markup Highlight.pdf`, the union of the loose boxes under each one matched
 its `/QuadPoints` exactly, to the hundredth of a point, on every one. The
 ink-tight boxes over the same characters ran 2 to 6 points short.
 
 There is no single factor to apply instead, because a line may hold several
-sizes of type and Acrobat gives each its own quadrilateral -- on one page its
+sizes of type and Reader gives each its own quadrilateral -- on one page its
 quads are 12.99, 13.34, 14.56 and 26.69 points tall.
 
 Qt PDF *is* PDFium, but it links it statically with hidden visibility: of the
@@ -1394,7 +1643,7 @@ document.
 
 Where the quadrilaterals break is in `textlayer`, with the measurements that
 settled each rule. One consequence is visible: because only the armed page's
-glyphs are loaded, the gesture stops at the page edge, which is what Acrobat
+glyphs are loaded, the gesture stops at the page edge, which is what Reader
 does for a highlight and the opposite of what it does for a selection.
 
 
@@ -1425,15 +1674,15 @@ brought, which is the same ownership question highlight step 4 has to answer wha
 is decided here.
 
 **13. The outline is the same whether a mark is hovered or selected.**
-Acrobat draws one outline, and passing the pointer over a mark draws it
+Reader draws one outline, and passing the pointer over a mark draws it
 exactly as picking the mark up does. The outline answers "how far does this
 mark reach", and that does not change according to whether you have
 committed to it.
 
 A faded version of it was tried first, on the reasoning that hovering is the
-lesser state and should look lesser. Measured against Acrobat's own, ours
+lesser state and should look lesser. Measured against Reader's own, ours
 came out paler *and* wider -- a dominant (144, 176, 224) in 4 to 5 pixel
-strokes against Acrobat's (32, 112, 192) in one -- and it read as a worse
+strokes against Reader's (32, 112, 192) in one -- and it read as a worse
 selection rather than as a different thing.
 
 **There are three states, and the outline is only one of the differences.**
@@ -1455,7 +1704,7 @@ The grips are highlight step 6. The editor is highlight step 8, so
 grips and its bar now, and will open its thread when there is one to open.
 
 **14. The buttons beside a selected mark are drawn before they act.** Three
-of them, as Acrobat shows: add a comment, a colour swatch, delete. Each
+of them, as Reader shows: add a comment, a colour swatch, delete. Each
 belongs to a later step -- the comment to the note work, the swatch to
 colour and opacity, delete to the step that has to take a mark's status
 chain and its replies with it -- so each is drawn and disabled, and the step
@@ -1478,7 +1727,7 @@ is the one already ticked when the family opens. Three consequences follow.
 The popup mode is `InstantPopup`, because the divider a split button draws
 is a promise that its two halves differ. Qt's menu indicator is painted out
 and a small filled triangle drawn into the bottom right corner instead,
-which is the mark Acrobat puts there. And the button filters events on its
+which is the mark Reader puts there. And the button filters events on its
 own menu, so that a press landing on another family reaches *that* family:
 an open menu grabs the mouse, and without this the press was swallowed to
 close the menu and the next family needed a second click. Reacting after
@@ -1613,6 +1862,182 @@ An I-beam over any part of the mark would promise a text selection that
 pressing there does not give.
 
 
+
+**22. Redaction is not supported, and not offered.** `/Redact` is the one
+markup subtype Reader's own menus reach that this application will not make:
+redaction is an Acrobat feature rather than a Reader one, and the owner ruled
+it out on 2026-11-02 along with any menu entry for it. *Redact text* is
+therefore absent from the selection menu, beside *Edit text*, *Bold, Italics
+& more* and *Export selected text*, which have nothing behind them either.
+
+It is the only gap in the test document's coverage. Measured on
+`corpus/Markup Test Case.pdf`: 180 annotations over four pages in 18
+subtypes -- the fifteen markup kinds plus `/Link`, `/Popup` and `/Widget`,
+which is the eighteen this document refers to elsewhere. The ten subtypes
+the specification lists and the file does not hold are `/Redact` and nine
+that no comment tool creates: `/Sound`, `/Movie`, `/Screen`, `/RichMedia`,
+`/3D`, `/Projection`, `/PrinterMark`, `/TrapNet` and `/Watermark`.
+
+Not making one is not the same as not carrying one. A `/Redact` arriving in
+somebody else's document still has to survive an export untouched, which is
+what *lose nothing* requires of every subtype -- and the round trip that
+proves it cannot prove it for this one, because the test document has none.
+
+
+
+**23. An open pop-up is honoured on hover, and opening one changes
+nothing.** `/Popup /Open` says a mark's window was showing when the file was
+saved, and Reader shows that window as soon as the page is drawn. Verified in
+the corpus on 2026-11-02: one highlight's popup reads `/Open true` with a
+`/Rect` of `[57, 556, 223, 687]`, moved into the page and resized to 166 by
+131, and both survive closing and reopening the file.
+
+**Honoured on hover rather than on opening the page.** Hovering a mark whose
+popup is open gives the thread; hovering one whose popup is closed gives the
+one-line summary, which is the distinction Reader itself makes. Not shown
+unbidden, for two reasons: the panel here is one widget, and a page carrying
+three open popups would need three of them -- turning a window into a set --
+and it is the case Reader renders worst, with a popup that stays
+transparent until the pointer enters it.
+
+**Opening a panel is not a change to the document.** `Save` is enabled by
+there being pages, never by `modified`, so marking the document dirty would
+not enable anything: all it would do is ask "save your changes?" on close
+because somebody read a note. A panel left open when the document *is* saved
+writes `/Open true`, so saving it open stays possible -- it is just never a
+reason to save. Taken by the owner on 2026-11-02, against Reader, which also
+declines to dirty the file and then will not let you save the open state at
+all unless you move the window first.
+
+**Moving or resizing the window is a change, and does mark the document
+dirty.** That is the line between the two: opening a window writes nothing,
+while moving it writes a new `/Popup /Rect` -- so one is reading and the
+other is editing, and "save your changes?" is the right question after the
+second and the wrong one after the first.
+
+Built on 2026-11-03. The window is dragged by the first item's header and
+resized by a corner of its own -- **not a `QSizeGrip`**, which resizes the
+top level window it finds by walking up the parents, and from inside a panel
+over the canvas that is the application window.
+
+**The file's geometry is a floor, not a box.** A window Reader sized was
+sized for Reader's text in Reader's fonts; taken as the size, a 166 by 131
+point window folded a note and two replies into 28-pixel rows, because Qt
+shrinks whatever will shrink. It is grown to what the thread needs, and the
+half of the geometry that cannot be honoured is a position that would put
+the window outside the view -- it is dragged by its own header, so a window
+hanging over the top edge takes the handle with it.
+
+**Closing the window is this session's own business.** The cross puts it
+away and the mark goes back to its one-line summary under the pointer;
+`/Popup /Open` in the file is untouched, by the same reasoning that makes
+opening one write nothing. Without that the cross did nothing anybody could
+see: the hover fires on every mouse move and brought the window straight
+back.
+
+
+
+**24. A reply carries its own status, and the window shows it.** The format
+already allows it and the corpus uses it -- three replies under one note
+with three separate chains, measured 2026-11-03 -- so this is a question of
+what is *shown*, not of what can be stored.
+
+**A chain is followed, not filtered.** Everything hanging off a mark
+includes its replies and each of *their* histories, so taking every status
+below a mark reads a reply's status as the mark's own: a note whose reply
+was Cancelled reported Cancelled. The links that belong are the ones
+reachable from the mark through statuses alone. Every item in the thread gets a
+status row and *Set status* on its own menu. A status of `None` draws no
+row at all: it is a link in the history like any other, which is how a
+status is taken back, but the thread says what the item's status *is*, and
+the answer there is that it has none.
+
+**25. An appearance stream goes only when what it draws has changed.**
+A text markup's can go freely: every reader falls back to `/QuadPoints`
+and `/C` and redraws it, which is why a recoloured highlight drops the
+producer's `/AP`. A `/Text`'s cannot -- that stream *is* the icon, nothing
+regenerates one, and the reader substitutes a default of its own in its
+own colour. Measured 2026-11-03: an edit to a reply's text dropped its
+appearance and PDFium then drew a yellow note icon that ignored the
+mark's colour entirely. So `/AP` is dropped for a colour, an opacity or a
+resize, and kept for the text, the rich text, the author, the subject, the
+lock and the window's position -- none of which change what is drawn.
+
+**What a colour change on a `/Text` should leave behind is still open.**
+Dropping the stream is right -- it has the old colour baked in -- but
+there is then nothing to draw, and each reader's default differs. Reader
+draws no replies at all so it does not care; PDFGear and PDF24 draw a box
+in the annotation's colour; PDFium draws yellow.
+
+**26. A reply is not page content, and the badge speaks for the thread.**
+Measured against Reader on 2026-11-03, on a document whose three replies
+were given three different colours and three different `/Name` icons:
+Reader draws no reply at all -- not with its appearance stream, not
+without one, under no icon name. The one thing it does draw at the mark's
+corner is chrome of its own, which does not print. PDFGear and PDF24 draw
+a box in the annotation's colour; PDFium draws the appearance stream, and
+since a thread's replies all carry the same rectangle it stacks them into
+one smudge.
+
+So the replies are **dropped from the page this application renders** --
+only from what is shown; the document written out keeps every one -- and
+the badge at the mark's corner wears **the latest reply's colour and
+opacity**, the one every renderer paints over the others. Hovering it
+gives that reply's author, its text and its own status. The thread window
+puts every item's author and date in that item's own colour, which is the
+only place all of them can be seen at once.
+
+**Nothing else shows a reply's colour.** `/C` is defined as the colour of
+an annotation's icon when closed and of its pop-up's title bar; this
+application draws neither, so without the badge and the window the colour
+a reply carries would be invisible.
+
+**27. `/RC` is read, written with the text, and never left stale.** The
+rich text is the same words as `/Contents` with their runs marked up, and
+every reader that understands it prefers it. So all three follow together:
+a note that arrives styled is *shown* styled, an edit that carries styling
+writes a new `/RC`, and an edit that carries none takes the producer's
+`/RC` away rather than leaving it to contradict the new `/Contents`. The
+styling kept is what *Text Style* can say -- bold, italic, underline,
+superscript, subscript -- and the rest of what Reader writes on every span
+is dropped on the way in: a negative font size is not a size, and an
+alignment inside a line is not a style.
+
+**The editor is a `QTextEdit`.** A plain one cannot hold any of this, so
+text that arrived styled would have been flattened the first time anybody
+posted an edit to it.
+
+**28. A status or a reply keeps what is in the box.** Reader treats
+setting a status, or pressing Reply, as a post of whatever has been typed
+into the open editor and then the action -- not as a cancel. Taken from the
+owner on 2026-11-03. So neither throws away an unposted edit, and a post
+made on the way to an action does not close the item that action opened.
+Nothing is posted when nothing was changed: every status change would
+otherwise record an edit to the text that nobody made.
+
+**29. A lock is honoured, per annotation, and refusals are visible.**
+`/F` bit 8 says the attributes and the mark's own text are not to be
+changed, and this reader chooses to be stopped by it -- no editor, no
+colour, no opacity, no resize, no delete. Not `LockedContents` (512), which
+Reader does not write. *Reply* and *Set status* stay available because
+each writes a new annotation rather than changing the locked one, and
+*Properties...* stays because that is where the lock comes off. What is
+refused is greyed rather than removed, which is the owner's preference over
+Reader's own behaviour, taken 2026-11-03.
+
+**30. The window's own menus act on items, and the first item is the
+mark.** Settled with the owner on 2026-11-03, against Reader. A reply's
+line offers Reply, Delete and Set status, where Delete is the whole reply
+and its status chain. The first item's line and the window's background
+both give that mark's menu, less the entry that would open a window
+already open, because the first item *is* the comment and there is no
+deleting it on its own. An item's author line opens that item, as its text
+does -- and after a post nothing is open at all, so the line is how an item
+is reached again; on the first item, which is also the window's title bar,
+a click is told from a drag by whether the pointer moved. There is no menu over text that is
+not being edited: clicking it opens it, and every entry Reader offers
+there acts on the text anyway. The platform's spelling and dictionary
+entries are not offered, because Qt does not give them to us.
 
 ## Done
 

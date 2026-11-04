@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-03 03:39+0000\n"
+"POT-Creation-Date: 2026-11-03 20:57+0000\n"
 "PO-Revision-Date: 2022-09-01 00:40+0900\n"
 "Last-Translator: sicklylife <translation@sicklylife.jp>\n"
 "Language: ja\n"
@@ -64,8 +64,74 @@ msgstr "コピー"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
+msgid "Highlight text"
+msgstr "テキストをハイライト"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Strikethrough text"
+msgstr "テキストに取り消し線"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Add a comment to replace text"
+msgstr "テキストを置き換えるコメントを追加"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Add note to text"
+msgstr "テキストにノートを追加"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
 msgid "Select All"
 msgstr "すべて選択"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Open Pop-Up Note"
+msgstr "ポップアップノートを開く"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py pdfarranger_qt/mainwindow.py
+msgid "Reply"
+msgstr "返信"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Delete Thread"
+msgstr "スレッドを削除"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py pdfarranger_qt/mainwindow.py pdfarranger_qt/reader.py
+#: pdfarranger_qt/toolstrip.py
+msgid "Delete"
+msgstr "削除"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py pdfarranger_qt/mainwindow.py
+msgid "Set status"
+msgstr "ステータスを設定"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py pdfarranger_qt/mainwindow.py
+msgid "Copy Text"
+msgstr "テキストをコピー"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Enable Text Selection"
+msgstr "テキスト選択を有効にする"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Make current properties default"
+msgstr "現在のプロパティを既定にする"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py pdfarranger_qt/mainwindow.py
+msgid "Properties..."
+msgstr "プロパティ..."
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
@@ -320,17 +386,17 @@ msgid "Gap"
 msgstr "間隔"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/dialogs.py
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/properties.py
 msgid "Appearance"
 msgstr "外観"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/dialogs.py pdfarranger_qt/reader.py
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/notepanel.py pdfarranger_qt/reader.py
 msgid "Bold"
 msgstr "太字"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/dialogs.py pdfarranger_qt/reader.py
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/notepanel.py pdfarranger_qt/reader.py
 msgid "Italic"
 msgstr "斜体"
 
@@ -345,12 +411,14 @@ msgid "Size"
 msgstr "サイズ"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/dialogs.py pdfarranger_qt/toolstrip.py
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/properties.py
+#: pdfarranger_qt/toolstrip.py
 msgid "Colour"
 msgstr "色"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/dialogs.py pdfarranger_qt/toolstrip.py
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/properties.py
+#: pdfarranger_qt/toolstrip.py
 msgid "Opacity"
 msgstr "不透明度"
 
@@ -579,7 +647,7 @@ msgid "Theme"
 msgstr "テーマ"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/dialogs.py
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/properties.py
 msgid "General"
 msgstr "全般"
 
@@ -1830,11 +1898,6 @@ msgstr "選択範囲をラスター化 PDF (jpg) に書き出し…(_G)"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
-msgid "Copy Text"
-msgstr "テキストをコピー"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
 msgid "Copy _Image"
 msgstr "画像をコピー(_I)"
 
@@ -1964,6 +2027,26 @@ msgstr "マークのサイズを変更"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
+msgid "Set Status"
+msgstr "ステータスを設定"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-brace-format
+msgid "{state} set by {author}"
+msgstr "{state}（{author}）"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Mark Properties"
+msgstr "マークのプロパティ"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Edit Note"
+msgstr "ノートを編集"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
 msgid "Delete Mark"
 msgstr "マークを削除"
 
@@ -1986,11 +2069,6 @@ msgstr "マークを変更"
 #: pdfarranger_qt/mainwindow.py
 msgid "Delete Note"
 msgstr "ノートを削除"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
-msgid "Edit Note"
-msgstr "ノートを編集"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
@@ -2106,7 +2184,7 @@ msgid "Importing…"
 msgstr "取り込み中…"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
+#: pdfarranger_qt/mainwindow.py pdfarranger_qt/notepanel.py
 msgid "Cancel"
 msgstr "キャンセル"
 
@@ -2247,12 +2325,6 @@ msgstr "この文書には保存していない変更があります。"
 #: pdfarranger_qt/mainwindow.py
 msgid "Save before continuing?"
 msgstr "続ける前に保存しますか?"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py pdfarranger_qt/reader.py
-#: pdfarranger_qt/toolstrip.py
-msgid "Delete"
-msgstr "削除"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
@@ -2499,6 +2571,31 @@ msgstr "回転"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/markup.py
+msgid "None"
+msgstr "なし"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Accepted"
+msgstr "承認"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Cancelled"
+msgstr "取り消し"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Completed"
+msgstr "完了"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Rejected"
+msgstr "却下"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
 msgid "Blue"
 msgstr "青"
 
@@ -2606,7 +2703,7 @@ msgstr "黒"
 msgid "Title"
 msgstr "タイトル"
 
-#: pdfarranger_qt/metadata.py
+#: pdfarranger_qt/metadata.py pdfarranger_qt/properties.py
 msgid "Subject"
 msgstr "サブタイトル"
 
@@ -2626,13 +2723,44 @@ msgstr "作成"
 msgid "Creator tool"
 msgstr "作成ツール"
 
-#: pdfarranger_qt/metadata.py
+#: pdfarranger_qt/metadata.py pdfarranger_qt/properties.py
 msgid "Created"
 msgstr "作成日時"
 
 #: pdfarranger_qt/metadata.py
 msgid "Modified"
 msgstr "更新日時"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/notepanel.py pdfarranger_qt/tools.py
+msgid "Underline"
+msgstr "下線"
+
+#: pdfarranger_qt/notepanel.py
+msgid "Superscript"
+msgstr "上付き文字"
+
+#: pdfarranger_qt/notepanel.py
+msgid "Subscript"
+msgstr "下付き文字"
+
+#: pdfarranger_qt/notepanel.py
+msgid "Text Style"
+msgstr "文字スタイル"
+
+#: pdfarranger_qt/notepanel.py
+msgid "Clear Formatting"
+msgstr "書式をクリア"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/notepanel.py
+msgid "Status"
+msgstr "ステータス"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/notepanel.py
+msgid "Post"
+msgstr "投稿"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/nup.py
@@ -2663,6 +2791,34 @@ msgstr "1 枚に 9 ページ"
 #: pdfarranger_qt/nup.py
 msgid "16 pages per sheet"
 msgstr "1 枚に 16 ページ"
+
+#: pdfarranger_qt/properties.py
+msgid "Comment properties"
+msgstr "注釈のプロパティ"
+
+#: pdfarranger_qt/properties.py
+msgid "Review History"
+msgstr "レビュー履歴"
+
+#: pdfarranger_qt/properties.py
+msgid "Locked"
+msgstr "ロック"
+
+#: pdfarranger_qt/properties.py
+msgid "Make Properties Default"
+msgstr "プロパティを初期設定にする"
+
+#: pdfarranger_qt/properties.py
+msgid "Author"
+msgstr "作成者"
+
+#: pdfarranger_qt/properties.py
+msgid "Date modified"
+msgstr "更新日"
+
+#: pdfarranger_qt/properties.py
+msgid "The Review History lists any change of status for this comment."
+msgstr "レビュー履歴には、この注釈のステータスの変更がすべて表示されます。"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/reader.py
@@ -2894,11 +3050,6 @@ msgstr "ファイルを添付"
 #: pdfarranger_qt/tools.py
 msgid "Highlight"
 msgstr "ハイライト"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/tools.py
-msgid "Underline"
-msgstr "下線"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/tools.py
@@ -3363,4 +3514,40 @@ msgstr "ファイル名ではなくタイトルを表示する"
 # machine translation, unreviewed
 #~ msgid "Markup"
 #~ msgstr "マークアップ"
+
+#~ msgid "Jan"
+#~ msgstr ""
+
+#~ msgid "Feb"
+#~ msgstr ""
+
+#~ msgid "Mar"
+#~ msgstr ""
+
+#~ msgid "Apr"
+#~ msgstr ""
+
+#~ msgid "May"
+#~ msgstr ""
+
+#~ msgid "Jun"
+#~ msgstr ""
+
+#~ msgid "Jul"
+#~ msgstr ""
+
+#~ msgid "Aug"
+#~ msgstr ""
+
+#~ msgid "Sep"
+#~ msgstr ""
+
+#~ msgid "Oct"
+#~ msgstr ""
+
+#~ msgid "Nov"
+#~ msgstr ""
+
+#~ msgid "Dec"
+#~ msgstr ""
 

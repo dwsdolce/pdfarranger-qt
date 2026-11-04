@@ -439,6 +439,8 @@ class ToolStrip(QFrame):
             self.swatch.set_colour(tuple(colour))
         if opacity is not None:
             self._opacity = float(opacity)
+        # A selected mark has attributes even when the armed tool has none.
+        self._show_tail()
         self.refresh()
 
     def unfollow(self) -> None:
@@ -449,6 +451,7 @@ class ToolStrip(QFrame):
         self._before = None
         self.swatch.set_colour(colour)
         self._opacity = opacity
+        self._show_tail()
         self.refresh()
 
     def _open_palette(self) -> None:
@@ -468,17 +471,20 @@ class ToolStrip(QFrame):
         self.opacity_armed.emit(float(opacity))
 
     def _show_tail(self) -> None:
-        """Show the armed tool's own controls.
+        """Show the attributes of whatever is being worked on.
 
-        Shown under *every* tool, the pointer included. It was hidden for the
-        pointer at first, on the reasoning that nothing is being made so
-        there is nothing to set an attribute of -- but the swatch does two
-        jobs, and the second one is changing the mark you have selected,
-        which is exactly what you do with the pointer armed. Observed in
-        Reader: the swatch is there with Select armed and with a tool armed
-        alike.
+        **The armed tool's, or the selected annotation's.** A pointer tool
+        makes nothing and has no attributes of its own, so with one armed
+        the tail is empty -- until a mark is selected, when it shows that
+        mark's, which is the swatch's second job.
+
+        It was shown under every tool for a while, on the reasoning that
+        the swatch has that second job at all times. That substituted a
+        rule of its own for the one the owner asked for.
         """
-        self.tail.setVisible(True)
+        tool = tools.by_name(self._armed) if self._armed else None
+        makes_marks = tool is not None and tool.family != tools.POINTER
+        self.tail.setVisible(makes_marks or self._before is not None)
 
     def _show_armed(self) -> None:
         """Each family button in the colour its state calls for."""
@@ -670,9 +676,17 @@ class MarkButtons(QWidget):
         self._restyle()
         self.hide()
 
-    def set_mark(self, colour, opacity) -> None:
-        """What the selected mark looks like now, for the popup to show."""
+    def set_mark(self, colour, opacity, locked: bool = False) -> None:
+        """What the selected mark looks like now, for the popup to show.
+
+        ``locked`` greys the two buttons that would change it. Shown and
+        refused rather than taken away: the bar is how a selected mark says
+        what can be done to it, and a bar that loses buttons says the mark
+        is a different kind of thing.
+        """
         self._colour, self._opacity = colour, opacity
+        self.buttons["colour"].setEnabled(not locked)
+        self.buttons["delete"].setEnabled(not locked)
 
     def _open_palette(self) -> None:
         button = self.buttons["colour"]

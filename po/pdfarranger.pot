@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pdfarranger-qt VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/dwsdolce/pdfarranger-qt/issues\n"
-"POT-Creation-Date: 2026-11-03 03:39+0000\n"
+"POT-Creation-Date: 2026-11-03 20:57+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -53,7 +53,60 @@ msgid "Copy"
 msgstr ""
 
 #: pdfarranger_qt/canvas.py
+msgid "Highlight text"
+msgstr ""
+
+#: pdfarranger_qt/canvas.py
+msgid "Strikethrough text"
+msgstr ""
+
+#: pdfarranger_qt/canvas.py
+msgid "Add a comment to replace text"
+msgstr ""
+
+#: pdfarranger_qt/canvas.py
+msgid "Add note to text"
+msgstr ""
+
+#: pdfarranger_qt/canvas.py
 msgid "Select All"
+msgstr ""
+
+#: pdfarranger_qt/canvas.py
+msgid "Open Pop-Up Note"
+msgstr ""
+
+#: pdfarranger_qt/canvas.py pdfarranger_qt/mainwindow.py
+msgid "Reply"
+msgstr ""
+
+#: pdfarranger_qt/canvas.py
+msgid "Delete Thread"
+msgstr ""
+
+#: pdfarranger_qt/canvas.py pdfarranger_qt/mainwindow.py pdfarranger_qt/reader.py
+#: pdfarranger_qt/toolstrip.py
+msgid "Delete"
+msgstr ""
+
+#: pdfarranger_qt/canvas.py pdfarranger_qt/mainwindow.py
+msgid "Set status"
+msgstr ""
+
+#: pdfarranger_qt/canvas.py pdfarranger_qt/mainwindow.py
+msgid "Copy Text"
+msgstr ""
+
+#: pdfarranger_qt/canvas.py
+msgid "Enable Text Selection"
+msgstr ""
+
+#: pdfarranger_qt/canvas.py
+msgid "Make current properties default"
+msgstr ""
+
+#: pdfarranger_qt/canvas.py pdfarranger_qt/mainwindow.py
+msgid "Properties..."
 msgstr ""
 
 #: pdfarranger_qt/canvas.py
@@ -273,15 +326,15 @@ msgstr ""
 msgid "Gap"
 msgstr ""
 
-#: pdfarranger_qt/dialogs.py
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/properties.py
 msgid "Appearance"
 msgstr ""
 
-#: pdfarranger_qt/dialogs.py pdfarranger_qt/reader.py
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/notepanel.py pdfarranger_qt/reader.py
 msgid "Bold"
 msgstr ""
 
-#: pdfarranger_qt/dialogs.py pdfarranger_qt/reader.py
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/notepanel.py pdfarranger_qt/reader.py
 msgid "Italic"
 msgstr ""
 
@@ -293,11 +346,13 @@ msgstr ""
 msgid "Size"
 msgstr ""
 
-#: pdfarranger_qt/dialogs.py pdfarranger_qt/toolstrip.py
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/properties.py
+#: pdfarranger_qt/toolstrip.py
 msgid "Colour"
 msgstr ""
 
-#: pdfarranger_qt/dialogs.py pdfarranger_qt/toolstrip.py
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/properties.py
+#: pdfarranger_qt/toolstrip.py
 msgid "Opacity"
 msgstr ""
 
@@ -481,7 +536,7 @@ msgstr ""
 msgid "Theme"
 msgstr ""
 
-#: pdfarranger_qt/dialogs.py
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/properties.py
 msgid "General"
 msgstr ""
 
@@ -1490,10 +1545,6 @@ msgid "Export Selection to _Rasterized PDF (jpg)…"
 msgstr ""
 
 #: pdfarranger_qt/mainwindow.py
-msgid "Copy Text"
-msgstr ""
-
-#: pdfarranger_qt/mainwindow.py
 msgid "Copy _Image"
 msgstr ""
 
@@ -1598,6 +1649,23 @@ msgid "Resize Mark"
 msgstr ""
 
 #: pdfarranger_qt/mainwindow.py
+msgid "Set Status"
+msgstr ""
+
+#: pdfarranger_qt/mainwindow.py
+#, python-brace-format
+msgid "{state} set by {author}"
+msgstr ""
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Mark Properties"
+msgstr ""
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Edit Note"
+msgstr ""
+
+#: pdfarranger_qt/mainwindow.py
 msgid "Delete Mark"
 msgstr ""
 
@@ -1615,10 +1683,6 @@ msgstr ""
 
 #: pdfarranger_qt/mainwindow.py
 msgid "Delete Note"
-msgstr ""
-
-#: pdfarranger_qt/mainwindow.py
-msgid "Edit Note"
 msgstr ""
 
 #: pdfarranger_qt/mainwindow.py
@@ -1720,7 +1784,7 @@ msgstr ""
 msgid "Importing…"
 msgstr ""
 
-#: pdfarranger_qt/mainwindow.py
+#: pdfarranger_qt/mainwindow.py pdfarranger_qt/notepanel.py
 msgid "Cancel"
 msgstr ""
 
@@ -1837,11 +1901,6 @@ msgstr ""
 
 #: pdfarranger_qt/mainwindow.py
 msgid "Save before continuing?"
-msgstr ""
-
-#: pdfarranger_qt/mainwindow.py pdfarranger_qt/reader.py
-#: pdfarranger_qt/toolstrip.py
-msgid "Delete"
 msgstr ""
 
 #: pdfarranger_qt/mainwindow.py
@@ -2047,6 +2106,26 @@ msgid "Rotate"
 msgstr ""
 
 #: pdfarranger_qt/markup.py
+msgid "None"
+msgstr ""
+
+#: pdfarranger_qt/markup.py
+msgid "Accepted"
+msgstr ""
+
+#: pdfarranger_qt/markup.py
+msgid "Cancelled"
+msgstr ""
+
+#: pdfarranger_qt/markup.py
+msgid "Completed"
+msgstr ""
+
+#: pdfarranger_qt/markup.py
+msgid "Rejected"
+msgstr ""
+
+#: pdfarranger_qt/markup.py
 msgid "Blue"
 msgstr ""
 
@@ -2134,7 +2213,7 @@ msgstr ""
 msgid "Title"
 msgstr ""
 
-#: pdfarranger_qt/metadata.py
+#: pdfarranger_qt/metadata.py pdfarranger_qt/properties.py
 msgid "Subject"
 msgstr ""
 
@@ -2154,12 +2233,40 @@ msgstr ""
 msgid "Creator tool"
 msgstr ""
 
-#: pdfarranger_qt/metadata.py
+#: pdfarranger_qt/metadata.py pdfarranger_qt/properties.py
 msgid "Created"
 msgstr ""
 
 #: pdfarranger_qt/metadata.py
 msgid "Modified"
+msgstr ""
+
+#: pdfarranger_qt/notepanel.py pdfarranger_qt/tools.py
+msgid "Underline"
+msgstr ""
+
+#: pdfarranger_qt/notepanel.py
+msgid "Superscript"
+msgstr ""
+
+#: pdfarranger_qt/notepanel.py
+msgid "Subscript"
+msgstr ""
+
+#: pdfarranger_qt/notepanel.py
+msgid "Text Style"
+msgstr ""
+
+#: pdfarranger_qt/notepanel.py
+msgid "Clear Formatting"
+msgstr ""
+
+#: pdfarranger_qt/notepanel.py
+msgid "Status"
+msgstr ""
+
+#: pdfarranger_qt/notepanel.py
+msgid "Post"
 msgstr ""
 
 #: pdfarranger_qt/nup.py
@@ -2184,6 +2291,34 @@ msgstr ""
 
 #: pdfarranger_qt/nup.py
 msgid "16 pages per sheet"
+msgstr ""
+
+#: pdfarranger_qt/properties.py
+msgid "Comment properties"
+msgstr ""
+
+#: pdfarranger_qt/properties.py
+msgid "Review History"
+msgstr ""
+
+#: pdfarranger_qt/properties.py
+msgid "Locked"
+msgstr ""
+
+#: pdfarranger_qt/properties.py
+msgid "Make Properties Default"
+msgstr ""
+
+#: pdfarranger_qt/properties.py
+msgid "Author"
+msgstr ""
+
+#: pdfarranger_qt/properties.py
+msgid "Date modified"
+msgstr ""
+
+#: pdfarranger_qt/properties.py
+msgid "The Review History lists any change of status for this comment."
 msgstr ""
 
 #: pdfarranger_qt/reader.py
@@ -2369,10 +2504,6 @@ msgstr ""
 
 #: pdfarranger_qt/tools.py
 msgid "Highlight"
-msgstr ""
-
-#: pdfarranger_qt/tools.py
-msgid "Underline"
 msgstr ""
 
 #: pdfarranger_qt/tools.py

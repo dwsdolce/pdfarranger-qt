@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-03 03:39+0000\n"
+"POT-Creation-Date: 2026-11-03 20:57+0000\n"
 "PO-Revision-Date: 2023-06-08 10:00+0700\n"
 "Last-Translator: Abdul Munif Hanafi <amunifhanafi@gmail.com>\n"
 "Language: id\n"
@@ -64,8 +64,74 @@ msgstr "Salin"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
+msgid "Highlight text"
+msgstr "Sorot Teks"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Strikethrough text"
+msgstr "Coret Teks"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Add a comment to replace text"
+msgstr "Tambah komentar untuk mengganti teks"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Add note to text"
+msgstr "Tambah catatan ke teks"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
 msgid "Select All"
 msgstr "Pilih Semua"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Open Pop-Up Note"
+msgstr "Buka Catatan Sembul"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py pdfarranger_qt/mainwindow.py
+msgid "Reply"
+msgstr "Balas"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Delete Thread"
+msgstr "Hapus Utas"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py pdfarranger_qt/mainwindow.py pdfarranger_qt/reader.py
+#: pdfarranger_qt/toolstrip.py
+msgid "Delete"
+msgstr "Hapus"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py pdfarranger_qt/mainwindow.py
+msgid "Set status"
+msgstr "Atur Status"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py pdfarranger_qt/mainwindow.py
+msgid "Copy Text"
+msgstr "Salin Teks"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Enable Text Selection"
+msgstr "Aktifkan Pemilihan Teks"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Make current properties default"
+msgstr "Jadikan Properti Saat Ini sebagai Baku"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py pdfarranger_qt/mainwindow.py
+msgid "Properties..."
+msgstr "Properti..."
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
@@ -323,17 +389,17 @@ msgid "Gap"
 msgstr "Sela"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/dialogs.py
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/properties.py
 msgid "Appearance"
 msgstr "Tampilan"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/dialogs.py pdfarranger_qt/reader.py
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/notepanel.py pdfarranger_qt/reader.py
 msgid "Bold"
 msgstr "Tebal"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/dialogs.py pdfarranger_qt/reader.py
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/notepanel.py pdfarranger_qt/reader.py
 msgid "Italic"
 msgstr "Miring"
 
@@ -348,12 +414,14 @@ msgid "Size"
 msgstr "Ukuran"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/dialogs.py pdfarranger_qt/toolstrip.py
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/properties.py
+#: pdfarranger_qt/toolstrip.py
 msgid "Colour"
 msgstr "Warna"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/dialogs.py pdfarranger_qt/toolstrip.py
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/properties.py
+#: pdfarranger_qt/toolstrip.py
 msgid "Opacity"
 msgstr "Kelegapan"
 
@@ -580,7 +648,7 @@ msgid "Theme"
 msgstr "Tema"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/dialogs.py
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/properties.py
 msgid "General"
 msgstr "Umum"
 
@@ -1978,11 +2046,6 @@ msgstr "Ekspor Pilihan ke PDF Raster (_jpg)…"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
-msgid "Copy Text"
-msgstr "Salin Teks"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
 msgid "Copy _Image"
 msgstr "Salin _Gambar"
 
@@ -2110,6 +2173,26 @@ msgstr "Ubah Ukuran Tanda"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
+msgid "Set Status"
+msgstr "Atur Status"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-brace-format
+msgid "{state} set by {author}"
+msgstr "{state} oleh {author}"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Mark Properties"
+msgstr "Properti Tanda"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Edit Note"
+msgstr "Sunting Catatan"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
 msgid "Delete Mark"
 msgstr "Hapus Tanda"
 
@@ -2132,11 +2215,6 @@ msgstr "Ubah Tanda"
 #: pdfarranger_qt/mainwindow.py
 msgid "Delete Note"
 msgstr "Hapus Catatan"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
-msgid "Edit Note"
-msgstr "Sunting Catatan"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
@@ -2253,7 +2331,7 @@ msgid "Importing…"
 msgstr "Mengimpor…"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
+#: pdfarranger_qt/mainwindow.py pdfarranger_qt/notepanel.py
 msgid "Cancel"
 msgstr "Batal"
 
@@ -2401,12 +2479,6 @@ msgstr "Dokumen ini punya perubahan yang belum disimpan."
 #: pdfarranger_qt/mainwindow.py
 msgid "Save before continuing?"
 msgstr "Simpan sebelum melanjutkan?"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py pdfarranger_qt/reader.py
-#: pdfarranger_qt/toolstrip.py
-msgid "Delete"
-msgstr "Hapus"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
@@ -2656,6 +2728,31 @@ msgstr "Putar"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/markup.py
+msgid "None"
+msgstr "Tidak Ada"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Accepted"
+msgstr "Diterima"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Cancelled"
+msgstr "Dibatalkan"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Completed"
+msgstr "Selesai"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Rejected"
+msgstr "Ditolak"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
 msgid "Blue"
 msgstr "Biru"
 
@@ -2763,7 +2860,7 @@ msgstr "Hitam"
 msgid "Title"
 msgstr "Judul"
 
-#: pdfarranger_qt/metadata.py
+#: pdfarranger_qt/metadata.py pdfarranger_qt/properties.py
 msgid "Subject"
 msgstr "Subjek"
 
@@ -2783,13 +2880,44 @@ msgstr "Pencipta"
 msgid "Creator tool"
 msgstr "Alat pencipta"
 
-#: pdfarranger_qt/metadata.py
+#: pdfarranger_qt/metadata.py pdfarranger_qt/properties.py
 msgid "Created"
 msgstr "Dibuat"
 
 #: pdfarranger_qt/metadata.py
 msgid "Modified"
 msgstr "Diubah"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/notepanel.py pdfarranger_qt/tools.py
+msgid "Underline"
+msgstr "Garis bawah"
+
+#: pdfarranger_qt/notepanel.py
+msgid "Superscript"
+msgstr "Superskrip"
+
+#: pdfarranger_qt/notepanel.py
+msgid "Subscript"
+msgstr "Subskrip"
+
+#: pdfarranger_qt/notepanel.py
+msgid "Text Style"
+msgstr "Gaya Teks"
+
+#: pdfarranger_qt/notepanel.py
+msgid "Clear Formatting"
+msgstr "Hapus Format"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/notepanel.py
+msgid "Status"
+msgstr "Status"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/notepanel.py
+msgid "Post"
+msgstr "Kirim"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/nup.py
@@ -2820,6 +2948,34 @@ msgstr "9 halaman per lembar"
 #: pdfarranger_qt/nup.py
 msgid "16 pages per sheet"
 msgstr "16 halaman per lembar"
+
+#: pdfarranger_qt/properties.py
+msgid "Comment properties"
+msgstr "Properti Komentar"
+
+#: pdfarranger_qt/properties.py
+msgid "Review History"
+msgstr "Riwayat Tinjauan"
+
+#: pdfarranger_qt/properties.py
+msgid "Locked"
+msgstr "Terkunci"
+
+#: pdfarranger_qt/properties.py
+msgid "Make Properties Default"
+msgstr "Jadikan Properti Bawaan"
+
+#: pdfarranger_qt/properties.py
+msgid "Author"
+msgstr "Penulis"
+
+#: pdfarranger_qt/properties.py
+msgid "Date modified"
+msgstr "Tanggal diubah"
+
+#: pdfarranger_qt/properties.py
+msgid "The Review History lists any change of status for this comment."
+msgstr "Riwayat Tinjauan mencantumkan setiap perubahan status komentar ini."
 
 # machine translation, unreviewed
 #: pdfarranger_qt/reader.py
@@ -3051,11 +3207,6 @@ msgstr "Lampirkan berkas"
 #: pdfarranger_qt/tools.py
 msgid "Highlight"
 msgstr "Sorot"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/tools.py
-msgid "Underline"
-msgstr "Garis bawah"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/tools.py
@@ -3537,4 +3688,40 @@ msgstr "Tampilkan judul alih-alih nama berkas"
 # machine translation, unreviewed
 #~ msgid "Markup"
 #~ msgstr "Markah"
+
+#~ msgid "Jan"
+#~ msgstr ""
+
+#~ msgid "Feb"
+#~ msgstr ""
+
+#~ msgid "Mar"
+#~ msgstr ""
+
+#~ msgid "Apr"
+#~ msgstr ""
+
+#~ msgid "May"
+#~ msgstr ""
+
+#~ msgid "Jun"
+#~ msgstr ""
+
+#~ msgid "Jul"
+#~ msgstr ""
+
+#~ msgid "Aug"
+#~ msgstr ""
+
+#~ msgid "Sep"
+#~ msgstr ""
+
+#~ msgid "Oct"
+#~ msgstr ""
+
+#~ msgid "Nov"
+#~ msgstr ""
+
+#~ msgid "Dec"
+#~ msgstr ""
 

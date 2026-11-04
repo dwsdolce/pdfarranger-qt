@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pdfarranger - Korean\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-03 03:39+0000\n"
+"POT-Creation-Date: 2026-11-03 20:57+0000\n"
 "PO-Revision-Date: 2026-05-25 00:41+0900\n"
 "Last-Translator: VenusGirl <venusgirl@outlook.com>\n"
 "Language: ko\n"
@@ -62,8 +62,74 @@ msgstr "복사"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
+msgid "Highlight text"
+msgstr "텍스트 강조 표시"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Strikethrough text"
+msgstr "텍스트에 취소선"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Add a comment to replace text"
+msgstr "텍스트를 대체할 주석 추가"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Add note to text"
+msgstr "텍스트에 메모 추가"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
 msgid "Select All"
 msgstr "모두 선택"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Open Pop-Up Note"
+msgstr "팝업 메모 열기"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py pdfarranger_qt/mainwindow.py
+msgid "Reply"
+msgstr "답글"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Delete Thread"
+msgstr "스레드 삭제"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py pdfarranger_qt/mainwindow.py pdfarranger_qt/reader.py
+#: pdfarranger_qt/toolstrip.py
+msgid "Delete"
+msgstr "삭제"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py pdfarranger_qt/mainwindow.py
+msgid "Set status"
+msgstr "상태 설정"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py pdfarranger_qt/mainwindow.py
+msgid "Copy Text"
+msgstr "텍스트 복사"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Enable Text Selection"
+msgstr "텍스트 선택 사용"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Make current properties default"
+msgstr "현재 속성을 기본값으로 설정"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py pdfarranger_qt/mainwindow.py
+msgid "Properties..."
+msgstr "속성..."
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
@@ -303,17 +369,17 @@ msgid "Gap"
 msgstr "간격"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/dialogs.py
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/properties.py
 msgid "Appearance"
 msgstr "모양"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/dialogs.py pdfarranger_qt/reader.py
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/notepanel.py pdfarranger_qt/reader.py
 msgid "Bold"
 msgstr "굵게"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/dialogs.py pdfarranger_qt/reader.py
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/notepanel.py pdfarranger_qt/reader.py
 msgid "Italic"
 msgstr "기울임"
 
@@ -328,12 +394,14 @@ msgid "Size"
 msgstr "크기"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/dialogs.py pdfarranger_qt/toolstrip.py
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/properties.py
+#: pdfarranger_qt/toolstrip.py
 msgid "Colour"
 msgstr "색"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/dialogs.py pdfarranger_qt/toolstrip.py
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/properties.py
+#: pdfarranger_qt/toolstrip.py
 msgid "Opacity"
 msgstr "불투명도"
 
@@ -553,7 +621,7 @@ msgid "Theme"
 msgstr "테마"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/dialogs.py
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/properties.py
 msgid "General"
 msgstr "일반"
 
@@ -1819,11 +1887,6 @@ msgstr "선택 영역을 래스터화된 PDF (png)로 내보내기(_R)…"
 msgid "Export Selection to _Rasterized PDF (jpg)…"
 msgstr "선택 영역을 래스터화된 PDF (jpg)로 내보내기(_R)…"
 
-# machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
-msgid "Copy Text"
-msgstr "텍스트 복사"
-
 #: pdfarranger_qt/mainwindow.py
 msgid "Copy _Image"
 msgstr "이미지 복사(_I)"
@@ -1944,6 +2007,26 @@ msgstr "표시 크기 변경"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
+msgid "Set Status"
+msgstr "상태 설정"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-brace-format
+msgid "{state} set by {author}"
+msgstr "{state} — {author}"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Mark Properties"
+msgstr "표시 속성"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Edit Note"
+msgstr "메모 편집"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
 msgid "Delete Mark"
 msgstr "표시 삭제"
 
@@ -1966,11 +2049,6 @@ msgstr "표시 변경"
 #: pdfarranger_qt/mainwindow.py
 msgid "Delete Note"
 msgstr "메모 삭제"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
-msgid "Edit Note"
-msgstr "메모 편집"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
@@ -2084,7 +2162,7 @@ msgid "Importing…"
 msgstr "가져오는 중…"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
+#: pdfarranger_qt/mainwindow.py pdfarranger_qt/notepanel.py
 msgid "Cancel"
 msgstr "취소"
 
@@ -2223,12 +2301,6 @@ msgstr "이 문서에는 저장하지 않은 변경 사항이 있습니다."
 #: pdfarranger_qt/mainwindow.py
 msgid "Save before continuing?"
 msgstr "계속하기 전에 저장할까요?"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py pdfarranger_qt/reader.py
-#: pdfarranger_qt/toolstrip.py
-msgid "Delete"
-msgstr "삭제"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
@@ -2473,6 +2545,31 @@ msgstr "회전"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/markup.py
+msgid "None"
+msgstr "없음"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Accepted"
+msgstr "수락됨"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Cancelled"
+msgstr "취소됨"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Completed"
+msgstr "완료됨"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Rejected"
+msgstr "거부됨"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
 msgid "Blue"
 msgstr "파랑"
 
@@ -2580,7 +2677,7 @@ msgstr "검정"
 msgid "Title"
 msgstr "제목"
 
-#: pdfarranger_qt/metadata.py
+#: pdfarranger_qt/metadata.py pdfarranger_qt/properties.py
 msgid "Subject"
 msgstr "주제"
 
@@ -2600,13 +2697,44 @@ msgstr "만든이"
 msgid "Creator tool"
 msgstr "만든 도구"
 
-#: pdfarranger_qt/metadata.py
+#: pdfarranger_qt/metadata.py pdfarranger_qt/properties.py
 msgid "Created"
 msgstr "만든 날짜"
 
 #: pdfarranger_qt/metadata.py
 msgid "Modified"
 msgstr "수정 날짜"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/notepanel.py pdfarranger_qt/tools.py
+msgid "Underline"
+msgstr "밑줄"
+
+#: pdfarranger_qt/notepanel.py
+msgid "Superscript"
+msgstr "위 첨자"
+
+#: pdfarranger_qt/notepanel.py
+msgid "Subscript"
+msgstr "아래 첨자"
+
+#: pdfarranger_qt/notepanel.py
+msgid "Text Style"
+msgstr "텍스트 스타일"
+
+#: pdfarranger_qt/notepanel.py
+msgid "Clear Formatting"
+msgstr "서식 지우기"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/notepanel.py
+msgid "Status"
+msgstr "상태"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/notepanel.py
+msgid "Post"
+msgstr "게시"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/nup.py
@@ -2637,6 +2765,34 @@ msgstr "한 장당 9페이지"
 #: pdfarranger_qt/nup.py
 msgid "16 pages per sheet"
 msgstr "한 장당 16페이지"
+
+#: pdfarranger_qt/properties.py
+msgid "Comment properties"
+msgstr "주석 속성"
+
+#: pdfarranger_qt/properties.py
+msgid "Review History"
+msgstr "검토 기록"
+
+#: pdfarranger_qt/properties.py
+msgid "Locked"
+msgstr "잠김"
+
+#: pdfarranger_qt/properties.py
+msgid "Make Properties Default"
+msgstr "속성을 기본값으로 설정"
+
+#: pdfarranger_qt/properties.py
+msgid "Author"
+msgstr "작성자"
+
+#: pdfarranger_qt/properties.py
+msgid "Date modified"
+msgstr "수정한 날짜"
+
+#: pdfarranger_qt/properties.py
+msgid "The Review History lists any change of status for this comment."
+msgstr "검토 기록에는 이 주석의 모든 상태 변경이 표시됩니다."
 
 # machine translation, unreviewed
 #: pdfarranger_qt/reader.py
@@ -2868,11 +3024,6 @@ msgstr "파일 첨부"
 #: pdfarranger_qt/tools.py
 msgid "Highlight"
 msgstr "강조 표시"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/tools.py
-msgid "Underline"
-msgstr "밑줄"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/tools.py
@@ -3385,4 +3536,40 @@ msgstr "파일 이름 대신 제목 보이기"
 # machine translation, unreviewed
 #~ msgid "Markup"
 #~ msgstr "마크업"
+
+#~ msgid "Jan"
+#~ msgstr ""
+
+#~ msgid "Feb"
+#~ msgstr ""
+
+#~ msgid "Mar"
+#~ msgstr ""
+
+#~ msgid "Apr"
+#~ msgstr ""
+
+#~ msgid "May"
+#~ msgstr ""
+
+#~ msgid "Jun"
+#~ msgstr ""
+
+#~ msgid "Jul"
+#~ msgstr ""
+
+#~ msgid "Aug"
+#~ msgstr ""
+
+#~ msgid "Sep"
+#~ msgstr ""
+
+#~ msgid "Oct"
+#~ msgstr ""
+
+#~ msgid "Nov"
+#~ msgstr ""
+
+#~ msgid "Dec"
+#~ msgstr ""
 

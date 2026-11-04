@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-03 03:39+0000\n"
+"POT-Creation-Date: 2026-11-03 20:57+0000\n"
 "PO-Revision-Date: 2023-01-19 20:27+0100\n"
 "Last-Translator: alexgabi\n"
 "Language: eu\n"
@@ -67,8 +67,74 @@ msgstr "Kopiatu"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
+msgid "Highlight text"
+msgstr "Nabarmendu testua"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Strikethrough text"
+msgstr "Marratu testua"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Add a comment to replace text"
+msgstr "Gehitu iruzkina testua ordezteko"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Add note to text"
+msgstr "Gehitu oharra testuari"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
 msgid "Select All"
 msgstr "Hautatu guztiak"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Open Pop-Up Note"
+msgstr "Ireki ohar gainerakorra"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py pdfarranger_qt/mainwindow.py
+msgid "Reply"
+msgstr "Erantzun"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Delete Thread"
+msgstr "Ezabatu haria"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py pdfarranger_qt/mainwindow.py pdfarranger_qt/reader.py
+#: pdfarranger_qt/toolstrip.py
+msgid "Delete"
+msgstr "Ezabatu"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py pdfarranger_qt/mainwindow.py
+msgid "Set status"
+msgstr "Ezarri egoera"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py pdfarranger_qt/mainwindow.py
+msgid "Copy Text"
+msgstr "Kopiatu testua"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Enable Text Selection"
+msgstr "Gaitu testu-hautapena"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Make current properties default"
+msgstr "Ezarri uneko propietateak lehenetsi gisa"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py pdfarranger_qt/mainwindow.py
+msgid "Properties..."
+msgstr "Propietateak..."
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
@@ -324,17 +390,17 @@ msgid "Gap"
 msgstr "Tartea"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/dialogs.py
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/properties.py
 msgid "Appearance"
 msgstr "Itxura"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/dialogs.py pdfarranger_qt/reader.py
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/notepanel.py pdfarranger_qt/reader.py
 msgid "Bold"
 msgstr "Lodia"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/dialogs.py pdfarranger_qt/reader.py
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/notepanel.py pdfarranger_qt/reader.py
 msgid "Italic"
 msgstr "Etzana"
 
@@ -349,12 +415,14 @@ msgid "Size"
 msgstr "Tamaina"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/dialogs.py pdfarranger_qt/toolstrip.py
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/properties.py
+#: pdfarranger_qt/toolstrip.py
 msgid "Colour"
 msgstr "Kolorea"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/dialogs.py pdfarranger_qt/toolstrip.py
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/properties.py
+#: pdfarranger_qt/toolstrip.py
 msgid "Opacity"
 msgstr "Opakutasuna"
 
@@ -581,7 +649,7 @@ msgid "Theme"
 msgstr "Gaia"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/dialogs.py
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/properties.py
 msgid "General"
 msgstr "Orokorra"
 
@@ -1983,11 +2051,6 @@ msgstr "Esportatu hautapena PDF bilba_tura (png)…"
 msgid "Export Selection to _Rasterized PDF (jpg)…"
 msgstr "Esportatu hautapena PDF bilbatura (jp_g)…"
 
-# machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
-msgid "Copy Text"
-msgstr "Kopiatu testua"
-
 #: pdfarranger_qt/mainwindow.py
 msgid "Copy _Image"
 msgstr "Kopiatu _Irudia"
@@ -2115,6 +2178,26 @@ msgstr "Aldatu markaren tamaina"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
+msgid "Set Status"
+msgstr "Ezarri egoera"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-brace-format
+msgid "{state} set by {author}"
+msgstr "{state}: {author}"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Mark Properties"
+msgstr "Markaren propietateak"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Edit Note"
+msgstr "Editatu oharra"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
 msgid "Delete Mark"
 msgstr "Ezabatu marka"
 
@@ -2137,11 +2220,6 @@ msgstr "Aldatu marka"
 #: pdfarranger_qt/mainwindow.py
 msgid "Delete Note"
 msgstr "Ezabatu oharra"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
-msgid "Edit Note"
-msgstr "Editatu oharra"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
@@ -2257,7 +2335,7 @@ msgid "Importing…"
 msgstr "Inportatzen…"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
+#: pdfarranger_qt/mainwindow.py pdfarranger_qt/notepanel.py
 msgid "Cancel"
 msgstr "Utzi"
 
@@ -2405,12 +2483,6 @@ msgstr "Dokumentu honek gorde gabeko aldaketak ditu."
 #: pdfarranger_qt/mainwindow.py
 msgid "Save before continuing?"
 msgstr "Jarraitu aurretik gorde?"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py pdfarranger_qt/reader.py
-#: pdfarranger_qt/toolstrip.py
-msgid "Delete"
-msgstr "Ezabatu"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
@@ -2659,6 +2731,31 @@ msgstr "Biratu"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/markup.py
+msgid "None"
+msgstr "Bat ere ez"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Accepted"
+msgstr "Onartua"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Cancelled"
+msgstr "Bertan behera utzia"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Completed"
+msgstr "Osatua"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Rejected"
+msgstr "Baztertua"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
 msgid "Blue"
 msgstr "Urdina"
 
@@ -2766,7 +2863,7 @@ msgstr "Beltza"
 msgid "Title"
 msgstr "Izenburua"
 
-#: pdfarranger_qt/metadata.py
+#: pdfarranger_qt/metadata.py pdfarranger_qt/properties.py
 msgid "Subject"
 msgstr "Gaia"
 
@@ -2786,13 +2883,44 @@ msgstr "Sortzailea"
 msgid "Creator tool"
 msgstr "Sortzaile tresna"
 
-#: pdfarranger_qt/metadata.py
+#: pdfarranger_qt/metadata.py pdfarranger_qt/properties.py
 msgid "Created"
 msgstr "Sortua"
 
 #: pdfarranger_qt/metadata.py
 msgid "Modified"
 msgstr "Aldatua"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/notepanel.py pdfarranger_qt/tools.py
+msgid "Underline"
+msgstr "Azpimarra"
+
+#: pdfarranger_qt/notepanel.py
+msgid "Superscript"
+msgstr "Goi-indizea"
+
+#: pdfarranger_qt/notepanel.py
+msgid "Subscript"
+msgstr "Azpiindizea"
+
+#: pdfarranger_qt/notepanel.py
+msgid "Text Style"
+msgstr "Testu-estiloa"
+
+#: pdfarranger_qt/notepanel.py
+msgid "Clear Formatting"
+msgstr "Garbitu formatua"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/notepanel.py
+msgid "Status"
+msgstr "Egoera"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/notepanel.py
+msgid "Post"
+msgstr "Bidali"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/nup.py
@@ -2823,6 +2951,34 @@ msgstr "9 orrialde orriko"
 #: pdfarranger_qt/nup.py
 msgid "16 pages per sheet"
 msgstr "16 orrialde orriko"
+
+#: pdfarranger_qt/properties.py
+msgid "Comment properties"
+msgstr "Iruzkinaren propietateak"
+
+#: pdfarranger_qt/properties.py
+msgid "Review History"
+msgstr "Berrikuspen-historia"
+
+#: pdfarranger_qt/properties.py
+msgid "Locked"
+msgstr "Blokeatuta"
+
+#: pdfarranger_qt/properties.py
+msgid "Make Properties Default"
+msgstr "Ezarri propietateak lehenetsi gisa"
+
+#: pdfarranger_qt/properties.py
+msgid "Author"
+msgstr "Egilea"
+
+#: pdfarranger_qt/properties.py
+msgid "Date modified"
+msgstr "Aldaketa-data"
+
+#: pdfarranger_qt/properties.py
+msgid "The Review History lists any change of status for this comment."
+msgstr "Berrikuspen-historiak iruzkin honen egoera-aldaketa guztiak zerrendatzen ditu."
 
 # machine translation, unreviewed
 #: pdfarranger_qt/reader.py
@@ -3054,11 +3210,6 @@ msgstr "Erantsi fitxategia"
 #: pdfarranger_qt/tools.py
 msgid "Highlight"
 msgstr "Nabarmendu"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/tools.py
-msgid "Underline"
-msgstr "Azpimarra"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/tools.py
@@ -3541,4 +3692,40 @@ msgstr "Erakutsi izenburua fitxategi-izenaren ordez"
 # machine translation, unreviewed
 #~ msgid "Markup"
 #~ msgstr "Markaketa"
+
+#~ msgid "Jan"
+#~ msgstr ""
+
+#~ msgid "Feb"
+#~ msgstr ""
+
+#~ msgid "Mar"
+#~ msgstr ""
+
+#~ msgid "Apr"
+#~ msgstr ""
+
+#~ msgid "May"
+#~ msgstr ""
+
+#~ msgid "Jun"
+#~ msgstr ""
+
+#~ msgid "Jul"
+#~ msgstr ""
+
+#~ msgid "Aug"
+#~ msgstr ""
+
+#~ msgid "Sep"
+#~ msgstr ""
+
+#~ msgid "Oct"
+#~ msgstr ""
+
+#~ msgid "Nov"
+#~ msgstr ""
+
+#~ msgid "Dec"
+#~ msgstr ""
 

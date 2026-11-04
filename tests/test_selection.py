@@ -62,8 +62,26 @@ class SelectionCase(unittest.TestCase):
         self.win.set_read_mode(True)
         settle(timeout_ms=1600)
         self.canvas = self.win.reader.canvas
+        if not self.LOCKS_MATTER:
+            self.unlock_everything()
         self.canvas.verticalScrollBar().setValue(0)
         settle(timeout_ms=300)
+
+    #: Whether this case is about the lock. The fixture's first highlight is
+    #: locked -- the owner locked it in Reader so that honouring the flag
+    #: could be measured -- and a locked mark refuses the editor, the
+    #: colour, a resize and a delete. Every case about one of *those* needs
+    #: a mark it can work on, so by default the flag is cleared in the map
+    #: this session holds. **Nothing is written**: the file on disk still
+    #: says locked, and `TestALockedMarkInTheWindow` turns this off to read
+    #: it.
+    LOCKS_MATTER = False
+
+    def unlock_everything(self) -> None:
+        """Clear `locked` on the marks this session is showing."""
+        for number in range(1, self.canvas.page_count() + 1):
+            for mark in self.canvas._file_marks.visible(number):
+                mark.locked = False
 
     def tearDown(self):
         self.win.modified = False
@@ -433,10 +451,15 @@ class TestAMarkThatCarriesANote(SelectionCase):
                          len([m for m in chain if m.is_reply()]))
 
     def test_the_summary_says_who_and_what(self):
+        """**It speaks for the item the badge wears the colour of** -- the
+        latest reply on a thread, the mark's own note where there is none.
+        Naming the mark's author over a reply's words credits the wrong
+        person."""
         mark = self.a_noted_mark()
+        speaker = self.canvas.latest_reply(mark) or mark
         summary = self.canvas.note_summary(mark)
-        self.assertIn(mark.author, summary)
-        self.assertIn(mark.contents, summary)
+        self.assertIn(speaker.author, summary)
+        self.assertIn(speaker.contents, summary)
         _replies, current = self.canvas._file_marks.thread(mark)
         if current:
             self.assertIn("1", summary.splitlines()[0])
@@ -445,12 +468,25 @@ class TestAMarkThatCarriesANote(SelectionCase):
         return self.canvas.quad_on_screen(
             0, self.canvas.mark_boxes(mark)[0], scaled=False).center()
 
+    def a_mark_whose_window_is_closed(self):
+        """A noted mark that hovering should answer with the summary.
+
+        **The summary is for a closed window.** A mark whose `/Popup` the
+        file left open is answered with the thread itself instead, which is
+        the distinction the flag carries -- so a test about the summary has
+        to use a mark that is not in that state. The fixture's is open, so
+        it is closed here rather than hunting for another document.
+        """
+        mark = self.a_noted_mark()
+        mark.popup_open = False
+        return mark
+
     def test_pointing_at_the_mark_shows_the_note(self):
         """Over the whole mark, not only the badge, because that is where
         the pointer goes."""
         from PySide6.QtGui import QMouseEvent
 
-        mark = self.a_noted_mark()
+        mark = self.a_mark_whose_window_is_closed()
         self.send(QMouseEvent.Type.MouseMove, self.inside(mark))
         self.assertIsNotNone(self.canvas._note_panel)
         self.assertIs(self.canvas._note_panel[0], mark)
@@ -459,7 +495,7 @@ class TestAMarkThatCarriesANote(SelectionCase):
         from PySide6.QtCore import QPointF
         from PySide6.QtGui import QMouseEvent
 
-        mark = self.a_noted_mark()
+        mark = self.a_mark_whose_window_is_closed()
         at = self.inside(mark)
         self.send(QMouseEvent.Type.MouseMove, at)
         self.assertIsNotNone(self.canvas._note_panel)
@@ -484,7 +520,7 @@ class TestAMarkThatCarriesANote(SelectionCase):
         on screen."""
         from PySide6.QtGui import QImage, QMouseEvent
 
-        mark = self.a_noted_mark()
+        mark = self.a_mark_whose_window_is_closed()
         viewport = self.canvas.viewport()
 
         def painted():
@@ -762,22 +798,33 @@ class TestDeletingAMark(SelectionCase):
 
     def test_the_chain_is_walked_and_not_stepped(self):
         """A status change points at the link before it, so one step finds
-        the first and misses the rest."""
+        the first and misses the rest.
+
+        **Counted against one step, not against a number.** The fixture
+        grows as the owner marks up more of it, and a test that knows how
+        many links are in it is a test that breaks when he does.
+        """
         mark = self.a_reviewed_mark()
         chain = self.canvas.chain_of(mark)
-        self.assertEqual(len(chain), 4)
-        self.assertEqual(sum(1 for m in chain[1:] if m.is_status()), 2)
-        self.assertEqual(sum(1 for m in chain[1:] if m.is_reply()), 1)
+        direct = [m for m in chain[1:] if m.parent == mark.name]
+        self.assertGreater(len(chain) - 1, len(direct),
+                           "nothing in the fixture hangs off a link")
+        self.assertTrue(any(m.is_status() for m in chain[1:]))
+        self.assertTrue(any(m.is_reply() for m in chain[1:]))
 
     def test_every_link_is_recorded_as_deleted(self):
         from PySide6.QtWidgets import QMessageBox
 
         mark = self.a_reviewed_mark()
+        # Before the delete: the canvas forgets the chain as it goes, so
+        # asking afterwards asks about a mark with nothing left under it.
+        going = sorted(m.index for m in self.canvas.chain_of(mark))
         self.answering(QMessageBox.Yes)
         self.win.delete_mark(0, mark)
         settle(timeout_ms=400)
         recorded = self.win.model.mark_edits.for_page(self.uid())
-        self.assertEqual(len(recorded), 4)
+        self.assertEqual(sorted(recorded), going)
+        self.assertGreater(len(going), 1, "the fixture's mark has no chain")
         for index, edit in recorded.items():
             with self.subTest(index=index):
                 self.assertTrue(edit.get("deleted"))
@@ -873,3 +920,797 @@ class TestDeletingAMark(SelectionCase):
         self.assertEqual(
             len([m for m, mine in self.win.reader.canvas.marks_on(0)
                  if not mine]), before)
+
+
+class TestTheMenuOnAMark(SelectionCase):
+    """Right-clicking a mark offers the mark's menu, not the page's.
+
+    Five groups, as Reader has them, with two entries conditional: *Reply*
+    once there is a comment to reply to, and *Delete Thread* in place of
+    *Delete* once somebody has replied. Reader's three comment-panel
+    entries are left out, by the owner's decision, because there is no
+    panel here for them to open.
+    """
+
+    def document(self):
+        return NOTED
+
+    def a_mark_on(self, page: int):
+        found = [m for m, mine in self.canvas.marks_on(page) if not mine]
+        if not found:
+            self.skipTest(f"the fixture has no mark on page {page + 1}")
+        return found[0]
+
+    def menu_for(self, page: int, mark):
+        return self.canvas.mark_menu(page, mark)
+
+    @staticmethod
+    def entries(menu):
+        return [a.text() for a in menu.actions() if not a.isSeparator()]
+
+    @staticmethod
+    def enabled(menu, text):
+        for action in menu.actions():
+            if action.text() == text:
+                return action.isEnabled()
+        return None
+
+    def test_a_mark_with_replies_offers_delete_thread(self):
+        mark = self.a_mark_on(0)
+        chain = self.canvas.chain_of(mark)
+        if not any(m.is_reply() for m in chain[1:]):
+            self.skipTest("the fixture's first mark carries no reply")
+        entries = self.entries(self.menu_for(0, mark))
+        self.assertIn("Delete Thread", entries)
+        self.assertNotIn("Delete", entries)
+        self.assertIn("Reply", entries)
+
+    def test_a_mark_with_no_comment_offers_delete_and_no_reply(self):
+        for page in (1, 2):
+            mark = self.a_mark_on(page)
+            if mark.contents or self.canvas.chain_of(mark)[1:]:
+                continue
+            entries = self.entries(self.menu_for(page, mark))
+            self.assertIn("Delete", entries)
+            self.assertNotIn("Delete Thread", entries)
+            self.assertNotIn("Reply", entries)
+            return
+        self.skipTest("every mark in the fixture carries a comment")
+
+    def test_the_note_entry_is_there_either_way(self):
+        """It does not turn into Reply: it is how the note is reached
+        whether or not one has been written."""
+        for page in (0, 1):
+            mark = self.a_mark_on(page)
+            with self.subTest(page=page + 1):
+                self.assertEqual(
+                    self.entries(self.menu_for(page, mark))[0],
+                    "Open Pop-Up Note")
+
+    def test_the_comment_panel_entries_are_not_offered(self):
+        """There is no panel here and no pop-up windows to manage."""
+        entries = self.entries(self.menu_for(0, self.a_mark_on(0)))
+        for absent in ("Open comment panel", "Open all Pop-Ups",
+                       "Minimize Pop-Ups", "Hide comment panel"):
+            with self.subTest(entry=absent):
+                self.assertNotIn(absent, entries)
+
+    def test_what_acts_and_what_waits(self):
+        """Each entry is turned on by the step that builds it, which is how
+        the bar's buttons work too. **Nothing is waiting any more**: the
+        properties form was the last of them, and the menu carried its
+        entry disabled from the start until the step that built it."""
+        menu = self.menu_for(0, self.a_mark_on(0))
+        for text, acts in (("Delete Thread", True), ("Copy Text", True),
+                           ("Enable Text Selection", True),
+                           ("Make current properties default", True),
+                           ("Open Pop-Up Note", True), ("Reply", True),
+                           ("Set status", True), ("Properties...", True)):
+            with self.subTest(entry=text):
+                self.assertEqual(self.enabled(menu, text), acts)
+
+    def test_copy_text_takes_what_the_mark_covers(self):
+        """A line to each quadrilateral, and nothing from the line below:
+        a quadrilateral is a loose box whose foot overlaps it."""
+        mark = self.a_mark_on(0)
+        quads = len(self.canvas.mark_boxes(mark))
+        lines = self.canvas.mark_text(0, mark).splitlines()
+        self.assertTrue(lines, "the mark covers text but none was found")
+        self.assertLessEqual(len(lines), quads)
+
+    def test_a_mark_over_no_text_offers_no_copy(self):
+        from pdfarranger_qt import markup
+
+        drawn = markup.Annotation(markup.TEXT, 0, (10.0, 10.0, 30.0, 30.0))
+        menu = self.canvas.mark_menu(0, drawn)
+        self.assertFalse(self.enabled(menu, "Copy Text"))
+
+    def test_enabling_text_selection_gives_the_page_menu_back(self):
+        mark = self.a_mark_on(0)
+        at = self.canvas.quad_on_screen(
+            0, self.canvas.mark_boxes(mark)[0], scaled=False).center()
+        self.assertIn("Copy Text",
+                      self.entries(self.canvas.build_context_menu(at)))
+        self.canvas.let_text_through()
+        entries = self.entries(self.canvas.build_context_menu(at))
+        self.assertNotIn("Copy Text", entries)
+        self.assertIn("Select All", entries)
+
+    def test_it_lets_one_press_reach_the_text_and_no_more(self):
+        """Reader's lasts until the next selection, and so does this."""
+        from PySide6.QtGui import QMouseEvent
+
+        mark = self.a_mark_on(0)
+        at = self.canvas.quad_on_screen(
+            0, self.canvas.mark_boxes(mark)[0], scaled=False).center()
+        self.click(at)
+        settle(timeout_ms=150)
+        self.assertIsNotNone(self.canvas.selected_mark(),
+                             "a press on a mark should take the mark")
+        self.canvas.select_mark(None)
+        self.canvas.let_text_through()
+        self.send(QMouseEvent.Type.MouseButtonPress, at)
+        self.assertIsNone(self.canvas.selected_mark(),
+                          "the press was supposed to reach the text")
+        self.send(QMouseEvent.Type.MouseButtonRelease, at)
+        settle(timeout_ms=150)
+        self.click(at)
+        settle(timeout_ms=150)
+        self.assertIsNotNone(self.canvas.selected_mark(),
+                             "it outlasted the selection it allowed")
+
+    def test_making_it_the_default_arms_what_the_next_mark_gets(self):
+        from pdfarranger_qt import markup
+
+        mark = self.a_mark_on(0)
+        self.win.armed_colour = None
+        self.win.armed_opacity = None
+        self.win.mark_is_the_default(mark)
+        self.assertEqual(self.win.armed_colour, tuple(mark.colour))
+        self.assertAlmostEqual(self.win.armed_opacity,
+                               markup.solidity(mark), places=4)
+
+
+class TestTheNoteOnAMark(SelectionCase):
+    """*Open Pop-Up Note*: the thread, shown and edited over the page.
+
+    The note is the mark's own text and each reply is a mark of its own, so
+    the panel is a list -- and the one it opens on is always the note,
+    however many replies are under it, which is Reader's behaviour.
+    """
+
+    def document(self):
+        return NOTED
+
+    def uid(self):
+        return self.win.model.pages[0].uid
+
+    def a_noted_mark(self):
+        found = [m for m, mine in self.canvas.marks_on(0) if not mine]
+        self.assertTrue(found, "the page carries no mark")
+        mark = found[0]
+        if not mark.contents:
+            self.skipTest("the fixture's mark carries no note")
+        return mark
+
+    def test_the_entry_opens_the_thread(self):
+        mark = self.a_noted_mark()
+        menu = self.canvas.mark_menu(0, mark)
+        entry = next(a for a in menu.actions()
+                     if a.text() == "Open Pop-Up Note")
+        self.assertTrue(entry.isEnabled())
+        entry.trigger()
+        settle(timeout_ms=250)
+        self.assertTrue(self.win.note_panel.isVisible())
+
+    def test_it_lists_the_note_and_then_the_replies(self):
+        mark = self.a_noted_mark()
+        self.win.open_note(0, mark)
+        settle(timeout_ms=250)
+        items = self.win.note_panel.items()
+        replies = [m for m in self.canvas.chain_of(mark)[1:] if m.is_reply()]
+        self.assertEqual(len(items), 1 + len(replies))
+        self.assertEqual(items[0].text, mark.contents)
+        self.assertEqual(self.win.note_panel.selected(), 0)
+
+    def test_every_item_shows_its_own_status(self):
+        """**A reply carries a status of its own**, so the note's is the
+        note's: each row is the last link of that item's own chain."""
+        mark = self.a_noted_mark()
+        self.win.open_note(0, mark)
+        settle(timeout_ms=250)
+        items = self.win.note_panel.items()
+        thread = self.win._noted[1]
+        self.assertEqual(len(items), len(thread))
+        for item, one in zip(items, thread):
+            chain = self.canvas.status_chain(0, one)
+            want = str(chain[-1].state).lstrip("/") if chain else None
+            with self.subTest(length=len(item.text)):
+                self.assertEqual(item.status,
+                                 None if want == "None" else want)
+
+    def test_posting_the_note_records_it(self):
+        mark = self.a_noted_mark()
+        self.win.open_note(0, mark)
+        settle(timeout_ms=250)
+        self.win.note_panel._editor.setPlainText("Rewritten here")
+        self.win.note_panel._post_it()
+        settle(timeout_ms=500)
+        self.assertEqual(
+            self.win.model.mark_edits.of(self.uid(), mark.index).get("contents"),
+            "Rewritten here")
+
+    def test_a_reply_is_written_as_a_mark_of_its_own(self):
+        mark = self.a_noted_mark()
+        self.win.reply_to(0, mark)
+        settle(timeout_ms=300)
+        panel = self.win.note_panel
+        self.assertFalse(panel._post.isEnabled(), "an empty reply could post")
+        panel._editor.setPlainText("An answer")
+        panel._post_it()
+        settle(timeout_ms=600)
+        ours = [a for a in self.win.model.annotations.for_page(self.uid())
+                if a.irt]
+        self.assertEqual(len(ours), 1)
+        self.assertEqual(ours[0].irt, mark.name)
+        self.assertEqual(ours[0].contents, "An answer")
+
+    def test_an_abandoned_reply_writes_nothing(self):
+        mark = self.a_noted_mark()
+        self.win.reply_to(0, mark)
+        settle(timeout_ms=300)
+        self.win.note_panel._cancel()
+        settle(timeout_ms=200)
+        self.assertEqual(self.win.model.annotations.for_page(self.uid()), [])
+
+    def test_reading_a_note_does_not_change_the_document(self):
+        """Save is enabled by there being pages, never by this, so marking
+        the document dirty would do nothing but ask "save your changes?" on
+        close because somebody read a note."""
+        mark = self.a_noted_mark()
+        self.win.modified = False
+        self.win.open_note(0, mark)
+        settle(timeout_ms=300)
+        self.assertFalse(self.win.modified)
+
+    def test_the_cross_puts_the_window_away_and_it_stays_away(self):
+        """The pointer offers the window on a mark the file saved open, and
+        offered it again on every mouse move -- so the cross used to put it
+        away for exactly as long as it took to move the mouse."""
+        from PySide6.QtGui import QMouseEvent
+
+        mark = self.a_noted_mark()
+        if not mark.popup_open:
+            self.skipTest("the fixture's window was saved closed")
+        at = self.canvas.quad_on_screen(
+            0, self.canvas.mark_boxes(mark)[0], scaled=False).center()
+        self.send(QMouseEvent.Type.MouseMove, at)
+        settle(timeout_ms=400)
+        self.assertTrue(self.win.note_panel.isVisible())
+        self.win.note_panel._shut()
+        settle(timeout_ms=200)
+        self.send(QMouseEvent.Type.MouseMove, at)
+        settle(timeout_ms=400)
+        self.assertFalse(self.win.note_panel.isVisible(),
+                         "hovering brought a closed window straight back")
+        self.assertIsNotNone(self.canvas._note_panel,
+                             "and the summary did not take its place")
+
+    def test_the_entry_opens_a_window_that_was_closed_by_hand(self):
+        mark = self.a_noted_mark()
+        self.win.open_note(0, mark)
+        settle(timeout_ms=250)
+        self.win.note_panel._shut()
+        settle(timeout_ms=200)
+        self.assertTrue(self.canvas.note_window_is_shut(0, mark))
+        self.win.open_note(0, mark)
+        settle(timeout_ms=250)
+        self.assertTrue(self.win.note_panel.isVisible())
+        self.assertFalse(self.canvas.note_window_is_shut(0, mark))
+
+    def test_closing_the_window_does_not_step_the_form(self):
+        """**Hiding a widget that holds the focus runs Qt's own traversal**,
+        and this canvas reads that traversal as Tab -- so each close put the
+        caret in the next field of the form, and the one after that."""
+        mark = self.a_noted_mark()
+        for _again in range(3):
+            self.win.open_note(0, mark)
+            settle(timeout_ms=250)
+            self.win.note_panel._shut()
+            settle(timeout_ms=250)
+            self.assertIsNone(self.canvas.focused_field())
+
+    def test_a_click_on_the_window_does_not_reach_the_page(self):
+        """Qt passes a mouse event the widget ignores up to its parent, and
+        this window's parent is the page it floats over."""
+        from PySide6.QtCore import QPoint, QPointF, Qt
+        from PySide6.QtGui import QMouseEvent
+        from PySide6.QtWidgets import QApplication
+
+        mark = self.a_noted_mark()
+        self.win.open_note(0, mark)
+        settle(timeout_ms=300)
+        panel = self.win.note_panel
+        self.canvas.select_mark(None)
+        settle(timeout_ms=150)
+        blank = QPoint(panel.width() // 2, panel.height() - 30)
+        for kind in (QMouseEvent.Type.MouseButtonPress,
+                     QMouseEvent.Type.MouseButtonRelease):
+            QApplication.sendEvent(panel, QMouseEvent(
+                kind, QPointF(blank), QPointF(panel.mapToGlobal(blank)),
+                Qt.LeftButton, Qt.LeftButton, Qt.NoModifier))
+        settle(timeout_ms=250)
+        self.assertIsNone(self.canvas.selected_mark(),
+                          "the click went through the window")
+
+    def test_a_status_posts_what_is_in_the_box_first(self):
+        """**Acrobat treats setting a status as a post of whatever has been
+        typed**, not as a cancel. Taken from the owner, 2026-11-03."""
+        mark = self.a_noted_mark()
+        self.win.open_note(0, mark)
+        settle(timeout_ms=300)
+        self.win.note_panel._editor.setPlainText("Typed but never posted")
+        self.win.set_mark_status(0, mark, "Rejected")
+        settle(timeout_ms=700)
+        self.assertEqual(
+            self.win.model.mark_edits.of(self.uid(), mark.index).get("contents"),
+            "Typed but never posted")
+        self.assertEqual(self.win.note_panel.items()[0].status, "Rejected")
+
+    def test_reply_posts_what_is_in_the_box_first(self):
+        """The same rule, and the new blank is what stays open -- closing
+        the editor on what was posted must not close the one Reply made."""
+        mark = self.a_noted_mark()
+        self.win.open_note(0, mark)
+        settle(timeout_ms=300)
+        self.win.note_panel._editor.setPlainText("Kept on the way to a reply")
+        was = len(self.win.note_panel.items())
+        self.win.reply_to(0, mark)
+        settle(timeout_ms=700)
+        self.assertEqual(
+            self.win.model.mark_edits.of(self.uid(), mark.index).get("contents"),
+            "Kept on the way to a reply")
+        self.assertEqual(len(self.win.note_panel.items()), was + 1)
+        self.assertEqual(self.win.note_panel.selected(), was)
+        self.assertFalse(self.win.note_panel._post.isEnabled(),
+                         "the new reply is not empty")
+
+    def test_nothing_typed_posts_nothing(self):
+        """Otherwise every status change would record an edit to the text
+        that nobody made."""
+        mark = self.a_noted_mark()
+        self.win.open_note(0, mark)
+        settle(timeout_ms=300)
+        self.win.set_mark_status(0, mark, "Rejected")
+        settle(timeout_ms=700)
+        self.assertNotIn(
+            "contents", self.win.model.mark_edits.of(self.uid(), mark.index))
+
+    def test_the_window_offers_no_entry_to_open_itself(self):
+        """Inside the thread there is nothing to open: it is already
+        showing, and Acrobat leaves the entry out there too."""
+        mark = self.a_noted_mark()
+        inside = [a.text() for a
+                  in self.canvas.mark_menu(0, mark, inside=True).actions()]
+        self.assertNotIn("Open Pop-Up Note", inside)
+        self.assertIn("Open Pop-Up Note",
+                      [a.text() for a in self.canvas.mark_menu(0, mark).actions()])
+        self.assertIn("Delete Thread", inside)
+
+    def test_the_summary_draws_what_the_file_styled(self):
+        """Painted text, not a widget, so showing the styling means drawing
+        it through a `QTextDocument`.
+
+        **The same words twice, with the styling and without.** Rendering
+        only the styled one measures the font, not the drawing: the
+        comparison is the test.
+        """
+        from PySide6.QtCore import QPointF
+        from PySide6.QtGui import QColor, QImage
+
+        from pdfarranger_qt import markup
+
+        mark = self.a_noted_mark()
+        # The item the panel speaks for, which is the latest reply on a
+        # thread. Blanking the mark's own rich text proves nothing when
+        # what is drawn belongs to a reply.
+        target = self.canvas.latest_reply(mark) or mark
+        if not markup.rich_to_html(getattr(target, "rich", "")):
+            self.skipTest(
+                "the summary speaks for the thread's *last* reply, and that "
+                "one carries no styling in this fixture -- style it in "
+                "Reader and this runs")
+        keep = target.rich
+        self.addCleanup(setattr, target, "rich", keep)
+
+        def ink(_whatever):
+            self.canvas._show_note_panel(None, QPointF(0, 0))
+            settle(timeout_ms=150)
+            self.canvas._show_note_panel(mark, QPointF(60, 60), 0)
+            settle(timeout_ms=200)
+            image = QImage(self.canvas.viewport().size(), QImage.Format_ARGB32)
+            image.fill(0)
+            self.canvas.viewport().render(image)
+            return sum(1 for y in range(60, 240) for x in range(60, 360)
+                       if QColor(image.pixel(x, y)).lightness() < 110)
+
+        with_style = ink(target)
+        target.rich = ""
+        self.assertGreater(with_style, ink(target),
+                           "the summary drew the same ink either way")
+
+    def test_closing_the_document_takes_the_window_with_it(self):
+        """The window belongs to the mark it was opened on, and closing the
+        document leaves no mark. It used to stay floating over an empty
+        reader, still offering to post a reply to something that was no
+        longer there."""
+        mark = self.a_noted_mark()
+        self.win.open_note(0, mark)
+        settle(timeout_ms=250)
+        self.assertTrue(self.win.note_panel.isVisible())
+        self.win.modified = False
+        self.win.close_document()
+        settle(timeout_ms=250)
+        self.assertFalse(self.win.note_panel.isVisible())
+
+    def test_an_open_window_in_the_file_shows_on_hover(self):
+        """`/Popup /Open` says the window was showing when the file was
+        saved. Hovering such a mark gives the thread; hovering one whose
+        window is closed gives the one-line summary instead."""
+        from PySide6.QtGui import QMouseEvent
+
+        mark = self.a_noted_mark()
+        if not mark.popup_open:
+            self.skipTest("the fixture's window was saved closed")
+        at = self.canvas.quad_on_screen(
+            0, self.canvas.mark_boxes(mark)[0], scaled=False).center()
+        self.send(QMouseEvent.Type.MouseMove, at)
+        settle(timeout_ms=400)
+        self.assertTrue(self.win.note_panel.isVisible())
+
+    def test_hovering_again_does_not_throw_away_what_is_being_typed(self):
+        """The hover asks for the thread on every mouse move, so the window
+        has to notice it is already showing the one being asked for."""
+        from PySide6.QtGui import QMouseEvent
+
+        mark = self.a_noted_mark()
+        if not mark.popup_open:
+            self.skipTest("the fixture's window was saved closed")
+        at = self.canvas.quad_on_screen(
+            0, self.canvas.mark_boxes(mark)[0], scaled=False).center()
+        self.send(QMouseEvent.Type.MouseMove, at)
+        settle(timeout_ms=300)
+        self.win.note_panel._editor.setPlainText("half a thought")
+        for _again in range(3):
+            self.send(QMouseEvent.Type.MouseMove, at)
+        settle(timeout_ms=200)
+        self.assertEqual(self.win.note_panel._editor.toPlainText(),
+                         "half a thought")
+
+    def test_moving_the_window_does_change_it(self):
+        """The other side of the same line: this writes a new `/Popup
+        /Rect`, and reading does not write anything."""
+        from PySide6.QtCore import QRect
+
+        mark = self.a_noted_mark()
+        self.win.open_note(0, mark)
+        settle(timeout_ms=300)
+        self.win.modified = False
+        panel = self.win.note_panel
+        panel._sized = True
+        panel.setGeometry(QRect(60, 70, 320, 240))
+        settle(timeout_ms=300)
+        self.assertTrue(self.win.modified)
+        self.assertIn(
+            "popup", self.win.model.mark_edits.of(self.uid(), mark.index))
+
+
+class TestSettingTheStatus(SelectionCase):
+    """*Set status*: five states, the current one ticked."""
+
+    def document(self):
+        return NOTED
+
+    def a_mark(self):
+        found = [m for m, mine in self.canvas.marks_on(0) if not mine]
+        self.assertTrue(found, "the page carries no mark")
+        return found[0]
+
+    def submenu(self, mark):
+        menu = self.canvas.mark_menu(0, mark)
+        return next(a.menu() for a in menu.actions()
+                    if a.text() == "Set status")
+
+    def test_it_offers_the_five_readers_offers(self):
+        from pdfarranger_qt import markup
+
+        entries = [a.text() for a in self.submenu(self.a_mark()).actions()]
+        self.assertEqual(entries, list(markup.STATUSES))
+
+    def test_the_tick_is_on_the_current_one(self):
+        """The *last* link in the chain, not the only one: a mark accepted
+        and then completed has one status, Completed."""
+        mark = self.a_mark()
+        ticked = [a.text() for a in self.submenu(mark).actions()
+                  if a.isChecked()]
+        self.assertEqual(ticked, [self.canvas.status_of(mark)])
+
+    def test_choosing_one_appends_a_link_to_the_chain(self):
+        mark = self.a_mark()
+        before = self.canvas.status_of(mark)
+        self.assertNotEqual(before, "Rejected")
+        self.win.set_mark_status(0, mark, "Rejected")
+        settle(timeout_ms=600)
+        uid = self.win.model.pages[0].uid
+        ours = [a for a in self.win.model.annotations.for_page(uid) if a.state]
+        self.assertEqual([a.state for a in ours], ["Rejected"])
+
+    def test_it_answers_the_end_of_the_chain(self):
+        mark = self.a_mark()
+        chain = [m for m in self.canvas.chain_of(mark)[1:] if m.is_status()]
+        if not chain:
+            self.skipTest("the fixture's mark has no status chain")
+        self.win.set_mark_status(0, mark, "Rejected")
+        settle(timeout_ms=600)
+        uid = self.win.model.pages[0].uid
+        ours = [a for a in self.win.model.annotations.for_page(uid) if a.state]
+        self.assertEqual(ours[0].irt, chain[-1].name)
+
+    def test_setting_the_one_it_already_has_writes_nothing(self):
+        mark = self.a_mark()
+        self.win.set_mark_status(0, mark, self.canvas.status_of(mark))
+        settle(timeout_ms=400)
+        uid = self.win.model.pages[0].uid
+        self.assertEqual(
+            [a for a in self.win.model.annotations.for_page(uid) if a.state],
+            [])
+
+
+class TestAStatusBeforeTheFileIsWritten(SelectionCase):
+    """A status set here is an annotation in the model until the document is
+    saved. **Read from the file alone, nothing you just did is there** -- the
+    tick, the thread and the guard against setting the status it already has
+    were all reading past it."""
+
+    def document(self):
+        return NOTED
+
+    def a_mark(self):
+        found = [m for m, mine in self.canvas.marks_on(0) if not mine]
+        self.assertTrue(found, "the page carries no mark")
+        return found[0]
+
+    def ticked(self, mark):
+        menu = self.canvas.mark_menu(0, mark)
+        sub = next(a.menu() for a in menu.actions() if a.text() == "Set status")
+        return [a.text() for a in sub.actions() if a.isChecked()]
+
+    def test_the_tick_follows_what_was_just_set(self):
+        mark = self.a_mark()
+        self.win.set_mark_status(0, mark, "Rejected")
+        settle(timeout_ms=600)
+        self.assertEqual(self.ticked(mark), ["Rejected"])
+
+    def test_the_thread_follows_it_while_it_is_open(self):
+        """Otherwise the only way to see what you set is to close the window
+        and open it again."""
+        mark = self.a_mark()
+        self.win.open_note(0, mark)
+        settle(timeout_ms=300)
+        self.win.set_mark_status(0, mark, "Rejected")
+        settle(timeout_ms=600)
+        self.assertEqual(self.win.note_panel.items()[0].status, "Rejected")
+
+    def test_a_status_of_none_leaves_no_status_row(self):
+        """It is a link in the history like any other -- that is how a status
+        is taken back -- but the thread says what the status *is*."""
+        from PySide6.QtWidgets import QLabel
+
+        def rows():
+            return len([lab for lab in self.win.note_panel.findChildren(QLabel)
+                        if lab.property("role") == "status"])
+
+        mark = self.a_mark()
+        self.win.open_note(0, mark)
+        settle(timeout_ms=300)
+        self.assertIsNotNone(self.win.note_panel.items()[0].status,
+                             "the fixture's note has no status to take back")
+        before = rows()
+        self.win.set_mark_status(0, mark, "None")
+        settle(timeout_ms=600)
+        self.assertIsNone(self.win.note_panel.items()[0].status)
+        self.assertEqual(rows(), before - 1)
+
+    def test_a_reply_carries_a_status_of_its_own(self):
+        """Nothing in the format makes this special: a reply is a mark, and
+        a status points at whatever it answers."""
+        mark = self.a_mark()
+        self.win.open_note(0, mark)
+        settle(timeout_ms=300)
+        replies = self.win._replies_to(0, mark)
+        if not replies:
+            self.skipTest("the fixture's mark has no reply")
+        self.win.set_mark_status(0, replies[0], "Cancelled")
+        settle(timeout_ms=600)
+        items = self.win.note_panel.items()
+        self.assertEqual(items[1].status, "Cancelled")
+        self.assertNotEqual(items[0].status, "Cancelled",
+                            "it was set on the note instead")
+
+    def test_the_summary_counts_a_reply_written_here(self):
+        """Counting the file's alone said one reply at a thread of two until
+        the document had been written out and read back."""
+        mark = self.a_mark()
+        was = len(self.win._replies_to(0, mark))
+        self.win._write_reply(0, mark, "Said here")
+        settle(timeout_ms=600)
+        self.assertIn("%d Replies" % (was + 1),
+                      self.canvas.note_summary(mark, 0))
+
+
+class TestTheMenusInsideTheWindow(SelectionCase):
+    """The first item is the comment, so its line gives the mark's menu.
+    A reply's line gives a menu of its own."""
+
+    def document(self):
+        return NOTED
+
+    def setUp(self):
+        super().setUp()
+        found = [m for m, mine in self.canvas.marks_on(0) if not mine]
+        self.assertTrue(found, "the page carries no mark")
+        self.mark = found[0]
+        self.win.open_note(0, self.mark)
+        settle(timeout_ms=300)
+        if len(self.win.note_panel.items()) < 2:
+            self.skipTest("the fixture's mark has no reply")
+
+    def entries(self, which):
+        self.win.note_menu(which, self.win.note_panel.mapToGlobal(
+            self.win.note_panel.rect().center()))
+        return which
+
+    def test_a_replys_line_offers_reply_delete_and_status(self):
+        menu = self.win._reply_menu(0, self.win._noted[1][1])
+        names = [a.text() for a in menu.actions() if not a.isSeparator()]
+        self.assertEqual(names[:3], ["Reply", "Delete", "Set status"])
+        self.assertIn("Properties...", names)
+        self.assertNotIn("Delete Thread", names)
+
+    def test_the_status_submenu_ticks_the_replys_own(self):
+        reply = self.win._noted[1][1]
+        self.win.set_mark_status(0, reply, "Cancelled")
+        settle(timeout_ms=600)
+        menu = self.win._reply_menu(0, reply)
+        sub = next(a.menu() for a in menu.actions() if a.text() == "Set status")
+        self.assertEqual([a.text() for a in sub.actions() if a.isChecked()],
+                         ["Cancelled"])
+
+    def test_deleting_a_reply_takes_its_line_and_leaves_the_rest(self):
+        was = len(self.win.note_panel.items())
+        self.win.delete_mark(0, self.win._noted[1][1])
+        settle(timeout_ms=700)
+        self.assertEqual(len(self.win.note_panel.items()), was - 1)
+        self.assertTrue(self.win.note_panel.isVisible())
+
+    def test_deleting_the_comment_takes_the_window_with_it(self):
+        """There is no thread left to show. The confirmation is answered
+        because the mark has a reply -- that is what it warns about."""
+        from PySide6.QtWidgets import QMessageBox
+
+        original = QMessageBox.question
+        QMessageBox.question = staticmethod(lambda *a, **k: QMessageBox.Yes)
+        self.addCleanup(setattr, QMessageBox, "question", original)
+        self.win.delete_mark(0, self.mark)
+        settle(timeout_ms=700)
+        self.assertFalse(self.win.note_panel.isVisible())
+
+
+class TestALockedMarkInTheWindow(SelectionCase):
+    """A lock is `/F` bit 8 on one annotation, so it is per item: a locked
+    mark leaves its replies editable and a locked reply sits in a thread
+    whose other items are not.
+
+    What it refuses was taken from the owner against Acrobat on 2026-11-03:
+    the editor, the colour, the opacity, a resize and a delete. Replying to
+    a locked mark and setting a status on one are both still allowed --
+    each is a *new* annotation, which the lock does not reach.
+    """
+
+    LOCKS_MATTER = True
+
+    def document(self):
+        return NOTED
+
+    def uid(self):
+        return self.win.model.pages[0].uid
+
+    def a_locked_mark(self):
+        found = [m for m, mine in self.canvas.marks_on(0)
+                 if not mine and m.locked]
+        if not found:
+            self.skipTest("nothing on the fixture's first page is locked")
+        return found[0]
+
+    def test_it_is_still_selected_and_outlined(self):
+        """Only its ends are not draggable. A mark that cannot be picked up
+        at all would be a different kind of object."""
+        mark = self.a_locked_mark()
+        self.canvas.select_mark((0, mark))
+        settle(timeout_ms=250)
+        self.assertTrue(self.canvas.selection_on_screen())
+        self.assertEqual(self.canvas.grips(), [],
+                         "a locked mark offered handles to resize it by")
+
+    def test_the_bar_greys_what_would_change_it(self):
+        mark = self.a_locked_mark()
+        self.canvas.select_mark((0, mark))
+        settle(timeout_ms=250)
+        self.assertFalse(self.win.mark_buttons.buttons["colour"].isEnabled())
+        self.assertFalse(self.win.mark_buttons.buttons["delete"].isEnabled())
+
+    def test_a_colour_a_resize_and_a_delete_are_all_refused(self):
+        """Refused where they are recorded, not only where they are
+        offered: the Delete key reaches one of these too."""
+        mark = self.a_locked_mark()
+        self.canvas.select_mark((0, mark))
+        settle(timeout_ms=250)
+        self.win.modified = False
+        self.win.mark_recoloured((1.0, 0.0, 0.0))
+        self.win.mark_resized(0, mark, [(10.0, 10.0, 90.0, 30.0)])
+        self.win.delete_mark(0, mark)
+        settle(timeout_ms=400)
+        self.assertFalse(self.win.modified)
+        self.assertEqual(self.win.model.mark_edits.for_page(self.uid()), {})
+
+    def test_delete_is_shown_and_greyed_rather_than_left_out(self):
+        """Acrobat leaves it out; the owner prefers to see that it exists
+        and is refused."""
+        mark = self.a_locked_mark()
+        greyed = [a for a in self.canvas.mark_menu(0, mark).actions()
+                  if a.text() in ("Delete", "Delete Thread")]
+        self.assertTrue(greyed)
+        self.assertFalse(greyed[0].isEnabled())
+
+    def test_replying_and_setting_a_status_are_still_allowed(self):
+        """Each is a new annotation pointing at the locked one, which the
+        lock does not reach."""
+        mark = self.a_locked_mark()
+        self.win.reply_to(0, mark)
+        settle(timeout_ms=400)
+        self.win.note_panel._editor.setPlainText("An answer to a locked mark")
+        self.win.note_panel._post_it()
+        settle(timeout_ms=500)
+        self.win.set_mark_status(0, mark, "Rejected")
+        settle(timeout_ms=500)
+        ours = self.win.model.annotations.for_page(self.uid())
+        self.assertTrue(any(a.irt and not a.state for a in ours), "no reply")
+        self.assertTrue(any(a.state == "Rejected" for a in ours), "no status")
+
+    def test_the_form_opens_on_it_because_that_is_where_the_lock_comes_off(self):
+        mark = self.a_locked_mark()
+        entry = [a for a in self.canvas.mark_menu(0, mark).actions()
+                 if a.text() == "Properties..."]
+        self.assertTrue(entry)
+        self.assertTrue(entry[0].isEnabled())
+
+    def test_the_form_writes_the_three_keys_and_the_flag(self):
+        from pdfarranger_qt.properties import MarkProperties
+
+        mark = self.a_locked_mark()
+        original = MarkProperties.exec
+
+        def answer(form):
+            form.locked.setChecked(False)
+            form.author.setText("Someone Else")
+            form.subject.setText("A subject")
+            return MarkProperties.DialogCode.Accepted
+
+        MarkProperties.exec = answer
+        self.addCleanup(setattr, MarkProperties, "exec", original)
+        self.win.show_mark_properties(0, mark)
+        settle(timeout_ms=500)
+        self.assertEqual(
+            self.win.model.mark_edits.of(self.uid(), mark.index),
+            {"author": "Someone Else", "subject": "A subject",
+             "locked": False})

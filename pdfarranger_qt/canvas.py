@@ -71,6 +71,7 @@ from PySide6.QtGui import (
     QPen,
     QPolygonF,
     QTextCursor,
+    QTextDocument,
 )
 from PySide6.QtPdf import (
     QPdfDocument,
@@ -1171,6 +1172,14 @@ class PageCanvas(QAbstractScrollArea):
         #: drops it when the document does, exactly as the search hits are
         #: dropped for the same reason.
         self._file_marks = markup.MarkMap()
+        #: One click's worth of reaching the text a mark covers. See
+        #: `let_text_through`; cleared by the selection it allows.
+        self._text_through = False
+        #: The marks whose pop-up window has been closed by hand, by their
+        #: `/NM`. The file says a window was open when it was saved and the
+        #: pointer honours that, so without this the cross put a window
+        #: away for exactly as long as it took to move the mouse.
+        self._shut_notes = set()
         #: The three buttons shown beside a selected mark. Built by the
         #: window, as the tool strip is, and placed from here because only
         #: the canvas knows where the mark has got to after a scroll.
@@ -2768,6 +2777,13 @@ class PageCanvas(QAbstractScrollArea):
         three lines would cover the margins and the gaps between them, and a
         highlight that does that is worse than none.
 
+        **Measured by the text layer, not by the selection's own bounds.**
+        Qt reports the glyphs' ink, which runs 2 to 6 points short of what a
+        reader draws a highlight over; the loose boxes -- the font's ascent
+        and descent -- are what Acrobat uses. Going through the same call
+        the drag goes through also means a mark made from the menu is
+        identical to one dragged out with the tool, rather than nearly so.
+
         The page is the first one selected. A selection running across a page
         break gives its marks to that page only, which is a limitation worth
         stating rather than silently marking half of it.
@@ -2779,16 +2795,44 @@ class PageCanvas(QAbstractScrollArea):
         height = self._layout.page_height(page)
         if box is None or height is None:
             return None
-        quads = []
-        for polygon in self._selection[page].bounds():
-            rect = polygon.boundingRect()
-            if rect.width() <= 0 or rect.height() <= 0:
-                continue
-            shown = (rect.left(), height - rect.bottom(),
-                     rect.right(), height - rect.top())
-            quads.append(self.to_source(
-                page, forms_module.from_displayed(shown, box)))
-        return (page, quads) if quads else None
+        runs = [polygon.boundingRect()
+                for polygon in self._selection[page].bounds()]
+        runs = [r for r in runs if r.width() > 0 and r.height() > 0]
+        if not runs:
+            return None
+
+        def end(x: float, run) -> tuple:
+            # Along the middle of the line, for the reason `mark_text` is: a
+            # box's foot overlaps the line beneath it.
+            middle = height - run.center().y()
+            left, bottom, _right, _top = forms_module.from_displayed(
+                (x, middle, x, middle), box)
+            return (left, bottom)
+
+        try:
+            quads = tuple(self._glyphs.quads(
+                page, end(runs[0].left(), runs[0]),
+                end(runs[-1].right(), runs[-1])))
+        except Exception:  # noqa: BLE001 - a page with no text layer marks nothing
+            return None
+        if not quads:
+            return None
+        return (page, [self.to_source(page, quad) for quad in quads])
+
+    def mark_the_selection(self, tool: str) -> bool:
+        """Mark up the selected text with ``tool``. False if there is none.
+
+        The selection goes once it has been marked: what was selected is now
+        a mark, and leaving the blue over the top of it says there are two
+        things there.
+        """
+        found = self.selection_quads()
+        if found is None:
+            return False
+        page, quads = found
+        self.mark_drawn.emit(tool, page, list(quads))
+        self.clear_selection()
+        return True
 
     def focused_field(self):
         """The field Tab has reached, or None."""
@@ -3102,6 +3146,8 @@ class PageCanvas(QAbstractScrollArea):
         """Forget the document's own marks and anything selected among them."""
         self._file_marks = markup.MarkMap()
         self._hovered = None
+        # Which windows are shut is about the document that had them.
+        self._shut_notes = set()
         self.select_mark(None)
 
     def selection_on_screen(self):
@@ -3412,18 +3458,30 @@ class PageCanvas(QAbstractScrollArea):
         # the run and the end at the bottom right, so both lie on the same
         # north-west to south-east diagonal.
         over_grip = self.grip_at(position) is not None
-        over_mark = over_grip or self.mark_at(position) is not None
+        over_mark = not self._text_through and (
+            over_grip or self.mark_at(position) is not None)
         if over_mark and not (event.buttons() & Qt.LeftButton):
             self.viewport().setCursor(
                 Qt.SizeFDiagCursor if over_grip else Qt.ArrowCursor)
 
         carried = self.note_badge_at(position) or self._marked_note_at(position)
         if carried is not None:
+            if getattr(carried[1], "popup_open", False):
+                # The file says this mark's window was showing when it was
+                # saved, so hovering gives the thread rather than a summary
+                # of it -- which is the whole of what the flag is used for
+                # here. The window decides whether it is already showing.
+                found = self.mark_at(position)
+                if found is not None and not self.note_window_is_shut(*found):
+                    self._show_note_panel(None, position)
+                    self.note_wanted.emit(*found)
+                    super().mouseMoveEvent(event)
+                    return
             # Drawn, not a tooltip. Reader puts a panel at the pointer and
             # leaves it there; a tooltip waits for the pointer to settle,
             # vanishes on its own and is easy to miss entirely -- which is
             # what it did.
-            self._show_note_panel(carried[1], position)
+            self._show_note_panel(carried[1], position, carried[0])
             super().mouseMoveEvent(event)
             return
         self._show_note_panel(None, position)
@@ -3549,7 +3607,13 @@ class PageCanvas(QAbstractScrollArea):
             # over a mark plausibly means the page beneath it: a rectangle or
             # an arrow is drawn across whatever happens to be there, so that
             # branch above has already taken the press.
-            picked = self.mark_at(position)
+            if self._text_through:
+                # Spent by the press it was asked for, whether or not that
+                # press goes on to select anything: "the next click", not
+                # "the next click that lands on a word".
+                self._text_through, picked = False, None
+            else:
+                picked = self.mark_at(position)
             self.select_mark(picked)
             if picked is not None:
                 event.accept()
@@ -3715,8 +3779,23 @@ class PageCanvas(QAbstractScrollArea):
         selection because the pointer left the paper is the annoying half of
         that rule without the useful half.
         """
-        menu = QMenu(self)
+        found = self.mark_at(position)
+        if found is not None and not self._text_through and not (
+                self._point_in_live_selection(position)):
+            # A mark's own menu, instead of the page's and not above it:
+            # Reader replaces the text menu with this one, and *Enable Text
+            # Selection* is how the text menu is reached underneath.
+            #
+            # Unless there is text selected here. Once *Enable Text
+            # Selection* has let a selection be made over a mark, a click
+            # inside that selection is about the selection -- which is what
+            # Reader shows, and what the first version of this got wrong by
+            # ending the pass-through at the press that used it: by the time
+            # the words were selected the mark had already taken the menu
+            # back.
+            return self.mark_menu(*found)
 
+        menu = QMenu(self)
         link = self.link_at(position)
         if link is not None:
             url = link.url()
@@ -3743,6 +3822,27 @@ class PageCanvas(QAbstractScrollArea):
         copy.setEnabled(self.has_selection())
         copy.triggered.connect(self.copy)
 
+        if self.has_selection():
+            # What is useful to do with words you have just selected,
+            # wherever they are: this is the menu for any selection, not
+            # only one made over a mark. Reader's others -- editing the
+            # text, styling it, redacting it -- have nothing behind them
+            # and are left out.
+            menu.addSeparator()
+            for tool, label in ((self.HIGHLIGHT, _("Highlight text")),
+                                (self.STRIKEOUT, _("Strikethrough text"))):
+                act = menu.addAction(label)
+                act.triggered.connect(
+                    lambda _checked=False, t=tool: self.mark_the_selection(t))
+            # Drawn and refused, waiting for the note. Both make a comment
+            # out of a selection and neither can be built before there is
+            # one: replacing text is a strikeout carrying what should be
+            # there instead, and a note on text is the note itself.
+            for label in (_("Add a comment to replace text"),
+                          _("Add note to text")):
+                menu.addAction(label).setEnabled(False)
+            menu.addSeparator()
+
         select_all = menu.addAction(_("Select All"))
         select_all.setShortcut(QKeySequence.SelectAll)
         select_all.setEnabled(self._document is not None and bool(self.page_count()))
@@ -3750,6 +3850,213 @@ class PageCanvas(QAbstractScrollArea):
         select_all.triggered.connect(lambda: self.select_all_on(page))
 
         return menu
+
+    def mark_menu(self, index: int, mark, inside: bool = False):
+        """What a right-click on a mark offers.
+
+        Five groups, as Reader has them, with two things conditional and
+        nothing else: **Reply** appears once there is a comment to reply to,
+        and **Delete** becomes **Delete Thread** once somebody has replied.
+        A note's own entry is above both and is there either way -- it is
+        how the note is reached whether or not one has been written.
+
+        Reader's three comment-panel entries are deliberately absent. There
+        is no panel here and no pop-up windows to manage, and an entry for
+        something with nothing behind it is not the same as one waiting for
+        the step that turns it on.
+        """
+        menu = QMenu(self)
+        children = self.chain_of(mark)[1:]
+        has_note = bool(getattr(mark, "contents", "") or children)
+        replied = any(getattr(m, "is_reply", bool) and m.is_reply()
+                      for m in children)
+
+        if not inside:
+            # Not inside the window itself: there is nothing to open, the
+            # thread is already showing. Acrobat leaves it out there too.
+            note = menu.addAction(_("Open Pop-Up Note"))
+            note.triggered.connect(
+                lambda: self.note_wanted.emit(index, mark))
+            menu.addSeparator()
+
+        if has_note:
+            reply = menu.addAction(_("Reply"))
+            reply.triggered.connect(
+                lambda: self.reply_wanted.emit(index, mark))
+        remove = menu.addAction(_("Delete Thread") if replied else _("Delete"))
+        remove.triggered.connect(
+            lambda: self.mark_deleted.emit(index, mark))
+        # Shown and disabled on a locked mark rather than left out. Acrobat
+        # leaves it out; the owner prefers to see that it exists and is
+        # refused, 2026-11-03.
+        remove.setEnabled(not getattr(mark, "locked", False))
+        status = menu.addMenu(_("Set status"))
+        now = self.status_of(mark, index)
+        for state in markup.STATUSES:
+            act = status.addAction(_(markup.STATUS_LABELS[state]))
+            act.setCheckable(True)
+            # The tick marks the *current* status, which is the last link in
+            # the chain rather than the only one: a mark accepted and then
+            # completed has one status, Completed.
+            act.setChecked(state == now)
+            act.triggered.connect(
+                lambda _checked=False, m=mark, st=state:
+                self.status_wanted.emit(index, m, st))
+        menu.addSeparator()
+
+        text = self.mark_text(index, mark)
+        copy = menu.addAction(_("Copy Text"))
+        copy.setEnabled(bool(text))
+        copy.triggered.connect(
+            lambda: QApplication.clipboard().setText(text))
+        through = menu.addAction(_("Enable Text Selection"))
+        through.triggered.connect(self.let_text_through)
+        menu.addSeparator()
+
+        default = menu.addAction(_("Make current properties default"))
+        default.triggered.connect(
+            lambda: self.mark_is_the_default.emit(mark))
+        details = menu.addAction(_("Properties..."))
+        details.triggered.connect(
+            lambda: self.properties_wanted.emit(index, mark))
+        return menu
+
+    def status_chain(self, index: int, mark):
+        """A mark's review history, in the order it was made.
+
+        **The file's links and this session's together.** A status set here
+        is an annotation in the model until the document is saved, so a
+        chain read from the file alone stops at whatever the file knew.
+        Each link points at the one before it, and only links reachable
+        that way belong: a reply has a history of its own, hanging off the
+        same mark.
+        """
+        waiting = []
+        if not isinstance(mark, markup.Annotation):
+            waiting += [m for m in self.chain_of(mark)[1:] if m.is_status()]
+        waiting += [ours for ours in self._session_marks(index)
+                    if getattr(ours, "state", None)
+                    and getattr(ours, "irt", None)]
+        names, links = {getattr(mark, "name", None)}, []
+        while True:
+            # **Followed link by link, not filtered out of the subtree.**
+            # Everything under a mark includes its replies and each of
+            # *their* status chains, so taking every status below it read
+            # a reply's status as the mark's own -- and a note whose reply
+            # was Cancelled reported Cancelled.
+            for one in waiting:
+                answers = (one.irt if isinstance(one, markup.Annotation)
+                           else one.parent)
+                if answers in names and not any(link is one for link in links):
+                    links.append(one)
+                    names.add(getattr(one, "name", None))
+                    break
+            else:
+                return links
+
+    def replies_made_here(self, index, mark):
+        """The replies to a mark that this session has added.
+
+        Everything in the model that answers the mark and is not a status:
+        a reply says something, a status records that something was
+        decided, and only the first is part of what the thread reads.
+        """
+        if index is None:
+            return []
+        name = getattr(mark, "name", None)
+        if not name:
+            return []
+        return [ours for ours in self._session_marks(index)
+                if getattr(ours, "irt", None) == name
+                and not getattr(ours, "state", None)]
+
+    def _session_marks(self, index: int):
+        """This session's own marks on a page, as the window supplies them.
+
+        Everything the model holds for the page, drawn or not: a status
+        draws nothing and is still a mark, which is the whole point of
+        asking the model rather than asking what is on screen.
+        """
+        if self.marks is None:
+            return ()
+        try:
+            return self.marks(index) or ()
+        except Exception:   # noqa: BLE001 - reading a menu must not raise
+            return ()
+
+    def status_of(self, mark, index: Optional[int] = None) -> str:
+        """The mark's current status, as one of `markup.STATUSES`.
+
+        `None` when the chain is empty or ends in a link that says so --
+        setting a mark back to None appends a link like any other change,
+        so the absence of a status and a status *of* None are the same
+        answer arrived at two ways.
+
+        With a page, the chain includes the links made in this session; the
+        file's alone without one.
+        """
+        if index is not None:
+            chain = self.status_chain(index, mark)
+            found = str(chain[-1].state).lstrip("/") if chain else "None"
+            return found if found in markup.STATUSES else "None"
+        if isinstance(mark, markup.Annotation):
+            return "None"
+        try:
+            _replies, state = self._file_marks.thread(mark)
+        except Exception:  # noqa: BLE001 - a mark with no chain has none
+            return "None"
+        found = str(state).lstrip("/") if state else "None"
+        return found if found in markup.STATUSES else "None"
+
+    def let_text_through(self) -> None:
+        """Let the next click reach the words a mark covers.
+
+        **Not a property of the mark and nothing is written.** Without it
+        there is no way to select text a mark covers at all: a press on a
+        mark takes the mark. Reader's lasts until the next selection and so
+        does this: the press it was asked for spends it, whether or not that
+        press ends up selecting a word.
+        """
+        self._text_through = True
+        self.select_mark(None)
+
+    def mark_text(self, index: int, mark) -> str:
+        """The words a mark covers, a line to each of its quadrilaterals.
+
+        Per quadrilateral rather than one sweep from the first to the last:
+        a mark over one column of two would otherwise copy the other column
+        as well, because the sweep crosses everything between its ends.
+
+        **Taken along the middle of each box, not corner to corner.** A
+        quadrilateral is a *loose* box -- the font's ascent and descent
+        rather than the glyph's ink -- so its foot overlaps the line below,
+        and a corner-to-corner selection picks that line up too: measured on
+        a thirteen-line highlight, eight of the thirteen came back with two
+        lines in them and the mark copied twenty. Along the middle each box
+        returns its own line and nothing else.
+        """
+        if self._document is None:
+            return ""
+        box = self.page_box(index)
+        height = self._layout.page_height(index)
+        if box is None or height is None:
+            return ""
+        mine = isinstance(mark, markup.Annotation)
+        lines = []
+        for quad in self.mark_boxes(mark):
+            shown = forms_module.to_displayed(
+                self.from_source(index, quad) if mine else tuple(quad), box)
+            middle = height - (shown[1] + shown[3]) / 2
+            found = self._document.getSelection(
+                index, QPointF(shown[0], middle), QPointF(shown[2], middle))
+            if found is not None and found.isValid() and found.text():
+                lines.append(found.text())
+        return "\n".join(lines)
+
+    def _point_in_live_selection(self, position: QPointF) -> bool:
+        """Is a *viewport* point inside the text selection there now?"""
+        where = self.to_page(position)
+        return where is not None and self._point_in_selection(*where)
 
     def _point_in_selection(self, page: int, page_point: QPointF) -> bool:
         selection = self._selection.get(page)
@@ -4009,6 +4316,12 @@ class PageCanvas(QAbstractScrollArea):
         painter.save()
         painter.setPen(Qt.NoPen)
         for mark in marks:
+            if getattr(mark, "state", None):
+                # A status draws nothing. It is written `/F 30`, Hidden, and
+                # comes back from the file invisible -- so painting one made
+                # the same document look different before a save and after
+                # it.
+                continue
             colour = QColor.fromRgbF(*(mark.colour or (1.0, 1.0, 0.0)))
             if mark.kind == markup.TEXT:
                 self._paint_note(painter, index, mark, colour)
@@ -4075,7 +4388,17 @@ class PageCanvas(QAbstractScrollArea):
             where = self._badge_rect(index, mark, offset)
             if where is None or not where.intersects(viewport):
                 continue
-            colour = QColor.fromRgbF(*(mark.colour or (1.0, 0.82, 0.25)))
+            # **The badge wears the latest reply's colour**, not the
+            # mark's. A reply's `/C` colours an icon this reader does not
+            # draw and a pop-up title bar it has not got, so the badge is
+            # the one place on the page it can be seen -- and it is what
+            # the hover then describes.
+            speaks_for = self.latest_reply(mark) or mark
+            colour = QColor.fromRgbF(
+                *(speaks_for.colour or mark.colour or (1.0, 0.82, 0.25)))
+            faded = getattr(speaks_for, "opacity", None)
+            if faded is not None:
+                colour.setAlphaF(max(0.0, min(1.0, float(faded))))
             painter.setPen(QPen(QColor(255, 255, 255), 1.5))
             painter.setBrush(colour.darker(120))
             painter.drawEllipse(where)
@@ -4089,6 +4412,34 @@ class PageCanvas(QAbstractScrollArea):
                 painter.drawLine(QPointF(where.left() + inset, y),
                                  QPointF(where.right() - inset, y))
         painter.restore()
+
+    def pages_with_replies(self):
+        """Which pages carry a reply, by index. Empty for most documents."""
+        found = []
+        for number in range(1, self.page_count() + 1):
+            try:
+                marks = self._file_marks.visible(number)
+            except Exception:   # noqa: BLE001 - an unreadable page has none
+                continue
+            if any(m.is_reply() for m in marks):
+                found.append(number - 1)
+        return found
+
+    def latest_reply(self, mark):
+        """The last reply on a mark, or None where it has none.
+
+        *Last* in the order the file holds them, which is the one every
+        renderer paints over the others when they share a rectangle -- and
+        the one whose colour therefore stands for the thread.
+        """
+        if isinstance(mark, markup.Annotation):
+            return None
+        try:
+            answers = [m for m in self._file_marks.children(mark)
+                       if m.is_reply()]
+        except Exception:   # noqa: BLE001 - a repaint must not fail
+            return None
+        return answers[-1] if answers else None
 
     def _badge_rect(self, index: int, mark, offset=None):
         """Where a mark's note badge sits: off its top left corner."""
@@ -4116,6 +4467,32 @@ class PageCanvas(QAbstractScrollArea):
                 return (index, mark)
         return None
 
+    def note_window_is_shut(self, index: int, mark) -> bool:
+        """Whether this mark's window was closed by hand in this session."""
+        return self._note_key(index, mark) in self._shut_notes
+
+    def note_window_shut(self, index: int, mark, shut: bool = True) -> None:
+        """Say that a mark's window has been closed, or opened again.
+
+        **Closing it does not close it in the file.** `/Popup /Open` is
+        what the document was saved with, and reading a note -- or putting
+        one away -- is not an edit; it is this session's own notion of
+        what is showing. So the mark goes back to its one line summary
+        under the pointer rather than to nothing at all, and the file is
+        unchanged either way.
+        """
+        key = self._note_key(index, mark)
+        if shut:
+            self._shut_notes.add(key)
+        else:
+            self._shut_notes.discard(key)
+
+    @staticmethod
+    def _note_key(index: int, mark):
+        """What identifies a mark between one hover and the next: its `/NM`
+        where it has one, and the object itself where it does not."""
+        return (index, getattr(mark, "name", None) or id(mark))
+
     def _marked_note_at(self, point: QPointF):
         """The mark under a point, if it carries a note. Otherwise None."""
         found = self.mark_at(point)
@@ -4129,9 +4506,13 @@ class PageCanvas(QAbstractScrollArea):
     #: How wide the panel may get before its text wraps, in pixels.
     NOTE_PANEL_WIDTH = 260
 
-    def _show_note_panel(self, mark, at) -> None:
-        """Show a mark's note beside the pointer, or take it away."""
-        panel = None if mark is None else (mark, QPointF(at))
+    def _show_note_panel(self, mark, at, index=None) -> None:
+        """Show a mark's note beside the pointer, or take it away.
+
+        The page comes too, because what the note *says* -- its replies and
+        its status -- is partly in the model until the file is saved.
+        """
+        panel = None if mark is None else (mark, QPointF(at), index)
         was = self._note_panel
         self._note_panel = panel
         if (was is None) != (panel is None) or (
@@ -4141,19 +4522,52 @@ class PageCanvas(QAbstractScrollArea):
             self.viewport().update()
 
     def _paint_note_panel(self, painter) -> None:
-        """Reader's hover panel: who wrote it, the counts, and the text."""
+        """Reader's hover panel: who wrote it, the counts, and the text.
+
+        **The text is drawn through a `QTextDocument`**, not with
+        `drawText`, so that a note the file styled is summarised styled.
+        It measures the same text it draws, which is also why the box
+        fits a wrapped and styled note rather than a guess at one.
+        """
         if self._note_panel is None:
             return
-        mark, at = self._note_panel
-        head, _, body = self.note_summary(mark).partition("\n")
-        metrics = painter.fontMetrics()
-        width = min(self.NOTE_PANEL_WIDTH,
-                    max(metrics.horizontalAdvance(head),
-                        metrics.horizontalAdvance(body)) + 24)
-        text = QRectF(0, 0, width - 24, 10_000)
-        flags = int(Qt.TextWordWrap)
-        body_box = metrics.boundingRect(text.toRect(), flags, body)
-        height = metrics.height() + body_box.height() + 22
+        mark, at, index = self._note_panel
+        head, _, body = self.note_summary(mark, index).partition("\n")
+        said = QTextDocument()
+        said.setDefaultFont(painter.font())
+        said.setDocumentMargin(0)
+        styled = markup.rich_to_html(
+            getattr(self.latest_reply(mark) or mark, "rich", ""))
+        if styled:
+            said.setHtml(styled)
+        else:
+            said.setPlainText(body)
+        bold = painter.font()
+        bold.setBold(True)
+        # The head is a document too, so that it *wraps*. Drawn as one
+        # line it was simply cut off at the panel's width -- an author's
+        # name and the counts are easily wider than 236 pixels.
+        title = QTextDocument()
+        title.setDefaultFont(bold)
+        title.setDocumentMargin(0)
+        title.setPlainText(head)
+        # **The head sets the width; the body wraps within it.** The text
+        # wraps at `NOTE_PANEL_WIDTH`, but a line of author and counts is
+        # one line and there is room on the page for it -- wrapping it to
+        # keep the box narrow spent two lines to save nothing.
+        room = float(self.NOTE_PANEL_WIDTH - 24)
+        said.setTextWidth(room)
+        said.setTextWidth(min(said.idealWidth(), room))
+        title.setTextWidth(-1)
+        widest = float(max(self.viewport().width() - 32, self.NOTE_PANEL_WIDTH))
+        # Rounded *up*: truncating left the head a pixel short of the width
+        # it had just reported needing, so it wrapped anyway.
+        width = int(math.ceil(min(widest,
+                                  max(title.idealWidth(),
+                                      said.textWidth()) + 24)))
+        for piece in (title, said):
+            piece.setTextWidth(width - 24)
+        height = title.size().height() + said.size().height() + 22
         where = QRectF(at.x() + 16, at.y() + 16, width, height)
         viewport = QRectF(self.viewport().rect())
         if where.right() > viewport.right():
@@ -4167,40 +4581,60 @@ class PageCanvas(QAbstractScrollArea):
         painter.drawRoundedRect(where, 4, 4)
         inner = where.adjusted(12, 8, -12, -8)
         painter.setPen(QColor(90, 90, 90))
-        bold = painter.font()
-        bold.setBold(True)
-        painter.setFont(bold)
-        painter.drawText(QRectF(inner.left(), inner.top(), inner.width(),
-                                metrics.height()), int(Qt.AlignLeft), head)
-        bold.setBold(False)
-        painter.setFont(bold)
+        painter.save()
+        painter.translate(inner.left(), inner.top())
+        title.drawContents(painter)
+        painter.restore()
         painter.setPen(QColor(20, 20, 20))
-        painter.drawText(QRectF(inner.left(),
-                                inner.top() + metrics.height() + 4,
-                                inner.width(), body_box.height()),
-                         flags, body)
+        painter.translate(inner.left(),
+                          inner.top() + title.size().height() + 4)
+        # Drawn with the painter's pen as its text colour, which is what
+        # `drawContents` does with it.
+        said.drawContents(painter)
         painter.restore()
 
-    def note_summary(self, mark) -> str:
+    def note_summary(self, mark, index: Optional[int] = None) -> str:
         """What a mark's note says, as Reader's panel puts it.
 
         Author and the counts on one line, the text beneath. The counts read
         the *current* status rather than every change in the chain, which is
         what Reader shows and what `MarkMap.thread` answers.
+
+        **With a page, they count this session's replies and statuses too.**
+        Both are annotations in the model until the document is saved, so
+        counting the file's alone said "1 Reply" at a thread of three until
+        it had been written out and read back.
         """
         replies, status = self._file_marks.thread(mark)
+        replies = list(replies) + self.replies_made_here(index, mark)
+        if index is not None:
+            status = self.status_of(mark, index)
+            status = None if status == "None" else status
         parts = []
         if replies:
             parts.append(_("%d Reply") % len(replies) if len(replies) == 1
                          else _("%d Replies") % len(replies))
         if status:
             parts.append(_("%d Status") % 1)
-        who = mark.author if getattr(mark, "author", None) else ""
+        speaks_for = self.latest_reply(mark) or mark
+        who = (getattr(speaks_for, "author", None)
+               or getattr(mark, "author", None) or "")
         head = who
         if parts:
             head = f"{who} ({' / '.join(parts)})" if who \
                 else f"({' / '.join(parts)})"
-        return f"{head}\n{mark.contents}" if head else mark.contents
+        # **What it says is the item the badge is wearing the colour of.**
+        # On a thread that is the latest reply, which is the one every
+        # renderer paints over the others; on a mark with none it is the
+        # mark's own note. Its author too: naming the mark's author over a
+        # reply's words credits the wrong person.
+        said = speaks_for.contents or ""
+        if speaks_for is not mark and index is not None:
+            state = self.status_of(speaks_for, index)
+            if state and state != "None":
+                said = "%s\n%s %s" % (said, _("Status"), state) if said \
+                    else "%s %s" % (_("Status"), state)
+        return f"{head}\n{said}" if head else said
 
     #: How big a grip is, in pixels. Interface rather than paper, so it does
     #: not grow with the zoom -- the same reasoning as the outline.
@@ -4232,6 +4666,12 @@ class PageCanvas(QAbstractScrollArea):
         if self._selected is None:
             return []
         index, mark = self._selected
+        if getattr(mark, "locked", False):
+            # A locked mark is not resized, so it is not offered handles to
+            # resize it by. Nothing to take hold of says more than a handle
+            # that refuses when pulled. It is still *selected*, with its
+            # outline and its buttons -- only its ends are not draggable.
+            return []
         is_mine = isinstance(mark, markup.Annotation)
         if self._dragging_grip is not None and self._preview:
             # While a grip is moving, both ends follow the run being built,
@@ -4269,6 +4709,26 @@ class PageCanvas(QAbstractScrollArea):
     #: with it -- the status chain, the replies, the popups -- is the
     #: window's business, because it owns the overlay that records it.
     mark_deleted = Signal(int, object)
+
+    #: A mark's colour and opacity are to become what the next one gets.
+    #: The window holds that, so the canvas only reports the mark.
+    mark_is_the_default = Signal(object)
+
+    #: The mark's note is to be opened: ``(page, mark)``. The thread it
+    #: shows is assembled by the window, which owns the panel.
+    note_wanted = Signal(int, object)
+
+
+    #: A reply is to be written to this mark: ``(page, mark)``.
+    reply_wanted = Signal(int, object)
+
+    #: A status is to be set on this mark: ``(page, mark, state)``, where the
+    #: state is one of `markup.STATUSES` as written, not as shown.
+    status_wanted = Signal(int, object, str)
+
+    #: The properties form is to be opened on this mark: ``(page, mark)``.
+    #: Shown even on a locked one, which is where the lock is taken off.
+    properties_wanted = Signal(int, object)
 
     def chain_of(self, mark):
         """``mark`` and everything hanging off it, in the order found.

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pdfarranger main\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-03 03:39+0000\n"
+"POT-Creation-Date: 2026-11-03 20:57+0000\n"
 "PO-Revision-Date: 2026-04-24 21:19+0300\n"
 "Last-Translator: Oğuz Ersen <oguz@ersen.moe>\n"
 "Language: tr\n"
@@ -63,8 +63,74 @@ msgstr "Kopyala"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
+msgid "Highlight text"
+msgstr "Metni Vurgula"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Strikethrough text"
+msgstr "Metnin Üstünü Çiz"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Add a comment to replace text"
+msgstr "Metni değiştirecek yorum ekle"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Add note to text"
+msgstr "Metne not ekle"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
 msgid "Select All"
 msgstr "Tümünü Seç"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Open Pop-Up Note"
+msgstr "Açılır Notu Aç"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py pdfarranger_qt/mainwindow.py
+msgid "Reply"
+msgstr "Yanıtla"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Delete Thread"
+msgstr "Konuyu Sil"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py pdfarranger_qt/mainwindow.py pdfarranger_qt/reader.py
+#: pdfarranger_qt/toolstrip.py
+msgid "Delete"
+msgstr "Sil"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py pdfarranger_qt/mainwindow.py
+msgid "Set status"
+msgstr "Durumu Ayarla"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py pdfarranger_qt/mainwindow.py
+msgid "Copy Text"
+msgstr "Metni Kopyala"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Enable Text Selection"
+msgstr "Metin Seçimini Etkinleştir"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Make current properties default"
+msgstr "Geçerli Özellikleri Varsayılan Yap"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py pdfarranger_qt/mainwindow.py
+msgid "Properties..."
+msgstr "Özellikler..."
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
@@ -305,17 +371,17 @@ msgid "Gap"
 msgstr "Aralık"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/dialogs.py
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/properties.py
 msgid "Appearance"
 msgstr "Görünüm"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/dialogs.py pdfarranger_qt/reader.py
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/notepanel.py pdfarranger_qt/reader.py
 msgid "Bold"
 msgstr "Kalın"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/dialogs.py pdfarranger_qt/reader.py
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/notepanel.py pdfarranger_qt/reader.py
 msgid "Italic"
 msgstr "Eğik"
 
@@ -330,12 +396,14 @@ msgid "Size"
 msgstr "Boyut"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/dialogs.py pdfarranger_qt/toolstrip.py
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/properties.py
+#: pdfarranger_qt/toolstrip.py
 msgid "Colour"
 msgstr "Renk"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/dialogs.py pdfarranger_qt/toolstrip.py
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/properties.py
+#: pdfarranger_qt/toolstrip.py
 msgid "Opacity"
 msgstr "Matlık"
 
@@ -560,7 +628,7 @@ msgid "Theme"
 msgstr "Tema"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/dialogs.py
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/properties.py
 msgid "General"
 msgstr "Genel"
 
@@ -1919,11 +1987,6 @@ msgstr "Seçimi _Pikselli PDF (png) Olarak Dışa Aktar…"
 msgid "Export Selection to _Rasterized PDF (jpg)…"
 msgstr "Seçimi _Pikselli PDF (jpg) Olarak Dışa Aktar…"
 
-# machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
-msgid "Copy Text"
-msgstr "Metni Kopyala"
-
 #: pdfarranger_qt/mainwindow.py
 msgid "Copy _Image"
 msgstr "_Resmi Kopyala"
@@ -2044,6 +2107,26 @@ msgstr "İşareti yeniden boyutlandır"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
+msgid "Set Status"
+msgstr "Durumu Ayarla"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-brace-format
+msgid "{state} set by {author}"
+msgstr "{state}: {author}"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Mark Properties"
+msgstr "İşaret özellikleri"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Edit Note"
+msgstr "Notu Düzenle"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
 msgid "Delete Mark"
 msgstr "İşareti sil"
 
@@ -2066,11 +2149,6 @@ msgstr "İşareti değiştir"
 #: pdfarranger_qt/mainwindow.py
 msgid "Delete Note"
 msgstr "Notu Sil"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
-msgid "Edit Note"
-msgstr "Notu Düzenle"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
@@ -2184,7 +2262,7 @@ msgid "Importing…"
 msgstr "İçe aktarılıyor…"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
+#: pdfarranger_qt/mainwindow.py pdfarranger_qt/notepanel.py
 msgid "Cancel"
 msgstr "İptal"
 
@@ -2327,12 +2405,6 @@ msgstr "Bu belgede kaydedilmemiş değişiklikler var."
 #: pdfarranger_qt/mainwindow.py
 msgid "Save before continuing?"
 msgstr "Devam etmeden önce kaydedilsin mi?"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py pdfarranger_qt/reader.py
-#: pdfarranger_qt/toolstrip.py
-msgid "Delete"
-msgstr "Sil"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
@@ -2577,6 +2649,31 @@ msgstr "Döndür"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/markup.py
+msgid "None"
+msgstr "Yok"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Accepted"
+msgstr "Kabul edildi"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Cancelled"
+msgstr "İptal edildi"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Completed"
+msgstr "Tamamlandı"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Rejected"
+msgstr "Reddedildi"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
 msgid "Blue"
 msgstr "Mavi"
 
@@ -2684,7 +2781,7 @@ msgstr "Siyah"
 msgid "Title"
 msgstr "Başlık"
 
-#: pdfarranger_qt/metadata.py
+#: pdfarranger_qt/metadata.py pdfarranger_qt/properties.py
 msgid "Subject"
 msgstr "Konu"
 
@@ -2704,13 +2801,44 @@ msgstr "Oluşturucu"
 msgid "Creator tool"
 msgstr "Oluşturucu araç"
 
-#: pdfarranger_qt/metadata.py
+#: pdfarranger_qt/metadata.py pdfarranger_qt/properties.py
 msgid "Created"
 msgstr "Oluşturulma"
 
 #: pdfarranger_qt/metadata.py
 msgid "Modified"
 msgstr "Değiştirilme"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/notepanel.py pdfarranger_qt/tools.py
+msgid "Underline"
+msgstr "Altı çizili"
+
+#: pdfarranger_qt/notepanel.py
+msgid "Superscript"
+msgstr "Üst simge"
+
+#: pdfarranger_qt/notepanel.py
+msgid "Subscript"
+msgstr "Alt simge"
+
+#: pdfarranger_qt/notepanel.py
+msgid "Text Style"
+msgstr "Metin stili"
+
+#: pdfarranger_qt/notepanel.py
+msgid "Clear Formatting"
+msgstr "Biçimi temizle"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/notepanel.py
+msgid "Status"
+msgstr "Durum"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/notepanel.py
+msgid "Post"
+msgstr "Gönder"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/nup.py
@@ -2741,6 +2869,34 @@ msgstr "Yaprak başına 9 sayfa"
 #: pdfarranger_qt/nup.py
 msgid "16 pages per sheet"
 msgstr "Yaprak başına 16 sayfa"
+
+#: pdfarranger_qt/properties.py
+msgid "Comment properties"
+msgstr "Yorum özellikleri"
+
+#: pdfarranger_qt/properties.py
+msgid "Review History"
+msgstr "İnceleme geçmişi"
+
+#: pdfarranger_qt/properties.py
+msgid "Locked"
+msgstr "Kilitli"
+
+#: pdfarranger_qt/properties.py
+msgid "Make Properties Default"
+msgstr "Özellikleri varsayılan yap"
+
+#: pdfarranger_qt/properties.py
+msgid "Author"
+msgstr "Yazar"
+
+#: pdfarranger_qt/properties.py
+msgid "Date modified"
+msgstr "Değiştirilme tarihi"
+
+#: pdfarranger_qt/properties.py
+msgid "The Review History lists any change of status for this comment."
+msgstr "İnceleme geçmişi bu yorumun tüm durum değişikliklerini listeler."
 
 # machine translation, unreviewed
 #: pdfarranger_qt/reader.py
@@ -2972,11 +3128,6 @@ msgstr "Dosya ekle"
 #: pdfarranger_qt/tools.py
 msgid "Highlight"
 msgstr "Vurgula"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/tools.py
-msgid "Underline"
-msgstr "Altı çizili"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/tools.py
@@ -3489,4 +3640,40 @@ msgstr "Dosya adı yerine başlığı göster"
 # machine translation, unreviewed
 #~ msgid "Markup"
 #~ msgstr "İşaretleme"
+
+#~ msgid "Jan"
+#~ msgstr ""
+
+#~ msgid "Feb"
+#~ msgstr ""
+
+#~ msgid "Mar"
+#~ msgstr ""
+
+#~ msgid "Apr"
+#~ msgstr ""
+
+#~ msgid "May"
+#~ msgstr ""
+
+#~ msgid "Jun"
+#~ msgstr ""
+
+#~ msgid "Jul"
+#~ msgstr ""
+
+#~ msgid "Aug"
+#~ msgstr ""
+
+#~ msgid "Sep"
+#~ msgstr ""
+
+#~ msgid "Oct"
+#~ msgstr ""
+
+#~ msgid "Nov"
+#~ msgstr ""
+
+#~ msgid "Dec"
+#~ msgstr ""
 

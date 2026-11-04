@@ -29,6 +29,7 @@ from typing import List, Optional
 
 from PySide6.QtCore import (
     QEventLoop,
+    QPointF,
     QProcess,
     QSize,
     Qt,
@@ -86,7 +87,10 @@ from .i18n import gettext_ as _
 from .i18n import menu_label as _m
 from .i18n import ngettext
 from .model import PageListModel
+from .notepanel import Item as NoteItem
+from .notepanel import NotePanel, when_text
 from .outline import Outline
+from .properties import MarkProperties, Properties
 from .recent import RecentFiles
 from .render import Renderer
 from .search import SearchIndex
@@ -152,6 +156,23 @@ class MainWindow(QMainWindow):
         self.reader.mark_drawn.connect(self.mark_drawn)
         self.reader.mark_resized.connect(self.mark_resized)
         self.reader.mark_deleted.connect(self.mark_deleted)
+        self.reader.mark_is_the_default.connect(self.mark_is_the_default)
+        self.reader.note_wanted.connect(self.open_note)
+        self.reader.reply_wanted.connect(self.reply_to)
+        self.reader.status_wanted.connect(self.set_mark_status)
+        self.reader.properties_wanted.connect(self.show_mark_properties)
+        #: The thread on the selected mark, shown over the page. A child of
+        #: the viewport for the reason the bar is: it is placed from the
+        #: rectangles the canvas reports, and those are viewport ones.
+        self.note_panel = NotePanel(self.reader.canvas.viewport())
+        self.note_panel.posted.connect(self.note_posted)
+        self.note_panel.placed.connect(self.note_panel_placed)
+        self.note_panel.closed.connect(self.note_shut)
+        self.note_panel.menu_wanted.connect(self.note_menu)
+        #: What that panel is showing: ``(page, [mark, reply, reply, ...])``,
+        #: in the order the panel lists them, so a post knows which mark it
+        #: belongs to.
+        self._noted = None
         # So a gesture in flight is drawn in the colour it will be kept in:
         # the preview is the mark, before it is a mark.
         self.reader.canvas.set_mark_styles(self.MARK_KINDS)
@@ -914,7 +935,8 @@ class MainWindow(QMainWindow):
         self.mark_buttons.set_mark(
             mark.colour,
             markup.solidity(mark) if isinstance(mark, markup.Annotation)
-            else mark.opacity)
+            else mark.opacity,
+            bool(getattr(mark, "locked", False)))
 
     def mark_recoloured(self, colour) -> None:
         """A colour was picked for the selected mark."""
@@ -935,6 +957,8 @@ class MainWindow(QMainWindow):
         mark is untouched, because it is the same mark.
         """
         if not quads or not 0 <= index < len(self.model.pages):
+            return
+        if getattr(mark, "locked", False):
             return
         if isinstance(mark, markup.Annotation):
             self.model.undo.commit(_("Resize Mark"))
@@ -963,6 +987,493 @@ class MainWindow(QMainWindow):
         is what Reader does and what makes the nearer thing win.
         """
         self.delete_mark(index, mark)
+
+    def note_shut(self) -> None:
+        """The window was closed, by the cross or by Escape.
+
+        The mark keeps its badge and its one line summary under the
+        pointer: what has been put away is the window, not the note. Told
+        to the canvas because that is what the pointer asks -- it offers
+        the window on a mark the file saved open, and offered it again on
+        every mouse move, so the cross used to put the window away for
+        exactly as long as it took to move the mouse.
+        """
+        if self._noted is not None:
+            index, marks = self._noted
+            self.reader.canvas.note_window_shut(index, marks[0])
+        self._noted = None
+
+    def open_note(self, index: int, mark, open_on: int = 0) -> None:
+        """Show the thread on a mark: its note first, then its replies.
+
+        **The note is the one open for editing, whatever is under it.** A
+        thread of three opens on the first, which is Reader's behaviour and
+        not a chat window's.
+        """
+        if not 0 <= index < len(self.model.pages):
+            return
+        # Asked for, so closing it earlier says nothing any more: the
+        # pointer offers the window again from here on.
+        self.reader.canvas.note_window_shut(index, mark, False)
+        if (self._noted is not None and self.note_panel.isVisible()
+                and self._noted[0] == index and self._noted[1][0] is mark):
+            # Already showing this one. Hovering a mark whose window the
+            # file left open asks for it on every mouse move, and rebuilding
+            # the thread under the pointer would throw away what is being
+            # typed into it.
+            return
+        replies = self._replies_to(index, mark)
+        status = self._status_of(index, mark)
+        items = [NoteItem(
+            getattr(mark, "author", "") or markup.default_author(),
+            when_text(getattr(mark, "when", "")),
+            getattr(mark, "contents", "") or "",
+            status,
+            markup.rich_to_html(getattr(mark, "rich", "")),
+            bool(getattr(mark, "locked", False)),
+            getattr(mark, "colour", None))]
+        for reply in replies:
+            items.append(NoteItem(
+                reply.author or markup.default_author(),
+                when_text(getattr(reply, "when", None)
+                                 or getattr(reply, "created", "")),
+                reply.contents,
+                # **A reply carries a status of its own.** It is a mark, so
+                # it has a chain like any other, and the corpus has three
+                # replies under one note with three separate histories.
+                self._status_of(index, reply),
+                markup.rich_to_html(getattr(reply, "rich", "")),
+                bool(getattr(reply, "locked", False)),
+                getattr(reply, "colour", None)))
+        self._noted = (index, [mark] + replies)
+        self.note_panel.show_thread(items, open_on)
+        where = getattr(mark, "popup_rect", None)
+        if where and self._panel_rect_for(index, where) is not None:
+            self.note_panel.resize_to(self._panel_rect_for(index, where))
+        else:
+            self._place_note_panel(index, mark)
+
+    def _replies_to(self, index: int, mark):
+        """Everything that answers ``mark``, the file's and ours alike.
+
+        A reply the file brought is a mark in the document; one written here
+        is an `Annotation` in the model that will become one when the file
+        is saved. Both point at the mark by its `/NM`, so both belong in the
+        same thread, in the order they were made.
+        """
+        name = getattr(mark, "name", None)
+        found = []
+        if not isinstance(mark, markup.Annotation):
+            found += [m for m in self.reader.canvas.chain_of(mark)[1:]
+                      if m.is_reply()]
+        if name:
+            uid = self.model.pages[index].uid
+            # **Not the statuses.** The first status set on a mark points
+            # at the mark itself -- that is what starts the chain -- so
+            # without this it arrived in the thread as a reply, and the
+            # window listed "Completed set by dws" as something somebody
+            # had written.
+            found += [a for a in self.model.annotations.for_page(uid)
+                      if a.irt == name and not a.state]
+        return found
+
+    def reply_to(self, index: int, mark) -> None:
+        """*Reply*: the same window with one more line in it, open and empty.
+
+        Nothing is written until it is posted. An empty one left behind is
+        dropped rather than saved, which is also why Post is refused while
+        the editor is empty: there is no way to make a reply that says
+        nothing.
+        """
+        if self._noted is None or self._noted[0] != index:
+            self.open_note(index, mark)
+        if self._noted is None:
+            return
+        # What is in the box is kept, not dropped: Acrobat treats Reply as
+        # a post of whatever has been typed and then the reply.
+        self.note_panel.post_now()
+        self.note_panel.add_blank(markup.default_author(),
+                                  when_text(markup.pdf_date()))
+
+    def _status_of(self, index: int, mark):
+        """The mark's current status, or None. The *last* link in the chain:
+        a history of Accepted then Completed is one status, Completed."""
+        chain = self.reader.canvas.status_chain(index, mark)
+        state = str(chain[-1].state).lstrip("/") if chain else None
+        # A status *of* None is the absence of one. It is a link like any
+        # other in the history -- that is how a status is taken back -- but
+        # the thread says what the mark's status is, and the answer here is
+        # that it has none.
+        return None if state == "None" else state
+
+    def set_mark_status(self, index: int, mark, state: str) -> None:
+        """*Set status*: append a link to the mark's review history.
+
+        **A status is a history, not a field.** Each change is an annotation
+        of its own carrying `/State` and `/StateModel /Review`, and its
+        `/IRT` points at *the link before it* rather than at the mark -- so
+        the current status is the last link, and the rest are how it got
+        there. Setting one never overwrites another, which is what lets
+        Review History show the whole sequence.
+
+        It is hidden, `/F 30`, because a status draws nothing: it is read
+        in the thread or in the properties form.
+        """
+        if not 0 <= index < len(self.model.pages) or state not in markup.STATUSES:
+            return
+        # The same rule as *Reply*: setting a status keeps what has been
+        # typed into the open editor rather than throwing it away.
+        if self._noted is not None and self._noted[0] == index:
+            self.note_panel.post_now()
+        canvas = self.reader.canvas
+        if canvas.status_of(mark, index) == state:
+            return
+        answered = self._last_link(index, mark)
+        if answered is None:
+            return
+        uid = self.model.pages[index].uid
+        self.model.undo.commit(_("Set Status"))
+        left, top = mark.rect[0], mark.rect[3]
+        self.model.annotations.add(markup.Annotation(
+            markup.TEXT, uid,
+            markup.note_rect(left, top, markup.NOTE_SIZE),
+            contents=_("{state} set by {author}").format(
+                state=state, author=markup.default_author()),
+            colour=getattr(mark, "colour", None) or self.armed_colour,
+            author=markup.default_author(),
+            irt=answered, state=state))
+        self._after_mark_change(index, uid)
+        self._show_thread_again(index, mark)
+
+    def show_mark_properties(self, index: int, mark) -> None:
+        """*Properties...*: the form, and what it changed.
+
+        **Offered on a locked mark**, because the form is where the lock
+        comes off. Everything else it can change is refused while the lock
+        is on, which `_change_mark` and `delete_mark` already see to.
+        """
+        if not 0 <= index < len(self.model.pages):
+            return
+        mine = isinstance(mark, markup.Annotation)
+        form = MarkProperties(Properties(
+            author=(getattr(mark, "author", "") or markup.default_author()),
+            subject=(getattr(mark, "subject", "") or markup.SUBJECTS.get(
+                mark.kind if mine else mark.subtype, "")),
+            when=when_text(getattr(mark, "when", None)
+                           or getattr(mark, "created", "")),
+            created=when_text(getattr(mark, "created", None)
+                              or getattr(mark, "when", "")),
+            colour=getattr(mark, "colour", None),
+            opacity=(markup.solidity(mark) if mine
+                     else getattr(mark, "opacity", None)),
+            locked=bool(getattr(mark, "locked", False)),
+            history=self._history_of(index, mark),
+        ), self)
+        # **The appearance is live, as Acrobat's is**: the slider shows on
+        # the page while it is dragged rather than when the form is
+        # accepted. So the undo entry is taken before the first preview and
+        # Cancel is an undo of whatever was shown.
+        taken = []
+        was_modified = self.modified
+        form.previewed.connect(
+            lambda colour, opacity: self._preview_mark(
+                index, mark, colour, opacity, taken))
+        accepted = form.exec() == MarkProperties.DialogCode.Accepted
+        if accepted and form.make_default:
+            self.mark_is_the_default(mark)
+        changed = form.changed() if accepted else {}
+        if not changed:
+            # Nothing stands. Either Cancel, or an accepted form whose
+            # appearance was dragged and put back where it started -- and
+            # an undo entry for a change nobody made is a change nobody
+            # made. Undoing the preview also rebuilds the canvas's marks,
+            # which is what puts the page back.
+            if taken:
+                self.model.undo.undo()
+                self.modified = was_modified
+            return
+        self._commit_properties(taken)
+        self._write_mark_fields(index, mark, changed, mine)
+        self._show_thread_again(index, mark)
+
+    def _commit_properties(self, taken: list) -> None:
+        """One undo entry for the whole form, taken before the first thing
+        it changes -- which may be a preview rather than the accepting."""
+        if not taken:
+            taken.append(True)
+            self.model.undo.commit(_("Mark Properties"))
+
+    def _preview_mark(self, index: int, mark, colour, opacity, taken) -> None:
+        """Show a colour or an opacity the form is still holding.
+
+        Written through the same path as accepting it, because a mark the
+        file brought is only *shown* changed by its overlay -- the page is
+        re-rendered from a document patched with `mark_edits`, so a preview
+        that only set the attribute would show nothing at all.
+        """
+        self._commit_properties(taken)
+        self._write_mark_fields(
+            index, mark, {"colour": colour, "opacity": opacity},
+            isinstance(mark, markup.Annotation))
+
+    def _write_mark_fields(self, index: int, mark, fields: dict,
+                           mine: bool) -> None:
+        """Record fields on a mark of ours, or beside one the file brought,
+        and re-render the page that shows it."""
+        if mine:
+            for name, value in fields.items():
+                setattr(mark, name, value)
+            self._after_mark_change(index)
+            return
+        uid = self.model.pages[index].uid
+        self.model.mark_edits.change(uid, mark.index, **fields)
+        for name, value in fields.items():
+            setattr(mark, name, value)
+        self._after_mark_change(index, uid)
+
+    def _history_of(self, index: int, mark):
+        """The mark's review history, as the form reads it out.
+
+        **Composed, not stored.** Acrobat prints `{author}: {state}, {when}`
+        and does not show the sentence each link carries in `/Contents`,
+        which it generates for other viewers.
+        """
+        return tuple(
+            (getattr(link, "author", "") or markup.default_author(),
+             str(link.state).lstrip("/"),
+             when_text(getattr(link, "when", None)
+                       or getattr(link, "created", "")))
+            for link in self.reader.canvas.status_chain(index, mark))
+
+    def _show_thread_again(self, index: int, mark) -> None:
+        """Rebuild the open window, where it is the one that just changed.
+
+        A status is read in the thread, so setting one while the thread is
+        showing has to reach it -- otherwise the only way to see what you
+        just set is to close the window and open it again.
+
+        **Any item of it, not only the note.** A reply has a status and can
+        be deleted, and both change the thread the window is showing.
+        """
+        if not self.note_panel.isVisible() or self._noted is None:
+            return
+        shown, marks = self._noted
+        if shown != index or not any(m is mark for m in marks):
+            return
+        root = marks[0]
+        # Whatever was open stays open. This is a redraw, not an opening.
+        open_on = self.note_panel.selected()
+        self._noted = None
+        self.open_note(index, root, open_on)
+
+    def note_menu(self, which: int, at) -> None:
+        """The menu asked for inside the thread window.
+
+        **The first item is the mark**, so its line and the window's own
+        background both give the mark's menu -- the one the page gives,
+        with *Delete Thread* on it. There is no deleting the first item on
+        its own: it is the comment, and the replies hang off it.
+        """
+        if self._noted is None:
+            return
+        index, marks = self._noted
+        if which <= 0 or which >= len(marks):
+            menu = self.reader.canvas.mark_menu(index, marks[0], inside=True)
+        else:
+            menu = self._reply_menu(index, marks[which])
+        menu.exec(at)
+
+    def _reply_menu(self, index: int, reply):
+        """What can be done to one reply: answer it, take it out, judge it.
+
+        *Delete* here is the whole reply and the status chain hanging off
+        it, not the words in it -- the words are edited by clicking them.
+        """
+        menu = QMenu(self)
+        answer = menu.addAction(_("Reply"))
+        answer.triggered.connect(
+            lambda: self.reply_to(index, self._noted[1][0])
+            if self._noted else None)
+        remove = menu.addAction(_("Delete"))
+        remove.triggered.connect(lambda: self.delete_mark(index, reply))
+        # Shown and disabled rather than left out: a locked reply is still
+        # a reply, and an entry that vanishes makes it look like something
+        # else. Taken from the owner on 2026-11-03, against Acrobat, which
+        # leaves it out.
+        remove.setEnabled(not getattr(reply, "locked", False))
+        status = menu.addMenu(_("Set status"))
+        now = self.reader.canvas.status_of(reply, index)
+        for state in markup.STATUSES:
+            act = status.addAction(_(markup.STATUS_LABELS[state]))
+            act.setCheckable(True)
+            act.setChecked(state == now)
+            act.triggered.connect(
+                lambda _checked=False, st=state:
+                self.set_mark_status(index, reply, st))
+        menu.addSeparator()
+        details = menu.addAction(_("Properties..."))
+        details.triggered.connect(
+            lambda: self.show_mark_properties(index, reply))
+        return menu
+
+    def _last_link(self, index: int, mark):
+        """The `/NM` the next status change should point at.
+
+        The end of the chain, not the mark: a status points at the link
+        before it, so pointing a new one at the mark would start a second
+        history beside the first rather than continuing it.
+        """
+        name = getattr(mark, "name", None)
+        if not name:
+            return None
+        chain = self.reader.canvas.status_chain(index, mark)
+        return chain[-1].name if chain else name
+
+    def _write_reply(self, index: int, mark, text: str, rich=None) -> None:
+        """Keep a new reply to ``mark``, as a mark of its own.
+
+        A reply is a `/Text` that answers another annotation: it draws its
+        own icon, anchored to the top left of what it answers, and carries
+        that mark's colour so the thread reads as one thing. What makes it a
+        reply rather than a note somebody dropped there is `/IRT`, which is
+        resolved on the way out from the name of the mark it answers.
+        """
+        name = getattr(mark, "name", None)
+        if not name:
+            return
+        uid = self.model.pages[index].uid
+        left, top = mark.rect[0], mark.rect[3]
+        self.model.undo.commit(_("Reply"))
+        reply = markup.Annotation(
+            markup.TEXT, uid,
+            markup.note_rect(left, top, markup.NOTE_SIZE),
+            contents=text, rich=rich,
+            colour=getattr(mark, "colour", None) or self.armed_colour,
+            author=markup.default_author(),
+            irt=name)
+        self.model.annotations.add(reply)
+        if self._noted is not None:
+            # Only when the thread is the one showing. A reply can be
+            # written with no window open -- the menu's *Reply* opens one,
+            # but nothing else has to.
+            self._noted = (index, list(self._noted[1]) + [reply])
+        self._after_mark_change(index, uid)
+
+    def _panel_rect_for(self, index: int, rect):
+        """A window's rectangle in the page, as a viewport one.
+
+        Reader parks a window it has never been given a place for *off* the
+        paper, to the right, which has nowhere to go here -- there is no
+        off-the-paper in a scrolling reader. One of those is ignored and the
+        panel is put beside the mark instead; one somebody actually moved is
+        honoured.
+        """
+        canvas = self.reader.canvas
+        shown = canvas.quad_on_screen(index, rect, scaled=False)
+        if shown is None:
+            return None
+        view = canvas.viewport().rect()
+        if not view.intersects(shown.toRect()):
+            return None
+        return shown.toRect()
+
+    def note_panel_placed(self, rect) -> None:
+        """The window was moved or resized, which the document records.
+
+        **This is an edit and it marks the document dirty**, unlike opening
+        the window, which writes nothing. One writes a new `/Popup /Rect`
+        and the other does not, so "save your changes?" is the right
+        question after this and the wrong one after merely reading a note.
+        """
+        if self._noted is None:
+            return
+        index, marks = self._noted
+        mark = marks[0]
+        canvas = self.reader.canvas
+        top_left = canvas.page_point(index, QPointF(rect.left(), rect.top()))
+        bottom_right = canvas.page_point(
+            index, QPointF(rect.right(), rect.bottom()))
+        if top_left is None or bottom_right is None:
+            return
+        where = (top_left[0], bottom_right[1], bottom_right[0], top_left[1])
+        if isinstance(mark, markup.Annotation):
+            if mark.popup_rect == where:
+                return
+            mark.popup_rect = where
+        else:
+            uid = self.model.pages[index].uid
+            if self.model.mark_edits.of(uid, mark.index).get("popup") == where:
+                return
+            self.model.mark_edits.change(uid, mark.index, popup=where)
+        self._mark_modified()
+
+    def _place_note_panel(self, index: int, mark) -> None:
+        """Beside the mark, and inside the viewport.
+
+        Reader parks its window off the right edge of the paper; there is no
+        off-the-paper here, so it goes next to the mark and is pulled back
+        when it would hang over an edge.
+        """
+        canvas = self.reader.canvas
+        boxes = canvas.mark_boxes(mark)
+        where = canvas.quad_on_screen(
+            index, boxes[0], scaled=isinstance(mark, markup.Annotation))
+        if where is None:
+            return
+        view = canvas.viewport().rect()
+        panel = self.note_panel
+        x = min(int(where.right()) + 8, view.right() - panel.width() - 8)
+        y = min(int(where.top()), view.bottom() - panel.height() - 8)
+        panel.move(max(8, x), max(8, y))
+
+    def note_posted(self, which: int, text: str) -> None:
+        """Keep what was typed on the item it was typed into.
+
+        A note is the mark's own `/Contents`; a reply is a mark of its own
+        with its own index, so both are the same change to a different mark.
+        """
+        if self._noted is None:
+            return
+        index, marks = self._noted
+        # The styling goes with the words. `/RC` is the same text with its
+        # runs marked up and a reader prefers it, so writing one without
+        # the other leaves the file saying two different things.
+        rich = markup.rich_from_runs(self.note_panel.runs_of(which))
+        if which == len(marks):
+            self._write_reply(index, marks[0], text, rich)
+            return
+        if not 0 <= which < len(marks):
+            return
+        target = marks[which]
+        self.model.undo.commit(_("Edit Note"))
+        if isinstance(target, markup.Annotation):
+            target.contents = text
+            target.rich = rich
+            self._after_mark_change(index)
+            return
+        uid = self.model.pages[index].uid
+        self.model.mark_edits.change(uid, target.index,
+                                     contents=text, rich=rich)
+        target.contents = text
+        target.rich = rich or ""
+        self._after_mark_change(index, uid)
+
+    def mark_is_the_default(self, mark) -> None:
+        """*Make current properties default*: what the next mark gets.
+
+        Writes nothing to any document. It arms the colour and the opacity
+        this mark has, which is what the tail's swatch arms when it is used
+        -- the same preference reached from the mark instead of the palette.
+        """
+        colour = getattr(mark, "colour", None)
+        if colour is not None:
+            self.armed_colour = tuple(colour)
+        opacity = (mark.opacity if isinstance(mark, markup.Annotation)
+                   else getattr(mark, "opacity", None))
+        if opacity is None and not isinstance(mark, markup.Annotation):
+            opacity = markup.solidity(mark)
+        if opacity is not None:
+            self.armed_opacity = float(opacity)
 
     def delete_selected_mark(self) -> None:
         """The trash in the bar beside the selected mark."""
@@ -994,16 +1505,26 @@ class MainWindow(QMainWindow):
         """
         if not 0 <= index < len(self.model.pages):
             return
+        if getattr(mark, "locked", False):
+            # Locked is the one attribute that refuses here rather than in
+            # the menu: the Delete key reaches this too.
+            return
         canvas = self.reader.canvas
         going = canvas.chain_of(mark)
+        # What hangs *off* it, not it. Deleting a reply is deleting one
+        # reply, and warning that somebody else's answers will go with it
+        # would be warning about itself.
         if any(not isinstance(m, markup.Annotation) and m.is_reply()
-               for m in going) and not self._confirm_mark_delete():
+               for m in going[1:]) and not self._confirm_mark_delete():
             return
         self.model.undo.commit(_("Delete Mark"))
+        root = self._noted is not None and any(
+            m is mark for m in self._noted[1][:1])
         if isinstance(mark, markup.Annotation):
             self.model.annotations.remove(mark)
             canvas.select_mark(None)
             self._after_mark_change(index)
+            self._thread_lost(index, mark, root)
             return
         uid = self.model.pages[index].uid
         for one in going:
@@ -1013,6 +1534,22 @@ class MainWindow(QMainWindow):
         # the document the reader is showing and still holds them.
         canvas.forget_marks(going)
         self._after_mark_change(index, uid)
+        self._thread_lost(index, mark, root)
+
+    def _thread_lost(self, index: int, mark, root: bool) -> None:
+        """Put the window right after something in it was deleted.
+
+        The comment itself takes the window with it -- there is no thread
+        left to show. A reply only takes its own line, so the rest is shown
+        again without it.
+        """
+        if self._noted is None:
+            return
+        if root:
+            self.note_panel.hide()
+            self._noted = None
+            return
+        self._show_thread_again(index, mark)
 
     def _confirm_mark_delete(self) -> bool:
         """Reader's dialog, for a mark somebody has replied to.
@@ -1055,6 +1592,11 @@ class MainWindow(QMainWindow):
             return
         index, mark = found
         if not 0 <= index < len(self.model.pages):
+            return
+        if getattr(mark, "locked", False):
+            # What a lock locks: the attributes and the mark's own text.
+            # Refused here rather than only in the surfaces that offer it,
+            # so a colour, an opacity and a resize are all one answer.
             return
         uid = self.model.pages[index].uid
         self.model.undo.commit(_("Change Mark"))
@@ -1099,7 +1641,8 @@ class MainWindow(QMainWindow):
             return
         self.reader.canvas.repaint_edited(
             index, markup.one_page_with_edits(
-                data, index, self.model.mark_edits.for_page(uid)))
+                data, index, self.model.mark_edits.for_page(uid),
+                hide_replies=True))
 
     def note_edited(self, index: int, which: int, text: str) -> None:
         """A note's editor closed: keep what was typed, or drop the note.
@@ -2105,12 +2648,35 @@ class MainWindow(QMainWindow):
         return ok
 
     def _show_all_mark_edits(self) -> None:
-        """Re-render every page whose marks have been changed."""
-        if not self.model.mark_edits:
+        """Re-render every page that needs to be shown differently.
+
+        Two reasons a page does. Its marks have been changed, and the
+        snapshot the reader was given shows them as the file has them. Or
+        it carries **replies**, which are not page content: Reader draws
+        none of them, and a file gives every reply in a thread the same
+        rectangle, so a renderer that honours their appearance streams
+        stacks them into one smudge at the corner of the mark. What a reply
+        says is in the thread window and on the badge, both of which this
+        application draws itself.
+
+        Only what is *shown*. The document written out keeps every reply.
+        """
+        wanted = {index for index, row in enumerate(self.model.pages)
+                  if self.model.mark_edits.for_page(row.uid)}
+        wanted.update(self.reader.canvas.pages_with_replies())
+        if not wanted:
             return
-        for index, row in enumerate(self.model.pages):
-            if self.model.mark_edits.for_page(row.uid):
-                self._show_mark_edits(index, row.uid)
+        data = self.reader.document_bytes()
+        if data is None:
+            return
+        for index in sorted(wanted):
+            if not 0 <= index < len(self.model.pages):
+                continue
+            uid = self.model.pages[index].uid
+            self.reader.canvas.repaint_edited(
+                index, markup.one_page_with_edits(
+                    data, index, self.model.mark_edits.for_page(uid),
+                    hide_replies=True))
 
     def _invalidate_reader(self):
         """An edit happened; the snapshot no longer matches the page list."""
@@ -2555,6 +3121,12 @@ class MainWindow(QMainWindow):
         # covers them all; `closeEvent` has to do it separately because
         # quitting does not come through here.
         self._store_reading_position()
+        # The note window belongs to the mark it was opened on, and there is
+        # about to be no mark: closing the document left a thread floating
+        # over an empty reader, still offering to post a reply to something
+        # that is no longer there.
+        self.note_panel.hide()
+        self._noted = None
         self.model.undo.clear()
         self.model.set_pages([])
         self.renderer.invalidate()

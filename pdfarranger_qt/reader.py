@@ -150,6 +150,16 @@ class ReaderView(QWidget):
     mark_resized = Signal(int, object, object)
     #: The selected mark is to go: ``(page, mark)``.
     mark_deleted = Signal(int, object)
+    #: A mark's colour and opacity are to become the default.
+    mark_is_the_default = Signal(object)
+    #: The mark's note is to be opened: ``(page, mark)``.
+    note_wanted = Signal(int, object)
+    #: A reply is to be written to a mark: ``(page, mark)``.
+    reply_wanted = Signal(int, object)
+    #: A status is to be set on a mark: ``(page, mark, state)``.
+    status_wanted = Signal(int, object, str)
+    #: The properties form is to be opened on a mark: ``(page, mark)``.
+    properties_wanted = Signal(int, object)
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -161,6 +171,11 @@ class ReaderView(QWidget):
         self.canvas.mark_drawn.connect(self.mark_drawn)
         self.canvas.mark_resized.connect(self.mark_resized)
         self.canvas.mark_deleted.connect(self.mark_deleted)
+        self.canvas.mark_is_the_default.connect(self.mark_is_the_default)
+        self.canvas.note_wanted.connect(self.note_wanted)
+        self.canvas.reply_wanted.connect(self.reply_wanted)
+        self.canvas.status_wanted.connect(self.status_wanted)
+        self.canvas.properties_wanted.connect(self.properties_wanted)
         self.canvas.field_edited.connect(self.field_edited)
         self.canvas.field_refused.connect(self.field_refused)
         self.canvas.zoom_to_width()

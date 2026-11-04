@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-03 03:39+0000\n"
+"POT-Creation-Date: 2026-11-03 20:57+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: hu\n"
@@ -63,8 +63,74 @@ msgstr "Másolás"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
+msgid "Highlight text"
+msgstr "Szöveg kiemelése"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Strikethrough text"
+msgstr "Szöveg áthúzása"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Add a comment to replace text"
+msgstr "Megjegyzés hozzáadása a szöveg helyettesítésére"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Add note to text"
+msgstr "Jegyzet hozzáadása a szöveghez"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
 msgid "Select All"
 msgstr "Az összes kijelölése"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Open Pop-Up Note"
+msgstr "Felugró jegyzet megnyitása"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py pdfarranger_qt/mainwindow.py
+msgid "Reply"
+msgstr "Válasz"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Delete Thread"
+msgstr "Szál törlése"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py pdfarranger_qt/mainwindow.py pdfarranger_qt/reader.py
+#: pdfarranger_qt/toolstrip.py
+msgid "Delete"
+msgstr "Törlés"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py pdfarranger_qt/mainwindow.py
+msgid "Set status"
+msgstr "Állapot beállítása"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py pdfarranger_qt/mainwindow.py
+msgid "Copy Text"
+msgstr "Szöveg másolása"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Enable Text Selection"
+msgstr "Szövegkijelölés engedélyezése"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Make current properties default"
+msgstr "Jelenlegi tulajdonságok beállítása alapértelmezettként"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py pdfarranger_qt/mainwindow.py
+msgid "Properties..."
+msgstr "Tulajdonságok..."
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
@@ -320,17 +386,17 @@ msgid "Gap"
 msgstr "Rés"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/dialogs.py
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/properties.py
 msgid "Appearance"
 msgstr "Megjelenés"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/dialogs.py pdfarranger_qt/reader.py
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/notepanel.py pdfarranger_qt/reader.py
 msgid "Bold"
 msgstr "Félkövér"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/dialogs.py pdfarranger_qt/reader.py
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/notepanel.py pdfarranger_qt/reader.py
 msgid "Italic"
 msgstr "Dőlt"
 
@@ -345,12 +411,14 @@ msgid "Size"
 msgstr "Méret"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/dialogs.py pdfarranger_qt/toolstrip.py
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/properties.py
+#: pdfarranger_qt/toolstrip.py
 msgid "Colour"
 msgstr "Szín"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/dialogs.py pdfarranger_qt/toolstrip.py
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/properties.py
+#: pdfarranger_qt/toolstrip.py
 msgid "Opacity"
 msgstr "Átlátszatlanság"
 
@@ -575,7 +643,7 @@ msgid "Theme"
 msgstr "Téma"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/dialogs.py
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/properties.py
 msgid "General"
 msgstr "Általános"
 
@@ -1963,11 +2031,6 @@ msgstr "Kijelölés exportálása _raszteres PDF-be (png)…"
 msgid "Export Selection to _Rasterized PDF (jpg)…"
 msgstr "Kijelölés exportálása raszteres PDF-_be (jpg)…"
 
-# machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
-msgid "Copy Text"
-msgstr "Szöveg másolása"
-
 #: pdfarranger_qt/mainwindow.py
 msgid "Copy _Image"
 msgstr "_Kép másolása"
@@ -2095,6 +2158,26 @@ msgstr "Jelölés átméretezése"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
+msgid "Set Status"
+msgstr "Állapot beállítása"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-brace-format
+msgid "{state} set by {author}"
+msgstr "{state} – {author}"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Mark Properties"
+msgstr "Jelölés tulajdonságai"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Edit Note"
+msgstr "Jegyzet szerkesztése"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
 msgid "Delete Mark"
 msgstr "Jelölés törlése"
 
@@ -2117,11 +2200,6 @@ msgstr "Jelölés módosítása"
 #: pdfarranger_qt/mainwindow.py
 msgid "Delete Note"
 msgstr "Jegyzet törlése"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
-msgid "Edit Note"
-msgstr "Jegyzet szerkesztése"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
@@ -2237,7 +2315,7 @@ msgid "Importing…"
 msgstr "Importálás…"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
+#: pdfarranger_qt/mainwindow.py pdfarranger_qt/notepanel.py
 msgid "Cancel"
 msgstr "Mégse"
 
@@ -2385,12 +2463,6 @@ msgstr "Ennek a dokumentumnak mentetlen változtatásai vannak."
 #: pdfarranger_qt/mainwindow.py
 msgid "Save before continuing?"
 msgstr "Menti a folytatás előtt?"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py pdfarranger_qt/reader.py
-#: pdfarranger_qt/toolstrip.py
-msgid "Delete"
-msgstr "Törlés"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
@@ -2641,6 +2713,31 @@ msgstr "Forgatás"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/markup.py
+msgid "None"
+msgstr "Nincs"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Accepted"
+msgstr "Elfogadva"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Cancelled"
+msgstr "Megszakítva"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Completed"
+msgstr "Befejezve"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Rejected"
+msgstr "Elutasítva"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
 msgid "Blue"
 msgstr "Kék"
 
@@ -2748,7 +2845,7 @@ msgstr "Fekete"
 msgid "Title"
 msgstr "Cím"
 
-#: pdfarranger_qt/metadata.py
+#: pdfarranger_qt/metadata.py pdfarranger_qt/properties.py
 msgid "Subject"
 msgstr "Tárgy"
 
@@ -2768,13 +2865,44 @@ msgstr "Készítő"
 msgid "Creator tool"
 msgstr "Készítő eszköz"
 
-#: pdfarranger_qt/metadata.py
+#: pdfarranger_qt/metadata.py pdfarranger_qt/properties.py
 msgid "Created"
 msgstr "Készült"
 
 #: pdfarranger_qt/metadata.py
 msgid "Modified"
 msgstr "Módosítva"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/notepanel.py pdfarranger_qt/tools.py
+msgid "Underline"
+msgstr "Aláhúzás"
+
+#: pdfarranger_qt/notepanel.py
+msgid "Superscript"
+msgstr "Felső index"
+
+#: pdfarranger_qt/notepanel.py
+msgid "Subscript"
+msgstr "Alsó index"
+
+#: pdfarranger_qt/notepanel.py
+msgid "Text Style"
+msgstr "Szövegstílus"
+
+#: pdfarranger_qt/notepanel.py
+msgid "Clear Formatting"
+msgstr "Formázás törlése"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/notepanel.py
+msgid "Status"
+msgstr "Állapot"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/notepanel.py
+msgid "Post"
+msgstr "Közzététel"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/nup.py
@@ -2805,6 +2933,34 @@ msgstr "9 oldal laponként"
 #: pdfarranger_qt/nup.py
 msgid "16 pages per sheet"
 msgstr "16 oldal laponként"
+
+#: pdfarranger_qt/properties.py
+msgid "Comment properties"
+msgstr "Megjegyzés tulajdonságai"
+
+#: pdfarranger_qt/properties.py
+msgid "Review History"
+msgstr "Átnézési előzmények"
+
+#: pdfarranger_qt/properties.py
+msgid "Locked"
+msgstr "Zárolva"
+
+#: pdfarranger_qt/properties.py
+msgid "Make Properties Default"
+msgstr "Tulajdonságok beállítása alapértelmezettként"
+
+#: pdfarranger_qt/properties.py
+msgid "Author"
+msgstr "Szerző"
+
+#: pdfarranger_qt/properties.py
+msgid "Date modified"
+msgstr "Módosítás dátuma"
+
+#: pdfarranger_qt/properties.py
+msgid "The Review History lists any change of status for this comment."
+msgstr "Az átnézési előzmények felsorolják a megjegyzés minden állapotváltozását."
 
 # machine translation, unreviewed
 #: pdfarranger_qt/reader.py
@@ -3036,11 +3192,6 @@ msgstr "Fájl csatolása"
 #: pdfarranger_qt/tools.py
 msgid "Highlight"
 msgstr "Kiemelés"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/tools.py
-msgid "Underline"
-msgstr "Aláhúzás"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/tools.py
@@ -3527,4 +3678,40 @@ msgstr "A cím megjelenítése a fájlnév helyett"
 # machine translation, unreviewed
 #~ msgid "Markup"
 #~ msgstr "Jelölés"
+
+#~ msgid "Jan"
+#~ msgstr ""
+
+#~ msgid "Feb"
+#~ msgstr ""
+
+#~ msgid "Mar"
+#~ msgstr ""
+
+#~ msgid "Apr"
+#~ msgstr ""
+
+#~ msgid "May"
+#~ msgstr ""
+
+#~ msgid "Jun"
+#~ msgstr ""
+
+#~ msgid "Jul"
+#~ msgstr ""
+
+#~ msgid "Aug"
+#~ msgstr ""
+
+#~ msgid "Sep"
+#~ msgstr ""
+
+#~ msgid "Oct"
+#~ msgstr ""
+
+#~ msgid "Nov"
+#~ msgstr ""
+
+#~ msgid "Dec"
+#~ msgstr ""
 

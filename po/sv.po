@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  pdfarranger\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-03 03:39+0000\n"
+"POT-Creation-Date: 2026-11-03 20:57+0000\n"
 "PO-Revision-Date: 2026-05-24 07:36+0300\n"
 "Last-Translator: kbengs\n"
 "Language: sv\n"
@@ -62,8 +62,74 @@ msgstr "Kopiera"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
+msgid "Highlight text"
+msgstr "Markera texten"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Strikethrough text"
+msgstr "Stryk över texten"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Add a comment to replace text"
+msgstr "Lägg till en kommentar som ersätter texten"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Add note to text"
+msgstr "Lägg till anteckning till texten"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
 msgid "Select All"
 msgstr "Markera allt"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Open Pop-Up Note"
+msgstr "Öppna popup-anteckning"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py pdfarranger_qt/mainwindow.py
+msgid "Reply"
+msgstr "Svara"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Delete Thread"
+msgstr "Ta bort tråden"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py pdfarranger_qt/mainwindow.py pdfarranger_qt/reader.py
+#: pdfarranger_qt/toolstrip.py
+msgid "Delete"
+msgstr "Ta bort"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py pdfarranger_qt/mainwindow.py
+msgid "Set status"
+msgstr "Ange status"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py pdfarranger_qt/mainwindow.py
+msgid "Copy Text"
+msgstr "Kopiera text"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Enable Text Selection"
+msgstr "Aktivera textmarkering"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Make current properties default"
+msgstr "Gör aktuella egenskaper till standard"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py pdfarranger_qt/mainwindow.py
+msgid "Properties..."
+msgstr "Egenskaper..."
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
@@ -304,17 +370,17 @@ msgid "Gap"
 msgstr "Mellanrum"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/dialogs.py
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/properties.py
 msgid "Appearance"
 msgstr "Utseende"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/dialogs.py pdfarranger_qt/reader.py
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/notepanel.py pdfarranger_qt/reader.py
 msgid "Bold"
 msgstr "Fet"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/dialogs.py pdfarranger_qt/reader.py
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/notepanel.py pdfarranger_qt/reader.py
 msgid "Italic"
 msgstr "Kursiv"
 
@@ -329,12 +395,14 @@ msgid "Size"
 msgstr "Storlek"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/dialogs.py pdfarranger_qt/toolstrip.py
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/properties.py
+#: pdfarranger_qt/toolstrip.py
 msgid "Colour"
 msgstr "Färg"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/dialogs.py pdfarranger_qt/toolstrip.py
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/properties.py
+#: pdfarranger_qt/toolstrip.py
 msgid "Opacity"
 msgstr "Opacitet"
 
@@ -559,7 +627,7 @@ msgid "Theme"
 msgstr "Tema"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/dialogs.py
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/properties.py
 msgid "General"
 msgstr "Allmänt"
 
@@ -1921,11 +1989,6 @@ msgstr "Exportera markerade sidor till _raster PDF (png)…"
 msgid "Export Selection to _Rasterized PDF (jpg)…"
 msgstr "Exportera markerade sidor till _raster PDF (jpg)…"
 
-# machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
-msgid "Copy Text"
-msgstr "Kopiera text"
-
 #: pdfarranger_qt/mainwindow.py
 msgid "Copy _Image"
 msgstr "Kopiera _bild"
@@ -2046,6 +2109,26 @@ msgstr "Ändra storlek på markering"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
+msgid "Set Status"
+msgstr "Ange status"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-brace-format
+msgid "{state} set by {author}"
+msgstr "{state} av {author}"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Mark Properties"
+msgstr "Markeringsegenskaper"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Edit Note"
+msgstr "Redigera anteckning"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
 msgid "Delete Mark"
 msgstr "Ta bort markering"
 
@@ -2068,11 +2151,6 @@ msgstr "Ändra markering"
 #: pdfarranger_qt/mainwindow.py
 msgid "Delete Note"
 msgstr "Ta bort anteckning"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
-msgid "Edit Note"
-msgstr "Redigera anteckning"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
@@ -2187,7 +2265,7 @@ msgid "Importing…"
 msgstr "Importerar…"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
+#: pdfarranger_qt/mainwindow.py pdfarranger_qt/notepanel.py
 msgid "Cancel"
 msgstr "Avbryt"
 
@@ -2335,12 +2413,6 @@ msgstr "Det här dokumentet har osparade ändringar."
 #: pdfarranger_qt/mainwindow.py
 msgid "Save before continuing?"
 msgstr "Spara innan du fortsätter?"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py pdfarranger_qt/reader.py
-#: pdfarranger_qt/toolstrip.py
-msgid "Delete"
-msgstr "Ta bort"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
@@ -2589,6 +2661,31 @@ msgstr "Rotera"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/markup.py
+msgid "None"
+msgstr "Ingen"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Accepted"
+msgstr "Accepterad"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Cancelled"
+msgstr "Avbruten"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Completed"
+msgstr "Slutförd"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Rejected"
+msgstr "Avvisad"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
 msgid "Blue"
 msgstr "Blå"
 
@@ -2696,7 +2793,7 @@ msgstr "Svart"
 msgid "Title"
 msgstr "Titel"
 
-#: pdfarranger_qt/metadata.py
+#: pdfarranger_qt/metadata.py pdfarranger_qt/properties.py
 msgid "Subject"
 msgstr "Ämne"
 
@@ -2716,13 +2813,44 @@ msgstr "Författare"
 msgid "Creator tool"
 msgstr "Program"
 
-#: pdfarranger_qt/metadata.py
+#: pdfarranger_qt/metadata.py pdfarranger_qt/properties.py
 msgid "Created"
 msgstr "Skapad"
 
 #: pdfarranger_qt/metadata.py
 msgid "Modified"
 msgstr "Ändrad"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/notepanel.py pdfarranger_qt/tools.py
+msgid "Underline"
+msgstr "Understruken"
+
+#: pdfarranger_qt/notepanel.py
+msgid "Superscript"
+msgstr "Upphöjd"
+
+#: pdfarranger_qt/notepanel.py
+msgid "Subscript"
+msgstr "Nedsänkt"
+
+#: pdfarranger_qt/notepanel.py
+msgid "Text Style"
+msgstr "Textstil"
+
+#: pdfarranger_qt/notepanel.py
+msgid "Clear Formatting"
+msgstr "Rensa formatering"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/notepanel.py
+msgid "Status"
+msgstr "Status"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/notepanel.py
+msgid "Post"
+msgstr "Publicera"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/nup.py
@@ -2753,6 +2881,34 @@ msgstr "9 sidor per ark"
 #: pdfarranger_qt/nup.py
 msgid "16 pages per sheet"
 msgstr "16 sidor per ark"
+
+#: pdfarranger_qt/properties.py
+msgid "Comment properties"
+msgstr "Kommentarsegenskaper"
+
+#: pdfarranger_qt/properties.py
+msgid "Review History"
+msgstr "Granskningshistorik"
+
+#: pdfarranger_qt/properties.py
+msgid "Locked"
+msgstr "Låst"
+
+#: pdfarranger_qt/properties.py
+msgid "Make Properties Default"
+msgstr "Gör egenskaper till standard"
+
+#: pdfarranger_qt/properties.py
+msgid "Author"
+msgstr "Författare"
+
+#: pdfarranger_qt/properties.py
+msgid "Date modified"
+msgstr "Ändringsdatum"
+
+#: pdfarranger_qt/properties.py
+msgid "The Review History lists any change of status for this comment."
+msgstr "Granskningshistoriken visar alla statusändringar för den här kommentaren."
 
 # machine translation, unreviewed
 #: pdfarranger_qt/reader.py
@@ -2984,11 +3140,6 @@ msgstr "Bifoga fil"
 #: pdfarranger_qt/tools.py
 msgid "Highlight"
 msgstr "Markera"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/tools.py
-msgid "Underline"
-msgstr "Understruken"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/tools.py
@@ -3507,4 +3658,40 @@ msgstr "Visa titeln i stället för filnamnet"
 # machine translation, unreviewed
 #~ msgid "Markup"
 #~ msgstr "Markeringar"
+
+#~ msgid "Jan"
+#~ msgstr ""
+
+#~ msgid "Feb"
+#~ msgstr ""
+
+#~ msgid "Mar"
+#~ msgstr ""
+
+#~ msgid "Apr"
+#~ msgstr ""
+
+#~ msgid "May"
+#~ msgstr ""
+
+#~ msgid "Jun"
+#~ msgstr ""
+
+#~ msgid "Jul"
+#~ msgstr ""
+
+#~ msgid "Aug"
+#~ msgstr ""
+
+#~ msgid "Sep"
+#~ msgstr ""
+
+#~ msgid "Oct"
+#~ msgstr ""
+
+#~ msgid "Nov"
+#~ msgstr ""
+
+#~ msgid "Dec"
+#~ msgstr ""
 

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pdfarranger master\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-03 03:39+0000\n"
+"POT-Creation-Date: 2026-11-03 20:57+0000\n"
 "PO-Revision-Date: 2026-01-04 02:52+0100\n"
 "Last-Translator: Massimo Pissarello <mapi68@gmail.com>\n"
 "Language: it\n"
@@ -63,8 +63,74 @@ msgstr "Copia"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
+msgid "Highlight text"
+msgstr "Evidenzia il testo"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Strikethrough text"
+msgstr "Barra il testo"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Add a comment to replace text"
+msgstr "Aggiungi un commento per sostituire il testo"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Add note to text"
+msgstr "Aggiungi una nota al testo"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
 msgid "Select All"
 msgstr "Seleziona tutto"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Open Pop-Up Note"
+msgstr "Apri la nota a comparsa"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py pdfarranger_qt/mainwindow.py
+msgid "Reply"
+msgstr "Rispondi"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Delete Thread"
+msgstr "Elimina la discussione"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py pdfarranger_qt/mainwindow.py pdfarranger_qt/reader.py
+#: pdfarranger_qt/toolstrip.py
+msgid "Delete"
+msgstr "Elimina"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py pdfarranger_qt/mainwindow.py
+msgid "Set status"
+msgstr "Imposta lo stato"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py pdfarranger_qt/mainwindow.py
+msgid "Copy Text"
+msgstr "Copia il testo"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Enable Text Selection"
+msgstr "Abilita la selezione del testo"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Make current properties default"
+msgstr "Imposta le proprietà correnti come predefinite"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py pdfarranger_qt/mainwindow.py
+msgid "Properties..."
+msgstr "Proprietà..."
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
@@ -307,17 +373,17 @@ msgid "Gap"
 msgstr "Spaziatura"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/dialogs.py
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/properties.py
 msgid "Appearance"
 msgstr "Aspetto"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/dialogs.py pdfarranger_qt/reader.py
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/notepanel.py pdfarranger_qt/reader.py
 msgid "Bold"
 msgstr "Grassetto"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/dialogs.py pdfarranger_qt/reader.py
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/notepanel.py pdfarranger_qt/reader.py
 msgid "Italic"
 msgstr "Corsivo"
 
@@ -332,12 +398,14 @@ msgid "Size"
 msgstr "Dimensione"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/dialogs.py pdfarranger_qt/toolstrip.py
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/properties.py
+#: pdfarranger_qt/toolstrip.py
 msgid "Colour"
 msgstr "Colore"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/dialogs.py pdfarranger_qt/toolstrip.py
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/properties.py
+#: pdfarranger_qt/toolstrip.py
 msgid "Opacity"
 msgstr "Opacità"
 
@@ -563,7 +631,7 @@ msgid "Theme"
 msgstr "Tema"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/dialogs.py
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/properties.py
 msgid "General"
 msgstr "Generale"
 
@@ -1939,11 +2007,6 @@ msgstr "Esporta selezione in pdf _rasterizzato (png)…"
 msgid "Export Selection to _Rasterized PDF (jpg)…"
 msgstr "Esporta selezione in pdf rasteri_zzato (jpg)…"
 
-# machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
-msgid "Copy Text"
-msgstr "Copia il testo"
-
 #: pdfarranger_qt/mainwindow.py
 msgid "Copy _Image"
 msgstr "Copia _immagine"
@@ -2066,6 +2129,26 @@ msgstr "Ridimensiona contrassegno"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
+msgid "Set Status"
+msgstr "Imposta lo stato"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-brace-format
+msgid "{state} set by {author}"
+msgstr "{state} da {author}"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Mark Properties"
+msgstr "Proprietà del contrassegno"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Edit Note"
+msgstr "Modifica nota"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
 msgid "Delete Mark"
 msgstr "Elimina contrassegno"
 
@@ -2088,11 +2171,6 @@ msgstr "Modifica contrassegno"
 #: pdfarranger_qt/mainwindow.py
 msgid "Delete Note"
 msgstr "Elimina nota"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
-msgid "Edit Note"
-msgstr "Modifica nota"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
@@ -2209,7 +2287,7 @@ msgid "Importing…"
 msgstr "Importazione…"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
+#: pdfarranger_qt/mainwindow.py pdfarranger_qt/notepanel.py
 msgid "Cancel"
 msgstr "Annulla"
 
@@ -2357,12 +2435,6 @@ msgstr "Questo documento ha modifiche non salvate."
 #: pdfarranger_qt/mainwindow.py
 msgid "Save before continuing?"
 msgstr "Salvare prima di continuare?"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py pdfarranger_qt/reader.py
-#: pdfarranger_qt/toolstrip.py
-msgid "Delete"
-msgstr "Elimina"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
@@ -2611,6 +2683,31 @@ msgstr "Ruota"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/markup.py
+msgid "None"
+msgstr "Nessuno"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Accepted"
+msgstr "Accettato"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Cancelled"
+msgstr "Annullato"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Completed"
+msgstr "Completato"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Rejected"
+msgstr "Rifiutato"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
 msgid "Blue"
 msgstr "Blu"
 
@@ -2718,7 +2815,7 @@ msgstr "Nero"
 msgid "Title"
 msgstr "Titolo"
 
-#: pdfarranger_qt/metadata.py
+#: pdfarranger_qt/metadata.py pdfarranger_qt/properties.py
 msgid "Subject"
 msgstr "Oggetto"
 
@@ -2738,13 +2835,44 @@ msgstr "Autore"
 msgid "Creator tool"
 msgstr "Applicazione"
 
-#: pdfarranger_qt/metadata.py
+#: pdfarranger_qt/metadata.py pdfarranger_qt/properties.py
 msgid "Created"
 msgstr "Creato il"
 
 #: pdfarranger_qt/metadata.py
 msgid "Modified"
 msgstr "Modificato"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/notepanel.py pdfarranger_qt/tools.py
+msgid "Underline"
+msgstr "Sottolineato"
+
+#: pdfarranger_qt/notepanel.py
+msgid "Superscript"
+msgstr "Apice"
+
+#: pdfarranger_qt/notepanel.py
+msgid "Subscript"
+msgstr "Pedice"
+
+#: pdfarranger_qt/notepanel.py
+msgid "Text Style"
+msgstr "Stile del testo"
+
+#: pdfarranger_qt/notepanel.py
+msgid "Clear Formatting"
+msgstr "Cancella formattazione"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/notepanel.py
+msgid "Status"
+msgstr "Stato"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/notepanel.py
+msgid "Post"
+msgstr "Pubblica"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/nup.py
@@ -2775,6 +2903,34 @@ msgstr "9 pagine per foglio"
 #: pdfarranger_qt/nup.py
 msgid "16 pages per sheet"
 msgstr "16 pagine per foglio"
+
+#: pdfarranger_qt/properties.py
+msgid "Comment properties"
+msgstr "Proprietà del commento"
+
+#: pdfarranger_qt/properties.py
+msgid "Review History"
+msgstr "Cronologia revisioni"
+
+#: pdfarranger_qt/properties.py
+msgid "Locked"
+msgstr "Bloccato"
+
+#: pdfarranger_qt/properties.py
+msgid "Make Properties Default"
+msgstr "Imposta proprietà come predefinite"
+
+#: pdfarranger_qt/properties.py
+msgid "Author"
+msgstr "Autore"
+
+#: pdfarranger_qt/properties.py
+msgid "Date modified"
+msgstr "Data di modifica"
+
+#: pdfarranger_qt/properties.py
+msgid "The Review History lists any change of status for this comment."
+msgstr "La cronologia revisioni elenca ogni cambio di stato di questo commento."
 
 # machine translation, unreviewed
 #: pdfarranger_qt/reader.py
@@ -3006,11 +3162,6 @@ msgstr "Allega file"
 #: pdfarranger_qt/tools.py
 msgid "Highlight"
 msgstr "Evidenzia"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/tools.py
-msgid "Underline"
-msgstr "Sottolineato"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/tools.py
@@ -3529,4 +3680,40 @@ msgstr "Mostra il titolo invece del nome del file"
 # machine translation, unreviewed
 #~ msgid "Markup"
 #~ msgstr "Marcatura"
+
+#~ msgid "Jan"
+#~ msgstr ""
+
+#~ msgid "Feb"
+#~ msgstr ""
+
+#~ msgid "Mar"
+#~ msgstr ""
+
+#~ msgid "Apr"
+#~ msgstr ""
+
+#~ msgid "May"
+#~ msgstr ""
+
+#~ msgid "Jun"
+#~ msgstr ""
+
+#~ msgid "Jul"
+#~ msgstr ""
+
+#~ msgid "Aug"
+#~ msgstr ""
+
+#~ msgid "Sep"
+#~ msgstr ""
+
+#~ msgid "Oct"
+#~ msgstr ""
+
+#~ msgid "Nov"
+#~ msgstr ""
+
+#~ msgid "Dec"
+#~ msgstr ""
 

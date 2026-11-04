@@ -163,10 +163,18 @@ class TestWhatIsChangedAboutTheFilesOwnMarks(unittest.TestCase):
 
     def test_only_the_attributes_it_knows(self):
         """Anything not named here is the producer's and is left alone, so
-        accepting it silently would promise an edit that never happens."""
+        accepting it silently would promise an edit that never happens.
+
+        `contents` was the example of something refused, and then `subject`
+        was; both are fields now -- the first because a note is the mark's
+        own text and the second because the properties form writes `/Subj`.
+        The principle is unchanged: what is refused is a key nothing
+        writes, and the example moves as the writer grows.
+        """
         edits = markup.MarkEdits()
         with self.assertRaises(ValueError):
-            edits.change(7, 2, contents="hello")
+            edits.change(7, 2, border="hello")
+        self.assertEqual(edits.for_page(7), {})
 
     def test_it_is_kept_per_page(self):
         """By page uid, so a reorder cannot move an edit to another page and
@@ -537,15 +545,34 @@ class ColourCase(unittest.TestCase):
 class TestTheSwatchInTheTail(ColourCase):
     """It does two jobs, and which one depends on what is selected."""
 
-    def test_it_is_there_under_every_tool(self):
-        """Including the pointer. It was hidden for the pointer at first --
-        nothing is being made, so there is nothing to set an attribute of --
-        and that misses its second job, which is changing a selected mark."""
-        for name in ("select", "pan", "highlight", "draw", "comment"):
+    def test_the_tail_shows_what_is_being_worked_on(self):
+        """**The armed tool's attributes, or the selected annotation's.**
+
+        A pointer makes nothing and has no attributes of its own, so with
+        one armed the tail is empty -- until a mark is selected, when it
+        shows that mark's, which is the swatch's second job. It was shown
+        under every tool for a while, on the reasoning that the swatch has
+        that second job at all times; that substituted a rule of its own
+        for the one the owner asked for.
+        """
+        for name in ("highlight", "draw", "comment"):
             with self.subTest(tool=name):
                 self.strip.arm(name)
                 settle(timeout_ms=60)
                 self.assertTrue(self.strip.tail.isVisible())
+        for name in ("select", "pan"):
+            with self.subTest(tool=name):
+                self.canvas.select_mark(None)
+                self.strip.arm(name)
+                settle(timeout_ms=60)
+                self.assertFalse(self.strip.tail.isVisible(),
+                                 "a pointer has no attributes of its own")
+        mark = self.a_mark()
+        self.strip.arm("select")
+        self.canvas.select_mark((0, mark))
+        settle(timeout_ms=250)
+        self.assertTrue(self.strip.tail.isVisible(),
+                        "a selected mark has attributes to show")
 
     def test_with_nothing_selected_it_arms_the_next_mark(self):
         from pdfarranger_qt import markup as m
@@ -660,14 +687,21 @@ class TestItIsAllOneHistory(ColourCase):
 
     def test_the_page_is_rendered_from_its_own_document(self):
         """A recoloured mark is already in the page bitmap, so the page has
-        to come from a document that carries the change."""
+        to come from a document that carries the change.
+
+        The page it is *replaced* with is what matters, not whether there
+        was one before: a page carrying replies is already rendered from a
+        document of its own, because the replies are left out of it.
+        """
         mark = self.a_mark()
         self.canvas.select_mark((0, mark))
         settle(timeout_ms=200)
-        self.assertEqual(sorted(self.canvas._pages._edited), [])
+        was = self.canvas._pages._edited.get(0)
         self.win.mark_recoloured((0.0, 1.0, 1.0))
         settle(timeout_ms=400)
-        self.assertEqual(sorted(self.canvas._pages._edited), [0])
+        self.assertIn(0, self.canvas._pages._edited)
+        self.assertNotEqual(self.canvas._pages._edited.get(0), was,
+                            "the page was not rendered again")
 
     def test_the_selection_survives_the_change(self):
         """Recolouring used to rebuild the reader, which threw away both the

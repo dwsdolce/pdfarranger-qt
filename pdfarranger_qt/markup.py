@@ -44,7 +44,9 @@ import datetime
 import getpass
 import itertools
 import uuid
+from html import escape
 from typing import Dict, List, Optional, Tuple
+from xml.etree import ElementTree
 
 import pikepdf
 
@@ -75,6 +77,150 @@ SUBJECTS = {HIGHLIGHT: "Highlight", STRIKEOUT: "Cross-Out",
 #: Bit 3 of `/F`, Print. Without it a mark shows on screen and vanishes from
 #: paper, which is not what anybody means by annotating a document.
 PRINTABLE = 4
+
+#: Print, NoZoom and NoRotate: what Reader gives a reply, whose icon is
+#: anchored to the mark it answers rather than drawn on the paper.
+ANCHORED = 28
+
+#: The same, with Hidden: what a status change carries. It never draws --
+#: a status is read in the thread or in Review History, not on the page.
+UNSEEN = 30
+
+#: The five a mark can be given, as Reader's *Set status* offers them, with
+#: None first and the rest alphabetical. **Written as they are**: `/State`
+#: holds these keywords and a reader matches them, so a translated one is a
+#: status no other application understands. The menu shows them translated
+#: and writes these.
+STATUSES = ("None", "Accepted", "Cancelled", "Completed", "Rejected")
+
+#: The style properties a note's rich text keeps on the way in. Acrobat
+#: writes a `<span>` round every run whether or not anything is styled, and
+#: gives each one the whole set -- including `font-size:-14.0pt`, negative,
+#: which reads as "not set", and an alignment that means nothing inside a
+#: line. Neither of those survives the trip. What is left is what the *Text
+#: Style* menu can say.
+RICH_STYLES = ("font-weight", "font-style", "text-decoration",
+               "vertical-align")
+
+#: The values that mean "nothing is set", per property. A span carrying only
+#: these is a run with no styling, and is written out as bare text so that a
+#: note nobody styled does not arrive as markup.
+RICH_PLAIN = {"font-weight": "normal", "font-style": "normal",
+              "text-decoration": "none", "vertical-align": "baseline"}
+
+
+def rich_to_html(rich):
+    """`/RC` as a fragment Qt can draw, or None when it says nothing.
+
+    **`/RC` is the rich version of `/Contents` and viewers prefer it.** A
+    note Acrobat styled reads plain here until this is used, which is what
+    made the underlined reply in the corpus arrive as ordinary text.
+
+    None when there is no rich content, when it will not parse, or when
+    nothing in it is styled -- in each case `/Contents` is the better
+    answer and the caller already has it.
+    """
+    if not rich:
+        return None
+    try:
+        root = ElementTree.fromstring(rich)
+    except ElementTree.ParseError:
+        return None
+    lines, styled = [], False
+    for para in root.iter():
+        if para.tag.rsplit("}", 1)[-1].lower() != "p":
+            continue
+        piece, found = _rich_piece(para)
+        styled = styled or found
+        lines.append(piece)
+    if not styled:
+        return None
+    # Joined with breaks rather than left as paragraphs: a note is a few
+    # lines and Qt gives a paragraph margins this window has no room for.
+    return "<br>".join(line for line in lines if line)
+
+
+def _rich_piece(node):
+    """One element of `/RC` as Qt's rich text, and whether it styled
+    anything."""
+    inner = escape(node.text or "")
+    styled = False
+    for child in node:
+        piece, found = _rich_piece(child)
+        styled = styled or found
+        inner += piece + escape(child.tail or "")
+    tag = node.tag.rsplit("}", 1)[-1].lower()
+    if tag == "br":
+        return "<br>" + inner, styled
+    if tag in ("b", "i", "u"):
+        return "<%s>%s</%s>" % (tag, inner, tag), True
+    if tag == "span":
+        style = _kept_style(node.get("style", ""))
+        if style:
+            return '<span style="%s">%s</span>' % (style, inner), True
+    return inner, styled
+
+
+#: The shell Acrobat writes `/RC` in, less its own `xfa:APIVersion` -- that
+#: names the Acrobat build that wrote the file, which this is not.
+RICH_HEAD = ('<?xml version="1.0"?>'
+             '<body xmlns="http://www.w3.org/1999/xhtml" '
+             'xmlns:xfa="http://www.xfa.org/schema/xfa-data/1.0/" '
+             'xfa:spec="2.0.2">')
+
+
+def rich_from_runs(paragraphs) -> Optional[str]:
+    """Styled runs as `/RC`, or None when nothing in them is styled.
+
+    ``paragraphs`` is a list of lines, each a list of ``(text, style)``
+    where the style names only what is set -- the shape `NotePanel.runs`
+    reports. None rather than a fragment of bare spans, because a note
+    nobody styled belongs in `/Contents` alone: writing `/RC` for it would
+    hand every reader a second copy of the same words to prefer.
+    """
+    styled = any(style for line in paragraphs for _text, style in line)
+    if not styled:
+        return None
+    out = [RICH_HEAD]
+    for line in paragraphs:
+        out.append('<p dir="ltr">')
+        for text, style in line:
+            said = escape(text)
+            if style:
+                out.append('<span dir="ltr" style="%s">%s</span>' % (
+                    ";".join("%s:%s" % pair for pair in sorted(style.items())),
+                    said))
+            else:
+                out.append(said)
+        out.append("</p>")
+    out.append("</body>")
+    return "".join(out)
+
+
+def _kept_style(style: str) -> str:
+    """The declarations worth carrying over, in the order they were
+    written."""
+    kept = []
+    for part in style.split(";"):
+        name, _, value = part.partition(":")
+        name, value = name.strip().lower(), value.strip()
+        if (name in RICH_STYLES and value
+                and value.lower() != RICH_PLAIN.get(name)
+                and not value.startswith("-")):
+            kept.append("%s:%s" % (name, value))
+    return ";".join(kept)
+
+#: The same five as a menu shows them. Separate from `STATUSES` because
+#: these are read and those are written: a status translated into the file
+#: is one no other application understands, and a status shown in English
+#: to somebody reading in Finnish is a menu entry nobody asked for.
+STATUS_LABELS = {
+    "None": N_("None"),
+    "Accepted": N_("Accepted"),
+    "Cancelled": N_("Cancelled"),
+    "Completed": N_("Completed"),
+    "Rejected": N_("Rejected"),
+}
 
 #: How big a sticky note's icon is, in points. A `/Text` annotation is the one
 #: mark whose size is not its author's to choose: measured against PDFium, the
@@ -138,6 +284,25 @@ def pdf_date(when: Optional[datetime.datetime] = None) -> str:
             + f"{sign}{minutes // 60:02d}'{minutes % 60:02d}'")
 
 
+def parse_pdf_date(value) -> "Optional[datetime.datetime]":
+    """`D:YYYYMMDDHHmmSS` and whatever follows it, as a datetime.
+
+    The zone suffix is ignored rather than applied: a note's header shows
+    the time the file recorded, and shifting it into the reader's own zone
+    would make a comment written at 10:13 read as some other hour.
+    """
+    if not value:
+        return None
+    digits = "".join(ch for ch in str(value).lstrip("D:") if ch.isdigit())
+    if len(digits) < 8:
+        return None
+    digits = (digits + "000000")[:14]
+    try:
+        return datetime.datetime.strptime(digits, "%Y%m%d%H%M%S")
+    except ValueError:
+        return None
+
+
 def default_author() -> str:
     """Who to put on a mark: the account making it.
 
@@ -161,16 +326,40 @@ class Annotation:
     """One mark, in the page coordinates of the page it belongs to."""
 
     __slots__ = ("kind", "page", "rect", "quads", "contents", "colour",
-                 "opacity", "author", "created", "name")
+                 "opacity", "author", "created", "name", "irt",
+                 "popup_rect", "state", "rich", "subject", "locked")
 
     def __init__(self, kind: str, page: int, rect: Tuple[float, ...],
                  contents: str = "", colour=None, author: Optional[str] = None,
                  created: Optional[str] = None, quads=(),
-                 name: Optional[str] = None, opacity=None):
+                 name: Optional[str] = None, opacity=None,
+                 irt: Optional[str] = None, popup_rect=None,
+                 state: Optional[str] = None, rich: Optional[str] = None,
+                 subject: Optional[str] = None, locked: bool = False):
         if kind not in KINDS:
             raise ValueError(f"unknown annotation kind: {kind}")
         self.kind = kind
         self.page = page
+        #: The `/NM` of the mark this answers, for a reply, and None for
+        #: anything else. A reply is a mark in its own right -- it draws an
+        #: icon, it can be selected and deleted -- and all that makes it a
+        #: reply is pointing at what it answers.
+        self.irt = irt
+        #: Where this mark's window sits, once somebody has moved it. None
+        #: until then, and the default beside the page is computed instead.
+        self.popup_rect = tuple(popup_rect) if popup_rect else None
+        #: The review state this link records, for a status change, and None
+        #: for everything else. A status is an annotation like a reply --
+        #: what makes it a status is carrying this.
+        self.state = state
+        #: `/RC`, this mark's text with its styling, or None when nothing
+        #: in it is styled and `contents` says the whole of it.
+        self.rich = rich
+        #: `/Subj`, which starts as the name of the tool that made the mark
+        #: and is the properties form's to change. None means the tool's.
+        self.subject = subject
+        #: `/F` bit 8: this mark is not to be changed. Set from the form.
+        self.locked = locked
         self.rect = tuple(float(v) for v in rect)
         #: The mark's `/NM`, its name within the file. Made here rather than
         #: at export so that it survives a save: a name minted on the way out
@@ -263,7 +452,7 @@ class Annotations:
         return f"Annotations({len(self)} on {len(self._by_page)} page(s))"
 
 
-def apply_edit(annot, edit) -> None:
+def apply_edit(annot, edit, pdf=None) -> None:
     """Write one mark's edits onto the dictionary it arrived with.
 
     **Shared by the preview and the export, because they drifted.** They
@@ -288,14 +477,73 @@ def apply_edit(annot, edit) -> None:
         annot[pikepdf.Name.QuadPoints] = pikepdf.Array(
             [v for quad in quads for v in _quad_points(quad)])
         annot[pikepdf.Name.Rect] = pikepdf.Array([*bounding_rect(quads)])
-    if pikepdf.Name.AP in annot:
-        # The stream the producer wrote still draws the old colour over the
-        # old run, and every reader falls back to `/QuadPoints` when there
-        # is none.
+    popup = edit.get("popup")
+    if popup:
+        window = annot.get(pikepdf.Name.Popup)
+        if window is not None:
+            window[pikepdf.Name.Rect] = pikepdf.Array([*popup])
+    contents = edit.get("contents")
+    if contents is not None:
+        # Removed rather than emptied when there is nothing to say: a reader
+        # that lists comments lists an empty `/Contents` as a comment, which
+        # is a note against a mark whose point was that it had none.
+        if contents:
+            annot[pikepdf.Name.Contents] = pikepdf.String(contents)
+        elif pikepdf.Name.Contents in annot:
+            del annot[pikepdf.Name.Contents]
+        # **`/RC` is preferred over `/Contents` by every reader that
+        # understands it**, so it is rewritten with the text or taken away
+        # with it. Leaving the producer's rich text beside our new plain
+        # text would show the words we just replaced.
+        rich = edit.get("rich")
+        if contents and rich:
+            annot[pikepdf.Name.RC] = pikepdf.String(rich)
+        elif pikepdf.Name.RC in annot:
+            del annot[pikepdf.Name.RC]
+    # What the properties form writes. Each is left alone unless the form
+    # named it, so a mark whose colour was changed keeps the author and the
+    # subject the producer gave it.
+    author = edit.get("author")
+    if author is not None:
+        annot[pikepdf.Name.T] = pikepdf.String(author)
+    subject = edit.get("subject")
+    if subject is not None:
+        annot[pikepdf.Name.Subj] = pikepdf.String(subject)
+    locked = edit.get("locked")
+    if locked is not None:
+        # One bit of `/F`, set or cleared: the rest of the flags are the
+        # producer's -- Print, NoZoom, Hidden on a status link -- and are
+        # nothing to do with whether the mark is locked.
+        flags = int(annot.get(pikepdf.Name.F, 0))
+        annot[pikepdf.Name.F] = (flags | LOCKED) if locked else (
+            flags & ~LOCKED)
+    if (colour is not None or opacity is not None or quads) and (
+            pikepdf.Name.AP in annot):
+        if pdf is not None and annot.get(pikepdf.Name.Subtype) == pikepdf.Name.Text:
+            # **A `/Text`'s stream is replaced, not merely dropped.** Every
+            # other kind is redrawn by the reader from `/QuadPoints` and
+            # `/C`; this one is an icon, and a reader with no appearance to
+            # draw substitutes a default of its own -- PDFium's is yellow
+            # and ignores the colour entirely. A box in the mark's own
+            # colour is what the other readers draw for one of these, and
+            # it is the one thing that makes every reader agree.
+            annot[pikepdf.Name.AP] = pikepdf.Dictionary(
+                N=_box_appearance(pdf, annot))
+            return
+        # **Only when what it draws has changed.** The stream the producer
+        # wrote still draws the old colour over the old run, and every
+        # reader falls back to `/QuadPoints` when there is none.
+        #
+        # But for a `/Text` that stream *is* the icon, and nothing
+        # regenerates one: the reader substitutes a default of its own, in
+        # its own colour. Dropping it for a change to the text, the author,
+        # the subject, the lock or the window's position threw away the
+        # producer's artwork for a change that does not affect what is
+        # drawn at all.
         del annot[pikepdf.Name.AP]
 
 
-def patch_page_marks(page, edits) -> int:
+def patch_page_marks(page, edits, pdf=None) -> int:
     """Apply ``edits`` to one page's annotations. Returns how many were hit.
 
     Patch what changed and drop what was deleted, in one pass, because the
@@ -342,7 +590,7 @@ def patch_page_marks(page, edits) -> int:
                     pass
             changed += 1
             continue
-        apply_edit(annot, edit)
+        apply_edit(annot, edit, pdf)
         kept.append(annot)
         changed += 1
     if dropped:
@@ -351,7 +599,33 @@ def patch_page_marks(page, edits) -> int:
     return changed
 
 
-def one_page_with_edits(data, index: int, edits) -> "Optional[bytes]":
+def drop_replies(page) -> int:
+    """Take the replies off a page, for rendering only.
+
+    **A reply is not page content.** Reader draws none of them, and a
+    thread's replies all carry the same rectangle, so a renderer that
+    honours their appearance streams stacks them into one opaque smudge at
+    the corner of the mark. What a reply says belongs in the thread window
+    and on the badge, both of which this application draws itself.
+
+    Only for the page a reader is *shown*. The document that is written out
+    keeps every one of them.
+    """
+    annots = page.get(pikepdf.Name.Annots)
+    if annots is None:
+        return 0
+    kept = [a for a in annots
+            if not (a.get(pikepdf.Name.Subtype) == pikepdf.Name.Text
+                    and pikepdf.Name.IRT in a
+                    and pikepdf.Name.State not in a)]
+    if len(kept) == len(annots):
+        return 0
+    page[pikepdf.Name.Annots] = pikepdf.Array(kept)
+    return len(annots) - len(kept)
+
+
+def one_page_with_edits(data, index: int, edits,
+                        hide_replies: bool = False) -> "Optional[bytes]":
     """``data``'s page ``index`` on its own, with ``edits`` applied.
 
     For showing a change at once. The page a reader is looking at has its
@@ -369,7 +643,7 @@ def one_page_with_edits(data, index: int, edits) -> "Optional[bytes]":
     import io
     import warnings
 
-    if not edits:
+    if not edits and not hide_replies:
         return None
     try:
         with pikepdf.open(io.BytesIO(data)) as whole:
@@ -378,7 +652,9 @@ def one_page_with_edits(data, index: int, edits) -> "Optional[bytes]":
             one = pikepdf.Pdf.new()
             one.pages.append(whole.pages[index])
             page = one.pages[0].obj
-            changed = patch_page_marks(page, edits)
+            changed = patch_page_marks(page, edits, one)
+            if hide_replies:
+                changed += drop_replies(page)
             if not changed:
                 return None
             out = io.BytesIO()
@@ -443,6 +719,17 @@ class MarkEdits:
     #: What may be changed about a mark the file brought. Anything not here
     #: is left exactly as the producer wrote it.
     #:
+    #: `popup` is where the mark's window sits, which Reader remembers for
+    #: a window that has been moved or resized. It belongs to the `/Popup`
+    #: object rather than to the mark, and it is the one edit here that is
+    #: geometry without being the mark's own.
+    #:
+    #: `contents` is the note a mark carries -- what Reader calls its pop-up
+    #: note, and which is the mark's own `/Contents` rather than an
+    #: annotation of its own. A reply *is* an annotation of its own and is
+    #: not this; it gets an entry under its own index, because each reply is
+    #: a mark that can be edited like any other.
+    #:
     #: `quads` carries geometry, and geometry is the same problem as colour:
     #: `/QuadPoints` and `/Rect` are rewritten and the appearance dropped,
     #: while `/NM`, `/Popup`, `/RC` and the `/IRT` chains stay the
@@ -456,7 +743,11 @@ class MarkEdits:
     #: put back. A mark's status chain and its replies each get an entry of
     #: their own rather than being re-derived from the parent, so the chain
     #: is walked once, where the marks are, and not again in the writer.
-    FIELDS = ("colour", "opacity", "quads", "deleted")
+    #: `rich` travels with `contents` and never alone: it is the same
+    #: words with their styling, and a reader prefers it, so the two have
+    #: to be written in one go or not at all.
+    FIELDS = ("colour", "opacity", "quads", "deleted", "contents", "popup",
+              "rich", "author", "subject", "locked")
 
     def __init__(self, by_page=None):
         self._by_page: Dict[int, Dict[int, dict]] = {}
@@ -550,7 +841,12 @@ def to_dictionary(pdf, annotation: Annotation, page=None) -> pikepdf.Dictionary:
         Type=pikepdf.Name.Annot,
         Subtype=pikepdf.Name(annotation.kind),
         Rect=pikepdf.Array([*annotation.rect]),
-        F=PRINTABLE,
+        # A reply is NoZoom and NoRotate as well as Print, as Reader writes
+        # them: its icon is interface furniture anchored to the mark it
+        # answers, so it keeps its size when the page is zoomed or turned.
+        F=((UNSEEN if annotation.state
+            else ANCHORED if annotation.irt else PRINTABLE)
+           | (LOCKED if annotation.locked else 0)),
         M=pikepdf.String(annotation.created),
         # When the mark was made, as against `/M`, when it was last touched.
         # A reader sorts its comment list by one and shows the other, and
@@ -561,7 +857,15 @@ def to_dictionary(pdf, annotation: Annotation, page=None) -> pikepdf.Dictionary:
         # that cannot be named cannot be replied to.
         NM=pikepdf.String(annotation.name),
     )
-    subject = SUBJECTS.get(annotation.kind)
+    if annotation.state:
+        # `/StateModel` says which vocabulary `/State` is drawn from. Review
+        # is the one Reader writes and the only one this offers; the other,
+        # Marked, is a flag rather than a workflow.
+        entry[pikepdf.Name.State] = pikepdf.String(annotation.state)
+        entry[pikepdf.Name.StateModel] = pikepdf.String("Review")
+    # What the form was given, else the name of the tool that made it,
+    # which is what Acrobat starts every mark's subject as.
+    subject = annotation.subject or SUBJECTS.get(annotation.kind)
     if subject:
         entry[pikepdf.Name.Subj] = pikepdf.String(subject)
     if annotation.contents:
@@ -570,6 +874,11 @@ def to_dictionary(pdf, annotation: Annotation, page=None) -> pikepdf.Dictionary:
         # that lists comments lists it -- an empty note against a mark whose
         # whole point was that it had nothing to add.
         entry[pikepdf.Name.Contents] = pikepdf.String(annotation.contents)
+        if annotation.rich:
+            # The same words with their styling. `/Contents` stays beside
+            # it as the plain reading, which is what a viewer that does not
+            # understand `/RC` falls back to.
+            entry[pikepdf.Name.RC] = pikepdf.String(annotation.rich)
     if page is not None:
         # The page the mark is on. Readers use it to answer "which page is
         # this comment on" without searching every `/Annots`, and ours has
@@ -747,6 +1056,35 @@ def _appearance(pdf, annotation):
     return pdf.make_indirect(stream)
 
 
+def _box_appearance(pdf, annot):
+    """A filled box the size of the annotation, in its own colour.
+
+    What PDFGear and PDF24 draw for a `/Text`, and what the owner asked for
+    on 2026-11-03. The opacity is left to the annotation's `/CA`, which
+    every reader applies to whatever the stream draws, so it is not applied
+    twice.
+    """
+    rect = [_number(v, 0.0) for v in annot.get(pikepdf.Name.Rect, [0, 0, 0, 0])]
+    width = abs(rect[2] - rect[0])
+    height = abs(rect[3] - rect[1])
+    colour = annot.get(pikepdf.Name.C)
+    paint = " ".join("%g" % _number(v, 0.0) for v in (colour or [1, 1, 0]))
+    stream = pikepdf.Stream(pdf, ("/GS gs %s rg 0 0 %g %g re f"
+                                  % (paint, width, height)).encode())
+    stream[pikepdf.Name.Type] = pikepdf.Name.XObject
+    stream[pikepdf.Name.Subtype] = pikepdf.Name.Form
+    stream[pikepdf.Name.BBox] = pikepdf.Array([0, 0, width, height])
+    # The opacity is in the stream as well as in `/CA`. A reader is only
+    # *recommended* to apply `/CA` to an appearance -- measured, PDFium
+    # drew the box fully opaque with `/CA 0.72` on the annotation -- and
+    # the same pair is what `_appearance` writes for a highlight.
+    stream[pikepdf.Name.Resources] = pikepdf.Dictionary(
+        ExtGState=pikepdf.Dictionary(GS=pikepdf.Dictionary(
+            BM=pikepdf.Name.Normal,
+            ca=_number(annot.get(pikepdf.Name.CA), 1.0))))
+    return pdf.make_indirect(stream)
+
+
 def bounding_rect(quads) -> "tuple":
     """The box that contains every quad, which is what `/Rect` must be."""
     lefts = [q[0] for q in quads]
@@ -754,6 +1092,78 @@ def bounding_rect(quads) -> "tuple":
     rights = [q[2] for q in quads]
     tops = [q[3] for q in quads]
     return (min(lefts), min(bottoms), max(rights), max(tops))
+
+
+#: The window a viewer opens to show a mark's note, in points. Measured on
+#: 44 of Reader's own: 184 by 92, its left edge exactly at the page width --
+#: parked *off* the page, to the right -- and its top aligned with the
+#: parent's top. Nothing is clamped: where the mark sits low on the page,
+#: Reader writes a popup whose bottom is negative.
+POPUP_SIZE = (184.0, 92.0)
+
+
+def popup_for(pdf, mark, rect, page_width: float,
+              placed=None) -> pikepdf.Dictionary:
+    """The `/Popup` object for ``mark``, placed the way Reader places one.
+
+    **A popup is written whether or not the mark has a note.** It holds no
+    text -- the words are the mark's `/Contents` -- and draws nothing; it is
+    the window a viewer opens, and Reader gives one to every mark it makes.
+    The proof is a highlight in the corpus that has never been commented and
+    carries one anyway.
+
+    Indirect and pointing back at the mark, which is why this takes the mark
+    rather than making it: the two reference each other, so the mark has to
+    exist first.
+    """
+    width, height = POPUP_SIZE
+    top = float(rect[3])
+    where = ([float(v) for v in placed] if placed else
+             [page_width, top - height, page_width + width, top])
+    return pdf.make_indirect(pikepdf.Dictionary(
+        Type=pikepdf.Name.Annot,
+        Subtype=pikepdf.Name.Popup,
+        Rect=pikepdf.Array(where),
+        # Print, NoZoom and NoRotate, as Reader writes them. Not Hidden: a
+        # popup is not drawn in the page either way, and Reader leaves the
+        # bit alone even on the window of a hidden status change.
+        F=28,
+        Open=False,
+        Parent=mark,
+    ))
+
+
+def _popup_is_open(annot) -> bool:
+    """Whether this mark's window was showing when the file was saved."""
+    try:
+        popup = annot.get(pikepdf.Name.Popup)
+        return bool(popup is not None and popup.get(pikepdf.Name.Open, False))
+    except Exception:  # noqa: BLE001 - an unreadable popup is a closed one
+        return False
+
+
+def _popup_rect(annot):
+    """Where this mark's window sits, if it has one. Reader remembers a
+    window that has been moved or resized by writing it here."""
+    try:
+        popup = annot.get(pikepdf.Name.Popup)
+        if popup is None:
+            return None
+        raw = popup.get(pikepdf.Name.Rect)
+        return tuple(_number(v, 0.0) for v in raw) if raw is not None else None
+    except Exception:  # noqa: BLE001 - a mark without a readable window
+        return None
+
+
+def _named(page, name: str):
+    """The annotation on ``page`` whose `/NM` is ``name``, or None."""
+    for annot in (getattr(page, "obj", page).get(pikepdf.Name.Annots) or []):
+        try:
+            if pikepdf.Name.NM in annot and str(annot[pikepdf.Name.NM]) == name:
+                return annot
+        except Exception:  # noqa: BLE001 - an unreadable neighbour is not it
+            continue
+    return None
 
 
 def add_to_page(pdf, page, marks, factor: float = 1.0) -> int:
@@ -768,11 +1178,29 @@ def add_to_page(pdf, page, marks, factor: float = 1.0) -> int:
     # reference to the page, and a wrapper assigned into a dictionary writes
     # the page out again inside the annotation.
     target = getattr(page, "obj", page)
+    media = [float(v) for v in target.get(pikepdf.Name.MediaBox,
+                                          [0, 0, 612, 792])]
     for annotation in marks:
-        entry = to_dictionary(pdf, scaled(annotation, factor), page=target)
+        placed = scaled(annotation, factor)
+        entry = to_dictionary(pdf, placed, page=target)
         if pikepdf.Name.Annots not in page:
             page[pikepdf.Name.Annots] = pdf.make_indirect(pikepdf.Array([]))
         page[pikepdf.Name.Annots].append(entry)
+        # Its window, which goes in `/Annots` beside it and is pointed at
+        # from it. Written for every mark, commented or not, because that is
+        # what Reader writes.
+        if placed.irt:
+            # Resolved here rather than in `to_dictionary`, because it points
+            # at *another annotation on this page* and only the page knows
+            # which: the mark answered may be one the file brought, written
+            # long before this one existed.
+            answered = _named(page, placed.irt)
+            if answered is not None:
+                entry[pikepdf.Name.IRT] = answered
+        window = popup_for(pdf, entry, placed.rect, media[2],
+                           placed.popup_rect)
+        entry[pikepdf.Name.Popup] = window
+        page[pikepdf.Name.Annots].append(window)
         written += 1
     return written
 
@@ -794,6 +1222,15 @@ _mark_uids = itertools.count(1)
 #: never appears.
 HIDDEN = 2
 
+#: `/F` bit 8. **Locked**: the annotation's attributes and its own text are
+#: not to be changed. Measured on a highlight locked in Acrobat, whose `/F`
+#: went from 4 to 132, and on a reply, 28 to 156. The separate
+#: `LockedContents` bit (512) is not used by Acrobat and is not read here.
+#:
+#: It is per annotation, so a locked mark leaves its replies editable and a
+#: locked reply sits in a thread whose other items are not.
+LOCKED = 128
+
 
 class Mark:
     """One annotation the document already had, as this application sees it.
@@ -805,17 +1242,30 @@ class Mark:
 
     __slots__ = ("uid", "page", "index", "subtype", "rect", "quads", "colour",
                  "opacity", "contents", "author", "name", "parent", "state",
-                 "hidden")
+                 "hidden", "when", "popup_open", "popup_rect", "rich",
+                 "locked", "subject")
 
     def __init__(self, page, subtype, rect, quads=(), colour=None,
                  opacity=None, contents="", name=None, parent=None,
-                 state=None, hidden=False, index=-1, author=""):
+                 state=None, hidden=False, index=-1, author="", when="",
+                 popup_open=False, popup_rect=None, rich="", locked=False,
+                 subject=""):
         self.uid = next(_mark_uids)
         #: Where this mark sits among the markup annotations on its page, in
         #: the order the file has them. What `MarkEdits` keys an edit by, and
         #: the one thing about a mark that export can find again: it reads
         #: the same pages with the same enumeration.
         self.index = index
+        #: Whether the window on this mark was showing when the file was
+        #: saved, and where it was. A reader that honours `/Open` shows the
+        #: thread rather than a summary, which is the one thing the flag is
+        #: good for here.
+        self.popup_open = popup_open
+        self.popup_rect = popup_rect
+        #: `/M` if the mark has one, else `/CreationDate`, as the file wrote
+        #: it. Kept raw because a note's header shows it differently
+        #: according to how old it is -- see `when_text`.
+        self.when = when
         self.page = page
         self.subtype = subtype
         self.rect = tuple(rect)
@@ -823,6 +1273,11 @@ class Mark:
         self.colour = colour
         self.opacity = opacity
         self.contents = contents
+        #: `/RC`, the rich version of `/Contents`, exactly as the file wrote
+        #: it. Kept raw: `rich_to_html` is what turns it into something to
+        #: draw, and a writer needs the original to know what it is
+        #: replacing.
+        self.rich = rich
         #: `/T`, who made it. Shown beside a note's text, as Reader shows it.
         self.author = author
         #: `/NM`, when the producer wrote one. Not used for identity -- see
@@ -834,6 +1289,13 @@ class Mark:
         #: does not: it is absent on both, which the format reads as a reply.
         self.state = state
         self.hidden = hidden
+        #: `/F` bit 8: the producer, or somebody using one, said this is not
+        #: to be changed. Honoured rather than enforced -- the file cannot
+        #: stop an editor, and this one chooses to be stopped.
+        self.locked = locked
+        #: `/Subj`, which Acrobat starts as the name of the tool that made
+        #: the mark and the properties form can change to anything.
+        self.subject = subject
 
     def boxes(self) -> "list[tuple]":
         """The quadrilaterals as ``(left, bottom, right, top)`` rectangles.
@@ -922,7 +1384,12 @@ def marks_in(pdf) -> "list[Mark]":
                             if colour is not None else None),
                     opacity=_number(annot.get(pikepdf.Name.CA)),
                     contents=str(annot.get(pikepdf.Name.Contents, "")),
+                    rich=str(annot.get(pikepdf.Name.RC, "")),
+                    subject=str(annot.get(pikepdf.Name.Subj, "")),
                     author=str(annot.get(pikepdf.Name.T, "")),
+                    when=str(annot.get(pikepdf.Name.M,
+                                       annot.get(pikepdf.Name.CreationDate,
+                                                 ""))),
                     name=(str(annot[pikepdf.Name.NM])
                           if pikepdf.Name.NM in annot else None),
                     parent=(str(parent[pikepdf.Name.NM])
@@ -931,6 +1398,9 @@ def marks_in(pdf) -> "list[Mark]":
                     state=(str(annot[pikepdf.Name.State])
                            if pikepdf.Name.State in annot else None),
                     hidden=bool(int(annot.get(pikepdf.Name.F, 0)) & HIDDEN),
+                    locked=bool(int(annot.get(pikepdf.Name.F, 0)) & LOCKED),
+                    popup_open=_popup_is_open(annot),
+                    popup_rect=_popup_rect(annot),
                 ))
             except Exception:  # noqa: BLE001 - one bad mark is not the page
                 continue

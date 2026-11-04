@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-03 03:39+0000\n"
+"POT-Creation-Date: 2026-11-03 20:57+0000\n"
 "PO-Revision-Date: 2025-12-15 00:59+0700\n"
 "Last-Translator: Loc Huynh <https://github.com/hthienloc>\n"
 "Language: vi\n"
@@ -61,8 +61,74 @@ msgstr "Chép"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
+msgid "Highlight text"
+msgstr "Tô sáng văn bản"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Strikethrough text"
+msgstr "Gạch ngang văn bản"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Add a comment to replace text"
+msgstr "Thêm chú thích để thay thế văn bản"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Add note to text"
+msgstr "Thêm ghi chú vào văn bản"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
 msgid "Select All"
 msgstr "Chọn tất cả"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Open Pop-Up Note"
+msgstr "Mở ghi chú bật lên"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py pdfarranger_qt/mainwindow.py
+msgid "Reply"
+msgstr "Trả lời"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Delete Thread"
+msgstr "Xoá chuỗi"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py pdfarranger_qt/mainwindow.py pdfarranger_qt/reader.py
+#: pdfarranger_qt/toolstrip.py
+msgid "Delete"
+msgstr "Xóa bỏ"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py pdfarranger_qt/mainwindow.py
+msgid "Set status"
+msgstr "Đặt trạng thái"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py pdfarranger_qt/mainwindow.py
+msgid "Copy Text"
+msgstr "Chép văn bản"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Enable Text Selection"
+msgstr "Bật chọn văn bản"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Make current properties default"
+msgstr "Đặt thuộc tính hiện tại làm mặc định"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py pdfarranger_qt/mainwindow.py
+msgid "Properties..."
+msgstr "Thuộc tính..."
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
@@ -303,17 +369,17 @@ msgid "Gap"
 msgstr "Khe hở"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/dialogs.py
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/properties.py
 msgid "Appearance"
 msgstr "Diện mạo"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/dialogs.py pdfarranger_qt/reader.py
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/notepanel.py pdfarranger_qt/reader.py
 msgid "Bold"
 msgstr "Đậm"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/dialogs.py pdfarranger_qt/reader.py
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/notepanel.py pdfarranger_qt/reader.py
 msgid "Italic"
 msgstr "Nghiêng"
 
@@ -328,12 +394,14 @@ msgid "Size"
 msgstr "Cỡ"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/dialogs.py pdfarranger_qt/toolstrip.py
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/properties.py
+#: pdfarranger_qt/toolstrip.py
 msgid "Colour"
 msgstr "Màu"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/dialogs.py pdfarranger_qt/toolstrip.py
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/properties.py
+#: pdfarranger_qt/toolstrip.py
 msgid "Opacity"
 msgstr "Độ đục"
 
@@ -560,7 +628,7 @@ msgid "Theme"
 msgstr "Chủ đề"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/dialogs.py
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/properties.py
 msgid "General"
 msgstr "Chung"
 
@@ -1919,11 +1987,6 @@ msgstr "Xuất vùng chọn ra PDF _raster (png)…"
 msgid "Export Selection to _Rasterized PDF (jpg)…"
 msgstr "Xuất vùng chọn ra PDF raster (jp_g)…"
 
-# machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
-msgid "Copy Text"
-msgstr "Chép văn bản"
-
 #: pdfarranger_qt/mainwindow.py
 msgid "Copy _Image"
 msgstr "_Sao chép hình ảnh"
@@ -2050,6 +2113,26 @@ msgstr "Đổi kích thước dấu"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
+msgid "Set Status"
+msgstr "Đặt trạng thái"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-brace-format
+msgid "{state} set by {author}"
+msgstr "{state} bởi {author}"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Mark Properties"
+msgstr "Thuộc tính đánh dấu"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Edit Note"
+msgstr "Sửa ghi chú"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
 msgid "Delete Mark"
 msgstr "Xoá dấu"
 
@@ -2072,11 +2155,6 @@ msgstr "Đổi dấu"
 #: pdfarranger_qt/mainwindow.py
 msgid "Delete Note"
 msgstr "Xoá ghi chú"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
-msgid "Edit Note"
-msgstr "Sửa ghi chú"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
@@ -2190,7 +2268,7 @@ msgid "Importing…"
 msgstr "Đang nhập…"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
+#: pdfarranger_qt/mainwindow.py pdfarranger_qt/notepanel.py
 msgid "Cancel"
 msgstr "Hủy"
 
@@ -2335,12 +2413,6 @@ msgstr "Tài liệu này có thay đổi chưa lưu."
 #: pdfarranger_qt/mainwindow.py
 msgid "Save before continuing?"
 msgstr "Lưu trước khi tiếp tục?"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py pdfarranger_qt/reader.py
-#: pdfarranger_qt/toolstrip.py
-msgid "Delete"
-msgstr "Xóa bỏ"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
@@ -2585,6 +2657,31 @@ msgstr "Xoay"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/markup.py
+msgid "None"
+msgstr "Không có"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Accepted"
+msgstr "Đã chấp nhận"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Cancelled"
+msgstr "Đã huỷ"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Completed"
+msgstr "Đã hoàn thành"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Rejected"
+msgstr "Đã từ chối"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
 msgid "Blue"
 msgstr "Xanh dương"
 
@@ -2692,7 +2789,7 @@ msgstr "Đen"
 msgid "Title"
 msgstr "Tiêu đề"
 
-#: pdfarranger_qt/metadata.py
+#: pdfarranger_qt/metadata.py pdfarranger_qt/properties.py
 msgid "Subject"
 msgstr "Chủ thể"
 
@@ -2712,13 +2809,44 @@ msgstr "Trình tạo"
 msgid "Creator tool"
 msgstr "Công cụ tạo"
 
-#: pdfarranger_qt/metadata.py
+#: pdfarranger_qt/metadata.py pdfarranger_qt/properties.py
 msgid "Created"
 msgstr "Tạo"
 
 #: pdfarranger_qt/metadata.py
 msgid "Modified"
 msgstr "Đã sửa đổi"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/notepanel.py pdfarranger_qt/tools.py
+msgid "Underline"
+msgstr "Gạch chân"
+
+#: pdfarranger_qt/notepanel.py
+msgid "Superscript"
+msgstr "Chỉ số trên"
+
+#: pdfarranger_qt/notepanel.py
+msgid "Subscript"
+msgstr "Chỉ số dưới"
+
+#: pdfarranger_qt/notepanel.py
+msgid "Text Style"
+msgstr "Kiểu chữ"
+
+#: pdfarranger_qt/notepanel.py
+msgid "Clear Formatting"
+msgstr "Xóa định dạng"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/notepanel.py
+msgid "Status"
+msgstr "Trạng thái"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/notepanel.py
+msgid "Post"
+msgstr "Đăng"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/nup.py
@@ -2749,6 +2877,34 @@ msgstr "9 trang mỗi tờ"
 #: pdfarranger_qt/nup.py
 msgid "16 pages per sheet"
 msgstr "16 trang mỗi tờ"
+
+#: pdfarranger_qt/properties.py
+msgid "Comment properties"
+msgstr "Thuộc tính chú thích"
+
+#: pdfarranger_qt/properties.py
+msgid "Review History"
+msgstr "Lịch sử duyệt"
+
+#: pdfarranger_qt/properties.py
+msgid "Locked"
+msgstr "Đã khóa"
+
+#: pdfarranger_qt/properties.py
+msgid "Make Properties Default"
+msgstr "Đặt thuộc tính làm mặc định"
+
+#: pdfarranger_qt/properties.py
+msgid "Author"
+msgstr "Tác giả"
+
+#: pdfarranger_qt/properties.py
+msgid "Date modified"
+msgstr "Ngày sửa đổi"
+
+#: pdfarranger_qt/properties.py
+msgid "The Review History lists any change of status for this comment."
+msgstr "Lịch sử duyệt liệt kê mọi thay đổi trạng thái của chú thích này."
 
 # machine translation, unreviewed
 #: pdfarranger_qt/reader.py
@@ -2980,11 +3136,6 @@ msgstr "Đính kèm tệp"
 #: pdfarranger_qt/tools.py
 msgid "Highlight"
 msgstr "Tô sáng"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/tools.py
-msgid "Underline"
-msgstr "Gạch chân"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/tools.py
@@ -3477,4 +3628,40 @@ msgstr "Hiện tiêu đề thay cho tên tập tin"
 # machine translation, unreviewed
 #~ msgid "Markup"
 #~ msgstr "Đánh dấu"
+
+#~ msgid "Jan"
+#~ msgstr ""
+
+#~ msgid "Feb"
+#~ msgstr ""
+
+#~ msgid "Mar"
+#~ msgstr ""
+
+#~ msgid "Apr"
+#~ msgstr ""
+
+#~ msgid "May"
+#~ msgstr ""
+
+#~ msgid "Jun"
+#~ msgstr ""
+
+#~ msgid "Jul"
+#~ msgstr ""
+
+#~ msgid "Aug"
+#~ msgstr ""
+
+#~ msgid "Sep"
+#~ msgstr ""
+
+#~ msgid "Oct"
+#~ msgstr ""
+
+#~ msgid "Nov"
+#~ msgstr ""
+
+#~ msgid "Dec"
+#~ msgstr ""
 

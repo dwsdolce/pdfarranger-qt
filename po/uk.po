@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: unnamed project\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-03 03:39+0000\n"
+"POT-Creation-Date: 2026-11-03 20:57+0000\n"
 "PO-Revision-Date: 2026-05-27 19:30+0300\n"
 "Last-Translator: Dymko <Dymkovych@proton.me>\n"
 "Language: uk\n"
@@ -65,8 +65,74 @@ msgstr "Копіювати"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
+msgid "Highlight text"
+msgstr "Виділити текст"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Strikethrough text"
+msgstr "Закреслити текст"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Add a comment to replace text"
+msgstr "Додати коментар для заміни тексту"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Add note to text"
+msgstr "Додати нотатку до тексту"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
 msgid "Select All"
 msgstr "Обрати усі"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Open Pop-Up Note"
+msgstr "Відкрити спливну нотатку"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py pdfarranger_qt/mainwindow.py
+msgid "Reply"
+msgstr "Відповісти"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Delete Thread"
+msgstr "Вилучити гілку"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py pdfarranger_qt/mainwindow.py pdfarranger_qt/reader.py
+#: pdfarranger_qt/toolstrip.py
+msgid "Delete"
+msgstr "Видалити"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py pdfarranger_qt/mainwindow.py
+msgid "Set status"
+msgstr "Задати стан"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py pdfarranger_qt/mainwindow.py
+msgid "Copy Text"
+msgstr "Копіювати текст"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Enable Text Selection"
+msgstr "Увімкнути виділення тексту"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Make current properties default"
+msgstr "Зробити поточні властивості типовими"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py pdfarranger_qt/mainwindow.py
+msgid "Properties..."
+msgstr "Властивості..."
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
@@ -309,17 +375,17 @@ msgid "Gap"
 msgstr "Проміжок"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/dialogs.py
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/properties.py
 msgid "Appearance"
 msgstr "Вигляд"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/dialogs.py pdfarranger_qt/reader.py
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/notepanel.py pdfarranger_qt/reader.py
 msgid "Bold"
 msgstr "Жирний"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/dialogs.py pdfarranger_qt/reader.py
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/notepanel.py pdfarranger_qt/reader.py
 msgid "Italic"
 msgstr "Курсив"
 
@@ -334,12 +400,14 @@ msgid "Size"
 msgstr "Розмір"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/dialogs.py pdfarranger_qt/toolstrip.py
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/properties.py
+#: pdfarranger_qt/toolstrip.py
 msgid "Colour"
 msgstr "Колір"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/dialogs.py pdfarranger_qt/toolstrip.py
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/properties.py
+#: pdfarranger_qt/toolstrip.py
 msgid "Opacity"
 msgstr "Непрозорість"
 
@@ -564,7 +632,7 @@ msgid "Theme"
 msgstr "Тема"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/dialogs.py
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/properties.py
 msgid "General"
 msgstr "Загальне"
 
@@ -1931,11 +1999,6 @@ msgstr "Експортувати обране в _растровий PDF (png)�
 msgid "Export Selection to _Rasterized PDF (jpg)…"
 msgstr "Експортувати обране в _растровий PDF (jpg)…"
 
-# machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
-msgid "Copy Text"
-msgstr "Копіювати текст"
-
 #: pdfarranger_qt/mainwindow.py
 msgid "Copy _Image"
 msgstr "Скопіювати _зображення"
@@ -2056,6 +2119,26 @@ msgstr "Змінити розмір позначки"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
+msgid "Set Status"
+msgstr "Задати стан"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-brace-format
+msgid "{state} set by {author}"
+msgstr "{state} — {author}"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Mark Properties"
+msgstr "Властивості позначки"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Edit Note"
+msgstr "Змінити нотатку"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
 msgid "Delete Mark"
 msgstr "Вилучити позначку"
 
@@ -2078,11 +2161,6 @@ msgstr "Змінити позначку"
 #: pdfarranger_qt/mainwindow.py
 msgid "Delete Note"
 msgstr "Вилучити нотатку"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
-msgid "Edit Note"
-msgstr "Змінити нотатку"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
@@ -2200,7 +2278,7 @@ msgid "Importing…"
 msgstr "Імпортування…"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
+#: pdfarranger_qt/mainwindow.py pdfarranger_qt/notepanel.py
 msgid "Cancel"
 msgstr "Скасувати"
 
@@ -2347,12 +2425,6 @@ msgstr "Цей документ має незбережені зміни."
 #: pdfarranger_qt/mainwindow.py
 msgid "Save before continuing?"
 msgstr "Зберегти перед продовженням?"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py pdfarranger_qt/reader.py
-#: pdfarranger_qt/toolstrip.py
-msgid "Delete"
-msgstr "Видалити"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
@@ -2607,6 +2679,31 @@ msgstr "Перегорнути"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/markup.py
+msgid "None"
+msgstr "Немає"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Accepted"
+msgstr "Прийнято"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Cancelled"
+msgstr "Скасовано"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Completed"
+msgstr "Завершено"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Rejected"
+msgstr "Відхилено"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
 msgid "Blue"
 msgstr "Синій"
 
@@ -2714,7 +2811,7 @@ msgstr "Чорний"
 msgid "Title"
 msgstr "Назва"
 
-#: pdfarranger_qt/metadata.py
+#: pdfarranger_qt/metadata.py pdfarranger_qt/properties.py
 msgid "Subject"
 msgstr "Тема"
 
@@ -2734,13 +2831,44 @@ msgstr "Автор"
 msgid "Creator tool"
 msgstr "Інструмент створення"
 
-#: pdfarranger_qt/metadata.py
+#: pdfarranger_qt/metadata.py pdfarranger_qt/properties.py
 msgid "Created"
 msgstr "Створено"
 
 #: pdfarranger_qt/metadata.py
 msgid "Modified"
 msgstr "Змінено"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/notepanel.py pdfarranger_qt/tools.py
+msgid "Underline"
+msgstr "Підкреслення"
+
+#: pdfarranger_qt/notepanel.py
+msgid "Superscript"
+msgstr "Верхній індекс"
+
+#: pdfarranger_qt/notepanel.py
+msgid "Subscript"
+msgstr "Нижній індекс"
+
+#: pdfarranger_qt/notepanel.py
+msgid "Text Style"
+msgstr "Стиль тексту"
+
+#: pdfarranger_qt/notepanel.py
+msgid "Clear Formatting"
+msgstr "Очистити форматування"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/notepanel.py
+msgid "Status"
+msgstr "Стан"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/notepanel.py
+msgid "Post"
+msgstr "Опублікувати"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/nup.py
@@ -2771,6 +2899,34 @@ msgstr "9 сторінок на аркуші"
 #: pdfarranger_qt/nup.py
 msgid "16 pages per sheet"
 msgstr "16 сторінок на аркуші"
+
+#: pdfarranger_qt/properties.py
+msgid "Comment properties"
+msgstr "Властивості коментаря"
+
+#: pdfarranger_qt/properties.py
+msgid "Review History"
+msgstr "Історія рецензування"
+
+#: pdfarranger_qt/properties.py
+msgid "Locked"
+msgstr "Заблоковано"
+
+#: pdfarranger_qt/properties.py
+msgid "Make Properties Default"
+msgstr "Зробити властивості типовими"
+
+#: pdfarranger_qt/properties.py
+msgid "Author"
+msgstr "Автор"
+
+#: pdfarranger_qt/properties.py
+msgid "Date modified"
+msgstr "Дата зміни"
+
+#: pdfarranger_qt/properties.py
+msgid "The Review History lists any change of status for this comment."
+msgstr "Історія рецензування показує всі зміни стану цього коментаря."
 
 # machine translation, unreviewed
 #: pdfarranger_qt/reader.py
@@ -3002,11 +3158,6 @@ msgstr "Долучити файл"
 #: pdfarranger_qt/tools.py
 msgid "Highlight"
 msgstr "Виділення"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/tools.py
-msgid "Underline"
-msgstr "Підкреслення"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/tools.py
@@ -3525,4 +3676,40 @@ msgstr "Показувати заголовок замість імені фай
 # machine translation, unreviewed
 #~ msgid "Markup"
 #~ msgstr "Розмітка"
+
+#~ msgid "Jan"
+#~ msgstr ""
+
+#~ msgid "Feb"
+#~ msgstr ""
+
+#~ msgid "Mar"
+#~ msgstr ""
+
+#~ msgid "Apr"
+#~ msgstr ""
+
+#~ msgid "May"
+#~ msgstr ""
+
+#~ msgid "Jun"
+#~ msgstr ""
+
+#~ msgid "Jul"
+#~ msgstr ""
+
+#~ msgid "Aug"
+#~ msgstr ""
+
+#~ msgid "Sep"
+#~ msgstr ""
+
+#~ msgid "Oct"
+#~ msgstr ""
+
+#~ msgid "Nov"
+#~ msgstr ""
+
+#~ msgid "Dec"
+#~ msgstr ""
 

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  pdfarranger\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-03 03:39+0000\n"
+"POT-Creation-Date: 2026-11-03 20:57+0000\n"
 "PO-Revision-Date: 2023-06-06 13:27+0200\n"
 "Last-Translator: Milo Ivir <mail@milotype.de>\n"
 "Language: hr\n"
@@ -63,8 +63,74 @@ msgstr "Kopiraj"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
+msgid "Highlight text"
+msgstr "Istakni tekst"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Strikethrough text"
+msgstr "Precrtaj tekst"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Add a comment to replace text"
+msgstr "Dodaj komentar koji zamjenjuje tekst"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Add note to text"
+msgstr "Dodaj bilješku tekstu"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
 msgid "Select All"
 msgstr "Odaberi sve"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Open Pop-Up Note"
+msgstr "Otvori skočnu bilješku"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py pdfarranger_qt/mainwindow.py
+msgid "Reply"
+msgstr "Odgovori"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Delete Thread"
+msgstr "Izbriši nit"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py pdfarranger_qt/mainwindow.py pdfarranger_qt/reader.py
+#: pdfarranger_qt/toolstrip.py
+msgid "Delete"
+msgstr "Izbriši"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py pdfarranger_qt/mainwindow.py
+msgid "Set status"
+msgstr "Postavi stanje"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py pdfarranger_qt/mainwindow.py
+msgid "Copy Text"
+msgstr "Kopiraj tekst"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Enable Text Selection"
+msgstr "Omogući odabir teksta"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Make current properties default"
+msgstr "Postavi trenutna svojstva kao zadana"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py pdfarranger_qt/mainwindow.py
+msgid "Properties..."
+msgstr "Svojstva..."
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
@@ -319,17 +385,17 @@ msgid "Gap"
 msgstr "Razmak"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/dialogs.py
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/properties.py
 msgid "Appearance"
 msgstr "Izgled"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/dialogs.py pdfarranger_qt/reader.py
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/notepanel.py pdfarranger_qt/reader.py
 msgid "Bold"
 msgstr "Podebljano"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/dialogs.py pdfarranger_qt/reader.py
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/notepanel.py pdfarranger_qt/reader.py
 msgid "Italic"
 msgstr "Kurziv"
 
@@ -344,12 +410,14 @@ msgid "Size"
 msgstr "Veličina"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/dialogs.py pdfarranger_qt/toolstrip.py
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/properties.py
+#: pdfarranger_qt/toolstrip.py
 msgid "Colour"
 msgstr "Boja"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/dialogs.py pdfarranger_qt/toolstrip.py
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/properties.py
+#: pdfarranger_qt/toolstrip.py
 msgid "Opacity"
 msgstr "Neprozirnost"
 
@@ -574,7 +642,7 @@ msgid "Theme"
 msgstr "Tema"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/dialogs.py
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/properties.py
 msgid "General"
 msgstr "Općenito"
 
@@ -1954,11 +2022,6 @@ msgstr "Izvezi odabir u rasterski PD_F (jpg)…"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
-msgid "Copy Text"
-msgstr "Kopiraj tekst"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
 msgid "Copy _Image"
 msgstr "Kopiraj sl_iku"
 
@@ -2086,6 +2149,26 @@ msgstr "Promijeni veličinu oznake"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
+msgid "Set Status"
+msgstr "Postavi stanje"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-brace-format
+msgid "{state} set by {author}"
+msgstr "{state} postavio {author}"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Mark Properties"
+msgstr "Svojstva oznake"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Edit Note"
+msgstr "Uredi bilješku"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
 msgid "Delete Mark"
 msgstr "Izbriši oznaku"
 
@@ -2108,11 +2191,6 @@ msgstr "Promijeni oznaku"
 #: pdfarranger_qt/mainwindow.py
 msgid "Delete Note"
 msgstr "Izbriši bilješku"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
-msgid "Edit Note"
-msgstr "Uredi bilješku"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
@@ -2230,7 +2308,7 @@ msgid "Importing…"
 msgstr "Uvozim…"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
+#: pdfarranger_qt/mainwindow.py pdfarranger_qt/notepanel.py
 msgid "Cancel"
 msgstr "Odustani"
 
@@ -2379,12 +2457,6 @@ msgstr "Ovaj dokument ima nespremljene promjene."
 #: pdfarranger_qt/mainwindow.py
 msgid "Save before continuing?"
 msgstr "Spremiti prije nastavka?"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py pdfarranger_qt/reader.py
-#: pdfarranger_qt/toolstrip.py
-msgid "Delete"
-msgstr "Izbriši"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
@@ -2638,6 +2710,31 @@ msgstr "Okreni"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/markup.py
+msgid "None"
+msgstr "Nijedno"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Accepted"
+msgstr "Prihvaćeno"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Cancelled"
+msgstr "Otkazano"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Completed"
+msgstr "Dovršeno"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Rejected"
+msgstr "Odbijeno"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
 msgid "Blue"
 msgstr "Plava"
 
@@ -2745,7 +2842,7 @@ msgstr "Crna"
 msgid "Title"
 msgstr "Naslov"
 
-#: pdfarranger_qt/metadata.py
+#: pdfarranger_qt/metadata.py pdfarranger_qt/properties.py
 msgid "Subject"
 msgstr "Predmet"
 
@@ -2765,13 +2862,44 @@ msgstr "Izvorni program dokumenta"
 msgid "Creator tool"
 msgstr "Alat izvornog programa"
 
-#: pdfarranger_qt/metadata.py
+#: pdfarranger_qt/metadata.py pdfarranger_qt/properties.py
 msgid "Created"
 msgstr "Stvoreno"
 
 #: pdfarranger_qt/metadata.py
 msgid "Modified"
 msgstr "Promijenjeno"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/notepanel.py pdfarranger_qt/tools.py
+msgid "Underline"
+msgstr "Podcrtano"
+
+#: pdfarranger_qt/notepanel.py
+msgid "Superscript"
+msgstr "Eksponent"
+
+#: pdfarranger_qt/notepanel.py
+msgid "Subscript"
+msgstr "Indeks"
+
+#: pdfarranger_qt/notepanel.py
+msgid "Text Style"
+msgstr "Stil teksta"
+
+#: pdfarranger_qt/notepanel.py
+msgid "Clear Formatting"
+msgstr "Ukloni formatiranje"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/notepanel.py
+msgid "Status"
+msgstr "Stanje"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/notepanel.py
+msgid "Post"
+msgstr "Objavi"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/nup.py
@@ -2802,6 +2930,34 @@ msgstr "9 stranica po listu"
 #: pdfarranger_qt/nup.py
 msgid "16 pages per sheet"
 msgstr "16 stranica po listu"
+
+#: pdfarranger_qt/properties.py
+msgid "Comment properties"
+msgstr "Svojstva komentara"
+
+#: pdfarranger_qt/properties.py
+msgid "Review History"
+msgstr "Povijest pregleda"
+
+#: pdfarranger_qt/properties.py
+msgid "Locked"
+msgstr "Zaključano"
+
+#: pdfarranger_qt/properties.py
+msgid "Make Properties Default"
+msgstr "Postavi svojstva kao zadana"
+
+#: pdfarranger_qt/properties.py
+msgid "Author"
+msgstr "Autor"
+
+#: pdfarranger_qt/properties.py
+msgid "Date modified"
+msgstr "Datum izmjene"
+
+#: pdfarranger_qt/properties.py
+msgid "The Review History lists any change of status for this comment."
+msgstr "Povijest pregleda navodi svaku promjenu stanja ovog komentara."
 
 # machine translation, unreviewed
 #: pdfarranger_qt/reader.py
@@ -3033,11 +3189,6 @@ msgstr "Priloži datoteku"
 #: pdfarranger_qt/tools.py
 msgid "Highlight"
 msgstr "Istakni"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/tools.py
-msgid "Underline"
-msgstr "Podcrtano"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/tools.py
@@ -3516,4 +3667,40 @@ msgstr "Prikaži naslov umjesto naziva datoteke"
 # machine translation, unreviewed
 #~ msgid "Markup"
 #~ msgstr "Označavanje"
+
+#~ msgid "Jan"
+#~ msgstr ""
+
+#~ msgid "Feb"
+#~ msgstr ""
+
+#~ msgid "Mar"
+#~ msgstr ""
+
+#~ msgid "Apr"
+#~ msgstr ""
+
+#~ msgid "May"
+#~ msgstr ""
+
+#~ msgid "Jun"
+#~ msgstr ""
+
+#~ msgid "Jul"
+#~ msgstr ""
+
+#~ msgid "Aug"
+#~ msgstr ""
+
+#~ msgid "Sep"
+#~ msgstr ""
+
+#~ msgid "Oct"
+#~ msgstr ""
+
+#~ msgid "Nov"
+#~ msgstr ""
+
+#~ msgid "Dec"
+#~ msgstr ""
 

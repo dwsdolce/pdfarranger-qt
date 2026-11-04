@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-03 03:39+0000\n"
+"POT-Creation-Date: 2026-11-03 20:57+0000\n"
 "PO-Revision-Date: 2025-09-28 16:51+0000\n"
 "Last-Translator: Sveinn í Felli <sv1@fellsnet.is>\n"
 "Language: is\n"
@@ -63,8 +63,74 @@ msgstr "Afrita"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
+msgid "Highlight text"
+msgstr "Áherslulita texta"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Strikethrough text"
+msgstr "Yfirstrika texta"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Add a comment to replace text"
+msgstr "Bæta við athugasemd í stað textans"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Add note to text"
+msgstr "Bæta athugasemd við texta"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
 msgid "Select All"
 msgstr "Velja allt"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Open Pop-Up Note"
+msgstr "Opna sprettiminnispunkt"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py pdfarranger_qt/mainwindow.py
+msgid "Reply"
+msgstr "Svara"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Delete Thread"
+msgstr "Eyða þræði"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py pdfarranger_qt/mainwindow.py pdfarranger_qt/reader.py
+#: pdfarranger_qt/toolstrip.py
+msgid "Delete"
+msgstr "Eyða"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py pdfarranger_qt/mainwindow.py
+msgid "Set status"
+msgstr "Setja stöðu"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py pdfarranger_qt/mainwindow.py
+msgid "Copy Text"
+msgstr "Afrita texta"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Enable Text Selection"
+msgstr "Virkja textaval"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Make current properties default"
+msgstr "Gera núverandi eiginleika sjálfgefna"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py pdfarranger_qt/mainwindow.py
+msgid "Properties..."
+msgstr "Eiginleikar..."
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
@@ -305,17 +371,17 @@ msgid "Gap"
 msgstr "Bil"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/dialogs.py
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/properties.py
 msgid "Appearance"
 msgstr "Útlit"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/dialogs.py pdfarranger_qt/reader.py
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/notepanel.py pdfarranger_qt/reader.py
 msgid "Bold"
 msgstr "Feitletrað"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/dialogs.py pdfarranger_qt/reader.py
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/notepanel.py pdfarranger_qt/reader.py
 msgid "Italic"
 msgstr "Skáletrað"
 
@@ -330,12 +396,14 @@ msgid "Size"
 msgstr "Stærð"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/dialogs.py pdfarranger_qt/toolstrip.py
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/properties.py
+#: pdfarranger_qt/toolstrip.py
 msgid "Colour"
 msgstr "Litur"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/dialogs.py pdfarranger_qt/toolstrip.py
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/properties.py
+#: pdfarranger_qt/toolstrip.py
 msgid "Opacity"
 msgstr "Ógegnsæi"
 
@@ -562,7 +630,7 @@ msgid "Theme"
 msgstr "Þema"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/dialogs.py
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/properties.py
 msgid "General"
 msgstr "Almennt"
 
@@ -1933,11 +2001,6 @@ msgstr "Flytja val út í _rastað PDF (png)…"
 msgid "Export Selection to _Rasterized PDF (jpg)…"
 msgstr "Flytja val út í rastað PD_F (jpg)…"
 
-# machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
-msgid "Copy Text"
-msgstr "Afrita texta"
-
 #: pdfarranger_qt/mainwindow.py
 msgid "Copy _Image"
 msgstr "Afrita _mynd"
@@ -2064,6 +2127,26 @@ msgstr "Breyta stærð merkis"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
+msgid "Set Status"
+msgstr "Setja stöðu"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-brace-format
+msgid "{state} set by {author}"
+msgstr "{state} sett af {author}"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Mark Properties"
+msgstr "Eiginleikar merkingar"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Edit Note"
+msgstr "Breyta minnispunkti"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
 msgid "Delete Mark"
 msgstr "Eyða merki"
 
@@ -2086,11 +2169,6 @@ msgstr "Breyta merki"
 #: pdfarranger_qt/mainwindow.py
 msgid "Delete Note"
 msgstr "Eyða minnispunkti"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
-msgid "Edit Note"
-msgstr "Breyta minnispunkti"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
@@ -2205,7 +2283,7 @@ msgid "Importing…"
 msgstr "Flyt inn…"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
+#: pdfarranger_qt/mainwindow.py pdfarranger_qt/notepanel.py
 msgid "Cancel"
 msgstr "Hætta við"
 
@@ -2351,12 +2429,6 @@ msgstr "Þetta skjal hefur óvistaðar breytingar."
 #: pdfarranger_qt/mainwindow.py
 msgid "Save before continuing?"
 msgstr "Vista áður en haldið er áfram?"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py pdfarranger_qt/reader.py
-#: pdfarranger_qt/toolstrip.py
-msgid "Delete"
-msgstr "Eyða"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
@@ -2605,6 +2677,31 @@ msgstr "Snúa"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/markup.py
+msgid "None"
+msgstr "Ekkert"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Accepted"
+msgstr "Samþykkt"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Cancelled"
+msgstr "Hætt við"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Completed"
+msgstr "Lokið"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Rejected"
+msgstr "Hafnað"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
 msgid "Blue"
 msgstr "Blátt"
 
@@ -2712,7 +2809,7 @@ msgstr "Svart"
 msgid "Title"
 msgstr "Titill"
 
-#: pdfarranger_qt/metadata.py
+#: pdfarranger_qt/metadata.py pdfarranger_qt/properties.py
 msgid "Subject"
 msgstr "Viðfangsefni"
 
@@ -2732,13 +2829,44 @@ msgstr "Höfundur"
 msgid "Creator tool"
 msgstr "Verkfæri fyrir hönnuði"
 
-#: pdfarranger_qt/metadata.py
+#: pdfarranger_qt/metadata.py pdfarranger_qt/properties.py
 msgid "Created"
 msgstr "Búið til"
 
 #: pdfarranger_qt/metadata.py
 msgid "Modified"
 msgstr "Breytt"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/notepanel.py pdfarranger_qt/tools.py
+msgid "Underline"
+msgstr "Undirstrikun"
+
+#: pdfarranger_qt/notepanel.py
+msgid "Superscript"
+msgstr "Háletur"
+
+#: pdfarranger_qt/notepanel.py
+msgid "Subscript"
+msgstr "Lágletur"
+
+#: pdfarranger_qt/notepanel.py
+msgid "Text Style"
+msgstr "Textastíll"
+
+#: pdfarranger_qt/notepanel.py
+msgid "Clear Formatting"
+msgstr "Hreinsa snið"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/notepanel.py
+msgid "Status"
+msgstr "Staða"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/notepanel.py
+msgid "Post"
+msgstr "Senda"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/nup.py
@@ -2769,6 +2897,34 @@ msgstr "9 síður á blað"
 #: pdfarranger_qt/nup.py
 msgid "16 pages per sheet"
 msgstr "16 síður á blað"
+
+#: pdfarranger_qt/properties.py
+msgid "Comment properties"
+msgstr "Eiginleikar athugasemdar"
+
+#: pdfarranger_qt/properties.py
+msgid "Review History"
+msgstr "Yfirferðarsaga"
+
+#: pdfarranger_qt/properties.py
+msgid "Locked"
+msgstr "Læst"
+
+#: pdfarranger_qt/properties.py
+msgid "Make Properties Default"
+msgstr "Gera eiginleika sjálfgefna"
+
+#: pdfarranger_qt/properties.py
+msgid "Author"
+msgstr "Höfundur"
+
+#: pdfarranger_qt/properties.py
+msgid "Date modified"
+msgstr "Breytingadagsetning"
+
+#: pdfarranger_qt/properties.py
+msgid "The Review History lists any change of status for this comment."
+msgstr "Yfirferðarsagan telur upp allar stöðubreytingar þessarar athugasemdar."
 
 # machine translation, unreviewed
 #: pdfarranger_qt/reader.py
@@ -3000,11 +3156,6 @@ msgstr "Hengja skrá við"
 #: pdfarranger_qt/tools.py
 msgid "Highlight"
 msgstr "Áherslulita"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/tools.py
-msgid "Underline"
-msgstr "Undirstrikun"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/tools.py
@@ -3499,4 +3650,40 @@ msgstr "Sýna titilinn í stað skráarnafnsins"
 # machine translation, unreviewed
 #~ msgid "Markup"
 #~ msgstr "Merkingar"
+
+#~ msgid "Jan"
+#~ msgstr ""
+
+#~ msgid "Feb"
+#~ msgstr ""
+
+#~ msgid "Mar"
+#~ msgstr ""
+
+#~ msgid "Apr"
+#~ msgstr ""
+
+#~ msgid "May"
+#~ msgstr ""
+
+#~ msgid "Jun"
+#~ msgstr ""
+
+#~ msgid "Jul"
+#~ msgstr ""
+
+#~ msgid "Aug"
+#~ msgstr ""
+
+#~ msgid "Sep"
+#~ msgstr ""
+
+#~ msgid "Oct"
+#~ msgstr ""
+
+#~ msgid "Nov"
+#~ msgstr ""
+
+#~ msgid "Dec"
+#~ msgstr ""
 
