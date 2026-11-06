@@ -1219,10 +1219,14 @@ class TestTheFormOnOneMark(unittest.TestCase):
         self.assertEqual(form.changed(), {"locked": False})
 
     def test_making_it_the_default_is_not_a_change_to_the_file(self):
-        """It is this application's own preference for the next mark."""
+        """It is this application's own preference for the next mark.
+
+        A checkbox, not a button: it reads false until it is ticked, and
+        ticking it is not something the form has to write anywhere.
+        """
         form = self.form()
         self.assertFalse(form.make_default)
-        form._make_default()
+        form.make_default_box.setChecked(True)
         self.assertTrue(form.make_default)
         self.assertEqual(form.changed(), {})
 

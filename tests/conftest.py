@@ -32,6 +32,8 @@ import atexit
 import os
 import sys
 
+import pytest
+
 # The package under test, importable without installing it.
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
@@ -81,6 +83,26 @@ QT_APP = QApplication.instance() or QApplication(sys.argv[:1])
 _isolated = QSettings(scratch_path(), QSettings.IniFormat)
 _isolated.clear()
 _isolated.sync()
+
+
+@pytest.fixture(autouse=True)
+def _forget_tool_defaults():
+    """Start every test with each tool at the appearance it declares.
+
+    The scratch store is wiped once per *process*, which was enough while
+    nothing wrote a preference in passing. Arming a colour now does: a
+    tool's appearance is remembered between runs, so one test choosing a
+    colour reached every test after it and the suite became
+    order-dependent -- `test_each_starts_in_what_its_declaration_names`
+    failed only when something earlier had armed an underline.
+    """
+    from pdfarranger_qt.mainwindow import MainWindow
+    from pdfarranger_qt.settings import app_settings
+
+    settings = app_settings()
+    settings.remove(MainWindow.DEFAULTS_SETTING)
+    settings.sync()
+    yield
 
 
 @atexit.register
