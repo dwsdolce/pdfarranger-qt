@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-06 02:15+0000\n"
+"POT-Creation-Date: 2026-11-06 19:25+0000\n"
 "PO-Revision-Date: 2024-03-20 17:20+0800\n"
 "Last-Translator: 錢政維 <e.cwchien@gmail.com>\n"
 "Language: zh_TW\n"
@@ -2005,7 +2005,7 @@ msgstr "設定狀態"
 msgid "{state} set by {author}"
 msgstr "{state}（{author}）"
 
-#: pdfarranger_qt/mainwindow.py
+#: pdfarranger_qt/mainwindow.py pdfarranger_qt/properties.py
 msgid "Mark Properties"
 msgstr "標記屬性"
 
@@ -2775,14 +2775,9 @@ msgid "Cross-Out"
 msgstr "刪除線"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/properties.py
-msgid "Sticky Note"
-msgstr "便箋"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/properties.py
-msgid "Comment on Text"
-msgstr "文字註解"
+#: pdfarranger_qt/properties.py pdfarranger_qt/tools.py
+msgid "Comment"
+msgstr "註解"
 
 #: pdfarranger_qt/properties.py
 msgid "Review History"
@@ -2800,10 +2795,6 @@ msgstr "將屬性設為預設值"
 #: pdfarranger_qt/properties.py pdfarranger_qt/reader.py
 msgid "Style"
 msgstr "樣式"
-
-#: pdfarranger_qt/properties.py
-msgid "Comment properties"
-msgstr "註解屬性"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/properties.py
@@ -2993,11 +2984,6 @@ msgstr "右下"
 #: pdfarranger_qt/tools.py
 msgid "Pointer"
 msgstr "指標"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/tools.py
-msgid "Comment"
-msgstr "註解"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/tools.py
@@ -3543,4 +3529,15 @@ msgstr "顯示標題而非檔案名稱"
 
 #~ msgid "Dec"
 #~ msgstr ""
+
+# machine translation, unreviewed
+#~ msgid "Sticky Note"
+#~ msgstr "便箋"
+
+# machine translation, unreviewed
+#~ msgid "Comment on Text"
+#~ msgstr "文字註解"
+
+#~ msgid "Comment properties"
+#~ msgstr "註解屬性"
 

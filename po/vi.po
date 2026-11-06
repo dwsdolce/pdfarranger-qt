@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-06 02:15+0000\n"
+"POT-Creation-Date: 2026-11-06 19:25+0000\n"
 "PO-Revision-Date: 2025-12-15 00:59+0700\n"
 "Last-Translator: Loc Huynh <https://github.com/hthienloc>\n"
 "Language: vi\n"
@@ -2131,7 +2131,7 @@ msgstr "Đặt trạng thái"
 msgid "{state} set by {author}"
 msgstr "{state} bởi {author}"
 
-#: pdfarranger_qt/mainwindow.py
+#: pdfarranger_qt/mainwindow.py pdfarranger_qt/properties.py
 msgid "Mark Properties"
 msgstr "Thuộc tính đánh dấu"
 
@@ -2906,14 +2906,9 @@ msgid "Cross-Out"
 msgstr "Gạch ngang"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/properties.py
-msgid "Sticky Note"
-msgstr "Ghi chú"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/properties.py
-msgid "Comment on Text"
-msgstr "Chú thích văn bản"
+#: pdfarranger_qt/properties.py pdfarranger_qt/tools.py
+msgid "Comment"
+msgstr "Chú thích"
 
 #: pdfarranger_qt/properties.py
 msgid "Review History"
@@ -2931,10 +2926,6 @@ msgstr "Đặt thuộc tính làm mặc định"
 #: pdfarranger_qt/properties.py pdfarranger_qt/reader.py
 msgid "Style"
 msgstr "Kiểu"
-
-#: pdfarranger_qt/properties.py
-msgid "Comment properties"
-msgstr "Thuộc tính chú thích"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/properties.py
@@ -3124,11 +3115,6 @@ msgstr "Dưới phải"
 #: pdfarranger_qt/tools.py
 msgid "Pointer"
 msgstr "Con trỏ"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/tools.py
-msgid "Comment"
-msgstr "Chú thích"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/tools.py
@@ -3702,4 +3688,15 @@ msgstr "Hiện tiêu đề thay cho tên tập tin"
 
 #~ msgid "Dec"
 #~ msgstr ""
+
+# machine translation, unreviewed
+#~ msgid "Sticky Note"
+#~ msgstr "Ghi chú"
+
+# machine translation, unreviewed
+#~ msgid "Comment on Text"
+#~ msgstr "Chú thích văn bản"
+
+#~ msgid "Comment properties"
+#~ msgstr "Thuộc tính chú thích"
 

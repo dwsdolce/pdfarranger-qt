@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PDF-Shuffler 0.7\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-06 02:15+0000\n"
+"POT-Creation-Date: 2026-11-06 19:25+0000\n"
 "PO-Revision-Date: 2025-05-26 10:43+0200\n"
 "Last-Translator: Heimen Stoffels <vistausss@fastmail.com>\n"
 "Language: nl\n"
@@ -2175,7 +2175,7 @@ msgstr "Status instellen"
 msgid "{state} set by {author}"
 msgstr "{state} door {author}"
 
-#: pdfarranger_qt/mainwindow.py
+#: pdfarranger_qt/mainwindow.py pdfarranger_qt/properties.py
 msgid "Mark Properties"
 msgstr "Markeringseigenschappen"
 
@@ -2962,14 +2962,9 @@ msgid "Cross-Out"
 msgstr "Doorhalen"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/properties.py
-msgid "Sticky Note"
-msgstr "Notitie"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/properties.py
-msgid "Comment on Text"
-msgstr "Opmerking bij tekst"
+#: pdfarranger_qt/properties.py pdfarranger_qt/tools.py
+msgid "Comment"
+msgstr "Opmerking"
 
 #: pdfarranger_qt/properties.py
 msgid "Review History"
@@ -2987,10 +2982,6 @@ msgstr "Eigenschappen als standaard instellen"
 #: pdfarranger_qt/properties.py pdfarranger_qt/reader.py
 msgid "Style"
 msgstr "Stijl"
-
-#: pdfarranger_qt/properties.py
-msgid "Comment properties"
-msgstr "Opmerkingseigenschappen"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/properties.py
@@ -3180,11 +3171,6 @@ msgstr "Rechtsonder"
 #: pdfarranger_qt/tools.py
 msgid "Pointer"
 msgstr "Aanwijzer"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/tools.py
-msgid "Comment"
-msgstr "Opmerking"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/tools.py
@@ -3765,4 +3751,15 @@ msgstr "De titel tonen in plaats van de bestandsnaam"
 
 #~ msgid "Dec"
 #~ msgstr ""
+
+# machine translation, unreviewed
+#~ msgid "Sticky Note"
+#~ msgstr "Notitie"
+
+# machine translation, unreviewed
+#~ msgid "Comment on Text"
+#~ msgstr "Opmerking bij tekst"
+
+#~ msgid "Comment properties"
+#~ msgstr "Opmerkingseigenschappen"
 

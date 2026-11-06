@@ -1272,6 +1272,7 @@ class MainWindow(QMainWindow):
             return
         mine = isinstance(mark, markup.Annotation)
         form = MarkProperties(Properties(
+            kind=mark.kind if mine else mark.subtype,
             author=(getattr(mark, "author", "") or markup.default_author()),
             subject=(getattr(mark, "subject", "") or markup.SUBJECTS.get(
                 mark.kind if mine else mark.subtype, "")),

@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PDF Arranger 1.14.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-06 02:15+0000\n"
+"POT-Creation-Date: 2026-11-06 19:25+0000\n"
 "PO-Revision-Date: 2026-06-02 17:09+0800\n"
 "Last-Translator: Puqns67 <me@puqns67.icu>\n"
 "Language: zh_CN\n"
@@ -1969,7 +1969,7 @@ msgstr "设置状态"
 msgid "{state} set by {author}"
 msgstr "{state}（{author}）"
 
-#: pdfarranger_qt/mainwindow.py
+#: pdfarranger_qt/mainwindow.py pdfarranger_qt/properties.py
 msgid "Mark Properties"
 msgstr "标记属性"
 
@@ -2738,14 +2738,9 @@ msgid "Cross-Out"
 msgstr "删除线"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/properties.py
-msgid "Sticky Note"
-msgstr "便笺"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/properties.py
-msgid "Comment on Text"
-msgstr "文本注释"
+#: pdfarranger_qt/properties.py pdfarranger_qt/tools.py
+msgid "Comment"
+msgstr "注释"
 
 #: pdfarranger_qt/properties.py
 msgid "Review History"
@@ -2763,10 +2758,6 @@ msgstr "将属性设为默认值"
 #: pdfarranger_qt/properties.py pdfarranger_qt/reader.py
 msgid "Style"
 msgstr "样式"
-
-#: pdfarranger_qt/properties.py
-msgid "Comment properties"
-msgstr "注释属性"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/properties.py
@@ -2956,11 +2947,6 @@ msgstr "右下"
 #: pdfarranger_qt/tools.py
 msgid "Pointer"
 msgstr "指针"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/tools.py
-msgid "Comment"
-msgstr "注释"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/tools.py
@@ -3536,4 +3522,15 @@ msgstr "显示标题而非文件名"
 
 #~ msgid "Dec"
 #~ msgstr ""
+
+# machine translation, unreviewed
+#~ msgid "Sticky Note"
+#~ msgstr "便笺"
+
+# machine translation, unreviewed
+#~ msgid "Comment on Text"
+#~ msgstr "文本注释"
+
+#~ msgid "Comment properties"
+#~ msgstr "注释属性"
 

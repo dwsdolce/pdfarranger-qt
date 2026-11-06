@@ -9,6 +9,29 @@ document of its own; this one begins where that ends.
 The owner's standard, in his words: *make the markup and not lose anything
 when it is opened in our tool.*
 
+## Terms
+
+Two words carry this whole document and were used here for days before
+either was pinned down. The owner's definitions, 2026-11-06.
+
+**A tool** is chosen from the toolbar, and decides what a click or a drag
+on the page does. A tool becomes the current one when you choose it, and
+also when you select a mark. A **markup tool** creates one or more marks,
+and they need not all be of the same kind. **Select** and **Pan** are
+tools that create no marks -- they change what the cursor does instead.
+The toolbar holds other controls that are not tools, the appearance
+controls among them.
+
+**A mark** is an annotation in the document. It shows on a page, it
+carries notes and a review status, and it has attributes that decide its
+appearance, along with metadata such as who made it and when. Notes and
+status may be empty, and usually are. A mark is on one page: text selected
+across a page break gives a mark on each. A mark can be changed or removed
+after it is made.
+
+A mark's attributes can be set from three places: the appearance controls
+in the toolbar, the floating context palette, and the properties form.
+
 ## Where this stands
 
 A document goes through this application and comes out with every annotation
@@ -16,10 +39,17 @@ it went in with, measured on 8,697 annotations across the validation corpus.
 Three defects were found proving it, each of them a change made by nothing
 more than opening a file and saving it.
 
-The strip the tools are chosen from is built, and every one of its twenty
-tools can be armed. **No tool does anything yet.** What a tool makes is
-decided one tool at a time, together with its gesture and its attributes,
-starting with Highlight.
+The strip the tools are chosen from is built, and every one of its tools
+can be armed. **Three of them are done**: Highlight, Underline and
+Strikethrough make their mark, select, recolour, resize, delete, carry a
+note thread with replies and statuses, honour the lock, and open a
+properties form -- for marks made here and for marks the file arrived
+with alike. The rest can be armed and do nothing.
+
+What a tool makes is decided one tool at a time, together with its gesture
+and its attributes, against notes taken off Reader and a corpus file
+Reader wrote. That is how the three text markups were built and it is the
+shape the remaining tools follow.
 
 
 ## The tools, and what each one writes
@@ -35,40 +65,68 @@ writes the tool's own name into `/Subj` besides -- so a file records which tool
 made each mark, and showing a document back with the right tool against each
 mark is reading, not guessing. Every row below was read off the test document.
 
+### What a tool is called
+
+Two strings are required of every tool, and both are read by the user.
+
+- **Name** -- what the mark is called, in the words a user would use for
+  it: Highlight, Underline, Strikethrough, Comment. Capitalised, no
+  underscores. Seen mostly in the title of the properties form, which
+  decision 42 fixes as the Name plus "Properties".
+- **Text** -- the words on the button in the strip. Often the Name and
+  often not: the comment tool's button reads *Add a comment* and what it
+  makes is a *Comment*.
+
+The Name column below holds the ones that have been read off Reader. The
+rest are blank and are filled in as each tool is taken up, rather than
+guessed from the Text.
+
+Two further strings appear in the table and in the code, and **neither is
+a requirement**. `/Subj` is what Reader happens to put in the file, which
+is analysis rather than something we are obliged to show; the identifiers
+in `tools.py` are a Python naming convention. Nothing here is specified in
+terms of either.
+
 The state column says what the tool can do *here*, or else names the decision
 or open item that governs it. It does not report which step shipped something:
 that is the step table's job, and a step was never scoped as a whole tool.
 **Writes only** means the tool can make its mark and save it, and nothing
-after that.
+after that. **Done** means there is nothing left to build for it: the
+mark it makes can be selected, recoloured, resized and deleted, carries a
+note thread with replies and statuses, honours the lock and opens a
+properties form -- on a mark made here and on one the file brought.
 
-| tool | `/Subj` it writes | what is written | state |
-|---|---|---|---|
-| Add a comment | Sticky Note | `/Text`, `/Name /Comment` | writes only |
-| Insert text | Inserted Text | `/Caret` | decision 3, not started |
-| Replace selected text | Inserted Text + Cross-Out | `/Caret` `/IT /Replace` **and** `/StrikeOut` `/IT /StrikeOutTextEdit`, joined by `/IRT` + `/RT /Group` | decision 3, not started |
-| Add text comment | Text Box | `/FreeText` | not started |
-| Text callout | Callout | `/FreeText` `/IT /FreeTextCallout`, `/CL`, `/LE /OpenArrow` | not started |
-| Attach file | -- | `/FileAttachment`, `/Name /Paperclip`, `/FS /EF` | not started |
-| Highlight | Highlight | `/Highlight`, `/QuadPoints`, `/CA` | writes only |
-| Underline | Underline | `/Underline` or `/Squiggly` `/IT /Underline`, `/QuadPoints`, `/CA` | writes only |
-| Strikethrough | Cross-Out | `/StrikeOut`, `/QuadPoints`, no `/IT` | writes only |
-| Draw | Pencil | `/Ink`, `/InkList`, `/BS /W` | not started |
-| Line | Line | `/Line`, `/L` | not started |
-| Arrow | Line | `/Line` `/IT /LineArrow`, `/LE [/None /OpenArrow]`, `/BS /W` | not started |
-| Rectangle | Rectangle | `/Square`, `/RD` | not started |
-| Circle | Oval | `/Circle`, `/RD` | not started |
-| Polygon | Polygon | `/Polygon`, `/Vertices` | not started |
-| Cloud | Polygon | `/Polygon` `/IT /PolygonCloud`, `/BE /I` | not started |
-| Connected lines | Polygonal Line | `/PolyLine`, `/Vertices` | not started |
-| Stamps palette | the stamp's name | `/Stamp`, `/Name`, and an `/AP` we do not draw | O4 |
-| Add signature | -- | **page content, not an annotation** | not here |
-| Add initials | -- | **page content, not an annotation** | not here |
+| Name | Text (the strip) | `/Subj` it writes | what is written | state |
+|---|---|---|---|---|
+| Comment, or Highlight | Add a comment | Sticky Note, or Comment on Text | on a point `/Text` with `/Name` the chosen icon; over a run of words `/Highlight` `/IT /HighlightNote`, `/QuadPoints`, `/CA` | the highlight half is done; the icon half writes only, and the requirements for both are in **Comment** below |
+| | Insert text | Inserted Text | `/Caret` | decision 3, not started |
+| | Replace selected text | Inserted Text + Cross-Out | `/Caret` `/IT /Replace` **and** `/StrikeOut` `/IT /StrikeOutTextEdit`, joined by `/IRT` + `/RT /Group` | decision 3, not started |
+| | Add text comment | Text Box | `/FreeText` | not started |
+| | Text callout | Callout | `/FreeText` `/IT /FreeTextCallout`, `/CL`, `/LE /OpenArrow` | not started |
+| | Attach file | -- | `/FileAttachment`, `/Name /Paperclip`, `/FS /EF` | not started |
+| Highlight | Highlight | Highlight | `/Highlight`, `/QuadPoints`, `/CA` | done |
+| Underline | Underline | Underline | `/Underline` or `/Squiggly` `/IT /Underline`, `/QuadPoints`, `/CA` | done |
+| Strikethrough | Strikethrough | Cross-Out | `/StrikeOut`, `/QuadPoints`, no `/IT` | done |
+| | Draw | Pencil | `/Ink`, `/InkList`, `/BS /W` | not started |
+| | Line | Line | `/Line`, `/L` | not started |
+| | Arrow | Line | `/Line` `/IT /LineArrow`, `/LE [/None /OpenArrow]`, `/BS /W` | not started |
+| | Rectangle | Rectangle | `/Square`, `/RD` | not started |
+| | Circle | Oval | `/Circle`, `/RD` | not started |
+| | Polygon | Polygon | `/Polygon`, `/Vertices` | not started |
+| | Cloud | Polygon | `/Polygon` `/IT /PolygonCloud`, `/BE /I` | not started |
+| | Connected lines | Polygonal Line | `/PolyLine`, `/Vertices` | not started |
+| | Stamps palette | the stamp's name | `/Stamp`, `/Name`, and an `/AP` we do not draw | O4 |
+| -- | Add signature | -- | **page content, not an annotation** | not here |
+| -- | Add initials | -- | **page content, not an annotation** | not here |
 
-Twenty tools, none of them finished. Three can write their mark and save
-it -- the note, the highlight and the strikethrough -- which is one
-requirement out of the fifteen below; what they make cannot afterwards be
-selected, deleted or reopened, because M1 and M14 are shared by all twenty and
-neither exists yet. Eighteen write an annotation; the last two do not, and
+**Select** and **Pan** are in the strip and are not in this table: they
+change what the pointer does and write nothing.
+
+Twenty tools, three of them done: Highlight, Underline and
+Strikethrough. One more writes a mark and nothing else -- Add a comment,
+whose highlight half is done while the icon half writes only, and
+neither was ever specified until the **Comment** section below. Eighteen
+write an annotation; the last two do not, and
 that is the whole of what makes them different. Placing a stored
 signature or initials writes **page content**: measured on page 3 of the test
 document, the signature is 1334 ink pixels with annotations off and 1334 with,
@@ -705,12 +763,13 @@ this one, and there is no reason for the absence -- the tool exists, the
 gesture is the same selection, and a reader that can highlight or strike
 out a selection can underline it.
 
-***Add note to text* is live.** The measurement it was waiting for came
-off `corpus/Markup Underline Write.pdf` on 2026-11-04: it writes the same
-`/Highlight` the Highlight tool writes, with `/Subj Comment on Text`,
-`/IT /HighlightNote`, `/CA 0.4` and the run's `/QuadPoints`, and then the
-editor opens, because the note is the whole point of the mark. See
-decision 36.
+***Add note to text* is live, and it is not a tool.** It is this menu's
+way of reaching the **comment tool**, which makes a `/Highlight` over a
+run of words exactly as it makes a `/Text` on a point -- `/Subj Comment on
+Text`, `/IT /HighlightNote`, `/CA 0.4` and the run's `/QuadPoints`, with
+the note box opening because the note is the whole point of the mark.
+Measured on `corpus/Markup Underline Write.pdf` on 2026-11-04 and
+confirmed on `corpus/Markup Comment.pdf` on 2026-11-06. See **Comment**.
 
 **One entry there is still refused.** *Add a comment to replace text*
 waits for the **comment tool itself**. It is a *pair*, measured in the
@@ -1185,6 +1244,97 @@ reached by selecting one, or by a right-click that selects it first --
 which is what *Properties...* already does. Style sits beside Colour and
 Opacity in Appearance and applies to the mark whose form is open.
 
+## Comment
+
+The owner's own notes, `corpus/Annotations.docx`, read off Reader on
+2026-11-06:
+
+```
+1  a comment is either an icon carrying a note, or a highlight. A single
+   point gives the icon; a run of selected text gives the highlight
+2  for a point the order must be the tool first and then the click. For
+   text either order works -- select then tool, or tool then select
+3  the note box opens by itself, and Post is refused while it is empty.
+   Cancelling the box deletes the comment or the highlight
+4  hovering the icon shows the note, as the other tools already do
+5  the right-click menu is the other tools'
+6  the properties form carries the icons, a colour and an opacity,
+   beside the standard tabs
+```
+
+**One tool, two kinds**, measured on `corpus/Markup Comment.pdf`:
+
+    a point       /Text       /Subj Sticky Note      /Name <the icon>
+    a selection   /Highlight  /Subj Comment on Text  /IT /HighlightNote
+                              /QuadPoints, /CA 0.4
+
+Both carry `/Contents` and `/RC`, and both take the comment tool's current
+colour. **The highlight is one a user cannot tell from a highlight tool's**
+-- same subtype, same opacity, and its properties form says *Highlight
+Properties*, measured 2026-11-06. `/Subj` and `/IT` are the whole
+difference, and they are what a reader groups its comment list by.
+
+That settles a question left open since 2026-11-04. A highlight made this
+way takes the comment tool's colour and not the highlight tool's, which
+was written up then as two tools sharing one colour. There are not two
+tools: *Add note to text* is an entry in the right-click menu over a
+selection, and the toolbar tool it reaches is this one. See decisions 36
+and 37.
+
+**Seventeen icons**, each with a drawing of its own, none shared. What
+Reader's list calls each, what we call it, and what reaches the file:
+
+| Reader's label | ours | `/Name` |
+|---|---|---|
+| Checkmark | Check | `/Check` |
+| Insert Text | **Checkmark** | `/Checkmark` |
+| Circle | Circle | `/Circle` |
+| Comment | Comment | `/Comment` |
+| Cross | Cross | `/Cross` |
+| Cross Hairs | Cross Hairs | `/CrossHairs` |
+| Help | Help | `/Help` |
+| Insert Text | Insert Text | `/Insert` |
+| Key | Key | `/Key` |
+| New Paragraph | New Paragraph | `/NewParagraph` |
+| Text Note | Text Note | **omitted** |
+| Paragraph | Paragraph | `/Paragraph` |
+| Right Arrow | Right Arrow | `/RightArrow` |
+| Right Pointer | Right Pointer | `/RightPointer` |
+| Star | Star | `/Star` |
+| Up Arrow | Up Arrow | `/UpArrow` |
+| Up-Left Arrow | Up-Left Arrow | `/UpLeftArrow` |
+
+**Text Note is written by leaving `/Name` out**, rather than by writing
+the specification's `/Note`.
+
+**Two of Reader's labels are wrong and we do not copy them.** Its list
+shows *Checkmark* against the icon that writes `/Check`, and *Insert Text*
+against the one that writes `/Checkmark` -- which draws a check mark, not
+a caret. The caret is the *second* row also labelled Insert Text, which
+writes `/Insert`. The appearance streams settle it:
+
+    /Check      0.588 0.263 0.988 rg   a tick, filled and stroked
+    /Checkmark  q 0.396 0.396 0.396 rg a tick, filled        <- grey
+    /Insert     0.588 0.263 0.988 rg   a triangle, the caret
+
+`/Checkmark` **hard-codes its grey and ignores `/C`**, which is why it
+alone renders grey beside sixteen coloured ones. Both are Acrobat defects;
+both names are real, and neither is in the specification's standard seven.
+
+Three more things the file says, each a departure from what the sticky
+note here writes today:
+
+- **`/F 28`** on every comment icon -- Print, NoZoom and NoRotate, so an
+  icon keeps its size as the page is zoomed. Ours writes `/F 4`.
+- **Each icon has a rectangle of its own**, 24 by 24 for Comment down to
+  13 by 18 for Key. Ours places every note at a flat 20.
+- **No `/CA`** when the mark is fully opaque, as elsewhere.
+
+**Post is refused until there is text, and Cancel deletes the mark.**
+Neither is what happens here today: the sticky note's editor has no Post
+to refuse, and an empty one is removed when it closes rather than when it
+is cancelled.
+
 ## The test
 
 Load that document, see every annotation in it, and be able to edit every one.
@@ -1219,7 +1369,7 @@ behind.
 |---|---|---|---|---|
 | 1 | Every mark in the test document survives a save | marks being drawn | every annotation in the document comes back from an export unchanged | **done 2026-10-31** |
 | 2 | The tool surface | 1 | the strip opens from the toolbar, arms a tool, has a tail for the attributes to arrive in, and disarms on Escape | **done 2026-11-01** |
-| 3 | One family through: Highlight, Underline, Strikethrough | 2 | all three make, select by clicking, recolour, resize, delete and reopen -- and those three kinds are in the model whether the user made them or the file arrived with them | |
+| 3 | One family finished: Highlight, Underline, Strikethrough | 2 | all three make, select by clicking, recolour, resize, delete and reopen -- and those three kinds are in the model whether the user made them or the file arrived with them | **done 2026-11-05** |
 | 4 | The remaining tools, one at a time | 3 | each tool brings its own kinds into the model as it arrives | |
 
 **Plan step 1 first because it has no screen**, and it is done. A document that goes
@@ -1450,6 +1600,13 @@ follow, but the *artwork* is
   and the cost above is the only reason not to. One thing stands either way:
   mark over mark needs its own rule, where topmost-first is what the note
   hit-testing already does.
+
+  **Copied, for the text markups, on 2026-11-05** -- decision 44. A
+  cross-out is taken on its struck line and not on the struck words beside
+  it, *Enable Text Selection* is in the mark's menu, and topmost-first is
+  what `mark_at` walks. What is left of this item is the tools that draw
+  ink rather than mark text, where the rule was first worked out and where
+  there is still nothing to apply it to.
 
   **The scrolling half of Pan has a reader after all.** It was written off
   here on the grounds that the wheel, the trackpad, the scrollbars and the
@@ -2262,20 +2419,26 @@ of its underlines are its producer's and two are ours, side by side in one
 file. The test compares our drawing against the fixture's own marks quad
 by quad rather than against any number.
 
-**36. *Add note to text* is a tool, not a subtype.** It writes the
-`/Highlight` the Highlight tool writes; `/Subj Comment on Text` and
-`/IT /HighlightNote` are the whole of the difference. So `/Subtype` no
-longer says which tool made a mark, `Annotation` carries an `intent`, and
-the subject and intent both come off the tool's declaration in `tools.py`
-rather than off a table keyed by kind.
+**36. One tool can make two kinds of mark, and `/Subtype` does not say
+which tool made one.** The comment tool makes a `/Text` on a point and a
+`/Highlight` over a run of words; the second carries `/Subj Comment on
+Text` and `/IT /HighlightNote`, which are the whole of what tells it from
+a highlight the Highlight tool made. So a subject and an intent come off
+the tool rather than off a table keyed by kind, and `Annotation` carries
+an `intent`.
 
-**37. Two tools can share one current colour, and these two do.** Reader
-keeps one between *Add a comment* and *Add note to text* -- colouring
-either colours the other -- and Highlight keeps its own although it writes
-the same `/Highlight`. The sharing follows what the tool is *for*, a note
-on the page, not the subtype it writes. Nothing is shared document-wide:
-turning Underline purple left three later highlights orange. A tool names
-the tool it shares with, and `MainWindow._colour_keeper` resolves it.
+**Corrected 2026-11-06.** This read *"Add note to text is a tool, not a
+subtype"*, which invented one. *Add note to text* is an entry in the
+right-click menu over a selection, not an entry in the toolbar; it
+appears nowhere in `corpus/Annotations.pdf`, and the toolbar tool it
+reaches is **Add a comment**.
+
+**37. Withdrawn 2026-11-06.** It read *"two tools can share one current
+colour, and these two do"*, of *Add a comment* and *Add note to text*.
+They are one tool, so there was never any sharing to explain -- the
+colour simply belongs to the comment tool, and the Highlight tool's is its
+own. What the measurement of 2026-11-04 actually showed is that a colour
+belongs to a tool and not to a subtype, which decision 32 already says.
 
 **38. A note is always written twice, and a status change is written
 bare.** Every mark that carries `/Contents` carries `/RC` beside it, in
@@ -2404,20 +2567,38 @@ because setting the text back moves the cursor and fights the typist, so
 `50` is tidied to `50%` when the field is left instead. The lock refuses
 both controls: either one of them fades the mark.
 
-**42. The properties form is named for the mark it is open on.**
-*Underline Properties*, *Cross-Out Properties*, *Highlight Properties* --
-photographed in the owner's notes on 2026-11-05, which carry two of them.
-It said *Comment properties* whatever was picked.
+**42. The properties form is named for the kind of mark it is open on,
+and the name is the one the user has seen.** It said *Comment properties*
+whatever was picked.
 
-The name is the mark's `/Subj`, which is why a cross-out's form says
-Cross-Out where its tool is called Strikethrough. `/Subj` goes into the
-file in English, because a reader groups and filters its comment list by
-it and a translated one would sort into a category of its own in every
-other language -- so `properties.SUBJECT_LABELS` translates it for the
-title rather than showing the file's word. A subject somebody has typed
-into the General tab is their own words and is used as it stands; a mark
-with no subject at all, from a kind this application has no name for,
-keeps the generic title.
+**The name is the tool's, not `/Subj`.** `/Subj` never reaches the
+screen, so Reader's *Cross-Out Properties* heads the form with a word
+found nowhere in its own interface. **Ours says Strikethrough** -- taken
+from the owner on 2026-11-06, and the one place this departs from Reader
+on purpose rather than for want of a measurement.
+
+**By kind, though, not by tool**, because one tool can make two kinds. The
+comment tool makes a `/Text` on a point and a `/Highlight` over a run of
+words, and Reader titles the second *Highlight Properties*: to the user it
+is a highlight, with nothing to tell it from one the highlight tool made.
+Measured 2026-11-06.
+
+| kind | title |
+|---|---|
+| `/Text` | Comment Properties |
+| `/Highlight` | Highlight Properties |
+| `/Underline`, `/Squiggly` | Underline Properties |
+| `/StrikeOut` | Strikethrough Properties |
+
+Renaming a mark does not rename its form. The General tab makes `/Subj`
+free text, and what a mark is called is not what it is.
+
+**Capitalised throughout.** Reader writes a small p on the comment's form
+and a capital on the other three; the owner would rather be consistent
+than bug-compatible.
+
+Photographed in the owner's notes, the text markups on 2026-11-05 and the
+comment on 2026-11-06.
 
 **Strikethrough needed nothing else.** The owner's notes of the same day
 ask for five things and the work done for highlight and underline had

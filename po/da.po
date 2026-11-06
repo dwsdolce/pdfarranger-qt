@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  pdfarranger\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-06 02:15+0000\n"
+"POT-Creation-Date: 2026-11-06 19:25+0000\n"
 "PO-Revision-Date: 2023-10-22 00:28+0200\n"
 "Last-Translator: Lrss <dev@lrss.dk>\n"
 "Language: da\n"
@@ -2161,7 +2161,7 @@ msgstr "Angiv status"
 msgid "{state} set by {author}"
 msgstr "{state} angivet af {author}"
 
-#: pdfarranger_qt/mainwindow.py
+#: pdfarranger_qt/mainwindow.py pdfarranger_qt/properties.py
 msgid "Mark Properties"
 msgstr "Markeringsegenskaber"
 
@@ -2947,14 +2947,9 @@ msgid "Cross-Out"
 msgstr "Gennemstregning"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/properties.py
-msgid "Sticky Note"
-msgstr "Note"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/properties.py
-msgid "Comment on Text"
-msgstr "Kommentar til tekst"
+#: pdfarranger_qt/properties.py pdfarranger_qt/tools.py
+msgid "Comment"
+msgstr "Kommentar"
 
 #: pdfarranger_qt/properties.py
 msgid "Review History"
@@ -2972,10 +2967,6 @@ msgstr "Gør egenskaber til standard"
 #: pdfarranger_qt/properties.py pdfarranger_qt/reader.py
 msgid "Style"
 msgstr "Stil"
-
-#: pdfarranger_qt/properties.py
-msgid "Comment properties"
-msgstr "Kommentaregenskaber"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/properties.py
@@ -3165,11 +3156,6 @@ msgstr "Nederst til højre"
 #: pdfarranger_qt/tools.py
 msgid "Pointer"
 msgstr "Markør"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/tools.py
-msgid "Comment"
-msgstr "Kommentar"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/tools.py
@@ -3735,4 +3721,15 @@ msgstr "Vis titlen frem for filnavnet"
 
 #~ msgid "Dec"
 #~ msgstr ""
+
+# machine translation, unreviewed
+#~ msgid "Sticky Note"
+#~ msgstr "Note"
+
+# machine translation, unreviewed
+#~ msgid "Comment on Text"
+#~ msgstr "Kommentar til tekst"
+
+#~ msgid "Comment properties"
+#~ msgstr "Kommentaregenskaber"
 

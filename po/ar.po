@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-06 02:15+0000\n"
+"POT-Creation-Date: 2026-11-06 19:25+0000\n"
 "PO-Revision-Date: 2024-09-05 17:05+0300\n"
 "Last-Translator: Abdullah Albaroty <albaroty@gmail.com>\n"
 "Language: ar\n"
@@ -2115,7 +2115,7 @@ msgstr "تعيين الحالة"
 msgid "{state} set by {author}"
 msgstr "{state} عيّنها {author}"
 
-#: pdfarranger_qt/mainwindow.py
+#: pdfarranger_qt/mainwindow.py pdfarranger_qt/properties.py
 msgid "Mark Properties"
 msgstr "خصائص العلامة"
 
@@ -2923,14 +2923,9 @@ msgid "Cross-Out"
 msgstr "شطب"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/properties.py
-msgid "Sticky Note"
-msgstr "ملاحظة لاصقة"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/properties.py
-msgid "Comment on Text"
-msgstr "تعليق على النص"
+#: pdfarranger_qt/properties.py pdfarranger_qt/tools.py
+msgid "Comment"
+msgstr "تعليق"
 
 #: pdfarranger_qt/properties.py
 msgid "Review History"
@@ -2948,10 +2943,6 @@ msgstr "اجعل الخصائص افتراضية"
 #: pdfarranger_qt/properties.py pdfarranger_qt/reader.py
 msgid "Style"
 msgstr "الطراز"
-
-#: pdfarranger_qt/properties.py
-msgid "Comment properties"
-msgstr "خصائص التعليق"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/properties.py
@@ -3141,11 +3132,6 @@ msgstr "أسفل اليمين"
 #: pdfarranger_qt/tools.py
 msgid "Pointer"
 msgstr "مؤشر"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/tools.py
-msgid "Comment"
-msgstr "تعليق"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/tools.py
@@ -3706,4 +3692,15 @@ msgstr "أظهر العنوان بدل اسم الملف"
 
 #~ msgid "Dec"
 #~ msgstr ""
+
+# machine translation, unreviewed
+#~ msgid "Sticky Note"
+#~ msgstr "ملاحظة لاصقة"
+
+# machine translation, unreviewed
+#~ msgid "Comment on Text"
+#~ msgstr "تعليق على النص"
+
+#~ msgid "Comment properties"
+#~ msgstr "خصائص التعليق"
 

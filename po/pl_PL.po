@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PDF-Shuffler 0.7\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-06 02:15+0000\n"
+"POT-Creation-Date: 2026-11-06 19:25+0000\n"
 "PO-Revision-Date: 2021-12-30 17:13+0100\n"
 "Last-Translator: Toratora <darex7@o2.pl>\n"
 "Language: pl_PL\n"
@@ -2203,7 +2203,7 @@ msgstr "Ustaw stan"
 msgid "{state} set by {author}"
 msgstr "{state} przez {author}"
 
-#: pdfarranger_qt/mainwindow.py
+#: pdfarranger_qt/mainwindow.py pdfarranger_qt/properties.py
 msgid "Mark Properties"
 msgstr "Właściwości oznaczenia"
 
@@ -3008,14 +3008,9 @@ msgid "Cross-Out"
 msgstr "Przekreślenie"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/properties.py
-msgid "Sticky Note"
-msgstr "Notatka"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/properties.py
-msgid "Comment on Text"
-msgstr "Komentarz do tekstu"
+#: pdfarranger_qt/properties.py pdfarranger_qt/tools.py
+msgid "Comment"
+msgstr "Komentarz"
 
 #: pdfarranger_qt/properties.py
 msgid "Review History"
@@ -3033,10 +3028,6 @@ msgstr "Ustaw właściwości jako domyślne"
 #: pdfarranger_qt/properties.py pdfarranger_qt/reader.py
 msgid "Style"
 msgstr "Styl"
-
-#: pdfarranger_qt/properties.py
-msgid "Comment properties"
-msgstr "Właściwości komentarza"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/properties.py
@@ -3226,11 +3217,6 @@ msgstr "Prawy dolny"
 #: pdfarranger_qt/tools.py
 msgid "Pointer"
 msgstr "Wskaźnik"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/tools.py
-msgid "Comment"
-msgstr "Komentarz"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/tools.py
@@ -3792,4 +3778,15 @@ msgstr "Pokaż tytuł zamiast nazwy pliku"
 
 #~ msgid "Dec"
 #~ msgstr ""
+
+# machine translation, unreviewed
+#~ msgid "Sticky Note"
+#~ msgstr "Notatka"
+
+# machine translation, unreviewed
+#~ msgid "Comment on Text"
+#~ msgstr "Komentarz do tekstu"
+
+#~ msgid "Comment properties"
+#~ msgstr "Właściwości komentarza"
 

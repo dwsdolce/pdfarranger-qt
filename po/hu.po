@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-06 02:15+0000\n"
+"POT-Creation-Date: 2026-11-06 19:25+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: hu\n"
@@ -2176,7 +2176,7 @@ msgstr "Állapot beállítása"
 msgid "{state} set by {author}"
 msgstr "{state} – {author}"
 
-#: pdfarranger_qt/mainwindow.py
+#: pdfarranger_qt/mainwindow.py pdfarranger_qt/properties.py
 msgid "Mark Properties"
 msgstr "Jelölés tulajdonságai"
 
@@ -2962,14 +2962,9 @@ msgid "Cross-Out"
 msgstr "Áthúzás"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/properties.py
-msgid "Sticky Note"
-msgstr "Jegyzet"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/properties.py
-msgid "Comment on Text"
-msgstr "Megjegyzés a szöveghez"
+#: pdfarranger_qt/properties.py pdfarranger_qt/tools.py
+msgid "Comment"
+msgstr "Megjegyzés"
 
 #: pdfarranger_qt/properties.py
 msgid "Review History"
@@ -2987,10 +2982,6 @@ msgstr "Tulajdonságok beállítása alapértelmezettként"
 #: pdfarranger_qt/properties.py pdfarranger_qt/reader.py
 msgid "Style"
 msgstr "Stílus"
-
-#: pdfarranger_qt/properties.py
-msgid "Comment properties"
-msgstr "Megjegyzés tulajdonságai"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/properties.py
@@ -3180,11 +3171,6 @@ msgstr "Jobb alul"
 #: pdfarranger_qt/tools.py
 msgid "Pointer"
 msgstr "Mutató"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/tools.py
-msgid "Comment"
-msgstr "Megjegyzés"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/tools.py
@@ -3752,4 +3738,15 @@ msgstr "A cím megjelenítése a fájlnév helyett"
 
 #~ msgid "Dec"
 #~ msgstr ""
+
+# machine translation, unreviewed
+#~ msgid "Sticky Note"
+#~ msgstr "Jegyzet"
+
+# machine translation, unreviewed
+#~ msgid "Comment on Text"
+#~ msgstr "Megjegyzés a szöveghez"
+
+#~ msgid "Comment properties"
+#~ msgstr "Megjegyzés tulajdonságai"
 

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  pdfarranger\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-06 02:15+0000\n"
+"POT-Creation-Date: 2026-11-06 19:25+0000\n"
 "PO-Revision-Date: 2026-01-21 05:07+0100\n"
 "Last-Translator: Ekaterine Papava <papava.e@gtu.ge>\n"
 "Language: ka\n"
@@ -2135,7 +2135,7 @@ msgstr "სტატუსის დაყენება"
 msgid "{state} set by {author}"
 msgstr "{state} — {author}"
 
-#: pdfarranger_qt/mainwindow.py
+#: pdfarranger_qt/mainwindow.py pdfarranger_qt/properties.py
 msgid "Mark Properties"
 msgstr "ნიშნის თვისებები"
 
@@ -2914,14 +2914,9 @@ msgid "Cross-Out"
 msgstr "გადახაზვა"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/properties.py
-msgid "Sticky Note"
-msgstr "წებოვანი შენიშვნა"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/properties.py
-msgid "Comment on Text"
-msgstr "კომენტარი ტექსტზე"
+#: pdfarranger_qt/properties.py pdfarranger_qt/tools.py
+msgid "Comment"
+msgstr "კომენტარი"
 
 #: pdfarranger_qt/properties.py
 msgid "Review History"
@@ -2939,10 +2934,6 @@ msgstr "თვისებების ნაგულისხმევად �
 #: pdfarranger_qt/properties.py pdfarranger_qt/reader.py
 msgid "Style"
 msgstr "სტილი"
-
-#: pdfarranger_qt/properties.py
-msgid "Comment properties"
-msgstr "კომენტარის თვისებები"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/properties.py
@@ -3132,11 +3123,6 @@ msgstr "ქვემოთ მარჯვნივ"
 #: pdfarranger_qt/tools.py
 msgid "Pointer"
 msgstr "მაჩვენებელი"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/tools.py
-msgid "Comment"
-msgstr "კომენტარი"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/tools.py
@@ -3725,4 +3711,15 @@ msgstr "ფაილის სახელის ნაცვლად სათ
 
 #~ msgid "Dec"
 #~ msgstr ""
+
+# machine translation, unreviewed
+#~ msgid "Sticky Note"
+#~ msgstr "წებოვანი შენიშვნა"
+
+# machine translation, unreviewed
+#~ msgid "Comment on Text"
+#~ msgstr "კომენტარი ტექსტზე"
+
+#~ msgid "Comment properties"
+#~ msgstr "კომენტარის თვისებები"
 

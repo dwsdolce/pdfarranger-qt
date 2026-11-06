@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PDF Arranger 1.9.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-06 02:15+0000\n"
+"POT-Creation-Date: 2026-11-06 19:25+0000\n"
 "PO-Revision-Date: 2023-06-12 10:30+0300\n"
 "Last-Translator: Manussos Pulinakis "
 "<38626261+manussos@users.noreply.github.com>\n"
@@ -2205,7 +2205,7 @@ msgstr "Ορισμός κατάστασης"
 msgid "{state} set by {author}"
 msgstr "{state} από {author}"
 
-#: pdfarranger_qt/mainwindow.py
+#: pdfarranger_qt/mainwindow.py pdfarranger_qt/properties.py
 msgid "Mark Properties"
 msgstr "Ιδιότητες επισήμανσης"
 
@@ -2993,14 +2993,9 @@ msgid "Cross-Out"
 msgstr "Διαγραφή"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/properties.py
-msgid "Sticky Note"
-msgstr "Σημείωση"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/properties.py
-msgid "Comment on Text"
-msgstr "Σχόλιο στο κείμενο"
+#: pdfarranger_qt/properties.py pdfarranger_qt/tools.py
+msgid "Comment"
+msgstr "Σχόλιο"
 
 #: pdfarranger_qt/properties.py
 msgid "Review History"
@@ -3018,10 +3013,6 @@ msgstr "Ορισμός ιδιοτήτων ως προεπιλογή"
 #: pdfarranger_qt/properties.py pdfarranger_qt/reader.py
 msgid "Style"
 msgstr "Στυλ"
-
-#: pdfarranger_qt/properties.py
-msgid "Comment properties"
-msgstr "Ιδιότητες σχολίου"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/properties.py
@@ -3211,11 +3202,6 @@ msgstr "Κάτω δεξιά"
 #: pdfarranger_qt/tools.py
 msgid "Pointer"
 msgstr "Δείκτης"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/tools.py
-msgid "Comment"
-msgstr "Σχόλιο"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/tools.py
@@ -3777,4 +3763,15 @@ msgstr "Εμφάνιση του τίτλου αντί του ονόματος α
 
 #~ msgid "Dec"
 #~ msgstr ""
+
+# machine translation, unreviewed
+#~ msgid "Sticky Note"
+#~ msgstr "Σημείωση"
+
+# machine translation, unreviewed
+#~ msgid "Comment on Text"
+#~ msgstr "Σχόλιο στο κείμενο"
+
+#~ msgid "Comment properties"
+#~ msgstr "Ιδιότητες σχολίου"
 

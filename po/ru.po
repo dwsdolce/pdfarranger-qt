@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pdfarranger master\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-06 02:15+0000\n"
+"POT-Creation-Date: 2026-11-06 19:25+0000\n"
 "PO-Revision-Date: 2026-09-04 09:59+0000\n"
 "Last-Translator: Lumenman <28367232+Lumenman@users.noreply.github.com>\n"
 "Language: ru\n"
@@ -2017,7 +2017,7 @@ msgstr "Задать состояние"
 msgid "{state} set by {author}"
 msgstr "{state} — {author}"
 
-#: pdfarranger_qt/mainwindow.py
+#: pdfarranger_qt/mainwindow.py pdfarranger_qt/properties.py
 msgid "Mark Properties"
 msgstr "Свойства пометки"
 
@@ -2758,14 +2758,9 @@ msgid "Cross-Out"
 msgstr "Зачёркивание"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/properties.py
-msgid "Sticky Note"
-msgstr "Заметка"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/properties.py
-msgid "Comment on Text"
-msgstr "Комментарий к тексту"
+#: pdfarranger_qt/properties.py pdfarranger_qt/tools.py
+msgid "Comment"
+msgstr "Комментарий"
 
 #: pdfarranger_qt/properties.py
 msgid "Review History"
@@ -2782,10 +2777,6 @@ msgstr "Сделать свойства стандартными"
 #: pdfarranger_qt/properties.py pdfarranger_qt/reader.py
 msgid "Style"
 msgstr "Стиль"
-
-#: pdfarranger_qt/properties.py
-msgid "Comment properties"
-msgstr "Свойства комментария"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/properties.py
@@ -2952,11 +2943,6 @@ msgstr "Снизу справа"
 #: pdfarranger_qt/tools.py
 msgid "Pointer"
 msgstr "Указатель"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/tools.py
-msgid "Comment"
-msgstr "Комментарий"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/tools.py
@@ -3554,4 +3540,15 @@ msgstr "Показывать заголовок вместо имени файл
 
 #~ msgid "Dec"
 #~ msgstr ""
+
+# machine translation, unreviewed
+#~ msgid "Sticky Note"
+#~ msgstr "Заметка"
+
+# machine translation, unreviewed
+#~ msgid "Comment on Text"
+#~ msgstr "Комментарий к тексту"
+
+#~ msgid "Comment properties"
+#~ msgstr "Свойства комментария"
 

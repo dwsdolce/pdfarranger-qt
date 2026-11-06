@@ -14,7 +14,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  pdfarranger\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-06 02:15+0000\n"
+"POT-Creation-Date: 2026-11-06 19:25+0000\n"
 "PO-Revision-Date: 2026-04-03 11:36-0300\n"
 "Last-Translator: Óscar Fernández Díaz <oscfdezdz@tuta.io>\n"
 "Language: es\n"
@@ -2151,7 +2151,7 @@ msgstr "Establecer el estado"
 msgid "{state} set by {author}"
 msgstr "{state} por {author}"
 
-#: pdfarranger_qt/mainwindow.py
+#: pdfarranger_qt/mainwindow.py pdfarranger_qt/properties.py
 msgid "Mark Properties"
 msgstr "Propiedades de la marca"
 
@@ -2934,14 +2934,9 @@ msgid "Cross-Out"
 msgstr "Tachado"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/properties.py
-msgid "Sticky Note"
-msgstr "Nota adhesiva"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/properties.py
-msgid "Comment on Text"
-msgstr "Comentario sobre el texto"
+#: pdfarranger_qt/properties.py pdfarranger_qt/tools.py
+msgid "Comment"
+msgstr "Comentario"
 
 #: pdfarranger_qt/properties.py
 msgid "Review History"
@@ -2959,10 +2954,6 @@ msgstr "Establecer propiedades como predeterminadas"
 #: pdfarranger_qt/properties.py pdfarranger_qt/reader.py
 msgid "Style"
 msgstr "Estilo"
-
-#: pdfarranger_qt/properties.py
-msgid "Comment properties"
-msgstr "Propiedades del comentario"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/properties.py
@@ -3154,11 +3145,6 @@ msgstr "Abajo a la derecha"
 #: pdfarranger_qt/tools.py
 msgid "Pointer"
 msgstr "Puntero"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/tools.py
-msgid "Comment"
-msgstr "Comentario"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/tools.py
@@ -3761,4 +3747,15 @@ msgstr "Mostrar el título en lugar del nombre del archivo"
 
 #~ msgid "Dec"
 #~ msgstr ""
+
+# machine translation, unreviewed
+#~ msgid "Sticky Note"
+#~ msgstr "Nota adhesiva"
+
+# machine translation, unreviewed
+#~ msgid "Comment on Text"
+#~ msgstr "Comentario sobre el texto"
+
+#~ msgid "Comment properties"
+#~ msgstr "Propiedades del comentario"
 

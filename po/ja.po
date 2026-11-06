@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-06 02:15+0000\n"
+"POT-Creation-Date: 2026-11-06 19:25+0000\n"
 "PO-Revision-Date: 2022-09-01 00:40+0900\n"
 "Last-Translator: sicklylife <translation@sicklylife.jp>\n"
 "Language: ja\n"
@@ -2045,7 +2045,7 @@ msgstr "ステータスを設定"
 msgid "{state} set by {author}"
 msgstr "{state}（{author}）"
 
-#: pdfarranger_qt/mainwindow.py
+#: pdfarranger_qt/mainwindow.py pdfarranger_qt/properties.py
 msgid "Mark Properties"
 msgstr "マークのプロパティ"
 
@@ -2820,14 +2820,9 @@ msgid "Cross-Out"
 msgstr "取り消し線"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/properties.py
-msgid "Sticky Note"
-msgstr "ノート注釈"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/properties.py
-msgid "Comment on Text"
-msgstr "テキストへの注釈"
+#: pdfarranger_qt/properties.py pdfarranger_qt/tools.py
+msgid "Comment"
+msgstr "コメント"
 
 #: pdfarranger_qt/properties.py
 msgid "Review History"
@@ -2845,10 +2840,6 @@ msgstr "プロパティを初期設定にする"
 #: pdfarranger_qt/properties.py pdfarranger_qt/reader.py
 msgid "Style"
 msgstr "スタイル"
-
-#: pdfarranger_qt/properties.py
-msgid "Comment properties"
-msgstr "注釈のプロパティ"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/properties.py
@@ -3038,11 +3029,6 @@ msgstr "右下"
 #: pdfarranger_qt/tools.py
 msgid "Pointer"
 msgstr "ポインター"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/tools.py
-msgid "Comment"
-msgstr "コメント"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/tools.py
@@ -3588,4 +3574,15 @@ msgstr "ファイル名ではなくタイトルを表示する"
 
 #~ msgid "Dec"
 #~ msgstr ""
+
+# machine translation, unreviewed
+#~ msgid "Sticky Note"
+#~ msgstr "ノート注釈"
+
+# machine translation, unreviewed
+#~ msgid "Comment on Text"
+#~ msgstr "テキストへの注釈"
+
+#~ msgid "Comment properties"
+#~ msgstr "注釈のプロパティ"
 

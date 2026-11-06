@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  pdfarranger\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-06 02:15+0000\n"
+"POT-Creation-Date: 2026-11-06 19:25+0000\n"
 "PO-Revision-Date: 2023-06-06 13:27+0200\n"
 "Last-Translator: Milo Ivir <mail@milotype.de>\n"
 "Language: hr\n"
@@ -2167,7 +2167,7 @@ msgstr "Postavi stanje"
 msgid "{state} set by {author}"
 msgstr "{state} postavio {author}"
 
-#: pdfarranger_qt/mainwindow.py
+#: pdfarranger_qt/mainwindow.py pdfarranger_qt/properties.py
 msgid "Mark Properties"
 msgstr "Svojstva oznake"
 
@@ -2959,14 +2959,9 @@ msgid "Cross-Out"
 msgstr "Precrtano"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/properties.py
-msgid "Sticky Note"
-msgstr "Ljepljiva bilješka"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/properties.py
-msgid "Comment on Text"
-msgstr "Komentar na tekst"
+#: pdfarranger_qt/properties.py pdfarranger_qt/tools.py
+msgid "Comment"
+msgstr "Komentar"
 
 #: pdfarranger_qt/properties.py
 msgid "Review History"
@@ -2984,10 +2979,6 @@ msgstr "Postavi svojstva kao zadana"
 #: pdfarranger_qt/properties.py pdfarranger_qt/reader.py
 msgid "Style"
 msgstr "Stil"
-
-#: pdfarranger_qt/properties.py
-msgid "Comment properties"
-msgstr "Svojstva komentara"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/properties.py
@@ -3177,11 +3168,6 @@ msgstr "Dolje desno"
 #: pdfarranger_qt/tools.py
 msgid "Pointer"
 msgstr "Pokazivač"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/tools.py
-msgid "Comment"
-msgstr "Komentar"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/tools.py
@@ -3741,4 +3727,15 @@ msgstr "Prikaži naslov umjesto naziva datoteke"
 
 #~ msgid "Dec"
 #~ msgstr ""
+
+# machine translation, unreviewed
+#~ msgid "Sticky Note"
+#~ msgstr "Ljepljiva bilješka"
+
+# machine translation, unreviewed
+#~ msgid "Comment on Text"
+#~ msgstr "Komentar na tekst"
+
+#~ msgid "Comment properties"
+#~ msgstr "Svojstva komentara"
 

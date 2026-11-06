@@ -1035,6 +1035,7 @@ class TestTheFormOnOneMark(unittest.TestCase):
 
         self.MarkProperties = MarkProperties
         self.was = Properties(
+            kind="/Highlight",
             author="dws", subject="Highlight", when="Nov 1",
             created="Nov 1", colour=(1.0, 0.92, 0.23), opacity=1.0,
             locked=False,
@@ -1046,42 +1047,65 @@ class TestTheFormOnOneMark(unittest.TestCase):
         self.addCleanup(made.deleteLater)
         return made
 
-    def test_it_is_titled_after_the_mark(self):
-        """**Not one title for everything.** Reader names the form for the
-        mark it is open on -- *Underline Properties*, *Cross-Out
-        Properties*, *Highlight Properties*, photographed in the owner's
-        notes on 2026-11-05 -- where this said *Comment properties*
-        whatever had been picked.
+    def test_it_is_titled_after_the_tool_that_makes_it(self):
+        """The only name of a mark the user has ever seen. `/Subj` never
+        reaches the screen, so Reader's *Cross-Out Properties* heads the
+        form with a word found nowhere in its interface -- we say
+        Strikethrough, which is the one deliberate departure.
         """
-        for subject, expected in (("Highlight", "Highlight Properties"),
-                                  ("Cross-Out", "Cross-Out Properties"),
-                                  ("Underline", "Underline Properties"),
-                                  ("Sticky Note", "Sticky Note Properties")):
-            with self.subTest(subject=subject):
-                self.assertEqual(self.form(subject=subject).windowTitle(),
-                                 expected)
+        for kind, expected in (("/Highlight", "Highlight Properties"),
+                               ("/StrikeOut", "Strikethrough Properties"),
+                               ("/Underline", "Underline Properties"),
+                               ("/Squiggly", "Underline Properties"),
+                               ("/Text", "Comment Properties")):
+            with self.subTest(kind=kind):
+                self.assertEqual(self.form(kind=kind).windowTitle(), expected)
 
-    def test_a_subject_somebody_typed_is_used_as_it_stands(self):
-        """The General tab makes `/Subj` free text. What was typed there is
-        the mark's name, and is not looked up or translated."""
-        self.assertEqual(self.form(subject="Chapter three").windowTitle(),
-                         "Chapter three Properties")
+    def test_every_title_names_something_in_the_strip(self):
+        """A title naming what the user cannot find in the toolbar is the
+        defect this replaced -- Reader's *Cross-Out*, which appears nowhere
+        in its own interface.
 
-    def test_a_mark_with_no_subject_falls_back(self):
-        """A kind this application has no name for, out of somebody else's
-        file, still opens a form with a title on it."""
-        self.assertEqual(self.form(subject="").windowTitle(),
-                         "Comment properties")
+        Named *in*, not equal to: the comment tool's button reads *Add a
+        comment* and its form reads *Comment Properties*, which is the
+        same word and the shorter form of it.
+        """
+        from pdfarranger_qt import tools
+        from pdfarranger_qt.properties import KIND_LABELS
 
-    def test_every_subject_it_writes_has_a_name_for_the_title(self):
-        """A `/Subj` this application writes and cannot name would show the
-        English in a translated interface."""
-        from pdfarranger_qt import markup, tools
-        from pdfarranger_qt.properties import SUBJECT_LABELS
+        labels = [tool.label.lower() for tool in tools.TOOLS]
+        for shown in set(KIND_LABELS.values()):
+            with self.subTest(title=shown):
+                self.assertTrue(
+                    any(shown.lower() in label for label in labels),
+                    "no tool in the strip is called %r" % shown)
 
-        written = set(markup.SUBJECTS.values())
-        written |= {tool.subject for tool in tools.TOOLS if tool.subject}
-        self.assertEqual(written - set(SUBJECT_LABELS), set())
+    def test_one_tool_making_two_kinds_titles_each_by_what_it_is(self):
+        """The comment tool makes a `/Text` on a point and a `/Highlight`
+        over words. The second is a Highlight to the user, who has nothing
+        to tell it from one the highlight tool made."""
+        self.assertEqual(self.form(kind="/Highlight",
+                                   subject="Comment on Text").windowTitle(),
+                         "Highlight Properties")
+
+    def test_renaming_a_mark_does_not_rename_its_form(self):
+        """The General tab makes `/Subj` free text, and what a mark is
+        called is not what it *is*."""
+        form = self.form(kind="/StrikeOut", subject="Chapter three")
+        self.assertEqual(form.windowTitle(), "Strikethrough Properties")
+
+    def test_a_kind_with_no_name_here_still_gets_a_title(self):
+        """One out of somebody else's file, from a tool not built here."""
+        self.assertEqual(self.form(kind="/Polygon").windowTitle(),
+                         "Mark Properties")
+
+    def test_every_kind_it_writes_has_a_name_for_the_title(self):
+        """A kind this application makes and cannot name would fall back to
+        the generic title on a form the user opens every day."""
+        from pdfarranger_qt import markup
+        from pdfarranger_qt.properties import KIND_LABELS
+
+        self.assertEqual(set(markup.KINDS) - set(KIND_LABELS), set())
 
     def test_the_opacity_is_a_field_as_well_as_a_slider(self):
         """**Both, and both live**, as Reader has it -- photographed in the

@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-06 02:15+0000\n"
+"POT-Creation-Date: 2026-11-06 19:25+0000\n"
 "PO-Revision-Date: 2023-01-19 20:27+0100\n"
 "Last-Translator: alexgabi\n"
 "Language: eu\n"
@@ -2196,7 +2196,7 @@ msgstr "Ezarri egoera"
 msgid "{state} set by {author}"
 msgstr "{state}: {author}"
 
-#: pdfarranger_qt/mainwindow.py
+#: pdfarranger_qt/mainwindow.py pdfarranger_qt/properties.py
 msgid "Mark Properties"
 msgstr "Markaren propietateak"
 
@@ -2980,14 +2980,9 @@ msgid "Cross-Out"
 msgstr "Marratua"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/properties.py
-msgid "Sticky Note"
-msgstr "Ohar itsaskorra"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/properties.py
-msgid "Comment on Text"
-msgstr "Testuari buruzko iruzkina"
+#: pdfarranger_qt/properties.py pdfarranger_qt/tools.py
+msgid "Comment"
+msgstr "Iruzkina"
 
 #: pdfarranger_qt/properties.py
 msgid "Review History"
@@ -3005,10 +3000,6 @@ msgstr "Ezarri propietateak lehenetsi gisa"
 #: pdfarranger_qt/properties.py pdfarranger_qt/reader.py
 msgid "Style"
 msgstr "Estiloa"
-
-#: pdfarranger_qt/properties.py
-msgid "Comment properties"
-msgstr "Iruzkinaren propietateak"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/properties.py
@@ -3200,11 +3191,6 @@ msgstr "Behean eskuinean"
 #: pdfarranger_qt/tools.py
 msgid "Pointer"
 msgstr "Erakuslea"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/tools.py
-msgid "Comment"
-msgstr "Iruzkina"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/tools.py
@@ -3768,4 +3754,15 @@ msgstr "Erakutsi izenburua fitxategi-izenaren ordez"
 
 #~ msgid "Dec"
 #~ msgstr ""
+
+# machine translation, unreviewed
+#~ msgid "Sticky Note"
+#~ msgstr "Ohar itsaskorra"
+
+# machine translation, unreviewed
+#~ msgid "Comment on Text"
+#~ msgstr "Testuari buruzko iruzkina"
+
+#~ msgid "Comment properties"
+#~ msgstr "Iruzkinaren propietateak"
 

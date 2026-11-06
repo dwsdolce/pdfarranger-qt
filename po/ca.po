@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-06 02:15+0000\n"
+"POT-Creation-Date: 2026-11-06 19:25+0000\n"
 "PO-Revision-Date: 2022-10-03 23:44+0200\n"
 "Last-Translator: Ícar N. S. <icar.nin@protonmail.com>\n"
 "Language: ca\n"
@@ -2195,7 +2195,7 @@ msgstr "Estableix l'estat"
 msgid "{state} set by {author}"
 msgstr "{state} per {author}"
 
-#: pdfarranger_qt/mainwindow.py
+#: pdfarranger_qt/mainwindow.py pdfarranger_qt/properties.py
 msgid "Mark Properties"
 msgstr "Propietats de la marca"
 
@@ -2983,14 +2983,9 @@ msgid "Cross-Out"
 msgstr "Ratllat"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/properties.py
-msgid "Sticky Note"
-msgstr "Nota adhesiva"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/properties.py
-msgid "Comment on Text"
-msgstr "Comentari sobre el text"
+#: pdfarranger_qt/properties.py pdfarranger_qt/tools.py
+msgid "Comment"
+msgstr "Comentari"
 
 #: pdfarranger_qt/properties.py
 msgid "Review History"
@@ -3008,10 +3003,6 @@ msgstr "Fes que les propietats siguin per defecte"
 #: pdfarranger_qt/properties.py pdfarranger_qt/reader.py
 msgid "Style"
 msgstr "Estil"
-
-#: pdfarranger_qt/properties.py
-msgid "Comment properties"
-msgstr "Propietats del comentari"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/properties.py
@@ -3201,11 +3192,6 @@ msgstr "A baix a la dreta"
 #: pdfarranger_qt/tools.py
 msgid "Pointer"
 msgstr "Busca"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/tools.py
-msgid "Comment"
-msgstr "Comentari"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/tools.py
@@ -3767,4 +3753,15 @@ msgstr "Mostra el títol en lloc del nom del fitxer"
 
 #~ msgid "Dec"
 #~ msgstr ""
+
+# machine translation, unreviewed
+#~ msgid "Sticky Note"
+#~ msgstr "Nota adhesiva"
+
+# machine translation, unreviewed
+#~ msgid "Comment on Text"
+#~ msgstr "Comentari sobre el text"
+
+#~ msgid "Comment properties"
+#~ msgstr "Propietats del comentari"
 

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-06 02:15+0000\n"
+"POT-Creation-Date: 2026-11-06 19:25+0000\n"
 "PO-Revision-Date: 2023-06-12 11:22+0300\n"
 "Last-Translator: Yaron Shahrabani <sh.yaron@gmail.com>\n"
 "Language: he\n"
@@ -2118,7 +2118,7 @@ msgstr "הגדרת מצב"
 msgid "{state} set by {author}"
 msgstr "{state} על ידי {author}"
 
-#: pdfarranger_qt/mainwindow.py
+#: pdfarranger_qt/mainwindow.py pdfarranger_qt/properties.py
 msgid "Mark Properties"
 msgstr "מאפייני סימון"
 
@@ -2910,14 +2910,9 @@ msgid "Cross-Out"
 msgstr "קו חוצה"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/properties.py
-msgid "Sticky Note"
-msgstr "פתק"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/properties.py
-msgid "Comment on Text"
-msgstr "הערה על הטקסט"
+#: pdfarranger_qt/properties.py pdfarranger_qt/tools.py
+msgid "Comment"
+msgstr "הערה"
 
 #: pdfarranger_qt/properties.py
 msgid "Review History"
@@ -2935,10 +2930,6 @@ msgstr "הגדרת המאפיינים כברירת מחדל"
 #: pdfarranger_qt/properties.py pdfarranger_qt/reader.py
 msgid "Style"
 msgstr "סגנון"
-
-#: pdfarranger_qt/properties.py
-msgid "Comment properties"
-msgstr "מאפייני הערה"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/properties.py
@@ -3128,11 +3119,6 @@ msgstr "למטה מימין"
 #: pdfarranger_qt/tools.py
 msgid "Pointer"
 msgstr "מצביע"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/tools.py
-msgid "Comment"
-msgstr "הערה"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/tools.py
@@ -3689,4 +3675,15 @@ msgstr "הצגת הכותרת במקום שם הקובץ"
 
 #~ msgid "Dec"
 #~ msgstr ""
+
+# machine translation, unreviewed
+#~ msgid "Sticky Note"
+#~ msgstr "פתק"
+
+# machine translation, unreviewed
+#~ msgid "Comment on Text"
+#~ msgstr "הערה על הטקסט"
+
+#~ msgid "Comment properties"
+#~ msgstr "מאפייני הערה"
 

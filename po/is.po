@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-06 02:15+0000\n"
+"POT-Creation-Date: 2026-11-06 19:25+0000\n"
 "PO-Revision-Date: 2025-09-28 16:51+0000\n"
 "Last-Translator: Sveinn í Felli <sv1@fellsnet.is>\n"
 "Language: is\n"
@@ -2145,7 +2145,7 @@ msgstr "Setja stöðu"
 msgid "{state} set by {author}"
 msgstr "{state} sett af {author}"
 
-#: pdfarranger_qt/mainwindow.py
+#: pdfarranger_qt/mainwindow.py pdfarranger_qt/properties.py
 msgid "Mark Properties"
 msgstr "Eiginleikar merkingar"
 
@@ -2926,14 +2926,9 @@ msgid "Cross-Out"
 msgstr "Yfirstrikun"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/properties.py
-msgid "Sticky Note"
-msgstr "Minnismiði"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/properties.py
-msgid "Comment on Text"
-msgstr "Athugasemd við texta"
+#: pdfarranger_qt/properties.py pdfarranger_qt/tools.py
+msgid "Comment"
+msgstr "Athugasemd"
 
 #: pdfarranger_qt/properties.py
 msgid "Review History"
@@ -2951,10 +2946,6 @@ msgstr "Gera eiginleika sjálfgefna"
 #: pdfarranger_qt/properties.py pdfarranger_qt/reader.py
 msgid "Style"
 msgstr "Stíll"
-
-#: pdfarranger_qt/properties.py
-msgid "Comment properties"
-msgstr "Eiginleikar athugasemdar"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/properties.py
@@ -3144,11 +3135,6 @@ msgstr "Neðst til hægri"
 #: pdfarranger_qt/tools.py
 msgid "Pointer"
 msgstr "Bendill"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/tools.py
-msgid "Comment"
-msgstr "Athugasemd"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/tools.py
@@ -3724,4 +3710,15 @@ msgstr "Sýna titilinn í stað skráarnafnsins"
 
 #~ msgid "Dec"
 #~ msgstr ""
+
+# machine translation, unreviewed
+#~ msgid "Sticky Note"
+#~ msgstr "Minnismiði"
+
+# machine translation, unreviewed
+#~ msgid "Comment on Text"
+#~ msgstr "Athugasemd við texta"
+
+#~ msgid "Comment properties"
+#~ msgstr "Eiginleikar athugasemdar"
 

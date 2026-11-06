@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  pdfarranger\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-06 02:15+0000\n"
+"POT-Creation-Date: 2026-11-06 19:25+0000\n"
 "PO-Revision-Date: 2026-05-24 07:36+0300\n"
 "Last-Translator: kbengs\n"
 "Language: sv\n"
@@ -2127,7 +2127,7 @@ msgstr "Ange status"
 msgid "{state} set by {author}"
 msgstr "{state} av {author}"
 
-#: pdfarranger_qt/mainwindow.py
+#: pdfarranger_qt/mainwindow.py pdfarranger_qt/properties.py
 msgid "Mark Properties"
 msgstr "Markeringsegenskaper"
 
@@ -2910,14 +2910,9 @@ msgid "Cross-Out"
 msgstr "Genomstrykning"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/properties.py
-msgid "Sticky Note"
-msgstr "Notis"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/properties.py
-msgid "Comment on Text"
-msgstr "Kommentar till text"
+#: pdfarranger_qt/properties.py pdfarranger_qt/tools.py
+msgid "Comment"
+msgstr "Kommentar"
 
 #: pdfarranger_qt/properties.py
 msgid "Review History"
@@ -2935,10 +2930,6 @@ msgstr "Gör egenskaper till standard"
 #: pdfarranger_qt/properties.py pdfarranger_qt/reader.py
 msgid "Style"
 msgstr "Stil"
-
-#: pdfarranger_qt/properties.py
-msgid "Comment properties"
-msgstr "Kommentarsegenskaper"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/properties.py
@@ -3128,11 +3119,6 @@ msgstr "Nere till höger"
 #: pdfarranger_qt/tools.py
 msgid "Pointer"
 msgstr "Pekare"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/tools.py
-msgid "Comment"
-msgstr "Kommentar"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/tools.py
@@ -3732,4 +3718,15 @@ msgstr "Visa titeln i stället för filnamnet"
 
 #~ msgid "Dec"
 #~ msgstr ""
+
+# machine translation, unreviewed
+#~ msgid "Sticky Note"
+#~ msgstr "Notis"
+
+# machine translation, unreviewed
+#~ msgid "Comment on Text"
+#~ msgstr "Kommentar till text"
+
+#~ msgid "Comment properties"
+#~ msgstr "Kommentarsegenskaper"
 

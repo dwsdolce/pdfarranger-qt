@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  pdfarranger\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-06 02:15+0000\n"
+"POT-Creation-Date: 2026-11-06 19:25+0000\n"
 "PO-Revision-Date: 2024-03-24 19:16+0200\n"
 "Last-Translator: \n"
 "Language: fi\n"
@@ -2169,7 +2169,7 @@ msgstr "Aseta tila"
 msgid "{state} set by {author}"
 msgstr "{state}: {author}"
 
-#: pdfarranger_qt/mainwindow.py
+#: pdfarranger_qt/mainwindow.py pdfarranger_qt/properties.py
 msgid "Mark Properties"
 msgstr "Merkinnän ominaisuudet"
 
@@ -2955,14 +2955,9 @@ msgid "Cross-Out"
 msgstr "Yliviivaus"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/properties.py
-msgid "Sticky Note"
-msgstr "Muistilappu"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/properties.py
-msgid "Comment on Text"
-msgstr "Kommentti tekstiin"
+#: pdfarranger_qt/properties.py pdfarranger_qt/tools.py
+msgid "Comment"
+msgstr "Kommentti"
 
 #: pdfarranger_qt/properties.py
 msgid "Review History"
@@ -2980,10 +2975,6 @@ msgstr "Aseta ominaisuudet oletukseksi"
 #: pdfarranger_qt/properties.py pdfarranger_qt/reader.py
 msgid "Style"
 msgstr "Tyyli"
-
-#: pdfarranger_qt/properties.py
-msgid "Comment properties"
-msgstr "Kommentin ominaisuudet"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/properties.py
@@ -3173,11 +3164,6 @@ msgstr "Alhaalla oikealla"
 #: pdfarranger_qt/tools.py
 msgid "Pointer"
 msgstr "Osoitin"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/tools.py
-msgid "Comment"
-msgstr "Kommentti"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/tools.py
@@ -3735,4 +3721,15 @@ msgstr "Näytä otsikko tiedostonimen sijaan"
 
 #~ msgid "Dec"
 #~ msgstr ""
+
+# machine translation, unreviewed
+#~ msgid "Sticky Note"
+#~ msgstr "Muistilappu"
+
+# machine translation, unreviewed
+#~ msgid "Comment on Text"
+#~ msgstr "Kommentti tekstiin"
+
+#~ msgid "Comment properties"
+#~ msgstr "Kommentin ominaisuudet"
 

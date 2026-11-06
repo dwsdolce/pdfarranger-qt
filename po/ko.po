@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pdfarranger - Korean\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-06 02:15+0000\n"
+"POT-Creation-Date: 2026-11-06 19:25+0000\n"
 "PO-Revision-Date: 2026-05-25 00:41+0900\n"
 "Last-Translator: VenusGirl <venusgirl@outlook.com>\n"
 "Language: ko\n"
@@ -2025,7 +2025,7 @@ msgstr "상태 설정"
 msgid "{state} set by {author}"
 msgstr "{state} — {author}"
 
-#: pdfarranger_qt/mainwindow.py
+#: pdfarranger_qt/mainwindow.py pdfarranger_qt/properties.py
 msgid "Mark Properties"
 msgstr "표시 속성"
 
@@ -2794,14 +2794,9 @@ msgid "Cross-Out"
 msgstr "취소선"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/properties.py
-msgid "Sticky Note"
-msgstr "스티커 노트"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/properties.py
-msgid "Comment on Text"
-msgstr "텍스트 주석"
+#: pdfarranger_qt/properties.py pdfarranger_qt/tools.py
+msgid "Comment"
+msgstr "주석"
 
 #: pdfarranger_qt/properties.py
 msgid "Review History"
@@ -2819,10 +2814,6 @@ msgstr "속성을 기본값으로 설정"
 #: pdfarranger_qt/properties.py pdfarranger_qt/reader.py
 msgid "Style"
 msgstr "스타일"
-
-#: pdfarranger_qt/properties.py
-msgid "Comment properties"
-msgstr "주석 속성"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/properties.py
@@ -3012,11 +3003,6 @@ msgstr "오른쪽 아래"
 #: pdfarranger_qt/tools.py
 msgid "Pointer"
 msgstr "포인터"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/tools.py
-msgid "Comment"
-msgstr "주석"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/tools.py
@@ -3610,4 +3596,15 @@ msgstr "파일 이름 대신 제목 보이기"
 
 #~ msgid "Dec"
 #~ msgstr ""
+
+# machine translation, unreviewed
+#~ msgid "Sticky Note"
+#~ msgstr "스티커 노트"
+
+# machine translation, unreviewed
+#~ msgid "Comment on Text"
+#~ msgstr "텍스트 주석"
+
+#~ msgid "Comment properties"
+#~ msgstr "주석 속성"
 

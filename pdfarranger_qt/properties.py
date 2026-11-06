@@ -57,28 +57,38 @@ from .i18n import N_
 from .i18n import gettext_ as _
 from .toolstrip import ColourPopup
 
-#: What a mark is called in the form's title bar, translated. **Reader
-#: titles the form after the mark**: *Underline Properties*, *Cross-Out
-#: Properties*, *Highlight Properties* -- read off the owner's notes on
-#: 2026-11-05, which carry photographs of two of them.
+#: What a mark is called in the form's title bar: **the name of the tool
+#: that makes it**, which is the only name of it the user has ever seen.
+#: `/Subj` never reaches the screen, so a form headed *Cross-Out* names
+#: the mark after a word found nowhere in the interface.
 #:
-#: The names are the `/Subj` values, and those go into the file in English
-#: because a reader groups and filters its comment list by them -- so they
-#: are translated here, for the title, rather than shown raw. A subject
-#: somebody has typed into the General tab is their own words and is used
-#: as it stands.
-SUBJECT_LABELS = {
-    "Highlight": N_("Highlight"),
-    "Cross-Out": N_("Cross-Out"),
-    "Underline": N_("Underline"),
-    "Sticky Note": N_("Sticky Note"),
-    "Comment on Text": N_("Comment on Text"),
+#: Reader says Cross-Out there and we say Strikethrough. Deliberate, taken
+#: from the owner on 2026-11-06 -- the one place this departs from Reader
+#: on purpose rather than for want of a measurement.
+#:
+#: **By kind and not by tool**, because one tool can make two kinds: the
+#: comment tool makes a `/Text` on a point and a `/Highlight` over a run
+#: of words, and the second is a Highlight to the user, who sees nothing
+#: to tell it from one the highlight tool made. Measured 2026-11-06.
+#:
+#: **Capitalised throughout**, which Reader is not: it writes a small p on
+#: the comment's form alone.
+KIND_LABELS = {
+    "/Highlight": N_("Highlight"),
+    "/Underline": N_("Underline"),
+    "/Squiggly": N_("Underline"),
+    "/StrikeOut": N_("Strikethrough"),
+    "/Text": N_("Comment"),
 }
 
 
 class Properties(NamedTuple):
     """What a mark says about itself, as the form shows it."""
 
+    #: Which kind of annotation it is, for the title. Not `/Subj`, which
+    #: the General tab makes free text: renaming a mark does not change
+    #: what it *is*, and Reader's title does not follow the renaming.
+    kind: str = ""
     #: Who made it: `/T`. Editable.
     author: str = ""
     #: What it is called: `/Subj`, which starts as the name of the tool that
@@ -180,7 +190,7 @@ class MarkProperties(QDialog):
 
     def __init__(self, props: Properties, parent=None):
         super().__init__(parent)
-        self.setWindowTitle(self.title_for(props.subject))
+        self.setWindowTitle(self.title_for(props.kind))
         self.setModal(True)
         self._was = props
         #: What the appearance tab is holding, which the popup changes as it
@@ -272,16 +282,19 @@ class MarkProperties(QDialog):
         return page
 
     @staticmethod
-    def title_for(subject: str) -> str:
-        """What the title bar says, for a mark called ``subject``.
+    def title_for(kind: str) -> str:
+        """What the title bar says, for a mark of ``kind``.
 
-        The generic name for a mark with no subject at all -- a kind this
-        application has no name for yet, read out of somebody else's file.
+        The generic name for a kind this application has no name for --
+        one read out of somebody else's file, from a tool not built here.
         """
-        if not subject:
-            return _("Comment properties")
-        known = SUBJECT_LABELS.get(subject)
-        return _("%s Properties") % (_(known) if known else subject)
+        known = KIND_LABELS.get(kind)
+        if known is None:
+            # Deliberately the same message as the undo entry for a change
+            # made here: the same two words in the same sense, and a string
+            # only a mark from a tool we have not built can reach.
+            return _("Mark Properties")
+        return _("%s Properties") % _(known)
 
     def _general(self, props: Properties) -> QWidget:
         page = QWidget(self)

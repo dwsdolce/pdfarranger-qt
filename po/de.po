@@ -15,7 +15,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  pdfarranger\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-06 02:15+0000\n"
+"POT-Creation-Date: 2026-11-06 19:25+0000\n"
 "PO-Revision-Date: 2025-07-09 08:35+0200\n"
 "Last-Translator: Sebastian Scherch\n"
 "Language: de\n"
@@ -2167,7 +2167,7 @@ msgstr "Status festlegen"
 msgid "{state} set by {author}"
 msgstr "{state} von {author}"
 
-#: pdfarranger_qt/mainwindow.py
+#: pdfarranger_qt/mainwindow.py pdfarranger_qt/properties.py
 msgid "Mark Properties"
 msgstr "Markierungseigenschaften"
 
@@ -2955,14 +2955,9 @@ msgid "Cross-Out"
 msgstr "Durchstreichen"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/properties.py
-msgid "Sticky Note"
-msgstr "Notiz"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/properties.py
-msgid "Comment on Text"
-msgstr "Kommentar zum Text"
+#: pdfarranger_qt/properties.py pdfarranger_qt/tools.py
+msgid "Comment"
+msgstr "Kommentar"
 
 #: pdfarranger_qt/properties.py
 msgid "Review History"
@@ -2980,10 +2975,6 @@ msgstr "Eigenschaften als Standard festlegen"
 #: pdfarranger_qt/properties.py pdfarranger_qt/reader.py
 msgid "Style"
 msgstr "Stil"
-
-#: pdfarranger_qt/properties.py
-msgid "Comment properties"
-msgstr "Kommentareigenschaften"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/properties.py
@@ -3173,11 +3164,6 @@ msgstr "Unten rechts"
 #: pdfarranger_qt/tools.py
 msgid "Pointer"
 msgstr "Zeiger"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/tools.py
-msgid "Comment"
-msgstr "Kommentar"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/tools.py
@@ -3786,4 +3772,15 @@ msgstr "Den Titel statt des Dateinamens anzeigen"
 
 #~ msgid "Dec"
 #~ msgstr ""
+
+# machine translation, unreviewed
+#~ msgid "Sticky Note"
+#~ msgstr "Notiz"
+
+# machine translation, unreviewed
+#~ msgid "Comment on Text"
+#~ msgstr "Kommentar zum Text"
+
+#~ msgid "Comment properties"
+#~ msgstr "Kommentareigenschaften"
 

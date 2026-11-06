@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  pdfarranger\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-06 02:15+0000\n"
+"POT-Creation-Date: 2026-11-06 19:25+0000\n"
 "PO-Revision-Date: 2023-07-10 15:37+0000\n"
 "Last-Translator: PavelZ\n"
 "Language: cs_CZ\n"
@@ -2155,7 +2155,7 @@ msgstr "Nastavit stav"
 msgid "{state} set by {author}"
 msgstr "{state} nastavil {author}"
 
-#: pdfarranger_qt/mainwindow.py
+#: pdfarranger_qt/mainwindow.py pdfarranger_qt/properties.py
 msgid "Mark Properties"
 msgstr "Vlastnosti značky"
 
@@ -2945,14 +2945,9 @@ msgid "Cross-Out"
 msgstr "Přeškrtnutí"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/properties.py
-msgid "Sticky Note"
-msgstr "Lepicí poznámka"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/properties.py
-msgid "Comment on Text"
-msgstr "Komentář k textu"
+#: pdfarranger_qt/properties.py pdfarranger_qt/tools.py
+msgid "Comment"
+msgstr "Komentář"
 
 #: pdfarranger_qt/properties.py
 msgid "Review History"
@@ -2970,10 +2965,6 @@ msgstr "Nastavit vlastnosti jako výchozí"
 #: pdfarranger_qt/properties.py pdfarranger_qt/reader.py
 msgid "Style"
 msgstr "Styl"
-
-#: pdfarranger_qt/properties.py
-msgid "Comment properties"
-msgstr "Vlastnosti komentáře"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/properties.py
@@ -3163,11 +3154,6 @@ msgstr "Vpravo dole"
 #: pdfarranger_qt/tools.py
 msgid "Pointer"
 msgstr "Ukazatel"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/tools.py
-msgid "Comment"
-msgstr "Komentář"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/tools.py
@@ -3728,4 +3714,15 @@ msgstr "Zobrazit název místo jména souboru"
 
 #~ msgid "Dec"
 #~ msgstr ""
+
+# machine translation, unreviewed
+#~ msgid "Sticky Note"
+#~ msgstr "Lepicí poznámka"
+
+# machine translation, unreviewed
+#~ msgid "Comment on Text"
+#~ msgstr "Komentář k textu"
+
+#~ msgid "Comment properties"
+#~ msgstr "Vlastnosti komentáře"
 
