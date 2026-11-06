@@ -23,10 +23,11 @@ for form values, and the same answer.
 """
 
 import os
+import re
 import unittest
 
 import pikepdf
-from support import TEST_PDF, settle, temp_path
+from support import FIXTURES, TEST_PDF, settle, temp_path
 
 from pdfarranger_qt import markup
 from pdfarranger_qt.markup import TEXT, Annotation, Annotations
@@ -277,13 +278,13 @@ def two_pages_of_lines(path):
 
 
 class TestAMarkBelongsToOnePage(unittest.TestCase):
-    """A highlight stops at the page edge; a text selection does not.
+    """With a markup tool armed, the selection stops at the page edge.
 
-    Deliberately different, and Acrobat does the same: reading runs on, so a
-    selection crosses a page break, while a mark is a thing *on a page* and
-    has nowhere to go when the page ends. The feedback used to disagree with
-    that -- it was the reader's selection, so dragging past the bottom lit up
-    the next page and then marked only this one.
+    Reader's behaviour, and the reason this is not a limitation: a mark is a
+    thing *on a page* and has nowhere to go when the page ends, so dragging
+    one past the bottom simply takes the rest of that page. Selecting first
+    and applying a mark afterwards is the other case, where the selection
+    may cross and each page gets a mark -- `TestAMarkPerPage`.
     """
 
     def setUp(self):
@@ -335,7 +336,11 @@ class TestAMarkBelongsToOnePage(unittest.TestCase):
             QPointF(page_rect.center().x(), page_rect.bottom() + 120))
         self.send(QMouseEvent.Type.MouseButtonPress, first)
         self.send(QMouseEvent.Type.MouseMove, below)
-        shown = self.canvas._preview
+        # What the drag is showing: the selection it has made, which is what
+        # the band on screen is drawn from. Read before the release, which
+        # turns it into the mark and clears it.
+        found = self.canvas.selection_quads_by_page()
+        shown = found[0][1] if found else []
         self.send(QMouseEvent.Type.MouseButtonRelease, below)
         settle(timeout_ms=300)
         return shown, below
@@ -364,14 +369,104 @@ class TestAMarkBelongsToOnePage(unittest.TestCase):
             self.assertLessEqual(quad[3], height)
 
     def test_the_feedback_stops_where_the_mark_does(self):
-        """The defect this gesture exists to remove: what is shown while the
-        pointer is past the page is exactly what is kept."""
+        """What is shown while the pointer is past the page is exactly what
+        is kept -- the band and the mark are one list of quadrilaterals."""
         shown, _below = self.drag_off_the_bottom()
         kept = self.win.model.annotations.for_page(
             self.win.model.pages[0].uid)[0]
+        self.assertEqual([tuple(quad) for quad in shown],
+                         [tuple(quad) for quad in kept.quads])
+
+
+class TestAMarkPerPage(unittest.TestCase):
+    """Select first, then apply a mark: every page the selection covers.
+
+    The other case to `TestAMarkBelongsToOnePage`, where the tool is armed
+    first. A selection made before any tool was chosen may run across a
+    page break; a mark may not, so each page gets its own -- and because
+    making them was one action, taking them back is one too. Choosing the
+    tool is itself what applies it, as in Reader.
+    """
+
+    def setUp(self):
+        from PySide6.QtWidgets import QApplication  # noqa: F401
+
+        from pdfarranger_qt.mainwindow import MainWindow
+
+        self.win = MainWindow()
+        self.win.resize(900, 700)
+        self.win.show()
+        self.win.open_paths([two_pages_of_lines(temp_path("perpage.pdf"))])
+        settle(timeout_ms=1000)
+        self.win.set_read_mode(True)
+        settle(timeout_ms=1400)
+        self.canvas = self.win.reader.canvas
+        self.addCleanup(self.win.close)
+        self.addCleanup(lambda: setattr(self.win, "modified", False))
+
+    def counts(self):
+        return [len(self.win.model.annotations.for_page(page.uid))
+                for page in self.win.model.pages]
+
+    def select_across(self):
+        """Select from the first page's text into the second's."""
+        self.canvas.select_between(0, 4, 1, 20)
+        settle(timeout_ms=250)
+        pages = sorted(self.canvas._selection)
+        self.assertEqual(pages, [0, 1],
+                         "the selection did not reach the second page, so "
+                         "this proves nothing about marking both")
+
+    def test_the_selection_may_cross_with_no_tool_armed(self):
+        """The clamp belongs to the markup tools, not to selecting."""
+        self.select_across()
         self.assertEqual(
-            [tuple(self.canvas.to_source(0, quad)) for quad in shown],
-            [tuple(quad) for quad in kept.quads])
+            [page for page, _quads in self.canvas.selection_quads_by_page()],
+            [0, 1])
+
+    def test_arming_a_tool_marks_every_page_it_covers(self):
+        self.select_across()
+        before = self.counts()
+        self.win.tool_strip.arm("highlight")
+        settle(timeout_ms=600)
+        self.assertEqual([now - was for was, now in zip(before, self.counts())],
+                         [1, 1])
+
+    def test_choosing_the_tool_is_what_applies_it(self):
+        """Reader marks the words the moment the tool is chosen. There is no
+        second action, and waiting for one left the selection wearing the
+        tool's colour with no way to commit it."""
+        self.select_across()
+        self.win.tool_strip.arm("underline")
+        settle(timeout_ms=600)
+        self.assertFalse(self.canvas.has_selection(),
+                         "the selection outlived the mark made from it")
+        self.assertEqual(self.win.tool_strip.armed(), "underline",
+                         "the tool should stay armed for the next run")
+
+    def test_the_whole_gesture_is_one_undo(self):
+        """It was one action, so it comes back in one. Committing per page
+        left you pressing undo once for each page of something you did
+        once."""
+        self.select_across()
+        before = self.counts()
+        self.win.tool_strip.arm("highlight")
+        settle(timeout_ms=600)
+        self.assertEqual([now - was for was, now in zip(before, self.counts())],
+                         [1, 1])
+        self.win.undo()
+        settle(timeout_ms=500)
+        self.assertEqual(self.counts(), before)
+        self.win.redo()
+        settle(timeout_ms=500)
+        self.assertEqual([now - was for was, now in zip(before, self.counts())],
+                         [1, 1])
+
+    def test_arming_a_tool_with_nothing_selected_marks_nothing(self):
+        before = self.counts()
+        self.win.tool_strip.arm("strikethrough")
+        settle(timeout_ms=400)
+        self.assertEqual(self.counts(), before)
 
 
 class TestAMarkIsWrittenWithTheKeysAReaderExpects(unittest.TestCase):
@@ -1000,10 +1095,9 @@ class TestAHighlightFollowsTheLines(unittest.TestCase):
         """Arm the highlighter and drag, and report what the drag showed.
 
         Through the mouse handlers rather than by calling the geometry
-        directly. The gesture used to be driven here by setting the canvas's
-        selection anchor and reading `selection_quads`, which stopped being
-        the path a pointer takes the moment marking up got a gesture of its
-        own -- so the tests went on passing against code nothing called.
+        directly, so that what is exercised is the path a pointer takes.
+        What the drag shows is the selection it has made, which is what the
+        band is drawn from and what the release turns into the mark.
         """
         from PySide6.QtGui import QMouseEvent
 
@@ -1013,7 +1107,8 @@ class TestAHighlightFollowsTheLines(unittest.TestCase):
         first, second = self.lines()[:2]
         self.send(QMouseEvent.Type.MouseButtonPress, self.on_line(first, 0.0))
         self.send(QMouseEvent.Type.MouseMove, self.on_line(second, 1.0))
-        shown = self.canvas._preview
+        found = self.canvas.selection_quads_by_page()
+        shown = found[0][1] if found else []
         self.send(QMouseEvent.Type.MouseButtonRelease,
                   self.on_line(second, 1.0))
         settle(timeout_ms=200)
@@ -1065,19 +1160,18 @@ class TestAHighlightFollowsTheLines(unittest.TestCase):
         self.assertEqual(len(marks[0].quads), 2)
 
     def test_what_the_drag_showed_is_what_it_kept(self):
-        """The reason the gesture stopped borrowing the reader's selection.
+        """The band and the mark come off the same measurement.
 
-        The feedback used to be that selection -- which runs across pages and
-        is drawn tight to the ink -- while the mark was a filtered, differently
-        measured subset of it, so the band you dragged was never the band you
-        got. One list now, drawn by the painter that draws finished marks.
+        The feedback is the selection and the mark is built from that same
+        selection through `selection_quads_by_page`, which measures the
+        loose boxes -- the font's ascent and descent -- rather than the
+        ink Qt reports. So the band you drag is the band you get.
         """
         shown = self.highlight_two_lines()
         kept = self.win.model.annotations.for_page(
             self.win.model.pages[0].uid)[0]
-        self.assertEqual(
-            [tuple(self.canvas.to_source(0, quad)) for quad in shown],
-            [tuple(quad) for quad in kept.quads])
+        self.assertEqual([tuple(quad) for quad in shown],
+                         [tuple(quad) for quad in kept.quads])
 
 
 
@@ -1303,24 +1397,31 @@ class TestAStickyNoteIsPlaced(unittest.TestCase):
         self.assertEqual(rebuilds, [])
 
     def test_it_is_drawn_before_anything_is_exported(self):
-        from PySide6.QtGui import QImage
+        """**In the colour the tool declares**, which the test asks for
+        rather than naming: a note started amber here until Reader's own
+        default was measured and it became Purple."""
+        from PySide6.QtGui import QColor, QImage
 
-        def amber():
+        from pdfarranger_qt import tools
+
+        want = QColor.fromRgbF(*markup.swatch(tools.by_name("comment").colour))
+
+        def in_its_colour():
             shot = QImage(self.canvas.viewport().size(), QImage.Format_RGB32)
             shot.fill(0xFFFFFFFF)
             self.canvas.viewport().render(shot)
             return sum(
                 1 for y in range(shot.height()) for x in range(shot.width())
-                if shot.pixelColor(x, y).red() > 200
-                and 170 < shot.pixelColor(x, y).green() < 235
-                and shot.pixelColor(x, y).blue() < 140)
+                if max(abs(shot.pixelColor(x, y).red() - want.red()),
+                       abs(shot.pixelColor(x, y).green() - want.green()),
+                       abs(shot.pixelColor(x, y).blue() - want.blue())) < 40)
 
-        blank = amber()
+        blank = in_its_colour()
         self.place()
         self.canvas.verticalScrollBar().setValue(0)
         settle(timeout_ms=250)
         self.assertEqual(blank, 0)
-        self.assertGreater(amber(), 100)
+        self.assertGreater(in_its_colour(), 100)
 
     def test_it_reaches_the_saved_file(self):
         import io
@@ -1727,8 +1828,9 @@ class TestAMarkLivesInTheSourcePagesSpace(unittest.TestCase):
 
         send(QMouseEvent.Type.MouseButtonPress, QPointF(70, 85))
         send(QMouseEvent.Type.MouseMove, QPointF(260, 92))
-        self.assertTrue(canvas._preview, "the drag marked nothing, so this "
-                                         "proves nothing about scaling quads")
+        self.assertTrue(canvas.selection_quads_by_page(),
+                        "the drag selected nothing, so this proves nothing "
+                        "about scaling quads")
         send(QMouseEvent.Type.MouseButtonRelease, QPointF(260, 92))
         settle(timeout_ms=250)
         mark = self.held()[0]
@@ -1748,3 +1850,246 @@ class TestAMarkLivesInTheSourcePagesSpace(unittest.TestCase):
         for got, want in zip(points, [left, top, right, top,
                                       left, bottom, right, bottom]):
             self.assertAlmostEqual(got, want, delta=1.0)
+
+
+class TestTheTwoStylesOfUnderline(unittest.TestCase):
+    """Reader's Underline tool writes two subtypes, and which one it writes
+    *is* the style: `/Underline` straight, `/Squiggly` squiggly with
+    `/IT /Underline` naming the tool it came from."""
+
+    def setUp(self):
+        self.pdf = pikepdf.Pdf.new()
+
+    def made(self, kind):
+        mark = markup.Annotation(
+            kind, 1, (36.0, 668.0, 196.0, 682.0),
+            quads=[(36.0, 668.7, 196.0, 681.7)], colour=(0.0, 0.45, 0.9))
+        return markup.to_dictionary(self.pdf, mark)
+
+    def test_both_are_kinds_this_module_writes(self):
+        for kind in (markup.UNDERLINE, markup.SQUIGGLY):
+            with self.subTest(kind=kind):
+                self.assertIn(kind, markup.KINDS)
+                self.assertIn(kind, markup.QUADDED)
+                self.assertEqual(markup.SUBJECTS[kind], "Underline")
+
+    def test_a_squiggly_says_which_tool_made_it(self):
+        """`/IT` names a *different* subtype's tool here, which is the one
+        place it does that -- so a squiggly reads back as the Underline
+        tool rather than as a kind of its own."""
+        self.assertEqual(str(self.made(markup.SQUIGGLY)["/IT"]), "/Underline")
+        self.assertNotIn("/IT", self.made(markup.UNDERLINE).keys())
+
+    def over(self, annot, kind):
+        """Our drawing for the run some Reader-written mark covers."""
+        q = [float(v) for v in annot["/QuadPoints"]]
+        quads = [tuple(q[n * 8 + i] for i in (0, 5, 2, 1))
+                 for n in range(len(q) // 8)]
+        mark = markup.Annotation(kind, 1, markup.bounding_rect(quads),
+                                 quads=quads, colour=(0.0, 0.45, 0.9))
+        return bytes(
+            markup.to_dictionary(self.pdf, mark)["/AP"]["/N"].read_bytes()
+        ).decode("latin-1")
+
+    def readers(self, subtype):
+        """Every mark of ``subtype`` the fixture's producer wrote."""
+        with pikepdf.open(os.path.join(FIXTURES, "markup.pdf")) as pdf:
+            for page in pdf.pages:
+                for annot in page.get("/Annots", []):
+                    if str(annot.get("/Subtype")) == subtype:
+                        yield annot, bytes(
+                            annot["/AP"]["/N"].read_bytes()).decode("latin-1")
+
+    def test_the_sizes_are_fractions_of_the_type(self):
+        """**Not points.** These were constants lifted from one 12.991pt
+        line, so they were right on that line and nowhere else. Fitted
+        across five corpus files and six text heights instead, each to
+        five figures."""
+        self.assertEqual(markup.STROKE_THICKNESS, 1 / 16)
+        self.assertEqual(markup.UNDERLINE_OFFSET, 1 / 7)
+        self.assertEqual(markup.STRIKEOUT_OFFSET, 3 / 7)
+        self.assertEqual(markup.SQUIGGLE_SCALE, 1 / 72)
+        self.assertEqual(markup.SQUIGGLE_BASE, 1 / 56)
+        self.assertAlmostEqual(markup.SQUIGGLE_ASPECT, 1.8)
+
+    def test_a_line_lands_where_reader_strokes_one(self):
+        """Against the fixture's own marks, not against a number: for each
+        underline and cross-out its producer wrote, ours is the same line
+        at the same width. Both are *stroked* -- filling a rectangle from
+        the quadrilateral's edge drew it half a width high."""
+        seen = 0
+        for subtype, kind in (("/Underline", markup.UNDERLINE),
+                              ("/StrikeOut", markup.STRIKEOUT)):
+            for annot, theirs in self.readers(subtype):
+                width, y = re.search(
+                    r"([\d.]+) w\s+[\d.]+ ([\d.]+) m", theirs).groups()
+                ours = re.search(
+                    r"([\d.]+) w\s+[\d.]+ ([\d.]+) m", self.over(annot, kind))
+                self.assertIsNotNone(ours, "ours no longer strokes a line")
+                with self.subTest(subtype=subtype, y=y):
+                    self.assertAlmostEqual(float(ours.group(1)), float(width), 3)
+                    self.assertAlmostEqual(float(ours.group(2)), float(y), 3)
+                seen += 1
+        self.assertGreaterEqual(seen, 3, "the fixture lost its marks")
+
+    def test_a_wave_lands_where_readers_tile_does(self):
+        """The fixture's squiggly places a 10-by-12 tile through a `cm`.
+        Our wave has to reach the same trough, the same crest and the same
+        cycle, which is what fixing the scale to points did not."""
+        seen = 0
+        for annot, theirs in self.readers("/Squiggly"):
+            across, up, _x, base = (float(v) for v in re.search(
+                r"([\d.]+) 0 0 ([\d.]+) ([\d.-]+) ([\d.-]+) cm",
+                theirs).groups())
+            ys = [float(m) for m in re.findall(
+                r"[\d.]+ ([\d.]+) [ml]\b", self.over(annot, markup.SQUIGGLY))]
+            with self.subTest(base=base):
+                self.assertAlmostEqual(min(ys), base + up * 1.0, 3)
+                self.assertAlmostEqual(max(ys), base + up * 11.0, 3)
+                quad = [float(v) for v in annot["/QuadPoints"]]
+                self.assertAlmostEqual(
+                    markup.SQUIGGLE_ASPECT * markup.SQUIGGLE_SCALE
+                    * (quad[1] - quad[5]) * markup.SQUIGGLE_CYCLE,
+                    across * 10.0, 3)
+            seen += 1
+        self.assertGreaterEqual(seen, 1, "the fixture lost its squiggly")
+
+    def test_the_squiggly_one_is_a_wave(self):
+        body = bytes(self.made(markup.SQUIGGLY)["/AP"]["/N"].read_bytes())
+        self.assertTrue(body.rstrip().endswith(b"S"),
+                        "a wave is stroked, not filled")
+        # Every turn of the wave is inside the run it marks.
+        tops = [float(n) for n in re.findall(rb"[\d.]+ ([\d.]+) l", body)]
+        self.assertTrue(tops)
+        self.assertLessEqual(max(tops), 681.7)
+        self.assertGreaterEqual(min(tops), 668.7)
+
+    def test_changing_the_style_rewrites_the_subtype(self):
+        """The one edit that changes what the annotation *is*. The stale
+        appearance goes with it: a wave and a line are not the same
+        drawing."""
+        for was, becomes, style in ((markup.UNDERLINE, markup.SQUIGGLY, "squiggly"),
+                                    (markup.SQUIGGLY, markup.UNDERLINE, "straight")):
+            with self.subTest(style=style):
+                entry = self.made(was)
+                markup.apply_edit(entry, {"style": style})
+                self.assertEqual(str(entry["/Subtype"]), becomes)
+                self.assertNotIn("/AP", entry.keys())
+                if becomes == markup.SQUIGGLY:
+                    self.assertEqual(str(entry["/IT"]), "/Underline")
+                else:
+                    self.assertNotIn("/IT", entry.keys())
+
+    def test_the_file_s_own_underlines_read_back_as_both(self):
+        """The fixture carries one of each, written by Reader."""
+        with pikepdf.open(os.path.join(FIXTURES, "markup.pdf")) as pdf:
+            kinds = {m.subtype for m in markup.marks_in(pdf)}
+        self.assertIn(markup.UNDERLINE, kinds)
+        self.assertIn(markup.SQUIGGLY, kinds)
+
+
+class TestANoteOnTheWordsIsStillAHighlight(unittest.TestCase):
+    """*Add note to text* writes the `/Highlight` the Highlight tool writes.
+    What tells the two apart in the file is `/Subj Comment on Text` and
+    `/IT /HighlightNote` -- measured on `Markup Underline Write.pdf`, where
+    four of them sit beside plain highlights written minutes apart.
+
+    So a subtype is not a tool, and nothing here may key off `/Subtype`
+    alone to decide which tool made a mark.
+    """
+
+    def setUp(self):
+        self.pdf = pikepdf.Pdf.new()
+
+    def made(self, tool_name):
+        from pdfarranger_qt import tools
+
+        tool = tools.by_name(tool_name)
+        mark = markup.Annotation(
+            markup.HIGHLIGHT, 1, (36.0, 668.0, 196.0, 682.0),
+            quads=[(36.0, 668.7, 196.0, 681.7)],
+            subject=tool.subject or None, intent=tool.intent or None)
+        return markup.to_dictionary(self.pdf, mark)
+
+    def test_the_tool_declares_both_keys(self):
+        from pdfarranger_qt import tools
+
+        tool = tools.by_name("note_on_text")
+        self.assertEqual(tool.subject, "Comment on Text")
+        self.assertEqual(tool.intent, "/HighlightNote")
+
+    def test_it_writes_the_pair_that_names_it(self):
+        entry = self.made("note_on_text")
+        self.assertEqual(str(entry["/Subtype"]), markup.HIGHLIGHT)
+        self.assertEqual(str(entry["/Subj"]), "Comment on Text")
+        self.assertEqual(str(entry["/IT"]), "/HighlightNote")
+
+    def test_a_plain_highlight_still_has_neither(self):
+        """The generalisation that let `/IT` come off the tool must not
+        start writing one on the tool that has none."""
+        entry = self.made("highlight")
+        self.assertEqual(str(entry["/Subj"]), "Highlight")
+        self.assertNotIn("/IT", entry.keys())
+
+    def test_an_intent_the_subtype_owns_is_still_written(self):
+        """`/Squiggly` carries `/IT /Underline` whichever tool made it, and
+        that default survives the move onto the annotation."""
+        self.assertEqual(markup.INTENTS[markup.SQUIGGLY], markup.UNDERLINE)
+        mark = markup.Annotation(
+            markup.SQUIGGLY, 1, (36.0, 668.0, 196.0, 682.0),
+            quads=[(36.0, 668.7, 196.0, 681.7)])
+        self.assertEqual(
+            str(markup.to_dictionary(self.pdf, mark)["/IT"]), markup.UNDERLINE)
+
+    def test_a_mark_keeps_its_intent_through_a_copy(self):
+        """`duplicate` is `copy.copy` over `__slots__`, so a field left out
+        of the slots would be dropped on every scale and every undo."""
+        mark = markup.Annotation(markup.HIGHLIGHT, 1, (0, 0, 10, 10),
+                                 intent="/HighlightNote")
+        self.assertEqual(mark.duplicate().intent, "/HighlightNote")
+        self.assertEqual(mark, mark.duplicate())
+
+
+class TestWhatColourEachToolStartsIn(unittest.TestCase):
+    """A default belongs to a **tool**, and is named rather than numbered:
+    one subtype can be two tools with two colours."""
+
+    def test_every_tool_names_a_colour_in_the_palette(self):
+        from pdfarranger_qt import tools
+
+        for tool in tools.TOOLS:
+            with self.subTest(tool=tool.name):
+                if not tool.colour:
+                    self.assertEqual(tool.family, tools.POINTER,
+                                     "only a pointer makes no mark")
+                    continue
+                self.assertTrue(markup.swatch(tool.colour))
+
+    def test_the_ones_read_off_reader(self):
+        """Measured from a document made after Reader's settings were
+        reset, in its own tool order."""
+        from pdfarranger_qt import tools
+
+        for name, colour in (("comment", "Purple"),
+                             ("replace_text", "Light Red"),
+                             ("insert_text", "Fuchsia"),
+                             ("text_comment", "White"),
+                             ("highlight", "Orange"),
+                             ("underline", "Blue"),
+                             ("strikethrough", "Light Red"),
+                             ("callout", "White"),
+                             ("draw", "Red"), ("stamps", "Red")):
+            with self.subTest(tool=name):
+                self.assertEqual(tools.by_name(name).colour, colour)
+
+    def test_one_subtype_can_be_two_tools_with_two_colours(self):
+        """Which is why the question is asked per tool: `/Caret` starts
+        Light Red for one and Fuchsia for the other."""
+        from pdfarranger_qt import tools
+
+        self.assertNotEqual(tools.by_name("replace_text").colour,
+                            tools.by_name("insert_text").colour)
+
+    def test_a_name_that_is_not_a_colour_is_a_mistake(self):
+        with self.assertRaises(KeyError):
+            markup.swatch("Not A Colour")

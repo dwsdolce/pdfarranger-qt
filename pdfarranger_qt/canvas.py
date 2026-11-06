@@ -67,6 +67,7 @@ from PySide6.QtGui import (
     QImage,
     QKeySequence,
     QPainter,
+    QPainterPath,
     QPalette,
     QPen,
     QPolygonF,
@@ -1036,6 +1037,10 @@ class PageCanvas(QAbstractScrollArea):
     #: out, a text tool one rectangle per run of text it covered. The canvas
     #: reports the gesture and keeps none of it.
     mark_drawn = Signal(str, int, object)
+    #: One gesture over several pages, as ``(tool, [(page, quads), ...])``.
+    #: Separate from `mark_drawn` so that marking a selection which runs
+    #: across a page break is one step to undo rather than one per page.
+    marks_drawn = Signal(str, object)
     #: A note's text was typed and its editor closed: ``(page, which, text)``.
     #: The note is named by its *position* in that page's marks rather than by
     #: the object, for the reason `structure._resolve` records positions: an
@@ -1155,7 +1160,6 @@ class PageCanvas(QAbstractScrollArea):
         self._glyphs = TextLayer()
         #: A text markup gesture in progress, as ``(page, anchor, pointer)``
         #: with both points in the page's own space.
-        self._text_mark = None
         #: Its quadrilaterals, recomputed as the pointer moves and drawn as
         #: the feedback. The *same* list the gesture emits when it ends, so
         #: what is shown and what is kept cannot drift apart.
@@ -1163,6 +1167,9 @@ class PageCanvas(QAbstractScrollArea):
         #: {tool: (annotation kind, colour)}, pushed in by the window so the
         #: preview is drawn in the colour the finished mark will have.
         self._mark_styles: dict = {}
+        #: What colour a mark of a given kind would be made in now. Set by
+        #: the window, because the answer changes as a colour is picked.
+        self.mark_colour = None
         #: The marks the document on screen already carried, for clicking on.
         #: Read from *that* document rather than from the sources it was made
         #: from: its pages are the ones being shown, its coordinates are the
@@ -2246,13 +2253,26 @@ class PageCanvas(QAbstractScrollArea):
         stops at a page break is not much of a reader: the first and last pages
         are selected from the anchor and to the cursor respectively, and every
         page between them entirely.
+
+        **Except with a markup tool armed, when it stops at the page it
+        started on.** That is Reader: select first and then apply a mark and
+        you get one mark per page, but arm the tool first and the selection
+        itself will not leave the page. Taken from the owner 2026-11-04,
+        against Reader, for highlight, underline and cross-out alike.
         """
         if self._anchor is None or self._document is None:
             return
         anchor_page, anchor_point = self._anchor
+        if self.marks_text() and page != anchor_page:
+            page, point = anchor_page, None
         first, last = sorted((anchor_page, page))
-        start = anchor_point if anchor_page <= page else point
-        end = point if anchor_page <= page else anchor_point
+        if point is None:
+            # The drag left the page a markup tool anchored it to, so it
+            # takes the rest of that page's text and no more.
+            start, end = anchor_point, None
+        else:
+            start = anchor_point if anchor_page <= page else point
+            end = point if anchor_page <= page else anchor_point
 
         found = {}
         for index in range(first, last + 1):
@@ -2356,10 +2376,25 @@ class PageCanvas(QAbstractScrollArea):
         selection = self._selection.get(index)
         if selection is None:
             return
+        # **In the colour the mark will be made in**, when a markup tool is
+        # armed: Reader tints the selection with the tool's own colour, so
+        # what you are dragging out looks like what you will get. The
+        # reader's own blue otherwise.
+        band = SELECTION
+        if self.marks_text() and self.mark_colour:
+            # **The tool's name, not the subtype it writes.** `mark_colour`
+            # is the window's `_colour_for_canvas_tool`, which looks a tool
+            # up by the canvas's name for it; handed `/Underline` it finds
+            # nothing and falls back to the default, so the band came out
+            # red whatever colour the tool was armed in.
+            colour = self.mark_colour(self._tool)
+            if colour is not None:
+                band = QColor.fromRgbF(*colour[:3])
+                band.setAlpha(SELECTION.alpha())
         for polygon in selection.bounds():
             rect = self._layout.rect_from_page(index, polygon.boundingRect())
             rect.translate(-offset)
-            painter.fillRect(rect, SELECTION)
+            painter.fillRect(rect, band)
 
     # -- links -------------------------------------------------------------
 
@@ -2727,14 +2762,18 @@ class PageCanvas(QAbstractScrollArea):
     #: step that adds it rather than being decided here.
     HIGHLIGHT = "highlight"
     STRIKEOUT = "strikeout"
+    UNDERLINE = "underline"
     NOTE = "note"
+    #: Not a kind of mark of its own: a `/Highlight` that carries a note,
+    #: which is a separate *tool* in Reader and so a separate one here.
+    NOTE_ON_TEXT = "note_on_text"
     DRAW = "draw"
 
     #: Tools whose geometry is a run of *text* rather than an area. They drag
     #: out a selection, exactly as reading does, because the quadrilaterals a
     #: `/Highlight` wants are what a text selection already produces -- which
     #: is why highlighting comes before the marks that need new hit-testing.
-    TEXT_TOOLS = (HIGHLIGHT, STRIKEOUT)
+    TEXT_TOOLS = (HIGHLIGHT, STRIKEOUT, UNDERLINE, NOTE_ON_TEXT)
 
     #: Tools whose geometry is a point and a size of their own rather than an
     #: area dragged out. A sticky note's icon is the same size wherever it
@@ -2751,7 +2790,6 @@ class PageCanvas(QAbstractScrollArea):
             return
         self._tool = tool
         self._marking = None
-        self._text_mark = None
         self._dragging_grip = None
         self._preview = ()
         self.viewport().unsetCursor()
@@ -2784,13 +2822,29 @@ class PageCanvas(QAbstractScrollArea):
         the drag goes through also means a mark made from the menu is
         identical to one dragged out with the tool, rather than nearly so.
 
-        The page is the first one selected. A selection running across a page
-        break gives its marks to that page only, which is a limitation worth
-        stating rather than silently marking half of it.
+        The first page of the selection. `selection_quads_by_page` answers
+        for all of them, which is what a mark applied to a selection running
+        across a page break needs: Reader makes one mark per page.
+        """
+        found = self.selection_quads_by_page()
+        return found[0] if found else None
+
+    def selection_quads_by_page(self) -> list:
+        """The selection as ``[(page, [rect, ...]), ...]``, in page order.
+
+        **One mark per page, not one mark and a lost half.** A selection may
+        run across a page break and a mark may not, so each page it covers
+        gets its own -- which is what Reader does when a mark is applied to
+        a selection that was made before the tool was chosen. This used to
+        answer the first page alone and call the rest a limitation.
         """
         if not self._selection:
-            return None
-        page = min(self._selection)
+            return []
+        return [found for page in sorted(self._selection)
+                if (found := self._quads_on_page(page)) is not None]
+
+    def _quads_on_page(self, page: int):
+        """One page's worth of the selection, or None if it marks nothing."""
         box = self.page_box(page)
         height = self._layout.page_height(page)
         if box is None or height is None:
@@ -2826,11 +2880,11 @@ class PageCanvas(QAbstractScrollArea):
         a mark, and leaving the blue over the top of it says there are two
         things there.
         """
-        found = self.selection_quads()
-        if found is None:
+        found = self.selection_quads_by_page()
+        if not found:
             return False
-        page, quads = found
-        self.mark_drawn.emit(tool, page, list(quads))
+        self.marks_drawn.emit(
+            tool, [(page, list(quads)) for page, quads in found])
         self.clear_selection()
         return True
 
@@ -2985,7 +3039,12 @@ class PageCanvas(QAbstractScrollArea):
             index, forms_module.from_displayed(shown, box))
 
     def set_mark_styles(self, styles) -> None:
-        """``{tool: (kind, colour)}``, so a preview looks like its mark."""
+        """``{tool: kind}``, so a preview knows what it is previewing.
+
+        The *colour* is asked for separately, through `mark_colour`: it is
+        the window's to answer because it changes as the user picks one,
+        and a copy kept here would be a copy that goes stale.
+        """
         self._mark_styles = dict(styles or {})
 
     def page_point(self, index: int, point: QPointF):
@@ -3006,30 +3065,6 @@ class PageCanvas(QAbstractScrollArea):
         flat = (here.x(), height - here.y(), here.x(), height - here.y())
         left, bottom, _right, _top = forms_module.from_displayed(flat, box)
         return (left, bottom)
-
-    def _mark_quads(self):
-        """What the gesture in flight covers, in the page's own space."""
-        if self._text_mark is None:
-            return ()
-        index, start, end = self._text_mark
-        try:
-            return tuple(self._glyphs.quads(index, start, end))
-        except Exception:       # noqa: BLE001 - a drag must not raise
-            return ()
-
-    def _track_mark(self, point: QPointF) -> None:
-        """Move the far end of the gesture and rebuild what it covers."""
-        if self._text_mark is None:
-            return
-        index, start, _end = self._text_mark
-        here = self.page_point(index, point)
-        if here is None:
-            return
-        self._text_mark = (index, start, here)
-        quads = self._mark_quads()
-        if quads != self._preview:
-            self._preview = quads
-            self.viewport().update()
 
     #: Subtypes a click can land on. The text markups are areas you can aim
     #: at; a note is reached by its icon, which `note_at` already answers for.
@@ -3192,19 +3227,10 @@ class PageCanvas(QAbstractScrollArea):
                 kind, index, markup.bounding_rect(quads),
                 colour=self.DRAGGED, quads=quads,
                 opacity=self.DRAGGED_OPACITY),)
-        if not self._preview or self._text_mark is None:
-            return ()
-        if self._text_mark[0] != index:
-            return ()
-        style = self._mark_styles.get(self._tool)
-        if style is None:
-            return ()
-        kind, colour = style
-        if kind not in markup.QUADDED:
-            return ()
-        quads = tuple(self.to_source(index, quad) for quad in self._preview)
-        return (markup.Annotation(kind, index, markup.bounding_rect(quads),
-                                  colour=colour, quads=quads),)
+        # A markup tool in flight has no preview of its own: what it is
+        # about to mark is the selection, drawn in the colour it will be
+        # made in by `_paint_selection`.
+        return ()
 
     def icon_rect(self, point: QPointF):
         """One viewport point to the page-space box of a fixed-size icon.
@@ -3408,10 +3434,6 @@ class PageCanvas(QAbstractScrollArea):
             if quads != self._preview:
                 self._preview = quads
                 self.viewport().update()
-            return
-
-        if self._text_mark is not None and event.buttons() & Qt.LeftButton:
-            self._track_mark(position)
             return
 
         if self._press is not None and event.buttons() & Qt.LeftButton:
@@ -3618,24 +3640,13 @@ class PageCanvas(QAbstractScrollArea):
             if picked is not None:
                 event.accept()
                 return
-            if self.marks_text():
-                # Its own gesture, not the reader's. Marking up text and
-                # selecting it look alike and are not: a selection runs across
-                # pages and a mark belongs to one, so building the mark out of
-                # the selection showed you more than you were going to get.
-                index = self.page_at(position)
-                here = (self.page_point(index, position)
-                        if index is not None else None)
-                if here is None:
-                    event.accept()
-                    return
-                if self._selection:
-                    self.clear_selection()
-                self._text_mark = (index, here, here)
-                self._preview = self._mark_quads()
-                self.viewport().update()
-                event.accept()
-                return
+            # **A markup tool selects text the way the reader does.** It had
+            # a gesture of its own, decided on 2026-11-01 inside a commit
+            # about something else and never recorded: it threw away the
+            # selection and tracked the drag itself, so double-click,
+            # shift-extend and scroll-past-the-edge did nothing, and a bare
+            # click made a mark one character wide. `_extend_selection`
+            # keeps it on one page; the release below turns it into a mark.
             self._press = position
             self._selecting = False
             found = self.to_page(self._press)
@@ -3725,16 +3736,13 @@ class PageCanvas(QAbstractScrollArea):
             event.accept()
             return
 
-        if event.button() == Qt.LeftButton and self._text_mark is not None:
-            index = self._text_mark[0]
-            quads = self._preview
-            self._text_mark = None
-            self._preview = ()
-            self.viewport().update()
-            if quads:
-                self.mark_drawn.emit(
-                    self._tool, index,
-                    [self.to_source(index, quad) for quad in quads])
+        if (event.button() == Qt.LeftButton and self.marks_text()
+                and self._selection):
+            # Nothing selected makes nothing: a click is not a mark, which
+            # is what let a stray press leave a five-point underline behind.
+            self.mark_the_selection(self._tool)
+            self._press = None
+            self._selecting = False
             event.accept()
             return
 
@@ -3829,18 +3837,29 @@ class PageCanvas(QAbstractScrollArea):
             # text, styling it, redacting it -- have nothing behind them
             # and are left out.
             menu.addSeparator()
+            # **Underline is here although Reader does not offer it.**
+            # There is no reason for its absence: the tool exists, the
+            # gesture is the same selection, and a reader that can
+            # highlight or strike out a selection can underline it. Taken
+            # from the owner on 2026-11-04.
             for tool, label in ((self.HIGHLIGHT, _("Highlight text")),
+                                (self.UNDERLINE, _("Underline text")),
                                 (self.STRIKEOUT, _("Strikethrough text"))):
                 act = menu.addAction(label)
                 act.triggered.connect(
                     lambda _checked=False, t=tool: self.mark_the_selection(t))
-            # Drawn and refused, waiting for the note. Both make a comment
-            # out of a selection and neither can be built before there is
-            # one: replacing text is a strikeout carrying what should be
-            # there instead, and a note on text is the note itself.
-            for label in (_("Add a comment to replace text"),
-                          _("Add note to text")):
-                menu.addAction(label).setEnabled(False)
+            # A note on the words rather than a mark on them: the same
+            # gesture, and then the editor opens, because the note is the
+            # whole point of the mark.
+            note = menu.addAction(_("Add note to text"))
+            note.triggered.connect(
+                lambda: self.mark_the_selection(self.NOTE_ON_TEXT))
+            # Drawn and refused, waiting for its own step. Replacing text
+            # is a pair -- a `/StrikeOut` grouped onto a `/Caret` that
+            # carries what should be there instead -- and neither half can
+            # be written until the pair is built.
+            menu.addAction(
+                _("Add a comment to replace text")).setEnabled(False)
             menu.addSeparator()
 
         select_all = menu.addAction(_("Select All"))
@@ -4105,10 +4124,11 @@ class PageCanvas(QAbstractScrollArea):
             self.focus_field(None)
             return
 
-        if key == Qt.Key_Escape and self._text_mark is not None:
-            self._text_mark = None
-            self._preview = ()
-            self.viewport().update()
+        if key == Qt.Key_Escape and self.marks_text() and self._selection:
+            # With a markup tool armed, Escape gives up the words picked for
+            # it before anything larger reads the key.
+            self.clear_selection()
+            return
         if key == Qt.Key_Escape and self._selected is not None:
             # Before the window gets the key: with a mark picked, Escape
             # means "not that one" rather than "put the pointer back", the
@@ -4332,12 +4352,23 @@ class PageCanvas(QAbstractScrollArea):
                     continue
                 if not where.intersects(QRectF(self.viewport().rect())):
                     continue
-                if mark.kind == markup.STRIKEOUT:
-                    thickness = max(1.0, where.height() / 15.0)
-                    line = QRectF(where.x(),
-                                  where.y() + (where.height() - thickness) / 2,
-                                  where.width(), thickness)
-                    painter.fillRect(line, colour)
+                if mark.kind in (markup.STRIKEOUT, markup.UNDERLINE):
+                    # The same fractions of the type's height the written
+                    # appearance uses, so the screen and the file agree:
+                    # a sixteenth thick, centred three sevenths up for a
+                    # cross-out and one seventh up for an underline.
+                    # Downwards here, because the screen's y grows that way.
+                    above = (markup.STRIKEOUT_OFFSET
+                             if mark.kind == markup.STRIKEOUT
+                             else markup.UNDERLINE_OFFSET)
+                    thickness = max(
+                        1.0, where.height() * markup.STROKE_THICKNESS)
+                    middle = where.bottom() - where.height() * above
+                    painter.fillRect(
+                        QRectF(where.x(), middle - thickness / 2,
+                               where.width(), thickness), colour)
+                elif mark.kind == markup.SQUIGGLY:
+                    self._paint_squiggle(painter, where, colour)
                 else:
                     # Multiplied, so the words underneath still read.
                     painter.save()
@@ -4372,13 +4403,18 @@ class PageCanvas(QAbstractScrollArea):
         must not look like one nobody has. Without it a note is invisible
         until the pointer happens to cross the mark.
 
-        Only the marks the *file* brought. A mark made here cannot have a
-        note yet, because nothing in this application writes one, and when
-        something does it will carry `contents` and arrive here with
-        everything else.
+        **The marks made here as well as the ones the file brought.** It
+        was the file's alone, on the reasoning that nothing in this
+        application wrote a note; the thread window does, so a note typed
+        on a mark made in this session showed no badge until the document
+        had been saved and opened again.
+
+        `markup.has_note` rather than the method, because the model holds
+        `Annotation` and the file holds `Mark` and only one of them has
+        the method -- and the same question asked in two shapes is the
+        same question answered two ways the first time one changes.
         """
-        marks = [m for m in self._file_marks.visible(index + 1)
-                 if m.subtype in self.SELECTABLE and m.has_note()]
+        marks = self.noted_marks(index)
         if not marks:
             return
         viewport = QRectF(self.viewport().rect())
@@ -4393,7 +4429,12 @@ class PageCanvas(QAbstractScrollArea):
             # draw and a pop-up title bar it has not got, so the badge is
             # the one place on the page it can be seen -- and it is what
             # the hover then describes.
-            speaks_for = self.latest_reply(mark) or mark
+            # A mark the file brought can already have replies, and the
+            # newest one's colour is what Reader shows. One made here
+            # cannot be answered until it has been written, so it speaks
+            # for itself.
+            speaks_for = (mark if isinstance(mark, markup.Annotation)
+                          else self.latest_reply(mark) or mark)
             colour = QColor.fromRgbF(
                 *(speaks_for.colour or mark.colour or (1.0, 0.82, 0.25)))
             faded = getattr(speaks_for, "opacity", None)
@@ -4454,14 +4495,31 @@ class PageCanvas(QAbstractScrollArea):
         return QRectF(where.left() - size * 0.62, where.top() - size * 0.5,
                       size, size)
 
+    def noted_marks(self, index: int) -> list:
+        """The marks on a page that carry a note of their own.
+
+        **The ones made here as well as the ones the file brought.** Three
+        places asked this -- the badge painter, the badge's hit test and
+        the hover -- and each asked the file alone, so a note typed in
+        this session had no badge, could not be hovered, and appeared only
+        once the document had been saved and opened again.
+        """
+        found = [m for m in self._file_marks.visible(index + 1)
+                 if m.subtype in self.SELECTABLE and markup.has_note(m)]
+        try:
+            if self.marks:
+                found += [m for m in (self.marks(index) or ())
+                          if markup.has_note(m)]
+        except Exception:       # noqa: BLE001 - a repaint must not fail
+            pass
+        return found
+
     def note_badge_at(self, point: QPointF):
         """The mark whose note badge is under a viewport point, or None."""
         index = self.page_at(point)
         if index is None:
             return None
-        for mark in self._file_marks.visible(index + 1):
-            if mark.subtype not in self.SELECTABLE or not mark.has_note():
-                continue
+        for mark in self.noted_marks(index):
             where = self._badge_rect(index, mark)
             if where is not None and where.contains(point):
                 return (index, mark)
@@ -4494,12 +4552,14 @@ class PageCanvas(QAbstractScrollArea):
         return (index, getattr(mark, "name", None) or id(mark))
 
     def _marked_note_at(self, point: QPointF):
-        """The mark under a point, if it carries a note. Otherwise None."""
+        """The mark under a point, if it carries a note. Otherwise None.
+
+        A mark made in this session counts. It used to be refused outright
+        -- nothing here wrote notes when this was written -- so hovering an
+        underline you had just commented on showed nothing at all.
+        """
         found = self.mark_at(point)
-        if found is None:
-            return None
-        mark = found[1]
-        if isinstance(mark, markup.Annotation) or not mark.has_note():
+        if found is None or not markup.has_note(found[1]):
             return None
         return found
 
@@ -4888,6 +4948,42 @@ class PageCanvas(QAbstractScrollArea):
                        (shown[3] - shown[1]) * zoom)
         where.translate(-(self.offset() if offset is None else offset))
         return where
+
+    def _paint_squiggle(self, painter, where, colour) -> None:
+        """The squiggly underline: a wave along the foot of the run.
+
+        **A fraction of the run, not a fixed size.** Reader's tile is 10 by
+        12 and is placed through a `cm` that is itself a fraction of the
+        type's height, so the wave on a heading is bigger than the wave on
+        a footnote. The same numbers `markup._zigzag` writes into the file,
+        so what is on the screen is what will be in it.
+        """
+        up = where.height() * markup.SQUIGGLE_SCALE
+        step = max(2.0, up * markup.SQUIGGLE_ASPECT * markup.SQUIGGLE_CYCLE)
+        base = where.bottom() - where.height() * markup.SQUIGGLE_BASE
+        low = base - up * markup.SQUIGGLE_LOW
+        high = base - up * markup.SQUIGGLE_HIGH
+        path = QPainterPath()
+        path.moveTo(where.left(), low)
+        at = where.left()
+        while at < where.right():
+            peak = min(at + step / 2.0, where.right())
+            path.lineTo(peak, high)
+            at += step
+            if min(at, where.right()) <= peak:
+                break
+            path.lineTo(min(at, where.right()), low)
+        pen = QPen(colour)
+        pen.setWidthF(max(0.8, markup.SQUIGGLE_PEN * math.sqrt(
+            up * up * markup.SQUIGGLE_ASPECT)))
+        pen.setCapStyle(Qt.RoundCap)
+        pen.setJoinStyle(Qt.RoundJoin)
+        painter.save()
+        painter.setRenderHint(QPainter.Antialiasing, True)
+        painter.setPen(pen)
+        painter.setBrush(Qt.NoBrush)
+        painter.drawPath(path)
+        painter.restore()
 
     def _paint_note(self, painter, index: int, mark, colour) -> None:
         """Draw a sticky note's icon: a balloon, at a size the zoom sets.

@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-04 04:48+0000\n"
+"POT-Creation-Date: 2026-11-05 04:10+0000\n"
 "PO-Revision-Date: 2024-03-20 17:20+0800\n"
 "Last-Translator: 錢政維 <e.cwchien@gmail.com>\n"
 "Language: zh_TW\n"
@@ -69,6 +69,10 @@ msgstr "複製"
 #: pdfarranger_qt/canvas.py
 msgid "Highlight text"
 msgstr "螢光標示文字"
+
+#: pdfarranger_qt/canvas.py
+msgid "Underline text"
+msgstr "為文字加底線"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
@@ -2005,6 +2009,14 @@ msgstr "{state}（{author}）"
 msgid "Mark Properties"
 msgstr "標記屬性"
 
+#: pdfarranger_qt/mainwindow.py
+msgid "Straight"
+msgstr "直線"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Squiggly"
+msgstr "波浪線"
+
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
 msgid "Edit Note"
@@ -2767,6 +2779,11 @@ msgstr "鎖定"
 msgid "Make Properties Default"
 msgstr "將屬性設為預設值"
 
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py pdfarranger_qt/reader.py
+msgid "Style"
+msgstr "樣式"
+
 #: pdfarranger_qt/properties.py
 msgid "Author"
 msgstr "作者"
@@ -2803,11 +2820,6 @@ msgstr "改指向這一頁"
 #: pdfarranger_qt/reader.py
 msgid "Rename"
 msgstr "重新命名"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/reader.py
-msgid "Style"
-msgstr "樣式"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/reader.py

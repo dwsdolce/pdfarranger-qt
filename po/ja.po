@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-04 04:48+0000\n"
+"POT-Creation-Date: 2026-11-05 04:10+0000\n"
 "PO-Revision-Date: 2022-09-01 00:40+0900\n"
 "Last-Translator: sicklylife <translation@sicklylife.jp>\n"
 "Language: ja\n"
@@ -66,6 +66,10 @@ msgstr "コピー"
 #: pdfarranger_qt/canvas.py
 msgid "Highlight text"
 msgstr "テキストをハイライト"
+
+#: pdfarranger_qt/canvas.py
+msgid "Underline text"
+msgstr "テキストに下線"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
@@ -2045,6 +2049,14 @@ msgstr "{state}（{author}）"
 msgid "Mark Properties"
 msgstr "マークのプロパティ"
 
+#: pdfarranger_qt/mainwindow.py
+msgid "Straight"
+msgstr "直線"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Squiggly"
+msgstr "波線"
+
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
 msgid "Edit Note"
@@ -2812,6 +2824,11 @@ msgstr "ロック"
 msgid "Make Properties Default"
 msgstr "プロパティを初期設定にする"
 
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py pdfarranger_qt/reader.py
+msgid "Style"
+msgstr "スタイル"
+
 #: pdfarranger_qt/properties.py
 msgid "Author"
 msgstr "作成者"
@@ -2848,11 +2865,6 @@ msgstr "このページに付け替える"
 #: pdfarranger_qt/reader.py
 msgid "Rename"
 msgstr "名前を変更"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/reader.py
-msgid "Style"
-msgstr "スタイル"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/reader.py

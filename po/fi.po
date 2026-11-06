@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  pdfarranger\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-04 04:48+0000\n"
+"POT-Creation-Date: 2026-11-05 04:10+0000\n"
 "PO-Revision-Date: 2024-03-24 19:16+0200\n"
 "Last-Translator: \n"
 "Language: fi\n"
@@ -64,6 +64,10 @@ msgstr "Kopioi"
 #: pdfarranger_qt/canvas.py
 msgid "Highlight text"
 msgstr "Korosta teksti"
+
+#: pdfarranger_qt/canvas.py
+msgid "Underline text"
+msgstr "Alleviivaa teksti"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
@@ -2169,6 +2173,14 @@ msgstr "{state}: {author}"
 msgid "Mark Properties"
 msgstr "Merkinnän ominaisuudet"
 
+#: pdfarranger_qt/mainwindow.py
+msgid "Straight"
+msgstr "Suora"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Squiggly"
+msgstr "Aaltoileva"
+
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
 msgid "Edit Note"
@@ -2947,6 +2959,11 @@ msgstr "Lukittu"
 msgid "Make Properties Default"
 msgstr "Aseta ominaisuudet oletukseksi"
 
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py pdfarranger_qt/reader.py
+msgid "Style"
+msgstr "Tyyli"
+
 #: pdfarranger_qt/properties.py
 msgid "Author"
 msgstr "Tekijä"
@@ -2983,11 +3000,6 @@ msgstr "Kohdista tälle sivulle"
 #: pdfarranger_qt/reader.py
 msgid "Rename"
 msgstr "Nimeä uudelleen"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/reader.py
-msgid "Style"
-msgstr "Tyyli"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/reader.py

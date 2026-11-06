@@ -826,10 +826,31 @@ class TestTheRichVersionOfWhatANoteSays(unittest.TestCase):
         self.assertEqual(markup.rich_to_html(rich),
                          'plain <span style="font-weight:bold">bold</span>')
 
-    def test_runs_with_no_styling_write_nothing(self):
-        """A note nobody styled belongs in `/Contents` alone: a `/RC` for it
-        hands every reader a second copy of the same words to prefer."""
-        self.assertIsNone(markup.rich_from_runs([[("just words", {})]]))
+    def test_runs_with_no_styling_still_get_a_span(self):
+        """**Reader writes one round every run**, carrying every property at
+        the value that means "not set".
+
+        This asserted None, on a reading of the fixtures that counted the
+        status links among the unstyled notes. Every bare `<p>` in the
+        corpus belongs to text a producer composed -- a status change, a
+        file attachment -- and every note a person typed carries a span.
+        """
+        rich = markup.rich_from_runs([[("just words", {})]])
+        self.assertIn('<span dir="ltr" style="%s">just words</span>'
+                      % markup.RICH_UNSET, rich)
+        # And it still reads back as saying nothing: every property in it
+        # is at its unset value, so the editor shows plain words rather
+        # than a note that has been styled to look exactly like one.
+        self.assertIsNone(markup.rich_to_html(rich))
+
+    def test_text_this_application_composed_is_written_bare(self):
+        """A status change's words are not somebody's note. Reader writes
+        those as a bare `<p>`, with no span and no `dir`."""
+        self.assertIn("<p>Accepted set by dws</p>",
+                      markup.rich_from_text("Accepted set by dws",
+                                            generated=True))
+        self.assertIn('<p dir="ltr"><span dir="ltr"',
+                      markup.rich_from_text("Accepted set by dws"))
 
     def test_what_is_written_is_escaped(self):
         rich = markup.rich_from_runs([[("<b>&", {"font-style": "italic"})]])

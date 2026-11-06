@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-04 04:48+0000\n"
+"POT-Creation-Date: 2026-11-05 04:10+0000\n"
 "PO-Revision-Date: 2023-06-12 11:22+0300\n"
 "Last-Translator: Yaron Shahrabani <sh.yaron@gmail.com>\n"
 "Language: he\n"
@@ -65,6 +65,10 @@ msgstr "העתקה"
 #: pdfarranger_qt/canvas.py
 msgid "Highlight text"
 msgstr "הדגשת הטקסט"
+
+#: pdfarranger_qt/canvas.py
+msgid "Underline text"
+msgstr "קו תחתון לטקסט"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
@@ -2118,6 +2122,14 @@ msgstr "{state} על ידי {author}"
 msgid "Mark Properties"
 msgstr "מאפייני סימון"
 
+#: pdfarranger_qt/mainwindow.py
+msgid "Straight"
+msgstr "ישר"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Squiggly"
+msgstr "גלי"
+
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
 msgid "Edit Note"
@@ -2902,6 +2914,11 @@ msgstr "נעול"
 msgid "Make Properties Default"
 msgstr "הגדרת המאפיינים כברירת מחדל"
 
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py pdfarranger_qt/reader.py
+msgid "Style"
+msgstr "סגנון"
+
 #: pdfarranger_qt/properties.py
 msgid "Author"
 msgstr "מחבר"
@@ -2938,11 +2955,6 @@ msgstr "הפניה מחדש לעמוד הזה"
 #: pdfarranger_qt/reader.py
 msgid "Rename"
 msgstr "שינוי שם"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/reader.py
-msgid "Style"
-msgstr "סגנון"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/reader.py

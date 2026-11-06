@@ -424,6 +424,26 @@ class ToolStrip(QFrame):
         """``(colour, opacity)`` the next mark should be made in."""
         return self.swatch.colour, self._opacity
 
+    def arm_colour(self, colour, opacity=None) -> None:
+        """Show the colour the armed tool makes its marks in.
+
+        **The swatch has to show what you will get.** Each tool keeps a
+        colour of its own, so arming one has to bring that colour with it
+        -- otherwise the swatch shows the last tool's and the mark comes
+        out in this tool's, which is what sent a new underline out blue
+        under a yellow swatch.
+        """
+        if self._before is not None:
+            # Following a selected mark: that is what the swatch is for
+            # just now, and this is the colour to go back to.
+            self._before = (tuple(colour),
+                            self._before[1] if opacity is None else opacity)
+            return
+        self.swatch.set_colour(tuple(colour))
+        if opacity is not None:
+            self._opacity = float(opacity)
+        self.refresh()
+
     def follow(self, colour, opacity) -> None:
         """Show a selected mark's colour, remembering what was there.
 
@@ -620,11 +640,11 @@ class MarkButtons(QWidget):
     pointer -- the right-click menu and the properties form are the long way
     round to the same places and arrive at their own steps.
 
-    The swatch is live: it opens the palette and the opacity slider, and so
-    is the trash, which takes the mark with its status chain and its
-    replies. Comment is still drawn and disabled, because it belongs to the
-    note work, and a button that acts before its step exists would be a
-    second, half-built way in.
+    All three are live. The swatch opens the palette and the opacity
+    slider; the trash takes the mark with its status chain and its replies;
+    and Comment opens the thread -- the mark's own note and whatever has
+    been said under it. Comment was drawn and refused until the note
+    existed to open.
     """
 
     #: A colour was picked for the selected mark.
@@ -633,6 +653,8 @@ class MarkButtons(QWidget):
     faded = Signal(float)
     #: The selected mark is to go, with whatever hangs off it.
     deleted = Signal()
+    #: Its thread is to be opened -- the note, and any replies under it.
+    commented = Signal()
 
     #: Air between the mark and the bar, in pixels.
     CLEARANCE = 8
@@ -670,6 +692,8 @@ class MarkButtons(QWidget):
         self.buttons["colour"].clicked.connect(self._open_palette)
         self.buttons["delete"].setEnabled(True)
         self.buttons["delete"].clicked.connect(self.deleted)
+        self.buttons["comment"].setEnabled(True)
+        self.buttons["comment"].clicked.connect(self.commented)
         #: What the selected mark is, so the popup can tick and read it.
         self._colour = None
         self._opacity = None
@@ -687,6 +711,11 @@ class MarkButtons(QWidget):
         self._colour, self._opacity = colour, opacity
         self.buttons["colour"].setEnabled(not locked)
         self.buttons["delete"].setEnabled(not locked)
+        # Comment stays live on a locked mark: reading a thread is not an
+        # edit, replying to one writes a new annotation rather than
+        # changing the locked one, and the editor on a locked item refuses
+        # for itself.
+        self.buttons["comment"].setEnabled(True)
 
     def _open_palette(self) -> None:
         button = self.buttons["colour"]

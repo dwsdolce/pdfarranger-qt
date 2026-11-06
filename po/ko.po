@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pdfarranger - Korean\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-04 04:48+0000\n"
+"POT-Creation-Date: 2026-11-05 04:10+0000\n"
 "PO-Revision-Date: 2026-05-25 00:41+0900\n"
 "Last-Translator: VenusGirl <venusgirl@outlook.com>\n"
 "Language: ko\n"
@@ -64,6 +64,10 @@ msgstr "복사"
 #: pdfarranger_qt/canvas.py
 msgid "Highlight text"
 msgstr "텍스트 강조 표시"
+
+#: pdfarranger_qt/canvas.py
+msgid "Underline text"
+msgstr "텍스트에 밑줄"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
@@ -2025,6 +2029,14 @@ msgstr "{state} — {author}"
 msgid "Mark Properties"
 msgstr "표시 속성"
 
+#: pdfarranger_qt/mainwindow.py
+msgid "Straight"
+msgstr "직선"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Squiggly"
+msgstr "물결선"
+
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
 msgid "Edit Note"
@@ -2786,6 +2798,11 @@ msgstr "잠김"
 msgid "Make Properties Default"
 msgstr "속성을 기본값으로 설정"
 
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py pdfarranger_qt/reader.py
+msgid "Style"
+msgstr "스타일"
+
 #: pdfarranger_qt/properties.py
 msgid "Author"
 msgstr "작성자"
@@ -2822,11 +2839,6 @@ msgstr "이 페이지로 다시 지정"
 #: pdfarranger_qt/reader.py
 msgid "Rename"
 msgstr "이름 바꾸기"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/reader.py
-msgid "Style"
-msgstr "스타일"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/reader.py

@@ -50,7 +50,7 @@ after that.
 | Text callout | Callout | `/FreeText` `/IT /FreeTextCallout`, `/CL`, `/LE /OpenArrow` | not started |
 | Attach file | -- | `/FileAttachment`, `/Name /Paperclip`, `/FS /EF` | not started |
 | Highlight | Highlight | `/Highlight`, `/QuadPoints`, `/CA` | writes only |
-| Underline | Underline | `/Underline`, `/QuadPoints` | not started |
+| Underline | Underline | `/Underline` or `/Squiggly` `/IT /Underline`, `/QuadPoints`, `/CA` | writes only |
 | Strikethrough | Cross-Out | `/StrikeOut`, `/QuadPoints`, no `/IT` | writes only |
 | Draw | Pencil | `/Ink`, `/InkList`, `/BS /W` | not started |
 | Line | Line | `/Line`, `/L` | not started |
@@ -507,10 +507,19 @@ replaced by their lengths:
 Three things that shape what we do with it. **A note with any styling in
 it gets one span per run, the plain runs included**, each carrying the
 whole property set, so there is no "plain" run to detect -- only values to
-compare against the defaults. A note with no styling anywhere gets no span
-at all, just a bare `<p>`; measured across the twelve marks of the fixture,
-where the unstyled notes and every status link are bare and the styled ones
-run to three and four spans.
+compare against the defaults. **A note with no styling gets a span too**,
+with every property at the value that means "not set":
+
+```
+font-size:-14.0pt;text-align:left;font-weight:normal;font-style:normal
+```
+
+The bare `<p>` with no span belongs to text the *producer* composed rather
+than took from anybody: a status change's "Completed set by dws", a file
+attachment's filename. Re-measured 2026-11-04 across both fixtures and
+four corpus files, after this had been recorded the other way round --
+the first reading counted the status links among the unstyled notes and
+concluded that an unstyled note was bare. It never is.
 **The size is written negative**, `font-size:-14.0pt`, which reads as
 "not set, and the default is 14"; it is copied rather than interpreted,
 and dropped on the way in because a negative size is not a size. And
@@ -689,6 +698,39 @@ ordinary text menu (Copy, Edit text, Export selected text, Redact text,
 Highlight text, Strikethrough text, and the two that make a comment out of
 a selection) rather than the mark's.
 
+**The menu over a selection carries one entry Reader has not got.**
+*Underline text* joins *Highlight text* and *Strikethrough text* there,
+taken from the owner on 2026-11-04: Reader offers the other two and not
+this one, and there is no reason for the absence -- the tool exists, the
+gesture is the same selection, and a reader that can highlight or strike
+out a selection can underline it.
+
+***Add note to text* is live.** The measurement it was waiting for came
+off `corpus/Markup Underline Write.pdf` on 2026-11-04: it writes the same
+`/Highlight` the Highlight tool writes, with `/Subj Comment on Text`,
+`/IT /HighlightNote`, `/CA 0.4` and the run's `/QuadPoints`, and then the
+editor opens, because the note is the whole point of the mark. See
+decision 36.
+
+**One entry there is still refused.** *Add a comment to replace text*
+waits for the **comment tool itself**. It is a *pair*, measured in the
+same file: a `/StrikeOut` over the words, `/Subj Cross-Out`,
+`/IT /StrikeOutTextEdit`, carrying `/IRT` -> the caret with `/RT /Group`,
+and a `/Caret`, `/Subj Inserted Text`, `/IT /Replace`, which holds the
+note. The caret is drawn from the strikeout's quads alone: 0.810 of the
+type's height wide, 0.660 tall, line width and `/RD` both 0.055 of it,
+centred on the struck run's right-hand end with its foot a line width
+below the baseline. The toolbar's *Replace selected text* writes exactly
+this too, down to the key set, so the two entries are one tool reached two
+ways. **Wiring and enabling that entry is part of the comment tool's
+work**, not a separate job to be remembered later.
+
+**`/RT` tells a reply from a group.** The grouped `/StrikeOut` carries
+`/IRT` and is still drawn, so `/IRT` alone does not mean "a reply": it is
+`/RT /R`, or no `/RT` at all, that does. `Mark.is_reply` does not yet read
+`/RT`, and until it does a caret's thread will list its own strikeout as
+an empty reply.
+
 **Three of Reader's entries are deliberately left out**: *Open comment
 panel*, *Open all Pop-Ups* and *Minimize Pop-Ups* (Cmd+7). There is no
 comment panel here and no pop-up windows for one to manage, and an entry
@@ -775,11 +817,22 @@ Reordering it would be overruling what the document says about itself, which
 is wrong wherever that order is deliberate -- a sidebar, a caption, a pull
 quote.
 
-**Underline and Strikethrough behave identically.** Same gesture -- tool
-armed, then drag -- same index range over the file's stored order, same clamp
-to the page, same handles. They differ only in what they write: `/Underline`
-and `/StrikeOut` over the same `/QuadPoints`, and no `/CA`, because opacity
-belongs to the highlight alone.
+**Underline and Strikethrough make the same gesture** -- tool armed, then
+drag -- over the same index range and with the same clamp to the page, and
+write the same `/QuadPoints`.
+
+They part company after that, and an earlier reading here was wrong twice.
+**An underline carries `/CA`**: measured 2026-11-04 on a corpus document
+whose straight underline reads `/CA 0.225006`, with `/ca`, `/CA` and
+`/AIS false` in its appearance stream's own graphics state -- the same pair
+a highlight needs, because applying `/CA` to an appearance is only a
+recommendation. Opacity is not the highlight's alone.
+
+**Reader will not resize an underline; this application will.** The owner's
+notes record Reader's behaviour -- *"Underlines cannot be resized"* -- and
+the grips highlight step 6 built work on one already, because nothing in
+them asks what kind a mark is. Kept deliberately on 2026-11-04: see
+decision 31.
 
 **It stops at the page edge.** `/QuadPoints` live in one page's coordinate
 space and the annotation lives in that page's `/Annots`, so a highlight
@@ -1053,6 +1106,84 @@ Cited as **highlight step 1** to **highlight step 9**.
    **A locked mark opens the form** -- it is where the lock comes off --
    and everything in it that would change the mark is refused until the box
    is cleared, which takes effect without closing it.
+
+## Underline
+
+The owner's own notes, `corpus/Annotations.pdf` page 10, read off Reader on
+2026-11-04:
+
+```
+1  a selection spans lines; selections on separate pages are separate marks
+2  two styles -- squiggly and straight -- a colour and an opacity. The style
+   appears only in the underline Properties form
+3  underlines cannot be resized -- in Reader. Ours keeps the handles;
+   see decision 31
+4  the marker tool carries colour as highlight does, and works the same way:
+   it sets what the next one is made in, and recolours the selected one
+5  the right-click menu is highlight's, and so are the General and
+   Review History tabs
+```
+
+So most of underline is highlight's machinery pointed at another kind.
+Selection, the thread window, statuses, the lock, `/RC`, the menus, Delete
+and the properties form are all written and none of them asks what kind a
+mark is. **A new underline is straight**, taken from the owner the same
+day.
+
+**The style is the subtype.** Measured on `corpus/Markup Underline.pdf`,
+where the same selection was marked both ways in the same colour:
+
+    straight   /Underline   no /IT          /Subj Underline
+               appearance:  0.8119 w  36 668.5458 m  195.916 668.5458 l  S
+
+    squiggly   /Squiggly    /IT /Underline  /Subj Underline
+               appearance:  /Pattern+DeviceRGB cs  <colour> /squiggly scn
+                            0 0 <width> 12 re f
+               placed by:   q  0.3248 0 0 0.1804 36 652.9189 cm  /F0 Do  Q
+               the tile:    q 1 i 1 J 1 j 1 w 10 M []0 d
+                            0 1 m  5 11 l  10 1 l  S Q
+               BBox 10 x 12, XStep 10, YStep 13
+
+**Every number in that drawing is a fraction of the type's height**, which
+is the quadrilateral's. Fitted across five corpus files and the six text
+heights in them -- 9.45, 12.99, 13.34, 14.17, 14.56 and 15.77 points --
+where each ratio holds to five figures:
+
+| | |
+|---|---|
+| thickness, underline and cross-out alike | height / 16 |
+| underline, the centre of the **stroke** | bottom + height / 7 |
+| cross-out, the centre of the stroke | bottom + 3 x height / 7 |
+| squiggly, the tile's placement | `sy = height / 72`, `sx = 1.8 x sy` |
+| squiggly, the tile's origin | bottom + height / 56 |
+
+So the wave is a quarter of the type's height per cycle and a sixth of it
+tall, and the straight line sits a seventh of the way up the run rather
+than on its bottom edge. One sample in twenty-four disagrees -- a 13.343pt
+run given the 12.991pt scale -- so Reader works from the font size it
+believes the run is, quantised to a set of its own, rather than from the
+quadrilateral exactly.
+
+The pattern is the only part not reproduced. A tiling pattern has to be a
+resource of the appearance stream, and the shape it paints is six numbers,
+so the wave is written as one stroked path at the placement above. Its pen
+is the awkward part: Reader's tile strokes `1 w` through a `cm` that is
+1.8 times wider than it is tall, which strokes a line whose width varies
+with its direction, and the geometric mean of the two scales is what a
+rasteriser arrives at for a line running diagonally -- which is all of
+this wave.
+
+**Style is therefore the first attribute that changes what the annotation
+*is*.** Every edit until now has rewritten a value inside a dictionary;
+this one rewrites `/Subtype` and has to rebuild the appearance rather than
+merely drop it. `MarkEdits` keys an edit by the mark's position in
+`/Annots`, and that position does not move when the subtype changes, so it
+can carry this -- but the writer has to be told to expect it.
+
+**The form is the mark's.** It cannot be opened until a mark exists and is
+reached by selecting one, or by a right-click that selects it first --
+which is what *Properties...* already does. Style sits beside Colour and
+Opacity in Appearance and applies to the mark whose form is open.
 
 ## The test
 
@@ -2054,7 +2185,53 @@ each writes a new annotation rather than changing the locked one, and
 refused is greyed rather than removed, which is the owner's preference over
 Reader's own behaviour, taken 2026-11-03.
 
-**31. The window's own menus act on items, and the first item is the
+**31. An underline keeps its handles, where Reader's has none.** The
+owner's notes say Reader will not resize one; ours does, kept deliberately
+on 2026-11-04. Offering a handle writes nothing by itself, a resize writes
+`/QuadPoints` as every other resize does, and the owner resized two and
+round-tripped them through Reader, which read them back. **The menu need
+not match Reader's, only be useful** -- the same judgement, applied to a
+handle.
+
+**32. A default colour belongs to a tool, and is named rather than
+numbered.** Each tool declares the `PALETTE` entry its marks start in --
+`tools.Tool.colour` -- and keeps whatever colour is chosen for it
+afterwards, so picking one with Underline armed does not recolour the next
+highlight. **Per tool, not per subtype**, because one subtype can be two
+tools with two colours: `/Caret` starts Light Red for *Replace selected
+text* and Fuchsia for *Insert text*.
+
+Measured on 2026-11-04 from `corpus/Annotation Examples.pdf`, made in
+Reader *after its settings were reset* and in Reader's own tool order, so
+each annotation names the tool that made it:
+
+    comment  Purple      replace_text  Light Red   insert_text  Fuchsia
+    text_comment White   highlight     Orange      underline    Blue
+    strikethrough Light Red           callout      White
+    draw, line, arrow, rectangle, circle, polygon, cloud,
+    connected_lines and all 22 stamps                           Red
+    attach_file  unmeasured -- the document carries no /FileAttachment
+
+Every one is a `PALETTE` entry, four of them to 1/255 and the rest
+exactly, which is not a coincidence: the palette was read off the same
+application. They are *named* for that reason -- a name can be checked
+against the swatch a user sees, three decimals cannot.
+
+**And the swatch shows the armed tool's colour**, because a swatch that
+disagrees with the mark it makes is worse than no swatch. The fault that
+turned this up: a new underline came out in the tool's own default while
+the swatch showed the last tool's, and the colour it came out in happened
+to match a mark elsewhere on the page, which made it look like the last
+*mark* was being copied.
+
+**33. Undo and redo work while reading.** They live in the Edit menu, and
+read mode disables everything in that menu because those commands change
+the page list -- so they were swept up with the rest and a mark could not
+be taken back. **Markup is an edit that happens in read mode**: every
+markup command commits to the same history, and nothing could unwind it.
+Taken 2026-11-04, after the owner noticed undo doing nothing.
+
+**34. The window's own menus act on items, and the first item is the
 mark.** Settled with the owner on 2026-11-03, against Reader. A reply's
 line offers Reply, Delete and Set status, where Delete is the whole reply
 and its status chain. The first item's line and the window's background
@@ -2067,6 +2244,119 @@ a click is told from a drag by whether the pointer moved. There is no menu over 
 not being edited: clicking it opens it, and every entry Reader offers
 there acts on the text anyway. The platform's spelling and dictionary
 entries are not offered, because Qt does not give them to us.
+
+**35. A mark's drawing is scaled to the type, never fixed in points.**
+`UNDERLINE_THICKNESS = 0.8119` and a pair of squiggle constants were read
+off a single 12.991pt line, so they were exactly right there and wrong
+everywhere else: on the 15.77pt heading two pages on, the line was thin
+and 2.25 points low and the wave was half again too tall. They are the
+ratios above instead, and the underline and the cross-out are **stroked**
+rather than filled -- a rectangle filled from the quadrilateral's edge is
+the same line half a width out of place, and no thickness hides that at a
+size other than the one it was fitted to. `canvas._paint_marks` uses the
+same ratios as `markup._appearance`, so the screen and the file agree.
+
+Found because `corpus/Markup Underline Write.pdf` holds both: it was
+written by Reader, marked up here, and written by Reader again, so three
+of its underlines are its producer's and two are ours, side by side in one
+file. The test compares our drawing against the fixture's own marks quad
+by quad rather than against any number.
+
+**36. *Add note to text* is a tool, not a subtype.** It writes the
+`/Highlight` the Highlight tool writes; `/Subj Comment on Text` and
+`/IT /HighlightNote` are the whole of the difference. So `/Subtype` no
+longer says which tool made a mark, `Annotation` carries an `intent`, and
+the subject and intent both come off the tool's declaration in `tools.py`
+rather than off a table keyed by kind.
+
+**37. Two tools can share one current colour, and these two do.** Reader
+keeps one between *Add a comment* and *Add note to text* -- colouring
+either colours the other -- and Highlight keeps its own although it writes
+the same `/Highlight`. The sharing follows what the tool is *for*, a note
+on the page, not the subtype it writes. Nothing is shared document-wide:
+turning Underline purple left three later highlights orange. A tool names
+the tool it shares with, and `MainWindow._colour_keeper` resolves it.
+
+**38. A note is always written twice, and a status change is written
+bare.** Every mark that carries `/Contents` carries `/RC` beside it, in
+the shape Reader writes for that kind of text: a span with the full unset
+property set for anything somebody typed, a bare `<p>` for text this
+application composed. `rich_from_runs` used to answer None when nothing
+was styled, on the misreading corrected above, so a note written here
+reached the file without the rich text every reader prefers. What we now
+write is byte-identical to Reader's but for its `xfa:APIVersion`
+attribute, which names Acrobat's own build.
+
+**39. An absent `/CA` means 1, and 1 is written as absence.** Two
+questions were being answered from one table. `TRANSPARENCY` is what a
+**new** mark a tool makes starts at -- 0.4 for a highlight -- and it is
+not what silence means in a file, where an absent `/CA` is fully opaque
+whatever the kind. Measured on `Markup Highlight.pdf`, whose 100%
+highlight carries neither `/CA` nor a `ca` in its appearance's
+`ExtGState`, only the blend mode. `markup.opacity_of` answers the first
+question and `markup.solidity` the second; asking `solidity` for a file
+mark raised, because a `Mark` has no `kind`, so *Make current properties
+default* threw on any Reader-written mark with no `/CA`. We now leave the
+key out at 1 as Reader does, in the annotation and in the appearance's
+graphics state alike, and take it away when an edit sets opacity back
+to 1.
+
+**40. A note made here is a note, everywhere that asks.** Three places
+looked at the file's marks alone, on the reasoning that nothing here
+wrote notes: the badge painter, the badge's hit test, and the hover --
+where `_marked_note_at` refused an `Annotation` outright. The thread
+window writes notes, so an underline you had just commented on had no
+badge, could not be hovered and showed nothing at all until the document
+had been saved and opened again. They ask `canvas.noted_marks` now, which
+is one list over both collections.
+
+The three questions it filters on -- has a note, is a reply, is a status
+-- are `markup` functions rather than `Mark` methods, so they are asked
+the same way of a `Mark` and of an `Annotation`; `Mark` keeps its
+methods, delegating. A mark made here speaks for its own colour and its
+own words rather than its newest reply's, because nothing can have
+answered it until it has been written.
+
+**41. A markup tool selects text the way the reader does.** It had a
+gesture of its own: the press threw away any selection, tracked the drag
+itself and built the quadrilaterals from that. So double-click-a-word,
+shift-to-extend and drag-past-the-edge-to-scroll all did nothing with a
+tool armed, and a bare click made a mark one character wide -- there is
+one in `Markup Underline PDF Arranger with note.pdf`, 5.72 points of
+underline left behind by a stray press.
+
+**The two page-crossing cases are different, and both are Reader's**,
+taken from the owner on 2026-11-04 and the same for highlight, underline
+and cross-out alike:
+
+- **Select first, then apply a mark** -- a selection may run across a page
+  break, and each page it covers gets its own mark.
+  `selection_quads_by_page` answers for every page; it used to answer the
+  first alone and call the rest a limitation. **The marks are one step to
+  undo**, because making them was one action: the canvas reports the whole
+  gesture through `marks_drawn`, and `MainWindow.marks_drawn` commits once
+  and then places each. Committing per page left you pressing undo twice
+  to reverse something you did once.
+- **Arm the tool first, then select** -- the selection itself stops at the
+  page it started on, so there is never more than one mark to make.
+  `_extend_selection` clamps to the anchor's page while a text tool is
+  armed.
+
+**Choosing the tool is itself the commit**, in the first of those: Reader
+marks the selected words the moment the tool is chosen, with no second
+action. Without that the words sat there wearing the tool's colour and
+there was no way to apply it. `MainWindow._tool_armed` marks whatever is
+selected and leaves the tool armed for the next run of words.
+
+And the band wears the colour the mark will be made in, as Reader's does,
+rather than the reader's own blue.
+
+This replaces a choice made on 2026-11-01 inside a commit about building
+quadrilaterals from the font rather than the ink. That fix was right and
+stays -- `selection_quads` measures the loose boxes through the same text
+layer, which is why a mark made from the menu and one dragged out are
+identical. Abandoning the reader's selection was bundled in beside it,
+recorded in a code comment rather than here, and never put to the owner.
 
 ## Done
 

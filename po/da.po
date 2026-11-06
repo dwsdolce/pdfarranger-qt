@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  pdfarranger\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-04 04:48+0000\n"
+"POT-Creation-Date: 2026-11-05 04:10+0000\n"
 "PO-Revision-Date: 2023-10-22 00:28+0200\n"
 "Last-Translator: Lrss <dev@lrss.dk>\n"
 "Language: da\n"
@@ -64,6 +64,10 @@ msgstr "Kopiér"
 #: pdfarranger_qt/canvas.py
 msgid "Highlight text"
 msgstr "Fremhæv tekst"
+
+#: pdfarranger_qt/canvas.py
+msgid "Underline text"
+msgstr "Understreg tekst"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
@@ -2161,6 +2165,14 @@ msgstr "{state} angivet af {author}"
 msgid "Mark Properties"
 msgstr "Markeringsegenskaber"
 
+#: pdfarranger_qt/mainwindow.py
+msgid "Straight"
+msgstr "Lige"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Squiggly"
+msgstr "Bølget"
+
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
 msgid "Edit Note"
@@ -2939,6 +2951,11 @@ msgstr "Låst"
 msgid "Make Properties Default"
 msgstr "Gør egenskaber til standard"
 
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py pdfarranger_qt/reader.py
+msgid "Style"
+msgstr "Stil"
+
 #: pdfarranger_qt/properties.py
 msgid "Author"
 msgstr "Forfatter"
@@ -2975,11 +2992,6 @@ msgstr "Peg om til denne side"
 #: pdfarranger_qt/reader.py
 msgid "Rename"
 msgstr "Omdøb"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/reader.py
-msgid "Style"
-msgstr "Stil"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/reader.py

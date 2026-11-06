@@ -83,9 +83,9 @@ from . import (
 from .core import DocumentSet, Page, PDFDocError
 from .export import SaveOptions, export
 from .find import Query
+from .i18n import N_, ngettext
 from .i18n import gettext_ as _
 from .i18n import menu_label as _m
-from .i18n import ngettext
 from .model import PageListModel
 from .notepanel import Item as NoteItem
 from .notepanel import NotePanel, when_text
@@ -154,6 +154,7 @@ class MainWindow(QMainWindow):
             lambda where: self.settings.setValue(
                 "reader/markup-tools-at", where))
         self.reader.mark_drawn.connect(self.mark_drawn)
+        self.reader.marks_drawn.connect(self.marks_drawn)
         self.reader.mark_resized.connect(self.mark_resized)
         self.reader.mark_deleted.connect(self.mark_deleted)
         self.reader.mark_is_the_default.connect(self.mark_is_the_default)
@@ -176,6 +177,7 @@ class MainWindow(QMainWindow):
         # So a gesture in flight is drawn in the colour it will be kept in:
         # the preview is the mark, before it is a mark.
         self.reader.canvas.set_mark_styles(self.MARK_KINDS)
+        self.reader.canvas.mark_colour = self._colour_for_canvas_tool
         #: What you can do to the mark that is selected. A child of the
         #: viewport rather than of the reader, because it is placed from the
         #: rectangles the canvas reports and those are in viewport
@@ -186,10 +188,16 @@ class MainWindow(QMainWindow):
         self.mark_buttons.recoloured.connect(self.mark_recoloured)
         self.mark_buttons.faded.connect(self.mark_faded)
         self.mark_buttons.deleted.connect(self.delete_selected_mark)
+        self.mark_buttons.commented.connect(self.comment_on_selected_mark)
         #: What the next mark will be made in, once the tail's swatch has
         #: been used. None until then, so each tool keeps the colour readers
         #: expect of it rather than everything starting out yellow.
         self.armed_colour = None
+        #: The colour each *tool* makes its marks in now. One per tool, as
+        #: Reader keeps them: picking a colour with Underline armed does
+        #: not recolour the next highlight. Seeded from what the tool
+        #: declares -- `tools.Tool.colour` -- the first time it is asked.
+        self._colours: dict = {}
         self.armed_opacity = None
         self.tool_strip.colour_armed.connect(self._colour_armed)
         self.tool_strip.opacity_armed.connect(self._opacity_armed)
@@ -786,10 +794,22 @@ class MainWindow(QMainWindow):
     #: current colour and it colours whatever is made next, of any kind.
     #: Reader works the same way: a single colour at the foot of its tool
     #: list, not a palette per tool.
+    #: Which annotation each markup tool writes. The colour each starts in
+    #: is `markup.DEFAULT_COLOURS`, read off Reader with its settings reset
+    #: -- it is not written here, because a colour written in two places is
+    #: a colour that will disagree with itself.
+    #:
+    #: **Underline writes the straight style.** The other is the same tool
+    #: writing `/Squiggly`, reached from the mark's properties form.
     MARK_KINDS = {
-        "highlight": (markup.HIGHLIGHT, (1.0, 0.92, 0.23)),
-        "strikeout": (markup.STRIKEOUT, (0.90, 0.22, 0.21)),
-        "note": (markup.TEXT, (1.0, 0.82, 0.25)),
+        "highlight": markup.HIGHLIGHT,
+        "strikeout": markup.STRIKEOUT,
+        "underline": markup.UNDERLINE,
+        "note": markup.TEXT,
+        # The same `/Highlight` the highlight tool writes. What makes it a
+        # different tool is `/Subj` and `/IT`, which come off the tool's
+        # own declaration -- see `mark_drawn`.
+        "note_on_text": markup.HIGHLIGHT,
     }
 
     #: Strip tool -> the canvas's own name for it. Only the tools that have
@@ -798,9 +818,15 @@ class MainWindow(QMainWindow):
     CANVAS_TOOLS = {
         "highlight": "highlight",
         "strikethrough": "strikeout",
+        "underline": "underline",
         "comment": "note",
+        "note_on_text": "note_on_text",
         "draw": "draw",
     }
+
+    #: And back again, for the places that start from the canvas's name --
+    #: a finished gesture, or a preview asking what colour it should be.
+    CANVAS_TO_STRIP = {canvas: strip for strip, canvas in CANVAS_TOOLS.items()}
 
     def _tool_armed(self, name: str) -> None:
         """The strip armed a tool, so the pointer changes meaning.
@@ -823,6 +849,19 @@ class MainWindow(QMainWindow):
                 self.CANVAS_TOOLS.get(name, PageCanvas.SELECT))
         finally:
             self._arming = False
+        # The swatch follows the tool, because each tool keeps a colour of
+        # its own and the swatch has to show what the next mark will be.
+        if name in self.MARK_KINDS or name in self.CANVAS_TOOLS:
+            self.tool_strip.arm_colour(self.colour_for(name))
+        # **With text already selected, arming the tool is the gesture.**
+        # Reader marks the selection the moment you choose the tool; there
+        # is no second action to commit it, and waiting for one left the
+        # words sitting there in the tool's colour with no way to apply it.
+        # One mark per page, as `mark_the_selection` does. The tool stays
+        # armed afterwards, for the next run of words.
+        canvas = self.reader.canvas
+        if canvas.marks_text() and canvas.has_selection():
+            canvas.mark_the_selection(canvas.tool())
 
     def _canvas_tool_changed(self, tool: str) -> None:
         """Keep the strip showing what the pointer is actually doing.
@@ -852,17 +891,56 @@ class MainWindow(QMainWindow):
         return self.model.annotations.for_page(self.model.pages[index].uid)
 
     def mark_drawn(self, tool: str, index: int, rects) -> None:
-        """A markup gesture finished: keep it.
+        """A markup gesture finished on one page: keep it."""
+        self.marks_drawn(tool, [(index, rects)])
 
-        The rectangles arrive in the page's own space, so nothing here
-        has to know about zoom, scroll or rotation.
+    def marks_drawn(self, tool: str, pages) -> None:
+        """A markup gesture finished, over however many pages it covered.
+
+        ``pages`` is ``[(index, rects), ...]``, the rectangles in each
+        page's own space, so nothing here has to know about zoom, scroll
+        or rotation.
+
+        **One undo step for the gesture, not one per page.** A selection
+        running across a page break makes a mark on each, and taking it
+        back is a single action in Reader because making it was -- where
+        committing per page left you pressing undo once per page to
+        reverse something you did once.
         """
-        kind = self.MARK_KINDS.get(tool)
-        if kind is None or not rects or not 0 <= index < len(self.model.pages):
+        subtype = self.MARK_KINDS.get(tool)
+        if subtype is None:
             return
-        subtype, colour = kind
-        if self.armed_colour is not None:
-            colour = self.armed_colour
+        wanted = [(index, rects) for index, rects in pages
+                  if rects and 0 <= index < len(self.model.pages)]
+        if not wanted:
+            return
+        self.model.undo.commit(_("Add Mark"))
+        for index, rects in wanted:
+            self._place_mark(tool, subtype, index, rects)
+        self._mark_added()
+        # The note tools open their editor on the last mark made, which for
+        # a gesture over several pages is the one on the last page.
+        index = wanted[-1][0]
+        made = self._marks_on_page(index)
+        if tool == self.CANVAS_TOOLS["comment"]:
+            # Straight into the editor. A note with nothing in it is not a
+            # mark anyone meant to make, and asking for the text afterwards
+            # would be a second gesture for one action.
+            self._placed_note = self.model.undo.current
+            self.reader.canvas.edit_note(index, len(made) - 1)
+        elif tool == self.CANVAS_TOOLS["note_on_text"]:
+            # **The thread window, not the editor on the page.** It is an
+            # ordinary note -- Reader opens the same window it opens for
+            # every other mark, with the author, the time and Post. The
+            # editor on the page belongs to the icon dropped on it, which
+            # has nowhere else to put its words. Left empty, the highlight
+            # stays: it is a mark somebody made, unlike an icon with
+            # nothing in it.
+            self.open_note(index, made[-1])
+
+    def _place_mark(self, tool: str, subtype: str, index: int, rects) -> None:
+        """Add one mark to one page. The caller owns the undo step."""
+        colour = self._colour_for_canvas_tool(tool)
         page = self.model.pages[index]
         rect = markup.bounding_rect(rects)
         quads = rects if subtype in markup.QUADDED else ()
@@ -883,19 +961,52 @@ class MainWindow(QMainWindow):
             scale = page.scale if page.scale else 1.0
             rect = markup.note_rect(rect[0], rect[3],
                                     markup.NOTE_SIZE / scale)
-        self.model.undo.commit(_("Add Mark"))
+        # Which tool, not which subtype: `/Highlight` is two tools, and
+        # what tells them apart in the file is the pair the tool declares.
+        made_by = tools.by_name(self.CANVAS_TO_STRIP.get(tool, tool))
         self.model.annotations.add(markup.Annotation(
             subtype, page.uid, rect, colour=colour, quads=quads,
             opacity=self.armed_opacity,
+            subject=made_by.subject or None,
+            intent=made_by.intent or None,
             author=markup.default_author()))
-        self._mark_added()
-        if subtype == markup.TEXT:
-            # Straight into the editor. A note with nothing in it is not a
-            # mark anyone meant to make, and asking for the text afterwards
-            # would be a second gesture for one action.
-            self._placed_note = self.model.undo.current
-            self.reader.canvas.edit_note(
-                index, len(self._marks_on_page(index)) - 1)
+
+    def colour_for(self, tool: str):
+        """What a mark made with ``tool`` would be coloured now.
+
+        **Per tool, not per kind.** The colour last chosen for that tool,
+        else the one its declaration names -- and one subtype can be two
+        tools with two colours, which is why the question is asked this
+        way: `/Caret` starts Light Red for *Replace selected text* and
+        Fuchsia for *Insert text*.
+        """
+        tool = self._colour_keeper(tool)
+        if tool in self._colours:
+            return self._colours[tool]
+        try:
+            named = tools.by_name(tool).colour
+        except KeyError:
+            return markup.DEFAULT_COLOUR
+        return markup.swatch(named) if named else markup.DEFAULT_COLOUR
+
+    @staticmethod
+    def _colour_keeper(tool: str) -> str:
+        """Which tool's colour ``tool`` uses -- usually its own.
+
+        Reader keeps one between *Add a comment* and *Add note to text* --
+        the two tools that put a note on the page -- and not between *Add
+        note to text* and Highlight, although those two write the same
+        `/Highlight`.
+        """
+        try:
+            shared = tools.by_name(tool).colour_with
+        except KeyError:
+            return tool
+        return shared or tool
+
+    def _colour_for_canvas_tool(self, tool: str):
+        """The same question, asked with the canvas's name for a tool."""
+        return self.colour_for(self.CANVAS_TO_STRIP.get(tool, tool))
 
     def _colour_armed(self, colour) -> None:
         """The tail's swatch was used.
@@ -909,6 +1020,11 @@ class MainWindow(QMainWindow):
             self._change_mark(colour=tuple(colour))
             return
         self.armed_colour = tuple(colour)
+        # And against the armed tool, so the swatch and the mark it makes
+        # cannot disagree -- which is what sent a new underline out in the
+        # tool's own colour while the swatch showed another.
+        self._colours[self._colour_keeper(self.tool_strip.armed())] = (
+            tuple(colour))
 
     def _opacity_armed(self, opacity: float) -> None:
         if self.reader.canvas.selected_mark() is not None:
@@ -1168,6 +1284,8 @@ class MainWindow(QMainWindow):
                      else getattr(mark, "opacity", None)),
             locked=bool(getattr(mark, "locked", False)),
             history=self._history_of(index, mark),
+            style=self._style_of(mark),
+            styles=self._styles_for(mark.kind if mine else mark.subtype),
         ), self)
         # **The appearance is live, as Acrobat's is**: the slider shows on
         # the page while it is dragged rather than when the form is
@@ -1222,14 +1340,58 @@ class MainWindow(QMainWindow):
         and re-render the page that shows it."""
         if mine:
             for name, value in fields.items():
-                setattr(mark, name, value)
+                self._set_mark_field(mark, name, value)
             self._after_mark_change(index)
             return
         uid = self.model.pages[index].uid
         self.model.mark_edits.change(uid, mark.index, **fields)
         for name, value in fields.items():
-            setattr(mark, name, value)
+            self._set_mark_field(mark, name, value)
         self._after_mark_change(index, uid)
+
+    @staticmethod
+    def _set_mark_field(mark, name: str, value) -> None:
+        """Put one changed field on the mark the reader is showing.
+
+        **A style is not a field on a mark**: it is which subtype the mark
+        has, so it is written as that rather than stored beside it. The
+        rest are set as they are named.
+        """
+        if name == "style":
+            kind = markup.UNDERLINE_STYLES.get(value)
+            if kind is None:
+                return
+            if isinstance(mark, markup.Annotation):
+                mark.kind = kind
+            else:
+                mark.subtype = kind
+            return
+        setattr(mark, name, value)
+
+    #: What each style is called, untranslated. Marked here and translated
+    #: where it is used: a label in a table reaches no catalogue at all,
+    #: and one translated at import time never changes language again.
+    STYLE_LABELS = {"straight": N_("Straight"), "squiggly": N_("Squiggly")}
+
+    def _styles_for(self, kind):
+        """The styles a kind offers, as ``(value, label)``.
+
+        **A style is the subtype**: an underline is `/Underline` straight
+        and `/Squiggly` squiggly, so choosing one in the form rewrites what
+        the annotation is. Empty for every kind with one appearance.
+        """
+        if kind not in markup.UNDERLINE_STYLES.values():
+            return ()
+        return tuple((style, _(self.STYLE_LABELS[style]))
+                     for style in markup.UNDERLINE_STYLES)
+
+    def _style_of(self, mark):
+        """Which style a mark is in, or None for a kind with one."""
+        for style, kind in markup.UNDERLINE_STYLES.items():
+            if (mark.kind if isinstance(mark, markup.Annotation)
+                    else mark.subtype) == kind:
+                return style
+        return None
 
     def _history_of(self, index: int, mark):
         """The mark's review history, as the form reads it out.
@@ -1468,12 +1630,25 @@ class MainWindow(QMainWindow):
         colour = getattr(mark, "colour", None)
         if colour is not None:
             self.armed_colour = tuple(colour)
-        opacity = (mark.opacity if isinstance(mark, markup.Annotation)
-                   else getattr(mark, "opacity", None))
-        if opacity is None and not isinstance(mark, markup.Annotation):
-            opacity = markup.solidity(mark)
-        if opacity is not None:
-            self.armed_opacity = float(opacity)
+        # A mark we made answers what its kind starts at when it has said
+        # nothing; a mark the file brought answers 1, because that is what
+        # an absent `/CA` means. Asking `solidity` for both raised on the
+        # second -- a `Mark` has no `kind` -- so *Make current properties
+        # default* threw on any Reader-written mark with no `/CA`.
+        self.armed_opacity = float(
+            markup.solidity(mark) if isinstance(mark, markup.Annotation)
+            else markup.opacity_of(mark))
+
+    def comment_on_selected_mark(self) -> None:
+        """The first button in the bar: open the selected mark's thread.
+
+        The same window *Open Pop-Up Note* opens, because it is the same
+        thing -- the mark's own note with whatever has been said under it.
+        Two ways in, one window.
+        """
+        found = self.reader.canvas.selected_mark()
+        if found is not None:
+            self.open_note(*found)
 
     def delete_selected_mark(self) -> None:
         """The trash in the bar beside the selected mark."""
@@ -2090,7 +2265,15 @@ class MainWindow(QMainWindow):
         self._on_selection_changed(self.view.selected_rows())
         if self.read_mode:
             # Last, so it overrides everything the calls above just enabled.
+            #
+            # **Except undo and redo.** They are in the Edit menu, so they
+            # were swept up with the commands that change the page list --
+            # and markup is an edit that happens *in* read mode, so taking
+            # a mark back was impossible: every markup command commits to
+            # the same history and nothing could unwind it.
             for act in self._editing_actions():
+                if act in (self.act_undo, self.act_redo):
+                    continue
                 act.setEnabled(False)
         self.status_mode.setText(_("Reading") if self.read_mode else "")
         # Always available: switching view is not an edit, and with no document

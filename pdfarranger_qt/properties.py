@@ -38,6 +38,7 @@ from PySide6.QtCore import QPoint, Qt, Signal
 from PySide6.QtGui import QColor, QPainter
 from PySide6.QtWidgets import (
     QCheckBox,
+    QComboBox,
     QDialog,
     QDialogButtonBox,
     QFormLayout,
@@ -78,6 +79,14 @@ class Properties(NamedTuple):
     #: Whether this kind has a colour at all. A mark that draws nothing of
     #: its own would show an empty tab.
     has_colour: bool = True
+    #: The mark's style, for a kind that has two of them, else None. An
+    #: underline is straight or squiggly, and **the style is the subtype**
+    #: -- so choosing one here rewrites what the annotation *is*, which no
+    #: other control in this form does.
+    style: Optional[str] = None
+    #: The styles this kind offers, as ``(value, label)`` with the label
+    #: already translated. Empty for a kind with one appearance.
+    styles: Tuple[Tuple[str, str], ...] = ()
 
 
 class _Swatch(QPushButton):
@@ -190,6 +199,17 @@ class MarkProperties(QDialog):
         row.addWidget(self.percent)
         form.addRow(_("Opacity"), row)
 
+        if self._was.styles:
+            # Beside Colour, as Reader puts it. The entries are the kind's
+            # own, because only the kind knows what its styles are.
+            self.style = QComboBox(page)
+            for value, label in self._was.styles:
+                self.style.addItem(label, value)
+            at = self.style.findData(self._was.style)
+            if at >= 0:
+                self.style.setCurrentIndex(at)
+            form.addRow(_("Style"), self.style)
+
         self.palette_popup = ColourPopup(self)
         self.palette_popup.chosen.connect(self._coloured)
         # The popup carries a slider of its own, because it is the strip's
@@ -262,6 +282,8 @@ class MarkProperties(QDialog):
         if self._was.has_colour:
             self.swatch.setEnabled(not on)
             self.slider.setEnabled(not on)
+        if self._was.styles:
+            self.style.setEnabled(not on)
 
     def _make_default(self) -> None:
         self.make_default = True
@@ -285,6 +307,10 @@ class MarkProperties(QDialog):
                 now["colour"] = self._colour
             if self._opacity != self._was.opacity:
                 now["opacity"] = self._opacity
+        if self._was.styles:
+            picked = self.style.currentData()
+            if picked != self._was.style:
+                now["style"] = picked
         return now
 
     def keyPressEvent(self, event):

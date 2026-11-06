@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-04 04:48+0000\n"
+"POT-Creation-Date: 2026-11-05 04:10+0000\n"
 "PO-Revision-Date: 2023-01-19 20:27+0100\n"
 "Last-Translator: alexgabi\n"
 "Language: eu\n"
@@ -69,6 +69,10 @@ msgstr "Kopiatu"
 #: pdfarranger_qt/canvas.py
 msgid "Highlight text"
 msgstr "Nabarmendu testua"
+
+#: pdfarranger_qt/canvas.py
+msgid "Underline text"
+msgstr "Azpimarratu testua"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
@@ -2196,6 +2200,14 @@ msgstr "{state}: {author}"
 msgid "Mark Properties"
 msgstr "Markaren propietateak"
 
+#: pdfarranger_qt/mainwindow.py
+msgid "Straight"
+msgstr "Zuzena"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Squiggly"
+msgstr "Uhindua"
+
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
 msgid "Edit Note"
@@ -2972,6 +2984,11 @@ msgstr "Blokeatuta"
 msgid "Make Properties Default"
 msgstr "Ezarri propietateak lehenetsi gisa"
 
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py pdfarranger_qt/reader.py
+msgid "Style"
+msgstr "Estiloa"
+
 #: pdfarranger_qt/properties.py
 msgid "Author"
 msgstr "Egilea"
@@ -3010,11 +3027,6 @@ msgstr "Birbideratu orrialde honetara"
 #: pdfarranger_qt/reader.py
 msgid "Rename"
 msgstr "Aldatu izena"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/reader.py
-msgid "Style"
-msgstr "Estiloa"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/reader.py

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pdfarranger main\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-04 04:48+0000\n"
+"POT-Creation-Date: 2026-11-05 04:10+0000\n"
 "PO-Revision-Date: 2026-04-24 21:19+0300\n"
 "Last-Translator: Oğuz Ersen <oguz@ersen.moe>\n"
 "Language: tr\n"
@@ -65,6 +65,10 @@ msgstr "Kopyala"
 #: pdfarranger_qt/canvas.py
 msgid "Highlight text"
 msgstr "Metni Vurgula"
+
+#: pdfarranger_qt/canvas.py
+msgid "Underline text"
+msgstr "Metnin altını çiz"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
@@ -2125,6 +2129,14 @@ msgstr "{state}: {author}"
 msgid "Mark Properties"
 msgstr "İşaret özellikleri"
 
+#: pdfarranger_qt/mainwindow.py
+msgid "Straight"
+msgstr "Düz"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Squiggly"
+msgstr "Dalgalı"
+
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
 msgid "Edit Note"
@@ -2890,6 +2902,11 @@ msgstr "Kilitli"
 msgid "Make Properties Default"
 msgstr "Özellikleri varsayılan yap"
 
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py pdfarranger_qt/reader.py
+msgid "Style"
+msgstr "Biçem"
+
 #: pdfarranger_qt/properties.py
 msgid "Author"
 msgstr "Yazar"
@@ -2926,11 +2943,6 @@ msgstr "Bu Sayfaya Yönlendir"
 #: pdfarranger_qt/reader.py
 msgid "Rename"
 msgstr "Yeniden Adlandır"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/reader.py
-msgid "Style"
-msgstr "Biçem"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/reader.py

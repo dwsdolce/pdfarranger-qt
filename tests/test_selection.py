@@ -320,16 +320,15 @@ class TestTheButtonsBesideIt(SelectionCase):
         before then would be a second, half-built way into work that step
         has to do properly.
 
-        Colour was turned on by the step that built the palette, and the
-        trash by the one that takes a mark with its status chain and its
-        replies. Comment still waits for the note work, so it is drawn and
-        refused.
+        Colour was turned on by the step that built the palette, the trash
+        by the one that takes a mark with its status chain and its replies,
+        and Comment by the note work -- it opens the mark's thread, which
+        is a step that exists.
         """
         buttons = self.win.mark_buttons.buttons
-        for name in ("colour", "delete"):
+        for name in ("colour", "delete", "comment"):
             with self.subTest(button=name, acts=True):
                 self.assertTrue(buttons[name].isEnabled())
-        self.assertFalse(buttons["comment"].isEnabled())
 
     def test_it_sits_clear_of_the_mark(self):
         _mark, where = self.a_mark()
@@ -1719,3 +1718,48 @@ class TestALockedMarkInTheWindow(SelectionCase):
             self.win.model.mark_edits.of(self.uid(), mark.index),
             {"author": "Someone Else", "subject": "A subject",
              "locked": False})
+
+
+class TestUndoWhileReading(SelectionCase):
+    """**Markup is an edit that happens in read mode.** Undo and redo live
+    in the Edit menu, and read mode disables that menu because its other
+    commands change the page list -- so they were swept up with the rest
+    and a mark could not be taken back."""
+
+    def uid(self):
+        return self.win.model.pages[0].uid
+
+    def test_it_is_offered_once_there_is_something_to_undo(self):
+        self.assertFalse(self.win.act_undo.isEnabled(),
+                         "nothing has been done yet")
+        self.win.tool_strip.arm("underline")
+        settle(timeout_ms=150)
+        self.canvas.mark_drawn.emit("underline", 0,
+                                    [(60.0, 700.0, 300.0, 714.0)])
+        settle(timeout_ms=400)
+        self.assertTrue(self.win.read_mode, "this is the mode markup is in")
+        self.assertTrue(self.win.act_undo.isEnabled())
+        self.assertIn("Add Mark", self.win.act_undo.text())
+
+    def test_it_takes_the_mark_back_and_puts_it_again(self):
+        self.win.tool_strip.arm("underline")
+        settle(timeout_ms=150)
+        self.canvas.mark_drawn.emit("underline", 0,
+                                    [(60.0, 700.0, 300.0, 714.0)])
+        settle(timeout_ms=400)
+        self.assertEqual(len(self.win.model.annotations.for_page(self.uid())), 1)
+        self.win.undo()
+        settle(timeout_ms=400)
+        self.assertEqual(self.win.model.annotations.for_page(self.uid()), [])
+        self.assertTrue(self.win.act_redo.isEnabled())
+        self.win.redo()
+        settle(timeout_ms=400)
+        self.assertEqual(len(self.win.model.annotations.for_page(self.uid())), 1)
+
+    def test_the_rest_of_the_edit_menu_stays_shut(self):
+        """Only these two are exempt: the others do change the page list."""
+        for act in self.win._editing_actions():
+            if act in (self.win.act_undo, self.win.act_redo):
+                continue
+            with self.subTest(action=act.text()):
+                self.assertFalse(act.isEnabled())

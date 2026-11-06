@@ -716,3 +716,62 @@ class TestItIsAllOneHistory(ColourCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class TestEachToolKeepsItsOwnColour(ColourCase):
+    """**The swatch shows what the next mark will be.** Each tool keeps a
+    colour of its own, as Reader does, so arming one has to bring that
+    colour with it -- a swatch that disagrees with the mark it makes is
+    worse than no swatch."""
+
+    def made_with(self, tool):
+        """Arm ``tool``, make a mark, and report (swatch, mark) colours."""
+        self.strip.arm(tool)
+        settle(timeout_ms=120)
+        swatch = self.strip.swatch.colour
+        self.canvas.mark_drawn.emit(
+            self.win.CANVAS_TOOLS[tool], 0, [(60.0, 700.0, 300.0, 714.0)])
+        settle(timeout_ms=250)
+        return swatch, self.win.model.annotations.for_page(self.uid())[-1].colour
+
+    def test_the_swatch_and_the_mark_agree(self):
+        """They did not: a new underline came out in the tool's own default
+        while the swatch still showed the last tool's."""
+        for tool in ("highlight", "underline", "strikethrough"):
+            with self.subTest(tool=tool):
+                swatch, made = self.made_with(tool)
+                self.assertEqual(tuple(round(v, 4) for v in swatch),
+                                 tuple(round(v, 4) for v in made))
+
+    def test_each_starts_in_what_its_declaration_names(self):
+        from pdfarranger_qt import markup as m
+        from pdfarranger_qt import tools
+
+        for tool in ("highlight", "underline", "strikethrough"):
+            with self.subTest(tool=tool):
+                self.assertEqual(
+                    self.win.colour_for(tool),
+                    m.swatch(tools.by_name(tool).colour))
+
+    def test_choosing_one_leaves_the_other_tools_alone(self):
+        """Picking a colour with Underline armed does not recolour the next
+        highlight."""
+        was = self.win.colour_for("highlight")
+        self.strip.arm("underline")
+        settle(timeout_ms=120)
+        self.canvas.select_mark(None)
+        self.win._colour_armed((0.0, 1.0, 0.0))
+        self.assertEqual(self.win.colour_for("underline"), (0.0, 1.0, 0.0))
+        self.assertEqual(self.win.colour_for("highlight"), was)
+
+    def test_arming_brings_the_colour_back(self):
+        self.strip.arm("underline")
+        settle(timeout_ms=120)
+        self.canvas.select_mark(None)
+        self.win._colour_armed((0.0, 1.0, 0.0))
+        self.strip.arm("highlight")
+        settle(timeout_ms=120)
+        self.assertNotEqual(tuple(self.strip.swatch.colour), (0.0, 1.0, 0.0))
+        self.strip.arm("underline")
+        settle(timeout_ms=120)
+        self.assertEqual(tuple(self.strip.swatch.colour), (0.0, 1.0, 0.0))

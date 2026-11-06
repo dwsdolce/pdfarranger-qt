@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: unnamed project\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-04 04:48+0000\n"
+"POT-Creation-Date: 2026-11-05 04:10+0000\n"
 "PO-Revision-Date: 2026-05-27 19:30+0300\n"
 "Last-Translator: Dymko <Dymkovych@proton.me>\n"
 "Language: uk\n"
@@ -67,6 +67,10 @@ msgstr "Копіювати"
 #: pdfarranger_qt/canvas.py
 msgid "Highlight text"
 msgstr "Виділити текст"
+
+#: pdfarranger_qt/canvas.py
+msgid "Underline text"
+msgstr "Підкреслити текст"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
@@ -2137,6 +2141,14 @@ msgstr "{state} — {author}"
 msgid "Mark Properties"
 msgstr "Властивості позначки"
 
+#: pdfarranger_qt/mainwindow.py
+msgid "Straight"
+msgstr "Пряма"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Squiggly"
+msgstr "Хвиляста"
+
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
 msgid "Edit Note"
@@ -2920,6 +2932,11 @@ msgstr "Заблоковано"
 msgid "Make Properties Default"
 msgstr "Зробити властивості типовими"
 
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py pdfarranger_qt/reader.py
+msgid "Style"
+msgstr "Стиль"
+
 #: pdfarranger_qt/properties.py
 msgid "Author"
 msgstr "Автор"
@@ -2956,11 +2973,6 @@ msgstr "Перенаправити на цю сторінку"
 #: pdfarranger_qt/reader.py
 msgid "Rename"
 msgstr "Перейменувати"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/reader.py
-msgid "Style"
-msgstr "Стиль"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/reader.py

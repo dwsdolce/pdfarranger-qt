@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-04 04:48+0000\n"
+"POT-Creation-Date: 2026-11-05 04:10+0000\n"
 "PO-Revision-Date: 2022-10-03 23:44+0200\n"
 "Last-Translator: Ícar N. S. <icar.nin@protonmail.com>\n"
 "Language: ca\n"
@@ -64,6 +64,10 @@ msgstr "Copia"
 #: pdfarranger_qt/canvas.py
 msgid "Highlight text"
 msgstr "Ressalta el text"
+
+#: pdfarranger_qt/canvas.py
+msgid "Underline text"
+msgstr "Subratlla el text"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
@@ -2195,6 +2199,14 @@ msgstr "{state} per {author}"
 msgid "Mark Properties"
 msgstr "Propietats de la marca"
 
+#: pdfarranger_qt/mainwindow.py
+msgid "Straight"
+msgstr "Recte"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Squiggly"
+msgstr "Ondulat"
+
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
 msgid "Edit Note"
@@ -2975,6 +2987,11 @@ msgstr "Blocat"
 msgid "Make Properties Default"
 msgstr "Fes que les propietats siguin per defecte"
 
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py pdfarranger_qt/reader.py
+msgid "Style"
+msgstr "Estil"
+
 #: pdfarranger_qt/properties.py
 msgid "Author"
 msgstr "Autor"
@@ -3011,11 +3028,6 @@ msgstr "Reapunta a aquesta pàgina"
 #: pdfarranger_qt/reader.py
 msgid "Rename"
 msgstr "Canvia el nom"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/reader.py
-msgid "Style"
-msgstr "Estil"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/reader.py

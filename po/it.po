@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pdfarranger master\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-04 04:48+0000\n"
+"POT-Creation-Date: 2026-11-05 04:10+0000\n"
 "PO-Revision-Date: 2026-01-04 02:52+0100\n"
 "Last-Translator: Massimo Pissarello <mapi68@gmail.com>\n"
 "Language: it\n"
@@ -65,6 +65,10 @@ msgstr "Copia"
 #: pdfarranger_qt/canvas.py
 msgid "Highlight text"
 msgstr "Evidenzia il testo"
+
+#: pdfarranger_qt/canvas.py
+msgid "Underline text"
+msgstr "Sottolinea il testo"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
@@ -2147,6 +2151,14 @@ msgstr "{state} da {author}"
 msgid "Mark Properties"
 msgstr "Proprietà del contrassegno"
 
+#: pdfarranger_qt/mainwindow.py
+msgid "Straight"
+msgstr "Dritta"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Squiggly"
+msgstr "Ondulata"
+
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
 msgid "Edit Note"
@@ -2924,6 +2936,11 @@ msgstr "Bloccato"
 msgid "Make Properties Default"
 msgstr "Imposta proprietà come predefinite"
 
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py pdfarranger_qt/reader.py
+msgid "Style"
+msgstr "Stile"
+
 #: pdfarranger_qt/properties.py
 msgid "Author"
 msgstr "Autore"
@@ -2960,11 +2977,6 @@ msgstr "Riassegna a questa pagina"
 #: pdfarranger_qt/reader.py
 msgid "Rename"
 msgstr "Rinomina"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/reader.py
-msgid "Style"
-msgstr "Stile"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/reader.py

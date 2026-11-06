@@ -73,6 +73,15 @@ class Tool(NamedTuple):
     its prefix. ``writes`` is what the tool will put in the file, carried here
     only so the declaration stays the single place a tool is described; it is
     documentation until the tool is built.
+
+    ``colour`` is the name of the `markup.PALETTE` entry a mark of this tool
+    is made in before anybody chooses otherwise. **A name, and per tool.**
+    Read off Reader on 2026-11-04 from a document made after its settings
+    were reset, so these are its own defaults rather than one user's habits,
+    and made in Reader's own tool order so each annotation names its tool.
+    Per tool rather than per subtype, because one subtype can carry two of
+    them: `/Caret` starts Light Red for *Replace selected text* and Fuchsia
+    for *Insert text*. Empty for a tool that makes no mark.
     """
 
     name: str
@@ -80,31 +89,65 @@ class Tool(NamedTuple):
     label: str
     icon: str
     writes: str = ""
+    colour: str = "Red"
+    #: `/Subj` and `/IT`, where a tool needs them to say which tool it was.
+    #: **A subtype is not always a tool.** *Add note to text* writes a
+    #: `/Highlight` like the Highlight tool and is told apart by these two:
+    #: `/Subj Comment on Text` and `/IT /HighlightNote`, measured 2026-11-04
+    #: on `Markup Underline Write.pdf`. Empty means the subtype's own
+    #: subject and no intent.
+    subject: str = ""
+    intent: str = ""
+    #: The tool this one shares a current colour with, or empty for a tool
+    #: that keeps its own. **Reader shares one between Add a comment and
+    #: *Add note to text***, reported 2026-11-04: colouring either one
+    #: colours the other, while Highlight keeps its own -- the sharing goes
+    #: by what the tool is for, a note on the page, not by the subtype it
+    #: writes. Turning Underline purple left three later highlights orange,
+    #: so nothing shares a colour document-wide.
+    colour_with: str = ""
 
 
 #: Every tool, in the order each family shows them. Reader's order, which is
 #: the order a user of Reader will look for them in.
 TOOLS: List[Tool] = [
-    Tool("select", POINTER, N_("Select"), "cursor-default-outline"),
-    Tool("pan", POINTER, N_("Pan"), "hand-back-right-outline"),
+    Tool("select", POINTER, N_("Select"), "cursor-default-outline",
+         colour=''),
+    Tool("pan", POINTER, N_("Pan"), "hand-back-right-outline",
+         colour=''),
 
     Tool("comment", COMMENT, N_("Add a comment"), "comment-plus-outline",
-         "/Text, /Name /Comment"),
+         "/Text, /Name /Comment",
+         colour='Purple'),
+    Tool("note_on_text", COMMENT, N_("Add note to text"), "comment-text-outline",
+         "/Highlight /Subj Comment on Text /IT /HighlightNote, /QuadPoints, /CA",
+         # Purple, the comment's own, which it shares: the `/HighlightNote`
+         # in `Markup Underline Write.pdf` is Purple where the plain
+         # highlights beside it are Orange.
+         colour='Purple', subject="Comment on Text", intent="/HighlightNote",
+         colour_with="comment"),
     Tool("replace_text", COMMENT, N_("Replace selected text"), "find-replace",
-         "/Caret /IT /Replace and /StrikeOut, joined by /IRT + /RT /Group"),
+         "/Caret /IT /Replace and /StrikeOut, joined by /IRT + /RT /Group",
+         colour='Light Red'),
     Tool("insert_text", COMMENT, N_("Insert text"), "cursor-text",
-         "/Caret"),
+         "/Caret",
+         colour='Fuchsia'),
     Tool("text_comment", COMMENT, N_("Add text comment"), "text-box-outline",
-         "/FreeText"),
+         "/FreeText",
+         colour='White'),
     Tool("attach_file", COMMENT, N_("Attach file"), "paperclip",
-         "/FileAttachment, /Name /Paperclip, /FS /EF"),
+         "/FileAttachment, /Name /Paperclip, /FS /EF",
+         colour='Red'),
 
     Tool("highlight", TEXT_MARKUP, N_("Highlight"), "format-color-highlight",
-         "/Highlight, /QuadPoints, /CA"),
+         "/Highlight, /QuadPoints, /CA",
+         colour='Orange'),
     Tool("underline", TEXT_MARKUP, N_("Underline"), "format-underline",
-         "/Underline, /QuadPoints"),
+         "/Underline, /QuadPoints",
+         colour='Blue'),
     Tool("strikethrough", TEXT_MARKUP, N_("Strikethrough"),
-         "format-strikethrough", "/StrikeOut, /QuadPoints"),
+         "format-strikethrough", "/StrikeOut, /QuadPoints",
+         colour='Light Red'),
 
     Tool("draw", DRAWING, N_("Draw"), "draw", "/Ink, /InkList, /BS /W"),
     Tool("line", DRAWING, N_("Line"), "minus", "/Line, /L"),
@@ -113,7 +156,8 @@ TOOLS: List[Tool] = [
     Tool("rectangle", DRAWING, N_("Rectangle"), "square-outline", "/Square, /RD"),
     Tool("circle", DRAWING, N_("Circle"), "circle-outline", "/Circle, /RD"),
     Tool("callout", DRAWING, N_("Text callout"), "comment-text-outline",
-         "/FreeText /IT /FreeTextCallout, /CL, /LE /OpenArrow"),
+         "/FreeText /IT /FreeTextCallout, /CL, /LE /OpenArrow",
+         colour='White'),
     Tool("polygon", DRAWING, N_("Polygon"), "pentagon-outline",
          "/Polygon, /Vertices"),
     Tool("cloud", DRAWING, N_("Cloud"), "cloud-outline",

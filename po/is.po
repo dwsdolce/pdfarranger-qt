@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-04 04:48+0000\n"
+"POT-Creation-Date: 2026-11-05 04:10+0000\n"
 "PO-Revision-Date: 2025-09-28 16:51+0000\n"
 "Last-Translator: Sveinn í Felli <sv1@fellsnet.is>\n"
 "Language: is\n"
@@ -65,6 +65,10 @@ msgstr "Afrita"
 #: pdfarranger_qt/canvas.py
 msgid "Highlight text"
 msgstr "Áherslulita texta"
+
+#: pdfarranger_qt/canvas.py
+msgid "Underline text"
+msgstr "Undirstrika texta"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
@@ -2145,6 +2149,14 @@ msgstr "{state} sett af {author}"
 msgid "Mark Properties"
 msgstr "Eiginleikar merkingar"
 
+#: pdfarranger_qt/mainwindow.py
+msgid "Straight"
+msgstr "Bein"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Squiggly"
+msgstr "Bylgjótt"
+
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
 msgid "Edit Note"
@@ -2918,6 +2930,11 @@ msgstr "Læst"
 msgid "Make Properties Default"
 msgstr "Gera eiginleika sjálfgefna"
 
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py pdfarranger_qt/reader.py
+msgid "Style"
+msgstr "Stíll"
+
 #: pdfarranger_qt/properties.py
 msgid "Author"
 msgstr "Höfundur"
@@ -2954,11 +2971,6 @@ msgstr "Beina á þessa síðu"
 #: pdfarranger_qt/reader.py
 msgid "Rename"
 msgstr "Endurnefna"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/reader.py
-msgid "Style"
-msgstr "Stíll"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/reader.py

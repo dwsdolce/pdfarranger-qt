@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  pdfarranger\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-04 04:48+0000\n"
+"POT-Creation-Date: 2026-11-05 04:10+0000\n"
 "PO-Revision-Date: 2023-07-10 15:37+0000\n"
 "Last-Translator: PavelZ\n"
 "Language: cs_CZ\n"
@@ -61,6 +61,10 @@ msgstr "Kopírovat"
 #: pdfarranger_qt/canvas.py
 msgid "Highlight text"
 msgstr "Zvýraznit text"
+
+#: pdfarranger_qt/canvas.py
+msgid "Underline text"
+msgstr "Podtrhnout text"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
@@ -2155,6 +2159,14 @@ msgstr "{state} nastavil {author}"
 msgid "Mark Properties"
 msgstr "Vlastnosti značky"
 
+#: pdfarranger_qt/mainwindow.py
+msgid "Straight"
+msgstr "Rovná"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Squiggly"
+msgstr "Vlnovka"
+
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
 msgid "Edit Note"
@@ -2937,6 +2949,11 @@ msgstr "Zamčeno"
 msgid "Make Properties Default"
 msgstr "Nastavit vlastnosti jako výchozí"
 
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py pdfarranger_qt/reader.py
+msgid "Style"
+msgstr "Styl"
+
 #: pdfarranger_qt/properties.py
 msgid "Author"
 msgstr "Autor"
@@ -2973,11 +2990,6 @@ msgstr "Přesměrovat na tuto stránku"
 #: pdfarranger_qt/reader.py
 msgid "Rename"
 msgstr "Přejmenovat"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/reader.py
-msgid "Style"
-msgstr "Styl"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/reader.py

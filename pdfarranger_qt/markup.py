@@ -43,6 +43,7 @@ import copy
 import datetime
 import getpass
 import itertools
+import math
 import uuid
 from html import escape
 from typing import Dict, List, Optional, Tuple
@@ -57,13 +58,24 @@ from .i18n import N_
 TEXT = "/Text"
 HIGHLIGHT = "/Highlight"
 STRIKEOUT = "/StrikeOut"
+UNDERLINE = "/Underline"
+#: The squiggly *is* the underline's other style. Reader's Underline tool
+#: writes this subtype with `/IT /Underline` when the style is squiggly, so
+#: a squiggly reads back as the Underline tool rather than as a kind of its
+#: own, and the two are one tool here.
+SQUIGGLY = "/Squiggly"
 
-KINDS = (TEXT, HIGHLIGHT, STRIKEOUT)
+KINDS = (TEXT, HIGHLIGHT, STRIKEOUT, UNDERLINE, SQUIGGLY)
+
+#: The two subtypes one tool writes, and which of them means what. A style
+#: is not a value inside the dictionary: it is which dictionary gets
+#: written.
+UNDERLINE_STYLES = {"straight": UNDERLINE, "squiggly": SQUIGGLY}
 
 #: Subtypes whose geometry is a run of text rather than a box, and which say
 #: so with `/QuadPoints`. `/Rect` still has to be there and has to contain
 #: them: a viewer that does not understand the subtype falls back to it.
-QUADDED = (HIGHLIGHT, STRIKEOUT)
+QUADDED = (HIGHLIGHT, STRIKEOUT, UNDERLINE, SQUIGGLY)
 
 #: What a reader calls each kind in a comment list. Not translated: these are
 #: the strings producers actually write, read out of the corpus rather than
@@ -71,8 +83,17 @@ QUADDED = (HIGHLIGHT, STRIKEOUT)
 #: "Cross-Out" in four and `/Text` is "Sticky Note" in seven. A reader groups
 #: and filters its comment list by this, so a translated one would sort into
 #: a category of its own in every other language.
+#: `/IT` for the subtypes that carry one whatever tool made them. A tool
+#: with an intent of its own overrides this -- *Add note to text* writes
+#: `/HighlightNote` on a `/Highlight`, which has none by default.
+INTENTS = {SQUIGGLY: UNDERLINE}
+
 SUBJECTS = {HIGHLIGHT: "Highlight", STRIKEOUT: "Cross-Out",
-            TEXT: "Sticky Note"}
+            TEXT: "Sticky Note",
+            # Both styles say Underline, because both come from the one
+            # tool -- read off `Markup Underline.pdf`, where the same words
+            # were marked each way.
+            UNDERLINE: "Underline", SQUIGGLY: "Underline"}
 
 #: Bit 3 of `/F`, Print. Without it a mark shows on screen and vanishes from
 #: paper, which is not what anybody means by annotating a document.
@@ -173,30 +194,54 @@ RICH_HEAD = ('<?xml version="1.0"?>'
              'xfa:spec="2.0.2">')
 
 
-def rich_from_runs(paragraphs) -> Optional[str]:
-    """Styled runs as `/RC`, or None when nothing in them is styled.
+#: The property set Reader puts on a run that carries no styling: every
+#: property at the value that means "not set", `font-size` negative. It
+#: writes one of these round **every** run of a note somebody typed, so an
+#: unstyled note is a span rather than bare text.
+RICH_UNSET = ("font-size:-14.0pt;text-align:left;"
+              "font-weight:normal;font-style:normal")
+
+
+def rich_from_runs(paragraphs) -> str:
+    """Styled runs as `/RC`.
 
     ``paragraphs`` is a list of lines, each a list of ``(text, style)``
     where the style names only what is set -- the shape `NotePanel.runs`
-    reports. None rather than a fragment of bare spans, because a note
-    nobody styled belongs in `/Contents` alone: writing `/RC` for it would
-    hand every reader a second copy of the same words to prefer.
+    reports. A run with nothing set still gets a span, carrying
+    `RICH_UNSET`, because that is what Reader writes.
+
+    **Always, even when nothing is styled.** It used to answer None there,
+    on a reading of the fixture that counted the status links as unstyled
+    notes: every bare `<p>` in the corpus belongs to a status change or a
+    file attachment, and every note a person typed carries a span. So a
+    note written here arrived without the `/RC` a reader prefers.
     """
-    styled = any(style for line in paragraphs for _text, style in line)
-    if not styled:
-        return None
     out = [RICH_HEAD]
     for line in paragraphs:
         out.append('<p dir="ltr">')
         for text, style in line:
-            said = escape(text)
-            if style:
-                out.append('<span dir="ltr" style="%s">%s</span>' % (
-                    ";".join("%s:%s" % pair for pair in sorted(style.items())),
-                    said))
-            else:
-                out.append(said)
+            out.append('<span dir="ltr" style="%s">%s</span>' % (
+                ";".join("%s:%s" % pair for pair in sorted(style.items()))
+                if style else RICH_UNSET,
+                escape(text)))
         out.append("</p>")
+    out.append("</body>")
+    return "".join(out)
+
+
+def rich_from_text(text: str, generated: bool = False) -> str:
+    """Plain text as `/RC`, for the marks that never saw the editor.
+
+    ``generated`` for text this application composed rather than took from
+    somebody -- a status change's "Completed set by dws". Reader writes
+    those as a bare `<p>` with no span and no `dir`, and every typed note
+    with both, so the distinction is the one the corpus draws.
+    """
+    out = [RICH_HEAD]
+    for line in text.split("\n"):
+        out.append("<p>%s</p>" % escape(line) if generated else
+                   '<p dir="ltr"><span dir="ltr" style="%s">%s</span></p>'
+                   % (RICH_UNSET, escape(line)))
     out.append("</body>")
     return "".join(out)
 
@@ -331,7 +376,8 @@ class Annotation:
 
     __slots__ = ("kind", "page", "rect", "quads", "contents", "colour",
                  "opacity", "author", "created", "name", "irt",
-                 "popup_rect", "state", "rich", "subject", "locked")
+                 "popup_rect", "state", "rich", "subject", "locked",
+                 "intent")
 
     def __init__(self, kind: str, page: int, rect: Tuple[float, ...],
                  contents: str = "", colour=None, author: Optional[str] = None,
@@ -339,7 +385,8 @@ class Annotation:
                  name: Optional[str] = None, opacity=None,
                  irt: Optional[str] = None, popup_rect=None,
                  state: Optional[str] = None, rich: Optional[str] = None,
-                 subject: Optional[str] = None, locked: bool = False):
+                 subject: Optional[str] = None, locked: bool = False,
+                 intent: Optional[str] = None):
         if kind not in KINDS:
             raise ValueError(f"unknown annotation kind: {kind}")
         self.kind = kind
@@ -364,6 +411,9 @@ class Annotation:
         self.subject = subject
         #: `/F` bit 8: this mark is not to be changed. Set from the form.
         self.locked = locked
+        #: `/IT`, which tool made the mark where the subtype alone does not
+        #: say. None means the subtype's own, `INTENTS`, or none at all.
+        self.intent = intent
         self.rect = tuple(float(v) for v in rect)
         #: The mark's `/NM`, its name within the file. Made here rather than
         #: at export so that it survives a save: a name minted on the way out
@@ -475,7 +525,12 @@ def apply_edit(annot, edit) -> None:
         annot[pikepdf.Name.C] = pikepdf.Array([*colour])
     opacity = edit.get("opacity")
     if opacity is not None:
-        annot[pikepdf.Name.CA] = float(opacity)
+        # Taken away at 1 rather than written as 1, so a mark turned fully
+        # opaque here looks like one Reader made fully opaque.
+        if float(opacity) != 1.0:
+            annot[pikepdf.Name.CA] = float(opacity)
+        elif pikepdf.Name.CA in annot:
+            del annot[pikepdf.Name.CA]
     quads = edit.get("quads")
     if quads:
         annot[pikepdf.Name.QuadPoints] = pikepdf.Array(
@@ -513,6 +568,18 @@ def apply_edit(annot, edit) -> None:
     subject = edit.get("subject")
     if subject is not None:
         annot[pikepdf.Name.Subj] = pikepdf.String(subject)
+    style = edit.get("style")
+    if style in UNDERLINE_STYLES:
+        # **The one edit that changes what the annotation is.** An
+        # underline's style is its subtype, so this rewrites `/Subtype`
+        # -- and `/IT`, which says which tool a `/Squiggly` came from.
+        # The appearance goes with it: a wave and a line are not the same
+        # drawing, and the stream the producer wrote draws the old one.
+        annot[pikepdf.Name.Subtype] = pikepdf.Name(UNDERLINE_STYLES[style])
+        if UNDERLINE_STYLES[style] == SQUIGGLY:
+            annot[pikepdf.Name.IT] = pikepdf.Name(UNDERLINE)
+        elif pikepdf.Name.IT in annot:
+            del annot[pikepdf.Name.IT]
     locked = edit.get("locked")
     if locked is not None:
         # One bit of `/F`, set or cleared: the rest of the flags are the
@@ -521,8 +588,8 @@ def apply_edit(annot, edit) -> None:
         flags = int(annot.get(pikepdf.Name.F, 0))
         annot[pikepdf.Name.F] = (flags | LOCKED) if locked else (
             flags & ~LOCKED)
-    if (colour is not None or opacity is not None or quads) and (
-            pikepdf.Name.AP in annot):
+    if (colour is not None or opacity is not None or quads
+            or style in UNDERLINE_STYLES) and (pikepdf.Name.AP in annot):
         # **Only when what it draws has changed.** The stream the producer
         # wrote still draws the old colour over the old run, and every
         # reader falls back to `/QuadPoints` when there is none.
@@ -740,7 +807,7 @@ class MarkEdits:
     #: words with their styling, and a reader prefers it, so the two have
     #: to be written in one go or not at all.
     FIELDS = ("colour", "opacity", "quads", "deleted", "contents", "popup",
-              "rich", "author", "subject", "locked")
+              "rich", "author", "subject", "locked", "style")
 
     def __init__(self, by_page=None):
         self._by_page: Dict[int, Dict[int, dict]] = {}
@@ -858,6 +925,15 @@ def to_dictionary(pdf, annotation: Annotation, page=None) -> pikepdf.Dictionary:
         entry[pikepdf.Name.StateModel] = pikepdf.String("Review")
     # What the form was given, else the name of the tool that made it,
     # which is what Acrobat starts every mark's subject as.
+    # **Which tool made it**, where the subtype does not say by itself.
+    # Two tools write `/Highlight` and are told apart by this: a plain
+    # highlight has no `/IT`, and *Add note to text* has `/HighlightNote`.
+    # Reader also writes `/IT /Underline` on a squiggly, so the mark reads
+    # back as the Underline tool rather than as a kind of its own -- the
+    # one place `/IT` names a tool a *different* subtype came from.
+    intent = annotation.intent or INTENTS.get(annotation.kind)
+    if intent:
+        entry[pikepdf.Name.IT] = pikepdf.Name(intent)
     subject = annotation.subject or SUBJECTS.get(annotation.kind)
     if subject:
         entry[pikepdf.Name.Subj] = pikepdf.String(subject)
@@ -867,11 +943,15 @@ def to_dictionary(pdf, annotation: Annotation, page=None) -> pikepdf.Dictionary:
         # that lists comments lists it -- an empty note against a mark whose
         # whole point was that it had nothing to add.
         entry[pikepdf.Name.Contents] = pikepdf.String(annotation.contents)
-        if annotation.rich:
-            # The same words with their styling. `/Contents` stays beside
-            # it as the plain reading, which is what a viewer that does not
-            # understand `/RC` falls back to.
-            entry[pikepdf.Name.RC] = pikepdf.String(annotation.rich)
+        # **And always the same words as `/RC`**, which is what a reader
+        # that understands it will show. `/Contents` stays beside it as the
+        # plain reading, for the ones that do not. A note that never
+        # reached the editor has no runs to write, so it is composed from
+        # the text -- bare for a status change, which is text this
+        # application wrote, and spanned for anything somebody typed.
+        entry[pikepdf.Name.RC] = pikepdf.String(
+            annotation.rich or rich_from_text(
+                annotation.contents, generated=bool(annotation.state)))
     if page is not None:
         # The page the mark is on. Readers use it to answer "which page is
         # this comment on" without searching every `/Annots`, and ours has
@@ -905,7 +985,11 @@ def to_dictionary(pdf, annotation: Annotation, page=None) -> pikepdf.Dictionary:
     if annotation.kind in QUADDED:
         entry[pikepdf.Name.QuadPoints] = pikepdf.Array(
             [v for quad in annotation.quads for v in _quad_points(quad)])
-        entry[pikepdf.Name.CA] = solidity(annotation)
+        # **Only when it is not 1.** Reader leaves the key out of a fully
+        # opaque mark rather than writing one, highlights included, and an
+        # absent `/CA` already means 1 to every reader.
+        if solidity(annotation) != 1.0:
+            entry[pikepdf.Name.CA] = solidity(annotation)
         entry[pikepdf.Name.AP] = pikepdf.Dictionary(
             N=_appearance(pdf, annotation))
     if annotation.author:
@@ -968,6 +1052,26 @@ PALETTE = (
 PALETTE_COLUMNS = 7
 
 
+def swatch(name: str):
+    """A palette colour by its untranslated name.
+
+    So that a default can be *named* rather than written out as three
+    numbers nobody can check. Raises rather than guessing: a colour that is
+    not in the palette is a mistake, not a shade.
+    """
+    for known, colour in PALETTE:
+        if known == name:
+            return colour
+    raise KeyError("no palette colour called %r" % name)
+
+
+#: What a mark is made in when nobody has said otherwise and no tool
+#: declares one. Every tool does declare one -- see `tools.Tool.colour`,
+#: where the defaults live, per *tool* rather than per subtype -- so this is
+#: the floor under a caller that has no tool at all.
+DEFAULT_COLOUR = swatch("Red")
+
+
 def nearest_swatch(colour):
     """The index of the palette entry closest to ``colour``, or None.
 
@@ -990,11 +1094,31 @@ def nearest_swatch(colour):
 #: How solid each kind is drawn when nobody has said otherwise. A highlight
 #: has to be seen through or it hides the words it marks; a line drawn over
 #: them does not.
-TRANSPARENCY = {HIGHLIGHT: 0.4, STRIKEOUT: 1.0}
+TRANSPARENCY = {HIGHLIGHT: 0.4, STRIKEOUT: 1.0,
+                UNDERLINE: 1.0, SQUIGGLY: 1.0}
+
+
+def opacity_of(mark) -> float:
+    """How solid ``mark`` **is**, as the file says.
+
+    **An absent `/CA` means 1.** It does not mean "whatever that kind is
+    usually drawn at": Reader omits the key entirely on a fully opaque
+    mark, highlights included -- measured on `Markup Highlight.pdf`, where
+    the 100% one carries neither `/CA` nor a `ca` in its appearance's
+    `ExtGState`, only the blend mode. Asking `solidity` instead read that
+    highlight as 40%, and on a `Mark`, which has no `kind`, it raised.
+    """
+    opacity = getattr(mark, "opacity", None)
+    return 1.0 if opacity is None else float(opacity)
 
 
 def solidity(annotation) -> float:
-    """``/CA`` for a mark: its own, or what its kind is usually drawn at."""
+    """``/CA`` for a mark being made: its own, or its kind's starting point.
+
+    **Not the same question as `opacity_of`.** This one is a default for
+    something new, which is why a highlight answers 0.4; that one is what
+    a mark in a file actually is, where the same silence means 1.
+    """
     if getattr(annotation, "opacity", None) is not None:
         return float(annotation.opacity)
     return TRANSPARENCY.get(annotation.kind, 1.0)
@@ -1011,6 +1135,101 @@ def _quad_points(quad) -> "list[float]":
     return [left, top, right, top, left, bottom, right, bottom]
 
 
+# **Every one of these is a fraction of the type's height**, which is the
+# quadrilateral's. They were constants here once, lifted from a single
+# 12.991pt line, and so were right on that line and nowhere else. Fitted
+# instead across five corpus files and six text heights -- 9.45, 12.99,
+# 13.34, 14.17, 14.56 and 15.77 points -- where each agrees to five
+# figures. The one disagreement is a 13.343pt run given the 12.991pt
+# scale, so Reader works from the font size it believes the run is, in
+# steps of its own, rather than from the quadrilateral exactly.
+
+#: How thick an underline or a cross-out is. Reader *strokes* both, so
+#: this is the width of a line centred on the offsets below -- not the
+#: height of a filled rectangle sitting on the quadrilateral's edge,
+#: which is what was drawn here before and put the line half a width low.
+STROKE_THICKNESS = 1.0 / 16.0
+
+#: Where that stroke's centre sits above the quadrilateral's bottom edge.
+#: An underline is below the baseline rather than on the edge of the box,
+#: and a cross-out is below the middle of the type rather than through it.
+UNDERLINE_OFFSET = 1.0 / 7.0
+STRIKEOUT_OFFSET = 3.0 / 7.0
+
+#: The squiggly's wave. Reader fills the run with a tiling pattern whose
+#: tile is ten wide by twelve tall and strokes `0 1 -> 5 11 -> 10 1`, and
+#: places it through a `cm` that is *anisotropic*: it scales x by 1.8
+#: times what it scales y. So the wave that lands is a quarter of the
+#: type's height per cycle and a sixth of it tall.
+SQUIGGLE_SCALE = 1.0 / 72.0
+SQUIGGLE_ASPECT = 1.8
+#: Where the tile's own origin sits above the quadrilateral's bottom edge,
+#: so the wave runs from a sixteenth of the height above that edge to an
+#: eighth of it. Measured 0.2320 and 0.2319 against 12.991pt runs.
+SQUIGGLE_BASE = 1.0 / 56.0
+#: The tile, in its own space: how far one cycle runs, how low and how
+#: high the wave turns, and the stroke it is drawn with.
+SQUIGGLE_CYCLE = 10.0
+SQUIGGLE_LOW = 1.0
+SQUIGGLE_HIGH = 11.0
+SQUIGGLE_PEN = 1.0
+
+
+def _stroke(left, right, y, thickness) -> str:
+    """One line across a run, stroked rather than filled.
+
+    Reader strokes both the underline and the cross-out, so the line is
+    centred on ``y`` and covers half a thickness either side of it. Filling
+    a rectangle *from* ``y`` instead -- which is what this did -- draws the
+    same line half a thickness too high, and no amount of adjusting the
+    thickness hides that at a size other than the one it was fitted to.
+    """
+    return "{} w\n{} {} m\n{} {} l\nS".format(thickness, left, y, right, y)
+
+
+def _zigzag(left, bottom, right, top) -> str:
+    """The squiggly style, as a stroked path along the quadrilateral.
+
+    **Reader fills the quad with a tiling pattern** whose tile strokes
+    `0 1 -> 5 11 -> 10 1` over ten points, repeating every ten. The wave is
+    reproduced here as one path instead: a pattern would have to be a
+    resource of the stream, and the shape it draws is six numbers.
+
+    **Scaled to the type, not fixed.** The tile is placed through a `cm`
+    that is a fraction of the run's height, so a wave on small print is a
+    small wave -- which a pair of constants in points could not be, and was
+    not: the one fitted to a 12.991pt line was half again too tall on the
+    15.77pt heading two pages later.
+
+    The pen is the awkward part. Reader's tile strokes `1 w` and is placed
+    through a scale that is 1.8 times wider than it is tall, which strokes
+    a line whose width varies with its direction. One number has to stand
+    in for that, and the geometric mean of the two scales is what a
+    rasteriser arrives at for a line running diagonally -- which is the
+    whole of this wave.
+    """
+    height = top - bottom
+    up = height * SQUIGGLE_SCALE
+    along = up * SQUIGGLE_ASPECT
+    base = bottom + height * SQUIGGLE_BASE
+    low, high = base + up * SQUIGGLE_LOW, base + up * SQUIGGLE_HIGH
+    cycle = along * SQUIGGLE_CYCLE
+    pen = SQUIGGLE_PEN * math.sqrt(along * up)
+    steps = ["{} w 1 J 1 j".format(pen), "{} {} m".format(left, low)]
+    at = left
+    while at < right:
+        peak = min(at + cycle / 2.0, right)
+        steps.append("{} {} l".format(peak, high))
+        at = at + cycle
+        if min(at, right) <= peak:
+            # The run ended on a rise. Stopping here rather than adding a
+            # trough at the same x, which draws a vertical tick.
+            break
+        steps.append("{} {} l".format(min(at, right), low))
+    steps.append("S")
+    return "\n".join(steps)
+
+
 def _appearance(pdf, annotation):
     """A drawing for a text mark, so the file does not depend on charity.
 
@@ -1024,16 +1243,24 @@ def _appearance(pdf, annotation):
     than being painted over.
     """
     colour = annotation.colour or (1.0, 1.0, 0.0)
-    drawing = ["/GS gs", "{} {} {} rg".format(*colour[:3])]
+    # Both colours: every other kind fills, and the squiggly strokes.
+    drawing = ["/GS gs", "{} {} {} rg".format(*colour[:3]),
+               "{} {} {} RG".format(*colour[:3])]
     for quad in annotation.quads:
         left, bottom, right, top = quad
-        if annotation.kind == STRIKEOUT:
-            # Through the middle, a fifteenth of the line's height thick,
-            # which is about what a pen does.
-            thickness = max(0.6, (top - bottom) / 15.0)
-            middle = (top + bottom) / 2.0
-            drawing.append("{} {} {} {} re f".format(
-                left, middle - thickness / 2, right - left, thickness))
+        if annotation.kind in (STRIKEOUT, UNDERLINE):
+            # **Three sevenths of the way up for a cross-out, one seventh
+            # for an underline, a sixteenth of the height thick, stroked.**
+            # Not the middle of the box and not its bottom edge: Reader
+            # draws both relative to the type, which is why these are
+            # fractions rather than the points they used to be.
+            height = top - bottom
+            above = (STRIKEOUT_OFFSET if annotation.kind == STRIKEOUT
+                     else UNDERLINE_OFFSET)
+            drawing.append(_stroke(left, right, bottom + height * above,
+                                   height * STROKE_THICKNESS))
+        elif annotation.kind == SQUIGGLY:
+            drawing.append(_zigzag(left, bottom, right, top))
         else:
             drawing.append("{} {} {} {} re f".format(
                 left, bottom, right - left, top - bottom))
@@ -1041,11 +1268,15 @@ def _appearance(pdf, annotation):
     stream[pikepdf.Name.Type] = pikepdf.Name.XObject
     stream[pikepdf.Name.Subtype] = pikepdf.Name.Form
     stream[pikepdf.Name.BBox] = pikepdf.Array([*annotation.rect])
+    # The blend mode always, the alpha only when it is not 1 -- Reader's
+    # fully opaque highlight carries `BM /Multiply` and nothing else.
+    graphics = pikepdf.Dictionary(
+        BM=(pikepdf.Name.Multiply if annotation.kind == HIGHLIGHT
+            else pikepdf.Name.Normal))
+    if solidity(annotation) != 1.0:
+        graphics[pikepdf.Name.ca] = solidity(annotation)
     stream[pikepdf.Name.Resources] = pikepdf.Dictionary(
-        ExtGState=pikepdf.Dictionary(GS=pikepdf.Dictionary(
-            BM=(pikepdf.Name.Multiply if annotation.kind == HIGHLIGHT
-                else pikepdf.Name.Normal),
-            ca=solidity(annotation))))
+        ExtGState=pikepdf.Dictionary(GS=graphics))
     return pdf.make_indirect(stream)
 
 
@@ -1291,17 +1522,49 @@ class Mark:
         contents too -- "Completed set by dws" -- which is why this is only
         ever asked of a mark that is neither.
         """
-        return bool(self.contents) and not self.parent
+        return has_note(self)
 
     def is_status(self) -> bool:
-        return self.state is not None
+        return is_status(self)
 
     def is_reply(self) -> bool:
-        return self.parent is not None and self.state is None
+        return is_reply(self)
 
     def __repr__(self):  # pragma: no cover - debugging aid
         return (f"Mark({self.subtype}, page={self.page}, uid={self.uid}, "
                 f"rect={self.rect})")
+
+
+def _answers(mark):
+    """What ``mark`` hangs off, whichever kind of mark it is.
+
+    `Mark` reads `/IRT` into `parent` and `Annotation` holds the name it
+    will be written as in `irt`, so a question asked of both has to look
+    for either.
+    """
+    parent = getattr(mark, "parent", None)
+    return parent if parent is not None else getattr(mark, "irt", None)
+
+
+def is_status(mark) -> bool:
+    """A review state recorded against something, rather than a mark."""
+    return getattr(mark, "state", None) is not None
+
+
+def is_reply(mark) -> bool:
+    """An answer to another mark. A status change is not one."""
+    return _answers(mark) is not None and not is_status(mark)
+
+
+def has_note(mark) -> bool:
+    """Whether ``mark`` carries a popup note of its own.
+
+    Over either kind, because the badge has to be drawn on the marks this
+    application made as well as the ones the file brought -- and the same
+    question asked twice in two shapes is the same question answered two
+    ways the first time one of them changes.
+    """
+    return bool(getattr(mark, "contents", "")) and _answers(mark) is None
 
 
 def _number(value, default=None):

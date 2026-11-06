@@ -14,7 +14,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  pdfarranger\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-04 04:48+0000\n"
+"POT-Creation-Date: 2026-11-05 04:10+0000\n"
 "PO-Revision-Date: 2026-04-03 11:36-0300\n"
 "Last-Translator: Óscar Fernández Díaz <oscfdezdz@tuta.io>\n"
 "Language: es\n"
@@ -71,6 +71,10 @@ msgstr "Copiar"
 #: pdfarranger_qt/canvas.py
 msgid "Highlight text"
 msgstr "Resaltar el texto"
+
+#: pdfarranger_qt/canvas.py
+msgid "Underline text"
+msgstr "Subrayar texto"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
@@ -2151,6 +2155,14 @@ msgstr "{state} por {author}"
 msgid "Mark Properties"
 msgstr "Propiedades de la marca"
 
+#: pdfarranger_qt/mainwindow.py
+msgid "Straight"
+msgstr "Recta"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Squiggly"
+msgstr "Ondulada"
+
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
 msgid "Edit Note"
@@ -2926,6 +2938,11 @@ msgstr "Bloqueado"
 msgid "Make Properties Default"
 msgstr "Establecer propiedades como predeterminadas"
 
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py pdfarranger_qt/reader.py
+msgid "Style"
+msgstr "Estilo"
+
 #: pdfarranger_qt/properties.py
 msgid "Author"
 msgstr "Autor"
@@ -2964,11 +2981,6 @@ msgstr "Reasignar a esta página"
 #: pdfarranger_qt/reader.py
 msgid "Rename"
 msgstr "Cambiar el nombre"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/reader.py
-msgid "Style"
-msgstr "Estilo"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/reader.py

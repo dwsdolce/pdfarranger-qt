@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-04 04:48+0000\n"
+"POT-Creation-Date: 2026-11-05 04:10+0000\n"
 "PO-Revision-Date: 2025-12-15 00:59+0700\n"
 "Last-Translator: Loc Huynh <https://github.com/hthienloc>\n"
 "Language: vi\n"
@@ -63,6 +63,10 @@ msgstr "Chép"
 #: pdfarranger_qt/canvas.py
 msgid "Highlight text"
 msgstr "Tô sáng văn bản"
+
+#: pdfarranger_qt/canvas.py
+msgid "Underline text"
+msgstr "Gạch chân văn bản"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
@@ -2131,6 +2135,14 @@ msgstr "{state} bởi {author}"
 msgid "Mark Properties"
 msgstr "Thuộc tính đánh dấu"
 
+#: pdfarranger_qt/mainwindow.py
+msgid "Straight"
+msgstr "Thẳng"
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Squiggly"
+msgstr "Lượn sóng"
+
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
 msgid "Edit Note"
@@ -2898,6 +2910,11 @@ msgstr "Đã khóa"
 msgid "Make Properties Default"
 msgstr "Đặt thuộc tính làm mặc định"
 
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py pdfarranger_qt/reader.py
+msgid "Style"
+msgstr "Kiểu"
+
 #: pdfarranger_qt/properties.py
 msgid "Author"
 msgstr "Tác giả"
@@ -2934,11 +2951,6 @@ msgstr "Trỏ lại về trang này"
 #: pdfarranger_qt/reader.py
 msgid "Rename"
 msgstr "Đổi tên"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/reader.py
-msgid "Style"
-msgstr "Kiểu"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/reader.py
