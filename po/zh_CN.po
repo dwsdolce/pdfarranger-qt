@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PDF Arranger 1.14.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-06 19:25+0000\n"
+"POT-Creation-Date: 2026-11-06 22:22+0000\n"
 "PO-Revision-Date: 2026-06-02 17:09+0800\n"
 "Last-Translator: Puqns67 <me@puqns67.icu>\n"
 "Language: zh_CN\n"
@@ -79,7 +79,7 @@ msgid "Strikethrough text"
 msgstr "为文本添加删除线"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/canvas.py pdfarranger_qt/tools.py
+#: pdfarranger_qt/canvas.py
 msgid "Add note to text"
 msgstr "为文本添加注释"
 
@@ -2733,8 +2733,8 @@ msgid "Highlight"
 msgstr "高亮"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/properties.py
-msgid "Cross-Out"
+#: pdfarranger_qt/properties.py pdfarranger_qt/tools.py
+msgid "Strikethrough"
 msgstr "删除线"
 
 # machine translation, unreviewed
@@ -2992,11 +2992,6 @@ msgstr "添加文本框"
 #: pdfarranger_qt/tools.py
 msgid "Attach file"
 msgstr "附加文件"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/tools.py
-msgid "Strikethrough"
-msgstr "删除线"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/tools.py
@@ -3533,4 +3528,8 @@ msgstr "显示标题而非文件名"
 
 #~ msgid "Comment properties"
 #~ msgstr "注释属性"
+
+# machine translation, unreviewed
+#~ msgid "Cross-Out"
+#~ msgstr "删除线"
 

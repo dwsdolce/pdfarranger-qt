@@ -21,6 +21,7 @@ real menu bar with a tool bar for the common ones, which is what the platform
 expects.
 """
 
+import json
 import logging
 import os
 import shutil
@@ -198,6 +199,15 @@ class MainWindow(QMainWindow):
         #: not recolour the next highlight. Seeded from what the tool
         #: declares -- `tools.Tool.colour` -- the first time it is asked.
         self._colours: dict = {}
+        #: And how solid each tool's marks are, the same way. A single
+        #: value served every tool once, so fading a highlight set the
+        #: next underline's opacity too.
+        self._opacities: dict = {}
+        #: And the style, for a tool whose kind has more than one. An
+        #: underline starts straight; *Make Properties Default* on a
+        #: squiggly is how that moves.
+        self._styles: dict = {}
+        self._load_tool_defaults()
         self.armed_opacity = None
         self.tool_strip.colour_armed.connect(self._colour_armed)
         self.tool_strip.opacity_armed.connect(self._opacity_armed)
@@ -809,8 +819,16 @@ class MainWindow(QMainWindow):
         # The same `/Highlight` the highlight tool writes. What makes it a
         # different tool is `/Subj` and `/IT`, which come off the tool's
         # own declaration -- see `mark_drawn`.
-        "note_on_text": markup.HIGHLIGHT,
+        # **A gesture, not a tool.** The right-click menu's *Add note to
+        # text* is the comment tool marking a run of words instead of
+        # placing an icon, so it writes a `/Highlight` and takes the
+        # comment tool's colour. It was a tool in the strip for two days
+        # and never should have been.
+        markup.NOTE_ON_TEXT: markup.HIGHLIGHT,
     }
+
+    #: The gestures above that are not tools, and the tool each acts as.
+    GESTURE_TOOLS = {markup.NOTE_ON_TEXT: "comment"}
 
     #: Strip tool -> the canvas's own name for it. Only the tools that have
     #: been built appear: the strip offers twenty and the canvas implements
@@ -820,7 +838,6 @@ class MainWindow(QMainWindow):
         "strikethrough": "strikeout",
         "underline": "underline",
         "comment": "note",
-        "note_on_text": "note_on_text",
         "draw": "draw",
     }
 
@@ -910,6 +927,14 @@ class MainWindow(QMainWindow):
         subtype = self.MARK_KINDS.get(tool)
         if subtype is None:
             return
+        # **The style is the subtype**, so a tool told to default to
+        # squiggly makes a different annotation, not a differently drawn
+        # one. Straight is where an underline starts, not where it is
+        # pinned.
+        style = self._styles.get(self.CANVAS_TO_STRIP.get(tool, tool))
+        if style in markup.UNDERLINE_STYLES and (
+                subtype in markup.UNDERLINE_STYLES.values()):
+            subtype = markup.UNDERLINE_STYLES[style]
         wanted = [(index, rects) for index, rects in pages
                   if rects and 0 <= index < len(self.model.pages)]
         if not wanted:
@@ -928,7 +953,7 @@ class MainWindow(QMainWindow):
             # would be a second gesture for one action.
             self._placed_note = self.model.undo.current
             self.reader.canvas.edit_note(index, len(made) - 1)
-        elif tool == self.CANVAS_TOOLS["note_on_text"]:
+        elif tool == markup.NOTE_ON_TEXT:
             # **The thread window, not the editor on the page.** It is an
             # ordinary note -- Reader opens the same window it opens for
             # every other mark, with the author, the time and Post. The
@@ -961,15 +986,24 @@ class MainWindow(QMainWindow):
             scale = page.scale if page.scale else 1.0
             rect = markup.note_rect(rect[0], rect[3],
                                     markup.NOTE_SIZE / scale)
-        # Which tool, not which subtype: `/Highlight` is two tools, and
-        # what tells them apart in the file is the pair the tool declares.
-        made_by = tools.by_name(self.CANVAS_TO_STRIP.get(tool, tool))
+        # **Which tool, not which subtype.** Two things make a
+        # `/Highlight` -- the highlight tool, and the comment tool over a
+        # run of words -- and what tells them apart in the file is the
+        # subject and the intent.
+        subject, intent = self._names_written_by(tool)
         self.model.annotations.add(markup.Annotation(
             subtype, page.uid, rect, colour=colour, quads=quads,
-            opacity=self.armed_opacity,
-            subject=made_by.subject or None,
-            intent=made_by.intent or None,
+            opacity=self._opacity_for_canvas_tool(tool),
+            subject=subject or None, intent=intent or None,
             author=markup.default_author()))
+
+    @staticmethod
+    def _names_written_by(tool: str):
+        """``(subject, intent)`` for a gesture, or ``("", "")`` for a tool
+        whose subtype already says what it is."""
+        if tool == markup.NOTE_ON_TEXT:
+            return markup.COMMENT_ON_TEXT
+        return "", ""
 
     def colour_for(self, tool: str):
         """What a mark made with ``tool`` would be coloured now.
@@ -980,7 +1014,7 @@ class MainWindow(QMainWindow):
         way: `/Caret` starts Light Red for *Replace selected text* and
         Fuchsia for *Insert text*.
         """
-        tool = self._colour_keeper(tool)
+        tool = self.GESTURE_TOOLS.get(tool, tool)
         if tool in self._colours:
             return self._colours[tool]
         try:
@@ -989,20 +1023,53 @@ class MainWindow(QMainWindow):
             return markup.DEFAULT_COLOUR
         return markup.swatch(named) if named else markup.DEFAULT_COLOUR
 
-    @staticmethod
-    def _colour_keeper(tool: str) -> str:
-        """Which tool's colour ``tool`` uses -- usually its own.
+    #: Where the per-tool defaults are kept between runs. **Internal**:
+    #: this is the application's own state, not something a user opens and
+    #: edits, so the shape and the keys are ours to change. The keys are
+    #: the `tools.py` identifiers, which exist for exactly this sort of
+    #: thing and reach no screen.
+    DEFAULTS_SETTING = "markup/tool-defaults"
 
-        Reader keeps one between *Add a comment* and *Add note to text* --
-        the two tools that put a note on the page -- and not between *Add
-        note to text* and Highlight, although those two write the same
-        `/Highlight`.
+    def _load_tool_defaults(self) -> None:
+        """Read back the appearance each tool was last told to use.
+
+        A default outlives the session: making a squiggly the default and
+        restarting still gives a squiggly. Anything
+        unreadable is dropped rather than raised on -- a preference file
+        is not worth refusing to start over.
         """
         try:
-            shared = tools.by_name(tool).colour_with
-        except KeyError:
-            return tool
-        return shared or tool
+            stored = json.loads(self.settings.value(
+                self.DEFAULTS_SETTING, "", type=str) or "{}")
+            self._colours.update(
+                {k: tuple(v) for k, v in stored.get("colours", {}).items()})
+            self._opacities.update(
+                {k: float(v) for k, v in stored.get("opacities", {}).items()})
+            self._styles.update(
+                {k: str(v) for k, v in stored.get("styles", {}).items()})
+        except Exception:  # noqa: BLE001 - a bad preference is no preference
+            logging.getLogger(__name__).debug(
+                "tool defaults could not be read", exc_info=True)
+
+    def _remember_tool_defaults(self) -> None:
+        """Keep them for the next run. Called whenever one changes."""
+        self.settings.setValue(self.DEFAULTS_SETTING, json.dumps({
+            "colours": {k: list(v) for k, v in self._colours.items()},
+            "opacities": dict(self._opacities),
+            "styles": dict(self._styles),
+        }))
+
+    def opacity_for(self, tool: str):
+        """How solid a mark made with ``tool`` would be now.
+
+        None where the tool has never been told, which leaves the kind to
+        answer -- a highlight is drawn at 0.4 and the rest at 1.
+        """
+        return self._opacities.get(self.GESTURE_TOOLS.get(tool, tool))
+
+    def _opacity_for_canvas_tool(self, tool: str):
+        """The same question, asked with the canvas's name for a tool."""
+        return self.opacity_for(self.CANVAS_TO_STRIP.get(tool, tool))
 
     def _colour_for_canvas_tool(self, tool: str):
         """The same question, asked with the canvas's name for a tool."""
@@ -1023,14 +1090,16 @@ class MainWindow(QMainWindow):
         # And against the armed tool, so the swatch and the mark it makes
         # cannot disagree -- which is what sent a new underline out in the
         # tool's own colour while the swatch showed another.
-        self._colours[self._colour_keeper(self.tool_strip.armed())] = (
-            tuple(colour))
+        self._colours[self.tool_strip.armed()] = tuple(colour)
+        self._remember_tool_defaults()
 
     def _opacity_armed(self, opacity: float) -> None:
         if self.reader.canvas.selected_mark() is not None:
             self._change_mark(opacity=float(opacity))
             return
         self.armed_opacity = float(opacity)
+        self._opacities[self.tool_strip.armed()] = float(opacity)
+        self._remember_tool_defaults()
 
     def _selected_mark_changed(self, _selected: bool) -> None:
         """Tell the buttons, and the tail's swatch, what is selected.
@@ -1621,24 +1690,63 @@ class MainWindow(QMainWindow):
         target.rich = rich or ""
         self._after_mark_change(index, uid)
 
+    def tool_that_made(self, mark) -> str:
+        """Which tool made ``mark``, by the name `tools.py` knows it by.
+
+        **The kind names the tool**, and `/Highlight` is the only kind two
+        of them make: the highlight tool, and the comment tool over a run
+        of words, which is told by `/Subj` and `/IT`. A mark whose kind
+        cannot be named never reaches here -- it is not selectable, so no
+        form opens on it.
+        """
+        kind = (mark.kind if isinstance(mark, markup.Annotation)
+                else mark.subtype)
+        if kind == markup.HIGHLIGHT:
+            names = (getattr(mark, "subject", "") or "",
+                     getattr(mark, "intent", "") or "")
+            if names == markup.COMMENT_ON_TEXT:
+                return "comment"
+        if kind in markup.UNDERLINE_STYLES.values():
+            # Both styles are the one tool: the style *is* the subtype, so
+            # a squiggly is not a kind of its own to be traced back.
+            kind = markup.UNDERLINE
+        for tool, made in self.MARK_KINDS.items():
+            if made == kind and tool not in self.GESTURE_TOOLS:
+                return self.CANVAS_TO_STRIP.get(tool, tool)
+        return ""
+
     def mark_is_the_default(self, mark) -> None:
         """*Make current properties default*: what the next mark gets.
 
-        Writes nothing to any document. It arms the colour and the opacity
-        this mark has, which is what the tail's swatch arms when it is used
-        -- the same preference reached from the mark instead of the palette.
+        Writes nothing to any document. It sends this mark's appearance to
+        the defaults of **the tool that made it**, which is what the
+        checkbox in the properties form does and what the same entry in
+        the right-click menu does -- one behaviour, two ways in.
+
+        The author and the subject are not touched. They belong to the
+        mark: who made it, and what this one is called.
         """
+        tool = self.tool_that_made(mark)
+        if not tool:
+            return
         colour = getattr(mark, "colour", None)
         if colour is not None:
             self.armed_colour = tuple(colour)
+            self._colours[tool] = tuple(colour)
         # A mark we made answers what its kind starts at when it has said
         # nothing; a mark the file brought answers 1, because that is what
         # an absent `/CA` means. Asking `solidity` for both raised on the
-        # second -- a `Mark` has no `kind` -- so *Make current properties
-        # default* threw on any Reader-written mark with no `/CA`.
-        self.armed_opacity = float(
+        # second -- a `Mark` has no `kind`.
+        opacity = float(
             markup.solidity(mark) if isinstance(mark, markup.Annotation)
             else markup.opacity_of(mark))
+        self.armed_opacity = opacity
+        self._opacities[tool] = opacity
+        style = self._style_of(mark)
+        if style is not None:
+            self._styles[tool] = style
+        self._remember_tool_defaults()
+        self.tool_strip.arm_colour(self.colour_for(self.tool_strip.armed()))
 
     def comment_on_selected_mark(self) -> None:
         """The first button in the bar: open the selected mark's thread.

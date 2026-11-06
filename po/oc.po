@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-06 19:25+0000\n"
+"POT-Creation-Date: 2026-11-06 22:22+0000\n"
 "PO-Revision-Date: 2026-02-15 15:16+0100\n"
 "Last-Translator: Quentin PAGÈS\n"
 "Language: oc\n"
@@ -75,7 +75,7 @@ msgid "Strikethrough text"
 msgstr "Raiar lo tèxte"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/canvas.py pdfarranger_qt/tools.py
+#: pdfarranger_qt/canvas.py
 msgid "Add note to text"
 msgstr "Apondre una nòta al tèxte"
 
@@ -2925,8 +2925,8 @@ msgid "Highlight"
 msgstr "Suslinhar"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/properties.py
-msgid "Cross-Out"
+#: pdfarranger_qt/properties.py pdfarranger_qt/tools.py
+msgid "Strikethrough"
 msgstr "Raiat"
 
 # machine translation, unreviewed
@@ -3184,11 +3184,6 @@ msgstr "Apondre una zòna de tèxte"
 #: pdfarranger_qt/tools.py
 msgid "Attach file"
 msgstr "Jónher un fichièr"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/tools.py
-msgid "Strikethrough"
-msgstr "Raiat"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/tools.py
@@ -3754,4 +3749,8 @@ msgstr "Mostrar lo títol puslèu que lo nom del fichièr"
 
 #~ msgid "Comment properties"
 #~ msgstr "Proprietats del comentari"
+
+# machine translation, unreviewed
+#~ msgid "Cross-Out"
+#~ msgstr "Raiat"
 

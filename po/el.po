@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PDF Arranger 1.9.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-06 19:25+0000\n"
+"POT-Creation-Date: 2026-11-06 22:22+0000\n"
 "PO-Revision-Date: 2023-06-12 10:30+0300\n"
 "Last-Translator: Manussos Pulinakis "
 "<38626261+manussos@users.noreply.github.com>\n"
@@ -80,7 +80,7 @@ msgid "Strikethrough text"
 msgstr "Διακριτή διαγραφή κειμένου"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/canvas.py pdfarranger_qt/tools.py
+#: pdfarranger_qt/canvas.py
 msgid "Add note to text"
 msgstr "Προσθήκη σημείωσης στο κείμενο"
 
@@ -2988,9 +2988,9 @@ msgid "Highlight"
 msgstr "Επισήμανση"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/properties.py
-msgid "Cross-Out"
-msgstr "Διαγραφή"
+#: pdfarranger_qt/properties.py pdfarranger_qt/tools.py
+msgid "Strikethrough"
+msgstr "Διακριτή διαγραφή"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/properties.py pdfarranger_qt/tools.py
@@ -3247,11 +3247,6 @@ msgstr "Προσθήκη πλαισίου κειμένου"
 #: pdfarranger_qt/tools.py
 msgid "Attach file"
 msgstr "Επισύναψη αρχείου"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/tools.py
-msgid "Strikethrough"
-msgstr "Διακριτή διαγραφή"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/tools.py
@@ -3774,4 +3769,8 @@ msgstr "Εμφάνιση του τίτλου αντί του ονόματος α
 
 #~ msgid "Comment properties"
 #~ msgstr "Ιδιότητες σχολίου"
+
+# machine translation, unreviewed
+#~ msgid "Cross-Out"
+#~ msgstr "Διαγραφή"
 

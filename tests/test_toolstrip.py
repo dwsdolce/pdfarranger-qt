@@ -88,16 +88,16 @@ class TestEveryToolIsReachable(StripCase):
                          for name in button.actions_by_tool)
         self.assertEqual(offered, sorted(t.name for t in tools.TOOLS))
 
-    def test_there_are_twenty_one_of_them(self):
+    def test_there_are_twenty_of_them(self):
         """The count the plan speaks of, so a quiet loss of one is visible.
 
-        Twenty-one since *Add note to text* joined them: it writes the same
-        `/Highlight` the Highlight tool writes and is a tool of its own all
-        the same, told apart by `/Subj` and `/IT`.
+        It read twenty-one for two days, while *Add note to text* had an
+        entry here. It never had one in Reader: that is a right-click entry
+        over a selection, and the tool it reaches is Add a comment.
         """
         from pdfarranger_qt import tools
 
-        self.assertEqual(len(tools.TOOLS), 21)
+        self.assertEqual(len(tools.TOOLS), 20)
 
     def test_no_signature_tool_is_offered(self):
         """This application does not sign, so there is no such tool."""

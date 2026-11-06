@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-06 19:25+0000\n"
+"POT-Creation-Date: 2026-11-06 22:22+0000\n"
 "PO-Revision-Date: 2025-12-15 00:59+0700\n"
 "Last-Translator: Loc Huynh <https://github.com/hthienloc>\n"
 "Language: vi\n"
@@ -74,7 +74,7 @@ msgid "Strikethrough text"
 msgstr "Gạch ngang văn bản"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/canvas.py pdfarranger_qt/tools.py
+#: pdfarranger_qt/canvas.py
 msgid "Add note to text"
 msgstr "Thêm ghi chú vào văn bản"
 
@@ -2901,8 +2901,8 @@ msgid "Highlight"
 msgstr "Tô sáng"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/properties.py
-msgid "Cross-Out"
+#: pdfarranger_qt/properties.py pdfarranger_qt/tools.py
+msgid "Strikethrough"
 msgstr "Gạch ngang"
 
 # machine translation, unreviewed
@@ -3160,11 +3160,6 @@ msgstr "Thêm hộp văn bản"
 #: pdfarranger_qt/tools.py
 msgid "Attach file"
 msgstr "Đính kèm tệp"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/tools.py
-msgid "Strikethrough"
-msgstr "Gạch ngang"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/tools.py
@@ -3699,4 +3694,8 @@ msgstr "Hiện tiêu đề thay cho tên tập tin"
 
 #~ msgid "Comment properties"
 #~ msgstr "Thuộc tính chú thích"
+
+# machine translation, unreviewed
+#~ msgid "Cross-Out"
+#~ msgstr "Gạch ngang"
 

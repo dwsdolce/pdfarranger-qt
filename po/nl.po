@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PDF-Shuffler 0.7\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-06 19:25+0000\n"
+"POT-Creation-Date: 2026-11-06 22:22+0000\n"
 "PO-Revision-Date: 2025-05-26 10:43+0200\n"
 "Last-Translator: Heimen Stoffels <vistausss@fastmail.com>\n"
 "Language: nl\n"
@@ -79,7 +79,7 @@ msgid "Strikethrough text"
 msgstr "Tekst doorhalen"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/canvas.py pdfarranger_qt/tools.py
+#: pdfarranger_qt/canvas.py
 msgid "Add note to text"
 msgstr "Notitie aan tekst toevoegen"
 
@@ -2957,8 +2957,8 @@ msgid "Highlight"
 msgstr "Markeren"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/properties.py
-msgid "Cross-Out"
+#: pdfarranger_qt/properties.py pdfarranger_qt/tools.py
+msgid "Strikethrough"
 msgstr "Doorhalen"
 
 # machine translation, unreviewed
@@ -3216,11 +3216,6 @@ msgstr "Tekstvak toevoegen"
 #: pdfarranger_qt/tools.py
 msgid "Attach file"
 msgstr "Bestand bijvoegen"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/tools.py
-msgid "Strikethrough"
-msgstr "Doorhalen"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/tools.py
@@ -3762,4 +3757,8 @@ msgstr "De titel tonen in plaats van de bestandsnaam"
 
 #~ msgid "Comment properties"
 #~ msgstr "Opmerkingseigenschappen"
+
+# machine translation, unreviewed
+#~ msgid "Cross-Out"
+#~ msgstr "Doorhalen"
 

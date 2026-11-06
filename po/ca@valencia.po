@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-06 19:25+0000\n"
+"POT-Creation-Date: 2026-11-06 22:22+0000\n"
 "PO-Revision-Date: 2022-08-13 11:15+0200\n"
 "Last-Translator: Juanma1980 <juanma1980@gmail.com>\n"
 "Language: ca@valencia\n"
@@ -73,7 +73,7 @@ msgid "Strikethrough text"
 msgstr "Ratlla el text"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/canvas.py pdfarranger_qt/tools.py
+#: pdfarranger_qt/canvas.py
 msgid "Add note to text"
 msgstr "Afig una nota al text"
 
@@ -2980,8 +2980,8 @@ msgid "Highlight"
 msgstr "Ressaltat"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/properties.py
-msgid "Cross-Out"
+#: pdfarranger_qt/properties.py pdfarranger_qt/tools.py
+msgid "Strikethrough"
 msgstr "Ratllat"
 
 # machine translation, unreviewed
@@ -3239,11 +3239,6 @@ msgstr "Afig un quadre de text"
 #: pdfarranger_qt/tools.py
 msgid "Attach file"
 msgstr "Adjunta un fitxer"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/tools.py
-msgid "Strikethrough"
-msgstr "Ratllat"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/tools.py
@@ -3767,4 +3762,8 @@ msgstr "Mostra el títol en lloc del nom del fitxer"
 
 #~ msgid "Comment properties"
 #~ msgstr "Propietats del comentari"
+
+# machine translation, unreviewed
+#~ msgid "Cross-Out"
+#~ msgstr "Ratllat"
 

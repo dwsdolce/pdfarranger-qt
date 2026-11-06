@@ -13,7 +13,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  pdfarranger\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-06 19:25+0000\n"
+"POT-Creation-Date: 2026-11-06 22:22+0000\n"
 "PO-Revision-Date: 2025-08-29 21:18+0100\n"
 "Last-Translator: Hugo Carvalho <hugokarvalho@hotmail.com>\n"
 "Language: pt_PT\n"
@@ -81,7 +81,7 @@ msgid "Strikethrough text"
 msgstr "Rasurar o texto"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/canvas.py pdfarranger_qt/tools.py
+#: pdfarranger_qt/canvas.py
 msgid "Add note to text"
 msgstr "Adicionar uma nota ao texto"
 
@@ -2945,8 +2945,8 @@ msgid "Highlight"
 msgstr "Realçar"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/properties.py
-msgid "Cross-Out"
+#: pdfarranger_qt/properties.py pdfarranger_qt/tools.py
+msgid "Strikethrough"
 msgstr "Rasurado"
 
 # machine translation, unreviewed
@@ -3204,11 +3204,6 @@ msgstr "Adicionar caixa de texto"
 #: pdfarranger_qt/tools.py
 msgid "Attach file"
 msgstr "Anexar ficheiro"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/tools.py
-msgid "Strikethrough"
-msgstr "Rasurado"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/tools.py
@@ -3742,4 +3737,8 @@ msgstr "Mostrar o título em vez do nome do ficheiro"
 
 #~ msgid "Comment properties"
 #~ msgstr "Propriedades do comentário"
+
+# machine translation, unreviewed
+#~ msgid "Cross-Out"
+#~ msgstr "Rasurado"
 

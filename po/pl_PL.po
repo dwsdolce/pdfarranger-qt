@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PDF-Shuffler 0.7\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-06 19:25+0000\n"
+"POT-Creation-Date: 2026-11-06 22:22+0000\n"
 "PO-Revision-Date: 2021-12-30 17:13+0100\n"
 "Last-Translator: Toratora <darex7@o2.pl>\n"
 "Language: pl_PL\n"
@@ -80,7 +80,7 @@ msgid "Strikethrough text"
 msgstr "Przekreśl tekst"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/canvas.py pdfarranger_qt/tools.py
+#: pdfarranger_qt/canvas.py
 msgid "Add note to text"
 msgstr "Dodaj notatkę do tekstu"
 
@@ -3003,8 +3003,8 @@ msgid "Highlight"
 msgstr "Wyróżnienie"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/properties.py
-msgid "Cross-Out"
+#: pdfarranger_qt/properties.py pdfarranger_qt/tools.py
+msgid "Strikethrough"
 msgstr "Przekreślenie"
 
 # machine translation, unreviewed
@@ -3262,11 +3262,6 @@ msgstr "Dodaj pole tekstowe"
 #: pdfarranger_qt/tools.py
 msgid "Attach file"
 msgstr "Załącz plik"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/tools.py
-msgid "Strikethrough"
-msgstr "Przekreślenie"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/tools.py
@@ -3789,4 +3784,8 @@ msgstr "Pokaż tytuł zamiast nazwy pliku"
 
 #~ msgid "Comment properties"
 #~ msgstr "Właściwości komentarza"
+
+# machine translation, unreviewed
+#~ msgid "Cross-Out"
+#~ msgstr "Przekreślenie"
 

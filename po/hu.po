@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-06 19:25+0000\n"
+"POT-Creation-Date: 2026-11-06 22:22+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: hu\n"
@@ -76,7 +76,7 @@ msgid "Strikethrough text"
 msgstr "Szöveg áthúzása"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/canvas.py pdfarranger_qt/tools.py
+#: pdfarranger_qt/canvas.py
 msgid "Add note to text"
 msgstr "Jegyzet hozzáadása a szöveghez"
 
@@ -2957,8 +2957,8 @@ msgid "Highlight"
 msgstr "Kiemelés"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/properties.py
-msgid "Cross-Out"
+#: pdfarranger_qt/properties.py pdfarranger_qt/tools.py
+msgid "Strikethrough"
 msgstr "Áthúzás"
 
 # machine translation, unreviewed
@@ -3216,11 +3216,6 @@ msgstr "Szövegdoboz hozzáadása"
 #: pdfarranger_qt/tools.py
 msgid "Attach file"
 msgstr "Fájl csatolása"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/tools.py
-msgid "Strikethrough"
-msgstr "Áthúzás"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/tools.py
@@ -3749,4 +3744,8 @@ msgstr "A cím megjelenítése a fájlnév helyett"
 
 #~ msgid "Comment properties"
 #~ msgstr "Megjegyzés tulajdonságai"
+
+# machine translation, unreviewed
+#~ msgid "Cross-Out"
+#~ msgstr "Áthúzás"
 

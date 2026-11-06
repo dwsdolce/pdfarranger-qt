@@ -1499,6 +1499,61 @@ follow, but the *artwork* is
   generated at placement, not picked from a palette. So the choice runs from
   none, through a small set of our own, to all three families. Not decided.
 
+- **O5. Whether to copy Reader's rule for what a click on the page means.** The
+  rule itself is now known, having been got wrong twice here first. It has two
+  parts and they fit together.
+
+  **Marks are hit by their drawn ink, not by `/Rect`.** To take an arrow you
+  must click a pixel of the arrow. This matters more than it sounds: measured
+  on page 1 of the test document, the 25 marks make 25 overlapping pairs by
+  bounding box and at most a handful by ink -- four pairs found, sharing
+  between 1 and 26 pixels, with two marks the per-mark isolation could not
+  resolve, so four is a floor rather than a count. Bounding boxes would make
+  the page a thicket; ink makes it nearly unambiguous. An unfilled shape is its
+  outline, so the inside of an empty rectangle is not the rectangle.
+
+  **Where the gesture starts decides what it is.** Start on a mark's ink and
+  the gesture belongs to the mark -- select it, move it. Start anywhere else
+  and it is a text selection, which then runs *through* marks freely: dragging
+  across a highlight selects the words under it. The mode, Select against Pan,
+  changes none of this; marks behave the same under both, and the mode governs
+  only whether a drag on bare page selects text or scrolls.
+
+  What it costs: text whose every pixel lies under a mark cannot be selected,
+  because there is nowhere to start -- a word inside a highlight is
+  unreachable. Reader does not simply pay that, which is how this was first
+  written here. A mark's right-click menu carries **Enable Text Selection**,
+  which makes that one mark transparent to the pointer so the text under it
+  can be taken. The cost is real but remediable, and the remedy is per mark
+  rather than a mode.
+
+  So this is no longer a question about how to build it but whether to copy it,
+  and the cost above is the only reason not to. One thing stands either way:
+  mark over mark needs its own rule, where topmost-first is what the note
+  hit-testing already does.
+
+  **Copied, for the text markups, on 2026-11-05** -- decision 44. A
+  cross-out is taken on its struck line and not on the struck words beside
+  it, *Enable Text Selection* is in the mark's menu, and topmost-first is
+  what `mark_at` walks. What is left of this item is the tools that draw
+  ink rather than mark text, where the rule was first worked out and where
+  there is still nothing to apply it to.
+
+  **The scrolling half of Pan has a reader after all.** It was written off
+  here on the grounds that the wheel, the trackpad, the scrollbars and the
+  keyboard already scroll in every mode. That holds for a mouse and not for a
+  finger. A touchscreen has no wheel and no trackpad, and this app handles no
+  touch at all -- nothing under `pdfarranger_qt/` mentions `QTouchEvent` or a
+  gesture -- so a finger arrives as a synthesised left-button drag. Under the
+  rule above that drag on bare page selects text, which leaves a touchscreen
+  with no way to scroll the page by finger. Pan is that way. This is the
+  owner's reason, 2026-10-31, and it is a reason to have the mode that does
+  not depend on copying Reader: Pan earns its place as the touch scroll
+  gesture whether or not the click rule is copied. What it leaves open is
+  whether to answer touch with the mode or with real touch handling -- a
+  one-finger drag that scrolls while Select stays Select -- which is now part
+  of O5. Not decided.
+
 - **O6. Whether to offer a Fill in form fields family.** It appeared in
   Reader during this work -- not in any earlier run, so it arrived with a
   version update, 2026-11-02 -- as a sixth family button between the drawing
@@ -1567,61 +1622,6 @@ follow, but the *artwork* is
   the audience. A page of boxes drawn in ink is still a page of boxes drawn
   in ink, and a rectangle tool plus a checkmark stamp would cover it without
   a family of its own.
-
-- **O5. Whether to copy Reader's rule for what a click on the page means.** The
-  rule itself is now known, having been got wrong twice here first. It has two
-  parts and they fit together.
-
-  **Marks are hit by their drawn ink, not by `/Rect`.** To take an arrow you
-  must click a pixel of the arrow. This matters more than it sounds: measured
-  on page 1 of the test document, the 25 marks make 25 overlapping pairs by
-  bounding box and at most a handful by ink -- four pairs found, sharing
-  between 1 and 26 pixels, with two marks the per-mark isolation could not
-  resolve, so four is a floor rather than a count. Bounding boxes would make
-  the page a thicket; ink makes it nearly unambiguous. An unfilled shape is its
-  outline, so the inside of an empty rectangle is not the rectangle.
-
-  **Where the gesture starts decides what it is.** Start on a mark's ink and
-  the gesture belongs to the mark -- select it, move it. Start anywhere else
-  and it is a text selection, which then runs *through* marks freely: dragging
-  across a highlight selects the words under it. The mode, Select against Pan,
-  changes none of this; marks behave the same under both, and the mode governs
-  only whether a drag on bare page selects text or scrolls.
-
-  What it costs: text whose every pixel lies under a mark cannot be selected,
-  because there is nowhere to start -- a word inside a highlight is
-  unreachable. Reader does not simply pay that, which is how this was first
-  written here. A mark's right-click menu carries **Enable Text Selection**,
-  which makes that one mark transparent to the pointer so the text under it
-  can be taken. The cost is real but remediable, and the remedy is per mark
-  rather than a mode.
-
-  So this is no longer a question about how to build it but whether to copy it,
-  and the cost above is the only reason not to. One thing stands either way:
-  mark over mark needs its own rule, where topmost-first is what the note
-  hit-testing already does.
-
-  **Copied, for the text markups, on 2026-11-05** -- decision 44. A
-  cross-out is taken on its struck line and not on the struck words beside
-  it, *Enable Text Selection* is in the mark's menu, and topmost-first is
-  what `mark_at` walks. What is left of this item is the tools that draw
-  ink rather than mark text, where the rule was first worked out and where
-  there is still nothing to apply it to.
-
-  **The scrolling half of Pan has a reader after all.** It was written off
-  here on the grounds that the wheel, the trackpad, the scrollbars and the
-  keyboard already scroll in every mode. That holds for a mouse and not for a
-  finger. A touchscreen has no wheel and no trackpad, and this app handles no
-  touch at all -- nothing under `pdfarranger_qt/` mentions `QTouchEvent` or a
-  gesture -- so a finger arrives as a synthesised left-button drag. Under the
-  rule above that drag on bare page selects text, which leaves a touchscreen
-  with no way to scroll the page by finger. Pan is that way. This is the
-  owner's reason, 2026-10-31, and it is a reason to have the mode that does
-  not depend on copying Reader: Pan earns its place as the touch scroll
-  gesture whether or not the click rule is copied. What it leaves open is
-  whether to answer touch with the mode or with real touch handling -- a
-  one-finger drag that scrolls while Select stays Select -- which is now part
-  of O5. Not decided.
 
 ## Decisions
 
@@ -2354,7 +2354,10 @@ handle.
 numbered.** Each tool declares the `PALETTE` entry its marks start in --
 `tools.Tool.colour` -- and keeps whatever colour is chosen for it
 afterwards, so picking one with Underline armed does not recolour the next
-highlight. **Per tool, not per subtype**, because one subtype can be two
+highlight. **Decision 45 says what "chosen for it" means**: a colour
+picked with nothing selected, or the form's values sent over by *Make
+Properties Default*. Recolouring a mark that is already there changes
+that mark alone. **Per tool, not per subtype**, because one subtype can be two
 tools with two colours: `/Caret` starts Light Red for *Replace selected
 text* and Fuchsia for *Insert text*.
 
@@ -2609,6 +2612,78 @@ of its own, and the menu, the remaining tabs and the notes are
 highlight's. `Markup Strikethrough.pdf` also confirms the drawing on a
 sixth text size -- `0.06250` thick and `0.42856` of the height up the
 quadrilateral, which is 1/16 and 3/7 to five figures.
+
+**45. Changing a mark changes that mark. A tool's defaults move only when
+asked.** Taken from the owner on 2026-11-06, after measuring Reader and
+departing from it in one respect.
+
+A mark's appearance can be set from three places -- the swatch in the
+toolbar, the floating context palette, and the properties form. **All
+three change the selected mark and nothing else**, and none of them
+touches what the tool will make next. With no mark selected the toolbar
+swatch arms the colour for the next mark, which is what it is for.
+
+**That part is deliberately not Reader.** There, changing a mark's colour
+from any of the three re-arms the tool that made it, so the next mark
+comes out in the colour you last repaired something with. The owner met
+it and found it unexpected; it folds two intentions -- *fix this mark*
+and *change my default* -- into one gesture, and it leaves Make
+Properties Default with nothing to do for the attribute people change
+most.
+
+**The swatch follows the selection and returns to the tool.** Selecting a
+mark puts that mark's colour in the toolbar swatch; deselecting puts the
+tool's back. Display only -- looking at a mark arms nothing.
+
+**Make Properties Default is a checkbox**, in the form's footer beside
+Locked, and here we follow Reader exactly. It opens unticked every time.
+Ticking it does nothing by itself: on **OK** the form's values become the
+defaults of the tool, and the box resets. Cancel does nothing at all.
+
+**The right-click menu's *Make current properties default* is the same
+thing**, reached without opening the form: it does what ticking the box
+and pressing OK does. One behaviour, two ways in.
+
+It carries **every *appearance* attribute the form holds** -- colour,
+opacity, and whatever the kind adds: the style for an underline, the icon
+for a comment, and whatever a kind not yet built brings with it. So an
+underline made squiggly and then made default makes the next underline
+squiggly, which is how *a new underline is straight* gets moved. Straight
+is where it starts, not where it is pinned.
+
+**The author and the subject are never defaults.** They are on the
+General tab and they belong to the mark: who made it, and what this one
+is called. Neither is a preference and neither is saved as one.
+
+**The defaults are global and outlive the session.** Measured: make a
+squiggly the default, quit Reader, open a different file, and the next
+underline is squiggly. Ours live in memory and reset on restart, so they
+need somewhere to live.
+
+Durable, but **internal**: they are this application's own state, not
+something a user opens and edits, so whatever they are keyed by is ours
+to choose and ours to change.
+
+**They belong to the tool that made the mark**, not to the tool matching
+its kind. A highlight made by the comment tool sets the *comment* tool's
+default, although its form is headed *Highlight Properties*. The
+alternative adjusts a tool that did not make this mark and will not make
+another like it, so the button would do nothing for the thing in front of
+you. Which tool made a mark is recorded in `/Subj` and `/IT`, which makes
+**reading `/IT` a requirement**: today it is written and then dropped on
+the way back in, so a mark of ours would answer the question wrongly
+after a round trip. A mark whose maker cannot be named never reaches this
+question: if its kind cannot be named either it is not selectable, so no
+form opens on it, and the kind always names a tool -- `/Highlight` is the
+only one two tools share, and `/Subj` with `/IT` is what tells those two
+apart.
+
+**Locked is the other checkbox and behaves differently.** It is a
+property of the mark, it is written to the file, and it stays as it is
+set. Ticking it disables everything on every tab at once and before OK --
+the author and subject on General, the colour, opacity and style on
+Appearance -- and unticking makes them live again without closing the
+form. It does **not** disable Make Properties Default, in Reader or here.
 
 ## Done
 

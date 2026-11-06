@@ -15,7 +15,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  pdfarranger\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-06 19:25+0000\n"
+"POT-Creation-Date: 2026-11-06 22:22+0000\n"
 "PO-Revision-Date: 2025-07-09 08:35+0200\n"
 "Last-Translator: Sebastian Scherch\n"
 "Language: de\n"
@@ -83,7 +83,7 @@ msgid "Strikethrough text"
 msgstr "Text durchstreichen"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/canvas.py pdfarranger_qt/tools.py
+#: pdfarranger_qt/canvas.py
 msgid "Add note to text"
 msgstr "Notiz zum Text hinzufügen"
 
@@ -2950,8 +2950,8 @@ msgid "Highlight"
 msgstr "Hervorheben"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/properties.py
-msgid "Cross-Out"
+#: pdfarranger_qt/properties.py pdfarranger_qt/tools.py
+msgid "Strikethrough"
 msgstr "Durchstreichen"
 
 # machine translation, unreviewed
@@ -3209,11 +3209,6 @@ msgstr "Textfeld hinzufügen"
 #: pdfarranger_qt/tools.py
 msgid "Attach file"
 msgstr "Datei anhängen"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/tools.py
-msgid "Strikethrough"
-msgstr "Durchstreichen"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/tools.py
@@ -3783,4 +3778,8 @@ msgstr "Den Titel statt des Dateinamens anzeigen"
 
 #~ msgid "Comment properties"
 #~ msgstr "Kommentareigenschaften"
+
+# machine translation, unreviewed
+#~ msgid "Cross-Out"
+#~ msgstr "Durchstreichen"
 

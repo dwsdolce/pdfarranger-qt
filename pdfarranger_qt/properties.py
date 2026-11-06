@@ -197,9 +197,6 @@ class MarkProperties(QDialog):
         #: is used rather than when it closes.
         self._colour = props.colour
         self._opacity = props.opacity
-        #: Set by *Make Properties Default*, which writes nothing to the
-        #: file: it is this application's own preference for the next mark.
-        self.make_default = False
 
         outer = QVBoxLayout(self)
         tabs = QTabWidget(self)
@@ -214,9 +211,19 @@ class MarkProperties(QDialog):
         self.locked.setChecked(props.locked)
         self.locked.toggled.connect(self._lock_changed)
         footer.addWidget(self.locked)
-        default = QPushButton(_("Make Properties Default"), self)
-        default.clicked.connect(self._make_default)
-        footer.addWidget(default)
+        #: *Make Properties Default*: a checkbox, beside Locked, which
+        #: writes nothing to the file. **Ticking it does nothing by
+        #: itself** -- on OK the form's appearance becomes the defaults of
+        #: the tool that made the mark, and the box is gone with the
+        #: dialog. Cancel does nothing at all. It was a push button that
+        #: armed itself the instant it was clicked, so a click followed by
+        #: Cancel still changed the defaults, and nothing showed whether
+        #: it had been pressed.
+        #:
+        #: The lock does not disable it: it changes no mark, and Reader
+        #: leaves it live too.
+        self.make_default_box = QCheckBox(_("Make Properties Default"), self)
+        footer.addWidget(self.make_default_box)
         footer.addStretch(1)
         buttons = QDialogButtonBox(
             QDialogButtonBox.Ok | QDialogButtonBox.Cancel, self)
@@ -392,8 +399,10 @@ class MarkProperties(QDialog):
         if self._was.styles:
             self.style.setEnabled(not on)
 
-    def _make_default(self) -> None:
-        self.make_default = True
+    @property
+    def make_default(self) -> bool:
+        """Whether the form was asked to set the tool's defaults."""
+        return self.make_default_box.isChecked()
 
     def changed(self) -> dict:
         """What the form was given and what it holds now, where they differ.

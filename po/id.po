@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-06 19:25+0000\n"
+"POT-Creation-Date: 2026-11-06 22:22+0000\n"
 "PO-Revision-Date: 2023-06-08 10:00+0700\n"
 "Last-Translator: Abdul Munif Hanafi <amunifhanafi@gmail.com>\n"
 "Language: id\n"
@@ -77,7 +77,7 @@ msgid "Strikethrough text"
 msgstr "Coret Teks"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/canvas.py pdfarranger_qt/tools.py
+#: pdfarranger_qt/canvas.py
 msgid "Add note to text"
 msgstr "Tambah catatan ke teks"
 
@@ -2972,8 +2972,8 @@ msgid "Highlight"
 msgstr "Sorot"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/properties.py
-msgid "Cross-Out"
+#: pdfarranger_qt/properties.py pdfarranger_qt/tools.py
+msgid "Strikethrough"
 msgstr "Coret"
 
 # machine translation, unreviewed
@@ -3231,11 +3231,6 @@ msgstr "Tambah kotak teks"
 #: pdfarranger_qt/tools.py
 msgid "Attach file"
 msgstr "Lampirkan berkas"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/tools.py
-msgid "Strikethrough"
-msgstr "Coret"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/tools.py
@@ -3759,4 +3754,8 @@ msgstr "Tampilkan judul alih-alih nama berkas"
 
 #~ msgid "Comment properties"
 #~ msgstr "Properti Komentar"
+
+# machine translation, unreviewed
+#~ msgid "Cross-Out"
+#~ msgstr "Coret"
 

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  pdfarranger\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-06 19:25+0000\n"
+"POT-Creation-Date: 2026-11-06 22:22+0000\n"
 "PO-Revision-Date: 2023-06-06 13:27+0200\n"
 "Last-Translator: Janez G <janezgac@gmail.com>\n"
 "Language: sl_SI\n"
@@ -76,7 +76,7 @@ msgid "Strikethrough text"
 msgstr "Prečrtaj besedilo"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/canvas.py pdfarranger_qt/tools.py
+#: pdfarranger_qt/canvas.py
 msgid "Add note to text"
 msgstr "Dodaj opombo k besedilu"
 
@@ -2941,8 +2941,8 @@ msgid "Highlight"
 msgstr "Poudari"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/properties.py
-msgid "Cross-Out"
+#: pdfarranger_qt/properties.py pdfarranger_qt/tools.py
+msgid "Strikethrough"
 msgstr "Prečrtano"
 
 # machine translation, unreviewed
@@ -3200,11 +3200,6 @@ msgstr "Dodaj besedilno polje"
 #: pdfarranger_qt/tools.py
 msgid "Attach file"
 msgstr "Pripni datoteko"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/tools.py
-msgid "Strikethrough"
-msgstr "Prečrtano"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/tools.py
@@ -3728,4 +3723,8 @@ msgstr "Pokaži naslov namesto imena datoteke"
 
 #~ msgid "Comment properties"
 #~ msgstr "Lastnosti komentarja"
+
+# machine translation, unreviewed
+#~ msgid "Cross-Out"
+#~ msgstr "Prečrtano"
 

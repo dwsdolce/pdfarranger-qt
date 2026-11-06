@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  pdfarranger\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-06 19:25+0000\n"
+"POT-Creation-Date: 2026-11-06 22:22+0000\n"
 "PO-Revision-Date: 2023-07-10 15:37+0000\n"
 "Last-Translator: PavelZ\n"
 "Language: cs_CZ\n"
@@ -72,7 +72,7 @@ msgid "Strikethrough text"
 msgstr "Přeškrtnout text"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/canvas.py pdfarranger_qt/tools.py
+#: pdfarranger_qt/canvas.py
 msgid "Add note to text"
 msgstr "Přidat poznámku k textu"
 
@@ -2940,8 +2940,8 @@ msgid "Highlight"
 msgstr "Zvýraznění"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/properties.py
-msgid "Cross-Out"
+#: pdfarranger_qt/properties.py pdfarranger_qt/tools.py
+msgid "Strikethrough"
 msgstr "Přeškrtnutí"
 
 # machine translation, unreviewed
@@ -3199,11 +3199,6 @@ msgstr "Přidat textové pole"
 #: pdfarranger_qt/tools.py
 msgid "Attach file"
 msgstr "Připojit soubor"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/tools.py
-msgid "Strikethrough"
-msgstr "Přeškrtnutí"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/tools.py
@@ -3725,4 +3720,8 @@ msgstr "Zobrazit název místo jména souboru"
 
 #~ msgid "Comment properties"
 #~ msgstr "Vlastnosti komentáře"
+
+# machine translation, unreviewed
+#~ msgid "Cross-Out"
+#~ msgstr "Přeškrtnutí"
 

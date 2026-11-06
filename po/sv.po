@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  pdfarranger\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-06 19:25+0000\n"
+"POT-Creation-Date: 2026-11-06 22:22+0000\n"
 "PO-Revision-Date: 2026-05-24 07:36+0300\n"
 "Last-Translator: kbengs\n"
 "Language: sv\n"
@@ -75,7 +75,7 @@ msgid "Strikethrough text"
 msgstr "Stryk över texten"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/canvas.py pdfarranger_qt/tools.py
+#: pdfarranger_qt/canvas.py
 msgid "Add note to text"
 msgstr "Lägg till anteckning till texten"
 
@@ -2905,9 +2905,9 @@ msgid "Highlight"
 msgstr "Markera"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/properties.py
-msgid "Cross-Out"
-msgstr "Genomstrykning"
+#: pdfarranger_qt/properties.py pdfarranger_qt/tools.py
+msgid "Strikethrough"
+msgstr "Genomstruken"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/properties.py pdfarranger_qt/tools.py
@@ -3164,11 +3164,6 @@ msgstr "Lägg till textruta"
 #: pdfarranger_qt/tools.py
 msgid "Attach file"
 msgstr "Bifoga fil"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/tools.py
-msgid "Strikethrough"
-msgstr "Genomstruken"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/tools.py
@@ -3729,4 +3724,8 @@ msgstr "Visa titeln i stället för filnamnet"
 
 #~ msgid "Comment properties"
 #~ msgstr "Kommentarsegenskaper"
+
+# machine translation, unreviewed
+#~ msgid "Cross-Out"
+#~ msgstr "Genomstrykning"
 

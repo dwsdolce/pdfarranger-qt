@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pdfarranger - Korean\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-06 19:25+0000\n"
+"POT-Creation-Date: 2026-11-06 22:22+0000\n"
 "PO-Revision-Date: 2026-05-25 00:41+0900\n"
 "Last-Translator: VenusGirl <venusgirl@outlook.com>\n"
 "Language: ko\n"
@@ -75,7 +75,7 @@ msgid "Strikethrough text"
 msgstr "텍스트에 취소선"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/canvas.py pdfarranger_qt/tools.py
+#: pdfarranger_qt/canvas.py
 msgid "Add note to text"
 msgstr "텍스트에 메모 추가"
 
@@ -2789,8 +2789,8 @@ msgid "Highlight"
 msgstr "강조 표시"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/properties.py
-msgid "Cross-Out"
+#: pdfarranger_qt/properties.py pdfarranger_qt/tools.py
+msgid "Strikethrough"
 msgstr "취소선"
 
 # machine translation, unreviewed
@@ -3048,11 +3048,6 @@ msgstr "텍스트 상자 추가"
 #: pdfarranger_qt/tools.py
 msgid "Attach file"
 msgstr "파일 첨부"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/tools.py
-msgid "Strikethrough"
-msgstr "취소선"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/tools.py
@@ -3607,4 +3602,8 @@ msgstr "파일 이름 대신 제목 보이기"
 
 #~ msgid "Comment properties"
 #~ msgstr "주석 속성"
+
+# machine translation, unreviewed
+#~ msgid "Cross-Out"
+#~ msgstr "취소선"
 

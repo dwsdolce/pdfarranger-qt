@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  pdfarranger\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-06 19:25+0000\n"
+"POT-Creation-Date: 2026-11-06 22:22+0000\n"
 "PO-Revision-Date: 2024-03-24 19:16+0200\n"
 "Last-Translator: \n"
 "Language: fi\n"
@@ -75,7 +75,7 @@ msgid "Strikethrough text"
 msgstr "Yliviivaa teksti"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/canvas.py pdfarranger_qt/tools.py
+#: pdfarranger_qt/canvas.py
 msgid "Add note to text"
 msgstr "Lisää muistiinpano tekstiin"
 
@@ -2950,8 +2950,8 @@ msgid "Highlight"
 msgstr "Korostus"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/properties.py
-msgid "Cross-Out"
+#: pdfarranger_qt/properties.py pdfarranger_qt/tools.py
+msgid "Strikethrough"
 msgstr "Yliviivaus"
 
 # machine translation, unreviewed
@@ -3209,11 +3209,6 @@ msgstr "Lisää tekstikehys"
 #: pdfarranger_qt/tools.py
 msgid "Attach file"
 msgstr "Liitä tiedosto"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/tools.py
-msgid "Strikethrough"
-msgstr "Yliviivaus"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/tools.py
@@ -3732,4 +3727,8 @@ msgstr "Näytä otsikko tiedostonimen sijaan"
 
 #~ msgid "Comment properties"
 #~ msgstr "Kommentin ominaisuudet"
+
+# machine translation, unreviewed
+#~ msgid "Cross-Out"
+#~ msgstr "Yliviivaus"
 

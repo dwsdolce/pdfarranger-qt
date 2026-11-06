@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pdfarranger-qt VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/dwsdolce/pdfarranger-qt/issues\n"
-"POT-Creation-Date: 2026-11-06 19:25+0000\n"
+"POT-Creation-Date: 2026-11-06 22:22+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -64,7 +64,7 @@ msgstr ""
 msgid "Strikethrough text"
 msgstr ""
 
-#: pdfarranger_qt/canvas.py pdfarranger_qt/tools.py
+#: pdfarranger_qt/canvas.py
 msgid "Add note to text"
 msgstr ""
 
@@ -2314,8 +2314,8 @@ msgstr ""
 msgid "Highlight"
 msgstr ""
 
-#: pdfarranger_qt/properties.py
-msgid "Cross-Out"
+#: pdfarranger_qt/properties.py pdfarranger_qt/tools.py
+msgid "Strikethrough"
 msgstr ""
 
 #: pdfarranger_qt/properties.py pdfarranger_qt/tools.py
@@ -2526,10 +2526,6 @@ msgstr ""
 
 #: pdfarranger_qt/tools.py
 msgid "Attach file"
-msgstr ""
-
-#: pdfarranger_qt/tools.py
-msgid "Strikethrough"
 msgstr ""
 
 #: pdfarranger_qt/tools.py

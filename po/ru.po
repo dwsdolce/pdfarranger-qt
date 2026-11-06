@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pdfarranger master\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-06 19:25+0000\n"
+"POT-Creation-Date: 2026-11-06 22:22+0000\n"
 "PO-Revision-Date: 2026-09-04 09:59+0000\n"
 "Last-Translator: Lumenman <28367232+Lumenman@users.noreply.github.com>\n"
 "Language: ru\n"
@@ -73,7 +73,7 @@ msgid "Strikethrough text"
 msgstr "Зачеркнуть текст"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/canvas.py pdfarranger_qt/tools.py
+#: pdfarranger_qt/canvas.py
 msgid "Add note to text"
 msgstr "Добавить заметку к тексту"
 
@@ -2753,8 +2753,8 @@ msgid "Highlight"
 msgstr "Выделение"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/properties.py
-msgid "Cross-Out"
+#: pdfarranger_qt/properties.py pdfarranger_qt/tools.py
+msgid "Strikethrough"
 msgstr "Зачёркивание"
 
 # machine translation, unreviewed
@@ -2988,11 +2988,6 @@ msgstr "Добавить текстовое поле"
 #: pdfarranger_qt/tools.py
 msgid "Attach file"
 msgstr "Вложить файл"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/tools.py
-msgid "Strikethrough"
-msgstr "Зачёркивание"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/tools.py
@@ -3551,4 +3546,8 @@ msgstr "Показывать заголовок вместо имени файл
 
 #~ msgid "Comment properties"
 #~ msgstr "Свойства комментария"
+
+# machine translation, unreviewed
+#~ msgid "Cross-Out"
+#~ msgstr "Зачёркивание"
 

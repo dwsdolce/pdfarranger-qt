@@ -98,14 +98,6 @@ class Tool(NamedTuple):
     #: subject and no intent.
     subject: str = ""
     intent: str = ""
-    #: The tool this one shares a current colour with, or empty for a tool
-    #: that keeps its own. **Reader shares one between Add a comment and
-    #: *Add note to text***, reported 2026-11-04: colouring either one
-    #: colours the other, while Highlight keeps its own -- the sharing goes
-    #: by what the tool is for, a note on the page, not by the subtype it
-    #: writes. Turning Underline purple left three later highlights orange,
-    #: so nothing shares a colour document-wide.
-    colour_with: str = ""
 
 
 #: Every tool, in the order each family shows them. Reader's order, which is
@@ -116,16 +108,14 @@ TOOLS: List[Tool] = [
     Tool("pan", POINTER, N_("Pan"), "hand-back-right-outline",
          colour=''),
 
+    # **It writes two kinds.** An icon where it is clicked, and a
+    # `/Highlight` over a run of selected words -- which is what the
+    # right-click menu's *Add note to text* reaches. That second mark was
+    # briefly a tool of its own here, in the strip, which it never was in
+    # Reader. What it writes over words is `markup.COMMENT_ON_TEXT`.
     Tool("comment", COMMENT, N_("Add a comment"), "comment-plus-outline",
-         "/Text, /Name /Comment",
+         "/Text with /Name, or /Highlight /IT /HighlightNote over words",
          colour='Purple'),
-    Tool("note_on_text", COMMENT, N_("Add note to text"), "comment-text-outline",
-         "/Highlight /Subj Comment on Text /IT /HighlightNote, /QuadPoints, /CA",
-         # Purple, the comment's own, which it shares: the `/HighlightNote`
-         # in `Markup Underline Write.pdf` is Purple where the plain
-         # highlights beside it are Orange.
-         colour='Purple', subject="Comment on Text", intent="/HighlightNote",
-         colour_with="comment"),
     Tool("replace_text", COMMENT, N_("Replace selected text"), "find-replace",
          "/Caret /IT /Replace and /StrikeOut, joined by /IRT + /RT /Group",
          colour='Light Red'),

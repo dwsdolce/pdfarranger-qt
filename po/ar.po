@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-06 19:25+0000\n"
+"POT-Creation-Date: 2026-11-06 22:22+0000\n"
 "PO-Revision-Date: 2024-09-05 17:05+0300\n"
 "Last-Translator: Abdullah Albaroty <albaroty@gmail.com>\n"
 "Language: ar\n"
@@ -77,7 +77,7 @@ msgid "Strikethrough text"
 msgstr "توسيط النص بخط"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/canvas.py pdfarranger_qt/tools.py
+#: pdfarranger_qt/canvas.py
 msgid "Add note to text"
 msgstr "إضافة ملاحظة إلى النص"
 
@@ -2918,9 +2918,9 @@ msgid "Highlight"
 msgstr "تمييز"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/properties.py
-msgid "Cross-Out"
-msgstr "شطب"
+#: pdfarranger_qt/properties.py pdfarranger_qt/tools.py
+msgid "Strikethrough"
+msgstr "يتوسطه خط"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/properties.py pdfarranger_qt/tools.py
@@ -3177,11 +3177,6 @@ msgstr "إضافة مربع نص"
 #: pdfarranger_qt/tools.py
 msgid "Attach file"
 msgstr "إرفاق ملف"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/tools.py
-msgid "Strikethrough"
-msgstr "يتوسطه خط"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/tools.py
@@ -3703,4 +3698,8 @@ msgstr "أظهر العنوان بدل اسم الملف"
 
 #~ msgid "Comment properties"
 #~ msgstr "خصائص التعليق"
+
+# machine translation, unreviewed
+#~ msgid "Cross-Out"
+#~ msgstr "شطب"
 

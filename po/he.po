@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-06 19:25+0000\n"
+"POT-Creation-Date: 2026-11-06 22:22+0000\n"
 "PO-Revision-Date: 2023-06-12 11:22+0300\n"
 "Last-Translator: Yaron Shahrabani <sh.yaron@gmail.com>\n"
 "Language: he\n"
@@ -76,7 +76,7 @@ msgid "Strikethrough text"
 msgstr "מתיחת קו חוצה על הטקסט"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/canvas.py pdfarranger_qt/tools.py
+#: pdfarranger_qt/canvas.py
 msgid "Add note to text"
 msgstr "הוספת הערה לטקסט"
 
@@ -2905,8 +2905,8 @@ msgid "Highlight"
 msgstr "הדגשה"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/properties.py
-msgid "Cross-Out"
+#: pdfarranger_qt/properties.py pdfarranger_qt/tools.py
+msgid "Strikethrough"
 msgstr "קו חוצה"
 
 # machine translation, unreviewed
@@ -3164,11 +3164,6 @@ msgstr "הוספת תיבת טקסט"
 #: pdfarranger_qt/tools.py
 msgid "Attach file"
 msgstr "צירוף קובץ"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/tools.py
-msgid "Strikethrough"
-msgstr "קו חוצה"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/tools.py
@@ -3686,4 +3681,8 @@ msgstr "הצגת הכותרת במקום שם הקובץ"
 
 #~ msgid "Comment properties"
 #~ msgstr "מאפייני הערה"
+
+# machine translation, unreviewed
+#~ msgid "Cross-Out"
+#~ msgstr "קו חוצה"
 

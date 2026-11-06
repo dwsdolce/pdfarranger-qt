@@ -83,6 +83,18 @@ QUADDED = (HIGHLIGHT, STRIKEOUT, UNDERLINE, SQUIGGLY)
 #: "Cross-Out" in four and `/Text` is "Sticky Note" in seven. A reader groups
 #: and filters its comment list by this, so a translated one would sort into
 #: a category of its own in every other language.
+#: What the comment tool writes when it marks a run of words rather than
+#: placing an icon: `(subject, intent)` on a `/Highlight`, which is the
+#: whole of what tells it from one the highlight tool made. Measured on
+#: `Markup Comment.pdf`, 2026-11-06. Reached from the right-click menu's
+#: *Add note to text*, which is an entry in that menu and not a tool.
+COMMENT_ON_TEXT = ("Comment on Text", "/HighlightNote")
+
+#: What that gesture is called where it has to be named -- by the canvas
+#: that reports it and the window that writes it. **Not a tool**: there is
+#: no entry for it in `tools.TOOLS` and none in the strip.
+NOTE_ON_TEXT = "note_on_text"
+
 #: `/IT` for the subtypes that carry one whatever tool made them. A tool
 #: with an intent of its own overrides this -- *Add note to text* writes
 #: `/HighlightNote` on a `/Highlight`, which has none by default.
@@ -1476,13 +1488,13 @@ class Mark:
     __slots__ = ("uid", "page", "index", "subtype", "rect", "quads", "colour",
                  "opacity", "contents", "author", "name", "parent", "state",
                  "hidden", "when", "popup_open", "popup_rect", "rich",
-                 "locked", "subject")
+                 "locked", "subject", "intent")
 
     def __init__(self, page, subtype, rect, quads=(), colour=None,
                  opacity=None, contents="", name=None, parent=None,
                  state=None, hidden=False, index=-1, author="", when="",
                  popup_open=False, popup_rect=None, rich="", locked=False,
-                 subject=""):
+                 subject="", intent=""):
         self.uid = next(_mark_uids)
         #: Where this mark sits among the markup annotations on its page, in
         #: the order the file has them. What `MarkEdits` keys an edit by, and
@@ -1529,6 +1541,12 @@ class Mark:
         #: `/Subj`, which Acrobat starts as the name of the tool that made
         #: the mark and the properties form can change to anything.
         self.subject = subject
+        #: `/IT`, which with `/Subj` says **which tool made this mark**.
+        #: Read as well as written: a mark whose maker cannot be named
+        #: cannot have its tool's defaults set from it, and a mark of ours
+        #: answered that wrongly after a round trip while this was dropped
+        #: on the way in.
+        self.intent = intent
 
     def boxes(self) -> "list[tuple]":
         """The quadrilaterals as ``(left, bottom, right, top)`` rectangles.
@@ -1651,6 +1669,7 @@ def marks_in(pdf) -> "list[Mark]":
                     contents=str(annot.get(pikepdf.Name.Contents, "")),
                     rich=str(annot.get(pikepdf.Name.RC, "")),
                     subject=str(annot.get(pikepdf.Name.Subj, "")),
+                    intent=str(annot.get(pikepdf.Name.IT, "")),
                     author=str(annot.get(pikepdf.Name.T, "")),
                     when=str(annot.get(pikepdf.Name.M,
                                        annot.get(pikepdf.Name.CreationDate,

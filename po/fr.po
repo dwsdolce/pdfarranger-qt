@@ -13,7 +13,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-06 19:25+0000\n"
+"POT-Creation-Date: 2026-11-06 22:22+0000\n"
 "PO-Revision-Date: 2024-02-24 20:47+0100\n"
 "Last-Translator: Jérôme Robert <jeromerobert@gmx.com>\n"
 "Language: fr\n"
@@ -81,7 +81,7 @@ msgid "Strikethrough text"
 msgstr "Barrer le texte"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/canvas.py pdfarranger_qt/tools.py
+#: pdfarranger_qt/canvas.py
 msgid "Add note to text"
 msgstr "Ajouter une note au texte"
 
@@ -2966,9 +2966,9 @@ msgid "Highlight"
 msgstr "Surligner"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/properties.py
-msgid "Cross-Out"
-msgstr "Barré"
+#: pdfarranger_qt/properties.py pdfarranger_qt/tools.py
+msgid "Strikethrough"
+msgstr "Barrer"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/properties.py pdfarranger_qt/tools.py
@@ -3225,11 +3225,6 @@ msgstr "Ajouter une zone de texte"
 #: pdfarranger_qt/tools.py
 msgid "Attach file"
 msgstr "Joindre un fichier"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/tools.py
-msgid "Strikethrough"
-msgstr "Barrer"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/tools.py
@@ -3766,4 +3761,8 @@ msgstr "Afficher le titre plutôt que le nom du fichier"
 
 #~ msgid "Comment properties"
 #~ msgstr "Propriétés du commentaire"
+
+# machine translation, unreviewed
+#~ msgid "Cross-Out"
+#~ msgstr "Barré"
 

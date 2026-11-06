@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-06 19:25+0000\n"
+"POT-Creation-Date: 2026-11-06 22:22+0000\n"
 "PO-Revision-Date: 2025-09-28 16:51+0000\n"
 "Last-Translator: Sveinn í Felli <sv1@fellsnet.is>\n"
 "Language: is\n"
@@ -76,7 +76,7 @@ msgid "Strikethrough text"
 msgstr "Yfirstrika texta"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/canvas.py pdfarranger_qt/tools.py
+#: pdfarranger_qt/canvas.py
 msgid "Add note to text"
 msgstr "Bæta athugasemd við texta"
 
@@ -2921,8 +2921,8 @@ msgid "Highlight"
 msgstr "Áherslulita"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/properties.py
-msgid "Cross-Out"
+#: pdfarranger_qt/properties.py pdfarranger_qt/tools.py
+msgid "Strikethrough"
 msgstr "Yfirstrikun"
 
 # machine translation, unreviewed
@@ -3180,11 +3180,6 @@ msgstr "Bæta við textareit"
 #: pdfarranger_qt/tools.py
 msgid "Attach file"
 msgstr "Hengja skrá við"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/tools.py
-msgid "Strikethrough"
-msgstr "Yfirstrikun"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/tools.py
@@ -3721,4 +3716,8 @@ msgstr "Sýna titilinn í stað skráarnafnsins"
 
 #~ msgid "Comment properties"
 #~ msgstr "Eiginleikar athugasemdar"
+
+# machine translation, unreviewed
+#~ msgid "Cross-Out"
+#~ msgstr "Yfirstrikun"
 

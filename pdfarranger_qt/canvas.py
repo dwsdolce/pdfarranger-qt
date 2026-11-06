@@ -2764,9 +2764,11 @@ class PageCanvas(QAbstractScrollArea):
     STRIKEOUT = "strikeout"
     UNDERLINE = "underline"
     NOTE = "note"
-    #: Not a kind of mark of its own: a `/Highlight` that carries a note,
-    #: which is a separate *tool* in Reader and so a separate one here.
-    NOTE_ON_TEXT = "note_on_text"
+    #: **A gesture, not a tool.** The right-click menu's *Add note to
+    #: text*: the comment tool marking a run of words rather than placing
+    #: an icon, so it writes a `/Highlight`. It had an entry in the strip
+    #: for two days, which Reader never had.
+    NOTE_ON_TEXT = markup.NOTE_ON_TEXT
     DRAW = "draw"
 
     #: Tools whose geometry is a run of *text* rather than an area. They drag

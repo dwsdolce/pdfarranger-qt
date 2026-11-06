@@ -2001,35 +2001,48 @@ class TestANoteOnTheWordsIsStillAHighlight(unittest.TestCase):
     def setUp(self):
         self.pdf = pikepdf.Pdf.new()
 
-    def made(self, tool_name):
-        from pdfarranger_qt import tools
-
-        tool = tools.by_name(tool_name)
+    def made(self, subject="", intent=""):
         mark = markup.Annotation(
             markup.HIGHLIGHT, 1, (36.0, 668.0, 196.0, 682.0),
             quads=[(36.0, 668.7, 196.0, 681.7)],
-            subject=tool.subject or None, intent=tool.intent or None)
+            subject=subject or None, intent=intent or None)
         return markup.to_dictionary(self.pdf, mark)
 
-    def test_the_tool_declares_both_keys(self):
+    def test_the_comment_tool_is_not_two_tools(self):
+        """It had an entry of its own in the strip for two days. Reader
+        never had one: *Add note to text* is in the right-click menu over a
+        selection, and the toolbar tool it reaches is Add a comment."""
         from pdfarranger_qt import tools
 
-        tool = tools.by_name("note_on_text")
-        self.assertEqual(tool.subject, "Comment on Text")
-        self.assertEqual(tool.intent, "/HighlightNote")
+        self.assertNotIn("note_on_text", [tool.name for tool in tools.TOOLS])
+        with self.assertRaises(KeyError):
+            tools.by_name("note_on_text")
 
     def test_it_writes_the_pair_that_names_it(self):
-        entry = self.made("note_on_text")
+        entry = self.made(*markup.COMMENT_ON_TEXT)
         self.assertEqual(str(entry["/Subtype"]), markup.HIGHLIGHT)
         self.assertEqual(str(entry["/Subj"]), "Comment on Text")
         self.assertEqual(str(entry["/IT"]), "/HighlightNote")
 
     def test_a_plain_highlight_still_has_neither(self):
-        """The generalisation that let `/IT` come off the tool must not
-        start writing one on the tool that has none."""
-        entry = self.made("highlight")
+        """The generalisation that lets `/IT` be written must not start
+        writing one on a highlight that has none."""
+        entry = self.made()
         self.assertEqual(str(entry["/Subj"]), "Highlight")
         self.assertNotIn("/IT", entry.keys())
+
+    def test_what_is_written_comes_back(self):
+        """`/IT` was written and dropped on the way in, so a mark of ours
+        could not say which tool made it after a round trip."""
+        pdf = pikepdf.Pdf.new()
+        pdf.add_blank_page(page_size=(612, 792))
+        markup.add_to_page(pdf, pdf.pages[0], [markup.Annotation(
+            markup.HIGHLIGHT, 1, (36.0, 668.0, 196.0, 682.0),
+            quads=[(36.0, 668.7, 196.0, 681.7)],
+            subject=markup.COMMENT_ON_TEXT[0],
+            intent=markup.COMMENT_ON_TEXT[1])])
+        read = markup.marks_in(pdf)[0]
+        self.assertEqual((read.subject, read.intent), markup.COMMENT_ON_TEXT)
 
     def test_an_intent_the_subtype_owns_is_still_written(self):
         """`/Squiggly` carries `/IT /Underline` whichever tool made it, and
