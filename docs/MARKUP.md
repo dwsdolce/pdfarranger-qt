@@ -2685,6 +2685,81 @@ the author and subject on General, the colour, opacity and style on
 Appearance -- and unticking makes them live again without closing the
 form. It does **not** disable Make Properties Default, in Reader or here.
 
+**46. The same document made in either application looks the same.** The
+owner's rule, 2026-11-06, and it decides a class of questions rather than
+one: where Reader's choice is visible in the file, we make the same
+choice, and a reason of our own has to be better than that before it
+wins.
+
+It settles the three below. It does **not** mean copying Reader
+everywhere -- decision 45 departs from it deliberately, and so does
+*Underline text* in the selection menu and *Strikethrough* in a form
+title. Those are places the file does not see. This is about what reaches
+the page.
+
+**47. A comment's icon is Reader's drawing in Reader's box.** Seventeen
+icons, each a path drawing with no text in it -- two declare a `/Font`
+and never use it. The paths are taken from the streams in
+`corpus/Markup Comment.pdf` and kept **in the source**, not as SVG files:
+PDF operators, SVG path data and `QPainterPath` are one geometry in three
+notations, so the container decides only who can edit an icon later, and
+a table in the source needs no conversion either way and takes the
+mark's colour as a parameter.
+
+**Reader's rectangle comes with them.** `/Rect` is the box the appearance
+is mapped onto, and Reader's are cut to each glyph -- 24 by 24 for
+Comment, 13 by 18 for Key, 20 by 17 for Right Pointer -- where we write a
+flat 20 for every note. The paths and the box are one measurement: a key
+drawn into a square is half again too wide.
+
+**`/Checkmark` keeps its grey.** Its stream hard-codes
+`0.396 0.396 0.396 rg` and ignores `/C`, so it alone renders grey beside
+sixteen coloured ones. An Acrobat defect, in the same row whose label is
+also wrong -- and reproduced anyway, because a comment made here and a
+comment made there have to match.
+
+**48. An empty note is never posted, and what cancelling costs depends on
+the mark.** Two rules, and only the first is about the editor.
+
+**Post is refused while the note is empty**, on every mark there is. An
+empty note is not something anyone meant to make.
+
+**Cancelling deletes the mark only where the mark requires text.** A
+comment *is* its note, so cancelling or leaving it empty means there was
+no comment and nothing should remain. A highlight, an underline or a
+cross-out stands on its own: cancelling leaves the mark and simply gives
+it no note.
+
+| requires text -- cancel removes it | stands alone -- cancel leaves it |
+|---|---|
+| Comment, the icon | Highlight |
+| Comment on text, the highlight | Underline, either style |
+| Replace selected text, the pair | Strikethrough |
+
+The caret pair is in the first column for the same reason: the
+replacement text is the point of it.
+
+Neither rule holds today. Nothing refuses an empty Post anywhere, and the
+highlight made from *Add note to text* survives a cancel although it is a
+comment.
+
+**49. A comment's icon keeps its size, unless the user says otherwise.**
+Reader writes `/F 28` on every one -- Print, NoZoom and NoRotate -- so the
+icon stays the same size as the page is zoomed and the same way up as the
+page is turned. A sticky note is a pin on the page rather than ink on it,
+which is the reasoning already written beside the two places this
+application uses 28 for a reply's icon and a popup's window.
+
+**NoZoom is offered on the form**, which Reader does not offer and other
+PDF applications do. Clearing it writes `/F 20` and the icon scales with
+the page, which Reader honours although it never writes it. **NoRotate is
+not offered**: turning a page is rare and an icon that turns with it is
+stranger than one that does not.
+
+Both bits are false by default in the format -- `/F` is 0 when absent --
+so an annotation scales and rotates unless told not to. Our notes write
+`/F 4` today and therefore do both.
+
 ## Done
 
 **2026-11-01 — plan step 2, the tool surface.** A floating column over the

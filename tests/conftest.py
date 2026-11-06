@@ -86,21 +86,33 @@ _isolated.sync()
 
 
 @pytest.fixture(autouse=True)
-def _forget_tool_defaults():
-    """Start every test with each tool at the appearance it declares.
+def _factory_defaults():
+    """Start **every test** from factory defaults, not every run.
 
-    The scratch store is wiped once per *process*, which was enough while
-    nothing wrote a preference in passing. Arming a colour now does: a
-    tool's appearance is remembered between runs, so one test choosing a
-    colour reached every test after it and the suite became
-    order-dependent -- `test_each_starts_in_what_its_declaration_names`
-    failed only when something earlier had armed an underline.
+    The wipe above happens once per process, which read as isolation and
+    was not: seventy-three `setValue` calls across seven modules write a
+    preference in the course of ordinary use -- recent files, the window's
+    geometry, the reader's mode, the find options, the tool strip, the
+    properties popup -- and each one reached every test that ran after it.
+
+    It went unnoticed until a tool's appearance became something remembered
+    between runs. Then one test choosing a colour made
+    `test_each_starts_in_what_its_declaration_names` fail, and two
+    highlight tests with it, while all three passed on their own. One key
+    could have been cleared here; seventy-three others would have been
+    waiting.
+
+    Safe to do per test because the store is already per *process*, keyed
+    by the pid: clearing it cannot pull the rug from under a suite running
+    beside this one, which is the problem the once-per-process wipe exists
+    to solve. Nothing sets a preference in `setUpClass`, so no test is
+    relying on one surviving between tests -- and a test that did would be
+    asserting something it never set up.
     """
-    from pdfarranger_qt.mainwindow import MainWindow
     from pdfarranger_qt.settings import app_settings
 
     settings = app_settings()
-    settings.remove(MainWindow.DEFAULTS_SETTING)
+    settings.clear()
     settings.sync()
     yield
 
