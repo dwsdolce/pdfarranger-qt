@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PDF Arranger 1.14.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-05 04:10+0000\n"
+"POT-Creation-Date: 2026-11-06 02:15+0000\n"
 "PO-Revision-Date: 2026-06-02 17:09+0800\n"
 "Last-Translator: Puqns67 <me@puqns67.icu>\n"
 "Language: zh_CN\n"
@@ -79,14 +79,14 @@ msgid "Strikethrough text"
 msgstr "为文本添加删除线"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/canvas.py
-msgid "Add a comment to replace text"
-msgstr "添加替换文本的注释"
+#: pdfarranger_qt/canvas.py pdfarranger_qt/tools.py
+msgid "Add note to text"
+msgstr "为文本添加注释"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
-msgid "Add note to text"
-msgstr "为文本添加注释"
+msgid "Add a comment to replace text"
+msgstr "添加替换文本的注释"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
@@ -2667,7 +2667,8 @@ msgid "Modified"
 msgstr "已修改"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/notepanel.py pdfarranger_qt/tools.py
+#: pdfarranger_qt/notepanel.py pdfarranger_qt/properties.py
+#: pdfarranger_qt/tools.py
 msgid "Underline"
 msgstr "下划线"
 
@@ -2726,9 +2727,25 @@ msgstr "每张纸 9 页"
 msgid "16 pages per sheet"
 msgstr "每张纸 16 页"
 
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py pdfarranger_qt/tools.py
+msgid "Highlight"
+msgstr "高亮"
+
+# machine translation, unreviewed
 #: pdfarranger_qt/properties.py
-msgid "Comment properties"
-msgstr "注释属性"
+msgid "Cross-Out"
+msgstr "删除线"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Sticky Note"
+msgstr "便笺"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Comment on Text"
+msgstr "文本注释"
 
 #: pdfarranger_qt/properties.py
 msgid "Review History"
@@ -2746,6 +2763,16 @@ msgstr "将属性设为默认值"
 #: pdfarranger_qt/properties.py pdfarranger_qt/reader.py
 msgid "Style"
 msgstr "样式"
+
+#: pdfarranger_qt/properties.py
+msgid "Comment properties"
+msgstr "注释属性"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+#, python-format
+msgid "%s Properties"
+msgstr "%s属性"
 
 #: pdfarranger_qt/properties.py
 msgid "Author"
@@ -2979,11 +3006,6 @@ msgstr "添加文本框"
 #: pdfarranger_qt/tools.py
 msgid "Attach file"
 msgstr "附加文件"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/tools.py
-msgid "Highlight"
-msgstr "高亮"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/tools.py

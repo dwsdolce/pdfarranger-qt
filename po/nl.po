@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PDF-Shuffler 0.7\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-05 04:10+0000\n"
+"POT-Creation-Date: 2026-11-06 02:15+0000\n"
 "PO-Revision-Date: 2025-05-26 10:43+0200\n"
 "Last-Translator: Heimen Stoffels <vistausss@fastmail.com>\n"
 "Language: nl\n"
@@ -79,14 +79,14 @@ msgid "Strikethrough text"
 msgstr "Tekst doorhalen"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/canvas.py
-msgid "Add a comment to replace text"
-msgstr "Opmerking toevoegen om de tekst te vervangen"
+#: pdfarranger_qt/canvas.py pdfarranger_qt/tools.py
+msgid "Add note to text"
+msgstr "Notitie aan tekst toevoegen"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
-msgid "Add note to text"
-msgstr "Notitie aan tekst toevoegen"
+msgid "Add a comment to replace text"
+msgstr "Opmerking toevoegen om de tekst te vervangen"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
@@ -2891,7 +2891,8 @@ msgid "Modified"
 msgstr "Aangepast op"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/notepanel.py pdfarranger_qt/tools.py
+#: pdfarranger_qt/notepanel.py pdfarranger_qt/properties.py
+#: pdfarranger_qt/tools.py
 msgid "Underline"
 msgstr "Onderstrepen"
 
@@ -2950,9 +2951,25 @@ msgstr "9 pagina's per vel"
 msgid "16 pages per sheet"
 msgstr "16 pagina's per vel"
 
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py pdfarranger_qt/tools.py
+msgid "Highlight"
+msgstr "Markeren"
+
+# machine translation, unreviewed
 #: pdfarranger_qt/properties.py
-msgid "Comment properties"
-msgstr "Opmerkingseigenschappen"
+msgid "Cross-Out"
+msgstr "Doorhalen"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Sticky Note"
+msgstr "Notitie"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Comment on Text"
+msgstr "Opmerking bij tekst"
 
 #: pdfarranger_qt/properties.py
 msgid "Review History"
@@ -2970,6 +2987,16 @@ msgstr "Eigenschappen als standaard instellen"
 #: pdfarranger_qt/properties.py pdfarranger_qt/reader.py
 msgid "Style"
 msgstr "Stijl"
+
+#: pdfarranger_qt/properties.py
+msgid "Comment properties"
+msgstr "Opmerkingseigenschappen"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+#, python-format
+msgid "%s Properties"
+msgstr "Eigenschappen van %s"
 
 #: pdfarranger_qt/properties.py
 msgid "Author"
@@ -3203,11 +3230,6 @@ msgstr "Tekstvak toevoegen"
 #: pdfarranger_qt/tools.py
 msgid "Attach file"
 msgstr "Bestand bijvoegen"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/tools.py
-msgid "Highlight"
-msgstr "Markeren"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/tools.py

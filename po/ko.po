@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pdfarranger - Korean\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-05 04:10+0000\n"
+"POT-Creation-Date: 2026-11-06 02:15+0000\n"
 "PO-Revision-Date: 2026-05-25 00:41+0900\n"
 "Last-Translator: VenusGirl <venusgirl@outlook.com>\n"
 "Language: ko\n"
@@ -75,14 +75,14 @@ msgid "Strikethrough text"
 msgstr "텍스트에 취소선"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/canvas.py
-msgid "Add a comment to replace text"
-msgstr "텍스트를 대체할 주석 추가"
+#: pdfarranger_qt/canvas.py pdfarranger_qt/tools.py
+msgid "Add note to text"
+msgstr "텍스트에 메모 추가"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
-msgid "Add note to text"
-msgstr "텍스트에 메모 추가"
+msgid "Add a comment to replace text"
+msgstr "텍스트를 대체할 주석 추가"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
@@ -2723,7 +2723,8 @@ msgid "Modified"
 msgstr "수정 날짜"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/notepanel.py pdfarranger_qt/tools.py
+#: pdfarranger_qt/notepanel.py pdfarranger_qt/properties.py
+#: pdfarranger_qt/tools.py
 msgid "Underline"
 msgstr "밑줄"
 
@@ -2782,9 +2783,25 @@ msgstr "한 장당 9페이지"
 msgid "16 pages per sheet"
 msgstr "한 장당 16페이지"
 
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py pdfarranger_qt/tools.py
+msgid "Highlight"
+msgstr "강조 표시"
+
+# machine translation, unreviewed
 #: pdfarranger_qt/properties.py
-msgid "Comment properties"
-msgstr "주석 속성"
+msgid "Cross-Out"
+msgstr "취소선"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Sticky Note"
+msgstr "스티커 노트"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Comment on Text"
+msgstr "텍스트 주석"
 
 #: pdfarranger_qt/properties.py
 msgid "Review History"
@@ -2802,6 +2819,16 @@ msgstr "속성을 기본값으로 설정"
 #: pdfarranger_qt/properties.py pdfarranger_qt/reader.py
 msgid "Style"
 msgstr "스타일"
+
+#: pdfarranger_qt/properties.py
+msgid "Comment properties"
+msgstr "주석 속성"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+#, python-format
+msgid "%s Properties"
+msgstr "%s 속성"
 
 #: pdfarranger_qt/properties.py
 msgid "Author"
@@ -3035,11 +3062,6 @@ msgstr "텍스트 상자 추가"
 #: pdfarranger_qt/tools.py
 msgid "Attach file"
 msgstr "파일 첨부"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/tools.py
-msgid "Highlight"
-msgstr "강조 표시"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/tools.py

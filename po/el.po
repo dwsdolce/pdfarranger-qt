@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PDF Arranger 1.9.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-05 04:10+0000\n"
+"POT-Creation-Date: 2026-11-06 02:15+0000\n"
 "PO-Revision-Date: 2023-06-12 10:30+0300\n"
 "Last-Translator: Manussos Pulinakis "
 "<38626261+manussos@users.noreply.github.com>\n"
@@ -80,14 +80,14 @@ msgid "Strikethrough text"
 msgstr "Διακριτή διαγραφή κειμένου"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/canvas.py
-msgid "Add a comment to replace text"
-msgstr "Προσθήκη σχολίου αντικατάστασης κειμένου"
+#: pdfarranger_qt/canvas.py pdfarranger_qt/tools.py
+msgid "Add note to text"
+msgstr "Προσθήκη σημείωσης στο κείμενο"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
-msgid "Add note to text"
-msgstr "Προσθήκη σημείωσης στο κείμενο"
+msgid "Add a comment to replace text"
+msgstr "Προσθήκη σχολίου αντικατάστασης κειμένου"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
@@ -2922,7 +2922,8 @@ msgid "Modified"
 msgstr "Τροποποιήθηκε"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/notepanel.py pdfarranger_qt/tools.py
+#: pdfarranger_qt/notepanel.py pdfarranger_qt/properties.py
+#: pdfarranger_qt/tools.py
 msgid "Underline"
 msgstr "Υπογράμμιση"
 
@@ -2981,9 +2982,25 @@ msgstr "9 σελίδες ανά φύλλο"
 msgid "16 pages per sheet"
 msgstr "16 σελίδες ανά φύλλο"
 
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py pdfarranger_qt/tools.py
+msgid "Highlight"
+msgstr "Επισήμανση"
+
+# machine translation, unreviewed
 #: pdfarranger_qt/properties.py
-msgid "Comment properties"
-msgstr "Ιδιότητες σχολίου"
+msgid "Cross-Out"
+msgstr "Διαγραφή"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Sticky Note"
+msgstr "Σημείωση"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Comment on Text"
+msgstr "Σχόλιο στο κείμενο"
 
 #: pdfarranger_qt/properties.py
 msgid "Review History"
@@ -3001,6 +3018,16 @@ msgstr "Ορισμός ιδιοτήτων ως προεπιλογή"
 #: pdfarranger_qt/properties.py pdfarranger_qt/reader.py
 msgid "Style"
 msgstr "Στυλ"
+
+#: pdfarranger_qt/properties.py
+msgid "Comment properties"
+msgstr "Ιδιότητες σχολίου"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+#, python-format
+msgid "%s Properties"
+msgstr "Ιδιότητες %s"
 
 #: pdfarranger_qt/properties.py
 msgid "Author"
@@ -3234,11 +3261,6 @@ msgstr "Προσθήκη πλαισίου κειμένου"
 #: pdfarranger_qt/tools.py
 msgid "Attach file"
 msgstr "Επισύναψη αρχείου"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/tools.py
-msgid "Highlight"
-msgstr "Επισήμανση"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/tools.py

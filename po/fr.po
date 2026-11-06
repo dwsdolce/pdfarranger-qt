@@ -13,7 +13,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-05 04:10+0000\n"
+"POT-Creation-Date: 2026-11-06 02:15+0000\n"
 "PO-Revision-Date: 2024-02-24 20:47+0100\n"
 "Last-Translator: Jérôme Robert <jeromerobert@gmx.com>\n"
 "Language: fr\n"
@@ -81,14 +81,14 @@ msgid "Strikethrough text"
 msgstr "Barrer le texte"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/canvas.py
-msgid "Add a comment to replace text"
-msgstr "Ajouter un commentaire pour remplacer le texte"
+#: pdfarranger_qt/canvas.py pdfarranger_qt/tools.py
+msgid "Add note to text"
+msgstr "Ajouter une note au texte"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
-msgid "Add note to text"
-msgstr "Ajouter une note au texte"
+msgid "Add a comment to replace text"
+msgstr "Ajouter un commentaire pour remplacer le texte"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
@@ -2900,7 +2900,8 @@ msgid "Modified"
 msgstr "Modifié le"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/notepanel.py pdfarranger_qt/tools.py
+#: pdfarranger_qt/notepanel.py pdfarranger_qt/properties.py
+#: pdfarranger_qt/tools.py
 msgid "Underline"
 msgstr "Souligner"
 
@@ -2959,9 +2960,25 @@ msgstr "9 pages par feuille"
 msgid "16 pages per sheet"
 msgstr "16 pages par feuille"
 
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py pdfarranger_qt/tools.py
+msgid "Highlight"
+msgstr "Surligner"
+
+# machine translation, unreviewed
 #: pdfarranger_qt/properties.py
-msgid "Comment properties"
-msgstr "Propriétés du commentaire"
+msgid "Cross-Out"
+msgstr "Barré"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Sticky Note"
+msgstr "Note"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Comment on Text"
+msgstr "Commentaire sur le texte"
 
 #: pdfarranger_qt/properties.py
 msgid "Review History"
@@ -2979,6 +2996,16 @@ msgstr "Définir les propriétés par défaut"
 #: pdfarranger_qt/properties.py pdfarranger_qt/reader.py
 msgid "Style"
 msgstr "Style"
+
+#: pdfarranger_qt/properties.py
+msgid "Comment properties"
+msgstr "Propriétés du commentaire"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+#, python-format
+msgid "%s Properties"
+msgstr "Propriétés de %s"
 
 #: pdfarranger_qt/properties.py
 msgid "Author"
@@ -3212,11 +3239,6 @@ msgstr "Ajouter une zone de texte"
 #: pdfarranger_qt/tools.py
 msgid "Attach file"
 msgstr "Joindre un fichier"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/tools.py
-msgid "Highlight"
-msgstr "Surligner"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/tools.py

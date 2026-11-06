@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  pdfarranger\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-05 04:10+0000\n"
+"POT-Creation-Date: 2026-11-06 02:15+0000\n"
 "PO-Revision-Date: 2024-03-24 19:16+0200\n"
 "Last-Translator: \n"
 "Language: fi\n"
@@ -75,14 +75,14 @@ msgid "Strikethrough text"
 msgstr "Yliviivaa teksti"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/canvas.py
-msgid "Add a comment to replace text"
-msgstr "Lisää kommentti tekstin korvaamiseksi"
+#: pdfarranger_qt/canvas.py pdfarranger_qt/tools.py
+msgid "Add note to text"
+msgstr "Lisää muistiinpano tekstiin"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
-msgid "Add note to text"
-msgstr "Lisää muistiinpano tekstiin"
+msgid "Add a comment to replace text"
+msgstr "Lisää kommentti tekstin korvaamiseksi"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
@@ -2884,7 +2884,8 @@ msgid "Modified"
 msgstr "Muokattu"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/notepanel.py pdfarranger_qt/tools.py
+#: pdfarranger_qt/notepanel.py pdfarranger_qt/properties.py
+#: pdfarranger_qt/tools.py
 msgid "Underline"
 msgstr "Alleviivaus"
 
@@ -2943,9 +2944,25 @@ msgstr "9 sivua arkille"
 msgid "16 pages per sheet"
 msgstr "16 sivua arkille"
 
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py pdfarranger_qt/tools.py
+msgid "Highlight"
+msgstr "Korostus"
+
+# machine translation, unreviewed
 #: pdfarranger_qt/properties.py
-msgid "Comment properties"
-msgstr "Kommentin ominaisuudet"
+msgid "Cross-Out"
+msgstr "Yliviivaus"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Sticky Note"
+msgstr "Muistilappu"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Comment on Text"
+msgstr "Kommentti tekstiin"
 
 #: pdfarranger_qt/properties.py
 msgid "Review History"
@@ -2963,6 +2980,16 @@ msgstr "Aseta ominaisuudet oletukseksi"
 #: pdfarranger_qt/properties.py pdfarranger_qt/reader.py
 msgid "Style"
 msgstr "Tyyli"
+
+#: pdfarranger_qt/properties.py
+msgid "Comment properties"
+msgstr "Kommentin ominaisuudet"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+#, python-format
+msgid "%s Properties"
+msgstr "Ominaisuudet: %s"
 
 #: pdfarranger_qt/properties.py
 msgid "Author"
@@ -3196,11 +3223,6 @@ msgstr "Lisää tekstikehys"
 #: pdfarranger_qt/tools.py
 msgid "Attach file"
 msgstr "Liitä tiedosto"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/tools.py
-msgid "Highlight"
-msgstr "Korostus"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/tools.py

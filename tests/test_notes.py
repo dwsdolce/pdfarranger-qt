@@ -1025,7 +1025,7 @@ class TestWhatAnEditLeavesAlone(unittest.TestCase):
 
 
 class TestTheFormOnOneMark(unittest.TestCase):
-    """*Comment properties*: three tabs and a footer, writing three keys
+    """The mark's properties: three tabs and a footer, writing three keys
     and one flag."""
 
     def setUp(self):
@@ -1045,6 +1045,110 @@ class TestTheFormOnOneMark(unittest.TestCase):
         made = self.MarkProperties(self.was._replace(**fields))
         self.addCleanup(made.deleteLater)
         return made
+
+    def test_it_is_titled_after_the_mark(self):
+        """**Not one title for everything.** Reader names the form for the
+        mark it is open on -- *Underline Properties*, *Cross-Out
+        Properties*, *Highlight Properties*, photographed in the owner's
+        notes on 2026-11-05 -- where this said *Comment properties*
+        whatever had been picked.
+        """
+        for subject, expected in (("Highlight", "Highlight Properties"),
+                                  ("Cross-Out", "Cross-Out Properties"),
+                                  ("Underline", "Underline Properties"),
+                                  ("Sticky Note", "Sticky Note Properties")):
+            with self.subTest(subject=subject):
+                self.assertEqual(self.form(subject=subject).windowTitle(),
+                                 expected)
+
+    def test_a_subject_somebody_typed_is_used_as_it_stands(self):
+        """The General tab makes `/Subj` free text. What was typed there is
+        the mark's name, and is not looked up or translated."""
+        self.assertEqual(self.form(subject="Chapter three").windowTitle(),
+                         "Chapter three Properties")
+
+    def test_a_mark_with_no_subject_falls_back(self):
+        """A kind this application has no name for, out of somebody else's
+        file, still opens a form with a title on it."""
+        self.assertEqual(self.form(subject="").windowTitle(),
+                         "Comment properties")
+
+    def test_every_subject_it_writes_has_a_name_for_the_title(self):
+        """A `/Subj` this application writes and cannot name would show the
+        English in a translated interface."""
+        from pdfarranger_qt import markup, tools
+        from pdfarranger_qt.properties import SUBJECT_LABELS
+
+        written = set(markup.SUBJECTS.values())
+        written |= {tool.subject for tool in tools.TOOLS if tool.subject}
+        self.assertEqual(written - set(SUBJECT_LABELS), set())
+
+    def test_the_opacity_is_a_field_as_well_as_a_slider(self):
+        """**Both, and both live**, as Reader has it -- photographed in the
+        owner's notes. It was a label beside the slider, so a mark could
+        only be faded by dragging and there was no asking for 50 exactly.
+        """
+        from PySide6.QtWidgets import QLineEdit
+
+        form = self.form(opacity=0.5)
+        self.assertIsInstance(form.percent, QLineEdit)
+        self.assertEqual(form.percent.text(), "50%")
+        self.assertEqual(form.slider.value(), 50)
+
+    def test_typing_a_number_moves_the_slider_and_shows_the_page(self):
+        form = self.form(opacity=0.5)
+        seen = []
+        form.previewed.connect(lambda _colour, value: seen.append(value))
+        form.percent.setText("22")
+        form.percent.textEdited.emit("22")
+        self.assertEqual(form.slider.value(), 22)
+        self.assertEqual(seen, [0.22])
+        self.assertEqual(form.changed().get("opacity"), 0.22)
+
+    def test_dragging_the_slider_fills_the_field(self):
+        form = self.form(opacity=0.5)
+        form.slider.setValue(22)
+        self.assertEqual(form.percent.text(), "22%")
+
+    def test_a_field_being_retyped_changes_nothing_yet(self):
+        """Empty, or a bare `%`, is somebody mid-edit -- not a request for
+        a transparent mark. A field you cannot clear cannot be retyped."""
+        form = self.form(opacity=0.5)
+        for half_typed in ("", "%"):
+            with self.subTest(text=half_typed):
+                form.percent.setText(half_typed)
+                form.percent.textEdited.emit(half_typed)
+                self.assertEqual(form.changed().get("opacity"), None)
+
+    def test_leaving_the_field_tidies_what_is_in_it(self):
+        form = self.form(opacity=0.5)
+        form.percent.setText("75")
+        form.percent.textEdited.emit("75")
+        form.percent.editingFinished.emit()
+        self.assertEqual(form.percent.text(), "75%")
+
+    def test_what_it_refuses_to_take(self):
+        from PySide6.QtGui import QValidator
+
+        check = self.form(opacity=0.5).percent.validator().validate
+        for text, verdict in (("", QValidator.Intermediate),
+                              ("%", QValidator.Intermediate),
+                              ("5", QValidator.Acceptable),
+                              ("100", QValidator.Acceptable),
+                              ("101", QValidator.Invalid),
+                              ("-3", QValidator.Invalid),
+                              ("abc", QValidator.Invalid)):
+            with self.subTest(text=text):
+                self.assertEqual(check(text, 0)[0], verdict)
+
+    def test_a_locked_mark_refuses_the_field_too(self):
+        """Either control fades the mark, so leaving one live is a way
+        through the lock."""
+        form = self.form(locked=True)
+        self.assertFalse(form.percent.isEnabled())
+        self.assertFalse(form.slider.isEnabled())
+        form.locked.setChecked(False)
+        self.assertTrue(form.percent.isEnabled())
 
     def test_it_has_the_three_tabs(self):
         from PySide6.QtWidgets import QTabWidget

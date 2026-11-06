@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-05 04:10+0000\n"
+"POT-Creation-Date: 2026-11-06 02:15+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: hu\n"
@@ -76,14 +76,14 @@ msgid "Strikethrough text"
 msgstr "Szöveg áthúzása"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/canvas.py
-msgid "Add a comment to replace text"
-msgstr "Megjegyzés hozzáadása a szöveg helyettesítésére"
+#: pdfarranger_qt/canvas.py pdfarranger_qt/tools.py
+msgid "Add note to text"
+msgstr "Jegyzet hozzáadása a szöveghez"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
-msgid "Add note to text"
-msgstr "Jegyzet hozzáadása a szöveghez"
+msgid "Add a comment to replace text"
+msgstr "Megjegyzés hozzáadása a szöveg helyettesítésére"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
@@ -2891,7 +2891,8 @@ msgid "Modified"
 msgstr "Módosítva"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/notepanel.py pdfarranger_qt/tools.py
+#: pdfarranger_qt/notepanel.py pdfarranger_qt/properties.py
+#: pdfarranger_qt/tools.py
 msgid "Underline"
 msgstr "Aláhúzás"
 
@@ -2950,9 +2951,25 @@ msgstr "9 oldal laponként"
 msgid "16 pages per sheet"
 msgstr "16 oldal laponként"
 
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py pdfarranger_qt/tools.py
+msgid "Highlight"
+msgstr "Kiemelés"
+
+# machine translation, unreviewed
 #: pdfarranger_qt/properties.py
-msgid "Comment properties"
-msgstr "Megjegyzés tulajdonságai"
+msgid "Cross-Out"
+msgstr "Áthúzás"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Sticky Note"
+msgstr "Jegyzet"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Comment on Text"
+msgstr "Megjegyzés a szöveghez"
 
 #: pdfarranger_qt/properties.py
 msgid "Review History"
@@ -2970,6 +2987,16 @@ msgstr "Tulajdonságok beállítása alapértelmezettként"
 #: pdfarranger_qt/properties.py pdfarranger_qt/reader.py
 msgid "Style"
 msgstr "Stílus"
+
+#: pdfarranger_qt/properties.py
+msgid "Comment properties"
+msgstr "Megjegyzés tulajdonságai"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+#, python-format
+msgid "%s Properties"
+msgstr "%s tulajdonságai"
 
 #: pdfarranger_qt/properties.py
 msgid "Author"
@@ -3203,11 +3230,6 @@ msgstr "Szövegdoboz hozzáadása"
 #: pdfarranger_qt/tools.py
 msgid "Attach file"
 msgstr "Fájl csatolása"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/tools.py
-msgid "Highlight"
-msgstr "Kiemelés"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/tools.py

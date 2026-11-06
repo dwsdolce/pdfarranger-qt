@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  pdfarranger\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-05 04:10+0000\n"
+"POT-Creation-Date: 2026-11-06 02:15+0000\n"
 "PO-Revision-Date: 2026-01-21 05:07+0100\n"
 "Last-Translator: Ekaterine Papava <papava.e@gtu.ge>\n"
 "Language: ka\n"
@@ -75,14 +75,14 @@ msgid "Strikethrough text"
 msgstr "ტექსტის გადახაზვა"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/canvas.py
-msgid "Add a comment to replace text"
-msgstr "ტექსტის ჩანაცვლების კომენტარის დამატება"
+#: pdfarranger_qt/canvas.py pdfarranger_qt/tools.py
+msgid "Add note to text"
+msgstr "ტექსტისთვის შენიშვნის დამატება"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
-msgid "Add note to text"
-msgstr "ტექსტისთვის შენიშვნის დამატება"
+msgid "Add a comment to replace text"
+msgstr "ტექსტის ჩანაცვლების კომენტარის დამატება"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
@@ -2843,7 +2843,8 @@ msgid "Modified"
 msgstr "ცვლილების დროით"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/notepanel.py pdfarranger_qt/tools.py
+#: pdfarranger_qt/notepanel.py pdfarranger_qt/properties.py
+#: pdfarranger_qt/tools.py
 msgid "Underline"
 msgstr "ხაზგასმა"
 
@@ -2902,9 +2903,25 @@ msgstr "9 გვერდი თითო ფურცელზე"
 msgid "16 pages per sheet"
 msgstr "16 გვერდი თითო ფურცელზე"
 
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py pdfarranger_qt/tools.py
+msgid "Highlight"
+msgstr "გამოკვეთა"
+
+# machine translation, unreviewed
 #: pdfarranger_qt/properties.py
-msgid "Comment properties"
-msgstr "კომენტარის თვისებები"
+msgid "Cross-Out"
+msgstr "გადახაზვა"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Sticky Note"
+msgstr "წებოვანი შენიშვნა"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Comment on Text"
+msgstr "კომენტარი ტექსტზე"
 
 #: pdfarranger_qt/properties.py
 msgid "Review History"
@@ -2922,6 +2939,16 @@ msgstr "თვისებების ნაგულისხმევად �
 #: pdfarranger_qt/properties.py pdfarranger_qt/reader.py
 msgid "Style"
 msgstr "სტილი"
+
+#: pdfarranger_qt/properties.py
+msgid "Comment properties"
+msgstr "კომენტარის თვისებები"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+#, python-format
+msgid "%s Properties"
+msgstr "%s-ის თვისებები"
 
 #: pdfarranger_qt/properties.py
 msgid "Author"
@@ -3155,11 +3182,6 @@ msgstr "ტექსტური ველის დამატება"
 #: pdfarranger_qt/tools.py
 msgid "Attach file"
 msgstr "ფაილის მიმაგრება"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/tools.py
-msgid "Highlight"
-msgstr "გამოკვეთა"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/tools.py

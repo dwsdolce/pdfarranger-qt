@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: unnamed project\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-05 04:10+0000\n"
+"POT-Creation-Date: 2026-11-06 02:15+0000\n"
 "PO-Revision-Date: 2026-05-27 19:30+0300\n"
 "Last-Translator: Dymko <Dymkovych@proton.me>\n"
 "Language: uk\n"
@@ -78,14 +78,14 @@ msgid "Strikethrough text"
 msgstr "Закреслити текст"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/canvas.py
-msgid "Add a comment to replace text"
-msgstr "Додати коментар для заміни тексту"
+#: pdfarranger_qt/canvas.py pdfarranger_qt/tools.py
+msgid "Add note to text"
+msgstr "Додати нотатку до тексту"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
-msgid "Add note to text"
-msgstr "Додати нотатку до тексту"
+msgid "Add a comment to replace text"
+msgstr "Додати коментар для заміни тексту"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
@@ -2857,7 +2857,8 @@ msgid "Modified"
 msgstr "Змінено"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/notepanel.py pdfarranger_qt/tools.py
+#: pdfarranger_qt/notepanel.py pdfarranger_qt/properties.py
+#: pdfarranger_qt/tools.py
 msgid "Underline"
 msgstr "Підкреслення"
 
@@ -2916,9 +2917,25 @@ msgstr "9 сторінок на аркуші"
 msgid "16 pages per sheet"
 msgstr "16 сторінок на аркуші"
 
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py pdfarranger_qt/tools.py
+msgid "Highlight"
+msgstr "Виділення"
+
+# machine translation, unreviewed
 #: pdfarranger_qt/properties.py
-msgid "Comment properties"
-msgstr "Властивості коментаря"
+msgid "Cross-Out"
+msgstr "Закреслення"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Sticky Note"
+msgstr "Нотатка"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Comment on Text"
+msgstr "Коментар до тексту"
 
 #: pdfarranger_qt/properties.py
 msgid "Review History"
@@ -2936,6 +2953,16 @@ msgstr "Зробити властивості типовими"
 #: pdfarranger_qt/properties.py pdfarranger_qt/reader.py
 msgid "Style"
 msgstr "Стиль"
+
+#: pdfarranger_qt/properties.py
+msgid "Comment properties"
+msgstr "Властивості коментаря"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+#, python-format
+msgid "%s Properties"
+msgstr "Властивості: %s"
 
 #: pdfarranger_qt/properties.py
 msgid "Author"
@@ -3169,11 +3196,6 @@ msgstr "Додати текстове поле"
 #: pdfarranger_qt/tools.py
 msgid "Attach file"
 msgstr "Долучити файл"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/tools.py
-msgid "Highlight"
-msgstr "Виділення"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/tools.py

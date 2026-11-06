@@ -2050,6 +2050,68 @@ class TestANoteOnTheWordsIsStillAHighlight(unittest.TestCase):
         self.assertEqual(mark, mark.duplicate())
 
 
+class TestWhereTheInkIs(unittest.TestCase):
+    """`markup.ink_box` says where a mark actually draws inside a quad.
+
+    It exists so a mark can be hit by its ink rather than by the box its
+    quadrilaterals describe. Which means it has to agree with what
+    `_appearance` draws -- two statements of the same geometry, held
+    together here.
+    """
+
+    QUAD = (36.0, 666.690, 195.916, 679.681)
+
+    def setUp(self):
+        self.pdf = pikepdf.Pdf.new()
+
+    def drawn(self, kind):
+        """The y values the appearance for ``kind`` actually strokes."""
+        mark = markup.Annotation(kind, 1, markup.bounding_rect([self.QUAD]),
+                                 quads=[self.QUAD], colour=(0.0, 0.45, 0.9))
+        body = bytes(markup.to_dictionary(self.pdf, mark)["/AP"]["/N"]
+                     .read_bytes()).decode("latin-1")
+        width = float(re.search(r"([\d.]+) w\b", body).group(1))
+        ys = [float(m) for m in re.findall(r"[\d.]+ ([\d.]+) [ml]\b", body)]
+        return min(ys) - width / 2, max(ys) + width / 2
+
+    def test_the_ink_is_what_the_appearance_draws(self):
+        """Within a thousandth of a point, for every kind that strokes."""
+        for kind in (markup.UNDERLINE, markup.STRIKEOUT, markup.SQUIGGLY):
+            with self.subTest(kind=kind):
+                low, high = self.drawn(kind)
+                box = markup.ink_box(kind, self.QUAD)
+                self.assertAlmostEqual(box[1], low, places=3)
+                self.assertAlmostEqual(box[3], high, places=3)
+
+    def test_a_highlight_fills_what_it_was_given(self):
+        self.assertEqual(markup.ink_box(markup.HIGHLIGHT, self.QUAD),
+                         self.QUAD)
+        self.assertIn(markup.HIGHLIGHT, markup.FILLED)
+
+    def test_a_stroke_is_a_fraction_of_the_box_it_sits_in(self):
+        """The whole point: a cross-out claims four fifths of a point out of
+        thirteen, so the box is sixteen times too much of the page."""
+        box = markup.ink_box(markup.STRIKEOUT, self.QUAD)
+        height = self.QUAD[3] - self.QUAD[1]
+        self.assertAlmostEqual(box[3] - box[1],
+                               height * markup.STROKE_THICKNESS, places=6)
+        self.assertLess(box[3] - box[1], height / 15.0)
+
+    def test_the_sides_are_the_quad_s_own(self):
+        """Only the height narrows: a stroke runs the full width of the run
+        it marks."""
+        for kind in (markup.UNDERLINE, markup.STRIKEOUT, markup.SQUIGGLY,
+                     markup.HIGHLIGHT):
+            with self.subTest(kind=kind):
+                box = markup.ink_box(kind, self.QUAD)
+                self.assertEqual((box[0], box[2]),
+                                 (self.QUAD[0], self.QUAD[2]))
+
+    def test_a_kind_it_does_not_draw_is_taken_at_its_word(self):
+        """Rather than shrunk to nothing, which would make it unhittable."""
+        self.assertEqual(markup.ink_box(markup.TEXT, self.QUAD), self.QUAD)
+
+
 class TestWhatColourEachToolStartsIn(unittest.TestCase):
     """A default belongs to a **tool**, and is named rather than numbered:
     one subtype can be two tools with two colours."""

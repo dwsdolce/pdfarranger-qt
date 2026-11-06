@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pdfarranger main\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-05 04:10+0000\n"
+"POT-Creation-Date: 2026-11-06 02:15+0000\n"
 "PO-Revision-Date: 2026-04-24 21:19+0300\n"
 "Last-Translator: Oğuz Ersen <oguz@ersen.moe>\n"
 "Language: tr\n"
@@ -76,14 +76,14 @@ msgid "Strikethrough text"
 msgstr "Metnin Üstünü Çiz"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/canvas.py
-msgid "Add a comment to replace text"
-msgstr "Metni değiştirecek yorum ekle"
+#: pdfarranger_qt/canvas.py pdfarranger_qt/tools.py
+msgid "Add note to text"
+msgstr "Metne not ekle"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
-msgid "Add note to text"
-msgstr "Metne not ekle"
+msgid "Add a comment to replace text"
+msgstr "Metni değiştirecek yorum ekle"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
@@ -2827,7 +2827,8 @@ msgid "Modified"
 msgstr "Değiştirilme"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/notepanel.py pdfarranger_qt/tools.py
+#: pdfarranger_qt/notepanel.py pdfarranger_qt/properties.py
+#: pdfarranger_qt/tools.py
 msgid "Underline"
 msgstr "Altı çizili"
 
@@ -2886,9 +2887,25 @@ msgstr "Yaprak başına 9 sayfa"
 msgid "16 pages per sheet"
 msgstr "Yaprak başına 16 sayfa"
 
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py pdfarranger_qt/tools.py
+msgid "Highlight"
+msgstr "Vurgula"
+
+# machine translation, unreviewed
 #: pdfarranger_qt/properties.py
-msgid "Comment properties"
-msgstr "Yorum özellikleri"
+msgid "Cross-Out"
+msgstr "Üstü çizili"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Sticky Note"
+msgstr "Yapışkan not"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Comment on Text"
+msgstr "Metne yorum"
 
 #: pdfarranger_qt/properties.py
 msgid "Review History"
@@ -2906,6 +2923,16 @@ msgstr "Özellikleri varsayılan yap"
 #: pdfarranger_qt/properties.py pdfarranger_qt/reader.py
 msgid "Style"
 msgstr "Biçem"
+
+#: pdfarranger_qt/properties.py
+msgid "Comment properties"
+msgstr "Yorum özellikleri"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+#, python-format
+msgid "%s Properties"
+msgstr "%s özellikleri"
 
 #: pdfarranger_qt/properties.py
 msgid "Author"
@@ -3139,11 +3166,6 @@ msgstr "Metin kutusu ekle"
 #: pdfarranger_qt/tools.py
 msgid "Attach file"
 msgstr "Dosya ekle"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/tools.py
-msgid "Highlight"
-msgstr "Vurgula"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/tools.py

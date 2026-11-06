@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-05 04:10+0000\n"
+"POT-Creation-Date: 2026-11-06 02:15+0000\n"
 "PO-Revision-Date: 2025-09-28 16:51+0000\n"
 "Last-Translator: Sveinn í Felli <sv1@fellsnet.is>\n"
 "Language: is\n"
@@ -76,14 +76,14 @@ msgid "Strikethrough text"
 msgstr "Yfirstrika texta"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/canvas.py
-msgid "Add a comment to replace text"
-msgstr "Bæta við athugasemd í stað textans"
+#: pdfarranger_qt/canvas.py pdfarranger_qt/tools.py
+msgid "Add note to text"
+msgstr "Bæta athugasemd við texta"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
-msgid "Add note to text"
-msgstr "Bæta athugasemd við texta"
+msgid "Add a comment to replace text"
+msgstr "Bæta við athugasemd í stað textans"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
@@ -2855,7 +2855,8 @@ msgid "Modified"
 msgstr "Breytt"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/notepanel.py pdfarranger_qt/tools.py
+#: pdfarranger_qt/notepanel.py pdfarranger_qt/properties.py
+#: pdfarranger_qt/tools.py
 msgid "Underline"
 msgstr "Undirstrikun"
 
@@ -2914,9 +2915,25 @@ msgstr "9 síður á blað"
 msgid "16 pages per sheet"
 msgstr "16 síður á blað"
 
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py pdfarranger_qt/tools.py
+msgid "Highlight"
+msgstr "Áherslulita"
+
+# machine translation, unreviewed
 #: pdfarranger_qt/properties.py
-msgid "Comment properties"
-msgstr "Eiginleikar athugasemdar"
+msgid "Cross-Out"
+msgstr "Yfirstrikun"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Sticky Note"
+msgstr "Minnismiði"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Comment on Text"
+msgstr "Athugasemd við texta"
 
 #: pdfarranger_qt/properties.py
 msgid "Review History"
@@ -2934,6 +2951,16 @@ msgstr "Gera eiginleika sjálfgefna"
 #: pdfarranger_qt/properties.py pdfarranger_qt/reader.py
 msgid "Style"
 msgstr "Stíll"
+
+#: pdfarranger_qt/properties.py
+msgid "Comment properties"
+msgstr "Eiginleikar athugasemdar"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+#, python-format
+msgid "%s Properties"
+msgstr "Eiginleikar %s"
 
 #: pdfarranger_qt/properties.py
 msgid "Author"
@@ -3167,11 +3194,6 @@ msgstr "Bæta við textareit"
 #: pdfarranger_qt/tools.py
 msgid "Attach file"
 msgstr "Hengja skrá við"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/tools.py
-msgid "Highlight"
-msgstr "Áherslulita"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/tools.py

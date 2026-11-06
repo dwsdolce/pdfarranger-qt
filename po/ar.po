@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-05 04:10+0000\n"
+"POT-Creation-Date: 2026-11-06 02:15+0000\n"
 "PO-Revision-Date: 2024-09-05 17:05+0300\n"
 "Last-Translator: Abdullah Albaroty <albaroty@gmail.com>\n"
 "Language: ar\n"
@@ -77,14 +77,14 @@ msgid "Strikethrough text"
 msgstr "توسيط النص بخط"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/canvas.py
-msgid "Add a comment to replace text"
-msgstr "إضافة تعليق لاستبدال النص"
+#: pdfarranger_qt/canvas.py pdfarranger_qt/tools.py
+msgid "Add note to text"
+msgstr "إضافة ملاحظة إلى النص"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
-msgid "Add note to text"
-msgstr "إضافة ملاحظة إلى النص"
+msgid "Add a comment to replace text"
+msgstr "إضافة تعليق لاستبدال النص"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
@@ -2852,7 +2852,8 @@ msgid "Modified"
 msgstr "تعديل"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/notepanel.py pdfarranger_qt/tools.py
+#: pdfarranger_qt/notepanel.py pdfarranger_qt/properties.py
+#: pdfarranger_qt/tools.py
 msgid "Underline"
 msgstr "تسطير"
 
@@ -2911,9 +2912,25 @@ msgstr "9 صفحات لكل ورقة"
 msgid "16 pages per sheet"
 msgstr "16 صفحة لكل ورقة"
 
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py pdfarranger_qt/tools.py
+msgid "Highlight"
+msgstr "تمييز"
+
+# machine translation, unreviewed
 #: pdfarranger_qt/properties.py
-msgid "Comment properties"
-msgstr "خصائص التعليق"
+msgid "Cross-Out"
+msgstr "شطب"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Sticky Note"
+msgstr "ملاحظة لاصقة"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Comment on Text"
+msgstr "تعليق على النص"
 
 #: pdfarranger_qt/properties.py
 msgid "Review History"
@@ -2931,6 +2948,16 @@ msgstr "اجعل الخصائص افتراضية"
 #: pdfarranger_qt/properties.py pdfarranger_qt/reader.py
 msgid "Style"
 msgstr "الطراز"
+
+#: pdfarranger_qt/properties.py
+msgid "Comment properties"
+msgstr "خصائص التعليق"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+#, python-format
+msgid "%s Properties"
+msgstr "خصائص %s"
 
 #: pdfarranger_qt/properties.py
 msgid "Author"
@@ -3164,11 +3191,6 @@ msgstr "إضافة مربع نص"
 #: pdfarranger_qt/tools.py
 msgid "Attach file"
 msgstr "إرفاق ملف"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/tools.py
-msgid "Highlight"
-msgstr "تمييز"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/tools.py

@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-05 04:10+0000\n"
+"POT-Creation-Date: 2026-11-06 02:15+0000\n"
 "PO-Revision-Date: 2022-08-13 11:15+0200\n"
 "Last-Translator: Juanma1980 <juanma1980@gmail.com>\n"
 "Language: ca@valencia\n"
@@ -73,14 +73,14 @@ msgid "Strikethrough text"
 msgstr "Ratlla el text"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/canvas.py
-msgid "Add a comment to replace text"
-msgstr "Afig un comentari per a substituir el text"
+#: pdfarranger_qt/canvas.py pdfarranger_qt/tools.py
+msgid "Add note to text"
+msgstr "Afig una nota al text"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
-msgid "Add note to text"
-msgstr "Afig una nota al text"
+msgid "Add a comment to replace text"
+msgstr "Afig un comentari per a substituir el text"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
@@ -2914,7 +2914,8 @@ msgid "Modified"
 msgstr "Modificat"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/notepanel.py pdfarranger_qt/tools.py
+#: pdfarranger_qt/notepanel.py pdfarranger_qt/properties.py
+#: pdfarranger_qt/tools.py
 msgid "Underline"
 msgstr "Subratllat"
 
@@ -2973,9 +2974,25 @@ msgstr "9 pàgines per full"
 msgid "16 pages per sheet"
 msgstr "16 pàgines per full"
 
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py pdfarranger_qt/tools.py
+msgid "Highlight"
+msgstr "Ressaltat"
+
+# machine translation, unreviewed
 #: pdfarranger_qt/properties.py
-msgid "Comment properties"
-msgstr "Propietats del comentari"
+msgid "Cross-Out"
+msgstr "Ratllat"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Sticky Note"
+msgstr "Nota adhesiva"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Comment on Text"
+msgstr "Comentari sobre el text"
 
 #: pdfarranger_qt/properties.py
 msgid "Review History"
@@ -2993,6 +3010,16 @@ msgstr "Fes que les propietats siguen per defecte"
 #: pdfarranger_qt/properties.py pdfarranger_qt/reader.py
 msgid "Style"
 msgstr "Estil"
+
+#: pdfarranger_qt/properties.py
+msgid "Comment properties"
+msgstr "Propietats del comentari"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+#, python-format
+msgid "%s Properties"
+msgstr "Propietats de %s"
 
 #: pdfarranger_qt/properties.py
 msgid "Author"
@@ -3226,11 +3253,6 @@ msgstr "Afig un quadre de text"
 #: pdfarranger_qt/tools.py
 msgid "Attach file"
 msgstr "Adjunta un fitxer"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/tools.py
-msgid "Highlight"
-msgstr "Ressaltat"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/tools.py

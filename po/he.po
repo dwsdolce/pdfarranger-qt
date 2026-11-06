@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-05 04:10+0000\n"
+"POT-Creation-Date: 2026-11-06 02:15+0000\n"
 "PO-Revision-Date: 2023-06-12 11:22+0300\n"
 "Last-Translator: Yaron Shahrabani <sh.yaron@gmail.com>\n"
 "Language: he\n"
@@ -76,14 +76,14 @@ msgid "Strikethrough text"
 msgstr "מתיחת קו חוצה על הטקסט"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/canvas.py
-msgid "Add a comment to replace text"
-msgstr "הוספת הערה להחלפת הטקסט"
+#: pdfarranger_qt/canvas.py pdfarranger_qt/tools.py
+msgid "Add note to text"
+msgstr "הוספת הערה לטקסט"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
-msgid "Add note to text"
-msgstr "הוספת הערה לטקסט"
+msgid "Add a comment to replace text"
+msgstr "הוספת הערה להחלפת הטקסט"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
@@ -2839,7 +2839,8 @@ msgid "Modified"
 msgstr "נערך"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/notepanel.py pdfarranger_qt/tools.py
+#: pdfarranger_qt/notepanel.py pdfarranger_qt/properties.py
+#: pdfarranger_qt/tools.py
 msgid "Underline"
 msgstr "קו תחתון"
 
@@ -2898,9 +2899,25 @@ msgstr "9 עמודים לגיליון"
 msgid "16 pages per sheet"
 msgstr "16 עמודים לגיליון"
 
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py pdfarranger_qt/tools.py
+msgid "Highlight"
+msgstr "הדגשה"
+
+# machine translation, unreviewed
 #: pdfarranger_qt/properties.py
-msgid "Comment properties"
-msgstr "מאפייני הערה"
+msgid "Cross-Out"
+msgstr "קו חוצה"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Sticky Note"
+msgstr "פתק"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Comment on Text"
+msgstr "הערה על הטקסט"
 
 #: pdfarranger_qt/properties.py
 msgid "Review History"
@@ -2918,6 +2935,16 @@ msgstr "הגדרת המאפיינים כברירת מחדל"
 #: pdfarranger_qt/properties.py pdfarranger_qt/reader.py
 msgid "Style"
 msgstr "סגנון"
+
+#: pdfarranger_qt/properties.py
+msgid "Comment properties"
+msgstr "מאפייני הערה"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+#, python-format
+msgid "%s Properties"
+msgstr "מאפייני %s"
 
 #: pdfarranger_qt/properties.py
 msgid "Author"
@@ -3151,11 +3178,6 @@ msgstr "הוספת תיבת טקסט"
 #: pdfarranger_qt/tools.py
 msgid "Attach file"
 msgstr "צירוף קובץ"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/tools.py
-msgid "Highlight"
-msgstr "הדגשה"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/tools.py

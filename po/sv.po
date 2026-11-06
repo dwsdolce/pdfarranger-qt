@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  pdfarranger\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-05 04:10+0000\n"
+"POT-Creation-Date: 2026-11-06 02:15+0000\n"
 "PO-Revision-Date: 2026-05-24 07:36+0300\n"
 "Last-Translator: kbengs\n"
 "Language: sv\n"
@@ -75,14 +75,14 @@ msgid "Strikethrough text"
 msgstr "Stryk över texten"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/canvas.py
-msgid "Add a comment to replace text"
-msgstr "Lägg till en kommentar som ersätter texten"
+#: pdfarranger_qt/canvas.py pdfarranger_qt/tools.py
+msgid "Add note to text"
+msgstr "Lägg till anteckning till texten"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
-msgid "Add note to text"
-msgstr "Lägg till anteckning till texten"
+msgid "Add a comment to replace text"
+msgstr "Lägg till en kommentar som ersätter texten"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
@@ -2839,7 +2839,8 @@ msgid "Modified"
 msgstr "Ändrad"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/notepanel.py pdfarranger_qt/tools.py
+#: pdfarranger_qt/notepanel.py pdfarranger_qt/properties.py
+#: pdfarranger_qt/tools.py
 msgid "Underline"
 msgstr "Understruken"
 
@@ -2898,9 +2899,25 @@ msgstr "9 sidor per ark"
 msgid "16 pages per sheet"
 msgstr "16 sidor per ark"
 
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py pdfarranger_qt/tools.py
+msgid "Highlight"
+msgstr "Markera"
+
+# machine translation, unreviewed
 #: pdfarranger_qt/properties.py
-msgid "Comment properties"
-msgstr "Kommentarsegenskaper"
+msgid "Cross-Out"
+msgstr "Genomstrykning"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Sticky Note"
+msgstr "Notis"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Comment on Text"
+msgstr "Kommentar till text"
 
 #: pdfarranger_qt/properties.py
 msgid "Review History"
@@ -2918,6 +2935,16 @@ msgstr "Gör egenskaper till standard"
 #: pdfarranger_qt/properties.py pdfarranger_qt/reader.py
 msgid "Style"
 msgstr "Stil"
+
+#: pdfarranger_qt/properties.py
+msgid "Comment properties"
+msgstr "Kommentarsegenskaper"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+#, python-format
+msgid "%s Properties"
+msgstr "Egenskaper för %s"
 
 #: pdfarranger_qt/properties.py
 msgid "Author"
@@ -3151,11 +3178,6 @@ msgstr "Lägg till textruta"
 #: pdfarranger_qt/tools.py
 msgid "Attach file"
 msgstr "Bifoga fil"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/tools.py
-msgid "Highlight"
-msgstr "Markera"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/tools.py

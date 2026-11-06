@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  pdfarranger\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-05 04:10+0000\n"
+"POT-Creation-Date: 2026-11-06 02:15+0000\n"
 "PO-Revision-Date: 2023-06-06 13:27+0200\n"
 "Last-Translator: Milo Ivir <mail@milotype.de>\n"
 "Language: hr\n"
@@ -76,14 +76,14 @@ msgid "Strikethrough text"
 msgstr "Precrtaj tekst"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/canvas.py
-msgid "Add a comment to replace text"
-msgstr "Dodaj komentar koji zamjenjuje tekst"
+#: pdfarranger_qt/canvas.py pdfarranger_qt/tools.py
+msgid "Add note to text"
+msgstr "Dodaj bilješku tekstu"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
-msgid "Add note to text"
-msgstr "Dodaj bilješku tekstu"
+msgid "Add a comment to replace text"
+msgstr "Dodaj komentar koji zamjenjuje tekst"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
@@ -2888,7 +2888,8 @@ msgid "Modified"
 msgstr "Promijenjeno"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/notepanel.py pdfarranger_qt/tools.py
+#: pdfarranger_qt/notepanel.py pdfarranger_qt/properties.py
+#: pdfarranger_qt/tools.py
 msgid "Underline"
 msgstr "Podcrtano"
 
@@ -2947,9 +2948,25 @@ msgstr "9 stranica po listu"
 msgid "16 pages per sheet"
 msgstr "16 stranica po listu"
 
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py pdfarranger_qt/tools.py
+msgid "Highlight"
+msgstr "Istakni"
+
+# machine translation, unreviewed
 #: pdfarranger_qt/properties.py
-msgid "Comment properties"
-msgstr "Svojstva komentara"
+msgid "Cross-Out"
+msgstr "Precrtano"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Sticky Note"
+msgstr "Ljepljiva bilješka"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Comment on Text"
+msgstr "Komentar na tekst"
 
 #: pdfarranger_qt/properties.py
 msgid "Review History"
@@ -2967,6 +2984,16 @@ msgstr "Postavi svojstva kao zadana"
 #: pdfarranger_qt/properties.py pdfarranger_qt/reader.py
 msgid "Style"
 msgstr "Stil"
+
+#: pdfarranger_qt/properties.py
+msgid "Comment properties"
+msgstr "Svojstva komentara"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+#, python-format
+msgid "%s Properties"
+msgstr "Svojstva – %s"
 
 #: pdfarranger_qt/properties.py
 msgid "Author"
@@ -3200,11 +3227,6 @@ msgstr "Dodaj tekstni okvir"
 #: pdfarranger_qt/tools.py
 msgid "Attach file"
 msgstr "Priloži datoteku"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/tools.py
-msgid "Highlight"
-msgstr "Istakni"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/tools.py

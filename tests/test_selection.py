@@ -222,6 +222,100 @@ class TestWhatAClickDoes(SelectionCase):
         self.assertEqual(seen, [True, False])
 
 
+class TestAMarkIsHitByItsInk(SelectionCase):
+    """Over the words a cross-out runs through, but off the line, there is
+    no mark. Reader's rule, confirmed by the owner on 2026-11-05: its
+    outline appears on the struck line and not merely on the struck words.
+
+    A stroke is a sixteenth of the type's height, so hit-testing the
+    quadrilateral claimed sixteen times too much of the page -- and made
+    every overlapping mark on a busy page a coin toss.
+    """
+
+    def a_mark_of(self, subtype):
+        """A mark of ``subtype`` on the first page, with its first quad."""
+        for mark, _mine in self.canvas.marks_on(0):
+            if getattr(mark, "subtype", None) != subtype or not mark.quads:
+                continue
+            for box in self.canvas.mark_boxes(mark):
+                where = self.canvas.quad_on_screen(0, box, scaled=False)
+                if where is None or where.height() < 8:
+                    continue
+                if self.canvas.viewport().rect().contains(
+                        where.center().toPoint()):
+                    return mark, box
+        self.skipTest("no %s is on screen in the sample" % subtype)
+
+    def at(self, y, box):
+        from PySide6.QtCore import QPointF
+
+        height = self.canvas._layout.page_height(0)
+        return self.canvas.to_viewport(self.canvas._layout.from_page(
+            0, QPointF((box[0] + box[2]) / 2, height - y)))
+
+    def test_a_stroke_is_taken_on_its_line_and_not_beside_it(self):
+        from pdfarranger_qt import markup
+
+        for subtype in ("/Underline", "/StrikeOut"):
+            with self.subTest(subtype=subtype):
+                mark, box = self.a_mark_of(subtype)
+                ink = markup.ink_box(subtype, box)
+                self.assertIsNotNone(
+                    self.canvas.mark_at(self.at((ink[1] + ink[3]) / 2, box)),
+                    "the ink itself is not a hit")
+                # The top of the run: above a cross-out's line and well
+                # above an underline's, for both of them.
+                height = box[3] - box[1]
+                self.assertIsNone(
+                    self.canvas.mark_at(self.at(box[3] - height * 0.1, box)),
+                    "a point well away from the stroke still took the mark")
+
+    def test_a_highlight_is_taken_anywhere_on_the_words(self):
+        """Its ink *is* the quadrilateral, so nothing narrows."""
+        mark, box = self.a_mark_of("/Highlight")
+        height = box[3] - box[1]
+        for part in (0.1, 0.5, 0.9):
+            with self.subTest(part=part):
+                self.assertIsNotNone(
+                    self.canvas.mark_at(self.at(box[1] + height * part, box)))
+
+    def test_the_pointer_says_which_kind_it_is_over(self):
+        """**An arrow only where the mark covers the words.** Over a
+        highlight there is no text left uncovered; over a cross-out the
+        words are still there and still selectable, and Reader keeps the
+        I-beam -- taken from the owner on 2026-11-05.
+        """
+        from PySide6.QtCore import Qt
+        from PySide6.QtGui import QMouseEvent
+
+        from pdfarranger_qt import markup
+
+        for subtype, wanted in (("/Highlight", Qt.ArrowCursor),
+                                ("/StrikeOut", Qt.IBeamCursor),
+                                ("/Underline", Qt.IBeamCursor)):
+            with self.subTest(subtype=subtype):
+                mark, box = self.a_mark_of(subtype)
+                ink = markup.ink_box(subtype, box)
+                point = self.at((ink[1] + ink[3]) / 2, box)
+                self.send(QMouseEvent.Type.MouseMove, point)
+                settle(timeout_ms=120)
+                self.assertEqual(self.canvas.viewport().cursor().shape(),
+                                 wanted)
+
+    def test_the_tolerance_is_in_pixels_rather_than_points(self):
+        """So a mark does not get harder to grab the further out you zoom.
+        In points the slack would shrink with the zoom, which is backwards.
+        """
+        from pdfarranger_qt import markup
+
+        mark, box = self.a_mark_of("/StrikeOut")
+        ink = markup.ink_box("/StrikeOut", box)
+        on_screen = self.canvas.ink_on_screen(0, mark, box, False)
+        drawn = self.canvas.quad_on_screen(0, ink, scaled=False)
+        self.assertAlmostEqual(on_screen.height() - drawn.height(),
+                               2 * self.canvas.INK_TOLERANCE, places=3)
+
+
 class TestTheOutlineUnderThePointer(SelectionCase):
 
     def test_the_pointer_notices_a_mark_under_every_tool(self):

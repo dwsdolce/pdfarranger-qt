@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pdfarranger-qt VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/dwsdolce/pdfarranger-qt/issues\n"
-"POT-Creation-Date: 2026-11-05 04:10+0000\n"
+"POT-Creation-Date: 2026-11-06 02:15+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -64,12 +64,12 @@ msgstr ""
 msgid "Strikethrough text"
 msgstr ""
 
-#: pdfarranger_qt/canvas.py
-msgid "Add a comment to replace text"
+#: pdfarranger_qt/canvas.py pdfarranger_qt/tools.py
+msgid "Add note to text"
 msgstr ""
 
 #: pdfarranger_qt/canvas.py
-msgid "Add note to text"
+msgid "Add a comment to replace text"
 msgstr ""
 
 #: pdfarranger_qt/canvas.py
@@ -2257,7 +2257,8 @@ msgstr ""
 msgid "Modified"
 msgstr ""
 
-#: pdfarranger_qt/notepanel.py pdfarranger_qt/tools.py
+#: pdfarranger_qt/notepanel.py pdfarranger_qt/properties.py
+#: pdfarranger_qt/tools.py
 msgid "Underline"
 msgstr ""
 
@@ -2309,8 +2310,20 @@ msgstr ""
 msgid "16 pages per sheet"
 msgstr ""
 
+#: pdfarranger_qt/properties.py pdfarranger_qt/tools.py
+msgid "Highlight"
+msgstr ""
+
 #: pdfarranger_qt/properties.py
-msgid "Comment properties"
+msgid "Cross-Out"
+msgstr ""
+
+#: pdfarranger_qt/properties.py
+msgid "Sticky Note"
+msgstr ""
+
+#: pdfarranger_qt/properties.py
+msgid "Comment on Text"
 msgstr ""
 
 #: pdfarranger_qt/properties.py
@@ -2327,6 +2340,15 @@ msgstr ""
 
 #: pdfarranger_qt/properties.py pdfarranger_qt/reader.py
 msgid "Style"
+msgstr ""
+
+#: pdfarranger_qt/properties.py
+msgid "Comment properties"
+msgstr ""
+
+#: pdfarranger_qt/properties.py
+#, python-format
+msgid "%s Properties"
 msgstr ""
 
 #: pdfarranger_qt/properties.py
@@ -2516,10 +2538,6 @@ msgstr ""
 
 #: pdfarranger_qt/tools.py
 msgid "Attach file"
-msgstr ""
-
-#: pdfarranger_qt/tools.py
-msgid "Highlight"
 msgstr ""
 
 #: pdfarranger_qt/tools.py

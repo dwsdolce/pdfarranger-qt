@@ -1083,12 +1083,12 @@ Cited as **highlight step 1** to **highlight step 9**.
    menu above, which carries its entry from the start, and built separately
    afterwards.
 
-   **Done 2026-11-03.** *Comment properties*: three tabs and a footer, one
-   form for every kind, opened from *Properties...* in the mark's menu and
-   in a reply's. It writes three keys and one flag -- `/T`, `/Subj` and
-   `/F` bit 8 -- and only where they differ from what it was given, so a
-   mark whose colour was touched keeps the author and the subject the
-   producer gave it.
+   **Done 2026-11-03.** Three tabs and a footer, one form for every kind,
+   opened from *Properties...* in the mark's menu and in a reply's. It
+   writes three keys and one flag -- `/T`, `/Subj` and `/F` bit 8 -- and
+   only where they differ from what it was given, so a mark whose colour
+   was touched keeps the author and the subject the producer gave it.
+   **Titled after the mark**, as Reader titles it: see decision 42.
 
    Appearance reuses the palette the swatch in the tool strip opens, rather
    than a second one of its own: two pickers that have to agree about
@@ -2357,6 +2357,77 @@ stays -- `selection_quads` measures the loose boxes through the same text
 layer, which is why a mark made from the menu and one dragged out are
 identical. Abandoning the reader's selection was bundled in beside it,
 recorded in a code comment rather than here, and never put to the owner.
+
+**44. A text mark is hit by its ink, and the pointer says which kind it
+is over.** Both taken from the owner on 2026-11-05, against Reader.
+
+**The ink, not the quadrilateral.** Reader's outline appears when the
+pointer is on the struck *line*, not merely on the struck words. A stroke
+is a sixteenth of the type's height, so hit-testing the box claimed
+sixteen times too much of the page -- and on a page of overlapping marks
+that is the thicket the shape rule already warned about, arriving by the
+other door. `markup.ink_box` says where a kind draws inside a quad and
+`canvas.mark_at` tests that instead. For a highlight the two are the same
+box, which is why nothing about highlights changes and why this went
+unnoticed until there was a cross-out to look at.
+
+A stroke under a point thick is unhittable to the exact pixel, so
+`INK_TOLERANCE` grows the target by three *device* pixels. In points the
+slack would shrink with the zoom, making a mark harder to grab the
+further out you were, which is backwards.
+
+**An arrow only where the mark covers the words.** Over a highlight there
+is no text left uncovered, so the pointer says "this is a thing"; over a
+cross-out or an underline the words are still there and still selectable,
+and Reader keeps the I-beam. `markup.FILLED` is the distinction. The
+earlier rule -- an I-beam over text, an arrow over a mark -- was written
+for the shape tools, where it exists to make "start on the ink" visible;
+it holds for them and for the one text mark that fills what it marks.
+
+**`/Rect` is still unexplained.** Reader pads it, by about 0.44 points on
+every side for a highlight and by three to four points horizontally for
+the line markups -- subtype-dependent, and not the hover zone: the
+cursor keeps changing far outside what the padding would allow, and the
+ink stops several points short of the rectangle's edge. Ours is the
+quadrilaterals' bounding box. Nothing has been found that it breaks.
+
+**43. The opacity is a field as well as a slider.** Both live, both
+showing the same number, with the field above and the slider under it, as
+Reader has it -- photographed in the owner's notes on 2026-11-05. It was
+a label beside the slider, so a mark could only be faded by dragging and
+there was no way to ask for 50 exactly.
+
+A field that is being retyped -- empty, or a bare `%` -- changes nothing
+until it is a number again; a field you cannot clear is a field you
+cannot retype. What is typed is not rewritten while it is being typed,
+because setting the text back moves the cursor and fights the typist, so
+`50` is tidied to `50%` when the field is left instead. The lock refuses
+both controls: either one of them fades the mark.
+
+**42. The properties form is named for the mark it is open on.**
+*Underline Properties*, *Cross-Out Properties*, *Highlight Properties* --
+photographed in the owner's notes on 2026-11-05, which carry two of them.
+It said *Comment properties* whatever was picked.
+
+The name is the mark's `/Subj`, which is why a cross-out's form says
+Cross-Out where its tool is called Strikethrough. `/Subj` goes into the
+file in English, because a reader groups and filters its comment list by
+it and a translated one would sort into a category of its own in every
+other language -- so `properties.SUBJECT_LABELS` translates it for the
+title rather than showing the file's word. A subject somebody has typed
+into the General tab is their own words and is used as it stands; a mark
+with no subject at all, from a kind this application has no name for,
+keeps the generic title.
+
+**Strikethrough needed nothing else.** The owner's notes of the same day
+ask for five things and the work done for highlight and underline had
+already covered them: the selection splits per page or clamps to one
+depending on which came first, the form offers colour and opacity and no
+style, the grips stay although Reader has none, the tool keeps a colour
+of its own, and the menu, the remaining tabs and the notes are
+highlight's. `Markup Strikethrough.pdf` also confirms the drawing on a
+sixth text size -- `0.06250` thick and `0.42856` of the height up the
+quadrilateral, which is 1/16 and 3/7 to five figures.
 
 ## Done
 

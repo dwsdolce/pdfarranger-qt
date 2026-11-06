@@ -3101,8 +3101,35 @@ class PageCanvas(QAbstractScrollArea):
             return list(mark.quads) or [mark.rect]
         return mark.boxes()
 
+    #: How far off a mark's ink a click may land and still take it, in
+    #: *device* pixels. In points it would shrink with the zoom and a mark
+    #: would get harder to grab the further out you were, which is the
+    #: opposite of what a tolerance is for. A cross-out's stroke is under a
+    #: point thick, so without this it is unhittable.
+    INK_TOLERANCE = 3.0
+
+    def ink_on_screen(self, index: int, mark, quad, scaled: bool):
+        """Where one of a mark's quadrilaterals is *drawn*, on screen.
+
+        Grown by `INK_TOLERANCE`, which is the whole of what makes a stroke
+        a target rather than a hairline.
+        """
+        kind = (mark.kind if isinstance(mark, markup.Annotation)
+                else mark.subtype)
+        where = self.quad_on_screen(
+            index, markup.ink_box(kind, quad), scaled=scaled)
+        if where is None:
+            return None
+        return where.adjusted(-self.INK_TOLERANCE, -self.INK_TOLERANCE,
+                              self.INK_TOLERANCE, self.INK_TOLERANCE)
+
     def mark_at(self, point: QPointF):
         """The mark under a *viewport* point, or None.
+
+        **By its ink, not by the box its quadrilaterals describe.** Over
+        the words a cross-out runs through, but off the line itself, there
+        is no mark -- which is Reader, and which is what keeps a page of
+        overlapping marks from being a thicket.
 
         Last one first, so the topmost is found: marks are drawn in order and
         the one drawn last is the one a reader sees on top.
@@ -3112,10 +3139,19 @@ class PageCanvas(QAbstractScrollArea):
             return None
         for mark, is_mine in reversed(self.marks_on(index)):
             for quad in self.mark_boxes(mark):
-                where = self.quad_on_screen(index, quad, scaled=is_mine)
+                where = self.ink_on_screen(index, mark, quad, is_mine)
                 if where is not None and where.contains(point):
                     return (index, mark)
         return None
+
+    @staticmethod
+    def _covers_text(found) -> bool:
+        """Whether the mark in ``found`` hides the words it is on."""
+        if found is None:
+            return False
+        mark = found[1]
+        return (mark.kind if isinstance(mark, markup.Annotation)
+                else mark.subtype) in markup.FILLED
 
     def selected_mark(self):
         """``(page, mark)`` for what is selected, or None."""
@@ -3480,11 +3516,19 @@ class PageCanvas(QAbstractScrollArea):
         # the run and the end at the bottom right, so both lie on the same
         # north-west to south-east diagonal.
         over_grip = self.grip_at(position) is not None
-        over_mark = not self._text_through and (
-            over_grip or self.mark_at(position) is not None)
+        found = None if self._text_through else self.mark_at(position)
+        over_mark = not self._text_through and (over_grip or found is not None)
         if over_mark and not (event.buttons() & Qt.LeftButton):
+            # **An arrow only where the mark covers the words.** Over a
+            # highlight there is no text left uncovered, so the pointer
+            # says "this is a thing". Over a cross-out or an underline the
+            # words are still there and still selectable, and Reader keeps
+            # the I-beam -- taken from the owner on 2026-11-05, who has it
+            # for highlight and not for the other two.
             self.viewport().setCursor(
-                Qt.SizeFDiagCursor if over_grip else Qt.ArrowCursor)
+                Qt.SizeFDiagCursor if over_grip
+                else Qt.ArrowCursor if self._covers_text(found)
+                else Qt.IBeamCursor)
 
         carried = self.note_badge_at(position) or self._marked_note_at(position)
         if carried is not None:

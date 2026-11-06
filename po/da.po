@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  pdfarranger\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-05 04:10+0000\n"
+"POT-Creation-Date: 2026-11-06 02:15+0000\n"
 "PO-Revision-Date: 2023-10-22 00:28+0200\n"
 "Last-Translator: Lrss <dev@lrss.dk>\n"
 "Language: da\n"
@@ -75,14 +75,14 @@ msgid "Strikethrough text"
 msgstr "Gennemstreg tekst"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/canvas.py
-msgid "Add a comment to replace text"
-msgstr "Tilføj en kommentar der erstatter teksten"
+#: pdfarranger_qt/canvas.py pdfarranger_qt/tools.py
+msgid "Add note to text"
+msgstr "Tilføj note til tekst"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
-msgid "Add note to text"
-msgstr "Tilføj note til tekst"
+msgid "Add a comment to replace text"
+msgstr "Tilføj en kommentar der erstatter teksten"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
@@ -2876,7 +2876,8 @@ msgid "Modified"
 msgstr "Ændret"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/notepanel.py pdfarranger_qt/tools.py
+#: pdfarranger_qt/notepanel.py pdfarranger_qt/properties.py
+#: pdfarranger_qt/tools.py
 msgid "Underline"
 msgstr "Understregning"
 
@@ -2935,9 +2936,25 @@ msgstr "9 sider pr. ark"
 msgid "16 pages per sheet"
 msgstr "16 sider pr. ark"
 
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py pdfarranger_qt/tools.py
+msgid "Highlight"
+msgstr "Fremhæv"
+
+# machine translation, unreviewed
 #: pdfarranger_qt/properties.py
-msgid "Comment properties"
-msgstr "Kommentaregenskaber"
+msgid "Cross-Out"
+msgstr "Gennemstregning"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Sticky Note"
+msgstr "Note"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Comment on Text"
+msgstr "Kommentar til tekst"
 
 #: pdfarranger_qt/properties.py
 msgid "Review History"
@@ -2955,6 +2972,16 @@ msgstr "Gør egenskaber til standard"
 #: pdfarranger_qt/properties.py pdfarranger_qt/reader.py
 msgid "Style"
 msgstr "Stil"
+
+#: pdfarranger_qt/properties.py
+msgid "Comment properties"
+msgstr "Kommentaregenskaber"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+#, python-format
+msgid "%s Properties"
+msgstr "Egenskaber for %s"
 
 #: pdfarranger_qt/properties.py
 msgid "Author"
@@ -3188,11 +3215,6 @@ msgstr "Tilføj tekstfelt"
 #: pdfarranger_qt/tools.py
 msgid "Attach file"
 msgstr "Vedhæft fil"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/tools.py
-msgid "Highlight"
-msgstr "Fremhæv"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/tools.py

@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  pdfarranger\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-05 04:10+0000\n"
+"POT-Creation-Date: 2026-11-06 02:15+0000\n"
 "PO-Revision-Date: 2023-07-10 15:37+0000\n"
 "Last-Translator: PavelZ\n"
 "Language: cs_CZ\n"
@@ -72,14 +72,14 @@ msgid "Strikethrough text"
 msgstr "Přeškrtnout text"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/canvas.py
-msgid "Add a comment to replace text"
-msgstr "Přidat komentář nahrazující text"
+#: pdfarranger_qt/canvas.py pdfarranger_qt/tools.py
+msgid "Add note to text"
+msgstr "Přidat poznámku k textu"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
-msgid "Add note to text"
-msgstr "Přidat poznámku k textu"
+msgid "Add a comment to replace text"
+msgstr "Přidat komentář nahrazující text"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
@@ -2874,7 +2874,8 @@ msgid "Modified"
 msgstr "Změněno"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/notepanel.py pdfarranger_qt/tools.py
+#: pdfarranger_qt/notepanel.py pdfarranger_qt/properties.py
+#: pdfarranger_qt/tools.py
 msgid "Underline"
 msgstr "Podtržení"
 
@@ -2933,9 +2934,25 @@ msgstr "9 stránek na list"
 msgid "16 pages per sheet"
 msgstr "16 stránek na list"
 
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py pdfarranger_qt/tools.py
+msgid "Highlight"
+msgstr "Zvýraznění"
+
+# machine translation, unreviewed
 #: pdfarranger_qt/properties.py
-msgid "Comment properties"
-msgstr "Vlastnosti komentáře"
+msgid "Cross-Out"
+msgstr "Přeškrtnutí"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Sticky Note"
+msgstr "Lepicí poznámka"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Comment on Text"
+msgstr "Komentář k textu"
 
 #: pdfarranger_qt/properties.py
 msgid "Review History"
@@ -2953,6 +2970,16 @@ msgstr "Nastavit vlastnosti jako výchozí"
 #: pdfarranger_qt/properties.py pdfarranger_qt/reader.py
 msgid "Style"
 msgstr "Styl"
+
+#: pdfarranger_qt/properties.py
+msgid "Comment properties"
+msgstr "Vlastnosti komentáře"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+#, python-format
+msgid "%s Properties"
+msgstr "Vlastnosti – %s"
 
 #: pdfarranger_qt/properties.py
 msgid "Author"
@@ -3186,11 +3213,6 @@ msgstr "Přidat textové pole"
 #: pdfarranger_qt/tools.py
 msgid "Attach file"
 msgstr "Připojit soubor"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/tools.py
-msgid "Highlight"
-msgstr "Zvýraznění"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/tools.py

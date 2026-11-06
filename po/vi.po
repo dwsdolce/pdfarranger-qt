@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-05 04:10+0000\n"
+"POT-Creation-Date: 2026-11-06 02:15+0000\n"
 "PO-Revision-Date: 2025-12-15 00:59+0700\n"
 "Last-Translator: Loc Huynh <https://github.com/hthienloc>\n"
 "Language: vi\n"
@@ -74,14 +74,14 @@ msgid "Strikethrough text"
 msgstr "Gạch ngang văn bản"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/canvas.py
-msgid "Add a comment to replace text"
-msgstr "Thêm chú thích để thay thế văn bản"
+#: pdfarranger_qt/canvas.py pdfarranger_qt/tools.py
+msgid "Add note to text"
+msgstr "Thêm ghi chú vào văn bản"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
-msgid "Add note to text"
-msgstr "Thêm ghi chú vào văn bản"
+msgid "Add a comment to replace text"
+msgstr "Thêm chú thích để thay thế văn bản"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
@@ -2835,7 +2835,8 @@ msgid "Modified"
 msgstr "Đã sửa đổi"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/notepanel.py pdfarranger_qt/tools.py
+#: pdfarranger_qt/notepanel.py pdfarranger_qt/properties.py
+#: pdfarranger_qt/tools.py
 msgid "Underline"
 msgstr "Gạch chân"
 
@@ -2894,9 +2895,25 @@ msgstr "9 trang mỗi tờ"
 msgid "16 pages per sheet"
 msgstr "16 trang mỗi tờ"
 
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py pdfarranger_qt/tools.py
+msgid "Highlight"
+msgstr "Tô sáng"
+
+# machine translation, unreviewed
 #: pdfarranger_qt/properties.py
-msgid "Comment properties"
-msgstr "Thuộc tính chú thích"
+msgid "Cross-Out"
+msgstr "Gạch ngang"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Sticky Note"
+msgstr "Ghi chú"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Comment on Text"
+msgstr "Chú thích văn bản"
 
 #: pdfarranger_qt/properties.py
 msgid "Review History"
@@ -2914,6 +2931,16 @@ msgstr "Đặt thuộc tính làm mặc định"
 #: pdfarranger_qt/properties.py pdfarranger_qt/reader.py
 msgid "Style"
 msgstr "Kiểu"
+
+#: pdfarranger_qt/properties.py
+msgid "Comment properties"
+msgstr "Thuộc tính chú thích"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+#, python-format
+msgid "%s Properties"
+msgstr "Thuộc tính %s"
 
 #: pdfarranger_qt/properties.py
 msgid "Author"
@@ -3147,11 +3174,6 @@ msgstr "Thêm hộp văn bản"
 #: pdfarranger_qt/tools.py
 msgid "Attach file"
 msgstr "Đính kèm tệp"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/tools.py
-msgid "Highlight"
-msgstr "Tô sáng"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/tools.py

@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-05 04:10+0000\n"
+"POT-Creation-Date: 2026-11-06 02:15+0000\n"
 "PO-Revision-Date: 2023-06-08 10:00+0700\n"
 "Last-Translator: Abdul Munif Hanafi <amunifhanafi@gmail.com>\n"
 "Language: id\n"
@@ -77,14 +77,14 @@ msgid "Strikethrough text"
 msgstr "Coret Teks"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/canvas.py
-msgid "Add a comment to replace text"
-msgstr "Tambah komentar untuk mengganti teks"
+#: pdfarranger_qt/canvas.py pdfarranger_qt/tools.py
+msgid "Add note to text"
+msgstr "Tambah catatan ke teks"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
-msgid "Add note to text"
-msgstr "Tambah catatan ke teks"
+msgid "Add a comment to replace text"
+msgstr "Tambah komentar untuk mengganti teks"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
@@ -2906,7 +2906,8 @@ msgid "Modified"
 msgstr "Diubah"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/notepanel.py pdfarranger_qt/tools.py
+#: pdfarranger_qt/notepanel.py pdfarranger_qt/properties.py
+#: pdfarranger_qt/tools.py
 msgid "Underline"
 msgstr "Garis bawah"
 
@@ -2965,9 +2966,25 @@ msgstr "9 halaman per lembar"
 msgid "16 pages per sheet"
 msgstr "16 halaman per lembar"
 
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py pdfarranger_qt/tools.py
+msgid "Highlight"
+msgstr "Sorot"
+
+# machine translation, unreviewed
 #: pdfarranger_qt/properties.py
-msgid "Comment properties"
-msgstr "Properti Komentar"
+msgid "Cross-Out"
+msgstr "Coret"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Sticky Note"
+msgstr "Catatan Tempel"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Comment on Text"
+msgstr "Komentar pada Teks"
 
 #: pdfarranger_qt/properties.py
 msgid "Review History"
@@ -2985,6 +3002,16 @@ msgstr "Jadikan Properti Bawaan"
 #: pdfarranger_qt/properties.py pdfarranger_qt/reader.py
 msgid "Style"
 msgstr "Gaya"
+
+#: pdfarranger_qt/properties.py
+msgid "Comment properties"
+msgstr "Properti Komentar"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+#, python-format
+msgid "%s Properties"
+msgstr "Properti %s"
 
 #: pdfarranger_qt/properties.py
 msgid "Author"
@@ -3218,11 +3245,6 @@ msgstr "Tambah kotak teks"
 #: pdfarranger_qt/tools.py
 msgid "Attach file"
 msgstr "Lampirkan berkas"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/tools.py
-msgid "Highlight"
-msgstr "Sorot"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/tools.py

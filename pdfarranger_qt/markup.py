@@ -1280,6 +1280,44 @@ def _appearance(pdf, annotation):
     return pdf.make_indirect(stream)
 
 
+#: The kinds whose ink *covers* the words rather than marking them. The
+#: distinction a reader's pointer makes: over a highlight you are over the
+#: mark, because there is nothing of the text left uncovered, while over a
+#: cross-out the words are still there and still selectable.
+FILLED = (HIGHLIGHT,)
+
+
+def ink_box(kind: str, quad) -> "tuple":
+    """Where ``kind`` actually draws inside one of its quadrilaterals.
+
+    **A mark is hit by its ink, not by the box it was measured from.** A
+    cross-out is a stroke four fifths of a point thick inside a box of
+    thirteen, so treating the box as the mark claims sixteen times too
+    much of the page -- and Reader does not: its outline appears when the
+    pointer is on the struck line, not merely on the struck words.
+
+    The same geometry `_stroke` and `_zigzag` draw with, stated once more
+    so a hit test and a drawing cannot drift apart; `TestWhereTheInkIs`
+    holds them together.
+    """
+    left, bottom, right, top = quad[:4]
+    height = top - bottom
+    if kind == SQUIGGLY:
+        up = height * SQUIGGLE_SCALE
+        base = bottom + height * SQUIGGLE_BASE
+        pen = SQUIGGLE_PEN * math.sqrt(up * up * SQUIGGLE_ASPECT)
+        return (left, base + up * SQUIGGLE_LOW - pen / 2.0,
+                right, base + up * SQUIGGLE_HIGH + pen / 2.0)
+    if kind in (UNDERLINE, STRIKEOUT):
+        above = (STRIKEOUT_OFFSET if kind == STRIKEOUT else UNDERLINE_OFFSET)
+        middle = bottom + height * above
+        half = height * STROKE_THICKNESS / 2.0
+        return (left, middle - half, right, middle + half)
+    # A highlight fills what it was given, and a kind with no drawing of
+    # its own here is taken at its word rather than shrunk to nothing.
+    return (left, bottom, right, top)
+
+
 def bounding_rect(quads) -> "tuple":
     """The box that contains every quad, which is what `/Rect` must be."""
     lefts = [q[0] for q in quads]

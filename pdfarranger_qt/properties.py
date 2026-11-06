@@ -34,8 +34,8 @@ and the colour popup already use.
 
 from typing import NamedTuple, Optional, Tuple
 
-from PySide6.QtCore import QPoint, Qt, Signal
-from PySide6.QtGui import QColor, QPainter
+from PySide6.QtCore import QPoint, QSignalBlocker, Qt, Signal
+from PySide6.QtGui import QColor, QPainter, QValidator
 from PySide6.QtWidgets import (
     QCheckBox,
     QComboBox,
@@ -53,8 +53,27 @@ from PySide6.QtWidgets import (
     QWidget,
 )
 
+from .i18n import N_
 from .i18n import gettext_ as _
 from .toolstrip import ColourPopup
+
+#: What a mark is called in the form's title bar, translated. **Reader
+#: titles the form after the mark**: *Underline Properties*, *Cross-Out
+#: Properties*, *Highlight Properties* -- read off the owner's notes on
+#: 2026-11-05, which carry photographs of two of them.
+#:
+#: The names are the `/Subj` values, and those go into the file in English
+#: because a reader groups and filters its comment list by them -- so they
+#: are translated here, for the title, rather than shown raw. A subject
+#: somebody has typed into the General tab is their own words and is used
+#: as it stands.
+SUBJECT_LABELS = {
+    "Highlight": N_("Highlight"),
+    "Cross-Out": N_("Cross-Out"),
+    "Underline": N_("Underline"),
+    "Sticky Note": N_("Sticky Note"),
+    "Comment on Text": N_("Comment on Text"),
+}
 
 
 class Properties(NamedTuple):
@@ -87,6 +106,33 @@ class Properties(NamedTuple):
     #: The styles this kind offers, as ``(value, label)`` with the label
     #: already translated. Empty for a kind with one appearance.
     styles: Tuple[Tuple[str, str], ...] = ()
+
+
+def _as_number(text: str):
+    """``text`` as a percentage from 0 to 100, or None if it is not one."""
+    try:
+        value = int(text.strip().rstrip("%").strip() or "")
+    except ValueError:
+        return None
+    return max(0, min(100, value))
+
+
+class _PercentValidator(QValidator):
+    """Lets a percentage be typed, and nothing else.
+
+    Intermediate rather than Invalid for an empty field and a bare `%`,
+    because a field you cannot clear is a field you cannot retype.
+    """
+
+    def validate(self, text: str, position: int):
+        stripped = text.strip().rstrip("%").strip()
+        if not stripped:
+            return (QValidator.Intermediate, text, position)
+        if not stripped.isdigit():
+            return (QValidator.Invalid, text, position)
+        if int(stripped) > 100:
+            return (QValidator.Invalid, text, position)
+        return (QValidator.Acceptable, text, position)
 
 
 class _Swatch(QPushButton):
@@ -134,7 +180,7 @@ class MarkProperties(QDialog):
 
     def __init__(self, props: Properties, parent=None):
         super().__init__(parent)
-        self.setWindowTitle(_("Comment properties"))
+        self.setWindowTitle(self.title_for(props.subject))
         self.setModal(True)
         self._was = props
         #: What the appearance tab is holding, which the popup changes as it
@@ -187,17 +233,23 @@ class MarkProperties(QDialog):
         self.swatch.clicked.connect(self._pick_colour)
         form.addRow(_("Colour"), self.swatch)
 
-        row = QHBoxLayout()
+        # **A field you can type into and a slider under it**, both live
+        # and both showing the same number, which is how Reader has it.
+        # The percentage used to be a label beside the slider, so a mark
+        # could only be faded by dragging -- no way to ask for 50 exactly.
+        column = QVBoxLayout()
+        self.percent = QLineEdit(self._percent(), page)
+        self.percent.setValidator(_PercentValidator(self.percent))
+        self.percent.setMinimumWidth(80)
+        self.percent.editingFinished.connect(self._typed)
+        self.percent.textEdited.connect(self._typing)
+        column.addWidget(self.percent)
         self.slider = QSlider(Qt.Horizontal, page)
         self.slider.setRange(0, 100)
         self.slider.setValue(self._as_percent())
         self.slider.valueChanged.connect(self._slid)
-        row.addWidget(self.slider, 1)
-        self.percent = QLabel(self._percent(), page)
-        self.percent.setMinimumWidth(44)
-        self.percent.setAlignment(Qt.AlignRight | Qt.AlignVCenter)
-        row.addWidget(self.percent)
-        form.addRow(_("Opacity"), row)
+        column.addWidget(self.slider)
+        form.addRow(_("Opacity"), column)
 
         if self._was.styles:
             # Beside Colour, as Reader puts it. The entries are the kind's
@@ -218,6 +270,18 @@ class MarkProperties(QDialog):
         self.palette_popup.faded.connect(
             lambda value: self.slider.setValue(round(value * 100)))
         return page
+
+    @staticmethod
+    def title_for(subject: str) -> str:
+        """What the title bar says, for a mark called ``subject``.
+
+        The generic name for a mark with no subject at all -- a kind this
+        application has no name for yet, read out of somebody else's file.
+        """
+        if not subject:
+            return _("Comment properties")
+        known = SUBJECT_LABELS.get(subject)
+        return _("%s Properties") % (_(known) if known else subject)
 
     def _general(self, props: Properties) -> QWidget:
         page = QWidget(self)
@@ -255,9 +319,36 @@ class MarkProperties(QDialog):
         return "%d%%" % self._as_percent()
 
     def _slid(self, value: int) -> None:
+        """The slider moved: the field follows and the page previews."""
         self._opacity = value / 100.0
-        self.percent.setText(self._percent())
+        if self.percent.text() != self._percent():
+            self.percent.setText(self._percent())
         self.previewed.emit(self._colour, self._opacity)
+
+    def _typing(self, text: str) -> None:
+        """A digit went into the field.
+
+        Live, as the slider is, but without rewriting what is being typed:
+        setting the text back would move the cursor and fight the typist.
+        A field left half-finished -- empty, or just "%" -- changes
+        nothing until it is a number again.
+        """
+        value = _as_number(text)
+        if value is None:
+            return
+        self._opacity = value / 100.0
+        with QSignalBlocker(self.slider):
+            self.slider.setValue(value)
+        self.previewed.emit(self._colour, self._opacity)
+
+    def _typed(self) -> None:
+        """Focus left the field, or Return was pressed: tidy what is in it.
+
+        Whatever was typed is shown back as a percentage -- so `50`
+        becomes `50%` and something unreadable becomes the value the mark
+        still has, rather than being left looking like it meant something.
+        """
+        self.percent.setText(self._percent())
 
     def _pick_colour(self) -> None:
         below = self.swatch.mapToGlobal(QPoint(0, self.swatch.height() + 2))
@@ -282,6 +373,9 @@ class MarkProperties(QDialog):
         if self._was.has_colour:
             self.swatch.setEnabled(not on)
             self.slider.setEnabled(not on)
+            # The field as well as the slider: either one of them fades
+            # the mark, so leaving it live would leave a way through.
+            self.percent.setEnabled(not on)
         if self._was.styles:
             self.style.setEnabled(not on)
 
