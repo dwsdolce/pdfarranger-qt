@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-07 07:46+0000\n"
+"POT-Creation-Date: 2026-11-07 08:45+0000\n"
 "PO-Revision-Date: 2022-09-01 00:40+0900\n"
 "Last-Translator: sicklylife <translation@sicklylife.jp>\n"
 "Language: ja\n"
@@ -2175,11 +2175,6 @@ msgstr "マークを変更"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
-msgid "Delete Note"
-msgstr "ノートを削除"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
 msgid "_File"
 msgstr "ファイル(_F)"
 
@@ -3153,6 +3148,11 @@ msgstr "コメントを追加"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/tools.py
+msgid "Add a scalable comment"
+msgstr "拡大縮小できるコメントを追加"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
 msgid "Replace selected text"
 msgstr "選択したテキストを置換"
 
@@ -3679,4 +3679,8 @@ msgstr "ファイル名ではなくタイトルを表示する"
 # machine translation, unreviewed
 #~ msgid "Grows with the page"
 #~ msgstr "ページに合わせて拡大"
+
+# machine translation, unreviewed
+#~ msgid "Delete Note"
+#~ msgstr "ノートを削除"
 

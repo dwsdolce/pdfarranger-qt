@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PDF-Shuffler 0.7\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-07 07:46+0000\n"
+"POT-Creation-Date: 2026-11-07 08:45+0000\n"
 "PO-Revision-Date: 2021-12-30 17:13+0100\n"
 "Last-Translator: Toratora <darex7@o2.pl>\n"
 "Language: pl_PL\n"
@@ -2335,11 +2335,6 @@ msgstr "Zmień znacznik"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
-msgid "Delete Note"
-msgstr "Usuń notatkę"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
 msgid "_File"
 msgstr "_Plik"
 
@@ -3341,6 +3336,11 @@ msgstr "Dodaj komentarz"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/tools.py
+msgid "Add a scalable comment"
+msgstr "Dodaj skalowalny komentarz"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
 msgid "Replace selected text"
 msgstr "Zastąp zaznaczony tekst"
 
@@ -3883,4 +3883,8 @@ msgstr "Pokaż tytuł zamiast nazwy pliku"
 # machine translation, unreviewed
 #~ msgid "Grows with the page"
 #~ msgstr "Rośnie wraz ze stroną"
+
+# machine translation, unreviewed
+#~ msgid "Delete Note"
+#~ msgstr "Usuń notatkę"
 

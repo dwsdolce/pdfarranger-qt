@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-07 07:46+0000\n"
+"POT-Creation-Date: 2026-11-07 08:45+0000\n"
 "PO-Revision-Date: 2023-06-08 10:00+0700\n"
 "Last-Translator: Abdul Munif Hanafi <amunifhanafi@gmail.com>\n"
 "Language: id\n"
@@ -2321,11 +2321,6 @@ msgstr "Ubah Tanda"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
-msgid "Delete Note"
-msgstr "Hapus Catatan"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
 msgid "_File"
 msgstr "_Berkas"
 
@@ -3310,6 +3305,11 @@ msgstr "Tambah komentar"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/tools.py
+msgid "Add a scalable comment"
+msgstr "Tambahkan Komentar Terskala"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
 msgid "Replace selected text"
 msgstr "Ganti teks terpilih"
 
@@ -3853,4 +3853,8 @@ msgstr "Tampilkan judul alih-alih nama berkas"
 # machine translation, unreviewed
 #~ msgid "Grows with the page"
 #~ msgstr "Membesar bersama halaman"
+
+# machine translation, unreviewed
+#~ msgid "Delete Note"
+#~ msgstr "Hapus Catatan"
 

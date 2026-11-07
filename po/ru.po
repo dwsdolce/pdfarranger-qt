@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pdfarranger master\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-07 07:46+0000\n"
+"POT-Creation-Date: 2026-11-07 08:45+0000\n"
 "PO-Revision-Date: 2026-09-04 09:59+0000\n"
 "Last-Translator: Lumenman <28367232+Lumenman@users.noreply.github.com>\n"
 "Language: ru\n"
@@ -2145,11 +2145,6 @@ msgstr "При удалении этой пометки будут удален�
 msgid "Change Mark"
 msgstr "Изменить пометку"
 
-# machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
-msgid "Delete Note"
-msgstr "Удаление заметки"
-
 #: pdfarranger_qt/mainwindow.py
 msgid "_File"
 msgstr "_Файл"
@@ -3067,6 +3062,11 @@ msgstr "Добавить комментарий"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/tools.py
+msgid "Add a scalable comment"
+msgstr "Добавить масштабируемый комментарий"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
 msgid "Replace selected text"
 msgstr "Заменить выделенный текст"
 
@@ -3645,4 +3645,8 @@ msgstr "Показывать заголовок вместо имени файл
 # machine translation, unreviewed
 #~ msgid "Grows with the page"
 #~ msgstr "Растёт вместе со страницей"
+
+# machine translation, unreviewed
+#~ msgid "Delete Note"
+#~ msgstr "Удаление заметки"
 

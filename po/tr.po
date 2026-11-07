@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pdfarranger main\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-07 07:46+0000\n"
+"POT-Creation-Date: 2026-11-07 08:45+0000\n"
 "PO-Revision-Date: 2026-04-24 21:19+0300\n"
 "Last-Translator: Oğuz Ersen <oguz@ersen.moe>\n"
 "Language: tr\n"
@@ -2255,11 +2255,6 @@ msgstr "İşareti değiştir"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
-msgid "Delete Note"
-msgstr "Notu Sil"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
 msgid "_File"
 msgstr "_Dosya"
 
@@ -3231,6 +3226,11 @@ msgstr "Yorum ekle"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/tools.py
+msgid "Add a scalable comment"
+msgstr "Ölçeklenebilir yorum ekle"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
 msgid "Replace selected text"
 msgstr "Seçili metni değiştir"
 
@@ -3805,4 +3805,8 @@ msgstr "Dosya adı yerine başlığı göster"
 # machine translation, unreviewed
 #~ msgid "Grows with the page"
 #~ msgstr "Sayfayla birlikte büyür"
+
+# machine translation, unreviewed
+#~ msgid "Delete Note"
+#~ msgstr "Notu Sil"
 

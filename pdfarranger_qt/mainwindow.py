@@ -220,7 +220,6 @@ class MainWindow(QMainWindow):
         self.tool_strip.colour_armed.connect(self._colour_armed)
         self.tool_strip.opacity_armed.connect(self._opacity_armed)
         self.reader.canvas.mark_selected.connect(self._selected_mark_changed)
-        self.reader.canvas.note_edited.connect(self.note_edited)
         self.reader.canvas.marks = self._marks_on_page
         self.reader.field_edited.connect(self.field_edited)
         self.reader.field_refused.connect(self.field_refused)
@@ -836,10 +835,18 @@ class MainWindow(QMainWindow):
         # comment tool's colour. It was a tool in the strip for two days
         # and never should have been.
         markup.NOTE_ON_TEXT: markup.HIGHLIGHT,
+        "stamp": markup.STAMP,
     }
 
-    #: The gestures above that are not tools, and the tool each acts as.
-    GESTURE_TOOLS = {markup.NOTE_ON_TEXT: "comment"}
+    #: The gestures above that are not tools, and the tool each acts as --
+    #: and the one tool that borrows another's answers. The two comment
+    #: tools keep one set of properties between them: colour, opacity, the
+    #: icon and the note are the same question whichever makes the mark,
+    #: and two comment colours quietly drifting apart is the kind of thing
+    #: nobody reports and everybody notices. What differs is the subtype,
+    #: which is not a property anyone sets.
+    GESTURE_TOOLS = {markup.NOTE_ON_TEXT: "comment",
+                     "scalable_comment": "comment"}
 
     #: The marks that **are** their note. Cancelling the box, or leaving
     #: it empty, means there was no comment -- so the mark goes rather
@@ -849,7 +856,7 @@ class MainWindow(QMainWindow):
     #: By the canvas's names, because that is what reports a finished
     #: gesture -- `"note"` is the comment tool placing its icon. The caret
     #: pair belongs here too, once it exists.
-    REQUIRES_TEXT = (markup.NOTE_ON_TEXT, "note")
+    REQUIRES_TEXT = (markup.NOTE_ON_TEXT, "note", "stamp")
 
     #: Strip tool -> the canvas's own name for it. Only the tools that have
     #: been built appear: the strip offers twenty and the canvas implements
@@ -859,6 +866,7 @@ class MainWindow(QMainWindow):
         "strikethrough": "strikeout",
         "underline": "underline",
         "comment": "note",
+        "scalable_comment": "stamp",
         "draw": "draw",
     }
 
@@ -1024,6 +1032,19 @@ class MainWindow(QMainWindow):
                 wide, tall = markup.icon_size(self._icon_for("comment"))
                 rect = markup.note_rect(rect[0], rect[3],
                                         wide / scale, tall / scale)
+        if subtype == markup.STAMP:
+            # **Around the point, not down from it.** A stamp is page
+            # content and is placed by its centre: the fit to `/Rect` holds
+            # the artwork's centre whatever the angle, so a stamp anchored
+            # by a corner would walk across the page the first time it was
+            # turned. The pin above is the other way round, and has to be:
+            # NoZoom fixes its upper left.
+            page_scale = page.scale if page.scale else 1.0
+            icon = self._icon_for("comment")
+            wide, tall = markup.icon_size(icon)
+            centre = (rect[0], rect[3])
+            rect = markup.stamp_rect(centre[0], centre[1], icon,
+                                     1.0 / page_scale)
         # **Which tool, not which subtype.** Two things make a
         # `/Highlight` -- the highlight tool, and the comment tool over a
         # run of words -- and what tells them apart in the file is the
@@ -2112,55 +2133,6 @@ class MainWindow(QMainWindow):
             index, markup.one_page_with_edits(
                 data, index, self.model.mark_edits.for_page(uid),
                 hide_replies=True))
-
-    def note_edited(self, index: int, which: int, text: str) -> None:
-        """A note's editor closed: keep what was typed, or drop the note.
-
-        **An empty note is removed.** Until there is a command for deleting a
-        mark, emptying one is the only way to take it back, and an icon
-        claiming there is a note where there is no text is a lie on the page.
-        Placed and then abandoned, it goes with its own undo entry -- the mark
-        is removed and the entry `mark_drawn` pushed is discarded, so a note
-        nobody wrote leaves nothing behind, not even a step that undoes
-        nothing.
-        """
-        if not 0 <= index < len(self.model.pages):
-            return
-        marks = self._marks_on_page(index)
-        if not 0 <= which < len(marks):
-            return
-        mark = marks[which]
-        placed_at, self._placed_note = self._placed_note, None
-        text = text.strip()
-        if not text:
-            # Before the "nothing changed" test below, not after it: a note
-            # placed and then left empty has not *changed*, and it is exactly
-            # the one that has to go.
-            fresh = (not mark.contents
-                     and placed_at == self.model.undo.current)
-            if not fresh:
-                self.model.undo.commit(_("Delete Note"))
-            self.model.annotations.remove(mark)
-            if fresh:
-                # The entry being taken back is the one `mark_drawn` pushed
-                # for placing this note, and the state it holds is the one we
-                # have just returned to -- so the whole gesture leaves
-                # nothing behind, not even a step that undoes nothing.
-                self.model.undo.discard_last()
-            self._mark_added()
-            return
-        if text == (mark.contents or ""):
-            return
-        if mark.contents:
-            self.model.undo.commit(_("Edit Note"))
-        # No commit for the first text in a newly placed note: the "Add Mark"
-        # entry already holds the state from before it existed, so one undo
-        # takes away the note and its words together rather than leaving an
-        # empty icon behind.
-        mark.contents = text
-        if isinstance(mark, markup.Annotation):
-            mark.touch()
-        self._mark_added()
 
     def _mark_added(self) -> None:
         """Tell everything a mark was added, without rebuilding the reader.

@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-07 07:46+0000\n"
+"POT-Creation-Date: 2026-11-07 08:45+0000\n"
 "PO-Revision-Date: 2022-08-13 11:15+0200\n"
 "Last-Translator: Juanma1980 <juanma1980@gmail.com>\n"
 "Language: ca@valencia\n"
@@ -2324,11 +2324,6 @@ msgstr "Canvia la marca"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
-msgid "Delete Note"
-msgstr "Suprimix la nota"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
 msgid "_File"
 msgstr "_Fitxer"
 
@@ -3318,6 +3313,11 @@ msgstr "Afig un comentari"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/tools.py
+msgid "Add a scalable comment"
+msgstr "Afig un comentari escalable"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
 msgid "Replace selected text"
 msgstr "Substituïx el text seleccionat"
 
@@ -3861,4 +3861,8 @@ msgstr "Mostra el títol en lloc del nom del fitxer"
 # machine translation, unreviewed
 #~ msgid "Grows with the page"
 #~ msgstr "Creix amb la pàgina"
+
+# machine translation, unreviewed
+#~ msgid "Delete Note"
+#~ msgstr "Suprimix la nota"
 

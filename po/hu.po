@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-07 07:46+0000\n"
+"POT-Creation-Date: 2026-11-07 08:45+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: hu\n"
@@ -2306,11 +2306,6 @@ msgstr "Jelölés módosítása"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
-msgid "Delete Note"
-msgstr "Jegyzet törlése"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
 msgid "_File"
 msgstr "_Fájl"
 
@@ -3295,6 +3290,11 @@ msgstr "Megjegyzés hozzáadása"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/tools.py
+msgid "Add a scalable comment"
+msgstr "Méretezhető megjegyzés hozzáadása"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
 msgid "Replace selected text"
 msgstr "Kijelölt szöveg cseréje"
 
@@ -3843,4 +3843,8 @@ msgstr "A cím megjelenítése a fájlnév helyett"
 # machine translation, unreviewed
 #~ msgid "Grows with the page"
 #~ msgstr "Nő az oldallal"
+
+# machine translation, unreviewed
+#~ msgid "Delete Note"
+#~ msgstr "Jegyzet törlése"
 

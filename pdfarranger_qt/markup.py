@@ -66,7 +66,13 @@ UNDERLINE = "/Underline"
 #: own, and the two are one tool here.
 SQUIGGLY = "/Squiggly"
 
-KINDS = (TEXT, HIGHLIGHT, STRIKEOUT, UNDERLINE, SQUIGGLY)
+#: A comment that is ink on the page rather than a pin on it. The same
+#: seventeen icons as a `/Text` comment and the same note, but its
+#: rectangle is ordinary geometry: it scales with the page, it resizes,
+#: and it turns. Nothing about NoZoom applies to one.
+STAMP = "/Stamp"
+
+KINDS = (TEXT, HIGHLIGHT, STRIKEOUT, UNDERLINE, SQUIGGLY, STAMP)
 
 #: The two subtypes one tool writes, and which of them means what. A style
 #: is not a value inside the dictionary: it is which dictionary gets
@@ -106,7 +112,12 @@ SUBJECTS = {HIGHLIGHT: "Highlight", STRIKEOUT: "Cross-Out",
             # Both styles say Underline, because both come from the one
             # tool -- read off `Markup Underline.pdf`, where the same words
             # were marked each way.
-            UNDERLINE: "Underline", SQUIGGLY: "Underline"}
+            UNDERLINE: "Underline", SQUIGGLY: "Underline",
+            # The scalable comment says the same as the pin. `/Subj` names
+            # what the mark *is* to the person reading the comment list,
+            # and both are a sticky note there; what tells them apart is
+            # the subtype, which a reader already has.
+            STAMP: "Sticky Note"}
 
 #: Bit 3 of `/F`, Print. Without it a mark shows on screen and vanishes from
 #: paper, which is not what anybody means by annotating a document.
@@ -409,6 +420,128 @@ def icon_rect(rect, icon: str,
     return note_rect(rect[0], rect[3], wide / scale, tall / scale)
 
 
+#: How round a quarter circle's control points sit, for drawing one with
+#: two cubics. The usual constant: 4/3 * (sqrt(2) - 1).
+KAPPA = 0.5522847498307936
+
+
+def balloon_stream(wide: float, tall: float) -> str:
+    """The comment balloon as a content stream, with `%FILL%` for its colour.
+
+    **The one drawing here that is written rather than lifted from a file.**
+    Every other icon is Acrobat's own, read out of a document it wrote, so
+    that a comment made here and a comment made there are the same comment.
+    There is no such file for this one: Acrobat draws its balloon and never
+    writes it, so a stamp wanting that glyph has to carry a drawing of ours.
+
+    The shape is the measured one -- a circle of the whole box except the
+    bottom right quadrant, which stays square and makes the tail -- and the
+    two white bars are `BALLOON_BARS`. Drawn in the box's own space, y
+    upward as a content stream has it, so `BALLOON_BARS` is flipped here:
+    its tops are measured down from the top, as a screen measures.
+    """
+    cx, cy, rx, ry = wide / 2.0, tall / 2.0, wide / 2.0, tall / 2.0
+    kx, ky = KAPPA * rx, KAPPA * ry
+    out = ["%FILL%"]
+    out.append(f"{cx:.4f} {cy - ry:.4f} m")
+    for c1, c2, end in (
+            ((cx - kx, cy - ry), (cx - rx, cy - ky), (cx - rx, cy)),
+            ((cx - rx, cy + ky), (cx - kx, cy + ry), (cx, cy + ry)),
+            ((cx + kx, cy + ry), (cx + rx, cy + ky), (cx + rx, cy))):
+        out.append(f"{c1[0]:.4f} {c1[1]:.4f} {c2[0]:.4f} {c2[1]:.4f} "
+                   f"{end[0]:.4f} {end[1]:.4f} c")
+    out.append(f"{cx + rx:.4f} {cy - ry:.4f} l")
+    out.append(f"{cx:.4f} {cy - ry:.4f} l")
+    out.append("h f")
+    out.append("1 1 1 rg")
+    for left, top, across, down in BALLOON_BARS:
+        out.append(f"{left * wide:.4f} {(1.0 - top - down) * tall:.4f} "
+                   f"{across * wide:.4f} {down * tall:.4f} re")
+    out.append("f")
+    return " ".join(out)
+
+
+def stamp_rect(centre_x: float, centre_y: float, icon: str,
+               scale: float = 1.0, rotate: float = 0.0):
+    """The rectangle a stamp is stored with, around a point.
+
+    **Around it, not down from it.** A stamp is placed by its centre: 12.5.5
+    fits the *transformed* box to `/Rect`, so the artwork's centre lands on
+    the rectangle's centre at every angle while the corners do not. Anchor
+    one by a corner and it walks across the page the first time it is
+    turned.
+
+    ``rotate`` is in degrees, and the rectangle it gives back is the
+    bounding box of the turned artwork -- wider and shorter than the
+    artwork itself, which is how a reader knows how far round it goes.
+    ``scale`` multiplies that box, uniformly, which is the aspect lock as
+    the file records it: there is nowhere to write a scale, so it is the
+    ratio between this rectangle and the turned artwork.
+    """
+    wide, tall = icon_size(icon)
+    turned = math.radians(rotate)
+    across = abs(wide * math.cos(turned)) + abs(tall * math.sin(turned))
+    down = abs(wide * math.sin(turned)) + abs(tall * math.cos(turned))
+    half_x, half_y = across * scale / 2.0, down * scale / 2.0
+    return (centre_x - half_x, centre_y - half_y,
+            centre_x + half_x, centre_y + half_y)
+
+
+def stamp_scale(rect, icon: str, rotate: float = 0.0) -> float:
+    """How far a stamp has been scaled, read back from its rectangle.
+
+    Nothing writes a scale: it is the ratio between `/Rect` and the box the
+    turned artwork needs, and that the ratio is the same on both axes is
+    the aspect lock as the file records it. So this is how a stamp that has
+    been resized says so, and how a change of icon can keep the size it was
+    given -- the new icon's own box times this.
+    """
+    wide, tall = icon_size(icon)
+    turned = math.radians(rotate)
+    across = abs(wide * math.cos(turned)) + abs(tall * math.sin(turned))
+    if across <= 0:
+        return 1.0
+    return (rect[2] - rect[0]) / across
+
+
+def stamp_corners(rect, icon: str, rotate: float = 0.0):
+    """The four corners of the turned artwork inside ``rect``, in order.
+
+    Bottom left, bottom right, top right, top left, in the page's own
+    space. The rectangle is the *bounding box* of these, so at any angle
+    but a right one they sit part way along its edges rather than at its
+    corners -- which is where a stamp's handles go, because they belong to
+    the drawing and not to the box around it.
+    """
+    wide, tall = icon_size(icon)
+    scale = stamp_scale(rect, icon, rotate)
+    half_w, half_h = wide * scale / 2.0, tall * scale / 2.0
+    cx, cy = (rect[0] + rect[2]) / 2.0, (rect[1] + rect[3]) / 2.0
+    turned = math.radians(rotate)
+    cos, sin = math.cos(turned), math.sin(turned)
+    return tuple(
+        (cx + x * cos - y * sin, cy + x * sin + y * cos)
+        for x, y in ((-half_w, -half_h), (half_w, -half_h),
+                     (half_w, half_h), (-half_w, half_h)))
+
+
+def stamp_matrix(icon: str, rotate: float = 0.0):
+    """The appearance's `/Matrix` for a stamp turned ``rotate`` degrees.
+
+    A pure rotation, with a translation that puts the turned box at the
+    origin -- which is what Acrobat writes, measured on the stamp in
+    `corpus/Annotation Examples.pdf`. No scale goes in here: the fit to
+    `/Rect` does that, so one matrix serves a stamp at any size.
+    """
+    wide, tall = icon_size(icon)
+    turned = math.radians(rotate)
+    cos, sin = math.cos(turned), math.sin(turned)
+    corners = [(0.0, 0.0), (wide, 0.0), (wide, tall), (0.0, tall)]
+    moved = [(x * cos - y * sin, x * sin + y * cos) for x, y in corners]
+    return (cos, sin, -sin, cos,
+            -min(p[0] for p in moved), -min(p[1] for p in moved))
+
+
 def pdf_date(when: Optional[datetime.datetime] = None) -> str:
     """`D:YYYYMMDDHHmmSS+HH'mm'`, which is what `/M` wants."""
     when = when or datetime.datetime.now().astimezone()
@@ -462,7 +595,8 @@ class Annotation:
     """One mark, in the page coordinates of the page it belongs to."""
 
     __slots__ = ("kind", "page", "rect", "quads", "contents", "colour",
-                 "opacity", "author", "created", "modified", "name", "irt",
+                 "opacity", "author", "created", "modified", "name",
+                 "irt", "rotate",
                  "popup_rect", "state", "rich", "subject", "locked",
                  "intent", "icon")
 
@@ -533,6 +667,10 @@ class Annotation:
         #: was made and moves with every edit, which is what a reader shows
         #: beside a comment and what Reader itself rewrites on a move.
         self.modified = modified or self.created
+        #: `/Rotate`, the degrees a stamp has been turned. Zero for
+        #: everything else, which never turns: a pin holds its way up and a
+        #: run of words is at the angle the words are.
+        self.rotate = 0.0
 
     def touch(self) -> None:
         """Say the mark has just been changed.
@@ -1125,6 +1263,9 @@ def _flags_for(annotation) -> int:
         return ANCHORED
     if annotation.kind == TEXT:
         return ANCHORED
+    # A stamp falls through to Print alone. It is page content: it scales,
+    # it turns, and it is pinned by nothing -- which is the whole of what
+    # separates it from the icon above.
     return PRINTABLE
 
 
@@ -1227,6 +1368,23 @@ def to_dictionary(pdf, annotation: Annotation, page=None) -> pikepdf.Dictionary:
         # one icon. With seventeen to choose from the choice has to be in
         # the file, because a viewer that draws its own shows the same
         # glyph for all of them.
+    if annotation.kind == STAMP:
+        # **The same seventeen icons as the pin, and `/Name` says which.**
+        # Nothing reads it for appearance on a stamp -- the `/AP` decides
+        # that -- so it is free to record what was chosen, for the
+        # properties form and for a later change of icon.
+        if annotation.icon:
+            entry[pikepdf.Name.Name] = pikepdf.Name(annotation.icon)
+        entry[pikepdf.Name.AP] = pikepdf.Dictionary(
+            N=_icon_appearance(pdf, annotation))
+        if annotation.rotate:
+            # How far round it has been turned, in degrees. The matrix says
+            # the same thing and a reader draws from that; this is what the
+            # application reads back, because recovering an angle from a
+            # matrix is arithmetic where a number is a number.
+            entry[pikepdf.Name.Rotate] = round(float(annotation.rotate))
+        if solidity(annotation) != 1.0:
+            entry[pikepdf.Name.CA] = solidity(annotation)
     if annotation.kind in QUADDED:
         entry[pikepdf.Name.QuadPoints] = pikepdf.Array(
             [v for quad in annotation.quads for v in _quad_points(quad)])
@@ -1581,6 +1739,15 @@ def _icon_appearance(pdf, annotation):
     if found is None:
         found = noteicons.ICONS[DEFAULT_ICON]
     width, height, body = found
+    if annotation.kind == STAMP and (annotation.icon or "") == DEFAULT_ICON:
+        # **The balloon, not the square.** Acrobat substitutes its own
+        # glyph for a `/Text` comment, so what this application draws there
+        # is a display rule and the file keeps Acrobat's drawing. Nothing
+        # substitutes anything on a stamp: what is written is what every
+        # reader shows, so the balloon has to be in the file for the two to
+        # agree. It is the only comment icon that looks the same in all of
+        # them.
+        body = balloon_stream(width, height)
     colour = annotation.colour or swatch("Purple")
     stream = pikepdf.Stream(pdf, body.replace(
         noteicons.FILL, "{} {} {} rg".format(*colour[:3])).encode())
@@ -1591,6 +1758,14 @@ def _icon_appearance(pdf, annotation):
         ExtGState=pikepdf.Dictionary(GS0=pikepdf.Dictionary(
             Type=pikepdf.Name.ExtGState, BM=pikepdf.Name.Normal,
             AIS=False, ca=0.6, CA=0.6)))
+    if annotation.kind == STAMP and annotation.rotate:
+        # **The turn goes here and the size does not.** A pure rotation,
+        # translated so the turned box starts at the origin, which is what
+        # Acrobat writes; the fit to `/Rect` supplies the scale, so one
+        # matrix serves the stamp at any size.
+        stream[pikepdf.Name.Matrix] = pikepdf.Array(
+            [*stamp_matrix(annotation.icon or DEFAULT_ICON,
+                           annotation.rotate)])
     return pdf.make_indirect(stream)
 
 

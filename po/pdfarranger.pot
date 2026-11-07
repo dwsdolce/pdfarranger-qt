@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pdfarranger-qt VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/dwsdolce/pdfarranger-qt/issues\n"
-"POT-Creation-Date: 2026-11-07 07:46+0000\n"
+"POT-Creation-Date: 2026-11-07 08:45+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1771,10 +1771,6 @@ msgid "Change Mark"
 msgstr ""
 
 #: pdfarranger_qt/mainwindow.py
-msgid "Delete Note"
-msgstr ""
-
-#: pdfarranger_qt/mainwindow.py
 msgid "_File"
 msgstr ""
 
@@ -2587,6 +2583,10 @@ msgstr ""
 
 #: pdfarranger_qt/tools.py pdfarranger_qt/toolstrip.py
 msgid "Add a comment"
+msgstr ""
+
+#: pdfarranger_qt/tools.py
+msgid "Add a scalable comment"
 msgstr ""
 
 #: pdfarranger_qt/tools.py

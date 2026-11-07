@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-07 07:46+0000\n"
+"POT-Creation-Date: 2026-11-07 08:45+0000\n"
 "PO-Revision-Date: 2026-02-15 15:16+0100\n"
 "Last-Translator: Quentin PAGÈS\n"
 "Language: oc\n"
@@ -2277,11 +2277,6 @@ msgstr "Modificar la marca"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
-msgid "Delete Note"
-msgstr "Suprimir la nòta"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
 msgid "_File"
 msgstr "_Fichièr"
 
@@ -3263,6 +3258,11 @@ msgstr "Apondre un comentari"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/tools.py
+msgid "Add a scalable comment"
+msgstr "Apondre un comentari redimensionable"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
 msgid "Replace selected text"
 msgstr "Remplaçar lo tèxte seleccionat"
 
@@ -3848,4 +3848,8 @@ msgstr "Mostrar lo títol puslèu que lo nom del fichièr"
 # machine translation, unreviewed
 #~ msgid "Grows with the page"
 #~ msgstr "Creis amb la pagina"
+
+# machine translation, unreviewed
+#~ msgid "Delete Note"
+#~ msgstr "Suprimir la nòta"
 

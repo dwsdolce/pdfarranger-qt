@@ -14,7 +14,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  pdfarranger\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-07 07:46+0000\n"
+"POT-Creation-Date: 2026-11-07 08:45+0000\n"
 "PO-Revision-Date: 2026-04-03 11:36-0300\n"
 "Last-Translator: Óscar Fernández Díaz <oscfdezdz@tuta.io>\n"
 "Language: es\n"
@@ -2281,11 +2281,6 @@ msgstr "Cambiar marca"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
-msgid "Delete Note"
-msgstr "Eliminar la nota"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
 msgid "_File"
 msgstr "_Archivo"
 
@@ -3269,6 +3264,11 @@ msgstr "Añadir un comentario"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/tools.py
+msgid "Add a scalable comment"
+msgstr "Añadir un comentario escalable"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
 msgid "Replace selected text"
 msgstr "Sustituir el texto seleccionado"
 
@@ -3852,4 +3852,8 @@ msgstr "Mostrar el título en lugar del nombre del archivo"
 # machine translation, unreviewed
 #~ msgid "Grows with the page"
 #~ msgstr "Crece con la página"
+
+# machine translation, unreviewed
+#~ msgid "Delete Note"
+#~ msgstr "Eliminar la nota"
 

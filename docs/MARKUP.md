@@ -99,7 +99,7 @@ properties form -- on a mark made here and on one the file brought.
 | Name | Text (the strip) | `/Subj` it writes | what is written | state |
 |---|---|---|---|---|
 | Comment, or Highlight | Add a comment | Sticky Note, or Comment on Text | on a point `/Text` with `/Name` the chosen icon; over a run of words `/Highlight` `/IT /HighlightNote`, `/QuadPoints`, `/CA` | the highlight half is done; the icon half makes its mark with any of the seventeen icons, keeps its size, takes a note and opens a properties form, but **cannot be selected by clicking** -- so the right-click menu does not reach it |
-| Scalable Comment, or Highlight | Add a scalable comment | Sticky Note, or Comment on Text | on a point `/Stamp` with `/Name` the chosen icon and an `/AP` of ours, `/CA`; over a run of words the same `/Highlight` the comment tool writes | decision 53, not started |
+| Scalable Comment, or Highlight | Add a scalable comment | Sticky Note, or Comment on Text | on a point `/Stamp` with `/Name` the chosen icon and an `/AP` of ours, `/CA`; over a run of words the same `/Highlight` the comment tool writes | places, writes, takes a note and opens a properties form; **no handles yet**, so it can be resized and turned by other applications and not by this one |
 | | Insert text | Inserted Text | `/Caret` | decision 3, not started |
 | | Replace selected text | Inserted Text + Cross-Out | `/Caret` `/IT /Replace` **and** `/StrikeOut` `/IT /StrikeOutTextEdit`, joined by `/IRT` + `/RT /Group` | decision 3, not started |
 | | Add text comment | Text Box | `/FreeText` | not started |
@@ -3000,6 +3000,61 @@ considerable size -- and a catalogue translator with no other context
 will render that reading into thirty-three languages. *Scalable* names
 the thing that distinguishes it. *Resizable* names the handle, which is a
 consequence rather than the point.
+
+**It is placed by its centre, which is where the two tools differ.**
+Clicking with the comment tool puts the icon's top left under the pointer;
+clicking with this one puts the mark's centre there. Observed in Reader
+2026-11-07, and it is not a free choice on either side. A `/Text` is
+pinned by its upper left because NoZoom says that corner holds still. A
+stamp is pinned by its centre because 12.5.5 fits the *transformed*
+bounding box to `/Rect`, so the artwork's centre lands on `/Rect`'s
+centre at every angle while the corners do not -- measured on the rotated
+stamp in `corpus/Annotation Examples.pdf`, whose artwork centre comes out
+at 308.90, 515.40 against a `/Rect` centre of 308.90, 515.40, with none
+of its four corners within 20 points of a corner of `/Rect`. Anchor a
+stamp by a corner and it walks across the page the first time it is
+turned.
+
+Everything else about the two tools is shared, so this is the one place
+they visibly differ, and the difference is the one the user can already
+see: a pin has no handles and this has four.
+
+**Built so far**: the tool places one centred on the click at the icon's
+own size, writes it with `/F 4`, its `/Name`, an `/AP` of ours and the
+note, draws it on the canvas before anything is saved, and lets it be
+picked up and given properties. The rectangle, the matrix and `/Rotate`
+are all written as below, so a stamp made here can be resized and turned
+by any other application. **Not built: the handles.** Until they are,
+this application can make one and not reshape it.
+
+**The handles are the stamp's own, not ours to invent.** Four, any of
+them draggable, and the aspect is kept -- 12.5.5 scales x and y
+independently, so a rectangle whose proportions do not match the artwork
+skews it, and three of the four readers measured already offer exactly
+this. One more handle turns it. Both act about the centre.
+
+**A turn is written in three places that have to agree.** Measured on
+that same stamp:
+
+    /Rotate            20          degrees, on the annotation
+    /AP /N /Matrix     a pure rotation by that angle, translating the
+                       rotated box to the origin
+    /Rect              the bounding box of the rotated artwork
+
+    artwork            99.69 x 30.34
+    rotated at 20      104.06 x 62.61
+    /Rect              232.39 x 139.82   = 2.2333 of it, on both axes
+
+The scale is not written anywhere: it is the ratio between `/Rect` and
+the rotated box, and that it is the same on both axes is the aspect lock
+as the file records it.
+
+**The icons are the comment tool's, all seventeen**, and `/Name` says
+which -- nothing reads it for appearance on a stamp, so it is free to
+record the choice. `/Comment` is the balloon this application draws,
+written as the stamp's appearance: the first drawing here written rather
+than lifted from a file, and the only comment icon that is the same in
+every reader, because nothing substitutes its own on a stamp.
 
 **54. An appearance stream this application writes carries `/Resources`,
 and carries its colour in the stream.** Two rules with one cause: a reader

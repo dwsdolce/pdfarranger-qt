@@ -70,7 +70,6 @@ from PySide6.QtGui import (
     QPainterPath,
     QPalette,
     QPen,
-    QTextCursor,
     QTextDocument,
 )
 from PySide6.QtPdf import (
@@ -85,7 +84,6 @@ from PySide6.QtWidgets import (
     QLineEdit,
     QMenu,
     QStyle,
-    QTextEdit,
 )
 
 from . import forms as forms_module
@@ -1045,7 +1043,6 @@ class PageCanvas(QAbstractScrollArea):
     #: the object, for the reason `structure._resolve` records positions: an
     #: undo rebuilds every mark with `duplicate()`, so a reference held across
     #: one points at an annotation the document no longer has.
-    note_edited = Signal(int, int, str)
     #: Whether a mark is selected. The mark itself is not sent: what is
     #: selected is the canvas's own state and `selected_mark` answers for it,
     #: while this is what the buttons beside it listen to.
@@ -1119,8 +1116,6 @@ class PageCanvas(QAbstractScrollArea):
         self.field_locked = None
         #: ``(field, editor)`` while a text field is being typed into.
         self._editing = None
-        #: ``(page, which, editor)`` while a note is being typed into.
-        self._note = None
 
         self._tooltip = ""
         self._text = PageText()
@@ -1770,7 +1765,6 @@ class PageCanvas(QAbstractScrollArea):
     def _scrolled(self, _value):
         self._emit_current()
         self._moving()
-        self._follow_note()
         self.viewport().update()
 
     #: How long after the last scroll the view counts as settled. Long enough
@@ -2580,62 +2574,6 @@ class PageCanvas(QAbstractScrollArea):
                 return (index, which, mark)
         return None
 
-    def edit_note(self, index: int, which: int):
-        """Put an editor on a note, to read it or to write it.
-
-        A real `QTextEdit` over the page rather than a dialog, for the reason
-        `edit_field` gives: a note is read and written where it is in every
-        other reader, and a widget already knows about wrapping, the
-        clipboard, input methods and right-to-left text.
-        """
-        self.finish_editing()
-        if self.marks is None:
-            return False
-        try:
-            marks = self.marks(index)
-        except Exception:       # noqa: BLE001
-            return False
-        if not 0 <= which < len(marks):
-            return False
-        mark = marks[which]
-        icon = self.note_icon_rect(index, mark)
-        if icon is None:
-            return False
-        editor = QTextEdit(self.viewport())
-        editor.setFrameShape(QFrame.Box)
-        editor.setPlainText(mark.contents or "")
-        editor.setGeometry(self._note_editor_rect(icon).toRect())
-        editor.show()
-        editor.setFocus()
-        editor.moveCursor(QTextCursor.End)
-        # Tab and Escape never reach a QTextEdit's parent: one inserts a tab
-        # into the note and the other is swallowed. Both mean "done here".
-        editor.installEventFilter(self)
-        self._note = (index, which, editor)
-        return True
-
-    def _follow_note(self) -> None:
-        """Keep an open note's editor beside its icon while the view moves.
-
-        A note is anchored to a place on a page, so an editor that stayed
-        where it was while the page scrolled away would be pointing at
-        whatever had scrolled into its place.
-        """
-        if self._note is None:
-            return
-        index, which, editor = self._note
-        if self.marks is None:
-            return
-        try:
-            marks = self.marks(index)
-        except Exception:       # noqa: BLE001 - a scroll must not raise
-            return
-        if not 0 <= which < len(marks):
-            return
-        icon = self.note_icon_rect(index, marks[which])
-        if icon is not None:
-            editor.setGeometry(self._note_editor_rect(icon).toRect())
-
     def _note_editor_rect(self, icon: QRectF) -> QRectF:
         """Where the editor goes: beside the icon, and inside the viewport.
 
@@ -2652,30 +2590,6 @@ class PageCanvas(QAbstractScrollArea):
         if top + height > area.bottom():
             top = max(area.top(), area.bottom() - height)
         return QRectF(left, top, width, height)
-
-    def editing_note(self):
-        """``(page, which)`` for the note being typed into, or None."""
-        return self._note[:2] if self._note else None
-
-    def finish_note(self):
-        """Commit what was typed into a note and take the editor away.
-
-        Guarded against traversal the way `finish_editing` is: removing a
-        widget that holds the keyboard makes Qt look for somewhere to put it,
-        which arrives in `focusNextPrevChild` and would step the form.
-        """
-        if self._note is None:
-            return
-        index, which, editor = self._note
-        self._note = None
-        text = editor.toPlainText()
-        was, self._stepping = self._stepping, True
-        try:
-            editor.hide()
-            editor.deleteLater()
-        finally:
-            self._stepping = was
-        self.note_edited.emit(index, which, text)
 
     def focusNextPrevChild(self, forward: bool) -> bool:
         """Tab steps through the form rather than out of the canvas.
@@ -2703,17 +2617,6 @@ class PageCanvas(QAbstractScrollArea):
         it also means Qt's focus traversal gets Tab first unless it is taken
         here.
         """
-        if (self._note is not None and watched is self._note[2]
-                and event.type() == QEvent.Type.KeyPress
-                and event.key() in (Qt.Key_Tab, Qt.Key_Backtab,
-                                    Qt.Key_Escape)):
-            # Escape as well as Tab, and taken here rather than left to the
-            # canvas: Escape there means "stop marking up" and would leave the
-            # tool with the editor still open over the page. Return is *not*
-            # here -- a note is prose, and a paragraph break is a thing you
-            # want in one.
-            self.finish_note()
-            return True
         if (self._editing is not None and watched is self._editing[1]
                 and event.type() == QEvent.Type.KeyPress
                 and event.key() in (Qt.Key_Tab, Qt.Key_Backtab)):
@@ -2741,7 +2644,6 @@ class PageCanvas(QAbstractScrollArea):
         clicking away from a field moved the focus to another one and drew a
         ring round it.
         """
-        self.finish_note()
         if self._editing is None:
             return
         field, editor = self._editing
@@ -2813,6 +2715,12 @@ class PageCanvas(QAbstractScrollArea):
     NOTE_ON_TEXT = markup.NOTE_ON_TEXT
     DRAW = "draw"
 
+    #: The comment tool's twin, placing a `/Stamp` instead of a `/Text`.
+    #: Its gesture is the same -- a point, and then the words -- and the
+    #: only difference the canvas sees is where the point goes: a stamp is
+    #: placed by its centre and a pin by its top left corner.
+    STAMP = "stamp"
+
     #: Tools whose geometry is a run of *text* rather than an area. They drag
     #: out a selection, exactly as reading does, because the quadrilaterals a
     #: `/Highlight` wants are what a text selection already produces -- which
@@ -2821,8 +2729,12 @@ class PageCanvas(QAbstractScrollArea):
 
     #: Tools whose geometry is a point and a size of their own rather than an
     #: area dragged out. A sticky note's icon is the same size wherever it
-    #: lands, so the gesture supplies a corner and nothing else.
-    POINT_TOOLS = (NOTE,)
+    #: lands, so the gesture supplies a corner and nothing else -- and a
+    #: scalable comment is placed the same way, except that the point it
+    #: supplies is the centre rather than the corner. Which of the two it
+    #: means is the window's business, not the canvas's: both arrive here
+    #: as a point and a box of the icon's own size.
+    POINT_TOOLS = (NOTE, STAMP)
 
     def tool(self) -> str:
         return self._tool
@@ -3114,7 +3026,7 @@ class PageCanvas(QAbstractScrollArea):
     #: Subtypes a click can land on. The text markups are areas you can aim
     #: at; a note is reached by its icon, which `note_at` already answers for.
     SELECTABLE = ("/Highlight", "/StrikeOut", "/Underline", "/Squiggly",
-                  markup.TEXT)
+                  markup.TEXT, markup.STAMP)
 
     #: Of those, the ones drawn *over* a run of words. A comment's icon is
     #: the odd one: it is placed rather than sized, so it has no run to
@@ -3162,6 +3074,11 @@ class PageCanvas(QAbstractScrollArea):
             return [markup.icon_box(mark.rect,
                                     getattr(mark, "icon",
                                             markup.DEFAULT_ICON))]
+        if kind == markup.STAMP:
+            # Its rectangle, and nothing cleverer: a stamp's box *is* the
+            # bounding box of what it draws, at whatever size and angle it
+            # has been given, which is what the fit to `/Rect` guarantees.
+            return [tuple(mark.rect)]
         if isinstance(mark, markup.Annotation):
             return list(mark.quads) or [mark.rect]
         return mark.boxes()
@@ -4566,6 +4483,9 @@ class PageCanvas(QAbstractScrollArea):
             if kind == markup.TEXT:
                 self._paint_note(painter, index, mark, colour)
                 continue
+            if kind == markup.STAMP:
+                self._paint_stamp(painter, index, mark, colour, offset)
+                continue
             for quad in (mark.quads or (mark.rect,)):
                 where = self.quad_on_screen(index, quad, offset)
                 if where is None:
@@ -5357,6 +5277,54 @@ class PageCanvas(QAbstractScrollArea):
                     if m.subtype == markup.TEXT and not m.is_reply()]
         except Exception:       # noqa: BLE001 - a repaint must not fail
             return []
+
+    def _paint_stamp(self, painter, index: int, mark, colour, offset) -> None:
+        """Draw a scalable comment: the same glyph, as ink on the page.
+
+        **It scales and it turns**, which is the whole of what separates it
+        from the pin. So the box comes from the page's own arithmetic --
+        `quad_on_screen`, the zoom and the resize included -- rather than
+        from `note_icon_rect`, which holds a size still.
+
+        The rectangle is the *bounding box of the turned artwork*, so the
+        artwork inside it is smaller the further round it goes. Its size is
+        recovered the way a viewer recovers it: the box that bounds to this
+        one at this angle. Qt turns clockwise where a page turns anti, so
+        the angle changes sign on the way in.
+        """
+        is_mine = isinstance(mark, markup.Annotation)
+        where = self.quad_on_screen(index, mark.rect, offset, scaled=is_mine)
+        if where is None or not where.intersects(QRectF(self.viewport().rect())):
+            return
+        icon = getattr(mark, "icon", markup.DEFAULT_ICON) or markup.DEFAULT_ICON
+        wide, tall = markup.icon_size(icon)
+        angle = float(getattr(mark, "rotate", 0.0) or 0.0)
+        turned = math.radians(angle)
+        across = abs(wide * math.cos(turned)) + abs(tall * math.sin(turned))
+        scale = where.width() / across if across else 1.0
+        drawn = QRectF(0.0, 0.0, wide * scale, tall * scale)
+        drawn.moveCenter(where.center())
+        painter.save()
+        if angle:
+            painter.translate(where.center())
+            painter.rotate(-angle)
+            painter.translate(-where.center())
+        if icon == markup.DEFAULT_ICON:
+            self._paint_balloon(painter, drawn, colour)
+        else:
+            painter.setRenderHint(QPainter.Antialiasing, True)
+            for path, fill, stroke, width in self._icon_drawing(
+                    icon, drawn, colour):
+                painter.setBrush(fill if fill is not None else Qt.NoBrush)
+                if stroke is None:
+                    painter.setPen(Qt.NoPen)
+                else:
+                    pen = QPen(stroke)
+                    pen.setWidthF(width)
+                    pen.setJoinStyle(Qt.RoundJoin)
+                    painter.setPen(pen)
+                painter.drawPath(path)
+        painter.restore()
 
     def _paint_note(self, painter, index: int, mark, colour) -> None:
         """Draw a sticky note's icon: a balloon, at a size the zoom sets.

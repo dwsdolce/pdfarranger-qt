@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-07 07:46+0000\n"
+"POT-Creation-Date: 2026-11-07 08:45+0000\n"
 "PO-Revision-Date: 2025-12-15 00:59+0700\n"
 "Last-Translator: Loc Huynh <https://github.com/hthienloc>\n"
 "Language: vi\n"
@@ -2261,11 +2261,6 @@ msgstr "Đổi dấu"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
-msgid "Delete Note"
-msgstr "Xoá ghi chú"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
 msgid "_File"
 msgstr "_Tập tin"
 
@@ -3239,6 +3234,11 @@ msgstr "Thêm chú thích"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/tools.py
+msgid "Add a scalable comment"
+msgstr "Thêm chú thích co giãn"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
 msgid "Replace selected text"
 msgstr "Thay thế văn bản đã chọn"
 
@@ -3793,4 +3793,8 @@ msgstr "Hiện tiêu đề thay cho tên tập tin"
 # machine translation, unreviewed
 #~ msgid "Grows with the page"
 #~ msgstr "Phóng to theo trang"
+
+# machine translation, unreviewed
+#~ msgid "Delete Note"
+#~ msgstr "Xoá ghi chú"
 

@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PDF Arranger 1.9.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-07 07:46+0000\n"
+"POT-Creation-Date: 2026-11-07 08:45+0000\n"
 "PO-Revision-Date: 2023-06-12 10:30+0300\n"
 "Last-Translator: Manussos Pulinakis "
 "<38626261+manussos@users.noreply.github.com>\n"
@@ -2335,11 +2335,6 @@ msgstr "Αλλαγή σήμανσης"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
-msgid "Delete Note"
-msgstr "Διαγραφή σημείωσης"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
 msgid "_File"
 msgstr "_Αρχείο"
 
@@ -3326,6 +3321,11 @@ msgstr "Προσθήκη σχολίου"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/tools.py
+msgid "Add a scalable comment"
+msgstr "Προσθήκη κλιμακούμενου σχολίου"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
 msgid "Replace selected text"
 msgstr "Αντικατάσταση επιλεγμένου κειμένου"
 
@@ -3868,4 +3868,8 @@ msgstr "Εμφάνιση του τίτλου αντί του ονόματος α
 # machine translation, unreviewed
 #~ msgid "Grows with the page"
 #~ msgstr "Μεγαλώνει με τη σελίδα"
+
+# machine translation, unreviewed
+#~ msgid "Delete Note"
+#~ msgstr "Διαγραφή σημείωσης"
 

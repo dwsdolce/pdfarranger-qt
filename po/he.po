@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-07 07:46+0000\n"
+"POT-Creation-Date: 2026-11-07 08:45+0000\n"
 "PO-Revision-Date: 2023-06-12 11:22+0300\n"
 "Last-Translator: Yaron Shahrabani <sh.yaron@gmail.com>\n"
 "Language: he\n"
@@ -2248,11 +2248,6 @@ msgstr "שינוי סימון"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
-msgid "Delete Note"
-msgstr "מחיקת הערה"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
 msgid "_File"
 msgstr "_קובץ"
 
@@ -3243,6 +3238,11 @@ msgstr "הוספת הערה"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/tools.py
+msgid "Add a scalable comment"
+msgstr "הוספת הערה מתכווננת"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
 msgid "Replace selected text"
 msgstr "החלפת הטקסט הנבחר"
 
@@ -3780,4 +3780,8 @@ msgstr "הצגת הכותרת במקום שם הקובץ"
 # machine translation, unreviewed
 #~ msgid "Grows with the page"
 #~ msgstr "גדל עם העמוד"
+
+# machine translation, unreviewed
+#~ msgid "Delete Note"
+#~ msgstr "מחיקת הערה"
 

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-07 07:46+0000\n"
+"POT-Creation-Date: 2026-11-07 08:45+0000\n"
 "PO-Revision-Date: 2025-09-28 16:51+0000\n"
 "Last-Translator: Sveinn í Felli <sv1@fellsnet.is>\n"
 "Language: is\n"
@@ -2275,11 +2275,6 @@ msgstr "Breyta merki"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
-msgid "Delete Note"
-msgstr "Eyða minnispunkti"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
 msgid "_File"
 msgstr "_Skrá"
 
@@ -3259,6 +3254,11 @@ msgstr "Bæta við athugasemd"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/tools.py
+msgid "Add a scalable comment"
+msgstr "Bæta við kvarðanlegri athugasemd"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
 msgid "Replace selected text"
 msgstr "Skipta út völdum texta"
 
@@ -3815,4 +3815,8 @@ msgstr "Sýna titilinn í stað skráarnafnsins"
 # machine translation, unreviewed
 #~ msgid "Grows with the page"
 #~ msgstr "Stækkar með síðunni"
+
+# machine translation, unreviewed
+#~ msgid "Delete Note"
+#~ msgstr "Eyða minnispunkti"
 

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pdfarranger - Korean\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-07 07:46+0000\n"
+"POT-Creation-Date: 2026-11-07 08:45+0000\n"
 "PO-Revision-Date: 2026-05-25 00:41+0900\n"
 "Last-Translator: VenusGirl <venusgirl@outlook.com>\n"
 "Language: ko\n"
@@ -2155,11 +2155,6 @@ msgstr "표시 변경"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
-msgid "Delete Note"
-msgstr "메모 삭제"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
 msgid "_File"
 msgstr "파일(_F)"
 
@@ -3127,6 +3122,11 @@ msgstr "주석 추가"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/tools.py
+msgid "Add a scalable comment"
+msgstr "크기 조절 가능한 설명 추가"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
 msgid "Replace selected text"
 msgstr "선택한 텍스트 바꾸기"
 
@@ -3701,4 +3701,8 @@ msgstr "파일 이름 대신 제목 보이기"
 # machine translation, unreviewed
 #~ msgid "Grows with the page"
 #~ msgstr "페이지에 따라 커짐"
+
+# machine translation, unreviewed
+#~ msgid "Delete Note"
+#~ msgstr "메모 삭제"
 

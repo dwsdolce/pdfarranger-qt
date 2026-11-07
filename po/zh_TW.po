@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-07 07:46+0000\n"
+"POT-Creation-Date: 2026-11-07 08:45+0000\n"
 "PO-Revision-Date: 2024-03-20 17:20+0800\n"
 "Last-Translator: 錢政維 <e.cwchien@gmail.com>\n"
 "Language: zh_TW\n"
@@ -2135,11 +2135,6 @@ msgstr "變更標記"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
-msgid "Delete Note"
-msgstr "刪除註解"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
 msgid "_File"
 msgstr "檔案(_F)"
 
@@ -3108,6 +3103,11 @@ msgstr "新增註解"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/tools.py
+msgid "Add a scalable comment"
+msgstr "新增可縮放註解"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
 msgid "Replace selected text"
 msgstr "取代選取的文字"
 
@@ -3634,4 +3634,8 @@ msgstr "顯示標題而非檔案名稱"
 # machine translation, unreviewed
 #~ msgid "Grows with the page"
 #~ msgstr "隨頁面縮放"
+
+# machine translation, unreviewed
+#~ msgid "Delete Note"
+#~ msgstr "刪除註解"
 

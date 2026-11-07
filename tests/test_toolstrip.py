@@ -88,16 +88,19 @@ class TestEveryToolIsReachable(StripCase):
                          for name in button.actions_by_tool)
         self.assertEqual(offered, sorted(t.name for t in tools.TOOLS))
 
-    def test_there_are_twenty_of_them(self):
+    def test_there_are_twenty_one_of_them(self):
         """The count the plan speaks of, so a quiet loss of one is visible.
 
         It read twenty-one for two days, while *Add note to text* had an
         entry here. It never had one in Reader: that is a right-click entry
-        over a selection, and the tool it reaches is Add a comment.
+        over a selection, and the tool it reaches is Add a comment. It is
+        twenty-one again for a better reason: *Add a scalable comment*,
+        which Reader does not have either but which is a tool here and not
+        a gesture -- it writes a different subtype.
         """
         from pdfarranger_qt import tools
 
-        self.assertEqual(len(tools.TOOLS), 20)
+        self.assertEqual(len(tools.TOOLS), 21)
 
     def test_no_signature_tool_is_offered(self):
         """This application does not sign, so there is no such tool."""

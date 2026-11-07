@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  pdfarranger\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-07 07:46+0000\n"
+"POT-Creation-Date: 2026-11-07 08:45+0000\n"
 "PO-Revision-Date: 2023-10-22 00:28+0200\n"
 "Last-Translator: Lrss <dev@lrss.dk>\n"
 "Language: da\n"
@@ -2291,11 +2291,6 @@ msgstr "Ændr mærke"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
-msgid "Delete Note"
-msgstr "Slet note"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
 msgid "_File"
 msgstr "_Fil"
 
@@ -3280,6 +3275,11 @@ msgstr "Tilføj en kommentar"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/tools.py
+msgid "Add a scalable comment"
+msgstr "Tilføj en skalerbar kommentar"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
 msgid "Replace selected text"
 msgstr "Erstat markeret tekst"
 
@@ -3826,4 +3826,8 @@ msgstr "Vis titlen frem for filnavnet"
 # machine translation, unreviewed
 #~ msgid "Grows with the page"
 #~ msgstr "Vokser med siden"
+
+# machine translation, unreviewed
+#~ msgid "Delete Note"
+#~ msgstr "Slet note"
 

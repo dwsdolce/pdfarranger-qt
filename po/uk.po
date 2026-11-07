@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: unnamed project\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-07 07:46+0000\n"
+"POT-Creation-Date: 2026-11-07 08:45+0000\n"
 "PO-Revision-Date: 2026-05-27 19:30+0300\n"
 "Last-Translator: Dymko <Dymkovych@proton.me>\n"
 "Language: uk\n"
@@ -2267,11 +2267,6 @@ msgstr "Змінити позначку"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
-msgid "Delete Note"
-msgstr "Вилучити нотатку"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
 msgid "_File"
 msgstr "_Файл"
 
@@ -3261,6 +3256,11 @@ msgstr "Додати коментар"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/tools.py
+msgid "Add a scalable comment"
+msgstr "Додати масштабований коментар"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
 msgid "Replace selected text"
 msgstr "Замінити позначений текст"
 
@@ -3841,4 +3841,8 @@ msgstr "Показувати заголовок замість імені фай
 # machine translation, unreviewed
 #~ msgid "Grows with the page"
 #~ msgstr "Росте разом зі сторінкою"
+
+# machine translation, unreviewed
+#~ msgid "Delete Note"
+#~ msgstr "Вилучити нотатку"
 

@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-07 07:46+0000\n"
+"POT-Creation-Date: 2026-11-07 08:45+0000\n"
 "PO-Revision-Date: 2023-01-19 20:27+0100\n"
 "Last-Translator: alexgabi\n"
 "Language: eu\n"
@@ -2326,11 +2326,6 @@ msgstr "Aldatu marka"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
-msgid "Delete Note"
-msgstr "Ezabatu oharra"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
 msgid "_File"
 msgstr "_Fitxategia"
 
@@ -3315,6 +3310,11 @@ msgstr "Gehitu iruzkina"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/tools.py
+msgid "Add a scalable comment"
+msgstr "Gehitu iruzkin eskalagarri bat"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
 msgid "Replace selected text"
 msgstr "Ordeztu hautatutako testua"
 
@@ -3859,4 +3859,8 @@ msgstr "Erakutsi izenburua fitxategi-izenaren ordez"
 # machine translation, unreviewed
 #~ msgid "Grows with the page"
 #~ msgstr "Orriarekin handitzen da"
+
+# machine translation, unreviewed
+#~ msgid "Delete Note"
+#~ msgstr "Ezabatu oharra"
 

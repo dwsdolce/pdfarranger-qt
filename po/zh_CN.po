@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PDF Arranger 1.14.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-07 07:46+0000\n"
+"POT-Creation-Date: 2026-11-07 08:45+0000\n"
 "PO-Revision-Date: 2026-06-02 17:09+0800\n"
 "Last-Translator: Puqns67 <me@puqns67.icu>\n"
 "Language: zh_CN\n"
@@ -2099,11 +2099,6 @@ msgstr "更改标记"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
-msgid "Delete Note"
-msgstr "删除注释"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
 msgid "_File"
 msgstr "文件（_F）"
 
@@ -3071,6 +3066,11 @@ msgstr "添加注释"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/tools.py
+msgid "Add a scalable comment"
+msgstr "添加可缩放批注"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
 msgid "Replace selected text"
 msgstr "替换所选文本"
 
@@ -3627,4 +3627,8 @@ msgstr "显示标题而非文件名"
 # machine translation, unreviewed
 #~ msgid "Grows with the page"
 #~ msgstr "随页面缩放"
+
+# machine translation, unreviewed
+#~ msgid "Delete Note"
+#~ msgstr "删除注释"
 

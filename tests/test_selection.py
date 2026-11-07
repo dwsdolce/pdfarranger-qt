@@ -478,7 +478,28 @@ class TestTheOutlineUnderThePointer(SelectionCase):
         from PySide6.QtCore import Qt
         from PySide6.QtGui import QImage, QMouseEvent, QPainter
 
-        mark, where = self.a_mark()
+        from pdfarranger_qt import markup
+
+        # **A mark with nothing written about it.** Hovering one that has a
+        # note draws the panel that says what it says, and selecting one
+        # opens its thread -- both of which are windows over the page and
+        # neither of which is the outline this is about.
+        mark = where = None
+        for found, _mine in self.canvas.marks_on(0):
+            if markup.has_note(found):
+                continue
+            for box in self.canvas.mark_boxes(found):
+                seen = self.canvas.quad_on_screen(0, box, scaled=False)
+                if (seen is not None and seen.width() > 4
+                        and seen.height() > 4
+                        and self.canvas.viewport().rect().contains(
+                            seen.center().toPoint())):
+                    mark, where = found, seen
+                    break
+            if mark is not None:
+                break
+        if mark is None:
+            self.skipTest("no mark without a note is on screen")
         viewport = self.canvas.viewport()
 
         def painted():
@@ -1333,7 +1354,10 @@ class TestTheNoteOnAMark(SelectionCase):
         replies = [m for m in self.canvas.chain_of(mark)[1:] if m.is_reply()]
         self.assertEqual(len(items), 1 + len(replies))
         self.assertEqual(items[0].text, mark.contents)
-        self.assertEqual(self.win.note_panel.selected(), 0)
+        # **And none of them is open for changing.** A thread already
+        # written is shown; the editor is for what has not been said yet.
+        self.assertEqual(self.win.note_panel.selected(),
+                         self.win.note_panel.NOTHING)
 
     def test_every_item_shows_its_own_status(self):
         """**A reply carries a status of its own**, so the note's is the
@@ -1355,6 +1379,11 @@ class TestTheNoteOnAMark(SelectionCase):
         mark = self.a_noted_mark()
         self.win.open_note(0, mark)
         settle(timeout_ms=250)
+        # Clicking the note's words is what opens it for
+        # changing: a thread already written is shown, not
+        # reached for.
+        self.win.note_panel.select(0)
+        settle(timeout_ms=150)
         self.win.note_panel._editor.setPlainText("Rewritten here")
         self.win.note_panel._post_it()
         settle(timeout_ms=500)
@@ -1471,6 +1500,11 @@ class TestTheNoteOnAMark(SelectionCase):
         mark = self.a_noted_mark()
         self.win.open_note(0, mark)
         settle(timeout_ms=300)
+        # Clicking the note's words is what opens it for
+        # changing: a thread already written is shown, not
+        # reached for.
+        self.win.note_panel.select(0)
+        settle(timeout_ms=150)
         self.win.note_panel._editor.setPlainText("Typed but never posted")
         self.win.set_mark_status(0, mark, "Rejected")
         settle(timeout_ms=700)
@@ -1485,6 +1519,11 @@ class TestTheNoteOnAMark(SelectionCase):
         mark = self.a_noted_mark()
         self.win.open_note(0, mark)
         settle(timeout_ms=300)
+        # Clicking the note's words is what opens it for
+        # changing: a thread already written is shown, not
+        # reached for.
+        self.win.note_panel.select(0)
+        settle(timeout_ms=150)
         self.win.note_panel._editor.setPlainText("Kept on the way to a reply")
         was = len(self.win.note_panel.items())
         self.win.reply_to(0, mark)

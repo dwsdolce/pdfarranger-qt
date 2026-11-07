@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  pdfarranger\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-07 07:46+0000\n"
+"POT-Creation-Date: 2026-11-07 08:45+0000\n"
 "PO-Revision-Date: 2024-03-24 19:16+0200\n"
 "Last-Translator: \n"
 "Language: fi\n"
@@ -2299,11 +2299,6 @@ msgstr "Muuta merkintää"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
-msgid "Delete Note"
-msgstr "Poista muistiinpano"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
 msgid "_File"
 msgstr "_Tiedosto"
 
@@ -3288,6 +3283,11 @@ msgstr "Lisää kommentti"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/tools.py
+msgid "Add a scalable comment"
+msgstr "Lisää skaalautuva kommentti"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
 msgid "Replace selected text"
 msgstr "Korvaa valittu teksti"
 
@@ -3826,4 +3826,8 @@ msgstr "Näytä otsikko tiedostonimen sijaan"
 # machine translation, unreviewed
 #~ msgid "Grows with the page"
 #~ msgstr "Kasvaa sivun mukana"
+
+# machine translation, unreviewed
+#~ msgid "Delete Note"
+#~ msgstr "Poista muistiinpano"
 

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-07 07:46+0000\n"
+"POT-Creation-Date: 2026-11-07 08:45+0000\n"
 "PO-Revision-Date: 2024-09-05 17:05+0300\n"
 "Last-Translator: Abdullah Albaroty <albaroty@gmail.com>\n"
 "Language: ar\n"
@@ -2245,11 +2245,6 @@ msgstr "تغيير العلامة"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
-msgid "Delete Note"
-msgstr "حذف الملاحظة"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
 msgid "_File"
 msgstr "_ملف"
 
@@ -3256,6 +3251,11 @@ msgstr "إضافة تعليق"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/tools.py
+msgid "Add a scalable comment"
+msgstr "إضافة تعليق قابل للتحجيم"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
 msgid "Replace selected text"
 msgstr "استبدال النص المحدد"
 
@@ -3797,4 +3797,8 @@ msgstr "أظهر العنوان بدل اسم الملف"
 # machine translation, unreviewed
 #~ msgid "Grows with the page"
 #~ msgstr "يكبر مع الصفحة"
+
+# machine translation, unreviewed
+#~ msgid "Delete Note"
+#~ msgstr "حذف الملاحظة"
 

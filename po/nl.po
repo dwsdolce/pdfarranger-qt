@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PDF-Shuffler 0.7\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-07 07:46+0000\n"
+"POT-Creation-Date: 2026-11-07 08:45+0000\n"
 "PO-Revision-Date: 2025-05-26 10:43+0200\n"
 "Last-Translator: Heimen Stoffels <vistausss@fastmail.com>\n"
 "Language: nl\n"
@@ -2305,11 +2305,6 @@ msgstr "Markering wijzigen"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
-msgid "Delete Note"
-msgstr "Notitie verwijderen"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
 msgid "_File"
 msgstr "_Bestand"
 
@@ -3295,6 +3290,11 @@ msgstr "Opmerking toevoegen"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/tools.py
+msgid "Add a scalable comment"
+msgstr "Schaalbare opmerking toevoegen"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
 msgid "Replace selected text"
 msgstr "Geselecteerde tekst vervangen"
 
@@ -3856,4 +3856,8 @@ msgstr "De titel tonen in plaats van de bestandsnaam"
 # machine translation, unreviewed
 #~ msgid "Grows with the page"
 #~ msgstr "Groeit mee met de pagina"
+
+# machine translation, unreviewed
+#~ msgid "Delete Note"
+#~ msgstr "Notitie verwijderen"
 

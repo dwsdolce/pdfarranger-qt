@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  pdfarranger\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-07 07:46+0000\n"
+"POT-Creation-Date: 2026-11-07 08:45+0000\n"
 "PO-Revision-Date: 2026-05-24 07:36+0300\n"
 "Last-Translator: kbengs\n"
 "Language: sv\n"
@@ -2257,11 +2257,6 @@ msgstr "Ändra markering"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
-msgid "Delete Note"
-msgstr "Ta bort anteckning"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
 msgid "_File"
 msgstr "_Arkiv"
 
@@ -3243,6 +3238,11 @@ msgstr "Lägg till en kommentar"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/tools.py
+msgid "Add a scalable comment"
+msgstr "Lägg till en skalbar kommentar"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
 msgid "Replace selected text"
 msgstr "Ersätt markerad text"
 
@@ -3823,4 +3823,8 @@ msgstr "Visa titeln i stället för filnamnet"
 # machine translation, unreviewed
 #~ msgid "Grows with the page"
 #~ msgstr "Växer med sidan"
+
+# machine translation, unreviewed
+#~ msgid "Delete Note"
+#~ msgstr "Ta bort anteckning"
 

@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  pdfarranger\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-07 07:46+0000\n"
+"POT-Creation-Date: 2026-11-07 08:45+0000\n"
 "PO-Revision-Date: 2023-07-10 15:37+0000\n"
 "Last-Translator: PavelZ\n"
 "Language: cs_CZ\n"
@@ -2285,11 +2285,6 @@ msgstr "Změnit značku"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
-msgid "Delete Note"
-msgstr "Odstranit poznámku"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
 msgid "_File"
 msgstr "_Soubor"
 
@@ -3278,6 +3273,11 @@ msgstr "Přidat komentář"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/tools.py
+msgid "Add a scalable comment"
+msgstr "Přidat škálovatelný komentář"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/tools.py
 msgid "Replace selected text"
 msgstr "Nahradit vybraný text"
 
@@ -3819,4 +3819,8 @@ msgstr "Zobrazit název místo jména souboru"
 # machine translation, unreviewed
 #~ msgid "Grows with the page"
 #~ msgstr "Roste se stránkou"
+
+# machine translation, unreviewed
+#~ msgid "Delete Note"
+#~ msgstr "Odstranit poznámku"
 

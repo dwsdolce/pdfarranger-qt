@@ -22,6 +22,7 @@ undo stack, and reaches the file -- which is the same ground body 2 covered
 for form values, and the same answer.
 """
 
+import math
 import os
 import re
 import unittest
@@ -29,7 +30,7 @@ import unittest
 import pikepdf
 from support import FIXTURES, TEST_PDF, settle, temp_path
 
-from pdfarranger_qt import markup
+from pdfarranger_qt import markup, noteicons
 from pdfarranger_qt.markup import TEXT, Annotation, Annotations
 
 
@@ -1544,6 +1545,152 @@ class TestAStickyNoteIsPlaced(unittest.TestCase):
         self.assertGreater(ink(out), 100)
 
 
+class TestAScalableCommentIsWritten(unittest.TestCase):
+    """The comment tool's twin, writing a `/Stamp`.
+
+    Everything about the two is shared but the subtype, and the subtype is
+    the whole difference: a `/Text` is a pin, fixed and anchored by its top
+    left corner, while a stamp is ink on the page -- it scales, it resizes,
+    it turns, and it is placed by its centre.
+    """
+
+    def setUp(self):
+        self.pdf = pikepdf.Pdf.new()
+        self.pdf.add_blank_page(page_size=(612, 792))
+
+    def stamp(self, icon="/Comment", rotate=0.0, scale=1.0,
+              centre=(300.0, 500.0)):
+        mark = markup.Annotation(
+            markup.STAMP, 1,
+            markup.stamp_rect(centre[0], centre[1], icon, scale, rotate),
+            contents="a scalable comment", icon=icon, colour=(1.0, 0.0, 0.0))
+        mark.rotate = rotate
+        return mark, markup.to_dictionary(self.pdf, mark)
+
+    def test_it_is_page_content_and_asks_for_no_anchoring(self):
+        """`/F 4`: Print and nothing else. NoZoom and NoRotate are what make
+        the other comment a pin, and the whole point of this one is that it
+        is not."""
+        _mark, entry = self.stamp()
+        self.assertEqual(int(entry["/F"]), markup.PRINTABLE)
+
+    def test_it_is_placed_by_its_centre(self):
+        """The fit to `/Rect` holds the artwork's centre at every angle and
+        holds no corner at all, so a corner would walk across the page the
+        first time the stamp was turned."""
+        for angle in (0, 20, 45, 90, -30):
+            with self.subTest(angle=angle):
+                rect = markup.stamp_rect(300.0, 500.0, "/Comment", 2.0, angle)
+                self.assertAlmostEqual((rect[0] + rect[2]) / 2, 300.0, places=6)
+                self.assertAlmostEqual((rect[1] + rect[3]) / 2, 500.0, places=6)
+
+    def test_the_rectangle_is_the_box_the_turned_artwork_needs(self):
+        """Measured on Acrobat's own rotated stamp: artwork 99.69 by 30.34
+        bounds 104.06 by 62.61 at twenty degrees. The same arithmetic."""
+        wide, tall = markup.icon_size("/Key")
+        for angle in (0, 20, 45, 90):
+            with self.subTest(angle=angle):
+                turned = math.radians(angle)
+                across = abs(wide * math.cos(turned)) + abs(tall * math.sin(turned))
+                down = abs(wide * math.sin(turned)) + abs(tall * math.cos(turned))
+                rect = markup.stamp_rect(300.0, 500.0, "/Key", 1.0, angle)
+                self.assertAlmostEqual(rect[2] - rect[0], across, places=6)
+                self.assertAlmostEqual(rect[3] - rect[1], down, places=6)
+
+    def test_the_scale_is_the_ratio_and_is_the_same_on_both_axes(self):
+        """There is nowhere to write a scale. That the fit comes out equal
+        on both axes is the aspect lock as the file records it."""
+        mark, entry = self.stamp(icon="/Key", rotate=20.0, scale=2.2333)
+        m = [float(v) for v in entry["/AP"]["/N"]["/Matrix"]]
+        b = [float(v) for v in entry["/AP"]["/N"]["/BBox"]]
+        r = [float(v) for v in entry["/Rect"]]
+        corners = [(b[0], b[1]), (b[2], b[1]), (b[2], b[3]), (b[0], b[3])]
+        moved = [(m[0] * x + m[2] * y + m[4], m[1] * x + m[3] * y + m[5])
+                 for x, y in corners]
+        across = max(p[0] for p in moved) - min(p[0] for p in moved)
+        down = max(p[1] for p in moved) - min(p[1] for p in moved)
+        self.assertAlmostEqual((r[2] - r[0]) / across, 2.2333, places=4)
+        self.assertAlmostEqual((r[3] - r[1]) / down, 2.2333, places=4)
+
+    def test_a_turn_is_written_in_the_two_places_a_reader_looks(self):
+        """`/Rotate` for this application to read back, and a pure rotation
+        in the matrix for the reader that draws it."""
+        _mark, entry = self.stamp(rotate=20.0)
+        self.assertEqual(int(entry["/Rotate"]), 20)
+        m = [float(v) for v in entry["/AP"]["/N"]["/Matrix"]]
+        # Four places, not six: the matrix reaches the file through a
+        # decimal and comes back a hair short of the angle it was built
+        # from, which is the file's precision and not an error here.
+        self.assertAlmostEqual(math.degrees(math.atan2(m[1], m[0])), 20.0,
+                               places=4)
+        self.assertAlmostEqual(math.hypot(m[0], m[1]), 1.0, places=4,
+                               msg="the matrix carries a scale, which belongs "
+                                   "in the rectangle")
+
+    def test_an_unturned_stamp_writes_neither(self):
+        _mark, entry = self.stamp(rotate=0.0)
+        self.assertNotIn("/Rotate", entry)
+        self.assertNotIn("/Matrix", entry["/AP"]["/N"])
+
+    def test_the_size_it_was_given_can_be_read_back(self):
+        """Nothing writes a scale, so a stamp that has been resized says so
+        only through the ratio -- which is also how a change of icon can
+        keep the size somebody chose."""
+        for icon in ("/Comment", "/Key", "/RightPointer"):
+            for angle in (0, 20, 90, -35):
+                for scale in (1.0, 0.5, 3.25):
+                    with self.subTest(icon=icon, angle=angle, scale=scale):
+                        rect = markup.stamp_rect(300.0, 500.0, icon,
+                                                 scale, angle)
+                        self.assertAlmostEqual(
+                            markup.stamp_scale(rect, icon, angle), scale,
+                            places=9)
+
+    def test_the_corners_turn_about_the_centre(self):
+        """Where the handles go. They belong to the drawing, so at any angle
+        but a right one they sit part way along the rectangle's edges rather
+        than at its corners."""
+        rect = markup.stamp_rect(300.0, 500.0, "/Key", 2.0, 20.0)
+        corners = markup.stamp_corners(rect, "/Key", 20.0)
+        self.assertEqual(len(corners), 4)
+        middle = (sum(p[0] for p in corners) / 4, sum(p[1] for p in corners) / 4)
+        self.assertAlmostEqual(middle[0], 300.0, places=6)
+        self.assertAlmostEqual(middle[1], 500.0, places=6)
+        for x, y in corners:
+            self.assertGreaterEqual(x, rect[0] - 1e-6)
+            self.assertLessEqual(x, rect[2] + 1e-6)
+            self.assertGreaterEqual(y, rect[1] - 1e-6)
+            self.assertLessEqual(y, rect[3] + 1e-6)
+        self.assertFalse(
+            any(abs(x - rect[0]) < 1e-6 and abs(y - rect[1]) < 1e-6
+                for x, y in corners),
+            "a turned stamp has a corner on the rectangle's corner")
+
+    def test_the_comment_icon_is_the_balloon_and_not_the_square(self):
+        """Acrobat substitutes its own glyph for a `/Text` comment, so what
+        this application draws there is a display rule and the file keeps
+        Acrobat's square. Nothing substitutes anything on a stamp, so the
+        balloon has to be in the file for the two to agree."""
+        _mark, entry = self.stamp(icon="/Comment")
+        body = bytes(entry["/AP"]["/N"].read_bytes()).decode("latin-1")
+        square = " ".join(noteicons.ICONS["/Comment"][2].split())
+        self.assertNotIn(square[:40], " ".join(body.split()))
+        self.assertIn(" re", body, "the two white bars are not in it")
+        self.assertIn("1 1 1 rg", body, "the bars are not white")
+
+    def test_every_other_icon_is_the_one_the_file_already_had(self):
+        for icon in ("/Check", "/Key", "/Star", "/Help"):
+            with self.subTest(icon=icon):
+                _mark, entry = self.stamp(icon=icon)
+                body = " ".join(
+                    bytes(entry["/AP"]["/N"].read_bytes())
+                    .decode("latin-1").split())
+                want = " ".join(noteicons.ICONS[icon][2].split())
+                self.assertEqual(
+                    body.replace("1.0 0.0 0.0 rg", noteicons.FILL), want)
+                self.assertEqual(str(entry["/Name"]), icon)
+
+
 class TestANoteLandsUnderThePointer(unittest.TestCase):
     """The turn is the whole of this.
 
@@ -1600,9 +1747,10 @@ class TestANoteLandsUnderThePointer(unittest.TestCase):
              if kind == QMouseEvent.Type.MouseButtonPress
              else canvas.mouseReleaseEvent)(event)
         settle(timeout_ms=250)
-        if canvas._note is not None:
-            canvas._note[2].setPlainText("under the pointer")
-            canvas.finish_note()
+        panel = self.win.note_panel
+        if panel._editor is not None:
+            panel._editor.setPlainText("under the pointer")
+            panel._post_it()
             settle(timeout_ms=250)
 
     def test_the_icon_s_corner_is_where_the_pointer_was(self):
@@ -1718,9 +1866,10 @@ class TestAMarkLivesInTheSourcePagesSpace(unittest.TestCase):
              if kind == QMouseEvent.Type.MouseButtonPress
              else canvas.mouseReleaseEvent)(event)
         settle(timeout_ms=250)
-        if canvas._note is not None:
-            canvas._note[2].setPlainText("in the page's own space")
-            canvas.finish_note()
+        panel = self.win.note_panel
+        if panel._editor is not None:
+            panel._editor.setPlainText("in the page's own space")
+            panel._post_it()
             settle(timeout_ms=250)
         return point
 
