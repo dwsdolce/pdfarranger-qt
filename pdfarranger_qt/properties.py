@@ -34,8 +34,8 @@ and the colour popup already use.
 
 from typing import NamedTuple, Optional, Tuple
 
-from PySide6.QtCore import QPoint, QSignalBlocker, Qt, Signal
-from PySide6.QtGui import QColor, QPainter, QValidator
+from PySide6.QtCore import QPoint, QRectF, QSignalBlocker, Qt, Signal
+from PySide6.QtGui import QColor, QIcon, QImage, QPainter, QPen, QPixmap, QValidator
 from PySide6.QtWidgets import (
     QCheckBox,
     QComboBox,
@@ -46,6 +46,7 @@ from PySide6.QtWidgets import (
     QLabel,
     QLineEdit,
     QListWidget,
+    QListWidgetItem,
     QPushButton,
     QSlider,
     QTabWidget,
@@ -116,6 +117,49 @@ class Properties(NamedTuple):
     #: The styles this kind offers, as ``(value, label)`` with the label
     #: already translated. Empty for a kind with one appearance.
     styles: Tuple[Tuple[str, str], ...] = ()
+    #: The icon a comment is drawn with, as `/Name`, and the icons it may
+    #: be given, as ``(value, label)``. Empty for every kind but `/Text`,
+    #: which is the only one with an icon to choose.
+    icon: str = ""
+    #: Whether the icon list is there to read rather than to change. A
+    #: reply has one because it is a `/Text` like the mark it answers, and
+    #: changing it would change nothing: the icon drawn on the page is the
+    #: comment's, and a reply draws nothing at all.
+    icons_fixed: bool = False
+    icons: Tuple[Tuple[str, str], ...] = ()
+    #: Whether the mark grows with the page. Offered only where an icon
+    #: is: it is the one place the size is the mark's rather than the
+    #: text's. Reader always fixes it and never offers the choice.
+
+
+def _icon_badge(icon: str, colour) -> QIcon:
+    """A comment's icon, small, for the list in the form.
+
+    Drawn from the same paths the file gets -- `canvas` walks them for the
+    page and this walks them for the list, so an icon cannot look like one
+    thing where it is chosen and another where it lands.
+    """
+    from .canvas import PageCanvas
+
+    side = 20
+    image = QImage(side, side, QImage.Format_ARGB32)
+    image.fill(Qt.transparent)
+    painter = QPainter(image)
+    painter.setRenderHint(QPainter.Antialiasing, True)
+    shown = QColor.fromRgbF(*colour[:3]) if colour else QColor(150, 67, 252)
+    for path, fill, stroke, width in PageCanvas._icon_drawing(
+            None, icon, QRectF(1, 1, side - 2, side - 2), shown):
+        painter.setBrush(fill if fill is not None else Qt.NoBrush)
+        if stroke is None:
+            painter.setPen(Qt.NoPen)
+        else:
+            pen = QPen(stroke)
+            pen.setWidthF(width)
+            pen.setJoinStyle(Qt.RoundJoin)
+            painter.setPen(pen)
+        painter.drawPath(path)
+    painter.end()
+    return QIcon(QPixmap.fromImage(image))
 
 
 def _as_number(text: str):
@@ -268,6 +312,21 @@ class MarkProperties(QDialog):
         column.addWidget(self.slider)
         form.addRow(_("Opacity"), column)
 
+        if self._was.icons:
+            # **Above Colour**, as Reader's comment form has it: a list to
+            # scroll rather than a drop-down, because seventeen icons are
+            # told apart by their drawing and not by their names.
+            self.icons = QListWidget(page)
+            self.icons.setMaximumHeight(140)
+            for value, label in self._was.icons:
+                row = QListWidgetItem(label, self.icons)
+                row.setData(Qt.UserRole, value)
+                row.setIcon(_icon_badge(value, self._colour))
+                if value == self._was.icon:
+                    self.icons.setCurrentItem(row)
+            self.icons.setEnabled(not self._was.icons_fixed)
+            form.addRow(_("Icon"), self.icons)
+
         if self._was.styles:
             # Beside Colour, as Reader puts it. The entries are the kind's
             # own, because only the kind knows what its styles are.
@@ -398,6 +457,8 @@ class MarkProperties(QDialog):
             self.percent.setEnabled(not on)
         if self._was.styles:
             self.style.setEnabled(not on)
+        if self._was.icons:
+            self.icons.setEnabled(not on and not self._was.icons_fixed)
 
     @property
     def make_default(self) -> bool:
@@ -427,6 +488,11 @@ class MarkProperties(QDialog):
             picked = self.style.currentData()
             if picked != self._was.style:
                 now["style"] = picked
+        if self._was.icons:
+            row = self.icons.currentItem()
+            picked = row.data(Qt.UserRole) if row is not None else None
+            if picked is not None and picked != self._was.icon:
+                now["icon"] = picked
         return now
 
     def keyPressEvent(self, event):

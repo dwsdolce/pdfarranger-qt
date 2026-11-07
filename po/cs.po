@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  pdfarranger\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-06 22:22+0000\n"
+"POT-Creation-Date: 2026-11-07 07:46+0000\n"
 "PO-Revision-Date: 2023-07-10 15:37+0000\n"
 "Last-Translator: PavelZ\n"
 "Language: cs_CZ\n"
@@ -2146,6 +2146,11 @@ msgstr "Změnit velikost značky"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
+msgid "Move Mark"
+msgstr "Přesunout značku"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
 msgid "Set Status"
 msgstr "Nastavit stav"
 
@@ -2166,6 +2171,92 @@ msgstr "Rovná"
 #: pdfarranger_qt/mainwindow.py
 msgid "Squiggly"
 msgstr "Vlnovka"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Check"
+msgstr "Zaškrtnutí"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Checkmark"
+msgstr "Fajfka"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py pdfarranger_qt/tools.py
+msgid "Circle"
+msgstr "Kruh"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py pdfarranger_qt/properties.py
+#: pdfarranger_qt/tools.py
+msgid "Comment"
+msgstr "Komentář"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Cross"
+msgstr "Křížek"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Cross Hairs"
+msgstr "Nitkový kříž"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Help"
+msgstr "Nápověda"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Insert Text"
+msgstr "Vložit text"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Key"
+msgstr "Klíč"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "New Paragraph"
+msgstr "Nový odstavec"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Text Note"
+msgstr "Textová poznámka"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Paragraph"
+msgstr "Odstavec"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Right Arrow"
+msgstr "Šipka doprava"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Right Pointer"
+msgstr "Ukazatel doprava"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Star"
+msgstr "Hvězda"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Up Arrow"
+msgstr "Šipka nahoru"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Up-Left Arrow"
+msgstr "Šipka vlevo nahoru"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
@@ -2901,6 +2992,11 @@ msgstr "Vymazat formátování"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/notepanel.py
+msgid "Add a reply"
+msgstr "Přidat odpověď"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/notepanel.py
 msgid "Post"
 msgstr "Odeslat"
 
@@ -2944,11 +3040,6 @@ msgstr "Zvýraznění"
 msgid "Strikethrough"
 msgstr "Přeškrtnutí"
 
-# machine translation, unreviewed
-#: pdfarranger_qt/properties.py pdfarranger_qt/tools.py
-msgid "Comment"
-msgstr "Komentář"
-
 #: pdfarranger_qt/properties.py
 msgid "Review History"
 msgstr "Historie revizí"
@@ -2960,6 +3051,11 @@ msgstr "Zamčeno"
 #: pdfarranger_qt/properties.py
 msgid "Make Properties Default"
 msgstr "Nastavit vlastnosti jako výchozí"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Icon"
+msgstr "Ikona"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/properties.py pdfarranger_qt/reader.py
@@ -3219,11 +3315,6 @@ msgstr "Šipka"
 #: pdfarranger_qt/tools.py
 msgid "Rectangle"
 msgstr "Obdélník"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/tools.py
-msgid "Circle"
-msgstr "Kruh"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/tools.py
@@ -3724,4 +3815,8 @@ msgstr "Zobrazit název místo jména souboru"
 # machine translation, unreviewed
 #~ msgid "Cross-Out"
 #~ msgstr "Přeškrtnutí"
+
+# machine translation, unreviewed
+#~ msgid "Grows with the page"
+#~ msgstr "Roste se stránkou"
 

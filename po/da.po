@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  pdfarranger\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-06 22:22+0000\n"
+"POT-Creation-Date: 2026-11-07 07:46+0000\n"
 "PO-Revision-Date: 2023-10-22 00:28+0200\n"
 "Last-Translator: Lrss <dev@lrss.dk>\n"
 "Language: da\n"
@@ -2152,6 +2152,11 @@ msgstr "Ændr størrelse på mærke"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
+msgid "Move Mark"
+msgstr "Flyt mærke"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
 msgid "Set Status"
 msgstr "Angiv status"
 
@@ -2172,6 +2177,92 @@ msgstr "Lige"
 #: pdfarranger_qt/mainwindow.py
 msgid "Squiggly"
 msgstr "Bølget"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Check"
+msgstr "Flueben"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Checkmark"
+msgstr "Hak"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py pdfarranger_qt/tools.py
+msgid "Circle"
+msgstr "Cirkel"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py pdfarranger_qt/properties.py
+#: pdfarranger_qt/tools.py
+msgid "Comment"
+msgstr "Kommentar"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Cross"
+msgstr "Kryds"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Cross Hairs"
+msgstr "Trådkors"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Help"
+msgstr "Hjælp"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Insert Text"
+msgstr "Indsæt tekst"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Key"
+msgstr "Nøgle"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "New Paragraph"
+msgstr "Nyt afsnit"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Text Note"
+msgstr "Tekstnote"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Paragraph"
+msgstr "Afsnit"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Right Arrow"
+msgstr "Højrepil"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Right Pointer"
+msgstr "Højrepeger"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Star"
+msgstr "Stjerne"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Up Arrow"
+msgstr "Op-pil"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Up-Left Arrow"
+msgstr "Op-venstre-pil"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
@@ -2903,6 +2994,11 @@ msgstr "Ryd formatering"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/notepanel.py
+msgid "Add a reply"
+msgstr "Tilføj et svar"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/notepanel.py
 msgid "Post"
 msgstr "Udgiv"
 
@@ -2946,11 +3042,6 @@ msgstr "Fremhæv"
 msgid "Strikethrough"
 msgstr "Gennemstregning"
 
-# machine translation, unreviewed
-#: pdfarranger_qt/properties.py pdfarranger_qt/tools.py
-msgid "Comment"
-msgstr "Kommentar"
-
 #: pdfarranger_qt/properties.py
 msgid "Review History"
 msgstr "Gennemgangshistorik"
@@ -2962,6 +3053,11 @@ msgstr "Låst"
 #: pdfarranger_qt/properties.py
 msgid "Make Properties Default"
 msgstr "Gør egenskaber til standard"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Icon"
+msgstr "Ikon"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/properties.py pdfarranger_qt/reader.py
@@ -3221,11 +3317,6 @@ msgstr "Pil"
 #: pdfarranger_qt/tools.py
 msgid "Rectangle"
 msgstr "Rektangel"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/tools.py
-msgid "Circle"
-msgstr "Cirkel"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/tools.py
@@ -3731,4 +3822,8 @@ msgstr "Vis titlen frem for filnavnet"
 # machine translation, unreviewed
 #~ msgid "Cross-Out"
 #~ msgstr "Gennemstregning"
+
+# machine translation, unreviewed
+#~ msgid "Grows with the page"
+#~ msgstr "Vokser med siden"
 

@@ -98,7 +98,8 @@ properties form -- on a mark made here and on one the file brought.
 
 | Name | Text (the strip) | `/Subj` it writes | what is written | state |
 |---|---|---|---|---|
-| Comment, or Highlight | Add a comment | Sticky Note, or Comment on Text | on a point `/Text` with `/Name` the chosen icon; over a run of words `/Highlight` `/IT /HighlightNote`, `/QuadPoints`, `/CA` | the highlight half is done; the icon half writes only, and the requirements for both are in **Comment** below |
+| Comment, or Highlight | Add a comment | Sticky Note, or Comment on Text | on a point `/Text` with `/Name` the chosen icon; over a run of words `/Highlight` `/IT /HighlightNote`, `/QuadPoints`, `/CA` | the highlight half is done; the icon half makes its mark with any of the seventeen icons, keeps its size, takes a note and opens a properties form, but **cannot be selected by clicking** -- so the right-click menu does not reach it |
+| Scalable Comment, or Highlight | Add a scalable comment | Sticky Note, or Comment on Text | on a point `/Stamp` with `/Name` the chosen icon and an `/AP` of ours, `/CA`; over a run of words the same `/Highlight` the comment tool writes | decision 53, not started |
 | | Insert text | Inserted Text | `/Caret` | decision 3, not started |
 | | Replace selected text | Inserted Text + Cross-Out | `/Caret` `/IT /Replace` **and** `/StrikeOut` `/IT /StrikeOutTextEdit`, joined by `/IRT` + `/RT /Group` | decision 3, not started |
 | | Add text comment | Text Box | `/FreeText` | not started |
@@ -123,10 +124,11 @@ properties form -- on a mark made here and on one the file brought.
 change what the pointer does and write nothing.
 
 Twenty tools, three of them done: Highlight, Underline and
-Strikethrough. One more writes a mark and nothing else -- Add a comment,
-whose highlight half is done while the icon half writes only, and
-neither was ever specified until the **Comment** section below. Eighteen
-write an annotation; the last two do not, and
+Strikethrough. Add a comment is most of the way: its highlight half is
+done, and its icon half draws any of the seventeen, keeps its size,
+takes a note and opens a properties form -- what it still wants is to be
+selectable by a click, which is what the right-click menu hangs off.
+Eighteen write an annotation; the last two do not, and
 that is the whole of what makes them different. Placing a stored
 signature or initials writes **page content**: measured on page 3 of the test
 document, the signature is 1334 ink pixels with annotations off and 1334 with,
@@ -1257,10 +1259,20 @@ The owner's own notes, `corpus/Annotations.docx`, read off Reader on
 3  the note box opens by itself, and Post is refused while it is empty.
    Cancelling the box deletes the comment or the highlight
 4  hovering the icon shows the note, as the other tools already do
-5  the right-click menu is the other tools'
+5  the right-click menu is *nearly* the other tools': Open Pop-Up Note,
+   Reply, Delete, Set status, then the panel entries, then Make current
+   properties default and Properties. **No Copy Text and no Enable Text
+   Selection** -- and the same menu on the highlight a comment makes,
+   although that one is over words
 6  the properties form carries the icons, a colour and an opacity,
    beside the standard tabs
 ```
+
+Point 5 read "the right-click menu is the other tools'" here until
+2026-11-06, which was this document's paraphrase and not the owner's
+note. The two menus were then photographed and neither carries those two
+entries. Copying a summary of a requirement rather than the requirement
+is how a tool gets built to the wrong one.
 
 **One tool, two kinds**, measured on `corpus/Markup Comment.pdf`:
 
@@ -1331,9 +1343,22 @@ note here writes today:
 - **No `/CA`** when the mark is fully opaque, as elsewhere.
 
 **Post is refused until there is text, and Cancel deletes the mark.**
-Neither is what happens here today: the sticky note's editor has no Post
-to refuse, and an empty one is removed when it closes rather than when it
-is cancelled.
+Both hold now, for the marks that *are* their note -- the comment's icon
+and the highlight it makes over words -- while a highlight, an underline
+or a cross-out keeps its place and simply ends up without a note.
+
+**The icon is a mark like any other now.** `/Text` is in the canvas's
+`SELECTABLE`, so it can be clicked, outlined, hovered for its note and
+right-clicked for its menu, and its properties form opens. Two things it
+does not get: **grips**, because it is placed rather than sized and a
+handle on a glyph offers a drag that means nothing, and a **badge**,
+because the icon is already the sign that there is something to read.
+
+**The note window, not a box on the page.** Placing a comment opens the
+same window every other mark opens -- author, time, Cancel and Post --
+and so does clicking an icon that is already there. A comment used to get
+a bare text box instead, and it was the only mark in the application that
+did.
 
 ## The test
 
@@ -2670,9 +2695,9 @@ default, although its form is headed *Highlight Properties*. The
 alternative adjusts a tool that did not make this mark and will not make
 another like it, so the button would do nothing for the thing in front of
 you. Which tool made a mark is recorded in `/Subj` and `/IT`, which makes
-**reading `/IT` a requirement**: today it is written and then dropped on
-the way back in, so a mark of ours would answer the question wrongly
-after a round trip. A mark whose maker cannot be named never reaches this
+**reading `/IT` a requirement**: it was written and then dropped on the
+way back in, so a mark of ours answered the question wrongly after a
+round trip. It is read now. A mark whose maker cannot be named never reaches this
 question: if its kind cannot be named either it is not selectable, so no
 form opens on it, and the kind always names a tool -- `/Highlight` is the
 only one two tools share, and `/Subj` with `/IT` is what tells those two
@@ -2739,9 +2764,9 @@ it no note.
 The caret pair is in the first column for the same reason: the
 replacement text is the point of it.
 
-Neither rule holds today. Nothing refuses an empty Post anywhere, and the
-highlight made from *Add note to text* survives a cancel although it is a
-comment.
+Both rules hold. Post is disabled while the editor is empty, and a
+comment cancelled with nothing in it is dropped in either of its two
+forms -- the icon and the highlight that *Add note to text* makes.
 
 **49. A comment's icon keeps its size, unless the user says otherwise.**
 Reader writes `/F 28` on every one -- Print, NoZoom and NoRotate -- so the
@@ -2750,15 +2775,275 @@ page is turned. A sticky note is a pin on the page rather than ink on it,
 which is the reasoning already written beside the two places this
 application uses 28 for a reply's icon and a popup's window.
 
-**NoZoom is offered on the form**, which Reader does not offer and other
-PDF applications do. Clearing it writes `/F 20` and the icon scales with
-the page, which Reader honours although it never writes it. **NoRotate is
-not offered**: turning a page is rare and an icon that turns with it is
-stranger than one that does not.
+**Neither bit is offered on the form.** This document carried a scaling
+checkbox here until 2026-11-06, on the grounds that clearing NoZoom made
+the icon scale with the page and that Reader honoured it. Reader does
+not, and neither does anyone else in the same way. Measured on
+`corpus/Markup Comment Scale.pdf`, one `/Cross` with its NoZoom bit
+cleared -- `/F` 28 to 20 -- and nothing else changed, read against its
+unchanged neighbours:
+
+    this application, Stirling   fixed with the bit, scales without it
+    Acrobat                      fixed either way -- the bit is ignored
+    PDFGear                      scales either way -- the bit is ignored
+
+Four readers, three behaviours. A checkbox whose effect two of four
+readers discard is not a setting, so this application writes `/F 28` on
+every icon it makes and offers no way to ask for anything else.
+**NoRotate is not offered** for the reason it never was: turning a page
+is rare and an icon that turns with it is stranger than one that does
+not.
+
+**Not creating the flag is not the same as ignoring it.** A mark that
+arrives with NoZoom clear is drawn scaling, because the file is saying
+something and discarding it would be this application deciding the file
+is wrong. `Mark` reads the bit off `/F` and the canvas honours it; only
+`Annotation`, which is what this application *makes*, has no such
+attribute and no way to acquire one.
+
+Editing such a mark leaves the bit alone. `apply_edit` writes `/F` for
+one field only -- `locked`, which sets or clears bit 128 and leaves the
+rest of the byte as it found it. Measured on the `/Cross` in
+`corpus/Markup Comment Scale.pdf`, whose `/F` is 20:
+
+    a colour change        20 -> 20
+    opacity and a note     20 -> 20
+    a move                 20 -> 20
+    locking it             20 -> 148    Print + NoRotate + Locked
+    unlocking it           20 -> 20
+
+NoZoom is clear in every one. So nothing short of locking rewrites the
+flags at all, and locking preserves the choice as well.
+
+A page-space icon is still wanted, and decision 53 is where it went: a
+different subtype rather than a flag on this one.
 
 Both bits are false by default in the format -- `/F` is 0 when absent --
-so an annotation scales and rotates unless told not to. Our notes write
-`/F 4` today and therefore do both.
+so an annotation scales and rotates unless told not to. A comment's icon
+is written with 28; a status annotation takes 30, and every other mark 4.
+
+The size an icon is drawn at is its `/Rect`'s width and height **in
+default user space**, 1/72 inch each, held at that size whatever the
+magnification. Not pixels: points at 100%, and the anchor is the upper
+left corner, which stays where it is in the page's own coordinates while
+the extent stops being a page-space length. That is the whole of what
+NoZoom changes, and it is why decision 50's corner is the primitive and
+the size is not.
+
+**50. A comment's rectangle is anchored by its top left corner.** The same
+corner in all three places the box can change. Measured on
+`corpus/Markup Comment Position 1.pdf` and `2.pdf`, which are one comment
+saved before and after its icon was changed from `/Comment` to `/Check`:
+
+    before   [58.037, 699.491, 82.037, 723.491]   24 x 24
+    after    [58.037, 704.491, 77.037, 723.491]   19 x 19
+
+The left and the top are the same number twice; the right and the bottom
+come in by five. Changing the icon writes `/Name`, `/Rect`, `/AP` -- its
+`/BBox` and the drawing inside it -- and `/M`, and nothing else. `/C`,
+`/CA`, `/Contents`, `/RC`, `/CreationDate`, `/NM`, `/F`, `/Subj` and the
+popup's own rectangle are untouched, and the rebuilt drawing is
+byte-identical to the one in `noteicons.py` once the colour is put back.
+
+It is the same corner a click fixes, and the same corner a zoom fixes:
+under decision 49 the icon holds its size on screen while that corner keeps
+its place in the page, so the icon slides with the document instead of
+growing with it. One corner, three behaviours -- which is why a rectangle
+left at the old icon's size is wrong in two ways at once. A viewer fits
+the appearance to `/Rect`, so the glyph is drawn at the wrong size; and
+`icon_box`, which draws the icon's own size up from the *lower* left, puts
+it at the wrong height as well.
+
+`markup.icon_rect` is this rule, and `canvas.icon_rect` already places a
+new note by putting that corner under the pointer.
+
+**51. A comment's icon can be moved after it is placed.** Observed off
+Reader 2026-11-06: approaching a placed icon turns the pointer into a move
+cursor, and the icon drags to a new position. The owner's notes do not
+mention it, and the comment tool here was built without it.
+
+A move is a translation and nothing else. Measured over the nine first-row
+comments moved in `corpus/Markup Comment.pdf`, matched by `/NM` against the
+copy taken before they were moved: `/Rect` and `/M` change, and no other
+key does. The box keeps its size exactly -- `/Comment` is still 24 by 24
+and `/Key` still 13 by 18 -- the appearance stream is not rebuilt, and the
+popup does not follow the icon. The deltas are free-hand, -15.3 to +11.7
+across and -2.9 to +6.7 up, so Reader snaps a drag to nothing.
+
+Nor is a comment tied to text. It is placed wherever the page is clicked,
+and the one in the measurement above sits at x 58, outside the text
+margin entirely.
+
+Not implemented: a comment here is placed and then fixed.
+
+**52. A comment's icon is drawn the way Acrobat draws it, not the way the
+file does.** Acrobat writes one picture and shows another, and it is the
+only icon it does this for. Its `/AP` is the square with a white speech
+bubble, 17.4 points of drawing in a 24 point box; what it puts on screen
+is a balloon about 9 points across. The other sixteen it draws from the
+stream, at the size the stream gives -- measured on
+`corpus/Markup Comment Test.pdf` against a screenshot of Reader showing
+the same page, every one of them within the 0.956 the two shots differ
+in scale, and `/Comment` alone at 0.53.
+
+**Nothing of this reaches the file.** The stream written for a comment is
+still Acrobat's own, byte-identical to it, so a document made here and a
+document made there are the same document and open the same way in every
+other viewer. This is a display rule and only a display rule, which is
+exactly the arrangement Acrobat itself has.
+
+**It applies to every comment on the page**, the ones this session made
+and the ones the file arrived with alike. Drawing it for new comments
+only would swap the balloon for the square the moment the document was
+saved. So the page render stops drawing `/Text` at all -- they are hidden
+in the document built for the reader, never in one that is saved -- and
+the canvas paints all of them.
+
+**The glyph**, measured off a capture of Reader at 2026-11-06, in the
+30 pixel box the icon was drawn in, with its top left as the origin:
+
+    silhouette   a circle of the full box, except the bottom right
+                 quadrant, which stays square and makes the tail
+    upper bar    x 6, y 10, 18 by 3
+    lower bar    x 6, y 17, 14 by 3
+
+As fractions of the box, both bars begin 0.20 across and are 0.10 tall;
+the upper is 0.60 wide at 0.333 down and the lower 0.467 wide at 0.567
+down. The body takes the mark's own colour at the annotation's opacity
+and the bars are white. Nothing is drawn outside the balloon.
+
+**The ring is not part of the icon.** A selected comment gets an outer
+ring with a clear gap inside it, in Acrobat's own accent colour --
+measured `(51, 118, 243)`, which is not derived from `/C` and is the same
+for every mark -- and the body goes fully opaque. That is selection
+chrome and belongs with however this application shows a selected mark,
+not in the glyph.
+
+**53. A comment comes in two kinds, and they are different subtypes.**
+One tool writes a pin and another writes page content, because the format
+draws that line and no flag crosses it.
+
+**The comment**, as decisions 36 to 52 describe it, is a `/Text`. It is a
+marker pointing at a place: fixed size, upper-left anchored, no resize and
+no scaling control. That is not a limitation chosen here -- it is what
+`/Text` *is*, which is why readers feel free to treat its size as
+presentation and why they disagree about it. Decision 49 has the
+measurements.
+
+**The scalable comment** is a `/Stamp` carrying the same drawing. A stamp is
+ordinary page content, so its rectangle is ordinary geometry: it scales
+with the page, it resizes, and no flag is involved for anyone to honour or
+ignore. Measured 2026-11-06 on `corpus/Markup Stamp Probe.pdf`, two stamps
+sharing one appearance stream at 19 by 19 and 38 by 38:
+
+    scales with the page       all four readers
+    rectangle honoured         all four readers -- 38 is drawn twice 19
+    aspect-locked drag resize  offered already by three of the four
+    comment panel              Acrobat yes, Stirling yes, PDFGear no
+
+And it survives Acrobat untouched. `corpus/Markup Stamp Probe Reader.pdf`
+is the same file opened and saved there: the rectangle, the appearance,
+`/F`, `/CA`, `/Subj`, `/NM` and a `/Name` of our own invention all come
+back byte for byte, with only a `/P` page reference added. A stamp carries
+`/Contents`, `/Popup`, replies and status like any other markup
+annotation, so it is a comment in every sense that matters.
+
+**Which icon it is still lives in `/Name`.** Nothing reads it for
+appearance on a stamp -- the `/AP` decides that -- so it is free to record
+the choice for the properties form and for a later icon change.
+
+**The resize is a scale factor, derived and not stored.** One number,
+applied to both dimensions so the glyph can never skew, and recovered from
+the rectangle rather than kept beside it:
+
+    factor = rect width / the natural width of the icon it holds
+
+A note at its natural size has factor 1 and reads exactly as it does
+today. Changing the icon rebuilds the rectangle as the new icon's natural
+size times that factor, anchored at the same top left, so a resize is not
+thrown away by picking a different glyph. Derived rather than stored
+because a key of our own would be dropped by the first application that
+did not understand it, and the rectangle is preserved by all of them.
+
+**It makes a highlight too, and it is the same highlight.** The
+scalable comment is the comment tool with one difference: the point
+gesture writes a `/Stamp` where the other writes a `/Text`. Over a run of
+words there is no icon, so there is nothing for *scalable* to mean -- a
+highlight is already page content, already quads over text, already
+scaling with the page. So it writes the comment tool's highlight exactly:
+same `/Highlight`, same `/Subj Comment on Text`, same `/IT
+/HighlightNote`, same `/CA`, indistinguishable in the file.
+
+A `/Subj` of our own would have told the two apart. `/Subj` is free text
+in the format -- there is no controlled vocabulary and Acrobat merely
+happens to write its tool names there -- so it was allowed, and it was
+rejected anyway: it would make a file of ours differ from one of
+Acrobat's for a mark Acrobat can itself make, and buy nothing but an
+unfamiliar subject in its comment panel.
+
+**The two comment tools share one set of properties**, which is what makes
+that affordable. Colour, opacity, icon and the note behaviour are one
+set, read and written by both, so decision 46's question -- which tool
+made this mark -- has no consequence for a highlight that either could
+have made. *Make current properties default* on one adjusts both, which
+is also the less surprising behaviour: pick red in one, switch to the
+other, and it is still red. Two comment colours drifting apart is the
+kind of thing nobody reports and everybody notices.
+
+The one property that genuinely differs never enters that set. A mark's
+size factor is derived from its own rectangle, per mark, so it is not a
+tool default at all.
+
+**The name is *scalable*, not *sizable*.** *Sizable* in ordinary English
+means fairly large, so *Add a sizable comment* reads as a comment of
+considerable size -- and a catalogue translator with no other context
+will render that reading into thirty-three languages. *Scalable* names
+the thing that distinguishes it. *Resizable* names the handle, which is a
+consequence rather than the point.
+
+**54. An appearance stream this application writes carries `/Resources`,
+and carries its colour in the stream.** Two rules with one cause: a reader
+is entitled to be stricter than the one in front of you.
+
+`/Resources` is written even when it is empty. A form XObject without one
+has no resource context at all, and measured 2026-11-06 on
+`corpus/Markup Stamp Resources.pdf` -- four stamps sharing one drawing,
+differing only in these two entries -- PDFGear paints the two that lack it
+black and the two that have it correctly. `/Matrix` makes no difference
+either way, and Acrobat, Stirling and PDFium draw all four alike. Acrobat
+writes an empty `/Resources` on icon appearances that need no resources at
+all, which is the same conclusion reached by whoever wrote it.
+
+**`/C` is not a fallback for the colour.** A reader that ignores the
+colour the stream sets ignores `/C` as well -- measured on
+`corpus/Markup Stamp Colour Probe.pdf`, where adding `/C` matching the
+stream changed nothing anywhere. So the colour belongs in the appearance
+and writing it twice buys no safety. `/C` is still written where the
+format asks for it, as what the mark *is* rather than as a hint about how
+to draw it.
+
+**55. The note window belongs to the selection and follows it.** Observed
+off Reader 2026-11-06. Clicking another mark that carries a note closes
+the window that is open, lets go of the icon it belonged to, selects the
+new mark, and opens that one's note. Clicking the page where there is no
+mark lets go and closes the window with it. Closing it by hand closes it
+as well, and that one already works -- `canvas._shut_notes` remembers it
+per mark, so the pointer stops offering the window again until it is
+asked for. The window is the selected mark's, not something that outlives
+it.
+
+**The rule is about marks, not about icons.** Clicking any mark selects
+it and opens its note if it has one -- a highlight, an underline, a
+cross-out, as much as a comment's icon. A mark with no note selects and
+the window closes with nothing to replace it. The icon is where this was
+noticed because an icon is nothing *but* its note, but there is one rule
+and it reads: pick up a mark, see what was said about it.
+
+Not implemented apart from closing by hand. The window is otherwise
+hidden only when its own mark is deleted or the document is closed, so
+selecting anything else leaves a thread open over a mark it no longer
+describes -- and selecting a highlight that carries a note opens
+nothing.
 
 ## Done
 

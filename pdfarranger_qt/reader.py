@@ -54,6 +54,7 @@ from PySide6.QtWidgets import (
 )
 
 from . import forms as forms_module
+from . import markup
 from .canvas import ZOOM_LIMITS, ZOOM_STEP, PageCanvas
 from .export import get_in_memory_pdf
 from .find import Query, TextSearch
@@ -148,6 +149,7 @@ class ReaderView(QWidget):
     mark_drawn = Signal(str, int, object)
     marks_drawn = Signal(str, object)
     #: A grip moved: ``(page, mark, quads)`` in the page's own space.
+    mark_moved = Signal(int, object, object)
     mark_resized = Signal(int, object, object)
     #: The selected mark is to go: ``(page, mark)``.
     mark_deleted = Signal(int, object)
@@ -171,6 +173,7 @@ class ReaderView(QWidget):
         self.canvas.field_pressed.connect(self.field_pressed)
         self.canvas.mark_drawn.connect(self.mark_drawn)
         self.canvas.marks_drawn.connect(self.marks_drawn)
+        self.canvas.mark_moved.connect(self.mark_moved)
         self.canvas.mark_resized.connect(self.mark_resized)
         self.canvas.mark_deleted.connect(self.mark_deleted)
         self.canvas.mark_is_the_default.connect(self.mark_is_the_default)
@@ -303,7 +306,8 @@ class ReaderView(QWidget):
             # this export's, so building one here is work thrown away on every
             # mode switch -- and on a 1590 page book that is not free.
             data = get_in_memory_pdf(list(pages), files,
-                                     source_names=source_names)
+                                     source_names=source_names,
+                                     hide_notes=True)
         except Exception:  # noqa: BLE001 - reported by the caller as "cannot read"
             # Logged, not silent. Swallowing this once turned a crash in the
             # export path into "the reader just returns False", and 42 tests
@@ -347,6 +351,19 @@ class ReaderView(QWidget):
                 data = handle.read()
         except OSError:
             data = None
+        if data is not None:
+            # A comment's icon is this application's own drawing, and the
+            # export empties the file's so that only one of them shows. This
+            # path shows the file as it stands, so the renderer would draw
+            # its own under ours unless the same thing is done here.
+            blanked = markup.blanked_bytes(data)
+            if blanked is not data:
+                document.close()
+                document = MemoryDocument(blanked)
+                if not document.ok:
+                    document.close()
+                    return False
+                data = blanked
         self._show(document, data, sizes)
         return True
 

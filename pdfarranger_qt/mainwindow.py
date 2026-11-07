@@ -156,6 +156,7 @@ class MainWindow(QMainWindow):
                 "reader/markup-tools-at", where))
         self.reader.mark_drawn.connect(self.mark_drawn)
         self.reader.marks_drawn.connect(self.marks_drawn)
+        self.reader.mark_moved.connect(self.mark_moved)
         self.reader.mark_resized.connect(self.mark_resized)
         self.reader.mark_deleted.connect(self.mark_deleted)
         self.reader.mark_is_the_default.connect(self.mark_is_the_default)
@@ -171,6 +172,9 @@ class MainWindow(QMainWindow):
         self.note_panel.placed.connect(self.note_panel_placed)
         self.note_panel.closed.connect(self.note_shut)
         self.note_panel.menu_wanted.connect(self.note_menu)
+        # The box at the end of a thread asks for exactly what the menu's
+        # *Reply* asks for, so it is answered in one place.
+        self.note_panel.reply_here.connect(self._reply_to_the_open_thread)
         #: What that panel is showing: ``(page, [mark, reply, reply, ...])``,
         #: in the order the panel lists them, so a post knows which mark it
         #: belongs to.
@@ -179,6 +183,7 @@ class MainWindow(QMainWindow):
         # the preview is the mark, before it is a mark.
         self.reader.canvas.set_mark_styles(self.MARK_KINDS)
         self.reader.canvas.mark_colour = self._colour_for_canvas_tool
+        self.reader.canvas.note_icon = lambda: self._icon_for("comment")
         #: What you can do to the mark that is selected. A child of the
         #: viewport rather than of the reader, because it is placed from the
         #: rectangles the canvas reports and those are in viewport
@@ -207,6 +212,9 @@ class MainWindow(QMainWindow):
         #: underline starts straight; *Make Properties Default* on a
         #: squiggly is how that moves.
         self._styles: dict = {}
+        #: And the icon a comment is made with. One more appearance
+        #: attribute the properties form can send over as a default.
+        self._icons: dict = {}
         self._load_tool_defaults()
         self.armed_opacity = None
         self.tool_strip.colour_armed.connect(self._colour_armed)
@@ -279,6 +287,12 @@ class MainWindow(QMainWindow):
         #: stack, so a command run from the keyboard while the editor was open
         #: cannot be the one discarded instead.
         self._placed_note = None
+        #: A mark that **is** its note, made but not yet written: the
+        #: thread window is open on it and nothing has been posted. If the
+        #: window is cancelled or shut while it is still empty there was
+        #: no comment, so the mark goes and the undo entry with it.
+        #: ``(index, mark, undo point)``.
+        self._awaiting_text = None
         #: Zoom to restore when double-click toggles fit back off.
         self._zoom_before_fit: Optional[float] = None
 
@@ -816,9 +830,6 @@ class MainWindow(QMainWindow):
         "strikeout": markup.STRIKEOUT,
         "underline": markup.UNDERLINE,
         "note": markup.TEXT,
-        # The same `/Highlight` the highlight tool writes. What makes it a
-        # different tool is `/Subj` and `/IT`, which come off the tool's
-        # own declaration -- see `mark_drawn`.
         # **A gesture, not a tool.** The right-click menu's *Add note to
         # text* is the comment tool marking a run of words instead of
         # placing an icon, so it writes a `/Highlight` and takes the
@@ -829,6 +840,16 @@ class MainWindow(QMainWindow):
 
     #: The gestures above that are not tools, and the tool each acts as.
     GESTURE_TOOLS = {markup.NOTE_ON_TEXT: "comment"}
+
+    #: The marks that **are** their note. Cancelling the box, or leaving
+    #: it empty, means there was no comment -- so the mark goes rather
+    #: than staying behind with nothing to say. A highlight, an underline
+    #: or a cross-out stands on its own and keeps its place.
+    #:
+    #: By the canvas's names, because that is what reports a finished
+    #: gesture -- `"note"` is the comment tool placing its icon. The caret
+    #: pair belongs here too, once it exists.
+    REQUIRES_TEXT = (markup.NOTE_ON_TEXT, "note")
 
     #: Strip tool -> the canvas's own name for it. Only the tools that have
     #: been built appear: the strip offers twenty and the canvas implements
@@ -877,8 +898,17 @@ class MainWindow(QMainWindow):
         # One mark per page, as `mark_the_selection` does. The tool stays
         # armed afterwards, for the next run of words.
         canvas = self.reader.canvas
-        if canvas.marks_text() and canvas.has_selection():
-            canvas.mark_the_selection(canvas.tool())
+        if canvas.has_selection():
+            if canvas.marks_text():
+                canvas.mark_the_selection(canvas.tool())
+            elif canvas.tool() == self.CANVAS_TOOLS["comment"]:
+                # **The comment tool makes two kinds.** An icon where it
+                # is clicked, and a highlight over a run of words -- and
+                # for words either order works, so choosing it with a
+                # selection already made marks it at once. A point has to
+                # be the other way round: there is nothing to mark until
+                # the click says where.
+                canvas.mark_the_selection(markup.NOTE_ON_TEXT)
 
     def _canvas_tool_changed(self, tool: str) -> None:
         """Keep the strip showing what the pointer is actually doing.
@@ -947,20 +977,21 @@ class MainWindow(QMainWindow):
         # a gesture over several pages is the one on the last page.
         index = wanted[-1][0]
         made = self._marks_on_page(index)
-        if tool == self.CANVAS_TOOLS["comment"]:
-            # Straight into the editor. A note with nothing in it is not a
-            # mark anyone meant to make, and asking for the text afterwards
-            # would be a second gesture for one action.
-            self._placed_note = self.model.undo.current
-            self.reader.canvas.edit_note(index, len(made) - 1)
-        elif tool == markup.NOTE_ON_TEXT:
-            # **The thread window, not the editor on the page.** It is an
-            # ordinary note -- Reader opens the same window it opens for
-            # every other mark, with the author, the time and Post. The
-            # editor on the page belongs to the icon dropped on it, which
-            # has nowhere else to put its words. Left empty, the highlight
-            # stays: it is a mark somebody made, unlike an icon with
-            # nothing in it.
+        if tool in self.REQUIRES_TEXT:
+            # **The note window, which is the one every other mark uses.**
+            # Author, time, Cancel and Post -- not the bare text box on the
+            # page, which is what a comment opened before and was the only
+            # mark in the application that did. Straight into it, because a
+            # comment with nothing in it is not a mark anyone meant to
+            # make, and asking for the words afterwards would be a second
+            # gesture for one action.
+            self._awaiting_text = (index, made[-1], self.model.undo.current)
+            # **Held, before its window opens.** The thread belongs to the
+            # selected mark and closes when the selection moves off it, so
+            # a mark nobody has hold of would leave a window that clicking
+            # away could not shut -- and clicking the icon again would find
+            # it already showing and open no editor.
+            self.reader.canvas.select_mark((index, made[-1]))
             self.open_note(index, made[-1])
 
     def _place_mark(self, tool: str, subtype: str, index: int, rects) -> None:
@@ -983,9 +1014,16 @@ class MainWindow(QMainWindow):
             # the source page's space. Normalising to a flat 20 here
             # instead quietly halved a note placed on a page shown at half
             # size.
-            scale = page.scale if page.scale else 1.0
-            rect = markup.note_rect(rect[0], rect[3],
-                                    markup.NOTE_SIZE / scale)
+            # **Only a bare point.** The canvas sizes the box itself,
+            # because the corner that lands under the pointer depends on
+            # how the page is turned and only the canvas knows that.
+            # Rebuilding it here from the source-space left and top put
+            # the icon back where the turn had moved it.
+            if rect[2] - rect[0] <= 0 or rect[3] - rect[1] <= 0:
+                scale = page.scale if page.scale else 1.0
+                wide, tall = markup.icon_size(self._icon_for("comment"))
+                rect = markup.note_rect(rect[0], rect[3],
+                                        wide / scale, tall / scale)
         # **Which tool, not which subtype.** Two things make a
         # `/Highlight` -- the highlight tool, and the comment tool over a
         # run of words -- and what tells them apart in the file is the
@@ -995,6 +1033,7 @@ class MainWindow(QMainWindow):
             subtype, page.uid, rect, colour=colour, quads=quads,
             opacity=self._opacity_for_canvas_tool(tool),
             subject=subject or None, intent=intent or None,
+            icon=self._icon_for(self.CANVAS_TO_STRIP.get(tool, tool)),
             author=markup.default_author()))
 
     @staticmethod
@@ -1047,6 +1086,8 @@ class MainWindow(QMainWindow):
                 {k: float(v) for k, v in stored.get("opacities", {}).items()})
             self._styles.update(
                 {k: str(v) for k, v in stored.get("styles", {}).items()})
+            self._icons.update(
+                {k: str(v) for k, v in stored.get("icons", {}).items()})
         except Exception:  # noqa: BLE001 - a bad preference is no preference
             logging.getLogger(__name__).debug(
                 "tool defaults could not be read", exc_info=True)
@@ -1057,7 +1098,13 @@ class MainWindow(QMainWindow):
             "colours": {k: list(v) for k, v in self._colours.items()},
             "opacities": dict(self._opacities),
             "styles": dict(self._styles),
+            "icons": dict(self._icons),
         }))
+
+    def _icon_for(self, tool: str) -> str:
+        """The `/Name` a comment made with ``tool`` would carry now."""
+        return self._icons.get(self.GESTURE_TOOLS.get(tool, tool),
+                               markup.DEFAULT_ICON)
 
     def opacity_for(self, tool: str):
         """How solid a mark made with ``tool`` would be now.
@@ -1107,8 +1154,25 @@ class MainWindow(QMainWindow):
         The swatch follows the selection so that the tick in the palette
         marks the colour of the mark you picked. Letting go puts back the
         colour armed for the next one.
+
+        **And the note window goes with the selection.** It belongs to the
+        mark it was opened on, so picking up another mark or clicking the
+        bare page lets go of that one and takes the thread with it. Left
+        open it describes a mark nobody has hold of any more.
+
+        **And the new mark's note opens, whatever kind of mark it is.** A
+        highlight somebody wrote about shows what they said, exactly as an
+        icon does -- one rule, which is: pick up a mark, see what was said
+        about it. An icon also asks through `note_wanted`, which arrives
+        straight after this and finds the window already showing.
         """
         found = self.reader.canvas.selected_mark()
+        if self._noted is not None and (
+                found is None or found[1] is not self._noted[1][0]):
+            self.note_panel.hide()
+            self._noted = None
+        if found is not None and markup.has_note(found[1]):
+            self.open_note(*found)
         if found is None:
             self.tool_strip.unfollow()
             return
@@ -1149,6 +1213,7 @@ class MainWindow(QMainWindow):
             self.model.undo.commit(_("Resize Mark"))
             mark.quads = tuple(tuple(q) for q in quads)
             mark.rect = markup.bounding_rect(mark.quads)
+            mark.touch()
             self._after_mark_change(index)
             return
         uid = self.model.pages[index].uid
@@ -1162,6 +1227,27 @@ class MainWindow(QMainWindow):
         # outline and its badge all followed that wrong answer.
         mark.quads = tuple(tuple(markup._quad_points(q)) for q in boxes)
         mark.rect = markup.bounding_rect(boxes)
+        self._after_mark_change(index, uid)
+
+    def mark_moved(self, index: int, mark, rect) -> None:
+        """A comment's icon dragged to somewhere else on its page.
+
+        Reader allows this and nothing here did. A move writes the rectangle
+        and the date and leaves everything else -- the size, the appearance,
+        the thread, the popup's own window -- exactly as it was, which is
+        what Reader writes when one is dragged.
+        """
+        rect = tuple(float(v) for v in rect)
+        if isinstance(mark, markup.Annotation):
+            self.model.undo.commit(_("Move Mark"))
+            mark.rect = rect
+            mark.touch()
+            self._after_mark_change(index)
+            return
+        uid = self.model.pages[index].uid
+        self.model.undo.commit(_("Move Mark"))
+        self.model.mark_edits.change(uid, mark.index, rect=rect)
+        mark.rect = rect
         self._after_mark_change(index, uid)
 
     def mark_deleted(self, index: int, mark) -> None:
@@ -1187,13 +1273,41 @@ class MainWindow(QMainWindow):
             index, marks = self._noted
             self.reader.canvas.note_window_shut(index, marks[0])
         self._noted = None
+        self._drop_a_mark_with_nothing_to_say()
 
-    def open_note(self, index: int, mark, open_on: int = 0) -> None:
+    def _drop_a_mark_with_nothing_to_say(self) -> None:
+        """Take back a mark that *is* its note and never got one.
+
+        A comment cancelled, or shut while still empty, is a comment
+        nobody made -- so the mark goes and the step that placed it goes
+        with it, leaving no entry that undoes nothing. A highlight or an
+        underline is not touched: the mark stands on its own and simply
+        ends up without a note.
+        """
+        waiting, self._awaiting_text = self._awaiting_text, None
+        if waiting is None:
+            return
+        index, mark, placed_at = waiting
+        if (mark.contents or "").strip():
+            return
+        self.model.annotations.remove(mark)
+        if placed_at == self.model.undo.current:
+            self.model.undo.discard_last()
+        self._mark_added()
+
+    def open_note(self, index: int, mark, open_on=None) -> None:
         """Show the thread on a mark: its note first, then its replies.
 
-        **The note is the one open for editing, whatever is under it.** A
-        thread of three opens on the first, which is Reader's behaviour and
-        not a chat window's.
+        **Nothing opens for editing unless there is nothing written.** A
+        thread already written is shown, not reached for: opening an editor
+        over somebody's words, with the focus in it, is not what asking to
+        read them means. The empty case is a comment being made, which is
+        the one thing here that wants typing into, and a reply is asked for
+        by the box at the end.
+
+        ``open_on`` overrides that, and is how a redraw keeps the editor
+        somebody is using: a status set while a reply is being written
+        rebuilds the thread, and the box must not close under them.
         """
         if not 0 <= index < len(self.model.pages):
             return
@@ -1207,6 +1321,9 @@ class MainWindow(QMainWindow):
             # the thread under the pointer would throw away what is being
             # typed into it.
             return
+        if open_on is None:
+            open_on = (0 if not (getattr(mark, "contents", "") or "").strip()
+                       else self.note_panel.NOTHING)
         replies = self._replies_to(index, mark)
         status = self._status_of(index, mark)
         items = [NoteItem(
@@ -1279,6 +1396,13 @@ class MainWindow(QMainWindow):
         self.note_panel.post_now()
         self.note_panel.add_blank(markup.default_author(),
                                   when_text(markup.pdf_date()))
+
+    def _reply_to_the_open_thread(self) -> None:
+        """*Add a reply* clicked at the end of the window that is open."""
+        if self._noted is None:
+            return
+        index, marks = self._noted
+        self.reply_to(index, marks[0])
 
     def _status_of(self, index: int, mark):
         """The mark's current status, or None. The *last* link in the chain:
@@ -1355,6 +1479,9 @@ class MainWindow(QMainWindow):
             locked=bool(getattr(mark, "locked", False)),
             history=self._history_of(index, mark),
             style=self._style_of(mark),
+            icon=getattr(mark, "icon", "") or "",
+            icons=self._icons_for(mark.kind if mine else mark.subtype),
+            icons_fixed=markup.is_reply(mark),
             styles=self._styles_for(mark.kind if mine else mark.subtype),
         ), self)
         # **The appearance is live, as Acrobat's is**: the slider shows on
@@ -1408,24 +1535,29 @@ class MainWindow(QMainWindow):
                            mine: bool) -> None:
         """Record fields on a mark of ours, or beside one the file brought,
         and re-render the page that shows it."""
+        page = self.model.pages[index]
+        scale = page.scale if page.scale else 1.0
         if mine:
             for name, value in fields.items():
-                self._set_mark_field(mark, name, value)
+                self._set_mark_field(mark, name, value, scale)
+            mark.touch()
             self._after_mark_change(index)
             return
-        uid = self.model.pages[index].uid
+        uid = page.uid
         self.model.mark_edits.change(uid, mark.index, **fields)
         for name, value in fields.items():
-            self._set_mark_field(mark, name, value)
+            self._set_mark_field(mark, name, value, scale)
         self._after_mark_change(index, uid)
 
     @staticmethod
-    def _set_mark_field(mark, name: str, value) -> None:
+    def _set_mark_field(mark, name: str, value, scale: float = 1.0) -> None:
         """Put one changed field on the mark the reader is showing.
 
         **A style is not a field on a mark**: it is which subtype the mark
-        has, so it is written as that rather than stored beside it. The
-        rest are set as they are named.
+        has, so it is written as that rather than stored beside it. **Nor
+        is an icon only a field**: a note's rectangle is that icon's own
+        box, so the two move together or the canvas draws the new glyph in
+        the old one's box. The rest are set as they are named.
         """
         if name == "style":
             kind = markup.UNDERLINE_STYLES.get(value)
@@ -1437,11 +1569,47 @@ class MainWindow(QMainWindow):
                 mark.subtype = kind
             return
         setattr(mark, name, value)
+        if name == "icon" and (
+                mark.kind if isinstance(mark, markup.Annotation)
+                else mark.subtype) == markup.TEXT:
+            mark.rect = markup.icon_rect(mark.rect, value, scale)
 
     #: What each style is called, untranslated. Marked here and translated
     #: where it is used: a label in a table reaches no catalogue at all,
     #: and one translated at import time never changes language again.
     STYLE_LABELS = {"straight": N_("Straight"), "squiggly": N_("Squiggly")}
+
+    #: What each icon is called in the form, in the order Reader's list
+    #: has them. Its own list gets two of these wrong -- the row reading
+    #: *Checkmark* writes `/Check`, and the row reading *Insert Text*
+    #: writes `/Checkmark` and draws a tick -- and we do not copy that.
+    ICON_LABELS = (
+        ("/Check", N_("Check")),
+        ("/Checkmark", N_("Checkmark")),
+        ("/Circle", N_("Circle")),
+        ("/Comment", N_("Comment")),
+        ("/Cross", N_("Cross")),
+        ("/CrossHairs", N_("Cross Hairs")),
+        ("/Help", N_("Help")),
+        ("/Insert", N_("Insert Text")),
+        ("/Key", N_("Key")),
+        ("/NewParagraph", N_("New Paragraph")),
+        ("", N_("Text Note")),
+        ("/Paragraph", N_("Paragraph")),
+        ("/RightArrow", N_("Right Arrow")),
+        ("/RightPointer", N_("Right Pointer")),
+        ("/Star", N_("Star")),
+        ("/UpArrow", N_("Up Arrow")),
+        ("/UpLeftArrow", N_("Up-Left Arrow")),
+    )
+
+    def _icons_for(self, kind):
+        """The icons a kind offers, as ``(value, label)``. Only `/Text`
+        has any: it is the one mark drawn as a glyph rather than over the
+        words it marks."""
+        if kind != markup.TEXT:
+            return ()
+        return tuple((value, _(label)) for value, label in self.ICON_LABELS)
 
     def _styles_for(self, kind):
         """The styles a kind offers, as ``(value, label)``.
@@ -1632,6 +1800,7 @@ class MainWindow(QMainWindow):
             if mark.popup_rect == where:
                 return
             mark.popup_rect = where
+            mark.touch()
         else:
             uid = self.model.pages[index].uid
             if self.model.mark_edits.of(uid, mark.index).get("popup") == where:
@@ -1677,7 +1846,17 @@ class MainWindow(QMainWindow):
         if not 0 <= which < len(marks):
             return
         target = marks[which]
-        self.model.undo.commit(_("Edit Note"))
+        first_words = (self._awaiting_text is not None
+                       and self._awaiting_text[1] is target)
+        if first_words:
+            # It said something, so it is a mark like any other now.
+            self._awaiting_text = None
+        # **No entry for the first words on a mark that was waiting for
+        # them.** The one pushed when it was placed already holds the state
+        # from before it existed, so a single undo takes the mark and its
+        # words together rather than leaving an empty icon behind.
+        if not first_words:
+            self.model.undo.commit(_("Edit Note"))
         if isinstance(target, markup.Annotation):
             target.contents = text
             target.rich = rich
@@ -1745,6 +1924,11 @@ class MainWindow(QMainWindow):
         style = self._style_of(mark)
         if style is not None:
             self._styles[tool] = style
+        icon = getattr(mark, "icon", None)
+        if icon is not None and (
+                mark.kind if isinstance(mark, markup.Annotation)
+                else mark.subtype) == markup.TEXT:
+            self._icons[tool] = icon
         self._remember_tool_defaults()
         self.tool_strip.arm_colour(self.colour_for(self.tool_strip.armed()))
 
@@ -1887,6 +2071,7 @@ class MainWindow(QMainWindow):
         if isinstance(mark, markup.Annotation):
             for name, value in fields.items():
                 setattr(mark, name, value)
+            mark.touch()
             self.mark_buttons.set_mark(mark.colour, markup.solidity(mark))
             self._mark_added()
             return
@@ -1973,6 +2158,8 @@ class MainWindow(QMainWindow):
         # takes away the note and its words together rather than leaving an
         # empty icon behind.
         mark.contents = text
+        if isinstance(mark, markup.Annotation):
+            mark.touch()
         self._mark_added()
 
     def _mark_added(self) -> None:

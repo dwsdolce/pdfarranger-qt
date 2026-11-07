@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-06 22:22+0000\n"
+"POT-Creation-Date: 2026-11-07 07:46+0000\n"
 "PO-Revision-Date: 2025-09-28 16:51+0000\n"
 "Last-Translator: Sveinn í Felli <sv1@fellsnet.is>\n"
 "Language: is\n"
@@ -2136,6 +2136,11 @@ msgstr "Breyta stærð merkis"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
+msgid "Move Mark"
+msgstr "Færa merki"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
 msgid "Set Status"
 msgstr "Setja stöðu"
 
@@ -2156,6 +2161,92 @@ msgstr "Bein"
 #: pdfarranger_qt/mainwindow.py
 msgid "Squiggly"
 msgstr "Bylgjótt"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Check"
+msgstr "Hak"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Checkmark"
+msgstr "Hakmerki"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py pdfarranger_qt/tools.py
+msgid "Circle"
+msgstr "Hringur"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py pdfarranger_qt/properties.py
+#: pdfarranger_qt/tools.py
+msgid "Comment"
+msgstr "Athugasemd"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Cross"
+msgstr "Kross"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Cross Hairs"
+msgstr "Krosshár"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Help"
+msgstr "Hjálp"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Insert Text"
+msgstr "Setja inn texta"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Key"
+msgstr "Lykill"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "New Paragraph"
+msgstr "Ný málsgrein"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Text Note"
+msgstr "Textaglósa"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Paragraph"
+msgstr "Málsgrein"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Right Arrow"
+msgstr "Ör til hægri"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Right Pointer"
+msgstr "Bendill til hægri"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Star"
+msgstr "Stjarna"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Up Arrow"
+msgstr "Ör upp"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Up-Left Arrow"
+msgstr "Ör upp til vinstri"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
@@ -2882,6 +2973,11 @@ msgstr "Hreinsa snið"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/notepanel.py
+msgid "Add a reply"
+msgstr "Bæta við svari"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/notepanel.py
 msgid "Post"
 msgstr "Senda"
 
@@ -2925,11 +3021,6 @@ msgstr "Áherslulita"
 msgid "Strikethrough"
 msgstr "Yfirstrikun"
 
-# machine translation, unreviewed
-#: pdfarranger_qt/properties.py pdfarranger_qt/tools.py
-msgid "Comment"
-msgstr "Athugasemd"
-
 #: pdfarranger_qt/properties.py
 msgid "Review History"
 msgstr "Yfirferðarsaga"
@@ -2941,6 +3032,11 @@ msgstr "Læst"
 #: pdfarranger_qt/properties.py
 msgid "Make Properties Default"
 msgstr "Gera eiginleika sjálfgefna"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Icon"
+msgstr "Táknmynd"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/properties.py pdfarranger_qt/reader.py
@@ -3200,11 +3296,6 @@ msgstr "Ör"
 #: pdfarranger_qt/tools.py
 msgid "Rectangle"
 msgstr "Ferhyrningur"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/tools.py
-msgid "Circle"
-msgstr "Hringur"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/tools.py
@@ -3720,4 +3811,8 @@ msgstr "Sýna titilinn í stað skráarnafnsins"
 # machine translation, unreviewed
 #~ msgid "Cross-Out"
 #~ msgstr "Yfirstrikun"
+
+# machine translation, unreviewed
+#~ msgid "Grows with the page"
+#~ msgstr "Stækkar með síðunni"
 

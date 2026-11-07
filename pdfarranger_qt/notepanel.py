@@ -387,6 +387,10 @@ class NotePanel(QWidget):
     #: which is not this window's business.
     menu_wanted = Signal(int, object)
 
+    #: The box at the end of a thread was clicked. The same thing the
+    #: menu's *Reply* asks for, so it is answered in the same place.
+    reply_here = Signal()
+
     #: The window was moved or resized, and where to: a viewport rectangle.
     #: Unlike opening it, this *is* a change to the document -- Reader keeps
     #: the geometry in `/Popup /Rect` -- so the window above records it.
@@ -632,6 +636,9 @@ class NotePanel(QWidget):
             if which:
                 self._layout.addSpacing(self.BETWEEN)
             self._add_item(which, item)
+        if self._selected == self.NOTHING and self._items and any(
+                item.text for item in self._items):
+            self._add_reply_box()
         # Room given away at the bottom, so that dragging the window
         # taller does not pour the extra height into the editor -- the one
         # thing in here that will stretch, which made a resize look like a
@@ -749,6 +756,25 @@ class NotePanel(QWidget):
             value.setProperty("item", which)
             self._layout.addWidget(holder)
 
+    def _add_reply_box(self) -> None:
+        """The quiet box at the end of a thread that says *Add a reply*.
+
+        **At the end, and always there.** A reply is the next thing anyone
+        would write, so the place to write it is the bottom of what has
+        been written -- not a menu command that appends a line with a box
+        already open on it, which is what this had instead.
+
+        Quiet until it is used: no buttons, no focus. Clicking it is what
+        asks for a reply, and that is the same thing the menu asks for, so
+        it goes through the same signal.
+        """
+        box = QLabel(_("Add a reply"), self)
+        box.setProperty("role", "addreply")
+        box.setWordWrap(True)
+        box.setCursor(Qt.IBeamCursor)
+        box.mousePressEvent = lambda event: self.reply_here.emit()
+        self._layout.addWidget(box)
+
     def _editor_for(self, item: Item) -> QWidget:
         box = QFrame(self)
         box.setProperty("role", "editor")
@@ -841,10 +867,24 @@ class NotePanel(QWidget):
 
     def _cancel(self) -> None:
         """Put back what the item said, rather than closing the window: the
-        editor is one item of several and the rest are untouched."""
+        editor is one item of several and the rest are untouched.
+
+        **Cancelling a reply closes the reply, not the window.** The box at
+        the end is a thing you opened on top of a thread that was already
+        there, so taking it back leaves the thread showing with the quiet
+        box at the end again. Cancelling the *note* is different: there is
+        nothing underneath it, so the window goes.
+        """
         if self._editor is not None:
             self._editor.setPlainText(self._items[self._selected].text)
+        replying = (self._selected > 0 and self._items
+                    and not self._items[self._selected].text)
         self.drop_blank()
+        if replying:
+            self._selected = self.NOTHING
+            self._rebuild()
+            self._settle()
+            return
         self._shut()
 
     def _shut(self) -> None:
@@ -971,12 +1011,15 @@ class NotePanel(QWidget):
             "QLabel[role=\"author\"] { font-weight: bold; }"
             "QLabel[role=\"when\"] { color: %s; }"
             "QLabel[role=\"status\"] { font-weight: bold; }"
+            "QLabel[role=\"addreply\"] { color: %s; border: 1px solid %s;"
+            " border-radius: 4px; padding: 8px 10px; }"
             "QFrame[role=\"editor\"] { border: 1px solid %s;"
             " border-radius: 4px; }"
             "QPushButton { border: none; font-weight: bold; padding: 2px 6px; }"
             "QPushButton[role=\"close\"] { font-size: 15px; padding: 0px; }"
             "QPushButton:disabled { color: %s; }"
             % (palette.base().color().name(), line, faint,
+               faint, line,
                palette.highlight().color().name(), faint))
 
     def paintEvent(self, event):

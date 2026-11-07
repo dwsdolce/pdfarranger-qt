@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-06 22:22+0000\n"
+"POT-Creation-Date: 2026-11-07 07:46+0000\n"
 "PO-Revision-Date: 2024-09-05 17:05+0300\n"
 "Last-Translator: Abdullah Albaroty <albaroty@gmail.com>\n"
 "Language: ar\n"
@@ -2106,6 +2106,11 @@ msgstr "تغيير حجم العلامة"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
+msgid "Move Mark"
+msgstr "نقل العلامة"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
 msgid "Set Status"
 msgstr "تعيين الحالة"
 
@@ -2126,6 +2131,92 @@ msgstr "مستقيم"
 #: pdfarranger_qt/mainwindow.py
 msgid "Squiggly"
 msgstr "متعرج"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Check"
+msgstr "علامة"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Checkmark"
+msgstr "علامة صح"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py pdfarranger_qt/tools.py
+msgid "Circle"
+msgstr "دائرة"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py pdfarranger_qt/properties.py
+#: pdfarranger_qt/tools.py
+msgid "Comment"
+msgstr "تعليق"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Cross"
+msgstr "صليب"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Cross Hairs"
+msgstr "تقاطع"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Help"
+msgstr "مساعدة"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Insert Text"
+msgstr "إدراج نص"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Key"
+msgstr "مفتاح"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "New Paragraph"
+msgstr "فقرة جديدة"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Text Note"
+msgstr "ملاحظة نصية"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Paragraph"
+msgstr "فقرة"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Right Arrow"
+msgstr "سهم لليمين"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Right Pointer"
+msgstr "مؤشر لليمين"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Star"
+msgstr "نجمة"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Up Arrow"
+msgstr "سهم لأعلى"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Up-Left Arrow"
+msgstr "سهم لأعلى اليسار"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
@@ -2879,6 +2970,11 @@ msgstr "مسح التنسيق"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/notepanel.py
+msgid "Add a reply"
+msgstr "إضافة رد"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/notepanel.py
 msgid "Post"
 msgstr "نشر"
 
@@ -2922,11 +3018,6 @@ msgstr "تمييز"
 msgid "Strikethrough"
 msgstr "يتوسطه خط"
 
-# machine translation, unreviewed
-#: pdfarranger_qt/properties.py pdfarranger_qt/tools.py
-msgid "Comment"
-msgstr "تعليق"
-
 #: pdfarranger_qt/properties.py
 msgid "Review History"
 msgstr "سجل المراجعة"
@@ -2938,6 +3029,11 @@ msgstr "مقفل"
 #: pdfarranger_qt/properties.py
 msgid "Make Properties Default"
 msgstr "اجعل الخصائص افتراضية"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Icon"
+msgstr "أيقونة"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/properties.py pdfarranger_qt/reader.py
@@ -3197,11 +3293,6 @@ msgstr "سهم"
 #: pdfarranger_qt/tools.py
 msgid "Rectangle"
 msgstr "مستطيل"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/tools.py
-msgid "Circle"
-msgstr "دائرة"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/tools.py
@@ -3702,4 +3793,8 @@ msgstr "أظهر العنوان بدل اسم الملف"
 # machine translation, unreviewed
 #~ msgid "Cross-Out"
 #~ msgstr "شطب"
+
+# machine translation, unreviewed
+#~ msgid "Grows with the page"
+#~ msgstr "يكبر مع الصفحة"
 

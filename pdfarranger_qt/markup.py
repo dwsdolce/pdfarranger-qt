@@ -51,6 +51,7 @@ from xml.etree import ElementTree
 
 import pikepdf
 
+from . import noteicons
 from .i18n import N_
 
 #: Every subtype this module can write. Kept explicit so that an unknown kind
@@ -111,8 +112,18 @@ SUBJECTS = {HIGHLIGHT: "Highlight", STRIKEOUT: "Cross-Out",
 #: paper, which is not what anybody means by annotating a document.
 PRINTABLE = 4
 
+#: Bit 4 of `/F`, NoZoom: the annotation keeps its size on screen however
+#: the page is magnified. Bit 5, NoRotate, is the same for the page's
+#: turn -- the rectangle's top left corner stays put and the drawing keeps
+#: its way up. **Both are false when `/F` is absent**, so an annotation
+#: scales and rotates unless it is told not to.
+NOZOOM = 8
+NOROTATE = 16
+
 #: Print, NoZoom and NoRotate: what Reader gives a reply, whose icon is
-#: anchored to the mark it answers rather than drawn on the paper.
+#: anchored to the mark it answers rather than drawn on the paper -- and
+#: what it gives a comment's icon, for the same reason. A sticky note is a
+#: pin on the page rather than ink on it.
 ANCHORED = 28
 
 #: The same, with Hidden: what a status change carries. It never draws --
@@ -300,23 +311,60 @@ STATUS_LABELS = {
 #: reader exactly where it would in any other.
 NOTE_SIZE = 20.0
 
+#: What `/Name` a note is written with when nobody has chosen: the icon
+#: Reader starts a comment with. Empty would be Text Note, which Reader
+#: writes by leaving the key out.
+DEFAULT_ICON = "/Comment"
 
-def icon_box(rect) -> "tuple[float, float, float, float]":
+
+#: The two white bars inside a comment's balloon, as fractions of its box:
+#: left, top, width, height, with the top measured down from the top. The
+#: upper bar is longer than the lower one and both start at the same place.
+BALLOON_BARS = ((0.20, 0.333, 0.60, 0.10),
+                (0.20, 0.567, 0.467, 0.10))
+
+#: How much of a comment's box the balloon fills, centred in it. Reader
+#: draws the glyph well inside the rectangle rather than out to its edges:
+#: measured on a capture of a selected comment, 30 pixels of balloon inside
+#: the 44 pixel ring that marks the box. One number, so it is one number to
+#: change if the icon ever looks the wrong size.
+BALLOON_SCALE = 30.0 / 44.0
+
+
+def icon_size(icon: str) -> "tuple[float, float]":
+    """How wide and tall ``icon``'s rectangle is, in points.
+
+    **Reader cuts the box to the glyph** -- 24 by 24 for Comment, 13 by 18
+    for Key, 20 by 17 for Right Pointer -- and the drawing is written for
+    that box, so a key in a square is half again too wide. An icon we have
+    no drawing for falls back to the square.
+    """
+    found = noteicons.ICONS.get(icon or "")
+    return (found[0], found[1]) if found else (NOTE_SIZE, NOTE_SIZE)
+
+
+def icon_box(rect, icon: str = DEFAULT_ICON) -> "tuple[float, float, float, float]":
     """The box a note's icon is actually drawn in, given its rectangle.
 
-    `NOTE_SIZE` square from the rectangle's lower left corner, which is what
-    a viewer draws whatever the rectangle says -- so this is what to hit-test
-    and what to draw, rather than the rectangle itself. The two are the same
-    box for a note placed here and different for one whose page has since been
-    resized, because the resize multiplies the rectangle and leaves the icon
-    the size it was.
+    **The rectangle, as the file gives it.** `/Rect` is where a note is and
+    how big it is, and under NoZoom that size is what a viewer draws
+    whatever the page is zoomed to. A mark made here is given a rectangle
+    the size of the icon it was made with -- `icon_rect` and `note_rect`
+    see to that -- so there is one answer and the file holds it.
+
+    ``icon`` is taken only when the rectangle has no size of its own, which
+    is a mark that was handed a bare point.
     """
-    left, bottom = rect[0], rect[1]
-    return (left, bottom, left + NOTE_SIZE, bottom + NOTE_SIZE)
+    left, top = rect[0], rect[3]
+    wide, tall = rect[2] - rect[0], rect[3] - rect[1]
+    if wide <= 0 or tall <= 0:
+        wide, tall = icon_size(icon)
+    return (left, top - tall, left + wide, top)
 
 
 def note_rect(x: float, top: float,
-              size: float = NOTE_SIZE) -> "tuple[float, float, float, float]":
+              size: float = NOTE_SIZE,
+              tall: Optional[float] = None) -> "tuple[float, float, float, float]":
     """The rectangle a note placed at ``(x, top)`` is stored with.
 
     ``top`` is the top of the icon as drawn, so the rectangle runs down from
@@ -326,12 +374,39 @@ def note_rect(x: float, top: float,
     that appears half its own height above the click is a note placed
     somewhere you did not click.
 
-    ``size`` is the icon's size *in the space this rectangle is in*. The icon
-    is `NOTE_SIZE` on the page a reader draws, so on a page resized to half
-    the mark holds twice that: the source page's space is the output's divided
-    by the resize, and the resize multiplies it back on the way out.
+    ``size`` is the icon's width *in the space this rectangle is in*, and
+    ``tall`` its height where the two differ -- Reader cuts each icon's box
+    to its own glyph. The icon is that many points on the page a reader
+    draws, so on a page resized to half the mark holds twice: the source
+    page's space is the output's divided by the resize, and the resize
+    multiplies it back on the way out.
     """
-    return (x, top - size, x + size, top)
+    return (x, top - (size if tall is None else tall), x + size, top)
+
+
+def icon_rect(rect, icon: str,
+              scale: float = 1.0) -> "tuple[float, float, float, float]":
+    """``rect`` cut to the size ``icon`` is drawn at, keeping the top left.
+
+    A note's rectangle *is* its icon's box, and Reader cuts each icon's to
+    its own glyph -- a check is 19 points square where a comment is 24. So
+    choosing a different icon for a comment changes the rectangle too, and
+    one left at the old icon's size draws the new glyph at the wrong size
+    rather than where the old one was: a viewer fits the appearance's
+    `/BBox` to `/Rect`, so a 19 point check in a 24 point box comes out a
+    quarter too big.
+
+    **The top left is the corner that stays.** It is the corner a note is
+    anchored by in both directions that matter: `note_rect` measures down
+    from the pointer, and NoZoom holds the upper left still while the rest
+    of the box moves.
+
+    ``scale`` is the page's resize, for a rectangle kept in the source
+    page's space, on the same reasoning as `note_rect`.
+    """
+    wide, tall = icon_size(icon)
+    scale = scale or 1.0
+    return note_rect(rect[0], rect[3], wide / scale, tall / scale)
 
 
 def pdf_date(when: Optional[datetime.datetime] = None) -> str:
@@ -387,18 +462,20 @@ class Annotation:
     """One mark, in the page coordinates of the page it belongs to."""
 
     __slots__ = ("kind", "page", "rect", "quads", "contents", "colour",
-                 "opacity", "author", "created", "name", "irt",
+                 "opacity", "author", "created", "modified", "name", "irt",
                  "popup_rect", "state", "rich", "subject", "locked",
-                 "intent")
+                 "intent", "icon")
 
     def __init__(self, kind: str, page: int, rect: Tuple[float, ...],
                  contents: str = "", colour=None, author: Optional[str] = None,
-                 created: Optional[str] = None, quads=(),
+                 created: Optional[str] = None,
+                 modified: Optional[str] = None, quads=(),
                  name: Optional[str] = None, opacity=None,
                  irt: Optional[str] = None, popup_rect=None,
                  state: Optional[str] = None, rich: Optional[str] = None,
                  subject: Optional[str] = None, locked: bool = False,
-                 intent: Optional[str] = None):
+                 intent: Optional[str] = None,
+                 icon: Optional[str] = None):
         if kind not in KINDS:
             raise ValueError(f"unknown annotation kind: {kind}")
         self.kind = kind
@@ -426,6 +503,11 @@ class Annotation:
         #: `/IT`, which tool made the mark where the subtype alone does not
         #: say. None means the subtype's own, `INTENTS`, or none at all.
         self.intent = intent
+        #: `/Name`, the icon a comment is drawn with -- not to be confused
+        #: with `name`, which is `/NM`. None means the tool's default;
+        #: empty means Text Note, which Reader writes by leaving the key
+        #: out rather than by writing the specification's `/Note`.
+        self.icon = DEFAULT_ICON if icon is None else icon
         self.rect = tuple(float(v) for v in rect)
         #: The mark's `/NM`, its name within the file. Made here rather than
         #: at export so that it survives a save: a name minted on the way out
@@ -447,6 +529,20 @@ class Annotation:
         self.opacity = float(opacity) if opacity is not None else None
         self.author = author
         self.created = created or pdf_date()
+        #: `/M`, when the mark was last changed. Starts as the moment it
+        #: was made and moves with every edit, which is what a reader shows
+        #: beside a comment and what Reader itself rewrites on a move.
+        self.modified = modified or self.created
+
+    def touch(self) -> None:
+        """Say the mark has just been changed.
+
+        `/M` is what a reader shows beside a comment and what it sorts by,
+        and Reader rewrites it for every edit including a move. A mark
+        whose `/M` never moved would claim it had not been touched since
+        the moment it was made.
+        """
+        self.modified = pdf_date()
 
     def duplicate(self) -> "Annotation":
         return copy.copy(self)
@@ -543,6 +639,38 @@ def apply_edit(annot, edit) -> None:
             annot[pikepdf.Name.CA] = float(opacity)
         elif pikepdf.Name.CA in annot:
             del annot[pikepdf.Name.CA]
+    icon = edit.get("icon")
+    if icon is not None:
+        # The drawing goes with the name: a comment's appearance *is* its
+        # icon, so a stale one would show the old glyph under the new
+        # name until something else rebuilt it.
+        if icon:
+            annot[pikepdf.Name.Name] = pikepdf.Name(icon)
+        elif pikepdf.Name.Name in annot:
+            del annot[pikepdf.Name.Name]
+        if pikepdf.Name.AP in annot:
+            del annot[pikepdf.Name.AP]
+        # And so does the rectangle, which is the icon's own box rather
+        # than a constant. Left at the old icon's size it rescales the new
+        # glyph instead of holding it, because a viewer fits the
+        # appearance to `/Rect`.
+        #
+        # In points, with no resize divided out: this patches the
+        # annotation where it sits in the source page's space, and a
+        # resized page multiplies every rectangle on it afterwards.
+        rect = annot.get(pikepdf.Name.Rect)
+        if (rect is not None and len(rect) == 4
+                and str(annot.get(pikepdf.Name.Subtype, "")) == TEXT):
+            annot[pikepdf.Name.Rect] = pikepdf.Array(
+                [*icon_rect([float(v) for v in rect], icon or "")])
+    modified = edit.get("modified")
+    if modified:
+        annot[pikepdf.Name.M] = pikepdf.String(modified)
+    rect = edit.get("rect")
+    if rect:
+        # A comment's icon, moved. On its own and not through `quads`,
+        # because a note has none: `/Rect` is the whole of where it is.
+        annot[pikepdf.Name.Rect] = pikepdf.Array([*rect])
     quads = edit.get("quads")
     if quads:
         annot[pikepdf.Name.QuadPoints] = pikepdf.Array(
@@ -671,6 +799,83 @@ def patch_page_marks(page, edits) -> int:
     return changed
 
 
+def blank_note_icons(pdf) -> int:
+    """Empty every `/Text` annotation's appearance, and say how many.
+
+    **For a document built to be shown, never for one being saved.** A
+    comment's icon is drawn by the canvas and not by the renderer, because
+    Reader draws its own glyph for `/Comment` rather than the one it
+    writes, and matching that means drawing every comment the same way --
+    the ones the file arrived with as much as the ones made here. Without
+    this the renderer draws its square underneath and both appear.
+
+    **Emptied rather than hidden, and rather than taken away.** Setting
+    `/F` Hidden would work on the renderer and take every comment out of
+    the mark map with it, because a hidden mark is how a status change is
+    told from a mark and `MarkMap.visible` drops them. Deleting `/AP`
+    is worse than doing nothing: measured against PDFium on one comment,
+    the icon costs 3970 pixels as it stands, 1080 with the stream emptied
+    -- which is the page's own text showing through -- and 5643 with the
+    stream removed, because PDFium then draws a glyph of its own, larger
+    than the one it replaced.
+
+    **So an annotation with no `/AP` is given one**, rather than passed
+    over. `apply_edit` drops the appearance when a comment's icon changes,
+    so that is exactly the mark most in need of this, and passing it over
+    put PDFium's yellow balloon under every icon anyone changed.
+    """
+    blanked = 0
+    for page in pdf.pages:
+        for annot in page.obj.get(pikepdf.Name.Annots) or []:
+            try:
+                if str(annot.get(pikepdf.Name.Subtype, "")) != TEXT:
+                    continue
+                if pikepdf.Name.AP not in annot:
+                    # **Especially one with no appearance at all.** Changing
+                    # a mark's icon drops `/AP` so the new glyph is built
+                    # from the new name, and PDFium draws a sticky note of
+                    # its own wherever it finds none -- a yellow balloon,
+                    # larger than the icon it stands in for, under the one
+                    # this application draws. Skipping these was the hole.
+                    annot[pikepdf.Name.AP] = pikepdf.Dictionary()
+                annot[pikepdf.Name.AP][pikepdf.Name.N] = pdf.make_stream(
+                    b"", BBox=pikepdf.Array([0, 0, 0, 0]),
+                    Type=pikepdf.Name.XObject, Subtype=pikepdf.Name.Form)
+            except Exception:  # noqa: BLE001 - unreadable is not markup
+                continue
+            blanked += 1
+    return blanked
+
+
+def blanked_bytes(data: bytes) -> bytes:
+    """``data`` with every comment icon emptied, or ``data`` itself.
+
+    For the reader's fast path, which shows a source file as it stands
+    rather than an export of it, and so would leave the renderer drawing
+    an icon under the one the canvas draws.
+
+    **The document has to be parsed to find out.** The obvious guard --
+    looking for `/Text` in the bytes -- is unsound, and quietly so: a
+    document written since PDF 1.5 keeps its dictionaries in object
+    streams, so the subtype never appears as plain bytes. Measured on the
+    three comment files in `corpus/`, all of them `/ObjStm`, that search
+    answers "no comments here" for every one. Opening is lazy and the walk
+    is one pass over the pages; the expensive half, writing the file out
+    again, happens only when there was something to blank.
+    """
+    try:
+        import io
+
+        with pikepdf.open(io.BytesIO(data)) as pdf:
+            if not blank_note_icons(pdf):
+                return data
+            out = io.BytesIO()
+            pdf.save(out)
+            return out.getvalue()
+    except Exception:  # noqa: BLE001 - showing the file as it is beats failing
+        return data
+
+
 def drop_replies(page) -> int:
     """Take the replies off a page, for rendering only.
 
@@ -729,6 +934,14 @@ def one_page_with_edits(data, index: int, edits,
                 changed += drop_replies(page)
             if not changed:
                 return None
+            # After the patching, not before: changing a comment's icon
+            # drops its `/AP` so the new glyph can be built, and a `/Text`
+            # with no appearance is the one case PDFium fills in for
+            # itself -- a yellow balloon of its own under the icon this
+            # application draws. The whole-document paths blank through
+            # the export; this one rebuilds a single page and has to do
+            # its own.
+            blank_note_icons(one)
             out = io.BytesIO()
             with warnings.catch_warnings():
                 # `PageCopyWarning`, raised by `save`: the widgets travel
@@ -819,7 +1032,8 @@ class MarkEdits:
     #: words with their styling, and a reader prefers it, so the two have
     #: to be written in one go or not at all.
     FIELDS = ("colour", "opacity", "quads", "deleted", "contents", "popup",
-              "rich", "author", "subject", "locked", "style")
+              "rich", "author", "subject", "locked", "style", "icon",
+              "rect", "modified")
 
     def __init__(self, by_page=None):
         self._by_page: Dict[int, Dict[int, dict]] = {}
@@ -838,7 +1052,12 @@ class MarkEdits:
             raise ValueError(f"not an editable attribute: {sorted(unknown)}")
         edit = self._by_page.setdefault(uid, {}).setdefault(index, {})
         edit.update({k: v for k, v in fields.items() if v is not None})
-        if not edit:
+        if edit:
+            # Stamped here rather than by every caller, because an edit that
+            # forgot to say when it happened is an edit that claims the mark
+            # has not been touched since it was made.
+            edit["modified"] = pdf_date()
+        else:
             self.forget(uid, index)
 
     def forget(self, uid: int, index: int) -> None:
@@ -898,6 +1117,17 @@ def scaled(annotation: Annotation, factor: float) -> Annotation:
     return copy_of
 
 
+def _flags_for(annotation) -> int:
+    """`/F` for a mark, before the lock bit is folded in."""
+    if annotation.state:
+        return UNSEEN
+    if annotation.irt:
+        return ANCHORED
+    if annotation.kind == TEXT:
+        return ANCHORED
+    return PRINTABLE
+
+
 def to_dictionary(pdf, annotation: Annotation, page=None) -> pikepdf.Dictionary:
     """``annotation`` as a PDF annotation dictionary in ``pdf``.
 
@@ -916,10 +1146,11 @@ def to_dictionary(pdf, annotation: Annotation, page=None) -> pikepdf.Dictionary:
         # A reply is NoZoom and NoRotate as well as Print, as Reader writes
         # them: its icon is interface furniture anchored to the mark it
         # answers, so it keeps its size when the page is zoomed or turned.
-        F=((UNSEEN if annotation.state
-            else ANCHORED if annotation.irt else PRINTABLE)
-           | (LOCKED if annotation.locked else 0)),
-        M=pikepdf.String(annotation.created),
+        # **So is a comment's icon**, which is a pin on the page rather
+        # than ink on it -- unless the form was told it should scale,
+        # which clears NoZoom alone and leaves the turn to NoRotate.
+        F=(_flags_for(annotation) | (LOCKED if annotation.locked else 0)),
+        M=pikepdf.String(annotation.modified),
         # When the mark was made, as against `/M`, when it was last touched.
         # A reader sorts its comment list by one and shows the other, and
         # with only `/M` written both answers were the same.
@@ -981,19 +1212,21 @@ def to_dictionary(pdf, annotation: Annotation, page=None) -> pikepdf.Dictionary:
         if getattr(page, "is_indirect", False):
             entry[pikepdf.Name.P] = page
     if annotation.kind == TEXT:
-        # The icon a viewer draws. /Note is the one every viewer has, and
-        # PDFium draws the same glyph whatever this says -- measured, the
-        # same 1327 pixels for /Comment, /Help, /Key, /Star, for no /Name at
-        # all and for a name that is not in the specification. It is written
-        # for the viewers that do look at it.
-        entry[pikepdf.Name.Name] = pikepdf.Name("/Note")
-        # No appearance stream, and this is the one mark where that is a
-        # decision rather than a shortcut. A highlight carries one because a
-        # viewer is only recommended to draw the quadrilaterals; a note's
-        # appearance is an *icon*, and every viewer already has one its users
-        # recognise. Measured: PDFium draws a note with no /AP in 1327 pixels
-        # and one with an /AP of ours in 1600 -- the stream does not rescue a
-        # file, it replaces a familiar balloon with our rounded box.
+        # **The icon the user chose.** PDFium draws the same glyph whatever
+        # this says -- measured, the same 1327 pixels for seven values and
+        # for none -- so the appearance below is what makes the choice
+        # visible, and this is for the readers that do look. Text Note is
+        # written by leaving the key out, as Reader writes it.
+        if annotation.icon:
+            entry[pikepdf.Name.Name] = pikepdf.Name(annotation.icon)
+        entry[pikepdf.Name.AP] = pikepdf.Dictionary(
+            N=_icon_appearance(pdf, annotation))
+        # It used to carry none, on the reasoning that every viewer has an
+        # icon of its own and a stream of ours would only replace a
+        # familiar balloon with a rounded box. That held while there was
+        # one icon. With seventeen to choose from the choice has to be in
+        # the file, because a viewer that draws its own shows the same
+        # glyph for all of them.
     if annotation.kind in QUADDED:
         entry[pikepdf.Name.QuadPoints] = pikepdf.Array(
             [v for quad in annotation.quads for v in _quad_points(quad)])
@@ -1330,6 +1563,37 @@ def ink_box(kind: str, quad) -> "tuple":
     return (left, bottom, right, top)
 
 
+def _icon_appearance(pdf, annotation):
+    """The drawing for a comment's icon, in the mark's own colour.
+
+    **Reader's drawing, in Reader's box.** The paths come from a file
+    Reader wrote, by way of `tools/extract_note_icons.py`, so a comment
+    made here and a comment made there are the same comment. The stream is
+    kept with its fill colour taken out and put back here; `/Checkmark`
+    has none taken out, because its grey is hard-coded in defiance of `/C`
+    and reproducing that is what makes the two files match.
+
+    `/GS0` is the translucency seven of the icons draw a part of
+    themselves with. It is the icon's own and has nothing to do with the
+    mark's opacity, which `/CA` on the annotation carries.
+    """
+    found = noteicons.ICONS.get(annotation.icon or "")
+    if found is None:
+        found = noteicons.ICONS[DEFAULT_ICON]
+    width, height, body = found
+    colour = annotation.colour or swatch("Purple")
+    stream = pikepdf.Stream(pdf, body.replace(
+        noteicons.FILL, "{} {} {} rg".format(*colour[:3])).encode())
+    stream[pikepdf.Name.Type] = pikepdf.Name.XObject
+    stream[pikepdf.Name.Subtype] = pikepdf.Name.Form
+    stream[pikepdf.Name.BBox] = pikepdf.Array([0, 0, width, height])
+    stream[pikepdf.Name.Resources] = pikepdf.Dictionary(
+        ExtGState=pikepdf.Dictionary(GS0=pikepdf.Dictionary(
+            Type=pikepdf.Name.ExtGState, BM=pikepdf.Name.Normal,
+            AIS=False, ca=0.6, CA=0.6)))
+    return pdf.make_indirect(stream)
+
+
 def bounding_rect(quads) -> "tuple":
     """The box that contains every quad, which is what `/Rect` must be."""
     lefts = [q[0] for q in quads]
@@ -1488,13 +1752,13 @@ class Mark:
     __slots__ = ("uid", "page", "index", "subtype", "rect", "quads", "colour",
                  "opacity", "contents", "author", "name", "parent", "state",
                  "hidden", "when", "popup_open", "popup_rect", "rich",
-                 "locked", "subject", "intent")
+                 "locked", "subject", "intent", "scales", "icon")
 
     def __init__(self, page, subtype, rect, quads=(), colour=None,
                  opacity=None, contents="", name=None, parent=None,
                  state=None, hidden=False, index=-1, author="", when="",
                  popup_open=False, popup_rect=None, rich="", locked=False,
-                 subject="", intent=""):
+                 subject="", intent="", scales=False, icon=""):
         self.uid = next(_mark_uids)
         #: Where this mark sits among the markup annotations on its page, in
         #: the order the file has them. What `MarkEdits` keys an edit by, and
@@ -1541,6 +1805,17 @@ class Mark:
         #: `/Subj`, which Acrobat starts as the name of the tool that made
         #: the mark and the properties form can change to anything.
         self.subject = subject
+        #: Whether the mark grows with the page -- `/F` with NoZoom
+        #: clear. Never written here: this application writes 28 on every
+        #: icon and offers no way to ask for anything else. Read all the
+        #: same, because a file that says an icon scales is saying
+        #: something, and discarding it is not the same as declining to
+        #: offer it.
+        self.scales = scales
+        #: `/Name`: the icon a comment is drawn with. Empty is Text Note,
+        #: which Reader writes by leaving the key out. Not `name`, which
+        #: is `/NM`.
+        self.icon = icon
         #: `/IT`, which with `/Subj` says **which tool made this mark**.
         #: Read as well as written: a mark whose maker cannot be named
         #: cannot have its tool's defaults set from it, and a mark of ours
@@ -1670,6 +1945,8 @@ def marks_in(pdf) -> "list[Mark]":
                     rich=str(annot.get(pikepdf.Name.RC, "")),
                     subject=str(annot.get(pikepdf.Name.Subj, "")),
                     intent=str(annot.get(pikepdf.Name.IT, "")),
+                    scales=not int(annot.get(pikepdf.Name.F, 0)) & NOZOOM,
+                    icon=str(annot.get(pikepdf.Name.Name, "")),
                     author=str(annot.get(pikepdf.Name.T, "")),
                     when=str(annot.get(pikepdf.Name.M,
                                        annot.get(pikepdf.Name.CreationDate,

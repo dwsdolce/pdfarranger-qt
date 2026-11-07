@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-06 22:22+0000\n"
+"POT-Creation-Date: 2026-11-07 07:46+0000\n"
 "PO-Revision-Date: 2025-12-15 00:59+0700\n"
 "Last-Translator: Loc Huynh <https://github.com/hthienloc>\n"
 "Language: vi\n"
@@ -2122,6 +2122,11 @@ msgstr "Đổi kích thước dấu"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
+msgid "Move Mark"
+msgstr "Di chuyển dấu"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
 msgid "Set Status"
 msgstr "Đặt trạng thái"
 
@@ -2142,6 +2147,92 @@ msgstr "Thẳng"
 #: pdfarranger_qt/mainwindow.py
 msgid "Squiggly"
 msgstr "Lượn sóng"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Check"
+msgstr "Dấu kiểm"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Checkmark"
+msgstr "Dấu tích"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py pdfarranger_qt/tools.py
+msgid "Circle"
+msgstr "Hình tròn"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py pdfarranger_qt/properties.py
+#: pdfarranger_qt/tools.py
+msgid "Comment"
+msgstr "Chú thích"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Cross"
+msgstr "Dấu chéo"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Cross Hairs"
+msgstr "Tâm ngắm"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Help"
+msgstr "Trợ giúp"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Insert Text"
+msgstr "Chèn văn bản"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Key"
+msgstr "Chìa khóa"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "New Paragraph"
+msgstr "Đoạn mới"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Text Note"
+msgstr "Ghi chú văn bản"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Paragraph"
+msgstr "Đoạn văn"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Right Arrow"
+msgstr "Mũi tên phải"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Right Pointer"
+msgstr "Con trỏ phải"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Star"
+msgstr "Ngôi sao"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Up Arrow"
+msgstr "Mũi tên lên"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Up-Left Arrow"
+msgstr "Mũi tên trái trên"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
@@ -2862,6 +2953,11 @@ msgstr "Xóa định dạng"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/notepanel.py
+msgid "Add a reply"
+msgstr "Thêm phản hồi"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/notepanel.py
 msgid "Post"
 msgstr "Đăng"
 
@@ -2905,11 +3001,6 @@ msgstr "Tô sáng"
 msgid "Strikethrough"
 msgstr "Gạch ngang"
 
-# machine translation, unreviewed
-#: pdfarranger_qt/properties.py pdfarranger_qt/tools.py
-msgid "Comment"
-msgstr "Chú thích"
-
 #: pdfarranger_qt/properties.py
 msgid "Review History"
 msgstr "Lịch sử duyệt"
@@ -2921,6 +3012,11 @@ msgstr "Đã khóa"
 #: pdfarranger_qt/properties.py
 msgid "Make Properties Default"
 msgstr "Đặt thuộc tính làm mặc định"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Icon"
+msgstr "Biểu tượng"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/properties.py pdfarranger_qt/reader.py
@@ -3180,11 +3276,6 @@ msgstr "Mũi tên"
 #: pdfarranger_qt/tools.py
 msgid "Rectangle"
 msgstr "Hình chữ nhật"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/tools.py
-msgid "Circle"
-msgstr "Hình tròn"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/tools.py
@@ -3698,4 +3789,8 @@ msgstr "Hiện tiêu đề thay cho tên tập tin"
 # machine translation, unreviewed
 #~ msgid "Cross-Out"
 #~ msgstr "Gạch ngang"
+
+# machine translation, unreviewed
+#~ msgid "Grows with the page"
+#~ msgstr "Phóng to theo trang"
 

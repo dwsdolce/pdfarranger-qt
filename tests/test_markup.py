@@ -1233,15 +1233,55 @@ class TestAStickyNoteIsPlaced(unittest.TestCase):
         self.send(QMouseEvent.Type.MouseButtonRelease, point)
         settle(timeout_ms=250)
 
+    def panel(self):
+        return self.win.note_panel
+
+    def writing(self):
+        """Whether a note is open for *writing*, and on which mark.
+
+        The window outlives the editor: posting closes the box and leaves
+        the thread showing, so being visible is not the same as being open
+        to type into.
+        """
+        if not (self.panel().isVisible() and self.win._noted is not None
+                and self.panel()._editor is not None):
+            return None
+        return self.win._noted[0], self.win._noted[1][0]
+
+    def reopen(self, x=125, y_down=210):
+        """Let go of the mark, click its icon, then click its words.
+
+        What a reader does. Letting go closes the thread and clicking the
+        icon shows it again -- as text, because it has already been
+        written. Clicking the words is what asks to change them, and
+        `select` is what that click calls.
+        """
+        self.canvas.select_mark(None)
+        settle(timeout_ms=150)
+        self.click(self.at(x, y_down))
+        settle(timeout_ms=250)
+        self.assertIsNone(self.panel()._editor,
+                          "a note already written opened in an editor")
+        self.panel().select(0)
+        settle(timeout_ms=150)
+
     def place(self, x=120, y_down=200, text="a note about this clause"):
-        """Place a note with the note tool and type into its editor."""
+        """Place a comment and write its note.
+
+        The words are asked for in the window every other mark uses, not
+        in a box drawn on the page: a comment *is* its note, so the two
+        are one action. ``text=None`` cancels instead, which takes the
+        mark with it -- a comment nobody wrote is a comment nobody made.
+        """
         from pdfarranger_qt.canvas import PageCanvas
 
         self.win.set_tool(PageCanvas.NOTE)
         self.click(self.at(x, y_down))
-        if text is not None:
-            self.canvas._note[2].setPlainText(text)
-        self.canvas.finish_note()
+        if text is None:
+            self.panel()._cancel()
+        else:
+            self.panel()._editor.setPlainText(text)
+            self.panel()._post_it()
         settle(timeout_ms=250)
 
     def held(self):
@@ -1260,8 +1300,11 @@ class TestAStickyNoteIsPlaced(unittest.TestCase):
         self.assertEqual(len(marks), 1)
         self.assertEqual(marks[0].kind, markup.TEXT)
         left, bottom, right, top = marks[0].rect
-        self.assertAlmostEqual(right - left, markup.NOTE_SIZE, places=3)
-        self.assertAlmostEqual(top - bottom, markup.NOTE_SIZE, places=3)
+        # The icon's own box, which Reader cuts to the glyph rather than
+        # making every one a square.
+        wide, tall = markup.icon_size(markup.DEFAULT_ICON)
+        self.assertAlmostEqual(right - left, wide, places=3)
+        self.assertAlmostEqual(top - bottom, tall, places=3)
 
     def test_the_point_clicked_is_the_icon_s_top_left(self):
         """Not its centre. Every viewer anchors the icon to that corner, so a
@@ -1279,7 +1322,7 @@ class TestAStickyNoteIsPlaced(unittest.TestCase):
 
         self.win.set_tool(PageCanvas.NOTE)
         self.click(self.at(120, 200))
-        self.assertEqual(self.canvas.editing_note(), (0, 0))
+        self.assertEqual(self.writing(), (0, self.held()[0]))
 
     def test_what_was_typed_is_kept(self):
         self.place(text="ask legal about this")
@@ -1311,10 +1354,18 @@ class TestAStickyNoteIsPlaced(unittest.TestCase):
         self.assertEqual(self.win.model.undo.current, before)
 
     def test_clicking_the_icon_opens_the_note_again(self):
+        """Letting go of the mark closes its thread; clicking the icon
+        brings it back. Not a fresh editor -- the window outlives the box
+        you typed into, and posting closes the box and leaves the thread."""
         self.place(text="the first draft")
+        self.canvas.select_mark(None)
+        settle(timeout_ms=200)
+        self.assertIsNone(self.win._noted,
+                          "letting go of the mark left its thread open")
         self.click(self.at(125, 210))
-        self.assertEqual(self.canvas.editing_note(), (0, 0))
-        self.assertEqual(self.canvas._note[2].toPlainText(), "the first draft")
+        self.assertIsNotNone(self.win._noted, "the icon opened nothing")
+        self.assertIs(self.win._noted[1][0], self.held()[0])
+        self.assertEqual(self.held()[0].contents, "the first draft")
 
     def test_the_icon_is_found_where_it_is_drawn(self):
         self.place(120, 200)
@@ -1335,58 +1386,65 @@ class TestAStickyNoteIsPlaced(unittest.TestCase):
         settle(timeout_ms=200)
         self.assertEqual(self.canvas.viewport().toolTip(),
                          "read me without clicking")
-        self.assertIsNone(self.canvas.editing_note())
+        self.assertIsNone(self.writing())
 
     def test_editing_the_text_keeps_the_note_in_place(self):
         self.place(120, 200, "the first draft")
         rect = self.held()[0].rect
-        self.canvas.edit_note(0, 0)
-        self.canvas._note[2].setPlainText("the second draft")
-        self.canvas.finish_note()
+        self.reopen()
+        self.panel()._editor.setPlainText("the second draft")
+        self.panel()._post_it()
         settle(timeout_ms=250)
         self.assertEqual(self.held()[0].contents, "the second draft")
         self.assertEqual(self.held()[0].rect, rect)
 
-    def test_emptying_an_existing_note_deletes_it(self):
-        """Until there is a command for deleting a mark, emptying one is the
-        only way to take it back -- and an icon claiming there is a note
-        where there is no text is a lie on the page."""
+    def test_an_existing_note_cannot_be_emptied(self):
+        """Post is refused while the editor is empty, on every mark there
+        is, so emptying one is no longer a way to take it back. Deleting
+        the mark is, and it is a command of its own."""
         self.place(text="written, then thought better of")
-        self.canvas.edit_note(0, 0)
-        self.canvas._note[2].setPlainText("   ")
-        self.canvas.finish_note()
+        self.reopen()
+        self.panel()._editor.setPlainText("   ")
+        settle(timeout_ms=100)
+        self.assertFalse(self.panel()._post.isEnabled(),
+                         "Post offered itself on an empty note")
+        self.panel()._post_it()
         settle(timeout_ms=250)
-        self.assertEqual(len(self.held()), 0)
+        self.assertEqual([m.contents for m in self.held()],
+                         ["written, then thought better of"])
 
     def test_a_deleted_note_comes_back_with_its_words(self):
         self.place(text="do not lose this")
-        self.canvas.edit_note(0, 0)
-        self.canvas._note[2].setPlainText("")
-        self.canvas.finish_note()
+        self.win.delete_mark(0, self.held()[0])
         settle(timeout_ms=250)
+        self.assertEqual(len(self.held()), 0)
         self.win.model.undo.undo()
         settle(timeout_ms=250)
         self.assertEqual([m.contents for m in self.held()],
                          ["do not lose this"])
 
-    def test_escape_closes_the_editor_and_leaves_the_tool(self):
-        """Escape on the canvas means "stop marking up". Inside the editor it
-        means "done here", and taking it there is what stops one keystroke
-        doing both."""
+    def test_escape_leaves_the_tool_and_takes_the_comment_with_it(self):
+        """Escape on the canvas means "stop marking up". In the note window
+        it means "never mind", and taking it there is what stops one
+        keystroke doing both.
+
+        **And never mind takes the comment.** A comment is its note, so
+        abandoning the words abandons the mark -- what is typed and then
+        escaped was never posted and never said.
+        """
         from PySide6.QtCore import Qt
         from PySide6.QtTest import QTest
-        from PySide6.QtWidgets import QApplication
 
         from pdfarranger_qt.canvas import PageCanvas
 
         self.win.set_tool(PageCanvas.NOTE)
         self.click(self.at(120, 200))
-        self.canvas._note[2].setPlainText("typed, then escaped")
-        QTest.keyClick(QApplication.focusWidget(), Qt.Key_Escape)
+        self.panel()._editor.setPlainText("typed, then escaped")
+        QTest.keyClick(self.panel(), Qt.Key_Escape)
         settle(timeout_ms=250)
-        self.assertIsNone(self.canvas.editing_note())
+        self.assertIsNone(self.writing())
         self.assertEqual(self.canvas.tool(), PageCanvas.NOTE)
-        self.assertEqual(self.held()[0].contents, "typed, then escaped")
+        self.assertEqual(len(self.held()), 0)
 
     def test_placing_one_does_not_rebuild_the_reader(self):
         rebuilds = []
@@ -1763,11 +1821,11 @@ class TestAMarkLivesInTheSourcePagesSpace(unittest.TestCase):
         self.assertEqual(canvas.page_scale(0), 0.5)
         self.place_note(canvas, 60, 100)
         left, bottom, right, top = self.held()[0].rect
-        self.assertAlmostEqual(right - left, markup.NOTE_SIZE / 0.5, delta=0.5)
-        self.assertAlmostEqual(top - bottom, markup.NOTE_SIZE / 0.5, delta=0.5)
+        wide, tall = markup.icon_size(markup.DEFAULT_ICON)
+        self.assertAlmostEqual(right - left, wide / 0.5, delta=0.5)
+        self.assertAlmostEqual(top - bottom, tall / 0.5, delta=0.5)
         _box, rects = self.written()
-        self.assertAlmostEqual(rects[0][2] - rects[0][0],
-                               markup.NOTE_SIZE, delta=0.5)
+        self.assertAlmostEqual(rects[0][2] - rects[0][0], wide, delta=0.5)
 
     def test_it_is_placed_under_the_pointer_on_a_resized_page(self):
         canvas = self.reading(scale=0.5)
@@ -1777,22 +1835,39 @@ class TestAMarkLivesInTheSourcePagesSpace(unittest.TestCase):
         self.assertAlmostEqual(icon.y(), point.y(), delta=1.5)
 
     def test_the_icon_is_drawn_the_size_a_viewer_draws_it(self):
-        """`markup.NOTE_SIZE` points, from the rectangle's lower left and
-        never the rectangle's own size -- which differ once the page has been
-        resized, and following the rectangle would draw an icon half the size
-        of the one in the saved file."""
+        """The rectangle's size in points, held whatever the magnification.
+
+        NoZoom: the icon is `/Rect`'s width and height in default user
+        space, drawn at that size however far the page is zoomed, so the
+        zoom reaches only the corner it hangs from.
+
+        A page *resized* is a different question, and the answer is that
+        the icon goes with it: a mark is kept in the source page's space
+        and multiplied by the resize on the way out, so halving the page
+        halves the rectangle and the icon it describes. Asserted against
+        what the export actually writes rather than against a number, so
+        the screen and the file cannot drift apart.
+        """
         from pdfarranger_qt import markup
 
+        wide, _tall = markup.icon_size(markup.DEFAULT_ICON)
         canvas = self.reading()
         self.place_note(canvas, 120, 200)
-        icon = canvas.note_icon_rect(0, self.held()[0])
-        self.assertAlmostEqual(icon.width() / canvas._layout.zoom,
-                               markup.NOTE_SIZE, delta=0.5)
+        self.assertAlmostEqual(
+            canvas.note_icon_rect(0, self.held()[0]).width(), wide, delta=0.5)
+        was = canvas._layout.zoom
+        canvas.set_zoom(was * 2.0)
+        self.assertAlmostEqual(
+            canvas.note_icon_rect(0, self.held()[0]).width(), wide, delta=0.5,
+            msg="the page doubled under it and the icon went with it")
+        canvas.set_zoom(was)
         self.resize_to(0.5)
         canvas = self.reading_again()
-        icon = canvas.note_icon_rect(0, self.held()[0])
-        self.assertAlmostEqual(icon.width() / canvas._layout.zoom,
-                               markup.NOTE_SIZE, delta=0.5)
+        _box, rects = self.written()
+        self.assertAlmostEqual(
+            canvas.note_icon_rect(0, self.held()[0]).width(),
+            rects[0][2] - rects[0][0], delta=0.5,
+            msg="the icon on screen is not the icon the file will hold")
 
     def reading_again(self):
         self.win.set_read_mode(True)
@@ -2061,6 +2136,142 @@ class TestANoteOnTheWordsIsStillAHighlight(unittest.TestCase):
                                  intent="/HighlightNote")
         self.assertEqual(mark.duplicate().intent, "/HighlightNote")
         self.assertEqual(mark, mark.duplicate())
+
+
+class TestTheIconACommentCarries(unittest.TestCase):
+    """Seventeen icons, Reader's drawings in Reader's boxes.
+
+    Lifted from a file Reader wrote by `tools/extract_note_icons.py`, so
+    a comment made here and one made there are the same comment. The
+    numbers below are the measurement, written out rather than read back
+    from the table they are checking.
+    """
+
+    #: What Reader gives each icon, measured on `Markup Comment.pdf`.
+    #: The empty name is Text Note, which it writes by leaving `/Name`
+    #: out rather than by writing the specification's `/Note`.
+    BOXES = {
+        "/Comment": (24.0, 24.0), "/Check": (19.0, 19.0),
+        "/Checkmark": (20.0, 20.0), "/Circle": (20.0, 20.0),
+        "/Cross": (19.0, 19.0), "/CrossHairs": (20.0, 20.0),
+        "/Help": (20.0, 20.0), "/Insert": (17.0, 20.0),
+        "/Key": (13.0, 18.0), "": (18.0, 20.0),
+        "/Paragraph": (20.0, 20.0), "/RightArrow": (20.0, 20.0),
+        "/RightPointer": (20.0, 17.0), "/Star": (20.0, 19.0),
+        "/UpArrow": (17.0, 20.0), "/UpLeftArrow": (17.0, 17.0),
+        "/NewParagraph": (13.0, 20.0),
+    }
+
+    def setUp(self):
+        self.pdf = pikepdf.Pdf.new()
+
+    def made(self, icon):
+        mark = markup.Annotation(markup.TEXT, 1,
+                                 markup.note_rect(36.0, 700.0,
+                                                  *markup.icon_size(icon)),
+                                 contents="a note", icon=icon,
+                                 colour=markup.swatch("Purple"))
+        return markup.to_dictionary(self.pdf, mark)
+
+    def test_there_are_seventeen_and_these_are_they(self):
+        from pdfarranger_qt import noteicons
+
+        self.assertEqual(set(noteicons.ICONS), set(self.BOXES))
+
+    def test_each_box_is_the_one_reader_cuts(self):
+        """Not a square each. A key is narrow and a right pointer is
+        short, and the drawing is written for that box -- so taking the
+        paths without the box stretches them."""
+        for icon, box in self.BOXES.items():
+            with self.subTest(icon=icon or "Text Note"):
+                self.assertEqual(markup.icon_size(icon), box)
+
+    def test_the_appearance_is_drawn_in_that_box(self):
+        for icon, (wide, tall) in self.BOXES.items():
+            with self.subTest(icon=icon or "Text Note"):
+                entry = self.made(icon)
+                self.assertEqual(
+                    [float(v) for v in entry["/AP"]["/N"]["/BBox"]],
+                    [0.0, 0.0, wide, tall])
+
+    def test_text_note_is_written_by_leaving_the_key_out(self):
+        self.assertNotIn("/Name", self.made("").keys())
+        self.assertEqual(str(self.made("/Key")["/Name"]), "/Key")
+
+    def test_every_icon_but_one_takes_the_mark_s_colour(self):
+        """`/Checkmark` hard-codes its grey in defiance of `/C`. An Acrobat
+        defect, reproduced so that the two files match."""
+        from pdfarranger_qt import noteicons
+
+        without = [icon for icon, (_w, _h, body) in noteicons.ICONS.items()
+                   if noteicons.FILL not in body]
+        self.assertEqual(without, ["/Checkmark"])
+        grey = bytes(self.made("/Checkmark")["/AP"]["/N"].read_bytes())
+        self.assertIn(b"0.396 0.396 0.396 rg", grey)
+        star = bytes(self.made("/Star")["/AP"]["/N"].read_bytes())
+        self.assertIn(b"0.5882", star)
+
+    def test_none_of_them_needs_a_font(self):
+        """Two declare one and never use it; the `NP` is drawn as curves.
+        A drawing that needed a font would need the font in the file."""
+        from pdfarranger_qt import noteicons
+
+        for icon, (_w, _h, body) in noteicons.ICONS.items():
+            with self.subTest(icon=icon or "Text Note"):
+                self.assertNotIn(" Tj", body)
+                self.assertNotIn(" TJ", body)
+
+
+class TestHowSolidlyANoteIsPinned(unittest.TestCase):
+    """`/F` on a comment's icon: Print, NoZoom and NoRotate, as Reader
+    writes it -- a pin on the page rather than ink on it. Both bits are
+    false when `/F` is absent, so an annotation scales and turns unless it
+    is told not to."""
+
+    def setUp(self):
+        self.pdf = pikepdf.Pdf.new()
+
+    def flags(self, **kwargs):
+        mark = markup.Annotation(markup.TEXT, 1, (36, 700, 56, 720),
+                                 contents="a note", **kwargs)
+        return int(markup.to_dictionary(self.pdf, mark)["/F"])
+
+    def test_an_icon_keeps_its_size_and_its_way_up(self):
+        self.assertEqual(self.flags(), markup.ANCHORED)
+        self.assertEqual(markup.ANCHORED,
+                         markup.PRINTABLE | markup.NOZOOM | markup.NOROTATE)
+
+    def test_nothing_here_can_ask_an_icon_to_scale(self):
+        """Four readers give three answers to a cleared NoZoom bit, so this
+        application never writes one. There is no attribute to set and no
+        editable field to set it through."""
+        made = markup.Annotation(markup.TEXT, 1, (36, 700, 56, 720))
+        self.assertFalse(hasattr(made, "scales"))
+        self.assertNotIn("scales", markup.MarkEdits.FIELDS)
+        self.assertEqual(self.flags(), markup.ANCHORED)
+
+    def test_the_lock_is_independent_of_both(self):
+        self.assertEqual(self.flags(locked=True),
+                         markup.ANCHORED | markup.LOCKED)
+
+    def test_a_scaling_icon_the_file_carries_is_read_back(self):
+        """Never written here, and not ignored either. Declining to offer a
+        setting is not the same as deciding the file is wrong, so the bit is
+        read off `/F` even though nothing here can put it there."""
+        pdf = pikepdf.Pdf.new()
+        pdf.add_blank_page(page_size=(612, 792))
+        markup.add_to_page(pdf, pdf.pages[0], [
+            markup.Annotation(markup.TEXT, 1, (36, 700, 56, 720),
+                              contents="fixed", icon="/Key"),
+            markup.Annotation(markup.TEXT, 1, (80, 700, 100, 720),
+                              contents="scaling", icon="/Star")])
+        for annot in pdf.pages[0][pikepdf.Name.Annots]:
+            if str(annot.get(pikepdf.Name.Contents, "")) == "scaling":
+                annot[pikepdf.Name.F] = (
+                    int(annot[pikepdf.Name.F]) & ~markup.NOZOOM)
+        read = sorted(markup.marks_in(pdf), key=lambda m: m.contents)
+        self.assertEqual([(m.icon, m.scales) for m in read],
+                         [("/Key", False), ("/Star", True)])
 
 
 class TestWhereTheInkIs(unittest.TestCase):

@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PDF Arranger 1.9.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-06 22:22+0000\n"
+"POT-Creation-Date: 2026-11-07 07:46+0000\n"
 "PO-Revision-Date: 2023-06-12 10:30+0300\n"
 "Last-Translator: Manussos Pulinakis "
 "<38626261+manussos@users.noreply.github.com>\n"
@@ -2196,6 +2196,11 @@ msgstr "Αλλαγή μεγέθους σήμανσης"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
+msgid "Move Mark"
+msgstr "Μετακίνηση σήμανσης"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
 msgid "Set Status"
 msgstr "Ορισμός κατάστασης"
 
@@ -2216,6 +2221,92 @@ msgstr "Ευθεία"
 #: pdfarranger_qt/mainwindow.py
 msgid "Squiggly"
 msgstr "Κυματιστή"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Check"
+msgstr "Σημάδι"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Checkmark"
+msgstr "Τσεκ"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py pdfarranger_qt/tools.py
+msgid "Circle"
+msgstr "Κύκλος"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py pdfarranger_qt/properties.py
+#: pdfarranger_qt/tools.py
+msgid "Comment"
+msgstr "Σχόλιο"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Cross"
+msgstr "Σταυρός"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Cross Hairs"
+msgstr "Σταυρόνημα"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Help"
+msgstr "Βοήθεια"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Insert Text"
+msgstr "Εισαγωγή κειμένου"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Key"
+msgstr "Κλειδί"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "New Paragraph"
+msgstr "Νέα παράγραφος"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Text Note"
+msgstr "Σημείωση κειμένου"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Paragraph"
+msgstr "Παράγραφος"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Right Arrow"
+msgstr "Δεξιό βέλος"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Right Pointer"
+msgstr "Δεξιός δείκτης"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Star"
+msgstr "Αστέρι"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Up Arrow"
+msgstr "Πάνω βέλος"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Up-Left Arrow"
+msgstr "Πάνω-αριστερά βέλος"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
@@ -2949,6 +3040,11 @@ msgstr "Εκκαθάριση μορφοποίησης"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/notepanel.py
+msgid "Add a reply"
+msgstr "Προσθήκη απάντησης"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/notepanel.py
 msgid "Post"
 msgstr "Δημοσίευση"
 
@@ -2992,11 +3088,6 @@ msgstr "Επισήμανση"
 msgid "Strikethrough"
 msgstr "Διακριτή διαγραφή"
 
-# machine translation, unreviewed
-#: pdfarranger_qt/properties.py pdfarranger_qt/tools.py
-msgid "Comment"
-msgstr "Σχόλιο"
-
 #: pdfarranger_qt/properties.py
 msgid "Review History"
 msgstr "Ιστορικό αναθεώρησης"
@@ -3008,6 +3099,11 @@ msgstr "Κλειδωμένο"
 #: pdfarranger_qt/properties.py
 msgid "Make Properties Default"
 msgstr "Ορισμός ιδιοτήτων ως προεπιλογή"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Icon"
+msgstr "Εικονίδιο"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/properties.py pdfarranger_qt/reader.py
@@ -3267,11 +3363,6 @@ msgstr "Βέλος"
 #: pdfarranger_qt/tools.py
 msgid "Rectangle"
 msgstr "Ορθογώνιο"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/tools.py
-msgid "Circle"
-msgstr "Κύκλος"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/tools.py
@@ -3773,4 +3864,8 @@ msgstr "Εμφάνιση του τίτλου αντί του ονόματος α
 # machine translation, unreviewed
 #~ msgid "Cross-Out"
 #~ msgstr "Διαγραφή"
+
+# machine translation, unreviewed
+#~ msgid "Grows with the page"
+#~ msgstr "Μεγαλώνει με τη σελίδα"
 

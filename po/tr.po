@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pdfarranger main\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-06 22:22+0000\n"
+"POT-Creation-Date: 2026-11-07 07:46+0000\n"
 "PO-Revision-Date: 2026-04-24 21:19+0300\n"
 "Last-Translator: Oğuz Ersen <oguz@ersen.moe>\n"
 "Language: tr\n"
@@ -2116,6 +2116,11 @@ msgstr "İşareti yeniden boyutlandır"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
+msgid "Move Mark"
+msgstr "İşareti taşı"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
 msgid "Set Status"
 msgstr "Durumu Ayarla"
 
@@ -2136,6 +2141,92 @@ msgstr "Düz"
 #: pdfarranger_qt/mainwindow.py
 msgid "Squiggly"
 msgstr "Dalgalı"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Check"
+msgstr "Onay"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Checkmark"
+msgstr "Onay işareti"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py pdfarranger_qt/tools.py
+msgid "Circle"
+msgstr "Daire"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py pdfarranger_qt/properties.py
+#: pdfarranger_qt/tools.py
+msgid "Comment"
+msgstr "Yorum"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Cross"
+msgstr "Çarpı"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Cross Hairs"
+msgstr "Artı nişan"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Help"
+msgstr "Yardım"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Insert Text"
+msgstr "Metin ekle"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Key"
+msgstr "Anahtar"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "New Paragraph"
+msgstr "Yeni paragraf"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Text Note"
+msgstr "Metin notu"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Paragraph"
+msgstr "Paragraf"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Right Arrow"
+msgstr "Sağ ok"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Right Pointer"
+msgstr "Sağ işaretçi"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Star"
+msgstr "Yıldız"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Up Arrow"
+msgstr "Yukarı ok"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Up-Left Arrow"
+msgstr "Sol üst ok"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
@@ -2854,6 +2945,11 @@ msgstr "Biçimi temizle"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/notepanel.py
+msgid "Add a reply"
+msgstr "Yanıt ekle"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/notepanel.py
 msgid "Post"
 msgstr "Gönder"
 
@@ -2897,11 +2993,6 @@ msgstr "Vurgula"
 msgid "Strikethrough"
 msgstr "Üstü çizili"
 
-# machine translation, unreviewed
-#: pdfarranger_qt/properties.py pdfarranger_qt/tools.py
-msgid "Comment"
-msgstr "Yorum"
-
 #: pdfarranger_qt/properties.py
 msgid "Review History"
 msgstr "İnceleme geçmişi"
@@ -2913,6 +3004,11 @@ msgstr "Kilitli"
 #: pdfarranger_qt/properties.py
 msgid "Make Properties Default"
 msgstr "Özellikleri varsayılan yap"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Icon"
+msgstr "Simge"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/properties.py pdfarranger_qt/reader.py
@@ -3172,11 +3268,6 @@ msgstr "Ok"
 #: pdfarranger_qt/tools.py
 msgid "Rectangle"
 msgstr "Dikdörtgen"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/tools.py
-msgid "Circle"
-msgstr "Daire"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/tools.py
@@ -3710,4 +3801,8 @@ msgstr "Dosya adı yerine başlığı göster"
 # machine translation, unreviewed
 #~ msgid "Cross-Out"
 #~ msgstr "Üstü çizili"
+
+# machine translation, unreviewed
+#~ msgid "Grows with the page"
+#~ msgstr "Sayfayla birlikte büyür"
 

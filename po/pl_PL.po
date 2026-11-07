@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PDF-Shuffler 0.7\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-06 22:22+0000\n"
+"POT-Creation-Date: 2026-11-07 07:46+0000\n"
 "PO-Revision-Date: 2021-12-30 17:13+0100\n"
 "Last-Translator: Toratora <darex7@o2.pl>\n"
 "Language: pl_PL\n"
@@ -2194,6 +2194,11 @@ msgstr "Zmień rozmiar znacznika"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
+msgid "Move Mark"
+msgstr "Przenieś znacznik"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
 msgid "Set Status"
 msgstr "Ustaw stan"
 
@@ -2214,6 +2219,92 @@ msgstr "Prosta"
 #: pdfarranger_qt/mainwindow.py
 msgid "Squiggly"
 msgstr "Falista"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Check"
+msgstr "Ptaszek"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Checkmark"
+msgstr "Znacznik wyboru"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py pdfarranger_qt/tools.py
+msgid "Circle"
+msgstr "Okrąg"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py pdfarranger_qt/properties.py
+#: pdfarranger_qt/tools.py
+msgid "Comment"
+msgstr "Komentarz"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Cross"
+msgstr "Krzyżyk"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Cross Hairs"
+msgstr "Celownik"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Help"
+msgstr "Pomoc"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Insert Text"
+msgstr "Wstaw tekst"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Key"
+msgstr "Klucz"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "New Paragraph"
+msgstr "Nowy akapit"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Text Note"
+msgstr "Notatka tekstowa"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Paragraph"
+msgstr "Akapit"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Right Arrow"
+msgstr "Strzałka w prawo"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Right Pointer"
+msgstr "Wskaźnik w prawo"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Star"
+msgstr "Gwiazda"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Up Arrow"
+msgstr "Strzałka w górę"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Up-Left Arrow"
+msgstr "Strzałka w lewo w górę"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
@@ -2964,6 +3055,11 @@ msgstr "Wyczyść formatowanie"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/notepanel.py
+msgid "Add a reply"
+msgstr "Dodaj odpowiedź"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/notepanel.py
 msgid "Post"
 msgstr "Opublikuj"
 
@@ -3007,11 +3103,6 @@ msgstr "Wyróżnienie"
 msgid "Strikethrough"
 msgstr "Przekreślenie"
 
-# machine translation, unreviewed
-#: pdfarranger_qt/properties.py pdfarranger_qt/tools.py
-msgid "Comment"
-msgstr "Komentarz"
-
 #: pdfarranger_qt/properties.py
 msgid "Review History"
 msgstr "Historia recenzji"
@@ -3023,6 +3114,11 @@ msgstr "Zablokowany"
 #: pdfarranger_qt/properties.py
 msgid "Make Properties Default"
 msgstr "Ustaw właściwości jako domyślne"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Icon"
+msgstr "Ikona"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/properties.py pdfarranger_qt/reader.py
@@ -3282,11 +3378,6 @@ msgstr "Strzałka"
 #: pdfarranger_qt/tools.py
 msgid "Rectangle"
 msgstr "Prostokąt"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/tools.py
-msgid "Circle"
-msgstr "Okrąg"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/tools.py
@@ -3788,4 +3879,8 @@ msgstr "Pokaż tytuł zamiast nazwy pliku"
 # machine translation, unreviewed
 #~ msgid "Cross-Out"
 #~ msgstr "Przekreślenie"
+
+# machine translation, unreviewed
+#~ msgid "Grows with the page"
+#~ msgstr "Rośnie wraz ze stroną"
 

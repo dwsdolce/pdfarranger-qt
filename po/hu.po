@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-06 22:22+0000\n"
+"POT-Creation-Date: 2026-11-07 07:46+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: hu\n"
@@ -2167,6 +2167,11 @@ msgstr "Jelölés átméretezése"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
+msgid "Move Mark"
+msgstr "Jelölés áthelyezése"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
 msgid "Set Status"
 msgstr "Állapot beállítása"
 
@@ -2187,6 +2192,92 @@ msgstr "Egyenes"
 #: pdfarranger_qt/mainwindow.py
 msgid "Squiggly"
 msgstr "Hullámos"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Check"
+msgstr "Pipa"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Checkmark"
+msgstr "Pipajel"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py pdfarranger_qt/tools.py
+msgid "Circle"
+msgstr "Kör"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py pdfarranger_qt/properties.py
+#: pdfarranger_qt/tools.py
+msgid "Comment"
+msgstr "Megjegyzés"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Cross"
+msgstr "Kereszt"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Cross Hairs"
+msgstr "Célkereszt"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Help"
+msgstr "Súgó"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Insert Text"
+msgstr "Szöveg beszúrása"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Key"
+msgstr "Kulcs"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "New Paragraph"
+msgstr "Új bekezdés"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Text Note"
+msgstr "Szöveges jegyzet"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Paragraph"
+msgstr "Bekezdés"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Right Arrow"
+msgstr "Jobbra nyíl"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Right Pointer"
+msgstr "Jobbra mutató"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Star"
+msgstr "Csillag"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Up Arrow"
+msgstr "Felfelé nyíl"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Up-Left Arrow"
+msgstr "Balra fel nyíl"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
@@ -2918,6 +3009,11 @@ msgstr "Formázás törlése"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/notepanel.py
+msgid "Add a reply"
+msgstr "Válasz hozzáadása"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/notepanel.py
 msgid "Post"
 msgstr "Közzététel"
 
@@ -2961,11 +3057,6 @@ msgstr "Kiemelés"
 msgid "Strikethrough"
 msgstr "Áthúzás"
 
-# machine translation, unreviewed
-#: pdfarranger_qt/properties.py pdfarranger_qt/tools.py
-msgid "Comment"
-msgstr "Megjegyzés"
-
 #: pdfarranger_qt/properties.py
 msgid "Review History"
 msgstr "Átnézési előzmények"
@@ -2977,6 +3068,11 @@ msgstr "Zárolva"
 #: pdfarranger_qt/properties.py
 msgid "Make Properties Default"
 msgstr "Tulajdonságok beállítása alapértelmezettként"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Icon"
+msgstr "Ikon"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/properties.py pdfarranger_qt/reader.py
@@ -3236,11 +3332,6 @@ msgstr "Nyíl"
 #: pdfarranger_qt/tools.py
 msgid "Rectangle"
 msgstr "Téglalap"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/tools.py
-msgid "Circle"
-msgstr "Kör"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/tools.py
@@ -3748,4 +3839,8 @@ msgstr "A cím megjelenítése a fájlnév helyett"
 # machine translation, unreviewed
 #~ msgid "Cross-Out"
 #~ msgstr "Áthúzás"
+
+# machine translation, unreviewed
+#~ msgid "Grows with the page"
+#~ msgstr "Nő az oldallal"
 

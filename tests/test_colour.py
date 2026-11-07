@@ -149,16 +149,33 @@ class TestHowSolidAMarkIs(unittest.TestCase):
 class TestWhatIsChangedAboutTheFilesOwnMarks(unittest.TestCase):
     """`MarkEdits`: a few keys held beside a dictionary, not a copy of it."""
 
+    @staticmethod
+    def changed(edit):
+        """An edit without its timestamp.
+
+        Every edit records when it happened, so an assertion against the
+        whole dictionary would be an assertion against the clock.
+        """
+        return {k: v for k, v in edit.items() if k != "modified"}
+
     def test_it_records_what_was_changed(self):
         edits = markup.MarkEdits()
         edits.change(7, 2, colour=(1.0, 0.0, 0.0))
-        self.assertEqual(edits.of(7, 2), {"colour": (1.0, 0.0, 0.0)})
+        self.assertEqual(self.changed(edits.of(7, 2)),
+                         {"colour": (1.0, 0.0, 0.0)})
+
+    def test_the_edit_records_when_it_happened(self):
+        """`/M` is what a reader shows beside a comment, and a mark
+        whose date never moved would claim it had not been touched."""
+        edits = markup.MarkEdits()
+        edits.change(7, 2, colour=(1.0, 0.0, 0.0))
+        self.assertRegex(edits.of(7, 2)["modified"], r"^D:\d{14}")
 
     def test_a_second_change_joins_the_first(self):
         edits = markup.MarkEdits()
         edits.change(7, 2, colour=(1.0, 0.0, 0.0))
         edits.change(7, 2, opacity=0.3)
-        self.assertEqual(edits.of(7, 2),
+        self.assertEqual(self.changed(edits.of(7, 2)),
                          {"colour": (1.0, 0.0, 0.0), "opacity": 0.3})
 
     def test_only_the_attributes_it_knows(self):
@@ -181,7 +198,9 @@ class TestWhatIsChangedAboutTheFilesOwnMarks(unittest.TestCase):
         a duplicated page is not recoloured along with its original."""
         edits = markup.MarkEdits()
         edits.change(7, 2, colour=(1.0, 0.0, 0.0))
-        self.assertEqual(edits.for_page(7), {2: {"colour": (1.0, 0.0, 0.0)}})
+        self.assertEqual({at: self.changed(e)
+                          for at, e in edits.for_page(7).items()},
+                         {2: {"colour": (1.0, 0.0, 0.0)}})
         self.assertEqual(edits.for_page(8), {})
 
     def test_forgetting_the_last_one_forgets_the_page(self):
@@ -197,8 +216,10 @@ class TestWhatIsChangedAboutTheFilesOwnMarks(unittest.TestCase):
         edits.change(7, 2, colour=(1.0, 0.0, 0.0))
         copy = edits.duplicate()
         copy.change(7, 2, colour=(0.0, 0.0, 1.0))
-        self.assertEqual(edits.of(7, 2), {"colour": (1.0, 0.0, 0.0)})
-        self.assertEqual(copy.of(7, 2), {"colour": (0.0, 0.0, 1.0)})
+        self.assertEqual(self.changed(edits.of(7, 2)),
+                         {"colour": (1.0, 0.0, 0.0)})
+        self.assertEqual(self.changed(copy.of(7, 2)),
+                         {"colour": (0.0, 0.0, 1.0)})
 
 
 class TestWhereAMarkSitsAmongItsNeighbours(unittest.TestCase):
@@ -670,20 +691,32 @@ class TestItIsAllOneHistory(ColourCase):
         settle(timeout_ms=300)
         self.win.mark_faded(0.25)
         settle(timeout_ms=300)
-        self.assertEqual(self.win.model.mark_edits.of(self.uid(), mark.index),
-                         {"colour": (0.0, 1.0, 1.0), "opacity": 0.25})
+        self.assertEqual(
+            {k: v for k, v in self.win.model.mark_edits.of(
+                self.uid(), mark.index).items()
+             if k != "modified"},
+            {"colour": (0.0, 1.0, 1.0), "opacity": 0.25})
         self.win.model.undo.undo()
         settle(timeout_ms=250)
-        self.assertEqual(self.win.model.mark_edits.of(self.uid(), mark.index),
-                         {"colour": (0.0, 1.0, 1.0)})
+        self.assertEqual(
+            {k: v for k, v in self.win.model.mark_edits.of(
+                self.uid(), mark.index).items()
+             if k != "modified"},
+            {"colour": (0.0, 1.0, 1.0)})
         self.win.model.undo.undo()
         settle(timeout_ms=250)
-        self.assertEqual(self.win.model.mark_edits.of(self.uid(), mark.index),
-                         {})
+        self.assertEqual(
+            {k: v for k, v in self.win.model.mark_edits.of(
+                self.uid(), mark.index).items()
+             if k != "modified"},
+            {})
         self.win.model.undo.redo()
         settle(timeout_ms=250)
-        self.assertEqual(self.win.model.mark_edits.of(self.uid(), mark.index),
-                         {"colour": (0.0, 1.0, 1.0)})
+        self.assertEqual(
+            {k: v for k, v in self.win.model.mark_edits.of(
+                self.uid(), mark.index).items()
+             if k != "modified"},
+            {"colour": (0.0, 1.0, 1.0)})
 
     def test_the_page_is_rendered_from_its_own_document(self):
         """A recoloured mark is already in the page bitmap, so the page has

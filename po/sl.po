@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  pdfarranger\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-06 22:22+0000\n"
+"POT-Creation-Date: 2026-11-07 07:46+0000\n"
 "PO-Revision-Date: 2023-06-06 13:27+0200\n"
 "Last-Translator: Janez G <janezgac@gmail.com>\n"
 "Language: sl_SI\n"
@@ -2143,6 +2143,11 @@ msgstr "Spremeni velikost oznake"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
+msgid "Move Mark"
+msgstr "Premakni oznako"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
 msgid "Set Status"
 msgstr "Nastavi stanje"
 
@@ -2163,6 +2168,92 @@ msgstr "Ravna"
 #: pdfarranger_qt/mainwindow.py
 msgid "Squiggly"
 msgstr "Valovita"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Check"
+msgstr "Kljukica"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Checkmark"
+msgstr "Oznaka kljukice"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py pdfarranger_qt/tools.py
+msgid "Circle"
+msgstr "Krog"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py pdfarranger_qt/properties.py
+#: pdfarranger_qt/tools.py
+msgid "Comment"
+msgstr "Komentar"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Cross"
+msgstr "Križec"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Cross Hairs"
+msgstr "Nitni križ"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Help"
+msgstr "Pomoč"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Insert Text"
+msgstr "Vstavi besedilo"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Key"
+msgstr "Ključ"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "New Paragraph"
+msgstr "Nov odstavek"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Text Note"
+msgstr "Besedilna opomba"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Paragraph"
+msgstr "Odstavek"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Right Arrow"
+msgstr "Puščica desno"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Right Pointer"
+msgstr "Kazalec desno"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Star"
+msgstr "Zvezda"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Up Arrow"
+msgstr "Puščica gor"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Up-Left Arrow"
+msgstr "Puščica levo gor"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
@@ -2902,6 +2993,11 @@ msgstr "Počisti oblikovanje"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/notepanel.py
+msgid "Add a reply"
+msgstr "Dodaj odgovor"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/notepanel.py
 msgid "Post"
 msgstr "Objavi"
 
@@ -2945,11 +3041,6 @@ msgstr "Poudari"
 msgid "Strikethrough"
 msgstr "Prečrtano"
 
-# machine translation, unreviewed
-#: pdfarranger_qt/properties.py pdfarranger_qt/tools.py
-msgid "Comment"
-msgstr "Komentar"
-
 #: pdfarranger_qt/properties.py
 msgid "Review History"
 msgstr "Zgodovina pregleda"
@@ -2961,6 +3052,11 @@ msgstr "Zaklenjeno"
 #: pdfarranger_qt/properties.py
 msgid "Make Properties Default"
 msgstr "Nastavi lastnosti kot privzete"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Icon"
+msgstr "Ikona"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/properties.py pdfarranger_qt/reader.py
@@ -3220,11 +3316,6 @@ msgstr "Puščica"
 #: pdfarranger_qt/tools.py
 msgid "Rectangle"
 msgstr "Pravokotnik"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/tools.py
-msgid "Circle"
-msgstr "Krog"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/tools.py
@@ -3727,4 +3818,8 @@ msgstr "Pokaži naslov namesto imena datoteke"
 # machine translation, unreviewed
 #~ msgid "Cross-Out"
 #~ msgstr "Prečrtano"
+
+# machine translation, unreviewed
+#~ msgid "Grows with the page"
+#~ msgstr "Raste s stranjo"
 

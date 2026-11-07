@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-06 22:22+0000\n"
+"POT-Creation-Date: 2026-11-07 07:46+0000\n"
 "PO-Revision-Date: 2023-06-12 11:22+0300\n"
 "Last-Translator: Yaron Shahrabani <sh.yaron@gmail.com>\n"
 "Language: he\n"
@@ -2109,6 +2109,11 @@ msgstr "שינוי גודל הסימון"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
+msgid "Move Mark"
+msgstr "הזזת סימון"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
 msgid "Set Status"
 msgstr "הגדרת מצב"
 
@@ -2129,6 +2134,92 @@ msgstr "ישר"
 #: pdfarranger_qt/mainwindow.py
 msgid "Squiggly"
 msgstr "גלי"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Check"
+msgstr "סימון"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Checkmark"
+msgstr "סימן וי"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py pdfarranger_qt/tools.py
+msgid "Circle"
+msgstr "עיגול"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py pdfarranger_qt/properties.py
+#: pdfarranger_qt/tools.py
+msgid "Comment"
+msgstr "הערה"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Cross"
+msgstr "צלב"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Cross Hairs"
+msgstr "כוונת"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Help"
+msgstr "עזרה"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Insert Text"
+msgstr "הוספת טקסט"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Key"
+msgstr "מפתח"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "New Paragraph"
+msgstr "פסקה חדשה"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Text Note"
+msgstr "הערת טקסט"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Paragraph"
+msgstr "פסקה"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Right Arrow"
+msgstr "חץ ימינה"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Right Pointer"
+msgstr "מצביע ימינה"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Star"
+msgstr "כוכב"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Up Arrow"
+msgstr "חץ למעלה"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Up-Left Arrow"
+msgstr "חץ שמאלה-למעלה"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
@@ -2866,6 +2957,11 @@ msgstr "ניקוי עיצוב"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/notepanel.py
+msgid "Add a reply"
+msgstr "הוספת תגובה"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/notepanel.py
 msgid "Post"
 msgstr "פרסום"
 
@@ -2909,11 +3005,6 @@ msgstr "הדגשה"
 msgid "Strikethrough"
 msgstr "קו חוצה"
 
-# machine translation, unreviewed
-#: pdfarranger_qt/properties.py pdfarranger_qt/tools.py
-msgid "Comment"
-msgstr "הערה"
-
 #: pdfarranger_qt/properties.py
 msgid "Review History"
 msgstr "היסטוריית סקירה"
@@ -2925,6 +3016,11 @@ msgstr "נעול"
 #: pdfarranger_qt/properties.py
 msgid "Make Properties Default"
 msgstr "הגדרת המאפיינים כברירת מחדל"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Icon"
+msgstr "סמל"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/properties.py pdfarranger_qt/reader.py
@@ -3184,11 +3280,6 @@ msgstr "חץ"
 #: pdfarranger_qt/tools.py
 msgid "Rectangle"
 msgstr "מלבן"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/tools.py
-msgid "Circle"
-msgstr "עיגול"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/tools.py
@@ -3685,4 +3776,8 @@ msgstr "הצגת הכותרת במקום שם הקובץ"
 # machine translation, unreviewed
 #~ msgid "Cross-Out"
 #~ msgstr "קו חוצה"
+
+# machine translation, unreviewed
+#~ msgid "Grows with the page"
+#~ msgstr "גדל עם העמוד"
 

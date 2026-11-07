@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: unnamed project\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-06 22:22+0000\n"
+"POT-Creation-Date: 2026-11-07 07:46+0000\n"
 "PO-Revision-Date: 2026-05-27 19:30+0300\n"
 "Last-Translator: Dymko <Dymkovych@proton.me>\n"
 "Language: uk\n"
@@ -2128,6 +2128,11 @@ msgstr "Змінити розмір позначки"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
+msgid "Move Mark"
+msgstr "Перемістити позначку"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
 msgid "Set Status"
 msgstr "Задати стан"
 
@@ -2148,6 +2153,92 @@ msgstr "Пряма"
 #: pdfarranger_qt/mainwindow.py
 msgid "Squiggly"
 msgstr "Хвиляста"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Check"
+msgstr "Галочка"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Checkmark"
+msgstr "Позначка"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py pdfarranger_qt/tools.py
+msgid "Circle"
+msgstr "Коло"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py pdfarranger_qt/properties.py
+#: pdfarranger_qt/tools.py
+msgid "Comment"
+msgstr "Коментар"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Cross"
+msgstr "Хрестик"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Cross Hairs"
+msgstr "Перехрестя"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Help"
+msgstr "Довідка"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Insert Text"
+msgstr "Вставити текст"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Key"
+msgstr "Ключ"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "New Paragraph"
+msgstr "Новий абзац"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Text Note"
+msgstr "Текстова нотатка"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Paragraph"
+msgstr "Абзац"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Right Arrow"
+msgstr "Стрілка праворуч"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Right Pointer"
+msgstr "Вказівник праворуч"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Star"
+msgstr "Зірка"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Up Arrow"
+msgstr "Стрілка вгору"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Up-Left Arrow"
+msgstr "Стрілка вгору-ліворуч"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
@@ -2884,6 +2975,11 @@ msgstr "Очистити форматування"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/notepanel.py
+msgid "Add a reply"
+msgstr "Додати відповідь"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/notepanel.py
 msgid "Post"
 msgstr "Опублікувати"
 
@@ -2927,11 +3023,6 @@ msgstr "Виділення"
 msgid "Strikethrough"
 msgstr "Закреслення"
 
-# machine translation, unreviewed
-#: pdfarranger_qt/properties.py pdfarranger_qt/tools.py
-msgid "Comment"
-msgstr "Коментар"
-
 #: pdfarranger_qt/properties.py
 msgid "Review History"
 msgstr "Історія рецензування"
@@ -2943,6 +3034,11 @@ msgstr "Заблоковано"
 #: pdfarranger_qt/properties.py
 msgid "Make Properties Default"
 msgstr "Зробити властивості типовими"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Icon"
+msgstr "Піктограма"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/properties.py pdfarranger_qt/reader.py
@@ -3202,11 +3298,6 @@ msgstr "Стрілка"
 #: pdfarranger_qt/tools.py
 msgid "Rectangle"
 msgstr "Прямокутник"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/tools.py
-msgid "Circle"
-msgstr "Коло"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/tools.py
@@ -3746,4 +3837,8 @@ msgstr "Показувати заголовок замість імені фай
 # machine translation, unreviewed
 #~ msgid "Cross-Out"
 #~ msgstr "Закреслення"
+
+# machine translation, unreviewed
+#~ msgid "Grows with the page"
+#~ msgstr "Росте разом зі сторінкою"
 

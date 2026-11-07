@@ -70,7 +70,6 @@ from PySide6.QtGui import (
     QPainterPath,
     QPalette,
     QPen,
-    QPolygonF,
     QTextCursor,
     QTextDocument,
 )
@@ -90,7 +89,7 @@ from PySide6.QtWidgets import (
 )
 
 from . import forms as forms_module
-from . import markup
+from . import markup, noteicons
 from .fieldlayer import AppearanceRenderer
 from .i18n import gettext_ as _
 from .render import ANNOTATIONS, DEFAULT_CACHE_PIXELS, BytesDocument, Renderer
@@ -1170,6 +1169,12 @@ class PageCanvas(QAbstractScrollArea):
         #: What colour a mark of a given kind would be made in now. Set by
         #: the window, because the answer changes as a colour is picked.
         self.mark_colour = None
+        #: What icon the next comment will carry, asked of the window --
+        #: which keeps it, because it is one of the tool's defaults. Its
+        #: *size* is what `icon_rect` needs: Reader cuts each icon's box
+        #: to its glyph, and the corner that lands under the pointer is
+        #: chosen here because only this knows how the page is turned.
+        self.note_icon = None
         #: The marks the document on screen already carried, for clicking on.
         #: Read from *that* document rather than from the sources it was made
         #: from: its pages are the ones being shown, its coordinates are the
@@ -1199,6 +1204,12 @@ class PageCanvas(QAbstractScrollArea):
         #: grip's index, and the page-space point the *other* grip sits at,
         #: which the run is rebuilt between.
         self._dragging_grip = None
+        #: A comment's icon being dragged, as ``(page, mark, grabbed, moved)``:
+        #: where the press landed, and whether it has yet travelled far enough
+        #: to be a drag rather than a click. Reader lets an icon be moved and
+        #: this application did not, so a press on one can no longer open its
+        #: note outright -- which gesture it was is known only on release.
+        self._dragging_note = None
         #: The note being shown beside the pointer, as ``(mark, point)``.
         self._note_panel = None
         #: What is selected, as ``(page, mark)``. A mark of the user's is an
@@ -2474,42 +2485,59 @@ class PageCanvas(QAbstractScrollArea):
     #: a note is most often placed.
     NOTE_EDITOR = (240, 120)
 
-    def note_icon_rect(self, index: int, mark):
+    def note_icon_rect(self, index: int, mark, offset=None):
         """Where a note's icon is in the viewport, or None if it is not drawn.
 
         From `markup.icon_box` rather than from the rectangle, because that is
-        what a viewer draws: `markup.NOTE_SIZE` points square from the
-        rectangle's lower left, whatever size the rectangle is. For a note
-        placed here the two are the same box; for one whose page has since
-        been resized they are not, and following the rectangle would draw an
-        icon half the size of the one the saved file shows.
+        what is anchored: the icon's own size hung from the rectangle's *top*
+        left, whatever size the rectangle is. For a note placed here the two
+        are the same box; for one whose page has since been resized they are
+        not, and following the rectangle would draw an icon half the size of
+        the one the saved file shows.
 
         The icon's *page-space* box is what is turned, not its box on screen,
-        which is again what a viewer does -- it adds the 20 points in page
-        space and then turns the page. So every rotation comes out right with
-        no case analysis here.
+        which is what a viewer does -- it adds the points in page space and
+        then turns the page. So every rotation comes out right with no case
+        analysis here.
+
+        **The size does not follow the zoom.** `/F` NoZoom says an icon holds
+        its size while the page grows under it, and holds it about that top
+        left corner, so the corner is placed at the zoom and the box is then
+        laid out from it at the icon's own size. A mark told to scale --
+        the form's checkbox, which clears the bit -- follows the zoom as
+        everything else does.
         """
         box = self.page_box(index)
         height = self._layout.page_height(index)
         if box is None or height is None:
             return None
         shown = forms_module.to_displayed(
-            markup.icon_box(self.from_source(index, mark.rect)), box)
+            markup.icon_box(self.from_source(index, mark.rect),
+                            getattr(mark, "icon", markup.DEFAULT_ICON)), box)
         zoom = self._layout.zoom
         page = self._layout.page_rect(index)
+        # The file's answer, not a setting of ours. Nothing here writes a
+        # scaling icon -- measured on one `/Cross` with its NoZoom bit
+        # cleared and nothing else changed, this application and Stirling
+        # scale it, Acrobat leaves it fixed and PDFGear scales every icon
+        # whatever the bit says, so four readers give three answers and the
+        # bit is not one to create. A file that carries it is another
+        # matter: it is saying something, and ignoring it would be this
+        # application deciding the file is wrong.
+        fixed = zoom if getattr(mark, "scales", False) else 1.0
         where = QRectF(page.x() + shown[0] * zoom,
                        page.y() + (height - shown[3]) * zoom,
-                       (shown[2] - shown[0]) * zoom,
-                       (shown[3] - shown[1]) * zoom)
-        where.translate(-self.offset())
+                       (shown[2] - shown[0]) * fixed,
+                       (shown[3] - shown[1]) * fixed)
+        where.translate(-(self.offset() if offset is None else offset))
         return where
 
     def note_at(self, point: QPointF):
         """``(page, which, mark)`` for the note under a *viewport* point.
 
-        The icon is `markup.NOTE_SIZE` points on the *page*, so it grows and
-        shrinks with the zoom like everything else: measured against PDFium
-        at 1x, 2x and 4x, it comes out 20 points square every time.
+        The icon holds its size while the page grows under it, which is what
+        `/F` NoZoom asks for, so this is in viewport units throughout and
+        the zoom reaches only the corner it hangs from.
 
         Hit-tested through `note_icon_rect`, which is also what the painter
         uses, so what can be clicked is what can be seen by construction. Two
@@ -2524,14 +2552,28 @@ class PageCanvas(QAbstractScrollArea):
             return None
         index = found[0]
         try:
-            marks = self.marks(index)
+            marks = list(self.marks(index) or ())
         except Exception:       # noqa: BLE001 - a click must not raise
-            return None
+            marks = []
+        # **The file's own comments too**, because this application draws
+        # them: `_paint_marks` paints every note whoever made it, and an
+        # icon that can be seen has to be one that can be picked up. Before
+        # this a saved comment could not be opened or dragged at all.
+        #
+        # A reply is neither: it is drawn nowhere, so there is nothing here
+        # to find. One made in this session sits at the corner of the mark
+        # it answers, and finding it there put the pointer on a box that
+        # nothing had drawn.
+        marks = [m for m in marks
+                 if not markup.is_reply(m) and not markup.is_status(m)]
+        marks += self._file_notes(index)
         # Last first: the most recently placed note is the one on top, which
         # is the one `_paint_marks` draws over the others.
         for which in range(len(marks) - 1, -1, -1):
             mark = marks[which]
-            if mark.kind != markup.TEXT:
+            kind = (mark.kind if isinstance(mark, markup.Annotation)
+                    else mark.subtype)
+            if kind != markup.TEXT:
                 continue
             where = self.note_icon_rect(index, mark)
             if where is not None and where.contains(point):
@@ -2793,6 +2835,7 @@ class PageCanvas(QAbstractScrollArea):
         self._tool = tool
         self._marking = None
         self._dragging_grip = None
+        self._dragging_note = None
         self._preview = ()
         self.viewport().unsetCursor()
         self.viewport().update()
@@ -3070,7 +3113,15 @@ class PageCanvas(QAbstractScrollArea):
 
     #: Subtypes a click can land on. The text markups are areas you can aim
     #: at; a note is reached by its icon, which `note_at` already answers for.
-    SELECTABLE = ("/Highlight", "/StrikeOut", "/Underline", "/Squiggly")
+    SELECTABLE = ("/Highlight", "/StrikeOut", "/Underline", "/Squiggly",
+                  markup.TEXT)
+
+    #: Of those, the ones drawn *over* a run of words. A comment's icon is
+    #: the odd one: it is placed rather than sized, so it has no run to
+    #: take hold of and no badge to wear -- the icon is already the sign
+    #: that there is something to read.
+    QUADDED_SELECTABLE = ("/Highlight", "/StrikeOut", "/Underline",
+                          "/Squiggly")
 
     def marks_on(self, index: int):
         """Every mark on a page that a click could be aimed at.
@@ -3080,14 +3131,17 @@ class PageCanvas(QAbstractScrollArea):
         already there is the one a click finds.
         """
         found = [(mark, False) for mark in self._file_marks.visible(index + 1)
-                 if mark.subtype in self.SELECTABLE]
+                 if mark.subtype in self.SELECTABLE
+                 and not markup.is_reply(mark)]
         if self.marks is not None:
             try:
                 mine = self.marks(index) or ()
             except Exception:   # noqa: BLE001 - a click must not raise
                 mine = ()
             found += [(mark, True) for mark in mine
-                      if mark.kind in self.SELECTABLE]
+                      if mark.kind in self.SELECTABLE
+                      and not markup.is_reply(mark)
+                      and not markup.is_status(mark)]
         return found
 
     @staticmethod
@@ -3099,6 +3153,15 @@ class PageCanvas(QAbstractScrollArea):
         already rectangles, while one read out of the file is a `Mark` whose
         quads are the four corners `/QuadPoints` holds.
         """
+        kind = (mark.kind if isinstance(mark, markup.Annotation)
+                else mark.subtype)
+        if kind == markup.TEXT:
+            # **Where the icon is drawn**, which is its own size hung
+            # from the rectangle's top left -- and once a page has been
+            # resized the rectangle is not that box.
+            return [markup.icon_box(mark.rect,
+                                    getattr(mark, "icon",
+                                            markup.DEFAULT_ICON))]
         if isinstance(mark, markup.Annotation):
             return list(mark.quads) or [mark.rect]
         return mark.boxes()
@@ -3110,6 +3173,32 @@ class PageCanvas(QAbstractScrollArea):
     #: point thick, so without this it is unhittable.
     INK_TOLERANCE = 3.0
 
+    def mark_screen_boxes(self, index: int, mark, offset=None):
+        """Where a mark is on screen, as viewport rectangles.
+
+        **One answer for the outline, the hover and the hit-test**, because
+        three ways of saying where a mark is are three ways to disagree.
+
+        A note is the exception the other kinds do not have. Its icon holds
+        its size while the page is zoomed, so its box comes from
+        `note_icon_rect`; everything else is ink on the paper and grows with
+        the page, which is what `quad_on_screen` does. Drawing the outline
+        the second way round an icon drawn the first gave a box that was
+        right at 100% and too big at every other zoom.
+        """
+        kind = (mark.kind if isinstance(mark, markup.Annotation)
+                else mark.subtype)
+        if kind == markup.TEXT:
+            where = self.note_icon_rect(index, mark, offset)
+            return [where] if where is not None else []
+        is_mine = isinstance(mark, markup.Annotation)
+        found = []
+        for quad in self.mark_boxes(mark):
+            where = self.quad_on_screen(index, quad, offset, scaled=is_mine)
+            if where is not None:
+                found.append(where)
+        return found
+
     def ink_on_screen(self, index: int, mark, quad, scaled: bool):
         """Where one of a mark's quadrilaterals is *drawn*, on screen.
 
@@ -3118,8 +3207,14 @@ class PageCanvas(QAbstractScrollArea):
         """
         kind = (mark.kind if isinstance(mark, markup.Annotation)
                 else mark.subtype)
-        where = self.quad_on_screen(
-            index, markup.ink_box(kind, quad), scaled=scaled)
+        if kind == markup.TEXT:
+            # The icon, which is not the page's to scale. Measured the other
+            # way a click landed on empty paper beside it at any zoom above
+            # 100%, because the box had grown and the glyph had not.
+            where = self.note_icon_rect(index, mark)
+        else:
+            where = self.quad_on_screen(
+                index, markup.ink_box(kind, quad), scaled=scaled)
         if where is None:
             return None
         return where.adjusted(-self.INK_TOLERANCE, -self.INK_TOLERANCE,
@@ -3233,13 +3328,7 @@ class PageCanvas(QAbstractScrollArea):
         if self._selected is None:
             return []
         index, mark = self._selected
-        is_mine = isinstance(mark, markup.Annotation)
-        found = []
-        for quad in self.mark_boxes(mark):
-            where = self.quad_on_screen(index, quad, scaled=is_mine)
-            if where is not None:
-                found.append(where)
-        return found
+        return self.mark_screen_boxes(index, mark)
 
     def _preview_marks(self, index: int):
         """The gesture in flight, as a mark, so it is drawn like one.
@@ -3297,7 +3386,9 @@ class PageCanvas(QAbstractScrollArea):
         # The icon's size is fixed on the page *as shown*, so it is expanded
         # here and divided afterwards: on a page resized to half, a note is
         # 40 points in the source space and comes back out at 20.
-        shown = markup.note_rect(where.x(), height - where.y())
+        icon = self.note_icon() if self.note_icon else markup.DEFAULT_ICON
+        shown = markup.note_rect(where.x(), height - where.y(),
+                                 *markup.icon_size(icon))
         return index, self.to_source(
             index, forms_module.from_displayed(shown, box))
 
@@ -3466,6 +3557,17 @@ class PageCanvas(QAbstractScrollArea):
             self.viewport().update()
             return
 
+        if self._dragging_note is not None and event.buttons() & Qt.LeftButton:
+            page, mark, grab, at, moved = self._dragging_note
+            if not moved and ((position - at).manhattanLength()
+                              > QApplication.startDragDistance()):
+                moved = True
+            if moved:
+                self._dragging_note = (page, mark, grab, position, True)
+                self.viewport().setCursor(Qt.SizeAllCursor)
+                self.viewport().update()
+            return
+
         if self._dragging_grip is not None and event.buttons() & Qt.LeftButton:
             _which, page, _mark, anchor = self._dragging_grip
             quads = self._grip_quads(page, anchor, position)
@@ -3491,17 +3593,26 @@ class PageCanvas(QAbstractScrollArea):
                 super().mouseMoveEvent(event)
                 return
 
-        note = self.note_at(position)
+        # A grip comes first, as it does on the press: it belongs to the
+        # mark already picked up, and a comment's icon lying over it would
+        # otherwise make the end of a highlight impossible to take hold of.
+        note = (None if self.grip_at(position) is not None
+                else self.note_at(position))
         if note is not None:
             # Read without opening anything. A note's whole value is its text,
             # and a document covered in icons you have to click one at a time
             # to read is a filing cabinet. Before the tool branches below,
             # because reading a note does not depend on what the pointer is
             # for.
+            #
+            # **And it falls through to the panel below.** The tooltip is a
+            # second way of saying the same thing and a poorer one -- it
+            # waits for the pointer to settle, says nothing about replies
+            # or status, and goes away on its own. An icon used to get it
+            # instead of the panel every other mark gets, because it
+            # returned here.
             self.viewport().setCursor(Qt.PointingHandCursor)
             self._set_tooltip(note[2].contents or _("Empty note"))
-            super().mouseMoveEvent(event)
-            return
 
         # A note hanging off a highlight reads the same way. The badge is
         # what says there is one; this is what says what it says, and it
@@ -3632,13 +3743,17 @@ class PageCanvas(QAbstractScrollArea):
             self.finish_editing()
             note = self.note_at(position)
             if note is not None:
-                # Before placing anything, and under every tool: an icon that
-                # says "there is a note here" has to open it, or the note is
-                # write-only. With the note tool this is also what stops a
-                # second note landing on top of the first.
-                if self.edit_note(note[0], note[1]):
-                    event.accept()
-                    return
+                # Taken, but not yet acted on. An icon that says "there is a
+                # note here" has to open it, or the note is write-only -- and
+                # it also has to be draggable, because Reader moves one and a
+                # comment is placed by eye. The two gestures start with the
+                # same press, so what this was is settled on release.
+                held = self.note_icon_rect(note[0], note[2])
+                grab = (position - held.topLeft() if held is not None
+                        else QPointF())
+                self._dragging_note = (note[0], note[2], grab, position, False)
+                event.accept()
+                return
             if self.marks_area():
                 # Only here, *after* the field check: over a field there is no
                 # markup, the field takes the press and is edited. A widget
@@ -3768,6 +3883,24 @@ class PageCanvas(QAbstractScrollArea):
                 placed = self.mark_rect(start, QPointF(event.position()))
             if placed is not None:
                 self.mark_drawn.emit(self._tool, placed[0], [placed[1]])
+            event.accept()
+            return
+
+        if event.button() == Qt.LeftButton and self._dragging_note is not None:
+            page, mark, grab, at, moved = self._dragging_note
+            self._dragging_note = None
+            self.viewport().unsetCursor()
+            self.viewport().update()
+            if not moved:
+                # **The note window**, which is the one every other mark
+                # opens. A comment used to get the bare text box on the page
+                # instead, and it was the only mark that did.
+                self.select_mark((page, mark))
+                self.note_wanted.emit(page, mark)
+            else:
+                rect = self._note_rect_at(page, mark, at - grab)
+                if rect is not None:
+                    self.mark_moved.emit(page, mark, rect)
             event.accept()
             return
 
@@ -3916,6 +4049,22 @@ class PageCanvas(QAbstractScrollArea):
 
         return menu
 
+    @staticmethod
+    def _is_a_comment(mark) -> bool:
+        """Whether the comment tool made this mark, either way it makes one.
+
+        An icon placed on the page, or a highlight laid over a run of
+        words -- told apart from the highlight tool's by `/Subj` and
+        `/IT`, which is what the file records.
+        """
+        kind = (mark.kind if isinstance(mark, markup.Annotation)
+                else mark.subtype)
+        if kind == markup.TEXT:
+            return True
+        return kind == markup.HIGHLIGHT and (
+            (getattr(mark, "subject", "") or "",
+             getattr(mark, "intent", "") or "") == markup.COMMENT_ON_TEXT)
+
     def mark_menu(self, index: int, mark, inside: bool = False):
         """What a right-click on a mark offers.
 
@@ -3969,14 +4118,22 @@ class PageCanvas(QAbstractScrollArea):
                 self.status_wanted.emit(index, m, st))
         menu.addSeparator()
 
-        text = self.mark_text(index, mark)
-        copy = menu.addAction(_("Copy Text"))
-        copy.setEnabled(bool(text))
-        copy.triggered.connect(
-            lambda: QApplication.clipboard().setText(text))
-        through = menu.addAction(_("Enable Text Selection"))
-        through.triggered.connect(self.let_text_through)
-        menu.addSeparator()
+        # **Not on a comment**, and not on the highlight a comment makes
+        # over words either -- photographed in the owner's notes on
+        # 2026-11-06, where both menus run Open Pop-Up Note, Reply,
+        # Delete, Set status, then the panel entries, then the two at the
+        # foot. Reader offers these two on a highlight, an underline and a
+        # cross-out and on nothing else. The second would be strange on an
+        # icon in any case: there is no text under a glyph to let through.
+        if not self._is_a_comment(mark):
+            text = self.mark_text(index, mark)
+            copy = menu.addAction(_("Copy Text"))
+            copy.setEnabled(bool(text))
+            copy.triggered.connect(
+                lambda: QApplication.clipboard().setText(text))
+            through = menu.addAction(_("Enable Text Selection"))
+            through.triggered.connect(self.let_text_through)
+            menu.addSeparator()
 
         default = menu.addAction(_("Make current properties default"))
         default.triggered.connect(
@@ -4371,25 +4528,42 @@ class PageCanvas(QAbstractScrollArea):
         screen is an export made before the mark existed, and rebuilding it
         for every highlight is the 682 ms the form work went to such lengths
         to avoid.
+
+        **Comments are the exception and come from both.** Their icons are
+        drawn here whoever made them, because the glyph is this
+        application's choice rather than the file's -- `markup.blank_note_icons`
+        takes the renderer's copy out of the document being shown, so if
+        these were not painted a saved comment would vanish.
         """
         try:
             marks = list(self.marks(index) or ()) if self.marks else []
         except Exception:       # noqa: BLE001 - a repaint must not fail
             marks = []
         marks += self._preview_marks(index)
+        marks += self._file_notes(index)
         if not marks:
             return
         painter.save()
         painter.setPen(Qt.NoPen)
         for mark in marks:
-            if getattr(mark, "state", None):
+            if getattr(mark, "state", None) or markup.is_reply(mark):
                 # A status draws nothing. It is written `/F 30`, Hidden, and
                 # comes back from the file invisible -- so painting one made
                 # the same document look different before a save and after
                 # it.
+                #
+                # **Nor does a reply.** It belongs in the thread and not on
+                # the paper. One made here is a `/Text` placed at the corner
+                # of the mark it answers, so painting it put a second icon
+                # over that mark's own -- a 20 point box from the old
+                # constant on top of the icon's own 24 -- and the pointer
+                # crossing between them made the outline change size and the
+                # hover panel come and go.
                 continue
             colour = QColor.fromRgbF(*(mark.colour or (1.0, 1.0, 0.0)))
-            if mark.kind == markup.TEXT:
+            kind = (mark.kind if isinstance(mark, markup.Annotation)
+                    else mark.subtype)
+            if kind == markup.TEXT:
                 self._paint_note(painter, index, mark, colour)
                 continue
             for quad in (mark.quads or (mark.rect,)):
@@ -4398,7 +4572,7 @@ class PageCanvas(QAbstractScrollArea):
                     continue
                 if not where.intersects(QRectF(self.viewport().rect())):
                     continue
-                if mark.kind in (markup.STRIKEOUT, markup.UNDERLINE):
+                if kind in (markup.STRIKEOUT, markup.UNDERLINE):
                     # The same fractions of the type's height the written
                     # appearance uses, so the screen and the file agree:
                     # a sixteenth thick, centred three sevenths up for a
@@ -4551,11 +4725,13 @@ class PageCanvas(QAbstractScrollArea):
         once the document had been saved and opened again.
         """
         found = [m for m in self._file_marks.visible(index + 1)
-                 if m.subtype in self.SELECTABLE and markup.has_note(m)]
+                 if m.subtype in self.QUADDED_SELECTABLE
+                 and markup.has_note(m)]
         try:
             if self.marks:
                 found += [m for m in (self.marks(index) or ())
-                          if markup.has_note(m)]
+                          if markup.has_note(m)
+                          and m.kind in self.QUADDED_SELECTABLE]
         except Exception:       # noqa: BLE001 - a repaint must not fail
             pass
         return found
@@ -4772,6 +4948,12 @@ class PageCanvas(QAbstractScrollArea):
         if self._selected is None:
             return []
         index, mark = self._selected
+        if (mark.kind if isinstance(mark, markup.Annotation)
+                else mark.subtype) not in self.QUADDED_SELECTABLE:
+            # A comment's icon is placed, not sized: there is no run to
+            # take hold of, and a handle on a glyph offers a drag that
+            # means nothing.
+            return []
         if getattr(mark, "locked", False):
             # A locked mark is not resized, so it is not offered handles to
             # resize it by. Nothing to take hold of says more than a handle
@@ -4809,6 +4991,8 @@ class PageCanvas(QAbstractScrollArea):
     #: Emitted when a grip drag ends: ``(page, mark, quads)`` in the page's
     #: own space. The canvas reports the new run and keeps none of it, the
     #: same way `mark_drawn` reports a new one.
+    mark_moved = Signal(int, object, object)
+
     mark_resized = Signal(int, object, object)
 
     #: Emitted when the selected mark is to go: ``(page, mark)``. What goes
@@ -4952,11 +5136,8 @@ class PageCanvas(QAbstractScrollArea):
         for where_page, mark in marks:
             if where_page != index:
                 continue
-            is_mine = isinstance(mark, markup.Annotation)
-            for quad in self.mark_boxes(mark):
-                where = self.quad_on_screen(index, quad, offset,
-                                            scaled=is_mine)
-                if where is None or not where.intersects(viewport):
+            for where in self.mark_screen_boxes(index, mark, offset):
+                if not where.intersects(viewport):
                     continue
                 painter.drawRoundedRect(where.adjusted(-1, -1, 1, 1),
                                         self.OUTLINE_RADIUS,
@@ -5031,6 +5212,152 @@ class PageCanvas(QAbstractScrollArea):
         painter.drawPath(path)
         painter.restore()
 
+    def _icon_drawing(self, icon: str, where: QRectF, colour: QColor):
+        """An icon's appearance stream as things a painter can draw.
+
+        **The same paths the file gets**, read back rather than drawn
+        again: `markup._icon_appearance` writes Reader's stream and this
+        walks it, so the icon on screen and the icon in the document
+        cannot drift. Yields ``(path, fill, stroke, width)``.
+
+        The operators are only the ones these seventeen use -- `m l c v y
+        h` for the outline, `f S B b` to paint it, `q Q cm w gs rg G` for
+        the state -- and the stream is Reader's, so the set is closed. PDF
+        counts y upward from the box's foot and Qt counts it down from the
+        top, which is the flip in `place`.
+        """
+        found = noteicons.ICONS.get(icon or "")
+        if found is None:
+            found = noteicons.ICONS[markup.DEFAULT_ICON]
+        wide, tall, body = found
+        body = body.replace(noteicons.FILL, "FILL rg")
+        sx, sy = where.width() / wide, where.height() / tall
+
+        def place(x, y, ctm):
+            at_x = ctm[0] * x + ctm[2] * y + ctm[4]
+            at_y = ctm[1] * x + ctm[3] * y + ctm[5]
+            return QPointF(where.x() + at_x * sx, where.bottom() - at_y * sy)
+
+        ctm = [1.0, 0.0, 0.0, 1.0, 0.0, 0.0]
+        fill, stroke, width, alpha = QColor(colour), None, 1.0, 1.0
+        saved, numbers, path = [], [], QPainterPath()
+        here = (0.0, 0.0)
+        for token in body.replace("[", " [ ").replace("]", " ] ").split():
+            try:
+                numbers.append(float(token))
+                continue
+            except ValueError:
+                pass
+            if token == "m" and len(numbers) >= 2:
+                here = (numbers[-2], numbers[-1])
+                path.moveTo(place(*here, ctm))
+            elif token == "l" and len(numbers) >= 2:
+                here = (numbers[-2], numbers[-1])
+                path.lineTo(place(*here, ctm))
+            elif token == "c" and len(numbers) >= 6:
+                a, b, c, d, e, f = numbers[-6:]
+                path.cubicTo(place(a, b, ctm), place(c, d, ctm),
+                             place(e, f, ctm))
+                here = (e, f)
+            elif token == "v" and len(numbers) >= 4:
+                c, d, e, f = numbers[-4:]
+                path.cubicTo(place(*here, ctm), place(c, d, ctm),
+                             place(e, f, ctm))
+                here = (e, f)
+            elif token == "y" and len(numbers) >= 4:
+                a, b, e, f = numbers[-4:]
+                path.cubicTo(place(a, b, ctm), place(e, f, ctm),
+                             place(e, f, ctm))
+                here = (e, f)
+            elif token == "h":
+                path.closeSubpath()
+            elif token == "cm" and len(numbers) >= 6:
+                a, b, c, d, e, f = numbers[-6:]
+                ctm = [a * ctm[0] + b * ctm[2], a * ctm[1] + b * ctm[3],
+                       c * ctm[0] + d * ctm[2], c * ctm[1] + d * ctm[3],
+                       e * ctm[0] + f * ctm[2] + ctm[4],
+                       e * ctm[1] + f * ctm[3] + ctm[5]]
+            elif token == "w" and numbers:
+                width = numbers[-1]
+            elif token == "q":
+                saved.append((list(ctm), QColor(fill) if fill else None,
+                              QColor(stroke) if stroke else None, width, alpha))
+            elif token == "Q" and saved:
+                ctm, fill, stroke, width, alpha = saved.pop()
+                ctm = list(ctm)
+            elif token == "gs":
+                alpha = 0.6
+            elif token == "FILL":
+                fill = QColor(colour)
+            elif token == "G" and numbers:
+                grey = int(max(0.0, min(1.0, numbers[-1])) * 255)
+                stroke = QColor(grey, grey, grey)
+            elif token == "rg" and len(numbers) >= 3:
+                fill = QColor.fromRgbF(*[max(0.0, min(1.0, v))
+                                         for v in numbers[-3:]])
+            elif token in ("f", "S", "B", "b"):
+                if token == "b":
+                    path.closeSubpath()
+                shown = QColor(fill) if fill else None
+                drawn = QColor(stroke) if stroke else None
+                if shown is not None:
+                    shown.setAlphaF(shown.alphaF() * alpha)
+                if drawn is not None:
+                    drawn.setAlphaF(drawn.alphaF() * alpha)
+                yield (path,
+                       shown if token in ("f", "B", "b") else None,
+                       drawn if token in ("S", "B", "b") else None,
+                       max(width * (sx + sy) / 2.0, 0.6))
+                path = QPainterPath()
+            if token not in ("[", "]"):
+                numbers = []
+
+    def _note_rect_at(self, index: int, mark, corner: QPointF):
+        """``mark``'s rectangle with its icon's top left at a viewport point.
+
+        The arithmetic `icon_rect` does for a note being placed, with the
+        icon this one already has rather than the tool's. The top left
+        because that is the corner a note is anchored by, which is what a
+        drag therefore moves.
+        """
+        box = self.page_box(index)
+        height = self._layout.page_height(index)
+        if box is None or height is None:
+            return None
+        at = self._layout.point_in_page(index, self.to_document(corner))
+        # The corner alone through the frames, then the mark's own size put
+        # back on it in the space the rectangle is kept in. Carrying the size
+        # through as well would run it through the page's resize twice.
+        point = self.to_source(index, forms_module.from_displayed(
+            (at.x(), height - at.y(), at.x(), height - at.y()), box))
+        wide = mark.rect[2] - mark.rect[0]
+        tall = mark.rect[3] - mark.rect[1]
+        if wide <= 0 or tall <= 0:
+            wide, tall = markup.icon_size(
+                getattr(mark, "icon", markup.DEFAULT_ICON))
+        return markup.note_rect(point[0], point[3], wide, tall)
+
+    def _file_notes(self, index: int):
+        """The comments this page arrived with, for `_paint_marks` to draw.
+
+        Their icons only. Every other kind the file carries is still drawn by
+        the renderer, and so were these until `markup.blank_note_icons` began
+        emptying them out of the document being shown -- which it does so
+        that one glyph answers for every comment, saved or not.
+
+        **Replies are not among them.** A reply is a `/Text` like the mark
+        it answers and carries `/F` the same way, so it reaches here and
+        has to be turned away: it is seen in the thread, not on the paper.
+        Measured on `corpus/Markup Highlight.pdf`, whose three visible
+        `/Text` annotations are three replies to one highlight -- drawn,
+        they are three icons on a page that should show none.
+        """
+        try:
+            return [m for m in self._file_marks.visible(index + 1)
+                    if m.subtype == markup.TEXT and not m.is_reply()]
+        except Exception:       # noqa: BLE001 - a repaint must not fail
+            return []
+
     def _paint_note(self, painter, index: int, mark, colour) -> None:
         """Draw a sticky note's icon: a balloon, at a size the zoom sets.
 
@@ -5043,34 +5370,81 @@ class PageCanvas(QAbstractScrollArea):
         where = self.note_icon_rect(index, mark)
         if where is None:
             return
+        drag = self._dragging_note
+        if drag is not None and drag[4] and drag[1] is mark:
+            # Shown where the pointer has taken it, not where the file still
+            # says it is: the mark is not rewritten until the button comes up,
+            # so that letting go outside the page costs nothing.
+            where = QRectF(drag[3] - drag[2], where.size())
         if not where.intersects(QRectF(self.viewport().rect())):
             return
         painter.save()
         painter.setRenderHint(QPainter.Antialiasing, True)
-        painter.setBrush(colour)
-        pen = QPen(QColor(90, 70, 20))
-        pen.setWidthF(max(1.0, where.width() / 16.0))
-        painter.setPen(pen)
-        # The balloon, with room under it for the tail.
-        body = QRectF(where.x(), where.y(), where.width(), where.height() * 0.78)
-        painter.drawRoundedRect(body, where.width() * 0.18,
-                                where.width() * 0.18)
-        tail = QPolygonF([
-            QPointF(body.left() + body.width() * 0.22, body.bottom() - 1),
-            QPointF(body.left() + body.width() * 0.22, where.bottom()),
-            QPointF(body.left() + body.width() * 0.50, body.bottom() - 1)])
-        painter.setPen(Qt.NoPen)
-        painter.drawPolygon(tail)
-        # Two lines of writing in it, which is what says "a note" rather than
-        # "a shape" at the size this is drawn.
-        pen = QPen(QColor(90, 70, 20))
-        pen.setWidthF(max(0.8, where.width() / 18.0))
-        painter.setPen(pen)
-        for fraction in (0.34, 0.58):
-            y = body.top() + body.height() * fraction
-            painter.drawLine(QPointF(body.left() + body.width() * 0.22, y),
-                             QPointF(body.right() - body.width() * 0.22, y))
+        icon = getattr(mark, "icon", markup.DEFAULT_ICON)
+        if icon == markup.DEFAULT_ICON:
+            self._paint_balloon(painter, where, colour)
+            painter.restore()
+            return
+        for path, fill, stroke, width in self._icon_drawing(
+                icon, where, colour):
+            painter.setBrush(fill if fill is not None else Qt.NoBrush)
+            if stroke is None:
+                painter.setPen(Qt.NoPen)
+            else:
+                pen = QPen(stroke)
+                pen.setWidthF(width)
+                pen.setJoinStyle(Qt.RoundJoin)
+                painter.setPen(pen)
+            painter.drawPath(path)
         painter.restore()
+
+    def _paint_balloon(self, painter, where, colour) -> None:
+        """A comment's icon: the balloon Reader shows, not the square it writes.
+
+        Measured off Reader rather than drawn to taste. The silhouette is a
+        circle of the whole box except its bottom right quadrant, which stays
+        square and is what makes the shape a speech bubble; inside it are two
+        white bars, the upper longer than the lower, at `markup.BALLOON_BARS`.
+
+        Reader puts one picture in `/AP` -- a square carrying a white bubble --
+        and draws this one instead, for this icon alone and no other. Drawing
+        what it draws is also why `/Text` is kept out of the page render: a
+        comment has to look the same before a save and after one.
+        """
+        scale = markup.BALLOON_SCALE
+        painter.save()
+        painter.setRenderHint(QPainter.Antialiasing, True)
+        painter.setPen(Qt.NoPen)
+        painter.setBrush(colour)
+        # Inside the box rather than filling it, which is where Reader puts
+        # it. The box stays what is clicked and dragged.
+        where = QRectF(where.center().x() - where.width() * scale / 2.0,
+                       where.center().y() - where.height() * scale / 2.0,
+                       where.width() * scale, where.height() * scale)
+        painter.drawPath(self._balloon_path(where))
+        painter.setBrush(QColor(255, 255, 255))
+        for left, top, wide, tall in markup.BALLOON_BARS:
+            painter.drawRect(QRectF(where.x() + left * where.width(),
+                                    where.y() + top * where.height(),
+                                    wide * where.width(),
+                                    tall * where.height()))
+        painter.restore()
+
+    @staticmethod
+    def _balloon_path(where: QRectF) -> QPainterPath:
+        """The balloon's outline: a circle with one corner left square.
+
+        Qt measures an arc anticlockwise from three o'clock, so the sweep runs
+        from six round through nine and twelve to three, and the quadrant it
+        leaves out is closed by the two straight lines that make the tail.
+        """
+        path = QPainterPath()
+        path.arcMoveTo(where, 270.0)
+        path.arcTo(where, 270.0, -270.0)
+        path.lineTo(where.right(), where.bottom())
+        path.lineTo(where.center().x(), where.bottom())
+        path.closeSubpath()
+        return path
 
     def _paint_marking(self, painter) -> None:
         """The rectangle being dragged out, while a markup tool is in use.

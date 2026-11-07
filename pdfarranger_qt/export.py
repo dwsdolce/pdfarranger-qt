@@ -927,13 +927,17 @@ def export_doc(pdf_input, pages, mdata, files_out, quit_flag=None,
                test_mode=False, output_password=None, with_outlines=False,
                options: "SaveOptions" = None, source_names=None, outline=None,
                prune_outline=False, form_values=None, annotations=None,
-               mark_edits=None):
+               mark_edits=None, hide_notes=False):
     """Same as export() but taking already-opened pikepdf.Pdf objects.
 
     ``outline`` is the document's own bookmark tree. When given it is
     written as it stands, which is what makes a bookmark edit survive a save;
     without it the outline is rebuilt from the source files as it always was, so
     every caller that has no such tree behaves exactly as before.
+
+    ``hide_notes`` empties every comment icon's appearance so the renderer
+    leaves it to the canvas. Only read mode asks for it; it must never reach
+    a save.
     """
     pdf_output = pikepdf.Pdf.new()
     max_version = get_max_pdf_version([pdf_output, *pdf_input])
@@ -956,6 +960,10 @@ def export_doc(pdf_input, pages, mdata, files_out, quit_flag=None,
     # pages: these are changes to what was already there, so there has to be
     # something there to change.
     _edit_annotations(pdf_output, pages, mark_edits)
+    # For the reader's own copy only. The canvas draws every comment's icon
+    # itself, so the renderer must not draw one underneath it.
+    if hide_notes:
+        markup.blank_note_icons(pdf_output)
     # Last of all, because it indexes the annotations that actually arrived:
     # a signature taken out above must not leave an /OBJR naming it, and a
     # mark added above has no structure and should gain none.
@@ -1053,7 +1061,8 @@ def _open_inputs(files, pages) -> List[Optional[pikepdf.Pdf]]:
 
 def get_in_memory_pdf(pages: List[Page], files: List[Tuple[str, str]],
                       outlines: bool = False,
-                      source_names: Optional[List[str]] = None) -> bytes:
+                      source_names: Optional[List[str]] = None,
+                      hide_notes: bool = False) -> bytes:
     """Render ``pages`` to a PDF in memory, with all their edits applied.
 
     Several features need to look at the *result* of the edits rather than the
@@ -1068,7 +1077,7 @@ def get_in_memory_pdf(pages: List[Page], files: List[Tuple[str, str]],
     buf = io.BytesIO()
     try:
         export_doc(pdf_input, pages, {}, [buf], None, with_outlines=outlines,
-                   source_names=source_names)
+                   source_names=source_names, hide_notes=hide_notes)
     finally:
         for pdf in pdf_input:
             if pdf is not None:

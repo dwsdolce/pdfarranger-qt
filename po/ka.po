@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  pdfarranger\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-06 22:22+0000\n"
+"POT-Creation-Date: 2026-11-07 07:46+0000\n"
 "PO-Revision-Date: 2026-01-21 05:07+0100\n"
 "Last-Translator: Ekaterine Papava <papava.e@gtu.ge>\n"
 "Language: ka\n"
@@ -2126,6 +2126,11 @@ msgstr "ნიშნის ზომის შეცვლა"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
+msgid "Move Mark"
+msgstr "ნიშნის გადატანა"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
 msgid "Set Status"
 msgstr "სტატუსის დაყენება"
 
@@ -2146,6 +2151,92 @@ msgstr "სწორი"
 #: pdfarranger_qt/mainwindow.py
 msgid "Squiggly"
 msgstr "ტალღოვანი"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Check"
+msgstr "მონიშვნა"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Checkmark"
+msgstr "მონიშვნის ნიშანი"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py pdfarranger_qt/tools.py
+msgid "Circle"
+msgstr "წრე"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py pdfarranger_qt/properties.py
+#: pdfarranger_qt/tools.py
+msgid "Comment"
+msgstr "კომენტარი"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Cross"
+msgstr "ჯვარი"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Cross Hairs"
+msgstr "სამიზნე"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Help"
+msgstr "დახმარება"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Insert Text"
+msgstr "ტექსტის ჩასმა"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Key"
+msgstr "გასაღები"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "New Paragraph"
+msgstr "ახალი აბზაცი"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Text Note"
+msgstr "ტექსტური შენიშვნა"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Paragraph"
+msgstr "აბზაცი"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Right Arrow"
+msgstr "ისარი მარჯვნივ"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Right Pointer"
+msgstr "მაჩვენებელი მარჯვნივ"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Star"
+msgstr "ვარსკვლავი"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Up Arrow"
+msgstr "ისარი ზემოთ"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Up-Left Arrow"
+msgstr "ისარი ზემოთ-მარცხნივ"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
@@ -2870,6 +2961,11 @@ msgstr "ფორმატირების მოცილება"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/notepanel.py
+msgid "Add a reply"
+msgstr "პასუხის დამატება"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/notepanel.py
 msgid "Post"
 msgstr "გაგზავნა"
 
@@ -2913,11 +3009,6 @@ msgstr "გამოკვეთა"
 msgid "Strikethrough"
 msgstr "გადახაზვა"
 
-# machine translation, unreviewed
-#: pdfarranger_qt/properties.py pdfarranger_qt/tools.py
-msgid "Comment"
-msgstr "კომენტარი"
-
 #: pdfarranger_qt/properties.py
 msgid "Review History"
 msgstr "გადახედვის ისტორია"
@@ -2929,6 +3020,11 @@ msgstr "ჩაკეტილი"
 #: pdfarranger_qt/properties.py
 msgid "Make Properties Default"
 msgstr "თვისებების ნაგულისხმევად დაყენება"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Icon"
+msgstr "ხატულა"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/properties.py pdfarranger_qt/reader.py
@@ -3188,11 +3284,6 @@ msgstr "ისარი"
 #: pdfarranger_qt/tools.py
 msgid "Rectangle"
 msgstr "მართკუთხედი"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/tools.py
-msgid "Circle"
-msgstr "წრე"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/tools.py
@@ -3721,4 +3812,8 @@ msgstr "ფაილის სახელის ნაცვლად სათ
 # machine translation, unreviewed
 #~ msgid "Cross-Out"
 #~ msgstr "გადახაზვა"
+
+# machine translation, unreviewed
+#~ msgid "Grows with the page"
+#~ msgstr "იზრდება გვერდთან ერთად"
 

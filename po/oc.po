@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-06 22:22+0000\n"
+"POT-Creation-Date: 2026-11-07 07:46+0000\n"
 "PO-Revision-Date: 2026-02-15 15:16+0100\n"
 "Last-Translator: Quentin PAGÈS\n"
 "Language: oc\n"
@@ -2136,6 +2136,11 @@ msgstr "Redimensionar la marca"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
+msgid "Move Mark"
+msgstr "Desplaçar la marca"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
 msgid "Set Status"
 msgstr "Definir l'estat"
 
@@ -2156,6 +2161,92 @@ msgstr "Drech"
 #: pdfarranger_qt/mainwindow.py
 msgid "Squiggly"
 msgstr "Ondulat"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Check"
+msgstr "Marca"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Checkmark"
+msgstr "Marca de verificacion"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py pdfarranger_qt/tools.py
+msgid "Circle"
+msgstr "Cercle"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py pdfarranger_qt/properties.py
+#: pdfarranger_qt/tools.py
+msgid "Comment"
+msgstr "Comentari"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Cross"
+msgstr "Crotz"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Cross Hairs"
+msgstr "Punt de mira"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Help"
+msgstr "Ajuda"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Insert Text"
+msgstr "Inserir de tèxte"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Key"
+msgstr "Clau"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "New Paragraph"
+msgstr "Paragraf novèl"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Text Note"
+msgstr "Nòta de tèxte"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Paragraph"
+msgstr "Paragraf"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Right Arrow"
+msgstr "Sageta drecha"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Right Pointer"
+msgstr "Puntador drech"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Star"
+msgstr "Estela"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Up Arrow"
+msgstr "Sageta amont"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Up-Left Arrow"
+msgstr "Sageta amont esquèrra"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
@@ -2886,6 +2977,11 @@ msgstr "Escafar la mesa en forma"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/notepanel.py
+msgid "Add a reply"
+msgstr "Apondre una responsa"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/notepanel.py
 msgid "Post"
 msgstr "Publicar"
 
@@ -2929,11 +3025,6 @@ msgstr "Suslinhar"
 msgid "Strikethrough"
 msgstr "Raiat"
 
-# machine translation, unreviewed
-#: pdfarranger_qt/properties.py pdfarranger_qt/tools.py
-msgid "Comment"
-msgstr "Comentari"
-
 #: pdfarranger_qt/properties.py
 msgid "Review History"
 msgstr "Istoric de revision"
@@ -2945,6 +3036,11 @@ msgstr "Varrolhat"
 #: pdfarranger_qt/properties.py
 msgid "Make Properties Default"
 msgstr "Definir las proprietats per defaut"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Icon"
+msgstr "Icòna"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/properties.py pdfarranger_qt/reader.py
@@ -3204,11 +3300,6 @@ msgstr "Sageta"
 #: pdfarranger_qt/tools.py
 msgid "Rectangle"
 msgstr "Rectangle"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/tools.py
-msgid "Circle"
-msgstr "Cercle"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/tools.py
@@ -3753,4 +3844,8 @@ msgstr "Mostrar lo títol puslèu que lo nom del fichièr"
 # machine translation, unreviewed
 #~ msgid "Cross-Out"
 #~ msgstr "Raiat"
+
+# machine translation, unreviewed
+#~ msgid "Grows with the page"
+#~ msgstr "Creis amb la pagina"
 

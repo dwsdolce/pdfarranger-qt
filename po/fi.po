@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  pdfarranger\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-06 22:22+0000\n"
+"POT-Creation-Date: 2026-11-07 07:46+0000\n"
 "PO-Revision-Date: 2024-03-24 19:16+0200\n"
 "Last-Translator: \n"
 "Language: fi\n"
@@ -2160,6 +2160,11 @@ msgstr "Muuta merkinnän kokoa"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
+msgid "Move Mark"
+msgstr "Siirrä merkintää"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
 msgid "Set Status"
 msgstr "Aseta tila"
 
@@ -2180,6 +2185,92 @@ msgstr "Suora"
 #: pdfarranger_qt/mainwindow.py
 msgid "Squiggly"
 msgstr "Aaltoileva"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Check"
+msgstr "Valinta"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Checkmark"
+msgstr "Valintamerkki"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py pdfarranger_qt/tools.py
+msgid "Circle"
+msgstr "Ympyrä"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py pdfarranger_qt/properties.py
+#: pdfarranger_qt/tools.py
+msgid "Comment"
+msgstr "Kommentti"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Cross"
+msgstr "Risti"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Cross Hairs"
+msgstr "Ristikko"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Help"
+msgstr "Ohje"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Insert Text"
+msgstr "Lisää tekstiä"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Key"
+msgstr "Avain"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "New Paragraph"
+msgstr "Uusi kappale"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Text Note"
+msgstr "Tekstimuistiinpano"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Paragraph"
+msgstr "Kappale"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Right Arrow"
+msgstr "Nuoli oikealle"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Right Pointer"
+msgstr "Osoitin oikealle"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Star"
+msgstr "Tähti"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Up Arrow"
+msgstr "Nuoli ylös"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Up-Left Arrow"
+msgstr "Nuoli ylävasemmalle"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
@@ -2911,6 +3002,11 @@ msgstr "Poista muotoilu"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/notepanel.py
+msgid "Add a reply"
+msgstr "Lisää vastaus"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/notepanel.py
 msgid "Post"
 msgstr "Lähetä"
 
@@ -2954,11 +3050,6 @@ msgstr "Korostus"
 msgid "Strikethrough"
 msgstr "Yliviivaus"
 
-# machine translation, unreviewed
-#: pdfarranger_qt/properties.py pdfarranger_qt/tools.py
-msgid "Comment"
-msgstr "Kommentti"
-
 #: pdfarranger_qt/properties.py
 msgid "Review History"
 msgstr "Tarkistushistoria"
@@ -2970,6 +3061,11 @@ msgstr "Lukittu"
 #: pdfarranger_qt/properties.py
 msgid "Make Properties Default"
 msgstr "Aseta ominaisuudet oletukseksi"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Icon"
+msgstr "Kuvake"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/properties.py pdfarranger_qt/reader.py
@@ -3229,11 +3325,6 @@ msgstr "Nuoli"
 #: pdfarranger_qt/tools.py
 msgid "Rectangle"
 msgstr "Suorakulmio"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/tools.py
-msgid "Circle"
-msgstr "Ympyrä"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/tools.py
@@ -3731,4 +3822,8 @@ msgstr "Näytä otsikko tiedostonimen sijaan"
 # machine translation, unreviewed
 #~ msgid "Cross-Out"
 #~ msgstr "Yliviivaus"
+
+# machine translation, unreviewed
+#~ msgid "Grows with the page"
+#~ msgstr "Kasvaa sivun mukana"
 

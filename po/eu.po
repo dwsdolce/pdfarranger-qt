@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-06 22:22+0000\n"
+"POT-Creation-Date: 2026-11-07 07:46+0000\n"
 "PO-Revision-Date: 2023-01-19 20:27+0100\n"
 "Last-Translator: alexgabi\n"
 "Language: eu\n"
@@ -2187,6 +2187,11 @@ msgstr "Aldatu markaren tamaina"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
+msgid "Move Mark"
+msgstr "Mugitu marka"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
 msgid "Set Status"
 msgstr "Ezarri egoera"
 
@@ -2207,6 +2212,92 @@ msgstr "Zuzena"
 #: pdfarranger_qt/mainwindow.py
 msgid "Squiggly"
 msgstr "Uhindua"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Check"
+msgstr "Marka"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Checkmark"
+msgstr "Egiaztapen-marka"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py pdfarranger_qt/tools.py
+msgid "Circle"
+msgstr "Zirkulua"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py pdfarranger_qt/properties.py
+#: pdfarranger_qt/tools.py
+msgid "Comment"
+msgstr "Iruzkina"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Cross"
+msgstr "Gurutzea"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Cross Hairs"
+msgstr "Gurutzaguneak"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Help"
+msgstr "Laguntza"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Insert Text"
+msgstr "Txertatu testua"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Key"
+msgstr "Giltza"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "New Paragraph"
+msgstr "Paragrafo berria"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Text Note"
+msgstr "Testu-oharra"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Paragraph"
+msgstr "Paragrafoa"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Right Arrow"
+msgstr "Eskuinera gezia"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Right Pointer"
+msgstr "Eskuineko erakuslea"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Star"
+msgstr "Izarra"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Up Arrow"
+msgstr "Gorako gezia"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Up-Left Arrow"
+msgstr "Goi-ezkerreko gezia"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
@@ -2936,6 +3027,11 @@ msgstr "Garbitu formatua"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/notepanel.py
+msgid "Add a reply"
+msgstr "Gehitu erantzun bat"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/notepanel.py
 msgid "Post"
 msgstr "Bidali"
 
@@ -2979,11 +3075,6 @@ msgstr "Nabarmendu"
 msgid "Strikethrough"
 msgstr "Marratua"
 
-# machine translation, unreviewed
-#: pdfarranger_qt/properties.py pdfarranger_qt/tools.py
-msgid "Comment"
-msgstr "Iruzkina"
-
 #: pdfarranger_qt/properties.py
 msgid "Review History"
 msgstr "Berrikuspen-historia"
@@ -2995,6 +3086,11 @@ msgstr "Blokeatuta"
 #: pdfarranger_qt/properties.py
 msgid "Make Properties Default"
 msgstr "Ezarri propietateak lehenetsi gisa"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Icon"
+msgstr "Ikonoa"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/properties.py pdfarranger_qt/reader.py
@@ -3256,11 +3352,6 @@ msgstr "Gezia"
 #: pdfarranger_qt/tools.py
 msgid "Rectangle"
 msgstr "Laukizuzena"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/tools.py
-msgid "Circle"
-msgstr "Zirkulua"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/tools.py
@@ -3764,4 +3855,8 @@ msgstr "Erakutsi izenburua fitxategi-izenaren ordez"
 # machine translation, unreviewed
 #~ msgid "Cross-Out"
 #~ msgstr "Marratua"
+
+# machine translation, unreviewed
+#~ msgid "Grows with the page"
+#~ msgstr "Orriarekin handitzen da"
 

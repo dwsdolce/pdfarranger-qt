@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PDF-Shuffler 0.7\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-06 22:22+0000\n"
+"POT-Creation-Date: 2026-11-07 07:46+0000\n"
 "PO-Revision-Date: 2025-05-26 10:43+0200\n"
 "Last-Translator: Heimen Stoffels <vistausss@fastmail.com>\n"
 "Language: nl\n"
@@ -2166,6 +2166,11 @@ msgstr "Markeringsgrootte wijzigen"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
+msgid "Move Mark"
+msgstr "Markering verplaatsen"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
 msgid "Set Status"
 msgstr "Status instellen"
 
@@ -2186,6 +2191,92 @@ msgstr "Recht"
 #: pdfarranger_qt/mainwindow.py
 msgid "Squiggly"
 msgstr "Golvend"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Check"
+msgstr "Vinkje"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Checkmark"
+msgstr "Vinkteken"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py pdfarranger_qt/tools.py
+msgid "Circle"
+msgstr "Cirkel"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py pdfarranger_qt/properties.py
+#: pdfarranger_qt/tools.py
+msgid "Comment"
+msgstr "Opmerking"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Cross"
+msgstr "Kruis"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Cross Hairs"
+msgstr "Draadkruis"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Help"
+msgstr "Help"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Insert Text"
+msgstr "Tekst invoegen"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Key"
+msgstr "Sleutel"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "New Paragraph"
+msgstr "Nieuwe alinea"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Text Note"
+msgstr "Tekstnotitie"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Paragraph"
+msgstr "Alinea"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Right Arrow"
+msgstr "Pijl rechts"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Right Pointer"
+msgstr "Aanwijzer rechts"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Star"
+msgstr "Ster"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Up Arrow"
+msgstr "Pijl omhoog"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Up-Left Arrow"
+msgstr "Pijl linksboven"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
@@ -2918,6 +3009,11 @@ msgstr "Opmaak wissen"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/notepanel.py
+msgid "Add a reply"
+msgstr "Antwoord toevoegen"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/notepanel.py
 msgid "Post"
 msgstr "Plaatsen"
 
@@ -2961,11 +3057,6 @@ msgstr "Markeren"
 msgid "Strikethrough"
 msgstr "Doorhalen"
 
-# machine translation, unreviewed
-#: pdfarranger_qt/properties.py pdfarranger_qt/tools.py
-msgid "Comment"
-msgstr "Opmerking"
-
 #: pdfarranger_qt/properties.py
 msgid "Review History"
 msgstr "Revisiegeschiedenis"
@@ -2977,6 +3068,11 @@ msgstr "Vergrendeld"
 #: pdfarranger_qt/properties.py
 msgid "Make Properties Default"
 msgstr "Eigenschappen als standaard instellen"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Icon"
+msgstr "Pictogram"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/properties.py pdfarranger_qt/reader.py
@@ -3236,11 +3332,6 @@ msgstr "Pijl"
 #: pdfarranger_qt/tools.py
 msgid "Rectangle"
 msgstr "Rechthoek"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/tools.py
-msgid "Circle"
-msgstr "Cirkel"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/tools.py
@@ -3761,4 +3852,8 @@ msgstr "De titel tonen in plaats van de bestandsnaam"
 # machine translation, unreviewed
 #~ msgid "Cross-Out"
 #~ msgstr "Doorhalen"
+
+# machine translation, unreviewed
+#~ msgid "Grows with the page"
+#~ msgstr "Groeit mee met de pagina"
 

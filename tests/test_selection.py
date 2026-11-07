@@ -31,6 +31,8 @@ import unittest
 
 from support import FIXTURES, settle
 
+from pdfarranger_qt import markup
+
 PDF = os.path.join(FIXTURES, "markup.pdf")
 
 #: A highlight Acrobat wrote, carrying a note with a reply and a status
@@ -86,6 +88,27 @@ class SelectionCase(unittest.TestCase):
     def tearDown(self):
         self.win.modified = False
         self.win.close()
+
+    def an_empty_spot(self, near):
+        """A viewport point below ``near`` with nothing under it.
+
+        Looked for rather than guessed at. A fixed offset down the page
+        used to be bare and is not any more: the comments a file brings
+        are selectable now, so "three hundred pixels down" can land on
+        one and a test for letting go finds it has taken hold instead.
+        """
+        from PySide6.QtCore import QPointF
+
+        rect = self.canvas.viewport().rect()
+        for down in range(40, rect.height(), 20):
+            point = QPointF(near.x(), near.y() + down)
+            if not rect.contains(point.toPoint()):
+                break
+            if (self.canvas.mark_at(point) is None
+                    and self.canvas.note_at(point) is None
+                    and self.canvas.note_badge_at(point) is None):
+                return point
+        self.fail("nowhere below the mark is bare enough to click")
 
     def a_mark(self):
         """A mark on the first page, with somewhere to click on it."""
@@ -184,21 +207,40 @@ class TestWhatAClickDoes(SelectionCase):
 
     def test_an_area_tool_keeps_the_press(self):
         """A rectangle or an arrow is drawn across whatever is underneath, so
-        the mark below it is not what the press was aimed at."""
+        the mark below it is not what the press was aimed at.
+
+        **Over a mark with no icon.** A comment's icon takes the press
+        under every tool, so that a note can always be opened, and whether
+        a drawing gesture should beat that is undecided -- the drawing
+        family has no requirements written yet. Asserting either way here
+        would settle a question nobody has asked.
+        """
+        from pdfarranger_qt import markup
         from pdfarranger_qt.canvas import PageCanvas
 
-        _mark, where = self.a_mark()
-        self.canvas.set_tool(PageCanvas.DRAW)
-        self.click(where.center())
-        self.assertIsNone(self.canvas.selected_mark())
+        for mark, _mine in self.canvas.marks_on(0):
+            if getattr(mark, "subtype", None) == markup.TEXT:
+                continue
+            for box in self.canvas.mark_boxes(mark):
+                where = self.canvas.quad_on_screen(0, box, scaled=False)
+                if where is None or where.width() < 4 or where.height() < 4:
+                    continue
+                if not self.canvas.viewport().rect().contains(
+                        where.center().toPoint()):
+                    continue
+                if self.canvas.note_at(where.center()) is not None:
+                    continue
+                self.canvas.set_tool(PageCanvas.DRAW)
+                self.click(where.center())
+                self.assertIsNone(self.canvas.selected_mark())
+                return
+        self.fail("no mark without an icon is on screen to press on")
 
     def test_clicking_the_page_lets_go(self):
-        from PySide6.QtCore import QPointF
-
         _mark, where = self.a_mark()
         self.click(where.center())
         self.assertIsNotNone(self.canvas.selected_mark())
-        self.click(QPointF(where.center().x(), where.center().y() + 300))
+        self.click(self.an_empty_spot(where.center()))
         self.assertIsNone(self.canvas.selected_mark())
 
     def test_escape_lets_go(self):
@@ -212,13 +254,11 @@ class TestWhatAClickDoes(SelectionCase):
         self.assertIsNone(self.canvas.selected_mark())
 
     def test_it_says_so(self):
-        from PySide6.QtCore import QPointF
-
         seen = []
         self.canvas.mark_selected.connect(seen.append)
         _mark, where = self.a_mark()
         self.click(where.center())
-        self.click(QPointF(where.center().x(), where.center().y() + 300))
+        self.click(self.an_empty_spot(where.center()))
         self.assertEqual(seen, [True, False])
 
 
@@ -314,6 +354,89 @@ class TestAMarkIsHitByItsInk(SelectionCase):
         drawn = self.canvas.quad_on_screen(0, ink, scaled=False)
         self.assertAlmostEqual(on_screen.height() - drawn.height(),
                                2 * self.canvas.INK_TOLERANCE, places=3)
+
+
+class TestAMarkThatIsItsNote(SelectionCase):
+    """Cancelling the box costs a comment its life and costs a highlight
+    nothing. A comment *is* its note, so leaving the box empty means there
+    was no comment; a highlight stands on its own and simply ends up
+    without one. Taken from the owner on 2026-11-06.
+    """
+
+    def a_comment_on_text(self):
+        """Mark a run of words with the comment tool, as the right-click
+        entry *Add note to text* does."""
+        self.canvas.select_all_on(0)
+        settle(timeout_ms=250)
+        self.canvas.mark_the_selection(self.canvas.NOTE_ON_TEXT)
+        settle(timeout_ms=500)
+
+    def mine(self):
+        return self.win.model.annotations.for_page(
+            self.win.model.pages[0].uid)
+
+    def test_post_is_refused_until_there_is_something_to_say(self):
+        self.a_comment_on_text()
+        self.assertFalse(self.win.note_panel._post.isEnabled())
+        self.win.note_panel._editor.setPlainText("now there is")
+        settle(timeout_ms=120)
+        self.assertTrue(self.win.note_panel._post.isEnabled())
+
+    def test_cancelling_an_empty_one_takes_the_mark_with_it(self):
+        before = len(self.mine())
+        self.a_comment_on_text()
+        self.assertEqual(len(self.mine()), before + 1)
+        self.win.note_panel._cancel()
+        settle(timeout_ms=400)
+        self.assertEqual(len(self.mine()), before)
+
+    def test_and_leaves_no_step_to_undo(self):
+        """A comment nobody made is not a thing to take back."""
+        steps = self.win.model.undo.current
+        self.a_comment_on_text()
+        self.win.note_panel._cancel()
+        settle(timeout_ms=400)
+        self.assertEqual(self.win.model.undo.current, steps)
+
+    def test_one_that_said_something_stays(self):
+        before = len(self.mine())
+        self.a_comment_on_text()
+        self.win.note_panel._editor.setPlainText("something to say")
+        self.win.note_panel.post_now()
+        settle(timeout_ms=300)
+        self.win.note_panel._cancel()
+        settle(timeout_ms=400)
+        self.assertEqual(len(self.mine()), before + 1)
+        self.assertEqual(self.mine()[-1].contents, "something to say")
+
+    def test_a_highlight_is_not_its_note_and_survives(self):
+        before = len(self.mine())
+        self.canvas.select_all_on(0)
+        settle(timeout_ms=250)
+        self.canvas.mark_the_selection(self.canvas.HIGHLIGHT)
+        settle(timeout_ms=400)
+        self.win.open_note(0, self.mine()[-1])
+        settle(timeout_ms=250)
+        self.win.note_panel._cancel()
+        settle(timeout_ms=400)
+        self.assertEqual(len(self.mine()), before + 1)
+        self.assertEqual(self.mine()[-1].contents, "")
+
+    def test_choosing_the_comment_tool_marks_a_selection_at_once(self):
+        """For words either order works -- select then choose the tool, or
+        choose the tool then select. For a point it has to be the tool
+        first, there being nothing to mark until the click says where.
+        """
+        before = len(self.mine())
+        self.canvas.select_all_on(0)
+        settle(timeout_ms=250)
+        self.win.tool_strip.arm("comment")
+        settle(timeout_ms=500)
+        made = self.mine()
+        self.assertEqual(len(made), before + 1)
+        self.assertEqual(made[-1].kind, markup.HIGHLIGHT)
+        self.assertEqual((made[-1].subject, made[-1].intent),
+                         markup.COMMENT_ON_TEXT)
 
 
 class TestTheOutlineUnderThePointer(SelectionCase):
@@ -525,10 +648,16 @@ class TestAMarkThatCarriesANote(SelectionCase):
             if mine or mark.has_note():
                 continue
             with self.subTest(index=mark.index):
+                self.assertNotIn(mark, self.canvas.noted_marks(0))
                 badge = self.canvas._badge_rect(0, mark)
                 if badge is not None:
-                    self.assertIsNone(
-                        self.canvas.note_badge_at(badge.center()))
+                    # **That this mark claims no badge**, not that the spot
+                    # is empty. A badge sits off its mark's top left corner
+                    # and corners collide, so a neighbour's badge may well
+                    # lie across the same few pixels -- which says nothing
+                    # about whether this one has a note.
+                    found = self.canvas.note_badge_at(badge.center())
+                    self.assertIsNot(found[1] if found else None, mark)
 
     def test_the_counts_read_the_current_status(self):
         """A chain of Accepted then a reply then Completed is one reply and
@@ -1808,8 +1937,11 @@ class TestALockedMarkInTheWindow(SelectionCase):
         self.addCleanup(setattr, MarkProperties, "exec", original)
         self.win.show_mark_properties(0, mark)
         settle(timeout_ms=500)
+        # Without the timestamp every edit carries: asserting against the
+        # whole dictionary would be asserting against the clock.
         self.assertEqual(
-            self.win.model.mark_edits.of(self.uid(), mark.index),
+            {k: v for k, v in self.win.model.mark_edits.of(
+                self.uid(), mark.index).items() if k != "modified"},
             {"author": "Someone Else", "subject": "A subject",
              "locked": False})
 

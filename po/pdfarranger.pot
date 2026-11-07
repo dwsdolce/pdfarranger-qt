@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pdfarranger-qt VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/dwsdolce/pdfarranger-qt/issues\n"
-"POT-Creation-Date: 2026-11-06 22:22+0000\n"
+"POT-Creation-Date: 2026-11-07 07:46+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1657,6 +1657,10 @@ msgid "Resize Mark"
 msgstr ""
 
 #: pdfarranger_qt/mainwindow.py
+msgid "Move Mark"
+msgstr ""
+
+#: pdfarranger_qt/mainwindow.py
 msgid "Set Status"
 msgstr ""
 
@@ -1675,6 +1679,75 @@ msgstr ""
 
 #: pdfarranger_qt/mainwindow.py
 msgid "Squiggly"
+msgstr ""
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Check"
+msgstr ""
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Checkmark"
+msgstr ""
+
+#: pdfarranger_qt/mainwindow.py pdfarranger_qt/tools.py
+msgid "Circle"
+msgstr ""
+
+#: pdfarranger_qt/mainwindow.py pdfarranger_qt/properties.py
+#: pdfarranger_qt/tools.py
+msgid "Comment"
+msgstr ""
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Cross"
+msgstr ""
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Cross Hairs"
+msgstr ""
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Help"
+msgstr ""
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Insert Text"
+msgstr ""
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Key"
+msgstr ""
+
+#: pdfarranger_qt/mainwindow.py
+msgid "New Paragraph"
+msgstr ""
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Text Note"
+msgstr ""
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Paragraph"
+msgstr ""
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Right Arrow"
+msgstr ""
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Right Pointer"
+msgstr ""
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Star"
+msgstr ""
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Up Arrow"
+msgstr ""
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Up-Left Arrow"
 msgstr ""
 
 #: pdfarranger_qt/mainwindow.py
@@ -2283,6 +2356,10 @@ msgid "Clear Formatting"
 msgstr ""
 
 #: pdfarranger_qt/notepanel.py
+msgid "Add a reply"
+msgstr ""
+
+#: pdfarranger_qt/notepanel.py
 msgid "Post"
 msgstr ""
 
@@ -2318,10 +2395,6 @@ msgstr ""
 msgid "Strikethrough"
 msgstr ""
 
-#: pdfarranger_qt/properties.py pdfarranger_qt/tools.py
-msgid "Comment"
-msgstr ""
-
 #: pdfarranger_qt/properties.py
 msgid "Review History"
 msgstr ""
@@ -2332,6 +2405,10 @@ msgstr ""
 
 #: pdfarranger_qt/properties.py
 msgid "Make Properties Default"
+msgstr ""
+
+#: pdfarranger_qt/properties.py
+msgid "Icon"
 msgstr ""
 
 #: pdfarranger_qt/properties.py pdfarranger_qt/reader.py
@@ -2542,10 +2619,6 @@ msgstr ""
 
 #: pdfarranger_qt/tools.py
 msgid "Rectangle"
-msgstr ""
-
-#: pdfarranger_qt/tools.py
-msgid "Circle"
 msgstr ""
 
 #: pdfarranger_qt/tools.py
