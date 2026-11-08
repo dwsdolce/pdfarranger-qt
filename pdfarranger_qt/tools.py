@@ -118,7 +118,7 @@ TOOLS: List[Tool] = [
          colour='Purple'),
     # The comment tool's twin, and everything about them is shared but the
     # subtype: this one writes a `/Stamp`, which is ink on the page rather
-    # than a pin on it, so it scales with the page, resizes and turns.
+    # than a marker fixed to it, so it scales, resizes and turns.
     Tool("scalable_comment", COMMENT, N_("Add a scalable comment"),
          "comment-plus", "/Stamp with /Name, or /Highlight over words",
          colour='Purple'),

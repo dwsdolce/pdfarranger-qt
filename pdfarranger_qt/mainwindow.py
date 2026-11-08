@@ -907,17 +907,13 @@ class MainWindow(QMainWindow):
         # One mark per page, as `mark_the_selection` does. The tool stays
         # armed afterwards, for the next run of words.
         canvas = self.reader.canvas
-        if canvas.has_selection():
-            if canvas.marks_text():
-                canvas.mark_the_selection(canvas.tool())
-            elif canvas.tool() == self.CANVAS_TOOLS["comment"]:
-                # **The comment tool makes two kinds.** An icon where it
-                # is clicked, and a highlight over a run of words -- and
-                # for words either order works, so choosing it with a
-                # selection already made marks it at once. A point has to
-                # be the other way round: there is nothing to mark until
-                # the click says where.
-                canvas.mark_the_selection(markup.NOTE_ON_TEXT)
+        if canvas.has_selection() and canvas.marks_text():
+            # **The comment tool makes two kinds**, and reaches this the
+            # same way the highlighter does: it marks text, so a selection
+            # already made is marked at once and the canvas names the
+            # gesture that writes it. A point has to be the other way
+            # round -- there is nothing to mark until the click says where.
+            canvas.mark_the_selection(canvas.tool())
 
     def _canvas_tool_changed(self, tool: str) -> None:
         """Keep the strip showing what the pointer is actually doing.
@@ -1042,7 +1038,8 @@ class MainWindow(QMainWindow):
             # content and is placed by its centre: the fit to `/Rect` holds
             # the artwork's centre whatever the angle, so a stamp anchored
             # by a corner would walk across the page the first time it was
-            # turned. The pin above is the other way round, and has to be:
+            # turned. The comment mark above is the other way round, and
+            # has to be:
             # NoZoom fixes its upper left.
             page_scale = page.scale if page.scale else 1.0
             centre = (rect[0], rect[3])

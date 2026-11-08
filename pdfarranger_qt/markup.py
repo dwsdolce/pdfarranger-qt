@@ -67,7 +67,8 @@ UNDERLINE = "/Underline"
 #: own, and the two are one tool here.
 SQUIGGLY = "/Squiggly"
 
-#: A comment that is ink on the page rather than a pin on it. The same
+#: A comment that is ink on the page rather than a marker fixed to it.
+#: The same
 #: seventeen icons as a `/Text` comment and the same note, but its
 #: rectangle is ordinary geometry: it scales with the page, it resizes,
 #: and it turns. Nothing about NoZoom applies to one.
@@ -138,7 +139,8 @@ SUBJECTS = {HIGHLIGHT: "Highlight", STRIKEOUT: "Cross-Out",
             # tool -- read off `Markup Underline.pdf`, where the same words
             # were marked each way.
             UNDERLINE: "Underline", SQUIGGLY: "Underline",
-            # The scalable comment says the same as the pin. `/Subj` names
+            # A scalable comment mark says the same as a comment mark.
+            # `/Subj` names
             # what the mark *is* to the person reading the comment list,
             # and both are a sticky note there; what tells them apart is
             # the subtype, which a reader already has.
@@ -158,8 +160,8 @@ NOROTATE = 16
 
 #: Print, NoZoom and NoRotate: what Reader gives a reply, whose icon is
 #: anchored to the mark it answers rather than drawn on the paper -- and
-#: what it gives a comment's icon, for the same reason. A sticky note is a
-#: pin on the page rather than ink on it.
+#: what it gives a comment's icon, for the same reason. A sticky note is
+#: fixed to the page rather than drawn on it.
 ANCHORED = 28
 
 #: The same, with Hidden: what a status change carries. It never draws --
@@ -693,8 +695,8 @@ class Annotation:
         #: beside a comment and what Reader itself rewrites on a move.
         self.modified = modified or self.created
         #: `/Rotate`, the degrees a stamp has been turned. Zero for
-        #: everything else, which never turns: a pin holds its way up and a
-        #: run of words is at the angle the words are.
+        #: everything else, which never turns: a comment mark holds its way
+        #: up and a run of words is at the angle the words are.
         self.rotate = 0.0
 
     def touch(self) -> None:
@@ -1371,8 +1373,8 @@ def to_dictionary(pdf, annotation: Annotation, page=None) -> pikepdf.Dictionary:
         # A reply is NoZoom and NoRotate as well as Print, as Reader writes
         # them: its icon is interface furniture anchored to the mark it
         # answers, so it keeps its size when the page is zoomed or turned.
-        # **So is a comment's icon**, which is a pin on the page rather
-        # than ink on it -- unless the form was told it should scale,
+        # **So is a comment's icon**, which is fixed to the page rather
+        # than drawn on it -- unless the form was told it should scale,
         # which clears NoZoom alone and leaves the turn to NoRotate.
         F=(_flags_for(annotation) | (LOCKED if annotation.locked else 0)),
         M=pikepdf.String(annotation.modified),
@@ -2183,8 +2185,8 @@ class Mark:
         #: offer it.
         self.scales = scales
         #: `/Rotate`, how far a stamp has been turned, in degrees. Zero
-        #: for everything else: a pin holds its way up and a run of words
-        #: is at the angle the words are.
+        #: for everything else: a comment mark holds its way up and a run
+        #: of words is at the angle the words are.
         self.rotate = rotate
         #: `/Name`: the icon a comment is drawn with. Empty is Text Note,
         #: which Reader writes by leaving the key out. Not `name`, which

@@ -1011,13 +1011,24 @@ class TestAHighlightIsASelection(unittest.TestCase):
         from pdfarranger_qt.canvas import PageCanvas
 
         def yellow():
+            """Pixels that are yellow-ish and not paper.
+
+            **By the hue, not by a number.** A highlight is drawn at the
+            opacity the file will carry -- 0.4 for one made here -- so
+            yellow over white lands at a blue of 153 rather than 0, and a
+            threshold tight enough for the undimmed colour counted none of
+            it. What makes it a highlight is that blue is lower than green
+            and the paper is no longer white, at whatever strength.
+            """
             shot = QImage(self.canvas.viewport().size(), QImage.Format_RGB32)
             shot.fill(0xFFFFFFFF)
             self.canvas.viewport().render(shot)
             return sum(1 for y in range(0, shot.height(), 2)
                        for x in range(0, shot.width(), 2)
                        if shot.pixelColor(x, y).red() > 200
-                       and shot.pixelColor(x, y).blue() < 120)
+                       and shot.pixelColor(x, y).blue() < 220
+                       and shot.pixelColor(x, y).blue()
+                       < shot.pixelColor(x, y).green())
 
         self.drag_over_text(PageCanvas.HIGHLIGHT)
         self.canvas.verticalScrollBar().setValue(0)
@@ -1288,12 +1299,20 @@ class TestAStickyNoteIsPlaced(unittest.TestCase):
     def held(self):
         return self.win.model.annotations.for_page(self.win.model.pages[0].uid)
 
-    def test_the_note_tool_places_rather_than_selects(self):
+    def test_the_note_tool_marks_text_as_well_as_placing(self):
+        """It is the one tool that does both. Over words it selects, as the
+        highlighter does, and a click places its icon -- which is why it is
+        not an area tool: an area tool drags out a box, and this drags out a
+        selection or nothing at all."""
         from pdfarranger_qt.canvas import PageCanvas
 
         self.win.set_tool(PageCanvas.NOTE)
-        self.assertTrue(self.canvas.marks_area())
-        self.assertFalse(self.canvas.marks_text())
+        self.assertTrue(self.canvas.marks_text())
+        self.assertFalse(self.canvas.marks_area())
+        # And the gesture over words names the mark it makes, which is not
+        # the tool's own name: a run of words is a `/Highlight`.
+        self.assertEqual(PageCanvas.OVER_TEXT[PageCanvas.NOTE],
+                         PageCanvas.NOTE_ON_TEXT)
 
     def test_a_click_places_a_note_of_the_icon_s_size(self):
         self.place(120, 200)
@@ -1549,8 +1568,8 @@ class TestAScalableCommentIsWritten(unittest.TestCase):
     """The comment tool's twin, writing a `/Stamp`.
 
     Everything about the two is shared but the subtype, and the subtype is
-    the whole difference: a `/Text` is a pin, fixed and anchored by its top
-    left corner, while a stamp is ink on the page -- it scales, it resizes,
+    the whole difference: a `/Text` comment mark is fixed, anchored by its
+    top left corner, while a stamp is ink on the page -- it scales, resizes,
     it turns, and it is placed by its centre.
     """
 
@@ -1569,8 +1588,8 @@ class TestAScalableCommentIsWritten(unittest.TestCase):
 
     def test_it_is_page_content_and_asks_for_no_anchoring(self):
         """`/F 4`: Print and nothing else. NoZoom and NoRotate are what make
-        the other comment a pin, and the whole point of this one is that it
-        is not."""
+        a comment mark fixed to the page, and the whole point of this one
+        is that it is not."""
         _mark, entry = self.stamp()
         self.assertEqual(int(entry["/F"]), markup.PRINTABLE)
 
@@ -2584,7 +2603,7 @@ class TestTheIconACommentCarries(unittest.TestCase):
 
 class TestHowSolidlyANoteIsPinned(unittest.TestCase):
     """`/F` on a comment's icon: Print, NoZoom and NoRotate, as Reader
-    writes it -- a pin on the page rather than ink on it. Both bits are
+    writes it -- fixed to the page rather than drawn on it. Both bits are
     false when `/F` is absent, so an annotation scales and turns unless it
     is told not to."""
 

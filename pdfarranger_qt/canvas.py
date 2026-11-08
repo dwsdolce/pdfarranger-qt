@@ -2746,14 +2746,20 @@ class PageCanvas(QAbstractScrollArea):
     #: The comment tool's twin, placing a `/Stamp` instead of a `/Text`.
     #: Its gesture is the same -- a point, and then the words -- and the
     #: only difference the canvas sees is where the point goes: a stamp is
-    #: placed by its centre and a pin by its top left corner.
+    #: placed by its centre and a comment mark by its top left corner.
     STAMP = "stamp"
 
     #: Tools whose geometry is a run of *text* rather than an area. They drag
     #: out a selection, exactly as reading does, because the quadrilaterals a
     #: `/Highlight` wants are what a text selection already produces -- which
     #: is why highlighting comes before the marks that need new hit-testing.
-    TEXT_TOOLS = (HIGHLIGHT, STRIKEOUT, UNDERLINE, NOTE_ON_TEXT)
+    TEXT_TOOLS = (HIGHLIGHT, STRIKEOUT, UNDERLINE, NOTE_ON_TEXT, NOTE)
+
+    #: What a tool writes when its gesture turns out to be a run of words
+    #: rather than a point. The comment tool is the only one with two, and
+    #: the mark they make is a different subtype, so the gesture has to say
+    #: which it was.
+    OVER_TEXT = {NOTE: NOTE_ON_TEXT}
 
     #: Tools whose geometry is a point and a size of their own rather than an
     #: area dragged out. A sticky note's icon is the same size wherever it
@@ -2762,6 +2768,9 @@ class PageCanvas(QAbstractScrollArea):
     #: supplies is the centre rather than the corner. Which of the two it
     #: means is the window's business, not the canvas's: both arrive here
     #: as a point and a box of the icon's own size.
+    #:
+    #: The comment tool is in both: it marks text like the highlighter and
+    #: places a point like this, and which it did is settled on release.
     POINT_TOOLS = (NOTE, STAMP)
 
     def tool(self) -> str:
@@ -2869,7 +2878,8 @@ class PageCanvas(QAbstractScrollArea):
         if not found:
             return False
         self.marks_drawn.emit(
-            tool, [(page, list(quads)) for page, quads in found])
+            self.OVER_TEXT.get(tool, tool),
+            [(page, list(quads)) for page, quads in found])
         self.clear_selection()
         return True
 
@@ -3135,7 +3145,8 @@ class PageCanvas(QAbstractScrollArea):
                 else mark.subtype)
         if kind in (markup.TEXT, markup.STAMP):
             # Both comments, and through one call: it is the one that knows
-            # a pin holds its size and a stamp does not, and the one that
+            # a comment mark holds its size and a stamp does not, and the
+            # one that
             # knows a gesture in flight outranks what is on record.
             where = self.note_icon_rect(index, mark, offset)
             return [where] if where is not None else []
@@ -3959,9 +3970,16 @@ class PageCanvas(QAbstractScrollArea):
             self._marking = None
             self.viewport().update()
             if self._tool in self.POINT_TOOLS:
-                # Where the gesture *began*, and its own size: a note is
-                # placed rather than sized, so a drag with this tool means the
-                # same as a click at the corner it started from.
+                # **A point tool places on a click and on nothing else.**
+                # A drag is not a point: it used to leave a mark at the
+                # corner it started from, so an aimed drag made a mark
+                # nobody had aimed. Over a run of words the comment tool
+                # has something to do with the drag and this one has not,
+                # so here it means nothing at all.
+                if ((QPointF(event.position()) - start).manhattanLength()
+                        > QApplication.startDragDistance()):
+                    event.accept()
+                    return
                 placed = self.icon_rect(start)
             else:
                 placed = self.mark_rect(start, QPointF(event.position()))
@@ -4023,6 +4041,29 @@ class PageCanvas(QAbstractScrollArea):
             self._selecting = False
             event.accept()
             return
+
+        if (event.button() == Qt.LeftButton and self._tool == self.NOTE
+                and not self._selection and self._press is not None):
+            # **The comment tool's other half.** It marks text like the
+            # tools above, and a click -- a press that selected nothing and
+            # went nowhere -- places its icon instead. A drag that selected
+            # nothing is not a click and makes nothing, which is the owner's
+            # answer: over a margin or a picture there is no comment to make.
+            #
+            # At the point pressed rather than the point released, so a
+            # wobble inside the drag threshold does not move the icon.
+            here = QPointF(event.position())
+            still = ((here - self._press).manhattanLength()
+                     <= QApplication.startDragDistance())
+            at = self._press
+            self._press = None
+            self._selecting = False
+            if still:
+                placed = self.icon_rect(at)
+                if placed is not None:
+                    self.mark_drawn.emit(self._tool, placed[0], [placed[1]])
+                event.accept()
+                return
 
         if event.button() == Qt.LeftButton and self._press is not None:
             here = QPointF(event.position())
@@ -4668,6 +4709,15 @@ class PageCanvas(QAbstractScrollArea):
             if kind == markup.STAMP:
                 self._paint_stamp(painter, index, mark, colour, offset)
                 continue
+            # **At the solidity the file will show**, which the quadded
+            # marks were drawn without: a highlight of ours is written
+            # `/CA 0.4` and was painted at full strength, so it was darker
+            # on screen than in every reader that opened it afterwards.
+            # Per shape rather than as a group, which these can afford: a
+            # run of words is one rectangle per line and they do not
+            # overlap, so there is nothing for a group to protect.
+            was = painter.opacity()
+            painter.setOpacity(self._solidity(mark))
             for quad in (mark.quads or (mark.rect,)):
                 where = self.quad_on_screen(index, quad, offset)
                 if where is None:
@@ -4698,6 +4748,7 @@ class PageCanvas(QAbstractScrollArea):
                         QPainter.CompositionMode_Multiply)
                     painter.fillRect(where, colour)
                     painter.restore()
+            painter.setOpacity(was)
         painter.restore()
 
     #: The colour a selected mark is outlined in. Acrobat's, so that a
@@ -5593,6 +5644,20 @@ class PageCanvas(QAbstractScrollArea):
         except Exception:       # noqa: BLE001 - a repaint must not fail
             return []
 
+    @staticmethod
+    def _solidity(mark) -> float:
+        """How solid to draw ``mark``, as the file will have it.
+
+        **Two questions that look like one.** A mark the file brought with
+        no `/CA` is fully solid -- Reader omits the key rather than writing
+        1 -- while a mark being made here with nothing chosen is drawn at
+        its kind's starting point, which is what the export will write for
+        it. A highlight is the case that differs: 0.4 when it is ours and
+        new, 1 when a file says nothing about it.
+        """
+        return (markup.solidity(mark) if isinstance(mark, markup.Annotation)
+                else markup.opacity_of(mark))
+
     def _faded(self, painter, where, opacity, draw) -> None:
         """Run ``draw`` as **one** drawing, composited at ``opacity``.
 
@@ -5639,7 +5704,8 @@ class PageCanvas(QAbstractScrollArea):
         """Draw a scalable comment: the same glyph, as ink on the page.
 
         **It scales and it turns**, which is the whole of what separates it
-        from the pin. So the box comes from the page's own arithmetic --
+        from the comment mark. So the box comes from the page's own
+        arithmetic --
         `quad_on_screen`, the zoom and the resize included -- rather than
         from `note_icon_rect`, which holds a size still.
 
@@ -5688,7 +5754,7 @@ class PageCanvas(QAbstractScrollArea):
                     target.drawPath(path)
             target.restore()
 
-        self._faded(painter, where, getattr(mark, "opacity", None), glyph)
+        self._faded(painter, where, self._solidity(mark), glyph)
 
     def _paint_note(self, painter, index: int, mark, colour) -> None:
         """Draw a sticky note's icon: a balloon, at a size the zoom sets.
@@ -5733,7 +5799,7 @@ class PageCanvas(QAbstractScrollArea):
                 target.drawPath(path)
             target.restore()
 
-        self._faded(painter, where, getattr(mark, "opacity", None), glyph)
+        self._faded(painter, where, self._solidity(mark), glyph)
 
     def _paint_balloon(self, painter, where, colour) -> None:
         """A comment's icon: the balloon Reader shows, not the square it writes.
@@ -5791,6 +5857,11 @@ class PageCanvas(QAbstractScrollArea):
         under the pointer even where that has wandered into a margin.
         """
         if self._marking is None:
+            return
+        if self._tool in self.POINT_TOOLS:
+            # Nothing is being sized, so nothing is drawn: a band that
+            # followed the pointer promised an area this tool would never
+            # make anything of.
             return
         start, current = self._marking
         band = QRectF(start, current).normalized()

@@ -98,8 +98,8 @@ properties form -- on a mark made here and on one the file brought.
 
 | Name | Text (the strip) | `/Subj` it writes | what is written | state |
 |---|---|---|---|---|
-| Comment, or Highlight | Add a comment | Sticky Note, or Comment on Text | on a point `/Text` with `/Name` the chosen icon; over a run of words `/Highlight` `/IT /HighlightNote`, `/QuadPoints`, `/CA` | the highlight half is done; the icon half makes its mark with any of the seventeen icons, keeps its size, takes a note and opens a properties form, but **cannot be selected by clicking** -- so the right-click menu does not reach it |
-| Scalable Comment, or Highlight | Add a scalable comment | Sticky Note, or Comment on Text | on a point `/Stamp` with `/Name /Comment`, `/IT` the chosen icon and an `/AP` of ours, `/CA` and the fade in the appearance; over a run of words the same `/Highlight` the comment tool writes | done |
+| Comment, or Highlight | Add a comment | Sticky Note, or Comment on Text | on a point `/Text` with `/Name` the chosen icon; over a run of words `/Highlight` `/IT /HighlightNote`, `/QuadPoints`, `/CA` | done. A comment mark is placed and not sized, which is what the scalable comment is for |
+| Scalable Comment | Add a scalable comment | Sticky Note | on a point `/Stamp` with `/Name /Comment`, `/IT` the chosen icon and an `/AP` of ours, `/CA` and the fade in the appearance. A point is all it makes | done |
 | | Insert text | Inserted Text | `/Caret` | decision 3, not started |
 | | Replace selected text | Inserted Text + Cross-Out | `/Caret` `/IT /Replace` **and** `/StrikeOut` `/IT /StrikeOutTextEdit`, joined by `/IRT` + `/RT /Group` | decision 3, not started |
 | | Add text comment | Text Box | `/FreeText` | not started |
@@ -2205,6 +2205,13 @@ the corpus on 2026-11-02: one highlight's popup reads `/Open true` with a
 `/Rect` of `[57, 556, 223, 687]`, moved into the page and resized to 166 by
 131, and both survive closing and reopening the file.
 
+**The panel wears the mark's colour.** A wash of it for the paper and
+the colour itself for the border, which is what Reader shows -- its panel
+beside a red mark is pale pink. It says which mark the note belongs to
+when several are close together, and it takes the newest reply's colour
+where there is one, as the badge does: a reply is answered in its own
+colour and the window shows what was last said.
+
 **Honoured on hover rather than on opening the page.** Hovering a mark whose
 popup is open gives the thread; hovering one whose popup is closed gives the
 one-line summary, which is the distinction Reader itself makes. Not shown
@@ -2454,6 +2461,20 @@ Text` and `/IT /HighlightNote`, which are the whole of what tells it from
 a highlight the Highlight tool made. So a subject and an intent come off
 the tool rather than off a table keyed by kind, and `Annotation` carries
 an `intent`.
+
+**Both gestures come from the tool, and for text the order is free.**
+The comment tool shows the text cursor when it is not over a mark. A
+click places the comment mark -- anywhere on the page, over text or not.
+A drag selects words and makes the comment highlight. A drag that selects
+nothing makes nothing. Text selected *before* the tool is armed makes the
+highlight at once, so for a run of words either order works, while a
+point can only be placed after the tool is chosen: there is nothing to
+mark until the click says where. The owner's notes, `corpus/Annotations.pdf`
+page 11, and the cursor from page 14.
+
+So the comment tool is the first that is both: it marks a run of text
+like the highlighter and places a point like nothing else, and which it
+did is settled on release.
 
 **Corrected 2026-11-06.** This read *"Add note to text is a tool, not a
 subtype"*, which invented one. *Add note to text* is an entry in the
@@ -2716,6 +2737,15 @@ one: where Reader's choice is visible in the file, we make the same
 choice, and a reason of our own has to be better than that before it
 wins.
 
+**It reaches the screen as well as the file.** A mark is drawn here at
+the opacity the file will carry: a highlight of ours is written `/CA 0.4`
+and was painted at full strength, so it was darker on screen than in
+every reader that opened it afterwards. The two questions differ and both
+are asked -- a mark the file brought with no `/CA` is solid, because
+Reader omits the key rather than writing 1, while a mark being made here
+with nothing chosen takes its kind's starting point, which is what the
+export will write for it.
+
 It settles the three below. It does **not** mean copying Reader
 everywhere -- decision 45 departs from it deliberately, and so does
 *Underline text* in the selection menu and *Strikethrough* in a form
@@ -2771,7 +2801,7 @@ forms -- the icon and the highlight that *Add note to text* makes.
 **49. A comment's icon keeps its size, unless the user says otherwise.**
 Reader writes `/F 28` on every one -- Print, NoZoom and NoRotate -- so the
 icon stays the same size as the page is zoomed and the same way up as the
-page is turned. A sticky note is a pin on the page rather than ink on it,
+page is turned. A sticky note is fixed to the page rather than drawn on it,
 which is the reasoning already written beside the two places this
 application uses 28 for a reply's icon and a popup's window.
 
@@ -2920,7 +2950,8 @@ chrome and belongs with however this application shows a selected mark,
 not in the glyph.
 
 **53. A comment comes in two kinds, and they are different subtypes.**
-One tool writes a pin and another writes page content, because the format
+One tool writes a marker fixed to the page and another writes page
+content, because the format
 draws that line and no flag crosses it.
 
 **The comment**, as decisions 36 to 52 describe it, is a `/Text`. It is a
@@ -3036,21 +3067,22 @@ thrown away by picking a different glyph. Derived rather than stored
 because a key of our own would be dropped by the first application that
 did not understand it, and the rectangle is preserved by all of them.
 
-**It makes a highlight too, and it is the same highlight.** The
-scalable comment is the comment tool with one difference: the point
-gesture writes a `/Stamp` where the other writes a `/Text`. Over a run of
-words there is no icon, so there is nothing for *scalable* to mean -- a
-highlight is already page content, already quads over text, already
-scaling with the page. So it writes the comment tool's highlight exactly:
-same `/Highlight`, same `/Subj Comment on Text`, same `/IT
-/HighlightNote`, same `/CA`, indistinguishable in the file.
+**It makes scalable comment marks and nothing else.** Reversed by the
+owner 2026-11-07. It had been written here that the tool would make the
+comment tool's highlight over a run of words, on the reasoning that a
+highlight is already page content and there is nothing for *scalable* to
+mean over words. True, and beside the point: a tool that makes one kind
+of mark is a tool somebody can explain, and the comment tool already
+reaches the highlight by either order. So the point gesture is the whole
+of this tool. The code never did anything else -- `STAMP` is a point
+tool and never reached the text path -- so this paragraph was the only
+place the second half existed.
 
-A `/Subj` of our own would have told the two apart. `/Subj` is free text
-in the format -- there is no controlled vocabulary and Acrobat merely
-happens to write its tool names there -- so it was allowed, and it was
-rejected anyway: it would make a file of ours differ from one of
-Acrobat's for a mark Acrobat can itself make, and buy nothing but an
-unfamiliar subject in its comment panel.
+A drag does nothing at all: it places on a click, and past the drag
+threshold the gesture is abandoned rather than treated as a click at the
+corner it began from -- which is what it used to do, so an aimed drag
+left a mark nobody had aimed. Nothing is drawn while the pointer moves
+either, since there is no area the tool could make anything of.
 
 **The two comment tools share one set of properties**, which is what makes
 that affordable. Colour, opacity, icon and the note behaviour are one
@@ -3088,7 +3120,7 @@ turned.
 
 Everything else about the two tools is shared, so this is the one place
 they visibly differ, and the difference is the one the user can already
-see: a pin has no handles and this has four.
+see: a comment mark has no handles and this has four.
 
 **Built so far**: the tool places one centred on the click at the icon's
 own size, writes it with `/F 4`, its `/Name`, an `/AP` of ours and the
@@ -3165,11 +3197,9 @@ the window closes with nothing to replace it. The icon is where this was
 noticed because an icon is nothing *but* its note, but there is one rule
 and it reads: pick up a mark, see what was said about it.
 
-Not implemented apart from closing by hand. The window is otherwise
-hidden only when its own mark is deleted or the document is closed, so
-selecting anything else leaves a thread open over a mark it no longer
-describes -- and selecting a highlight that carries a note opens
-nothing.
+Implemented 2026-11-07. Selecting another mark closes the window that
+is open and opens the new mark's, selecting a mark with no note closes it
+with nothing to replace it, and clicking the page lets go of both.
 
 ## Done
 
