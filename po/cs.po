@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  pdfarranger\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-07 08:45+0000\n"
+"POT-Creation-Date: 2026-11-07 17:59+0000\n"
 "PO-Revision-Date: 2023-07-10 15:37+0000\n"
 "Last-Translator: PavelZ\n"
 "Language: cs_CZ\n"
@@ -2146,6 +2146,11 @@ msgstr "Změnit velikost značky"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
+msgid "Reshape Mark"
+msgstr "Změnit tvar značky"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
 msgid "Move Mark"
 msgstr "Přesunout značku"
 
@@ -3034,6 +3039,11 @@ msgstr "Zvýraznění"
 #: pdfarranger_qt/properties.py pdfarranger_qt/tools.py
 msgid "Strikethrough"
 msgstr "Přeškrtnutí"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Scalable Comment"
+msgstr "Škálovatelný komentář"
 
 #: pdfarranger_qt/properties.py
 msgid "Review History"

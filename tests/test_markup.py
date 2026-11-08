@@ -1666,6 +1666,48 @@ class TestAScalableCommentIsWritten(unittest.TestCase):
                 for x, y in corners),
             "a turned stamp has a corner on the rectangle's corner")
 
+    def test_a_turn_keeps_the_size_and_a_resize_keeps_the_angle(self):
+        """The two handles say different things and neither says the
+        other's: a corner moves the ratio, the fifth moves the angle."""
+        rect = markup.stamp_rect(300.0, 500.0, "/Key", 2.5, 0.0)
+        turned = markup.stamp_rect(300.0, 500.0, "/Key", 2.5, 40.0)
+        self.assertAlmostEqual(markup.stamp_scale(turned, "/Key", 40.0), 2.5,
+                               places=9)
+        bigger = markup.stamp_rect(300.0, 500.0, "/Key", 4.0, 40.0)
+        self.assertAlmostEqual(markup.stamp_scale(bigger, "/Key", 40.0), 4.0,
+                               places=9)
+        for box in (rect, turned, bigger):
+            self.assertAlmostEqual((box[0] + box[2]) / 2, 300.0, places=9)
+            self.assertAlmostEqual((box[1] + box[3]) / 2, 500.0, places=9)
+
+    def test_changing_the_icon_keeps_the_size_it_was_given(self):
+        """A stamp pulled to twice its size stays twice the size when its
+        glyph changes. The factor is the ratio the rectangle records, and
+        the new icon's own box times that is the rectangle it should have."""
+        was = markup.stamp_rect(300.0, 500.0, "/Comment", 2.5, 20.0)
+        factor = markup.stamp_scale(was, "/Comment", 20.0)
+        now = markup.stamp_rect(300.0, 500.0, "/Key", factor, 20.0)
+        self.assertAlmostEqual(markup.stamp_scale(now, "/Key", 20.0), 2.5,
+                               places=9)
+        wide, tall = markup.icon_size("/Key")
+        self.assertNotAlmostEqual(now[2] - now[0], was[2] - was[0], places=1,
+                                  msg="a narrower glyph kept the wider box")
+        del wide, tall
+
+    def test_a_turn_is_recordable_as_an_edit(self):
+        """A stamp the file brought is reshaped through `MarkEdits`, so the
+        angle has to travel that way -- and the appearance goes with it,
+        because the matrix is the turn."""
+        edits = markup.MarkEdits()
+        edits.change(1, 0, rotate=35.0,
+                     rect=markup.stamp_rect(300.0, 500.0, "/Key", 1.0, 35.0))
+        _mark, entry = self.stamp(icon="/Key", rotate=0.0)
+        self.assertNotIn("/Rotate", entry)
+        markup.apply_edit(entry, edits.of(1, 0))
+        self.assertEqual(int(entry["/Rotate"]), 35)
+        self.assertNotIn("/AP", entry,
+                         "the drawing was kept, so it still has the old turn")
+
     def test_the_comment_icon_is_the_balloon_and_not_the_square(self):
         """Acrobat substitutes its own glyph for a `/Text` comment, so what
         this application draws there is a display rule and the file keeps
@@ -1688,7 +1730,176 @@ class TestAScalableCommentIsWritten(unittest.TestCase):
                 want = " ".join(noteicons.ICONS[icon][2].split())
                 self.assertEqual(
                     body.replace("1.0 0.0 0.0 rg", noteicons.FILL), want)
-                self.assertEqual(str(entry["/Name"]), icon)
+                # `/Name` is `/Comment` on every one of them, so that a
+                # reader takes the mark for a comment and not for a rubber
+                # stamp, and `/IT` says which icon it draws.
+                self.assertEqual(str(entry["/Name"]), "/Comment")
+                self.assertEqual(str(entry["/IT"]), icon)
+
+    def test_text_note_is_named_in_full_because_its_own_name_is_empty(self):
+        """It is the one icon written by leaving `/Name` out, so there is no
+        name to carry over and `/IT` spells it instead."""
+        _mark, entry = self.stamp(icon="")
+        self.assertEqual(str(entry["/Name"]), "/Comment")
+        self.assertEqual(str(entry["/IT"]), "/TextNote")
+
+
+class TestAScalableCommentIsReshaped(unittest.TestCase):
+    """Its five handles: four corners that scale it and one that turns it.
+
+    Both work about the centre, which is the only point the fit to `/Rect`
+    holds still, and the corners keep the aspect because one number does
+    both axes -- 12.5.5 scales x and y independently, so a rectangle whose
+    proportions do not match the artwork would skew it.
+    """
+
+    def setUp(self):
+        from pdfarranger_qt.mainwindow import MainWindow
+
+        self.win = MainWindow()
+        self.win.resize(900, 700)
+        self.win.show()
+        self.win.open_paths([TEXTED])
+        settle(timeout_ms=1000)
+        self.win.set_read_mode(True)
+        settle(timeout_ms=1200)
+        self.canvas = self.win.reader.canvas
+        self.canvas.verticalScrollBar().setValue(0)
+        settle(timeout_ms=200)
+
+    def tearDown(self):
+        self.win.modified = False
+        self.win.close()
+
+    def send(self, kind, point, buttons=None):
+        from PySide6.QtCore import QPoint, QPointF, Qt
+        from PySide6.QtGui import QMouseEvent
+
+        held = Qt.LeftButton if buttons is None else buttons
+        event = QMouseEvent(
+            kind, QPointF(point),
+            self.canvas.viewport().mapToGlobal(
+                QPoint(int(point.x()), int(point.y()))),
+            Qt.LeftButton, held, Qt.NoModifier)
+        {QMouseEvent.Type.MouseButtonPress: self.canvas.mousePressEvent,
+         QMouseEvent.Type.MouseMove: self.canvas.mouseMoveEvent,
+         QMouseEvent.Type.MouseButtonRelease:
+             self.canvas.mouseReleaseEvent}[kind](event)
+
+    def a_stamp(self):
+        """Place one, write its note, then take hold of it."""
+        from PySide6.QtCore import QPointF
+        from PySide6.QtGui import QMouseEvent
+
+        from pdfarranger_qt.canvas import PageCanvas
+
+        self.win.set_tool(PageCanvas.STAMP)
+        spot = self.canvas.to_viewport(
+            self.canvas._layout.from_page(0, QPointF(200, 300)))
+        self.send(QMouseEvent.Type.MouseButtonPress, spot)
+        self.send(QMouseEvent.Type.MouseButtonRelease, spot)
+        settle(timeout_ms=300)
+        if self.win.note_panel._editor is not None:
+            self.win.note_panel._editor.setPlainText("reshape me")
+            self.win.note_panel._post_it()
+        settle(timeout_ms=300)
+        # The pointer, because a markup tool takes the press before a
+        # handle does -- a drag with a tool armed means "make another one".
+        self.canvas.set_tool(PageCanvas.SELECT)
+        mark = self.win.model.annotations.for_page(
+            self.win.model.pages[0].uid)[0]
+        self.canvas.select_mark((0, mark))
+        settle(timeout_ms=200)
+        return mark
+
+    def shape(self, mark):
+        return (markup.stamp_scale(mark.rect, mark.icon, mark.rotate),
+                mark.rotate)
+
+    def drag(self, which, by):
+        from PySide6.QtCore import QPointF
+        from PySide6.QtGui import QMouseEvent
+
+        start = self.canvas.grips()[which].center()
+        end = QPointF(start.x() + by[0], start.y() + by[1])
+        self.send(QMouseEvent.Type.MouseButtonPress, start)
+        self.send(QMouseEvent.Type.MouseMove, end)
+        self.send(QMouseEvent.Type.MouseButtonRelease, end)
+        settle(timeout_ms=300)
+
+    def hover(self, point):
+        from PySide6.QtCore import Qt
+        from PySide6.QtGui import QMouseEvent
+
+        self.send(QMouseEvent.Type.MouseMove, point, buttons=Qt.NoButton)
+        settle(timeout_ms=100)
+        return self.canvas.viewport().cursor().shape()
+
+    def test_the_pointer_says_what_it_can_do(self):
+        """Five cases, read off Reader: away from it the text cursor, over
+        an unselected one an arrow, over a selected one a crosshair, over a
+        corner the arrow that points the way it would move, and over the
+        turning handle something curved."""
+        from PySide6.QtCore import QPointF, Qt
+
+        mark = self.a_stamp()
+        middle = self.canvas.quad_on_screen(0, mark.rect, scaled=True).center()
+
+        self.assertEqual(self.hover(middle), Qt.CrossCursor,
+                         "a stamp you have hold of should offer a crosshair")
+        corner = self.canvas.grips()[2].center()
+        self.assertIn(self.hover(corner),
+                      (Qt.SizeFDiagCursor, Qt.SizeBDiagCursor,
+                       Qt.SizeVerCursor, Qt.SizeHorCursor),
+                      "a corner should offer an arrow that resizes")
+        turn = self.canvas.grips()[4].center()
+        self.hover(turn)
+        self.assertNotIn(self.canvas.viewport().cursor().shape(),
+                         (Qt.CrossCursor, Qt.ArrowCursor, Qt.IBeamCursor),
+                         "the turning handle should offer something of its own")
+
+        self.canvas.select_mark(None)
+        settle(timeout_ms=150)
+        self.assertEqual(self.hover(middle), Qt.ArrowCursor,
+                         "a stamp nobody has hold of is a thing, not a point")
+        away = QPointF(middle.x(), middle.y() + 160)
+        self.assertNotEqual(self.hover(away), Qt.CrossCursor,
+                            "the crosshair followed the pointer off the stamp")
+
+    def test_a_selected_stamp_offers_four_corners_and_a_turn(self):
+        self.a_stamp()
+        self.assertEqual(len(self.canvas.grips()), 5)
+
+    def test_pulling_a_corner_scales_it_and_leaves_the_angle(self):
+        mark = self.a_stamp()
+        was, angle = self.shape(mark)
+        self.drag(2, (40, -40))
+        now, still = self.shape(mark)
+        self.assertGreater(now, was * 1.5, "the corner did not take hold")
+        self.assertEqual(still, angle)
+
+    def test_turning_it_keeps_the_size_it_was_given(self):
+        mark = self.a_stamp()
+        self.drag(2, (40, -40))
+        size, _angle = self.shape(mark)
+        self.drag(4, (70, 30))
+        now, turned = self.shape(mark)
+        self.assertAlmostEqual(now, size, places=6,
+                               msg="turning it changed its size")
+        self.assertNotAlmostEqual(turned, 0.0, places=1,
+                                  msg="the turn handle did not take hold")
+
+    def test_the_centre_is_what_both_handles_hold_still(self):
+        mark = self.a_stamp()
+        middle = ((mark.rect[0] + mark.rect[2]) / 2,
+                  (mark.rect[1] + mark.rect[3]) / 2)
+        for which, by in ((2, (40, -40)), (4, (70, 30)), (0, (-25, 25))):
+            with self.subTest(handle=which):
+                self.drag(which, by)
+                self.assertAlmostEqual(
+                    (mark.rect[0] + mark.rect[2]) / 2, middle[0], delta=0.5)
+                self.assertAlmostEqual(
+                    (mark.rect[1] + mark.rect[3]) / 2, middle[1], delta=0.5)
 
 
 class TestANoteLandsUnderThePointer(unittest.TestCase):

@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-07 08:45+0000\n"
+"POT-Creation-Date: 2026-11-07 17:59+0000\n"
 "PO-Revision-Date: 2022-09-01 00:40+0900\n"
 "Last-Translator: sicklylife <translation@sicklylife.jp>\n"
 "Language: ja\n"
@@ -2036,6 +2036,11 @@ msgstr "マークのサイズを変更"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
+msgid "Reshape Mark"
+msgstr "マークの形を変更"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
 msgid "Move Mark"
 msgstr "マークを移動"
 
@@ -2909,6 +2914,11 @@ msgstr "ハイライト"
 #: pdfarranger_qt/properties.py pdfarranger_qt/tools.py
 msgid "Strikethrough"
 msgstr "取り消し線"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Scalable Comment"
+msgstr "拡大縮小できるコメント"
 
 #: pdfarranger_qt/properties.py
 msgid "Review History"

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-07 08:45+0000\n"
+"POT-Creation-Date: 2026-11-07 17:59+0000\n"
 "PO-Revision-Date: 2022-10-03 23:44+0200\n"
 "Last-Translator: Ícar N. S. <icar.nin@protonmail.com>\n"
 "Language: ca\n"
@@ -2186,6 +2186,11 @@ msgstr "Redimensiona la marca"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
+msgid "Reshape Mark"
+msgstr "Remodela la marca"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
 msgid "Move Mark"
 msgstr "Mou la marca"
 
@@ -3072,6 +3077,11 @@ msgstr "Ressaltat"
 #: pdfarranger_qt/properties.py pdfarranger_qt/tools.py
 msgid "Strikethrough"
 msgstr "Ratllat"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Scalable Comment"
+msgstr "Comentari escalable"
 
 #: pdfarranger_qt/properties.py
 msgid "Review History"

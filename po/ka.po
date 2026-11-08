@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  pdfarranger\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-07 08:45+0000\n"
+"POT-Creation-Date: 2026-11-07 17:59+0000\n"
 "PO-Revision-Date: 2026-01-21 05:07+0100\n"
 "Last-Translator: Ekaterine Papava <papava.e@gtu.ge>\n"
 "Language: ka\n"
@@ -2126,6 +2126,11 @@ msgstr "ნიშნის ზომის შეცვლა"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
+msgid "Reshape Mark"
+msgstr "ნიშნის ფორმის შეცვლა"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
 msgid "Move Mark"
 msgstr "ნიშნის გადატანა"
 
@@ -3003,6 +3008,11 @@ msgstr "გამოკვეთა"
 #: pdfarranger_qt/properties.py pdfarranger_qt/tools.py
 msgid "Strikethrough"
 msgstr "გადახაზვა"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Scalable Comment"
+msgstr "მასშტაბირებადი კომენტარი"
 
 #: pdfarranger_qt/properties.py
 msgid "Review History"

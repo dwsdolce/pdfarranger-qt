@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  pdfarranger\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-07 08:45+0000\n"
+"POT-Creation-Date: 2026-11-07 17:59+0000\n"
 "PO-Revision-Date: 2026-05-24 07:36+0300\n"
 "Last-Translator: kbengs\n"
 "Language: sv\n"
@@ -2118,6 +2118,11 @@ msgstr "Ändra storlek på markering"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
+msgid "Reshape Mark"
+msgstr "Omforma markering"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
 msgid "Move Mark"
 msgstr "Flytta markering"
 
@@ -2999,6 +3004,11 @@ msgstr "Markera"
 #: pdfarranger_qt/properties.py pdfarranger_qt/tools.py
 msgid "Strikethrough"
 msgstr "Genomstruken"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Scalable Comment"
+msgstr "Skalbar kommentar"
 
 #: pdfarranger_qt/properties.py
 msgid "Review History"

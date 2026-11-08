@@ -80,10 +80,10 @@ KIND_LABELS = {
     "/Squiggly": N_("Underline"),
     "/StrikeOut": N_("Strikethrough"),
     "/Text": N_("Comment"),
-    # The scalable comment's form is headed the same, because it is the
-    # same mark to the person reading it: a comment with a note. What it
-    # writes differs; what it is does not.
-    "/Stamp": N_("Comment"),
+    # Named apart from the pin, because what you can do to it differs:
+    # this one has handles and that one does not, and a form headed the
+    # same for both would leave you guessing which you had hold of.
+    "/Stamp": N_("Scalable Comment"),
 }
 
 

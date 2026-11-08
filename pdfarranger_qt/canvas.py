@@ -63,6 +63,7 @@ from PySide6.QtCore import (
 )
 from PySide6.QtGui import (
     QColor,
+    QCursor,
     QFont,
     QImage,
     QKeySequence,
@@ -1205,6 +1206,16 @@ class PageCanvas(QAbstractScrollArea):
         #: this application did not, so a press on one can no longer open its
         #: note outright -- which gesture it was is known only on release.
         self._dragging_note = None
+        #: A stamp being reshaped, as ``(page, mark, which, centre)`` --
+        #: which handle has hold of it and the point both the scaling and
+        #: the turning happen about.
+        self._dragging_stamp = None
+        #: ``(mark, rect, rotate)`` while a comment is being dragged or
+        #: reshaped: the shape the gesture is asking for, which everything
+        #: that draws the mark reads instead of what is on record. Nothing
+        #: is written until the button comes up, so a gesture that goes
+        #: nowhere costs nothing.
+        self._shaping = None
         #: The note being shown beside the pointer, as ``(mark, point)``.
         self._note_panel = None
         #: What is selected, as ``(page, mark)``. A mark of the user's is an
@@ -2505,8 +2516,17 @@ class PageCanvas(QAbstractScrollArea):
         height = self._layout.page_height(index)
         if box is None or height is None:
             return None
+        rect, _angle = self._shape_of(mark)
+        if (mark.kind if isinstance(mark, markup.Annotation)
+                else mark.subtype) == markup.STAMP:
+            # A stamp's box is its rectangle, at the page's own scale: it
+            # is ink on the page, so none of the holding-still below
+            # applies to it.
+            return self.quad_on_screen(
+                index, rect, offset,
+                scaled=isinstance(mark, markup.Annotation))
         shown = forms_module.to_displayed(
-            markup.icon_box(self.from_source(index, mark.rect),
+            markup.icon_box(self.from_source(index, rect),
                             getattr(mark, "icon", markup.DEFAULT_ICON)), box)
         zoom = self._layout.zoom
         page = self._layout.page_rect(index)
@@ -2561,13 +2581,21 @@ class PageCanvas(QAbstractScrollArea):
         marks = [m for m in marks
                  if not markup.is_reply(m) and not markup.is_status(m)]
         marks += self._file_notes(index)
+        # And the stamps the file brought, which `_file_notes` leaves out
+        # because the renderer draws those -- they are page content. They
+        # are still comments to take hold of.
+        try:
+            marks += [m for m in self._file_marks.visible(index + 1)
+                      if m.subtype == markup.STAMP and not m.is_reply()]
+        except Exception:       # noqa: BLE001 - a click must not raise
+            pass
         # Last first: the most recently placed note is the one on top, which
         # is the one `_paint_marks` draws over the others.
         for which in range(len(marks) - 1, -1, -1):
             mark = marks[which]
             kind = (mark.kind if isinstance(mark, markup.Annotation)
                     else mark.subtype)
-            if kind != markup.TEXT:
+            if kind not in (markup.TEXT, markup.STAMP):
                 continue
             where = self.note_icon_rect(index, mark)
             if where is not None and where.contains(point):
@@ -3105,7 +3133,10 @@ class PageCanvas(QAbstractScrollArea):
         """
         kind = (mark.kind if isinstance(mark, markup.Annotation)
                 else mark.subtype)
-        if kind == markup.TEXT:
+        if kind in (markup.TEXT, markup.STAMP):
+            # Both comments, and through one call: it is the one that knows
+            # a pin holds its size and a stamp does not, and the one that
+            # knows a gesture in flight outranks what is on record.
             where = self.note_icon_rect(index, mark, offset)
             return [where] if where is not None else []
         is_mine = isinstance(mark, markup.Annotation)
@@ -3199,7 +3230,19 @@ class PageCanvas(QAbstractScrollArea):
         if self._selected is None:
             self._mark_buttons.hide()
             return
-        self._mark_buttons.show_for(self.selection_on_screen())
+        if self._shaping is not None:
+            # **Out of the way while the mark is being moved or reshaped.**
+            # The outline and the handles follow, because they say where
+            # the mark is; three buttons are not a description of the mark
+            # and chasing the pointer with them only makes them harder to
+            # aim at when you let go. Acrobat hides its own.
+            self._mark_buttons.hide()
+            return
+        # Above everything the selection shows, the turning handle
+        # included: the bar is placed over the topmost box it is given, and
+        # a stamp's fifth handle stands exactly where that put it.
+        self._mark_buttons.show_for(self.selection_on_screen()
+                                    + self.grips()[4:])
 
     def _hover_mark(self, found) -> None:
         """Note the mark under the pointer, repainting only when it changes.
@@ -3482,6 +3525,24 @@ class PageCanvas(QAbstractScrollArea):
             if moved:
                 self._dragging_note = (page, mark, grab, position, True)
                 self.viewport().setCursor(Qt.SizeAllCursor)
+                # Everything that draws this mark follows it, rather than
+                # the glyph going on ahead and its outline staying behind.
+                taken = self._note_rect_at(page, mark, position - grab)
+                if taken is not None:
+                    self._shaping = (
+                        mark, tuple(taken),
+                        float(getattr(mark, "rotate", 0.0) or 0.0))
+                    self._place_mark_buttons()
+                self.viewport().update()
+            return
+
+        if self._dragging_stamp is not None and event.buttons() & Qt.LeftButton:
+            page, mark, which, centre = self._dragging_stamp
+            shaped = self._stamp_shaped(page, mark, which, centre, position)
+            if shaped is not None and (
+                    self._shaping is None or self._shaping[1:] != shaped):
+                self._shaping = (mark, shaped[0], shaped[1])
+                self._place_mark_buttons()
                 self.viewport().update()
             return
 
@@ -3513,8 +3574,16 @@ class PageCanvas(QAbstractScrollArea):
         # A grip comes first, as it does on the press: it belongs to the
         # mark already picked up, and a comment's icon lying over it would
         # otherwise make the end of a highlight impossible to take hold of.
-        note = (None if self.grip_at(position) is not None
+        over_handle = self.grip_at(position)
+        shaped = self._shaping_cursor(over_handle)
+        if shaped is not None:
+            self.viewport().setCursor(shaped)
+            self._set_tooltip("")
+            super().mouseMoveEvent(event)
+            return
+        note = (None if over_handle is not None
                 else self.note_at(position))
+        named = False
         if note is not None:
             # Read without opening anything. A note's whole value is its text,
             # and a document covered in icons you have to click one at a time
@@ -3528,7 +3597,21 @@ class PageCanvas(QAbstractScrollArea):
             # or status, and goes away on its own. An icon used to get it
             # instead of the panel every other mark gets, because it
             # returned here.
-            self.viewport().setCursor(Qt.PointingHandCursor)
+            # **A crosshair, which is what says "this can be dragged".**
+            # The point you press is the point that lands where you let go,
+            # so the pointer names a point rather than a thing. A comment's
+            # icon shows one whenever the pointer is over it; a stamp shows
+            # one once it has been picked up, and an arrow before that --
+            # it is a thing on the page until you have hold of it.
+            holding = (self._selected is not None
+                       and self._selected[1] is note[2])
+            over_stamp = (note[2].kind
+                          if isinstance(note[2], markup.Annotation)
+                          else note[2].subtype) == markup.STAMP
+            self.viewport().setCursor(
+                Qt.ArrowCursor if over_stamp and not holding
+                else Qt.CrossCursor)
+            named = True
             self._set_tooltip(note[2].contents or _("Empty note"))
 
         # A note hanging off a highlight reads the same way. The badge is
@@ -3548,7 +3631,7 @@ class PageCanvas(QAbstractScrollArea):
         over_grip = self.grip_at(position) is not None
         found = None if self._text_through else self.mark_at(position)
         over_mark = not self._text_through and (over_grip or found is not None)
-        if over_mark and not (event.buttons() & Qt.LeftButton):
+        if over_mark and not named and not (event.buttons() & Qt.LeftButton):
             # **An arrow only where the mark covers the words.** Over a
             # highlight there is no text left uncovered, so the pointer
             # says "this is a thing". Over a cross-out or an underline the
@@ -3602,7 +3685,13 @@ class PageCanvas(QAbstractScrollArea):
             return
 
         link = self.link_at(position)
-        if link is not None:
+        if named:
+            # A comment under the pointer already said what the cursor
+            # should be, and it is not the text underneath it: setting one
+            # here would undo that, which is how the crosshair over a
+            # comment came and went within the same mouse move.
+            pass
+        elif link is not None:
             self.viewport().setCursor(Qt.PointingHandCursor)
         else:
             found = self.to_page(position)
@@ -3610,8 +3699,65 @@ class PageCanvas(QAbstractScrollArea):
                 self.viewport().setCursor(Qt.IBeamCursor)
             else:
                 self.viewport().unsetCursor()
-        self._set_tooltip(self.link_description(link))
+        if not named:
+            self._set_tooltip(self.link_description(link))
         super().mouseMoveEvent(event)
+
+    #: The eight compass directions a resize handle can point, and the
+    #: cursor for each. A turned stamp's corners land between them, so the
+    #: nearest is used -- which is what Acrobat does, there being only four
+    #: resize cursors to choose from.
+    SHAPING_CURSORS = (Qt.SizeHorCursor, Qt.SizeBDiagCursor,
+                       Qt.SizeVerCursor, Qt.SizeFDiagCursor)
+
+    def _shaping_cursor(self, which):
+        """The cursor for a stamp's handle, or None if that is not what it is.
+
+        A corner gets the arrow that points the way it would move: the
+        handle's direction from the centre, rounded to the nearest of the
+        four Qt offers. The turning handle gets a curved arrow, which Qt
+        has none of, so one is drawn from the icon set the toolbar uses.
+        """
+        if which is None or self._selected is None:
+            return None
+        index, mark = self._selected
+        if (mark.kind if isinstance(mark, markup.Annotation)
+                else mark.subtype) != markup.STAMP:
+            return None
+        if which == 4:
+            return self._turning_cursor()
+        handles = self.grips()
+        if which >= len(handles):
+            return None
+        middle = QPointF(
+            sum(h.center().x() for h in handles[:4]) / 4.0,
+            sum(h.center().y() for h in handles[:4]) / 4.0)
+        away = handles[which].center() - middle
+        # Screen y runs down, so the angle is negated to read as compass
+        # bearings do, and eighths of a turn are what the four cursors cut
+        # the circle into.
+        eighth = round(math.degrees(math.atan2(-away.y(), away.x())) / 45.0)
+        return self.SHAPING_CURSORS[eighth % 4]
+
+    def _turning_cursor(self):
+        """A curved arrow, drawn once and kept.
+
+        Qt has no cursor for turning something, so one is rendered from the
+        same icon set the tool strip draws from rather than hand-drawn.
+        """
+        if getattr(self, "_turn_cursor", None) is None:
+            try:
+                import qtawesome
+
+                pixmap = qtawesome.icon(
+                    "mdi.rotate-right",
+                    color=QColor(20, 20, 20)).pixmap(24, 24)
+                self._turn_cursor = QCursor(pixmap, 12, 12)
+            except Exception:  # noqa: BLE001 - a cursor must not fail
+                # Nothing curved to be had: the open hand at least says
+                # "take hold of this", which is nearer than an arrow.
+                self._turn_cursor = QCursor(Qt.OpenHandCursor)
+        return self._turn_cursor
 
     def _set_tooltip(self, text: str) -> None:
         """Set the viewport's tooltip, and only when it changes.
@@ -3658,7 +3804,12 @@ class PageCanvas(QAbstractScrollArea):
             # A press anywhere else ends the edit, as clicking away from a
             # field does in any form.
             self.finish_editing()
-            note = self.note_at(position)
+            # A handle first, as on the move: it belongs to the mark that
+            # is already held, and a stamp's handles sit on top of its own
+            # body -- so without this, grabbing one drags the whole stamp
+            # instead of reshaping it.
+            note = (None if self.grip_at(position) is not None
+                    else self.note_at(position))
             if note is not None:
                 # Taken, but not yet acted on. An icon that says "there is a
                 # note here" has to open it, or the note is write-only -- and
@@ -3671,19 +3822,26 @@ class PageCanvas(QAbstractScrollArea):
                 self._dragging_note = (note[0], note[2], grab, position, False)
                 event.accept()
                 return
-            if self.marks_area():
-                # Only here, *after* the field check: over a field there is no
-                # markup, the field takes the press and is edited. A widget
-                # that cannot be filled falls through to this, because a field
-                # you are not allowed to fill is no reason to refuse a mark on
-                # the page around it.
-                self._marking = (position, position)
+            # A grip takes the press before the mark it belongs to, and
+            # before the tool: it belongs to the mark already held, so it
+            # outranks "make another one". Below the tool branch, a handle
+            # pressed while the tool that made the mark was still armed
+            # placed a second mark instead of reshaping the first -- every
+            # time, because on a small stamp the handles cover most of it.
+            grip = self.grip_at(position)
+            if grip is not None and self._selected is not None and (
+                    self._selected[1].kind
+                    if isinstance(self._selected[1], markup.Annotation)
+                    else self._selected[1].subtype) == markup.STAMP:
+                page, mark = self._selected
+                self._dragging_stamp = (page, mark, grip,
+                                        self._stamp_centre(page, mark))
+                self._shaping = (mark, tuple(mark.rect),
+                                 float(getattr(mark, "rotate", 0.0) or 0.0))
+                self._place_mark_buttons()
+                self.viewport().update()
                 event.accept()
                 return
-            # A grip takes the press before the mark it belongs to, or
-            # grabbing the end of a highlight would select it again and
-            # start a text selection across it.
-            grip = self.grip_at(position)
             if grip is not None and self._selected is not None:
                 page, mark = self._selected
                 boxes = self.mark_boxes(mark)
@@ -3693,6 +3851,15 @@ class PageCanvas(QAbstractScrollArea):
                 self._dragging_grip = (grip, page, mark, anchor)
                 self._preview = self._grip_quads(page, anchor, position)
                 self.viewport().update()
+                event.accept()
+                return
+            if self.marks_area():
+                # Only here, *after* the field check: over a field there is no
+                # markup, the field takes the press and is edited. A widget
+                # that cannot be filled falls through to this, because a field
+                # you are not allowed to fill is no reason to refuse a mark on
+                # the page around it.
+                self._marking = (position, position)
                 event.accept()
                 return
 
@@ -3803,10 +3970,25 @@ class PageCanvas(QAbstractScrollArea):
             event.accept()
             return
 
+        if event.button() == Qt.LeftButton and self._dragging_stamp is not None:
+            page, mark, _which, _centre = self._dragging_stamp
+            shaped = self._shaping
+            self._dragging_stamp = None
+            self._shaping = None
+            self._place_mark_buttons()
+            self.viewport().update()
+            if shaped is not None:
+                self.mark_reshaped.emit(page, mark,
+                                        tuple(shaped[1]), float(shaped[2]))
+            event.accept()
+            return
+
         if event.button() == Qt.LeftButton and self._dragging_note is not None:
             page, mark, grab, at, moved = self._dragging_note
             self._dragging_note = None
+            self._shaping = None
             self.viewport().unsetCursor()
+            self._place_mark_buttons()
             self.viewport().update()
             if not moved:
                 # **The note window**, which is the one every other mark
@@ -4708,6 +4890,12 @@ class PageCanvas(QAbstractScrollArea):
     #: How wide the panel may get before its text wraps, in pixels.
     NOTE_PANEL_WIDTH = 260
 
+    #: How much of the mark's colour the hover panel's paper takes, the
+    #: rest being white. Measured off Reader, whose panel beside a red
+    #: mark is a pale pink rather than red: enough to say which mark the
+    #: note belongs to, little enough to read dark text on.
+    NOTE_PANEL_WASH = 0.2
+
     def _show_note_panel(self, mark, at, index=None) -> None:
         """Show a mark's note beside the pointer, or take it away.
 
@@ -4778,8 +4966,24 @@ class PageCanvas(QAbstractScrollArea):
             where.moveTop(max(0.0, at.y() - height - 16))
         painter.save()
         painter.setRenderHint(QPainter.Antialiasing, True)
-        painter.setPen(QPen(QColor(0, 0, 0, 40)))
-        painter.setBrush(QColor(255, 253, 240))
+        # **The mark's colour, washed for the paper and whole for the
+        # edge.** Reader's panel is tinted by `/C`, which is what says
+        # which mark the note belongs to when several are close together.
+        # The newest reply's colour where there is one, as the badge does:
+        # a reply is answered in its own colour and that is what the
+        # window shows.
+        speaks_for = self.latest_reply(mark) or mark
+        tint = getattr(speaks_for, "colour", None) or getattr(
+            mark, "colour", None)
+        if tint:
+            ink = QColor.fromRgbF(*tint[:3])
+            painter.setPen(QPen(ink))
+            painter.setBrush(QColor(
+                *(round(255 + (band - 255) * self.NOTE_PANEL_WASH)
+                  for band in (ink.red(), ink.green(), ink.blue()))))
+        else:
+            painter.setPen(QPen(QColor(0, 0, 0, 40)))
+            painter.setBrush(QColor(255, 253, 240))
         painter.drawRoundedRect(where, 4, 4)
         inner = where.adjusted(12, 8, -12, -8)
         painter.setPen(QColor(90, 90, 90))
@@ -4868,8 +5072,13 @@ class PageCanvas(QAbstractScrollArea):
         if self._selected is None:
             return []
         index, mark = self._selected
-        if (mark.kind if isinstance(mark, markup.Annotation)
-                else mark.subtype) not in self.QUADDED_SELECTABLE:
+        kind = (mark.kind if isinstance(mark, markup.Annotation)
+                else mark.subtype)
+        if kind == markup.STAMP:
+            if getattr(mark, "locked", False):
+                return []
+            return self._stamp_grips(index, mark, offset)
+        if kind not in self.QUADDED_SELECTABLE:
             # A comment's icon is placed, not sized: there is no run to
             # take hold of, and a handle on a glyph offers a drag that
             # means nothing.
@@ -4912,6 +5121,11 @@ class PageCanvas(QAbstractScrollArea):
     #: own space. The canvas reports the new run and keeps none of it, the
     #: same way `mark_drawn` reports a new one.
     mark_moved = Signal(int, object, object)
+
+    #: A stamp's handle was let go: ``(page, mark, rect, rotate)`` in the
+    #: page's own space and degrees. One signal for both handles, because
+    #: both say the same thing -- this is the shape it is now.
+    mark_reshaped = Signal(int, object, object, float)
 
     mark_resized = Signal(int, object, object)
 
@@ -4959,6 +5173,101 @@ class PageCanvas(QAbstractScrollArea):
         if found is not None and any(found[1] is m for m in marks):
             self.select_mark(None)
         self.viewport().update()
+
+    #: How far beyond the top edge a stamp's turning handle sits, in
+    #: viewport pixels. Far enough not to be taken for a corner.
+    TURN_REACH = 22.0
+
+    def _stamp_grips(self, index: int, mark, offset=None):
+        """A stamp's five handles: its four corners, then the one that turns.
+
+        **On the drawing, not on the rectangle.** `/Rect` is the box that
+        bounds the turned artwork, so at any angle but a right one its
+        corners are out in the white -- the handles belong to the thing you
+        can see. The fifth stands off the middle of the top edge, along the
+        direction the stamp calls up, so it turns with it.
+        """
+        icon = getattr(mark, "icon", "")
+        angle = float(getattr(mark, "rotate", 0.0) or 0.0)
+        rect, angle = self._shape_of(mark)
+        corners = markup.stamp_corners(rect, icon, angle)
+        is_mine = isinstance(mark, markup.Annotation)
+        found = []
+        for x, y in corners:
+            where = self.quad_on_screen(index, (x, y, x, y), offset,
+                                        scaled=is_mine)
+            if where is None:
+                return []
+            found.append(where.center())
+        # The top edge is between the third and fourth corners, which are
+        # the two the drawing calls its top.
+        top = QPointF((found[2].x() + found[3].x()) / 2.0,
+                      (found[2].y() + found[3].y()) / 2.0)
+        middle = QPointF(sum(p.x() for p in found) / 4.0,
+                         sum(p.y() for p in found) / 4.0)
+        away = QPointF(top.x() - middle.x(), top.y() - middle.y())
+        reach = math.hypot(away.x(), away.y()) or 1.0
+        found.append(QPointF(top.x() + away.x() / reach * self.TURN_REACH,
+                             top.y() + away.y() / reach * self.TURN_REACH))
+        size = float(self.GRIP)
+        return [QRectF(p.x() - size / 2, p.y() - size / 2, size, size)
+                for p in found]
+
+    def _shape_of(self, mark):
+        """``(rect, rotate)`` for a mark: the gesture's, or its own.
+
+        **One answer for every painter.** The outline, the handles and the
+        glyph all ask this, so a mark being dragged cannot have its box in
+        one place and its drawing in another -- which is what it did, and
+        what made a move look like two marks disagreeing.
+        """
+        if self._shaping is not None and self._shaping[0] is mark:
+            return self._shaping[1], self._shaping[2]
+        return tuple(mark.rect), float(getattr(mark, "rotate", 0.0) or 0.0)
+
+    def _stamp_centre(self, index: int, mark):
+        """The viewport point a stamp scales and turns about."""
+        is_mine = isinstance(mark, markup.Annotation)
+        where = self.quad_on_screen(index, mark.rect, scaled=is_mine)
+        return where.center() if where is not None else QPointF()
+
+    def _stamp_shaped(self, index: int, mark, which: int, centre, point):
+        """``(rect, rotate)`` for a stamp whose handle is at ``point``.
+
+        **Both handles work about the centre**, which is the only point the
+        fit to `/Rect` holds still. A corner says how far out it is: the
+        ratio of its distance from the centre now to what that distance was
+        at the size the icon is drawn at, so the aspect can never change
+        because one number does both axes. The fifth handle says which way
+        is up, and the size it had is kept.
+        """
+        icon = getattr(mark, "icon", "")
+        was = float(getattr(mark, "rotate", 0.0) or 0.0)
+        middle = self.page_point(index, centre)
+        here = self.page_point(index, point)
+        if middle is None or here is None:
+            return None
+        across, down = here[0] - middle[0], here[1] - middle[1]
+        if which == 4:
+            # Turning. The handle stands off the top edge, so the angle it
+            # reports is measured from straight up rather than from the
+            # x axis, and the stamp keeps the size it had.
+            angle = math.degrees(math.atan2(across, down))
+            return (markup.stamp_rect(
+                middle[0], middle[1], icon,
+                markup.stamp_scale(mark.rect, icon, was), -angle), -angle)
+        wide, tall = markup.icon_size(icon)
+        half = math.hypot(wide, tall) / 2.0
+        reach = math.hypot(across, down)
+        if half <= 0:
+            return None
+        scale = max(reach / half, self.SMALLEST_STAMP / half)
+        return (markup.stamp_rect(middle[0], middle[1], icon, scale, was), was)
+
+    #: How small a stamp may be dragged, as the half-diagonal of its
+    #: artwork in points. Below this it stops being something you can take
+    #: hold of again.
+    SMALLEST_STAMP = 6.0
 
     def grip_at(self, point: QPointF):
         """Which grip is under a viewport point: 0 for the start, 1 for the
@@ -5255,6 +5564,12 @@ class PageCanvas(QAbstractScrollArea):
         if wide <= 0 or tall <= 0:
             wide, tall = markup.icon_size(
                 getattr(mark, "icon", markup.DEFAULT_ICON))
+        if (mark.kind if isinstance(mark, markup.Annotation)
+                else mark.subtype) == markup.STAMP:
+            # Moved, not reshaped: the box keeps the size and the angle it
+            # was given and only its corner changes, which is what dragging
+            # the body of one means.
+            return (point[0], point[3] - tall, point[0] + wide, point[3])
         return markup.note_rect(point[0], point[3], wide, tall)
 
     def _file_notes(self, index: int):
@@ -5278,6 +5593,48 @@ class PageCanvas(QAbstractScrollArea):
         except Exception:       # noqa: BLE001 - a repaint must not fail
             return []
 
+    def _faded(self, painter, where, opacity, draw) -> None:
+        """Run ``draw`` as **one** drawing, composited at ``opacity``.
+
+        `/CA` is a constant alpha on the whole annotation, not on each
+        shape in it, and the difference shows: seven of the icons have
+        white interiors and the balloon has two white bars, all drawn over
+        the body beneath them. Fading shape by shape -- which is what
+        `QPainter.setOpacity` does -- lets the body show through its own
+        bars. So the glyph goes onto a transparent image of its own and
+        that image is composited once, which is what a reader does with
+        the appearance stream.
+
+        Opaque marks skip all of it and draw straight onto the page.
+        """
+        if opacity is None or float(opacity) >= 1.0:
+            draw(painter)
+            return
+        # Room for the antialiased edge, which otherwise lands outside the
+        # box and is clipped away.
+        box = where.adjusted(-2.0, -2.0, 2.0, 2.0).toAlignedRect()
+        if box.isEmpty():
+            return
+        ratio = self.devicePixelRatioF()
+        image = QImage(QSize(max(1, int(box.width() * ratio)),
+                             max(1, int(box.height() * ratio))),
+                       QImage.Format_ARGB32_Premultiplied)
+        image.setDevicePixelRatio(ratio)
+        image.fill(Qt.transparent)
+        inner = QPainter(image)
+        try:
+            inner.setRenderHint(QPainter.Antialiasing, True)
+            # The glyph is drawn in viewport coordinates, so the image is
+            # shifted under it rather than the drawing moved into the image.
+            inner.translate(-box.topLeft())
+            draw(inner)
+        finally:
+            inner.end()
+        was = painter.opacity()
+        painter.setOpacity(max(0.0, min(1.0, float(opacity))))
+        painter.drawImage(box.topLeft(), image)
+        painter.setOpacity(was)
+
     def _paint_stamp(self, painter, index: int, mark, colour, offset) -> None:
         """Draw a scalable comment: the same glyph, as ink on the page.
 
@@ -5293,38 +5650,45 @@ class PageCanvas(QAbstractScrollArea):
         the angle changes sign on the way in.
         """
         is_mine = isinstance(mark, markup.Annotation)
-        where = self.quad_on_screen(index, mark.rect, offset, scaled=is_mine)
+        rect, angle = self._shape_of(mark)
+        where = self.quad_on_screen(index, rect, offset, scaled=is_mine)
         if where is None or not where.intersects(QRectF(self.viewport().rect())):
             return
-        icon = getattr(mark, "icon", markup.DEFAULT_ICON) or markup.DEFAULT_ICON
+        # Whatever the mark says, with nothing substituted for it:
+        # Text Note's name is the empty string, and a fallback for
+        # a falsy icon drew it as the balloon.
+        icon = getattr(mark, "icon", "")
         wide, tall = markup.icon_size(icon)
-        angle = float(getattr(mark, "rotate", 0.0) or 0.0)
         turned = math.radians(angle)
         across = abs(wide * math.cos(turned)) + abs(tall * math.sin(turned))
         scale = where.width() / across if across else 1.0
         drawn = QRectF(0.0, 0.0, wide * scale, tall * scale)
         drawn.moveCenter(where.center())
-        painter.save()
-        if angle:
-            painter.translate(where.center())
-            painter.rotate(-angle)
-            painter.translate(-where.center())
-        if icon == markup.DEFAULT_ICON:
-            self._paint_balloon(painter, drawn, colour)
-        else:
-            painter.setRenderHint(QPainter.Antialiasing, True)
-            for path, fill, stroke, width in self._icon_drawing(
-                    icon, drawn, colour):
-                painter.setBrush(fill if fill is not None else Qt.NoBrush)
-                if stroke is None:
-                    painter.setPen(Qt.NoPen)
-                else:
-                    pen = QPen(stroke)
-                    pen.setWidthF(width)
-                    pen.setJoinStyle(Qt.RoundJoin)
-                    painter.setPen(pen)
-                painter.drawPath(path)
-        painter.restore()
+
+        def glyph(target):
+            target.save()
+            if angle:
+                target.translate(where.center())
+                target.rotate(-angle)
+                target.translate(-where.center())
+            if icon == markup.DEFAULT_ICON:
+                self._paint_balloon(target, drawn, colour)
+            else:
+                target.setRenderHint(QPainter.Antialiasing, True)
+                for path, fill, stroke, width in self._icon_drawing(
+                        icon, drawn, colour):
+                    target.setBrush(fill if fill is not None else Qt.NoBrush)
+                    if stroke is None:
+                        target.setPen(Qt.NoPen)
+                    else:
+                        pen = QPen(stroke)
+                        pen.setWidthF(width)
+                        pen.setJoinStyle(Qt.RoundJoin)
+                        target.setPen(pen)
+                    target.drawPath(path)
+            target.restore()
+
+        self._faded(painter, where, getattr(mark, "opacity", None), glyph)
 
     def _paint_note(self, painter, index: int, mark, colour) -> None:
         """Draw a sticky note's icon: a balloon, at a size the zoom sets.
@@ -5346,25 +5710,30 @@ class PageCanvas(QAbstractScrollArea):
             where = QRectF(drag[3] - drag[2], where.size())
         if not where.intersects(QRectF(self.viewport().rect())):
             return
-        painter.save()
-        painter.setRenderHint(QPainter.Antialiasing, True)
         icon = getattr(mark, "icon", markup.DEFAULT_ICON)
-        if icon == markup.DEFAULT_ICON:
-            self._paint_balloon(painter, where, colour)
-            painter.restore()
-            return
-        for path, fill, stroke, width in self._icon_drawing(
-                icon, where, colour):
-            painter.setBrush(fill if fill is not None else Qt.NoBrush)
-            if stroke is None:
-                painter.setPen(Qt.NoPen)
-            else:
-                pen = QPen(stroke)
-                pen.setWidthF(width)
-                pen.setJoinStyle(Qt.RoundJoin)
-                painter.setPen(pen)
-            painter.drawPath(path)
-        painter.restore()
+        box = where
+
+        def glyph(target):
+            target.save()
+            target.setRenderHint(QPainter.Antialiasing, True)
+            if icon == markup.DEFAULT_ICON:
+                self._paint_balloon(target, box, colour)
+                target.restore()
+                return
+            for path, fill, stroke, width in self._icon_drawing(
+                    icon, box, colour):
+                target.setBrush(fill if fill is not None else Qt.NoBrush)
+                if stroke is None:
+                    target.setPen(Qt.NoPen)
+                else:
+                    pen = QPen(stroke)
+                    pen.setWidthF(width)
+                    pen.setJoinStyle(Qt.RoundJoin)
+                    target.setPen(pen)
+                target.drawPath(path)
+            target.restore()
+
+        self._faded(painter, where, getattr(mark, "opacity", None), glyph)
 
     def _paint_balloon(self, painter, where, colour) -> None:
         """A comment's icon: the balloon Reader shows, not the square it writes.

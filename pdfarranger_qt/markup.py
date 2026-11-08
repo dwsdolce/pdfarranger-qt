@@ -44,6 +44,7 @@ import datetime
 import getpass
 import itertools
 import math
+import re
 import uuid
 from html import escape
 from typing import Dict, List, Optional, Tuple
@@ -106,6 +107,30 @@ NOTE_ON_TEXT = "note_on_text"
 #: with an intent of its own overrides this -- *Add note to text* writes
 #: `/HighlightNote` on a `/Highlight`, which has none by default.
 INTENTS = {SQUIGGLY: UNDERLINE}
+
+#: What `/IT` says on a scalable comment, where `/Name` is `/Comment` on
+#: every one of them so that a reader takes the mark for a comment rather
+#: than for a rubber stamp. Text Note has no name of its own -- it is
+#: written by leaving `/Name` out -- so it is spelled in full here.
+TEXT_NOTE = "/TextNote"
+
+
+def stamp_intent(icon: str) -> str:
+    """`/IT` for a scalable comment carrying ``icon``."""
+    return icon or TEXT_NOTE
+
+
+def stamp_icon(annot) -> str:
+    """Which of the seventeen icons a stamp in a file carries.
+
+    `/IT` first, then `/Name` for the files written before the icon moved
+    there -- those carry it in `/Name`, and reading it back is what keeps
+    their glyphs.
+    """
+    intent = str(annot.get(pikepdf.Name.IT, ""))
+    if intent:
+        return "" if intent == TEXT_NOTE else intent
+    return str(annot.get(pikepdf.Name.Name, ""))
 
 SUBJECTS = {HIGHLIGHT: "Highlight", STRIKEOUT: "Cross-Out",
             TEXT: "Sticky Note",
@@ -752,7 +777,28 @@ class Annotations:
         return f"Annotations({len(self)} on {len(self._by_page)} page(s))"
 
 
-def apply_edit(annot, edit) -> None:
+class _Stamped:
+    """Just enough of a mark for `_icon_appearance` to draw it again.
+
+    A stamp in a file is a pikepdf dictionary and not one of this module's
+    own objects, so what the drawing needs is read back off the dictionary
+    after it has been patched: the colour just written to `/C`, the icon
+    `/IT` records, and the angle in `/Rotate`.
+    """
+
+    kind = STAMP
+
+    def __init__(self, annot):
+        self.icon = stamp_icon(annot)
+        colour = annot.get(pikepdf.Name.C)
+        self.colour = (tuple(float(v) for v in colour)
+                       if colour is not None and len(colour) == 3 else None)
+        self.rotate = float(annot.get(pikepdf.Name.Rotate, 0) or 0)
+        faded = annot.get(pikepdf.Name.CA)
+        self.opacity = None if faded is None else float(faded)
+
+
+def apply_edit(annot, edit, pdf=None) -> None:
     """Write one mark's edits onto the dictionary it arrived with.
 
     **Shared by the preview and the export, because they drifted.** They
@@ -782,7 +828,12 @@ def apply_edit(annot, edit) -> None:
         # The drawing goes with the name: a comment's appearance *is* its
         # icon, so a stale one would show the old glyph under the new
         # name until something else rebuilt it.
-        if icon:
+        if str(annot.get(pikepdf.Name.Subtype, "")) == STAMP:
+            # A stamp keeps the one name that makes a reader call it a
+            # comment, and says which icon in `/IT`.
+            annot[pikepdf.Name.Name] = pikepdf.Name(DEFAULT_ICON)
+            annot[pikepdf.Name.IT] = pikepdf.Name(stamp_intent(icon))
+        elif icon:
             annot[pikepdf.Name.Name] = pikepdf.Name(icon)
         elif pikepdf.Name.Name in annot:
             del annot[pikepdf.Name.Name]
@@ -804,6 +855,17 @@ def apply_edit(annot, edit) -> None:
     modified = edit.get("modified")
     if modified:
         annot[pikepdf.Name.M] = pikepdf.String(modified)
+    rotate = edit.get("rotate")
+    if rotate is not None:
+        # The angle and the drawing that carries it go together: the matrix
+        # is a rotation, so a new angle means a new appearance. Dropped
+        # here and rebuilt by the writer, the same way a change of icon is.
+        if float(rotate):
+            annot[pikepdf.Name.Rotate] = round(float(rotate))
+        elif pikepdf.Name.Rotate in annot:
+            del annot[pikepdf.Name.Rotate]
+        if pikepdf.Name.AP in annot:
+            del annot[pikepdf.Name.AP]
     rect = edit.get("rect")
     if rect:
         # A comment's icon, moved. On its own and not through `quads`,
@@ -866,8 +928,30 @@ def apply_edit(annot, edit) -> None:
         flags = int(annot.get(pikepdf.Name.F, 0))
         annot[pikepdf.Name.F] = (flags | LOCKED) if locked else (
             flags & ~LOCKED)
-    if (colour is not None or opacity is not None or quads
-            or style in UNDERLINE_STYLES) and (pikepdf.Name.AP in annot):
+    redrawn = (colour is not None or opacity is not None or quads
+               or style in UNDERLINE_STYLES)
+    if redrawn and str(annot.get(pikepdf.Name.Subtype, "")) == STAMP:
+        # **A stamp is drawn again rather than undressed.** It is the one
+        # mark with nothing to fall back on: no quads for a reader to
+        # colour in, and no glyph substituted for a missing appearance, so
+        # a stamp stripped of its `/AP` is a mark that draws nothing at
+        # all and vanishes off the page. Its colour lives *inside* the
+        # stream -- the fill is written into the drawing -- so keeping the
+        # old one would show the old colour, and the only answer that
+        # shows the new one is to build the stream again.
+        #
+        # **Only for a colour, though.** A fade is a wrapper and leaves
+        # the artwork alone, because rebuilding it would fetch a colour
+        # from `/C` that nobody chose here.
+        #
+        # Without a document to build in there is nothing to be done, and
+        # the old drawing in the old colour beats no drawing.
+        if colour is not None and pdf is not None:
+            annot[pikepdf.Name.AP] = pikepdf.Dictionary(
+                N=_icon_appearance(pdf, _Stamped(annot)))
+        elif colour is None and opacity is not None:
+            _refade(pdf, annot, opacity)
+    elif redrawn and pikepdf.Name.AP in annot:
         # **Only when what it draws has changed.** The stream the producer
         # wrote still draws the old colour over the old run, and every
         # reader falls back to `/QuadPoints` when there is none.
@@ -881,7 +965,7 @@ def apply_edit(annot, edit) -> None:
         del annot[pikepdf.Name.AP]
 
 
-def patch_page_marks(page, edits) -> int:
+def patch_page_marks(page, edits, pdf=None) -> int:
     """Apply ``edits`` to one page's annotations. Returns how many were hit.
 
     Patch what changed and drop what was deleted, in one pass, because the
@@ -928,7 +1012,7 @@ def patch_page_marks(page, edits) -> int:
                     pass
             changed += 1
             continue
-        apply_edit(annot, edit)
+        apply_edit(annot, edit, pdf)
         kept.append(annot)
         changed += 1
     if dropped:
@@ -1067,7 +1151,7 @@ def one_page_with_edits(data, index: int, edits,
             one = pikepdf.Pdf.new()
             one.pages.append(whole.pages[index])
             page = one.pages[0].obj
-            changed = patch_page_marks(page, edits)
+            changed = patch_page_marks(page, edits, one)
             if hide_replies:
                 changed += drop_replies(page)
             if not changed:
@@ -1171,7 +1255,7 @@ class MarkEdits:
     #: to be written in one go or not at all.
     FIELDS = ("colour", "opacity", "quads", "deleted", "contents", "popup",
               "rich", "author", "subject", "locked", "style", "icon",
-              "rect", "modified")
+              "rect", "rotate", "modified")
 
     def __init__(self, by_page=None):
         self._by_page: Dict[int, Dict[int, dict]] = {}
@@ -1369,12 +1453,15 @@ def to_dictionary(pdf, annotation: Annotation, page=None) -> pikepdf.Dictionary:
         # the file, because a viewer that draws its own shows the same
         # glyph for all of them.
     if annotation.kind == STAMP:
-        # **The same seventeen icons as the pin, and `/Name` says which.**
-        # Nothing reads it for appearance on a stamp -- the `/AP` decides
-        # that -- so it is free to record what was chosen, for the
-        # properties form and for a later change of icon.
-        if annotation.icon:
-            entry[pikepdf.Name.Name] = pikepdf.Name(annotation.icon)
+        # **Named `/Comment` whatever it draws, with `/IT` saying which.**
+        # `/Stamp` means page content, so a reader tells a comment from a
+        # rubber stamp by the name alone: named this, all seventeen are
+        # comments to it. Nothing reads either key for appearance -- the
+        # `/AP` decides that -- so the icon is free to live in `/IT`,
+        # which the format keeps for what a mark was made as and which
+        # `/Stamp` defines no values of its own for.
+        entry[pikepdf.Name.Name] = pikepdf.Name(DEFAULT_ICON)
+        entry[pikepdf.Name.IT] = pikepdf.Name(stamp_intent(annotation.icon))
         entry[pikepdf.Name.AP] = pikepdf.Dictionary(
             N=_icon_appearance(pdf, annotation))
         if annotation.rotate:
@@ -1758,15 +1845,121 @@ def _icon_appearance(pdf, annotation):
         ExtGState=pikepdf.Dictionary(GS0=pikepdf.Dictionary(
             Type=pikepdf.Name.ExtGState, BM=pikepdf.Name.Normal,
             AIS=False, ca=0.6, CA=0.6)))
+    shown = _wrapped_in_opacity(
+        pdf, stream, getattr(annotation, "opacity", None))
     if annotation.kind == STAMP and annotation.rotate:
         # **The turn goes here and the size does not.** A pure rotation,
         # translated so the turned box starts at the origin, which is what
         # Acrobat writes; the fit to `/Rect` supplies the scale, so one
         # matrix serves the stamp at any size.
-        stream[pikepdf.Name.Matrix] = pikepdf.Array(
-            [*stamp_matrix(annotation.icon or DEFAULT_ICON,
-                           annotation.rotate)])
-    return pdf.make_indirect(stream)
+        #
+        # On the outermost form, which is the one a viewer maps to `/Rect`.
+        shown[pikepdf.Name.Matrix] = pikepdf.Array(
+            [*stamp_matrix(annotation.icon, annotation.rotate)])
+    return pdf.make_indirect(shown)
+
+
+def _wrapped_in_opacity(pdf, drawing, opacity):
+    """``drawing`` faded to ``opacity``, or ``drawing`` itself at 1.
+
+    **The fade belongs in the stream, not on the annotation.** `/CA` is
+    written as well, but 12.5.2 says a viewer shall not apply it to an
+    annotation that has an appearance -- the appearance is what carries
+    the transparency, and `/CA` is there for the viewers that regenerate
+    the appearance and may fold it back in. Measured: PDFium ignores
+    `/CA` on every subtype, so a mark faded only by the key renders
+    solid.
+
+    **Wrapped rather than set at the top of the drawing.** The icons set
+    `/GS0` partway through their own strokes, and `gs` replaces the alpha
+    constant rather than multiplying it, so a `ca` written at the top
+    would be thrown away by the first icon that has one. A transparency
+    group is composed first and faded afterwards, which is what makes the
+    glyph fade as one thing: white bars stay white at a tenth instead of
+    turning into holes. It is also what Acrobat writes, measured on
+    `corpus/Scalable Markup Comment Reader.pdf`, where our own stream
+    comes back untouched inside a group of its own.
+    """
+    if opacity is None or float(opacity) >= 1.0:
+        return drawing
+    faded = max(0.0, min(1.0, float(opacity)))
+    drawing[pikepdf.Name.Group] = pikepdf.Dictionary(
+        Type=pikepdf.Name.Group, S=pikepdf.Name.Transparency)
+    outer = pikepdf.Stream(pdf, FADE.encode())
+    outer[pikepdf.Name.Type] = pikepdf.Name.XObject
+    outer[pikepdf.Name.Subtype] = pikepdf.Name.Form
+    box = drawing.get(pikepdf.Name.BBox)
+    outer[pikepdf.Name.BBox] = pikepdf.Array([*box])
+    turn = drawing.get(pikepdf.Name.Matrix)
+    if turn is not None:
+        # On the outermost form, which is the one fitted to `/Rect`.
+        outer[pikepdf.Name.Matrix] = pikepdf.Array([*turn])
+        del drawing[pikepdf.Name.Matrix]
+    outer[pikepdf.Name.Resources] = pikepdf.Dictionary(
+        ExtGState=pikepdf.Dictionary(GS1=pikepdf.Dictionary(
+            Type=pikepdf.Name.ExtGState, AIS=False, ca=faded, CA=faded)),
+        XObject=pikepdf.Dictionary(Fm0=pdf.make_indirect(drawing)))
+    return outer
+
+
+#: The whole of a fade's appearance: set the alpha, draw the group. Ours
+#: says `/GS1` and `/Fm0` where Acrobat's says `/R0` and `/MWFOForm`, and
+#: the shape is the same, which is what lets one be recognised in the
+#: other's file.
+FADE = "/GS1 gs\n/Fm0 Do\n"
+
+#: That shape, for recognising a wrapper somebody else wrote.
+FADED = re.compile(rb"/(\S+) gs /(\S+) Do")
+
+
+def _refade(pdf, annot, opacity) -> None:
+    """Fade the appearance that is already there, without redrawing it.
+
+    **A fade must not repaint.** The drawing carries the colour, and
+    rebuilding it would take that colour from `/C` -- which on a stamp is
+    the comment's colour and may have been set in a reader that never
+    painted it. Changing the opacity would then change the colour too, on
+    an edit that had nothing to do with colour. So the artwork is left
+    exactly as it stands and only the alpha around it moves, which is also
+    what Acrobat does to ours.
+
+    An existing wrapper is reused rather than wrapped again, whoever wrote
+    it: two of them would multiply, and a mark faded twice to a half would
+    come out at a quarter.
+    """
+    ap = annot.get(pikepdf.Name.AP)
+    stream = ap.get(pikepdf.Name.N) if ap is not None else None
+    if stream is None or not hasattr(stream, "read_bytes"):
+        return
+    faded = max(0.0, min(1.0, float(opacity)))
+    found = FADED.fullmatch(b" ".join(stream.read_bytes().split()))
+    if found is not None:
+        resources = stream.get(pikepdf.Name.Resources)
+        states = (resources.get(pikepdf.Name.ExtGState)
+                  if resources is not None else None)
+        named = pikepdf.Name("/" + found.group(1).decode("latin-1"))
+        state = states.get(named) if states is not None else None
+        if state is not None and pikepdf.Name.ca in state:
+            inner = (resources.get(pikepdf.Name.XObject) or {}).get(
+                pikepdf.Name("/" + found.group(2).decode("latin-1")))
+            if faded >= 1.0 and inner is not None and stream.read_bytes(
+                    ).decode("latin-1") == FADE:
+                # Ours, and opaque again: the wrapper goes rather than
+                # staying as a fade of one, so the appearance is what it
+                # would have been had it never been faded.
+                if pikepdf.Name.Group in inner:
+                    del inner[pikepdf.Name.Group]
+                turn = stream.get(pikepdf.Name.Matrix)
+                if turn is not None:
+                    inner[pikepdf.Name.Matrix] = pikepdf.Array([*turn])
+                annot[pikepdf.Name.AP] = pikepdf.Dictionary(N=inner)
+                return
+            state[pikepdf.Name.ca] = faded
+            state[pikepdf.Name.CA] = faded
+            return
+    if faded < 1.0 and pdf is not None:
+        annot[pikepdf.Name.AP] = pikepdf.Dictionary(
+            N=_wrapped_in_opacity(pdf, stream, faded))
 
 
 def bounding_rect(quads) -> "tuple":
@@ -1927,13 +2120,15 @@ class Mark:
     __slots__ = ("uid", "page", "index", "subtype", "rect", "quads", "colour",
                  "opacity", "contents", "author", "name", "parent", "state",
                  "hidden", "when", "popup_open", "popup_rect", "rich",
-                 "locked", "subject", "intent", "scales", "icon")
+                 "locked", "subject", "intent", "scales", "icon",
+                 "rotate")
 
     def __init__(self, page, subtype, rect, quads=(), colour=None,
                  opacity=None, contents="", name=None, parent=None,
                  state=None, hidden=False, index=-1, author="", when="",
                  popup_open=False, popup_rect=None, rich="", locked=False,
-                 subject="", intent="", scales=False, icon=""):
+                 subject="", intent="", scales=False, icon="",
+                 rotate=0.0):
         self.uid = next(_mark_uids)
         #: Where this mark sits among the markup annotations on its page, in
         #: the order the file has them. What `MarkEdits` keys an edit by, and
@@ -1987,6 +2182,10 @@ class Mark:
         #: something, and discarding it is not the same as declining to
         #: offer it.
         self.scales = scales
+        #: `/Rotate`, how far a stamp has been turned, in degrees. Zero
+        #: for everything else: a pin holds its way up and a run of words
+        #: is at the angle the words are.
+        self.rotate = rotate
         #: `/Name`: the icon a comment is drawn with. Empty is Text Note,
         #: which Reader writes by leaving the key out. Not `name`, which
         #: is `/NM`.
@@ -2119,9 +2318,15 @@ def marks_in(pdf) -> "list[Mark]":
                     contents=str(annot.get(pikepdf.Name.Contents, "")),
                     rich=str(annot.get(pikepdf.Name.RC, "")),
                     subject=str(annot.get(pikepdf.Name.Subj, "")),
-                    intent=str(annot.get(pikepdf.Name.IT, "")),
+                    # Empty on a stamp: `/IT` there is the icon, not the
+                    # tool, and a mark whose maker was read as `/Star`
+                    # could have no defaults set from it.
+                    intent=("" if subtype == STAMP
+                            else str(annot.get(pikepdf.Name.IT, ""))),
                     scales=not int(annot.get(pikepdf.Name.F, 0)) & NOZOOM,
-                    icon=str(annot.get(pikepdf.Name.Name, "")),
+                    rotate=_number(annot.get(pikepdf.Name.Rotate), 0.0),
+                    icon=(stamp_icon(annot) if subtype == STAMP
+                          else str(annot.get(pikepdf.Name.Name, ""))),
                     author=str(annot.get(pikepdf.Name.T, "")),
                     when=str(annot.get(pikepdf.Name.M,
                                        annot.get(pikepdf.Name.CreationDate,

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-07 08:45+0000\n"
+"POT-Creation-Date: 2026-11-07 17:59+0000\n"
 "PO-Revision-Date: 2024-09-05 17:05+0300\n"
 "Last-Translator: Abdullah Albaroty <albaroty@gmail.com>\n"
 "Language: ar\n"
@@ -2106,6 +2106,11 @@ msgstr "تغيير حجم العلامة"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
+msgid "Reshape Mark"
+msgstr "إعادة تشكيل العلامة"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
 msgid "Move Mark"
 msgstr "نقل العلامة"
 
@@ -3012,6 +3017,11 @@ msgstr "تمييز"
 #: pdfarranger_qt/properties.py pdfarranger_qt/tools.py
 msgid "Strikethrough"
 msgstr "يتوسطه خط"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Scalable Comment"
+msgstr "تعليق قابل للتحجيم"
 
 #: pdfarranger_qt/properties.py
 msgid "Review History"

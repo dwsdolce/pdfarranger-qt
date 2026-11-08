@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-07 08:45+0000\n"
+"POT-Creation-Date: 2026-11-07 17:59+0000\n"
 "PO-Revision-Date: 2025-12-15 00:59+0700\n"
 "Last-Translator: Loc Huynh <https://github.com/hthienloc>\n"
 "Language: vi\n"
@@ -2122,6 +2122,11 @@ msgstr "Đổi kích thước dấu"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
+msgid "Reshape Mark"
+msgstr "Đổi hình dạng dấu"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
 msgid "Move Mark"
 msgstr "Di chuyển dấu"
 
@@ -2995,6 +3000,11 @@ msgstr "Tô sáng"
 #: pdfarranger_qt/properties.py pdfarranger_qt/tools.py
 msgid "Strikethrough"
 msgstr "Gạch ngang"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Scalable Comment"
+msgstr "Chú thích co giãn"
 
 #: pdfarranger_qt/properties.py
 msgid "Review History"

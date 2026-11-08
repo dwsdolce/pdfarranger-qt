@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pdfarranger-qt VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/dwsdolce/pdfarranger-qt/issues\n"
-"POT-Creation-Date: 2026-11-07 08:45+0000\n"
+"POT-Creation-Date: 2026-11-07 17:59+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1657,6 +1657,10 @@ msgid "Resize Mark"
 msgstr ""
 
 #: pdfarranger_qt/mainwindow.py
+msgid "Reshape Mark"
+msgstr ""
+
+#: pdfarranger_qt/mainwindow.py
 msgid "Move Mark"
 msgstr ""
 
@@ -2389,6 +2393,10 @@ msgstr ""
 
 #: pdfarranger_qt/properties.py pdfarranger_qt/tools.py
 msgid "Strikethrough"
+msgstr ""
+
+#: pdfarranger_qt/properties.py
+msgid "Scalable Comment"
 msgstr ""
 
 #: pdfarranger_qt/properties.py

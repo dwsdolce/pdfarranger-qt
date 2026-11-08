@@ -13,7 +13,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-07 08:45+0000\n"
+"POT-Creation-Date: 2026-11-07 17:59+0000\n"
 "PO-Revision-Date: 2024-02-24 20:47+0100\n"
 "Last-Translator: Jérôme Robert <jeromerobert@gmx.com>\n"
 "Language: fr\n"
@@ -2174,6 +2174,11 @@ msgstr "Redimensionner la marque"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
+msgid "Reshape Mark"
+msgstr "Remodeler la marque"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
 msgid "Move Mark"
 msgstr "Déplacer la marque"
 
@@ -3060,6 +3065,11 @@ msgstr "Surligner"
 #: pdfarranger_qt/properties.py pdfarranger_qt/tools.py
 msgid "Strikethrough"
 msgstr "Barrer"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Scalable Comment"
+msgstr "Commentaire redimensionnable"
 
 #: pdfarranger_qt/properties.py
 msgid "Review History"

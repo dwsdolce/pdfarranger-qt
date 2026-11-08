@@ -817,7 +817,8 @@ def _edit_annotations(pdf_output, pages, edits) -> int:
         wanted = edits.for_page(row.uid)
         if not wanted:
             continue
-        changed += markup.patch_page_marks(pdf_output.pages[index].obj, wanted)
+        changed += markup.patch_page_marks(
+            pdf_output.pages[index].obj, wanted, pdf_output)
     return changed
 
 

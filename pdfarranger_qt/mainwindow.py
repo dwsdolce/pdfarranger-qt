@@ -156,6 +156,7 @@ class MainWindow(QMainWindow):
                 "reader/markup-tools-at", where))
         self.reader.mark_drawn.connect(self.mark_drawn)
         self.reader.marks_drawn.connect(self.marks_drawn)
+        self.reader.mark_reshaped.connect(self.mark_reshaped)
         self.reader.mark_moved.connect(self.mark_moved)
         self.reader.mark_resized.connect(self.mark_resized)
         self.reader.mark_deleted.connect(self.mark_deleted)
@@ -1008,6 +1009,10 @@ class MainWindow(QMainWindow):
         page = self.model.pages[index]
         rect = markup.bounding_rect(rects)
         quads = rects if subtype in markup.QUADDED else ()
+        # Asked once, by the tool that is making the mark. Both comment
+        # tools keep one icon between them, so a literal "comment" here
+        # answers the same -- until the day it does not.
+        chosen = self._icon_for(self.CANVAS_TO_STRIP.get(tool, tool))
         if subtype == markup.TEXT:
             # A note is placed, not sized: its icon is the same size wherever
             # it lands. The canvas has already chosen the corner, because
@@ -1029,7 +1034,7 @@ class MainWindow(QMainWindow):
             # the icon back where the turn had moved it.
             if rect[2] - rect[0] <= 0 or rect[3] - rect[1] <= 0:
                 scale = page.scale if page.scale else 1.0
-                wide, tall = markup.icon_size(self._icon_for("comment"))
+                wide, tall = markup.icon_size(chosen)
                 rect = markup.note_rect(rect[0], rect[3],
                                         wide / scale, tall / scale)
         if subtype == markup.STAMP:
@@ -1040,10 +1045,8 @@ class MainWindow(QMainWindow):
             # turned. The pin above is the other way round, and has to be:
             # NoZoom fixes its upper left.
             page_scale = page.scale if page.scale else 1.0
-            icon = self._icon_for("comment")
-            wide, tall = markup.icon_size(icon)
             centre = (rect[0], rect[3])
-            rect = markup.stamp_rect(centre[0], centre[1], icon,
+            rect = markup.stamp_rect(centre[0], centre[1], chosen,
                                      1.0 / page_scale)
         # **Which tool, not which subtype.** Two things make a
         # `/Highlight` -- the highlight tool, and the comment tool over a
@@ -1054,7 +1057,7 @@ class MainWindow(QMainWindow):
             subtype, page.uid, rect, colour=colour, quads=quads,
             opacity=self._opacity_for_canvas_tool(tool),
             subject=subject or None, intent=intent or None,
-            icon=self._icon_for(self.CANVAS_TO_STRIP.get(tool, tool)),
+            icon=chosen,
             author=markup.default_author()))
 
     @staticmethod
@@ -1250,6 +1253,31 @@ class MainWindow(QMainWindow):
         mark.rect = markup.bounding_rect(boxes)
         self._after_mark_change(index, uid)
 
+    def mark_reshaped(self, index: int, mark, rect, rotate) -> None:
+        """A stamp's handle let go: the size and angle it has now.
+
+        One entry for both handles, because they are one gesture: a corner
+        says how big and the fifth says which way up, and either way what
+        is kept is the shape it ended at. The rectangle carries the size --
+        there is nowhere to write a scale -- so the two travel together.
+        """
+        rect = tuple(float(v) for v in rect)
+        rotate = float(rotate)
+        if isinstance(mark, markup.Annotation):
+            self.model.undo.commit(_("Reshape Mark"))
+            mark.rect = rect
+            mark.rotate = rotate
+            mark.touch()
+            self._after_mark_change(index)
+            return
+        uid = self.model.pages[index].uid
+        self.model.undo.commit(_("Reshape Mark"))
+        self.model.mark_edits.change(uid, mark.index,
+                                     rect=rect, rotate=rotate)
+        mark.rect = rect
+        mark.rotate = rotate
+        self._after_mark_change(index, uid)
+
     def mark_moved(self, index: int, mark, rect) -> None:
         """A comment's icon dragged to somewhere else on its page.
 
@@ -1312,6 +1340,13 @@ class MainWindow(QMainWindow):
         if (mark.contents or "").strip():
             return
         self.model.annotations.remove(mark)
+        # **And let go of it.** It is held the moment it is placed, so that
+        # its thread belongs to a selection; dropping it without letting go
+        # left its outline, its handles and its buttons sitting over a mark
+        # that was no longer there.
+        found = self.reader.canvas.selected_mark()
+        if found is not None and found[1] is mark:
+            self.reader.canvas.select_mark(None)
         if placed_at == self.model.undo.current:
             self.model.undo.discard_last()
         self._mark_added()
@@ -1589,11 +1624,24 @@ class MainWindow(QMainWindow):
             else:
                 mark.subtype = kind
             return
+        kind = (mark.kind if isinstance(mark, markup.Annotation)
+                else mark.subtype)
+        was = getattr(mark, "icon", "")
         setattr(mark, name, value)
-        if name == "icon" and (
-                mark.kind if isinstance(mark, markup.Annotation)
-                else mark.subtype) == markup.TEXT:
+        if name == "icon" and kind == markup.TEXT:
             mark.rect = markup.icon_rect(mark.rect, value, scale)
+        if name == "icon" and kind == markup.STAMP:
+            # **The size it was given, not the new icon's own.** A stamp
+            # that has been pulled to twice its size stays twice the size
+            # when its glyph changes: the factor is the ratio the rectangle
+            # already records, and the new icon's box times that is the
+            # rectangle it should have.
+            angle = float(getattr(mark, "rotate", 0.0) or 0.0)
+            factor = markup.stamp_scale(mark.rect, was, angle)
+            middle = ((mark.rect[0] + mark.rect[2]) / 2.0,
+                      (mark.rect[1] + mark.rect[3]) / 2.0)
+            mark.rect = markup.stamp_rect(middle[0], middle[1], value,
+                                          factor, angle)
 
     #: What each style is called, untranslated. Marked here and translated
     #: where it is used: a label in a table reaches no catalogue at all,
@@ -1625,10 +1673,14 @@ class MainWindow(QMainWindow):
     )
 
     def _icons_for(self, kind):
-        """The icons a kind offers, as ``(value, label)``. Only `/Text`
-        has any: it is the one mark drawn as a glyph rather than over the
-        words it marks."""
-        if kind != markup.TEXT:
+        """The icons a kind offers, as ``(value, label)``.
+
+        The two comments have them, and nothing else does: they are the
+        marks drawn as a glyph rather than over the words they mark, and
+        they offer the same seventeen. What they differ in is the subtype,
+        which is not something the form sets.
+        """
+        if kind not in (markup.TEXT, markup.STAMP):
             return ()
         return tuple((value, _(label)) for value, label in self.ICON_LABELS)
 

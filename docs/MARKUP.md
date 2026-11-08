@@ -99,7 +99,7 @@ properties form -- on a mark made here and on one the file brought.
 | Name | Text (the strip) | `/Subj` it writes | what is written | state |
 |---|---|---|---|---|
 | Comment, or Highlight | Add a comment | Sticky Note, or Comment on Text | on a point `/Text` with `/Name` the chosen icon; over a run of words `/Highlight` `/IT /HighlightNote`, `/QuadPoints`, `/CA` | the highlight half is done; the icon half makes its mark with any of the seventeen icons, keeps its size, takes a note and opens a properties form, but **cannot be selected by clicking** -- so the right-click menu does not reach it |
-| Scalable Comment, or Highlight | Add a scalable comment | Sticky Note, or Comment on Text | on a point `/Stamp` with `/Name` the chosen icon and an `/AP` of ours, `/CA`; over a run of words the same `/Highlight` the comment tool writes | places, writes, takes a note and opens a properties form; **no handles yet**, so it can be resized and turned by other applications and not by this one |
+| Scalable Comment, or Highlight | Add a scalable comment | Sticky Note, or Comment on Text | on a point `/Stamp` with `/Name /Comment`, `/IT` the chosen icon and an `/AP` of ours, `/CA` and the fade in the appearance; over a run of words the same `/Highlight` the comment tool writes | done |
 | | Insert text | Inserted Text | `/Caret` | decision 3, not started |
 | | Replace selected text | Inserted Text + Cross-Out | `/Caret` `/IT /Replace` **and** `/StrikeOut` `/IT /StrikeOutTextEdit`, joined by `/IRT` + `/RT /Group` | decision 3, not started |
 | | Add text comment | Text Box | `/FreeText` | not started |
@@ -2950,7 +2950,78 @@ annotation, so it is a comment in every sense that matters.
 
 **Which icon it is still lives in `/Name`.** Nothing reads it for
 appearance on a stamp -- the `/AP` decides that -- so it is free to record
-the choice for the properties form and for a later icon change.
+the choice for the properties form and for a later icon change. Text Note
+is the one whose name is empty, and it is written the way a `/Text` writes
+it: by leaving `/Name` out, and reading an absent key back as Text Note.
+The format's `/Draft` default for a nameless stamp is never reached,
+because every mark this tool makes carries an appearance of ours.
+
+**The fade goes in the appearance, and `/C` is only a record.**
+12.5.2 says a viewer shall not apply `/CA` to an annotation that has an
+appearance stream -- the stream carries the transparency, and the key is
+there for the viewers that regenerate the appearance and may fold it back
+in. Measured: PDFium honours only the stream, and Acrobat, asked to fade a
+stamp, wraps our drawing untouched in a transparency group and sets the
+alpha outside it. So both are written, agreeing: `/CA` on the annotation
+and an ExtGState around a group in the appearance.
+
+**Colour is a record and not a repaint.** Acrobat offers a colour for a
+stamp and then paints nothing: it writes `/C`, leaves the drawing byte for
+byte as it was, and shows the change only in the swatch on its own
+toolbar. `/C` on a markup annotation is the *comment's* colour -- the
+panel, the pop-up, the replies -- and not the artwork's, and on a stamp
+the artwork is out of its reach. Measured on `corpus/Scalable Markup Name
+Probe acrobat.pdf`: `/Star` comes back with `/C` red, its 230-byte drawing
+unchanged, drawn purple still. **A stamp the file brought is never
+repainted here either.** The page looks the same in both applications,
+which is the rule this whole tool is built on, and a `/C` set elsewhere
+sits in the file doing nothing until somebody chooses a colour *here* --
+which rebuilds the drawing and puts every reader back in step.
+
+**So a change of opacity wraps the drawing instead of rebuilding it.**
+That is what keeps the rule above honest. A rebuild takes its colour from
+`/C`, so rebuilding for a change of opacity would paint a colour nobody
+chose in this application -- the one Acrobat recorded and never showed --
+and it would arrive on an edit that has nothing to do with colour. Only a
+colour chosen here regenerates the artwork. A fade puts the alpha on the
+appearance that is already there, which is exactly what Acrobat does to
+ours.
+
+**Every scalable comment is named `/Comment`, and `/IT` says which icon.**
+`/Subtype /Stamp` means page content, so Reader cannot tell a comment from
+a rubber stamp except by `/Name`: it badges the ones it takes for stamps
+and leaves the one named `/Comment` alone, that being one of the standard
+sticky-note icon names. Writing it on all seventeen makes every scalable
+comment a comment in Reader's eyes, and costs nothing anywhere else,
+because every reader draws these marks from the `/AP` and not from the
+name.
+
+The icon moves to `/IT`, which is where the format already records what a
+mark was made as and for which `/Stamp` defines no values of its own. Text
+Note, whose name is empty, is written `/TextNote` there. Measured on
+`corpus/Scalable Markup Name Probe acrobat.pdf` -- sixteen renamed stamps
+taken into Acrobat, three of them edited, saved: `/IT` came back on all
+sixteen, `/Name /Comment` stayed, and every drawing returned byte for
+byte, so Acrobat defers to `/AP` even for a name it recognises as its own.
+A file written before this carries its icon in `/Name`, and is read that
+way when `/IT` is absent, so nothing already saved loses its glyph.
+
+**The note indicator goes on marks that are not themselves comments.**
+A highlight is ink on words and gives no sign that somebody wrote a
+paragraph about it, so it carries the badge. A comment *is* its note --
+the icon says so -- and a second balloon beside it says nothing and costs
+the glyph's corner. That holds for both comment kinds, and it is the rule
+Reader applies to the one stamp it takes for a comment; ours applies it to
+all seventeen.
+
+**A stamp that is not one of ours does carry it.** Acrobat's own set --
+Approved, Witness and the rest -- is page content that happens to have a
+note attached, which is a highlight's situation and not a comment's. So
+the badge follows what the mark *is*, not which subtype it has: the
+quadded three, plus any stamp that is not a scalable comment. A scalable
+comment is told from the others by `/Name /Comment` with an `/IT` among
+the seventeen icons, which is the same test that decides whose drawing a
+stamp carries.
 
 **The resize is a scale factor, derived and not stored.** One number,
 applied to both dimensions so the glyph can never skew, and recovered from
