@@ -38,7 +38,6 @@ from PySide6.QtWidgets import (
     QDialog,
     QDialogButtonBox,
     QDoubleSpinBox,
-    QFontComboBox,
     QFormLayout,
     QGridLayout,
     QGroupBox,
@@ -57,7 +56,7 @@ from PySide6.QtWidgets import (
     QWidget,
 )
 
-from . import compress, i18n, nup, stamp, viewer
+from . import compress, fonts, i18n, nup, stamp, viewer
 from .core import Dims, Sides
 from .find import Query
 from .i18n import N_, ngettext
@@ -573,7 +572,9 @@ class _StampStyleWidget(QGroupBox):
         super().__init__(_("Appearance"))
         self._colour = QColor(style.colour)
 
-        self.font = QFontComboBox()
+        # Only fonts that may be embedded: the numbers are drawn with the
+        # font embedded, so a font that cannot travel is no choice at all.
+        self.font = fonts.FontChooser()
         self.font.setCurrentFont(QFont(style.font))
 
         self.size = QDoubleSpinBox()

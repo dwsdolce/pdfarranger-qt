@@ -909,3 +909,42 @@ never in question.
 Adding the page box to the single toolbar had also pushed Delete into the
 overflow chevron at 1100 px wide. Neither mode now carries both sets, so it
 fits.
+
+## A font picker offers only fonts that may be embedded
+
+Wherever the application lets you choose a font -- the page-number and
+watermark dialogs today, a markup text box next -- the list holds only
+fonts whose licence allows them to be embedded. The text is drawn with
+the font embedded, because a document must read the same on a machine
+that does not have the font installed; a font that may not travel with
+the document has no place in a list whose whole promise is that it will.
+
+Every TrueType and OpenType font says so itself, in the `fsType` field of
+its OS/2 table: free to embed, embeddable for viewing and printing,
+embeddable and editable, or restricted. Only *restricted* is left out.
+Qt hands over that table for any font it offers (`QRawFont.fontTable`), so
+the check needs no new dependency. A font with no OS/2 table states no
+restriction and is offered.
+
+Measured on 2026-11-09 on a Mac with 915 font faces installed: 555 free to
+embed, 220 for viewing and printing, 130 editable, 7 with no OS/2 table,
+and 3 restricted -- Ayuthaya, GB18030 Bitmap and Songti SC Black. Acrobat's
+font list leaves out exactly those three and shows the rest, Songti SC's
+other weights included. Qt's own font picker shows all of them.
+
+**One picker, everywhere.** `fonts.FontChooser` is Qt's picker less the
+families that may not be embedded, and every font choice uses it. It
+filters by **family**, because that is what a picker offers: a family goes
+only when none of its faces may be embedded. Songti SC stays -- only its
+Black weight is restricted, and the picker reaches regular and bold, never
+Black -- while Ayuthaya and GB18030 Bitmap go. Which families pass is
+worked out once a session, checking each until one face passes: 0.45
+seconds the first time a picker opens on that Mac, and nothing after.
+
+Three things keep the list honest, each found by using it. Qt rebuilds its
+list from every installed font whenever the current font is set, so the
+filter is applied again after each rebuild. A remembered choice can name a
+font that is no longer offered, and then the first of Helvetica, Arial,
+Liberation Sans, DejaVu Sans, Segoe UI and Noto Sans that may be embedded is
+shown instead. And the picker takes typing, so a typed name that is not in
+the list is refused and the font from before the typing comes back.
