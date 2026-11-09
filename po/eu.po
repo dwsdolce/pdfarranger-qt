@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-09 03:19+0000\n"
+"POT-Creation-Date: 2026-11-09 05:40+0000\n"
 "PO-Revision-Date: 2023-01-19 20:27+0100\n"
 "Last-Translator: alexgabi\n"
 "Language: eu\n"
@@ -2255,7 +2255,7 @@ msgid "Help"
 msgstr "Laguntza"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
+#: pdfarranger_qt/mainwindow.py pdfarranger_qt/properties.py
 msgid "Insert Text"
 msgstr "Txertatu testua"
 
@@ -3399,11 +3399,6 @@ msgid "Stamps palette"
 msgstr "Zigilu-paleta"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/toolstrip.py
-msgid "Comment colour"
-msgstr "Iruzkinaren kolorea"
-
-# machine translation, unreviewed
 #: pdfarranger_qt/viewer.py
 msgid "Viewer default"
 msgstr "Ikustailearen lehenetsia"
@@ -3883,4 +3878,8 @@ msgstr "Erakutsi izenburua fitxategi-izenaren ordez"
 # machine translation, unreviewed
 #~ msgid "Delete Note"
 #~ msgstr "Ezabatu oharra"
+
+# machine translation, unreviewed
+#~ msgid "Comment colour"
+#~ msgstr "Iruzkinaren kolorea"
 

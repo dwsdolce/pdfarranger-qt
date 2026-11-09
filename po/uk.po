@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: unnamed project\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-09 03:19+0000\n"
+"POT-Creation-Date: 2026-11-09 05:40+0000\n"
 "PO-Revision-Date: 2026-05-27 19:30+0300\n"
 "Last-Translator: Dymko <Dymkovych@proton.me>\n"
 "Language: uk\n"
@@ -2196,7 +2196,7 @@ msgid "Help"
 msgstr "Довідка"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
+#: pdfarranger_qt/mainwindow.py pdfarranger_qt/properties.py
 msgid "Insert Text"
 msgstr "Вставити текст"
 
@@ -3345,11 +3345,6 @@ msgid "Stamps palette"
 msgstr "Палітра штампів"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/toolstrip.py
-msgid "Comment colour"
-msgstr "Колір коментаря"
-
-# machine translation, unreviewed
 #: pdfarranger_qt/viewer.py
 msgid "Viewer default"
 msgstr "Типово у переглядачі"
@@ -3865,4 +3860,8 @@ msgstr "Показувати заголовок замість імені фай
 # machine translation, unreviewed
 #~ msgid "Delete Note"
 #~ msgstr "Вилучити нотатку"
+
+# machine translation, unreviewed
+#~ msgid "Comment colour"
+#~ msgstr "Колір коментаря"
 

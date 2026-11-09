@@ -173,6 +173,11 @@ says only where it differs.
 - Colour comes from a fixed palette of twenty-one swatches: seven hues, the
   same seven lightened, and seven greys. Each swatch's name is its tooltip.
   No free colour picker.
+- The palette is headed **Colour**, and nothing more: it always opens from
+  something particular -- a mark's form, the selected mark's bar, the armed
+  tool's swatch -- so what it colours is already plain.
+- The tick is on the colour in use, and moves to a colour the moment it is
+  picked; the palette stays open after a pick, so the slider can be used.
 - Opacity is a percentage field above a slider. Both are live and show the
   same value.
 - **Changing a mark changes that mark.** The strip's swatch, the floating

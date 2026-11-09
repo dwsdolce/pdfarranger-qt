@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pdfarranger main\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-09 03:19+0000\n"
+"POT-Creation-Date: 2026-11-09 05:40+0000\n"
 "PO-Revision-Date: 2026-04-24 21:19+0300\n"
 "Last-Translator: Oğuz Ersen <oguz@ersen.moe>\n"
 "Language: tr\n"
@@ -2184,7 +2184,7 @@ msgid "Help"
 msgstr "Yardım"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
+#: pdfarranger_qt/mainwindow.py pdfarranger_qt/properties.py
 msgid "Insert Text"
 msgstr "Metin ekle"
 
@@ -3315,11 +3315,6 @@ msgid "Stamps palette"
 msgstr "Damga paleti"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/toolstrip.py
-msgid "Comment colour"
-msgstr "Yorum rengi"
-
-# machine translation, unreviewed
 #: pdfarranger_qt/viewer.py
 msgid "Viewer default"
 msgstr "Görüntüleyici öntanımlısı"
@@ -3829,4 +3824,8 @@ msgstr "Dosya adı yerine başlığı göster"
 # machine translation, unreviewed
 #~ msgid "Delete Note"
 #~ msgstr "Notu Sil"
+
+# machine translation, unreviewed
+#~ msgid "Comment colour"
+#~ msgstr "Yorum rengi"
 

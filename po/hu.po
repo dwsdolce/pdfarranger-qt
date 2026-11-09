@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-09 03:19+0000\n"
+"POT-Creation-Date: 2026-11-09 05:40+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: hu\n"
@@ -2235,7 +2235,7 @@ msgid "Help"
 msgstr "Súgó"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
+#: pdfarranger_qt/mainwindow.py pdfarranger_qt/properties.py
 msgid "Insert Text"
 msgstr "Szöveg beszúrása"
 
@@ -3379,11 +3379,6 @@ msgid "Stamps palette"
 msgstr "Bélyegzőpaletta"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/toolstrip.py
-msgid "Comment colour"
-msgstr "Megjegyzés színe"
-
-# machine translation, unreviewed
 #: pdfarranger_qt/viewer.py
 msgid "Viewer default"
 msgstr "A megjelenítő alapértelmezése"
@@ -3867,4 +3862,8 @@ msgstr "A cím megjelenítése a fájlnév helyett"
 # machine translation, unreviewed
 #~ msgid "Delete Note"
 #~ msgstr "Jegyzet törlése"
+
+# machine translation, unreviewed
+#~ msgid "Comment colour"
+#~ msgstr "Megjegyzés színe"
 

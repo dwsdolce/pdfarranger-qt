@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  pdfarranger\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-09 03:19+0000\n"
+"POT-Creation-Date: 2026-11-09 05:40+0000\n"
 "PO-Revision-Date: 2023-06-06 13:27+0200\n"
 "Last-Translator: Janez G <janezgac@gmail.com>\n"
 "Language: sl_SI\n"
@@ -2211,7 +2211,7 @@ msgid "Help"
 msgstr "Pomoč"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
+#: pdfarranger_qt/mainwindow.py pdfarranger_qt/properties.py
 msgid "Insert Text"
 msgstr "Vstavi besedilo"
 
@@ -3363,11 +3363,6 @@ msgid "Stamps palette"
 msgstr "Paleta žigov"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/toolstrip.py
-msgid "Comment colour"
-msgstr "Barva komentarja"
-
-# machine translation, unreviewed
 #: pdfarranger_qt/viewer.py
 msgid "Viewer default"
 msgstr "Privzeto v pregledovalniku"
@@ -3846,4 +3841,8 @@ msgstr "Pokaži naslov namesto imena datoteke"
 # machine translation, unreviewed
 #~ msgid "Delete Note"
 #~ msgstr "Izbriši opombo"
+
+# machine translation, unreviewed
+#~ msgid "Comment colour"
+#~ msgstr "Barva komentarja"
 

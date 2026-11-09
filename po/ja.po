@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-09 03:19+0000\n"
+"POT-Creation-Date: 2026-11-09 05:40+0000\n"
 "PO-Revision-Date: 2022-09-01 00:40+0900\n"
 "Last-Translator: sicklylife <translation@sicklylife.jp>\n"
 "Language: ja\n"
@@ -2104,7 +2104,7 @@ msgid "Help"
 msgstr "ヘルプ"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
+#: pdfarranger_qt/mainwindow.py pdfarranger_qt/properties.py
 msgid "Insert Text"
 msgstr "テキスト挿入"
 
@@ -3237,11 +3237,6 @@ msgid "Stamps palette"
 msgstr "スタンプパレット"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/toolstrip.py
-msgid "Comment colour"
-msgstr "コメントの色"
-
-# machine translation, unreviewed
 #: pdfarranger_qt/viewer.py
 msgid "Viewer default"
 msgstr "ビューアーの既定"
@@ -3703,4 +3698,8 @@ msgstr "ファイル名ではなくタイトルを表示する"
 # machine translation, unreviewed
 #~ msgid "Delete Note"
 #~ msgstr "ノートを削除"
+
+# machine translation, unreviewed
+#~ msgid "Comment colour"
+#~ msgstr "コメントの色"
 

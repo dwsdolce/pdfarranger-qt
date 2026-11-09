@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-09 03:19+0000\n"
+"POT-Creation-Date: 2026-11-09 05:40+0000\n"
 "PO-Revision-Date: 2024-09-05 17:05+0300\n"
 "Last-Translator: Abdullah Albaroty <albaroty@gmail.com>\n"
 "Language: ar\n"
@@ -2174,7 +2174,7 @@ msgid "Help"
 msgstr "مساعدة"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
+#: pdfarranger_qt/mainwindow.py pdfarranger_qt/properties.py
 msgid "Insert Text"
 msgstr "إدراج نص"
 
@@ -3340,11 +3340,6 @@ msgid "Stamps palette"
 msgstr "لوحة الأختام"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/toolstrip.py
-msgid "Comment colour"
-msgstr "لون التعليق"
-
-# machine translation, unreviewed
 #: pdfarranger_qt/viewer.py
 msgid "Viewer default"
 msgstr "مبدئي العارض"
@@ -3821,4 +3816,8 @@ msgstr "أظهر العنوان بدل اسم الملف"
 # machine translation, unreviewed
 #~ msgid "Delete Note"
 #~ msgstr "حذف الملاحظة"
+
+# machine translation, unreviewed
+#~ msgid "Comment colour"
+#~ msgstr "لون التعليق"
 

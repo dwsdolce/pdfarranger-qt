@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-09 03:19+0000\n"
+"POT-Creation-Date: 2026-11-09 05:40+0000\n"
 "PO-Revision-Date: 2023-06-08 10:00+0700\n"
 "Last-Translator: Abdul Munif Hanafi <amunifhanafi@gmail.com>\n"
 "Language: id\n"
@@ -2250,7 +2250,7 @@ msgid "Help"
 msgstr "Bantuan"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
+#: pdfarranger_qt/mainwindow.py pdfarranger_qt/properties.py
 msgid "Insert Text"
 msgstr "Sisipkan teks"
 
@@ -3394,11 +3394,6 @@ msgid "Stamps palette"
 msgstr "Palet stempel"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/toolstrip.py
-msgid "Comment colour"
-msgstr "Warna komentar"
-
-# machine translation, unreviewed
 #: pdfarranger_qt/viewer.py
 msgid "Viewer default"
 msgstr "Baku penampil"
@@ -3877,4 +3872,8 @@ msgstr "Tampilkan judul alih-alih nama berkas"
 # machine translation, unreviewed
 #~ msgid "Delete Note"
 #~ msgstr "Hapus Catatan"
+
+# machine translation, unreviewed
+#~ msgid "Comment colour"
+#~ msgstr "Warna komentar"
 

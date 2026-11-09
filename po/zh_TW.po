@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-09 03:19+0000\n"
+"POT-Creation-Date: 2026-11-09 05:40+0000\n"
 "PO-Revision-Date: 2024-03-20 17:20+0800\n"
 "Last-Translator: 錢政維 <e.cwchien@gmail.com>\n"
 "Language: zh_TW\n"
@@ -2064,7 +2064,7 @@ msgid "Help"
 msgstr "說明"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
+#: pdfarranger_qt/mainwindow.py pdfarranger_qt/properties.py
 msgid "Insert Text"
 msgstr "插入文字"
 
@@ -3192,11 +3192,6 @@ msgid "Stamps palette"
 msgstr "印章面板"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/toolstrip.py
-msgid "Comment colour"
-msgstr "註解顏色"
-
-# machine translation, unreviewed
 #: pdfarranger_qt/viewer.py
 msgid "Viewer default"
 msgstr "閱讀器預設值"
@@ -3658,4 +3653,8 @@ msgstr "顯示標題而非檔案名稱"
 # machine translation, unreviewed
 #~ msgid "Delete Note"
 #~ msgstr "刪除註解"
+
+# machine translation, unreviewed
+#~ msgid "Comment colour"
+#~ msgstr "註解顏色"
 

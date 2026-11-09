@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pdfarranger - Korean\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-09 03:19+0000\n"
+"POT-Creation-Date: 2026-11-09 05:40+0000\n"
 "PO-Revision-Date: 2026-05-25 00:41+0900\n"
 "Last-Translator: VenusGirl <venusgirl@outlook.com>\n"
 "Language: ko\n"
@@ -2084,7 +2084,7 @@ msgid "Help"
 msgstr "도움말"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
+#: pdfarranger_qt/mainwindow.py pdfarranger_qt/properties.py
 msgid "Insert Text"
 msgstr "텍스트 삽입"
 
@@ -3211,11 +3211,6 @@ msgid "Stamps palette"
 msgstr "스탬프 팔레트"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/toolstrip.py
-msgid "Comment colour"
-msgstr "주석 색상"
-
-# machine translation, unreviewed
 #: pdfarranger_qt/viewer.py
 msgid "Viewer default"
 msgstr "뷰어 기본값"
@@ -3725,4 +3720,8 @@ msgstr "파일 이름 대신 제목 보이기"
 # machine translation, unreviewed
 #~ msgid "Delete Note"
 #~ msgstr "메모 삭제"
+
+# machine translation, unreviewed
+#~ msgid "Comment colour"
+#~ msgstr "주석 색상"
 

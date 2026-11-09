@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  pdfarranger\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-09 03:19+0000\n"
+"POT-Creation-Date: 2026-11-09 05:40+0000\n"
 "PO-Revision-Date: 2026-01-21 05:07+0100\n"
 "Last-Translator: Ekaterine Papava <papava.e@gtu.ge>\n"
 "Language: ka\n"
@@ -2194,7 +2194,7 @@ msgid "Help"
 msgstr "დახმარება"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
+#: pdfarranger_qt/mainwindow.py pdfarranger_qt/properties.py
 msgid "Insert Text"
 msgstr "ტექსტის ჩასმა"
 
@@ -3331,11 +3331,6 @@ msgid "Stamps palette"
 msgstr "ბეჭდების პალიტრა"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/toolstrip.py
-msgid "Comment colour"
-msgstr "კომენტარის ფერი"
-
-# machine translation, unreviewed
 #: pdfarranger_qt/viewer.py
 msgid "Viewer default"
 msgstr "მნახველის ნაგულისხმევი"
@@ -3840,4 +3835,8 @@ msgstr "ფაილის სახელის ნაცვლად სათ
 # machine translation, unreviewed
 #~ msgid "Delete Note"
 #~ msgstr "შენიშვნის წაშლა"
+
+# machine translation, unreviewed
+#~ msgid "Comment colour"
+#~ msgstr "კომენტარის ფერი"
 

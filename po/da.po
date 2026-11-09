@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  pdfarranger\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-09 03:19+0000\n"
+"POT-Creation-Date: 2026-11-09 05:40+0000\n"
 "PO-Revision-Date: 2023-10-22 00:28+0200\n"
 "Last-Translator: Lrss <dev@lrss.dk>\n"
 "Language: da\n"
@@ -2220,7 +2220,7 @@ msgid "Help"
 msgstr "Hjælp"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
+#: pdfarranger_qt/mainwindow.py pdfarranger_qt/properties.py
 msgid "Insert Text"
 msgstr "Indsæt tekst"
 
@@ -3364,11 +3364,6 @@ msgid "Stamps palette"
 msgstr "Stempelpalet"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/toolstrip.py
-msgid "Comment colour"
-msgstr "Kommentarfarve"
-
-# machine translation, unreviewed
 #: pdfarranger_qt/viewer.py
 msgid "Viewer default"
 msgstr "Fremviserens standard"
@@ -3850,4 +3845,8 @@ msgstr "Vis titlen frem for filnavnet"
 # machine translation, unreviewed
 #~ msgid "Delete Note"
 #~ msgstr "Slet note"
+
+# machine translation, unreviewed
+#~ msgid "Comment colour"
+#~ msgstr "Kommentarfarve"
 

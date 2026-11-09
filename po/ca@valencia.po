@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-09 03:19+0000\n"
+"POT-Creation-Date: 2026-11-09 05:40+0000\n"
 "PO-Revision-Date: 2022-08-13 11:15+0200\n"
 "Last-Translator: Juanma1980 <juanma1980@gmail.com>\n"
 "Language: ca@valencia\n"
@@ -2253,7 +2253,7 @@ msgid "Help"
 msgstr "Ajuda"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
+#: pdfarranger_qt/mainwindow.py pdfarranger_qt/properties.py
 msgid "Insert Text"
 msgstr "Insereix text"
 
@@ -3402,11 +3402,6 @@ msgid "Stamps palette"
 msgstr "Paleta de segells"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/toolstrip.py
-msgid "Comment colour"
-msgstr "Color del comentari"
-
-# machine translation, unreviewed
 #: pdfarranger_qt/viewer.py
 msgid "Viewer default"
 msgstr "Per defecte del visualitzador"
@@ -3885,4 +3880,8 @@ msgstr "Mostra el títol en lloc del nom del fitxer"
 # machine translation, unreviewed
 #~ msgid "Delete Note"
 #~ msgstr "Suprimix la nota"
+
+# machine translation, unreviewed
+#~ msgid "Comment colour"
+#~ msgstr "Color del comentari"
 

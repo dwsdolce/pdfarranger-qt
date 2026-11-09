@@ -803,7 +803,11 @@ class ColourPopup(QWidget):
         outer = QVBoxLayout(self)
         outer.setContentsMargins(12, 10, 12, 10)
         outer.setSpacing(8)
-        title = QLabel(_("Comment colour"), self)
+        # Just "Colour": the popup always opens from something particular --
+        # a mark's form, the selected mark's bar, the armed tool's swatch --
+        # so what it colours is already plain, and naming one kind of mark
+        # here was wrong for every other.
+        title = QLabel(_("Colour"), self)
         font = title.font()
         font.setBold(True)
         title.setFont(font)
@@ -815,7 +819,7 @@ class ColourPopup(QWidget):
         for n, (name, colour) in enumerate(markup.PALETTE):
             cell = _Swatch(colour, _(name), self)
             cell.clicked.connect(
-                lambda _checked=False, rgb=colour: self.chosen.emit(rgb))
+                lambda _checked=False, at=n, rgb=colour: self._picked(at, rgb))
             grid.addWidget(cell, n // markup.PALETTE_COLUMNS,
                            n % markup.PALETTE_COLUMNS)
             self.cells.append(cell)
@@ -840,6 +844,17 @@ class ColourPopup(QWidget):
         self.slider.valueChanged.connect(
             lambda v: self.percent.setText(f"{v}%"))
         outer.addLayout(row)
+
+    def _picked(self, at: int, colour) -> None:
+        """A colour was clicked: tick it, then pass it on.
+
+        The popup stays open after a pick -- it is not a menu, so that the
+        slider can be dragged -- and the tick was set only when it opened,
+        so it went on ticking the colour it opened with.
+        """
+        for n, cell in enumerate(self.cells):
+            cell.set_chosen(n == at)
+        self.chosen.emit(colour)
 
     def _nudged(self, action):
         if action != QSlider.SliderMove:

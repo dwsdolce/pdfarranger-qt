@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-09 03:19+0000\n"
+"POT-Creation-Date: 2026-11-09 05:40+0000\n"
 "PO-Revision-Date: 2025-09-28 16:51+0000\n"
 "Last-Translator: Sveinn í Felli <sv1@fellsnet.is>\n"
 "Language: is\n"
@@ -2204,7 +2204,7 @@ msgid "Help"
 msgstr "Hjálp"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
+#: pdfarranger_qt/mainwindow.py pdfarranger_qt/properties.py
 msgid "Insert Text"
 msgstr "Setja inn texta"
 
@@ -3343,11 +3343,6 @@ msgid "Stamps palette"
 msgstr "Stimpilspjald"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/toolstrip.py
-msgid "Comment colour"
-msgstr "Litur athugasemdar"
-
-# machine translation, unreviewed
 #: pdfarranger_qt/viewer.py
 msgid "Viewer default"
 msgstr "Sjálfgefið í skoðara"
@@ -3839,4 +3834,8 @@ msgstr "Sýna titilinn í stað skráarnafnsins"
 # machine translation, unreviewed
 #~ msgid "Delete Note"
 #~ msgstr "Eyða minnispunkti"
+
+# machine translation, unreviewed
+#~ msgid "Comment colour"
+#~ msgstr "Litur athugasemdar"
 

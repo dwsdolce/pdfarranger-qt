@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  pdfarranger\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-09 03:19+0000\n"
+"POT-Creation-Date: 2026-11-09 05:40+0000\n"
 "PO-Revision-Date: 2026-05-23 07:56-0300\n"
 "Last-Translator: Rondnelly Assis <rond.nunes@gmail.com>\n"
 "Language: pt_BR\n"
@@ -2198,7 +2198,7 @@ msgid "Help"
 msgstr "Ajuda"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
+#: pdfarranger_qt/mainwindow.py pdfarranger_qt/properties.py
 msgid "Insert Text"
 msgstr "Inserir texto"
 
@@ -3339,11 +3339,6 @@ msgid "Stamps palette"
 msgstr "Paleta de carimbos"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/toolstrip.py
-msgid "Comment colour"
-msgstr "Cor do comentário"
-
-# machine translation, unreviewed
 #: pdfarranger_qt/viewer.py
 msgid "Viewer default"
 msgstr "Padrão do visualizador"
@@ -3853,4 +3848,8 @@ msgstr "Mostrar o título em vez do nome do arquivo"
 # machine translation, unreviewed
 #~ msgid "Delete Note"
 #~ msgstr "Excluir nota"
+
+# machine translation, unreviewed
+#~ msgid "Comment colour"
+#~ msgstr "Cor do comentário"
 

@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pdfarranger master\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-09 03:19+0000\n"
+"POT-Creation-Date: 2026-11-09 05:40+0000\n"
 "PO-Revision-Date: 2026-09-04 09:59+0000\n"
 "Last-Translator: Lumenman <28367232+Lumenman@users.noreply.github.com>\n"
 "Language: ru\n"
@@ -2076,7 +2076,7 @@ msgid "Help"
 msgstr "Справка"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
+#: pdfarranger_qt/mainwindow.py pdfarranger_qt/properties.py
 msgid "Insert Text"
 msgstr "Вставить текст"
 
@@ -3151,11 +3151,6 @@ msgid "Stamps palette"
 msgstr "Палитра штампов"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/toolstrip.py
-msgid "Comment colour"
-msgstr "Цвет комментария"
-
-# machine translation, unreviewed
 #: pdfarranger_qt/viewer.py
 msgid "Viewer default"
 msgstr "По умолчанию в программе просмотра"
@@ -3669,4 +3664,8 @@ msgstr "Показывать заголовок вместо имени файл
 # machine translation, unreviewed
 #~ msgid "Delete Note"
 #~ msgstr "Удаление заметки"
+
+# machine translation, unreviewed
+#~ msgid "Comment colour"
+#~ msgstr "Цвет комментария"
 

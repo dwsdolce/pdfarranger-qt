@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-09 03:19+0000\n"
+"POT-Creation-Date: 2026-11-09 05:40+0000\n"
 "PO-Revision-Date: 2023-06-12 11:22+0300\n"
 "Last-Translator: Yaron Shahrabani <sh.yaron@gmail.com>\n"
 "Language: he\n"
@@ -2177,7 +2177,7 @@ msgid "Help"
 msgstr "עזרה"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
+#: pdfarranger_qt/mainwindow.py pdfarranger_qt/properties.py
 msgid "Insert Text"
 msgstr "הוספת טקסט"
 
@@ -3327,11 +3327,6 @@ msgid "Stamps palette"
 msgstr "לוח חותמות"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/toolstrip.py
-msgid "Comment colour"
-msgstr "צבע ההערה"
-
-# machine translation, unreviewed
 #: pdfarranger_qt/viewer.py
 msgid "Viewer default"
 msgstr "בררת המחדל של המציג"
@@ -3804,4 +3799,8 @@ msgstr "הצגת הכותרת במקום שם הקובץ"
 # machine translation, unreviewed
 #~ msgid "Delete Note"
 #~ msgstr "מחיקת הערה"
+
+# machine translation, unreviewed
+#~ msgid "Comment colour"
+#~ msgstr "צבע ההערה"
 

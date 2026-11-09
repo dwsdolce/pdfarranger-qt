@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pdfarranger-qt VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/dwsdolce/pdfarranger-qt/issues\n"
-"POT-Creation-Date: 2026-11-09 03:19+0000\n"
+"POT-Creation-Date: 2026-11-09 05:40+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1714,7 +1714,7 @@ msgstr ""
 msgid "Help"
 msgstr ""
 
-#: pdfarranger_qt/mainwindow.py
+#: pdfarranger_qt/mainwindow.py pdfarranger_qt/properties.py
 msgid "Insert Text"
 msgstr ""
 
@@ -2655,10 +2655,6 @@ msgstr ""
 
 #: pdfarranger_qt/tools.py
 msgid "Stamps palette"
-msgstr ""
-
-#: pdfarranger_qt/toolstrip.py
-msgid "Comment colour"
 msgstr ""
 
 #: pdfarranger_qt/viewer.py

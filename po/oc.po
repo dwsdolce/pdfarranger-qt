@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-09 03:19+0000\n"
+"POT-Creation-Date: 2026-11-09 05:40+0000\n"
 "PO-Revision-Date: 2026-02-15 15:16+0100\n"
 "Last-Translator: Quentin PAGÈS\n"
 "Language: oc\n"
@@ -2204,7 +2204,7 @@ msgid "Help"
 msgstr "Ajuda"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
+#: pdfarranger_qt/mainwindow.py pdfarranger_qt/properties.py
 msgid "Insert Text"
 msgstr "Inserir de tèxte"
 
@@ -3347,11 +3347,6 @@ msgid "Stamps palette"
 msgstr "Paleta de timbres"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/toolstrip.py
-msgid "Comment colour"
-msgstr "Color del comentari"
-
-# machine translation, unreviewed
 #: pdfarranger_qt/viewer.py
 msgid "Viewer default"
 msgstr "Per defaut del visualizador"
@@ -3872,4 +3867,8 @@ msgstr "Mostrar lo títol puslèu que lo nom del fichièr"
 # machine translation, unreviewed
 #~ msgid "Delete Note"
 #~ msgstr "Suprimir la nòta"
+
+# machine translation, unreviewed
+#~ msgid "Comment colour"
+#~ msgstr "Color del comentari"
 

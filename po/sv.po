@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  pdfarranger\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-09 03:19+0000\n"
+"POT-Creation-Date: 2026-11-09 05:40+0000\n"
 "PO-Revision-Date: 2026-05-24 07:36+0300\n"
 "Last-Translator: kbengs\n"
 "Language: sv\n"
@@ -2186,7 +2186,7 @@ msgid "Help"
 msgstr "Hjälp"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
+#: pdfarranger_qt/mainwindow.py pdfarranger_qt/properties.py
 msgid "Insert Text"
 msgstr "Infoga text"
 
@@ -3327,11 +3327,6 @@ msgid "Stamps palette"
 msgstr "Stämpelpalett"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/toolstrip.py
-msgid "Comment colour"
-msgstr "Kommentarfärg"
-
-# machine translation, unreviewed
 #: pdfarranger_qt/viewer.py
 msgid "Viewer default"
 msgstr "Visningsprogrammets standard"
@@ -3847,4 +3842,8 @@ msgstr "Visa titeln i stället för filnamnet"
 # machine translation, unreviewed
 #~ msgid "Delete Note"
 #~ msgstr "Ta bort anteckning"
+
+# machine translation, unreviewed
+#~ msgid "Comment colour"
+#~ msgstr "Kommentarfärg"
 

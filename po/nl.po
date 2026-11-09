@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PDF-Shuffler 0.7\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-09 03:19+0000\n"
+"POT-Creation-Date: 2026-11-09 05:40+0000\n"
 "PO-Revision-Date: 2025-05-26 10:43+0200\n"
 "Last-Translator: Heimen Stoffels <vistausss@fastmail.com>\n"
 "Language: nl\n"
@@ -2234,7 +2234,7 @@ msgid "Help"
 msgstr "Help"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
+#: pdfarranger_qt/mainwindow.py pdfarranger_qt/properties.py
 msgid "Insert Text"
 msgstr "Tekst invoegen"
 
@@ -3379,11 +3379,6 @@ msgid "Stamps palette"
 msgstr "Stempelpalet"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/toolstrip.py
-msgid "Comment colour"
-msgstr "Opmerkingskleur"
-
-# machine translation, unreviewed
 #: pdfarranger_qt/viewer.py
 msgid "Viewer default"
 msgstr "Standaard van weergaveprogramma"
@@ -3880,4 +3875,8 @@ msgstr "De titel tonen in plaats van de bestandsnaam"
 # machine translation, unreviewed
 #~ msgid "Delete Note"
 #~ msgstr "Notitie verwijderen"
+
+# machine translation, unreviewed
+#~ msgid "Comment colour"
+#~ msgstr "Opmerkingskleur"
 

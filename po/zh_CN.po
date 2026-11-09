@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PDF Arranger 1.14.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-09 03:19+0000\n"
+"POT-Creation-Date: 2026-11-09 05:40+0000\n"
 "PO-Revision-Date: 2026-06-02 17:09+0800\n"
 "Last-Translator: Puqns67 <me@puqns67.icu>\n"
 "Language: zh_CN\n"
@@ -2028,7 +2028,7 @@ msgid "Help"
 msgstr "帮助"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
+#: pdfarranger_qt/mainwindow.py pdfarranger_qt/properties.py
 msgid "Insert Text"
 msgstr "插入文本"
 
@@ -3155,11 +3155,6 @@ msgid "Stamps palette"
 msgstr "图章面板"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/toolstrip.py
-msgid "Comment colour"
-msgstr "批注颜色"
-
-# machine translation, unreviewed
 #: pdfarranger_qt/viewer.py
 msgid "Viewer default"
 msgstr "阅读器默认"
@@ -3651,4 +3646,8 @@ msgstr "显示标题而非文件名"
 # machine translation, unreviewed
 #~ msgid "Delete Note"
 #~ msgstr "删除注释"
+
+# machine translation, unreviewed
+#~ msgid "Comment colour"
+#~ msgstr "批注颜色"
 

@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  pdfarranger\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-09 03:19+0000\n"
+"POT-Creation-Date: 2026-11-09 05:40+0000\n"
 "PO-Revision-Date: 2023-07-10 15:37+0000\n"
 "Last-Translator: PavelZ\n"
 "Language: cs_CZ\n"
@@ -2214,7 +2214,7 @@ msgid "Help"
 msgstr "Nápověda"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
+#: pdfarranger_qt/mainwindow.py pdfarranger_qt/properties.py
 msgid "Insert Text"
 msgstr "Vložit text"
 
@@ -3362,11 +3362,6 @@ msgid "Stamps palette"
 msgstr "Paleta razítek"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/toolstrip.py
-msgid "Comment colour"
-msgstr "Barva komentáře"
-
-# machine translation, unreviewed
 #: pdfarranger_qt/viewer.py
 msgid "Viewer default"
 msgstr "Výchozí nastavení prohlížeče"
@@ -3843,4 +3838,8 @@ msgstr "Zobrazit název místo jména souboru"
 # machine translation, unreviewed
 #~ msgid "Delete Note"
 #~ msgstr "Odstranit poznámku"
+
+# machine translation, unreviewed
+#~ msgid "Comment colour"
+#~ msgstr "Barva komentáře"
 
