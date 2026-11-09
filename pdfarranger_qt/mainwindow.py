@@ -1235,7 +1235,7 @@ class MainWindow(QMainWindow):
                 found is None or said is not self._noted[1][0]):
             self.note_panel.hide()
             self._noted = None
-        if found is not None and markup.has_note(said):
+        if found is not None and self.reader.canvas.carries_note(*found):
             self.open_note(*found)
         if found is None:
             self.tool_strip.unfollow()
@@ -1276,7 +1276,7 @@ class MainWindow(QMainWindow):
         # A pair's caret follows the end of the run, as one mark.
         caret = self.reader.canvas.caret_of(index, mark)
         if isinstance(mark, markup.Annotation):
-            self.model.undo.commit(_("Resize Mark"))
+            self._commit_mark_change(_("Resize Mark"), index, mark)
             mark.quads = tuple(tuple(q) for q in quads)
             mark.rect = markup.bounding_rect(mark.quads)
             mark.touch()
@@ -1286,7 +1286,7 @@ class MainWindow(QMainWindow):
             self._after_mark_change(index)
             return
         uid = self.model.pages[index].uid
-        self.model.undo.commit(_("Resize Mark"))
+        self._commit_mark_change(_("Resize Mark"), index, mark)
         boxes = tuple(tuple(q) for q in quads)
         self.model.mark_edits.change(uid, mark.index, quads=boxes)
         if caret is not None:
@@ -1315,14 +1315,14 @@ class MainWindow(QMainWindow):
         rect = tuple(float(v) for v in rect)
         rotate = float(rotate)
         if isinstance(mark, markup.Annotation):
-            self.model.undo.commit(_("Reshape Mark"))
+            self._commit_mark_change(_("Reshape Mark"), index, mark)
             mark.rect = rect
             mark.rotate = rotate
             mark.touch()
             self._after_mark_change(index)
             return
         uid = self.model.pages[index].uid
-        self.model.undo.commit(_("Reshape Mark"))
+        self._commit_mark_change(_("Reshape Mark"), index, mark)
         self.model.mark_edits.change(uid, mark.index,
                                      rect=rect, rotate=rotate)
         mark.rect = rect
@@ -1344,13 +1344,13 @@ class MainWindow(QMainWindow):
             return
         rect = tuple(float(v) for v in rect)
         if isinstance(mark, markup.Annotation):
-            self.model.undo.commit(_("Move Mark"))
+            self._commit_mark_change(_("Move Mark"), index, mark)
             mark.rect = rect
             mark.touch()
             self._after_mark_change(index)
             return
         uid = self.model.pages[index].uid
-        self.model.undo.commit(_("Move Mark"))
+        self._commit_mark_change(_("Move Mark"), index, mark)
         self.model.mark_edits.change(uid, mark.index, rect=rect)
         mark.rect = rect
         self._after_mark_change(index, uid)
@@ -1616,6 +1616,8 @@ class MainWindow(QMainWindow):
         # Cancel is an undo of whatever was shown.
         taken = []
         was_modified = self.modified
+        was = {"colour": getattr(mark, "colour", None),
+               "opacity": getattr(mark, "opacity", None)}
         form.previewed.connect(
             lambda colour, opacity: self._preview_mark(
                 index, mark, colour, opacity, taken))
@@ -1629,20 +1631,56 @@ class MainWindow(QMainWindow):
             # an undo entry for a change nobody made is a change nobody
             # made. Undoing the preview also rebuilds the canvas's marks,
             # which is what puts the page back.
-            if taken:
+            if taken and taken[0]:
                 self.model.undo.undo()
                 self.modified = was_modified
+            elif taken:
+                # Folded into a new mark's placement, so there is no step
+                # of its own to undo: what the preview showed is put back.
+                self._write_mark_fields(index, mark, was, mine)
+                self.modified = was_modified
             return
-        self._commit_properties(taken)
+        self._commit_properties(taken, index, mark)
         self._write_mark_fields(index, mark, changed, mine)
         self._show_thread_again(index, mark)
 
-    def _commit_properties(self, taken: list) -> None:
+    def _commit_properties(self, taken: list, index: int, mark) -> None:
         """One undo entry for the whole form, taken before the first thing
-        it changes -- which may be a preview rather than the accepting."""
+        it changes -- which may be a preview rather than the accepting.
+
+        ``taken`` records whether one was: a new mark still waiting for its
+        first words has none of its own, its changes folding into the step
+        that placed it."""
         if not taken:
-            taken.append(True)
-            self.model.undo.commit(_("Mark Properties"))
+            taken.append(self._commit_mark_change(
+                _("Mark Properties"), index, mark))
+
+    def _mark_is_waiting(self, index: int, mark) -> bool:
+        """Whether ``mark`` is a new mark still waiting for its first words
+        -- or the strikeout of a Replace pair whose caret is."""
+        if self._awaiting_text is None:
+            return False
+        waiting_index, waiting, _placed = self._awaiting_text
+        if waiting_index != index:
+            return False
+        return (mark is waiting
+                or self.reader.canvas.head_of(index, waiting) is mark)
+
+    def _commit_mark_change(self, label: str, index: int, mark) -> bool:
+        """Take an undo step for a change to ``mark``, and say whether one
+        was taken.
+
+        **None for a mark that needs a note and has not been given one.**
+        Until its first words are posted, the mark and everything done to it
+        are the step that placed it: one undo takes the lot, and Cancel
+        leaves nothing behind. A step of its own would let undo walk back to
+        the mark with its note gone -- a state it is never meant to be in,
+        and one Acrobat reaches by exactly these steps.
+        """
+        if self._mark_is_waiting(index, mark):
+            return False
+        self.model.undo.commit(label)
+        return True
 
     def _preview_mark(self, index: int, mark, colour, opacity, taken) -> None:
         """Show a colour or an opacity the form is still holding.
@@ -1652,7 +1690,7 @@ class MainWindow(QMainWindow):
         re-rendered from a document patched with `mark_edits`, so a preview
         that only set the attribute would show nothing at all.
         """
-        self._commit_properties(taken)
+        self._commit_properties(taken, index, mark)
         self._write_mark_fields(
             index, mark, {"colour": colour, "opacity": opacity},
             isinstance(mark, markup.Annotation))
@@ -2265,7 +2303,7 @@ class MainWindow(QMainWindow):
             # so a colour, an opacity and a resize are all one answer.
             return
         uid = self.model.pages[index].uid
-        self.model.undo.commit(_("Change Mark"))
+        self._commit_mark_change(_("Change Mark"), index, mark)
         partner = self._partner_fields(index, mark, fields)
         if isinstance(mark, markup.Annotation):
             for name, value in fields.items():

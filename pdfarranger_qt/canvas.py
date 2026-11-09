@@ -4434,6 +4434,28 @@ class PageCanvas(QAbstractScrollArea):
             else:
                 return links
 
+    def carries_note(self, index: int, mark) -> bool:
+        """Whether ``mark`` has a note window worth opening.
+
+        **Its note has text, or it has any reply.** A note emptied while a
+        reply stands under it is still a thread to read -- Acrobat leaves
+        such marks behind -- so it wears the badge, shows on hover and opens
+        on selection like any other. Asked of the annotation the note is on,
+        which for a Replace pair is its caret.
+        """
+        said = self.note_bearer(index, mark)
+        if markup.is_reply(said) or markup.is_status(said):
+            return False
+        if markup.has_note(said):
+            return True
+        if not isinstance(said, markup.Annotation):
+            try:
+                if any(m.is_reply() for m in self._file_marks.children(said)):
+                    return True
+            except Exception:   # noqa: BLE001 - a mark with no chain has none
+                pass
+        return bool(self.replies_made_here(index, said))
+
     def replies_made_here(self, index, mark):
         """The replies to a mark that this session has added.
 
@@ -5010,13 +5032,13 @@ class PageCanvas(QAbstractScrollArea):
                  if m.subtype in badged
                  and not markup.is_reply(m)
                  and not self._paired_caret(index, m)
-                 and markup.has_note(self.note_bearer(index, m))]
+                 and self.carries_note(index, m)]
         try:
             if self.marks:
                 found += [m for m in (self.marks(index) or ())
                           if m.kind in badged
                           and not self._paired_caret(index, m)
-                          and markup.has_note(self.note_bearer(index, m))]
+                          and self.carries_note(index, m)]
         except Exception:       # noqa: BLE001 - a repaint must not fail
             pass
         return found
@@ -5073,7 +5095,7 @@ class PageCanvas(QAbstractScrollArea):
         if found is None:
             return None
         said = self.note_bearer(*found)
-        if not markup.has_note(said):
+        if not self.carries_note(found[0], found[1]):
             return None
         return (found[0], said)
 

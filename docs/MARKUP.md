@@ -208,6 +208,11 @@ one looks like are two different intentions.
 
 #### Requirements
 
+- **A mark carries a note when its note has text or it has any reply.** A
+  mark whose note is empty but which has been replied to still has a thread
+  to read: it wears the badge, shows the thread on hover, and opens its
+  window when selected, with the empty note ready to type into. Acrobat
+  leaves such marks behind -- see Undo -- and treats them the same way.
 - Selecting a mark that carries a note opens its window. Selecting another
   mark swaps it for that mark's window; selecting one with no note, or
   clicking bare page, closes it.
@@ -346,6 +351,15 @@ behind as hidden annotations that nothing can reach. Here it goes.
 
 - Undo and redo work while reading, for every markup action.
 - One action is one undo step.
+- **A mark that needs a note is one undo step until its note is posted.**
+  Anything done to it while its note window waits for the first words --
+  a colour, an opacity, the properties form -- folds into the step that
+  placed it, as the first words do. One undo then takes the whole mark, and
+  Cancel removes it leaving nothing behind in the history. Without this,
+  undo could walk back to the mark with its note gone and its colours
+  still being undone: a state the mark is never meant to be in. Acrobat
+  does exactly that, measured by the owner on 2026-11-08 with the same
+  steps, which is one way it leaves a caret with an empty note.
 
 ## Marking text
 
