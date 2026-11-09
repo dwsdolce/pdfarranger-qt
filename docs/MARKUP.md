@@ -47,7 +47,7 @@ taken up, not guessed ahead of time.
 | | Add a scalable comment | Scalable Comment | a note icon that is part of the page: it scales, resizes and turns | complete |
 | | Replace selected text | Replace Selected Text | propose new wording for words that are struck out | complete |
 | | Insert text | Insert Text | propose words to insert at a point | complete |
-| | Add text comment | | words written straight onto the page in a box | not started |
+| | Add text comment | Text Box | words written straight onto the page in a box | next |
 | | Attach file | | a file carried in the document at a point | not started |
 | Text markup | Highlight | Highlight | colour behind a run of words | complete |
 | | Underline | Underline | a straight or wavy line under a run of words | complete |
@@ -720,3 +720,96 @@ holds three in identical 12-point text, two placed at a large zoom, within
 2.4% of each other. Replace's rule is consistent and lands within about a
 point of Acrobat's, which is close enough: this does not have to match
 Acrobat exactly.
+
+## Text Box
+
+Made by the Add Text Comment tool. Next.
+
+### Requirements
+
+- A box of text placed anywhere on the page, its words written straight onto
+  the page rather than kept in a note.
+- **Two ways to make one.** A click makes a box 108 points wide and one line
+  tall at the point clicked. A drag draws the box as it goes, and the drag
+  is the box.
+- **The text wraps at word boundaries where it can**; a word too long for the
+  line is broken across lines. The width stays as made, and the box grows
+  downward as the text wraps or Return is pressed.
+- A box may be left empty: unlike a note, it needs no text to exist.
+- Eight handles, resizing without keeping the proportions.
+- **Double-click goes into the text.** While editing, the strip's colour
+  swatch is replaced by the text's: a palette with the font, size, colour,
+  alignment, bold, italic, underline, strikethrough, superscript and
+  subscript, each a property of the run it is applied to.
+- **Every font on the system that may be embedded** is offered -- the rule
+  for every font picker, in [DESIGN.md](DESIGN.md). Acrobat's list leaves out
+  the same fonts. Helvetica 12 point to start.
+- **Three colours, one palette.** The border is the mark's colour -- the
+  strip's swatch, as for every other mark -- and starts Light Red. The fill
+  starts White and the text Green. All three come from the same twenty-one
+  swatches; Acrobat's fuller colour pickers are not copied.
+- Opacity, as for every other mark.
+- **Status, but no notes.** A text box has no note window, no replies and no
+  badge.
+- **Two right-click menus.** On the mark: Delete, Set status, Make current
+  properties default and Properties. Over selected text while editing: the
+  editor's own -- Paste, Select All and the Text Style menu. The platform's
+  spelling and dictionary entries are not offered, as for notes.
+- **The properties form is *Text Box Properties*.** Appearance holds Style,
+  Border Color, Opacity, Thickness and Fill Color, beside the standard tabs.
+  Style is one of ten: No Border, solid, dotted, five dash patterns, and a
+  small and a large cloud.
+
+**Departure from Acrobat.** Acrobat writes Helvetica without embedding it.
+Here the font used is embedded, as the page-number and watermark dialogs
+already do, or a document written on one system cannot be read on another --
+and with every system font on offer, most would not be there.
+
+### Plan
+
+The fixture is `corpus/Markup Text Comment.pdf`: four boxes on page 1, two of
+them empty, one with a 3 point border and an orange fill, and the newest made
+by a single click.
+
+**What Acrobat writes**: a `/FreeText` with `/Subj Text Box`, `/F 4`, no
+`/IT` and no `/Popup`. The three colours are in three places:
+
+    fill          /C                                white  [1 1 1]
+    border        the colour in /DA                  0.9725 0.3922 0.3922 rg
+    text          /RC and /DS                        color:#058A1B
+
+`/DA` names the font and size too, `/Helv 12 Tf`, against a Type 1 Helvetica
+in the appearance's resources and not embedded. `/DS` is the default style,
+and `/RC` the rich text, one span per run, as for notes. Thickness is
+`/BS /W`, written only when it is not 1. An empty box has no `/Contents` and
+no `/RC`.
+
+**The drawing**: the fill and the border in one path, the border inset by
+half its width; then the text, clipped to the box inset by twice the
+border's width, in lines 1.2 times the size apart -- 14.4 points at 12.
+
+**The click-made box** is 108 by 18.4 points: one 14.4 point line and 2
+points above and below.
+
+**Ours**: fonts offered through `fonts.FontChooser`, the one picker every
+font choice uses; drawn through `QPdfWriter`, which embeds a subset of each
+font used and takes any language, and lifted into the appearance as the page
+numbers and watermarks are. `/RC` records each run's font family and size
+beside the styles notes already keep, so Acrobat reads back what was chosen.
+
+The Add Text Comment tool's starting colour in `tools.py` is White, which was
+read off Acrobat's fill; the mark's colour is the border's, which starts
+Light Red, and the tool's colour changes to match.
+
+### Open
+
+- **How each border style is written.** The fixture has only solid borders.
+  A box with each of the dotted, dashed and cloudy styles, made in Acrobat,
+  would show whether they are `/BS /D` dash arrays and `/BE` clouds, and at
+  what values.
+- **How much the box grows per line.** Two lines come to 30.41 points in the
+  fixture where one line and a second 14.4 would make 32.8. Not established.
+- **Whether a box can be moved.** The notes do not say; Acrobat lets one be
+  dragged.
+- **Whether a click goes straight into the text**, ready to type, or makes
+  an empty box that a double-click then opens.
