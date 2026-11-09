@@ -20,7 +20,10 @@ tools that create no marks -- they change what the cursor does instead.
 The toolbar holds other controls that are not tools, the appearance
 controls among them.
 
-**A mark** is an annotation in the document. It shows on a page, it
+**A mark** annotates the document with one or more annotations, where
+*annotation* means the PDF object and not anything that annotates a
+document. Most marks are one annotation; Replace Selected Text is two that
+act as one mark. It shows on a page, it
 carries notes and a review status, and it has attributes that decide its
 appearance, along with metadata such as who made it and when. Notes and
 status may be empty, and usually are. A mark is on one page: text selected

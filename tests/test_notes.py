@@ -1099,13 +1099,20 @@ class TestTheFormOnOneMark(unittest.TestCase):
         self.assertEqual(self.form(kind="/Polygon").windowTitle(),
                          "Mark Properties")
 
-    def test_every_kind_it_writes_has_a_name_for_the_title(self):
-        """A kind this application makes and cannot name would fall back to
-        the generic title on a form the user opens every day."""
+    def test_every_mark_it_writes_has_a_name_for_the_title(self):
+        """A mark this application makes and cannot name would fall back to
+        the generic title on a form the user opens every day.
+
+        **Every mark, not every annotation.** A mark annotates the document
+        with one or more annotations, and the form belongs to the mark: the
+        caret of *Replace Selected Text* is half of that mark, has no form
+        of its own, and so needs no title. The mark it belongs to does.
+        """
         from pdfarranger_qt import markup
         from pdfarranger_qt.properties import KIND_LABELS
 
-        self.assertEqual(set(markup.KINDS) - set(KIND_LABELS), set())
+        marks = (set(markup.KINDS) - {markup.CARET}) | {"replace_text"}
+        self.assertEqual(marks - set(KIND_LABELS), set())
 
     def test_the_opacity_is_a_field_as_well_as_a_slider(self):
         """**Both, and both live**, as Reader has it -- photographed in the
