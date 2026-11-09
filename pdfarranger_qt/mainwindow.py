@@ -3372,7 +3372,56 @@ class MainWindow(QMainWindow):
             # has to be put back over the top every time the snapshot is
             # rebuilt, or the colour reverts whenever anything else is edited.
             self._show_all_mark_edits()
+            self._put_edits_on_records()
         return ok
+
+    def _put_edits_on_records(self) -> None:
+        """Give the reader's record of each mark the edits held for it.
+
+        **The picture and the record are rebuilt separately.** The reader
+        reads its marks afresh from the snapshot, which is built from the
+        sources and so holds every mark as the file has it; the page is
+        re-rendered with the edits put back, but the records were left as
+        read. So after a trip to Arrange, an undo or any other rebuild, a
+        mark recoloured blue was drawn blue and remembered as red -- and the
+        swatch, the properties form and a resize all started from red.
+
+        Set from whatever edits are held *now*, so after an undo the records
+        match the state the undo restored. A mark deleted this session is
+        dropped from what can be clicked, as it was before the rebuild.
+        """
+        canvas = self.reader.canvas
+        going = []
+        for index, row in enumerate(self.model.pages):
+            edits = self.model.mark_edits.for_page(row.uid)
+            if not edits:
+                continue
+            scale = row.scale if row.scale else 1.0
+            for mark in canvas._file_marks.for_page(index + 1):
+                edit = edits.get(mark.index)
+                if not edit:
+                    continue
+                if edit.get("deleted"):
+                    going.append(mark)
+                    continue
+                for name, value in edit.items():
+                    if name == "quads":
+                        # Back into the shape a `Mark` holds, as a resize
+                        # leaves it: `/QuadPoints` corners, not rectangles.
+                        boxes = tuple(tuple(q) for q in value)
+                        mark.quads = tuple(tuple(markup._quad_points(q))
+                                           for q in boxes)
+                        mark.rect = markup.bounding_rect(boxes)
+                    elif name == "popup":
+                        mark.popup_rect = tuple(value)
+                    elif name == "rich":
+                        mark.rich = value or ""
+                    elif name == "modified":
+                        mark.when = value
+                    else:
+                        self._set_mark_field(mark, name, value, scale)
+        if going:
+            canvas.forget_marks(going)
 
     def _show_all_mark_edits(self) -> None:
         """Re-render every page that needs to be shown differently.
