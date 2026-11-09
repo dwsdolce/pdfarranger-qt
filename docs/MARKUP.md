@@ -829,3 +829,56 @@ The Add Text Comment tool's starting colour in `tools.py` is White, which was
 read off Acrobat's fill; the mark's colour is the border's, which starts
 Light Red, and the tool's colour changes to match.
 
+### Building it
+
+Four stages, each one tried in the application before the next:
+
+1. **The box.** Made, selected, moved and resized; its border, fill and
+   style drawn and written; empty.
+2. **Typing.** Editing mode, plain text wrapping and growing the box, drawn
+   with its font embedded.
+3. **The rich text.** Font, size, colour and styles per run, and the text
+   palette that replaces the swatch while editing.
+4. **The properties form**, with its five appearance items, and status.
+
+**Stage 1.** What it builds, and what it leaves for later:
+
+- **The kind.** `/FreeText` joins the kinds the model knows. A mark's
+  *colour* is its border's, as for every other mark -- written into `/DA`,
+  not `/C` -- and a text box adds three of its own: the fill (`/C`), the
+  thickness (`/BS /W`) and the style, one of the nine. A colour edit on a
+  text box therefore writes `/DA`, and a file's box is read the same way
+  round.
+- **Writing it** as Acrobat does: `/Subj Text Box`, `/F 4`, `/C`, `/DA` with
+  the border colour and `/Helv 12 Tf` until stage 2 has a font, `/DS`, the
+  style's `/BS` or `/BE` and `/RD`, and no `/Popup`. The appearance is ours:
+  the fill, then the border in the style's dash pattern or cloud.
+- **Making it.** A click makes a 108 by 18.4 point box with its top left at
+  the click. A drag draws one from the press, its top left, to the release,
+  its bottom right, shown as it is dragged. Until stage 2 a new box comes out selected rather
+  than in editing, since there is nothing to type into yet.
+- **Selecting and moving.** A click anywhere on the box selects it; a drag
+  moves it, selected or not. The pointer changes to the move cursor only
+  once it is selected.
+- **Resizing.** Eight handles, corners and edge midpoints, with no
+  proportion kept -- the handle machinery the scalable comment has, with four
+  more handles and the aspect free.
+- **While a box from the file is moved or resized** a grey outline shows the
+  new place, and the box itself stays in the page image until the button is
+  let go, as a highlight's run does. A box made this session is drawn by the
+  canvas and moves with the pointer.
+- **Its menu** is the one for a mark that covers no text, less the note
+  entries: Delete, Set status, Make current properties default and
+  Properties.
+- **The tool's starting colour** in `tools.py` changes from White to Light
+  Red, the border's.
+- **The cloud.** The box is the rectangle less `/RD`, and the scallops lie
+  outside it: 5.09 points deep at `/I 1` and 9.28 at `/I 2`, laid as short
+  curves -- 196 about 2.3 points apart on the small cloud, 104 about 4.5
+  apart on the large. Drawn by the method of Apache PDFBox's `CloudyBorder`,
+  a reconstruction of Acrobat's own written to match it, and checked against
+  the fixture's two clouds.
+- **Left for later**: typing, the text palette and fonts (stages 2 and 3);
+  the properties form, so fill, thickness and style can be read and drawn
+  in stage 1 but changed only from stage 4.
+
