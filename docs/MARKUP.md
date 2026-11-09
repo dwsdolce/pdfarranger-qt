@@ -46,7 +46,7 @@ taken up, not guessed ahead of time.
 | Comment | Add a comment | Comment, or Highlight | a note pinned to a point, or a note on a run of words | complete |
 | | Add a scalable comment | Scalable Comment | a note icon that is part of the page: it scales, resizes and turns | complete |
 | | Replace selected text | Replace Selected Text | propose new wording for words that are struck out | complete |
-| | Insert text | Insert Text | propose words to insert at a point | next |
+| | Insert text | Insert Text | propose words to insert at a point | complete |
 | | Add text comment | | words written straight onto the page in a box | not started |
 | | Attach file | | a file carried in the document at a point | not started |
 | Text markup | Highlight | Highlight | colour behind a run of words | complete |
@@ -263,11 +263,17 @@ One menu for every mark:
     Delete                Delete Thread when there are replies
     Set status        ▸   the five statuses, current one ticked
     ──────────────────
-    Copy Text             not on either kind of comment
-    Enable Text Selection not on either kind of comment
+    Copy Text             only on a mark over text
+    Enable Text Selection only on a mark over text
     ──────────────────
     Make current properties default
     Properties...
+
+So there are two standard menus: one for a mark over text -- a highlight,
+an underline, a strikethrough, Replace Selected Text -- and one for a mark
+that covers no text, such as either comment or Insert Text, which has no
+text to copy or to let through. The comment tool's highlight is over words
+and still takes the second, as Acrobat has it.
 
 Inside the note window, a reply's author line offers Reply, Delete and Set
 status; the first item and the window's background give the mark's own menu,
@@ -354,7 +360,8 @@ highlight.
   are marked at once.
 - **A selection that crosses a page cannot be marked.** While one exists,
   the text tools in the strip and the marking entries in the right-click
-  menu are disabled. While the tool strip is shown, making such a selection
+  menu are disabled -- all but Insert Text, which never marks a selection
+  made before it is chosen: choosing it lets the selection go. While the tool strip is shown, making such a selection
   puts a message in the status bar saying that text is marked one page at a
   time; with the strip closed there is no message.
 
@@ -643,8 +650,6 @@ where h is the quadrilateral's height. It holds to four figures on both pairs:
 
 ## Insert Text
 
-Next.
-
 ### Requirements
 
 - A caret placed between two characters, carrying the words to insert as its
@@ -660,12 +665,16 @@ Next.
   always required, it always has one.
 - It cannot be moved: it marks a place in the text, and moving it would take
   it away from that place.
-- The menu, as Acrobat shows it: Delete, Set status, then Make current
-  properties default and Properties. The comment-panel entries are left out
-  here, as everywhere.
+- The standard menu for a mark that covers no text: Open Pop-Up Note,
+  Reply, Delete, Set status, Make current properties default and
+  Properties.
 - The properties form is titled *Insert Text Properties*, and its Appearance
   tab has colour and opacity only, beside the standard tabs and buttons.
 - Starts Fuchsia.
+
+**Departure from Acrobat.** Acrobat's menu for this mark has no *Open Pop-Up
+Note* and no *Reply*, though the mark always has a note; every other mark
+with a note offers both there. The standard menu is kept, for consistency.
 
 ### Plan
 
@@ -683,13 +692,12 @@ colour is the palette's Fuchsia exactly.
 points in all three. The box has Replace's caret proportions, 0.810 wide to
 0.660 tall, and the same drawing.
 
-### Open
-
-- **The caret's size.** Measured against the line under it, it comes out
-  between 0.82 and 0.90 of that line's height across the three files, where
-  Replace's held to four figures against its quadrilateral. So Acrobat sizes
-  this caret from something else, perhaps the font size; not established.
-  A few carets made on text of known sizes would settle it.
-- **No *Open Pop-Up Note* and no *Reply* in Acrobat's menu.** Every other
-  mark with a note offers both. Whether to follow Acrobat here or keep the
-  two entries, as on a strikethrough with a note, is not decided.
+**How big**: sized as Replace's caret is, from the height of the text line
+it is placed on -- `/RD` 0.055 of it, `/Rect` 0.810 wide and 0.660 tall.
+Acrobat's own Insert Text carets do not follow one rule: across five in the
+corpus `/RD` runs from 0.055 to 0.061 of the line's height, and it is not
+the font size and not the zoom -- `corpus/Markup Insert Text caret.pdf`
+holds three in identical 12-point text, two placed at a large zoom, within
+2.4% of each other. Replace's rule is consistent and lands within about a
+point of Acrobat's, which is close enough: this does not have to match
+Acrobat exactly.

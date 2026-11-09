@@ -2741,6 +2741,11 @@ class PageCanvas(QAbstractScrollArea):
     #: their end, which the window writes as a pair. To the canvas it is a
     #: text tool like the strikeout it draws.
     REPLACE = "replace"
+    #: *Insert Text*: a caret in the gap between two characters, carrying
+    #: the words to insert. A text tool, so a drag selects as the others
+    #: do -- and the caret goes at the end of what it selected -- but what
+    #: it makes is a point, never a run.
+    INSERT = "insert"
 
     #: The comment tool's twin, placing a `/Stamp` instead of a `/Text`.
     #: Its gesture is the same -- a point, and then the words -- and the
@@ -2753,7 +2758,7 @@ class PageCanvas(QAbstractScrollArea):
     #: `/Highlight` wants are what a text selection already produces -- which
     #: is why highlighting comes before the marks that need new hit-testing.
     TEXT_TOOLS = (HIGHLIGHT, STRIKEOUT, UNDERLINE, NOTE_ON_TEXT, NOTE,
-                  REPLACE)
+                  REPLACE, INSERT)
 
     #: What a tool writes when its gesture turns out to be a run of words
     #: rather than a point. The comment tool is the only one with two, and
@@ -2864,6 +2869,39 @@ class PageCanvas(QAbstractScrollArea):
             return None
         return (page, [self.to_source(page, quad) for quad in quads])
 
+    def insertion_point(self, point: QPointF):
+        """``(page, box)`` for a caret at the gap nearest a viewport point.
+
+        ``box`` is the character beside the gap, cut off at the gap, in the
+        source page's space: its right-hand edge is where the caret goes and
+        its height is the line's, which is what `markup.caret_rect` sizes a
+        caret from -- the same loose box a Replace caret is sized from.
+
+        None off the text: the point has to be level with a character and
+        within one character's width of it.
+        """
+        found = self.to_page(point)
+        if found is None:
+            return None
+        index = found[0]
+        at = self.page_point(index, point)
+        if at is None:
+            return None
+        x, y = at
+        try:
+            boxes = self._glyphs.boxes(index)
+            nearest = self._glyphs.nearest(index, x, y)
+        except Exception:  # noqa: BLE001 - a page with no text has no gap
+            return None
+        if nearest is None:
+            return None
+        left, bottom, right, top, _blank = boxes[nearest]
+        width = right - left
+        if not bottom <= y <= top or x < left - width or x > right + width:
+            return None
+        gap = left if abs(x - left) < abs(x - right) else right
+        return (index, self.to_source(index, (left - width, bottom, gap, top)))
+
     def mark_the_selection(self, tool: str) -> bool:
         """Mark up the selected text with ``tool``. False if there is none.
 
@@ -2878,6 +2916,13 @@ class PageCanvas(QAbstractScrollArea):
         found = self.selection_quads_by_page()
         if not found:
             return False
+        if tool == self.INSERT:
+            # A point, not a run: the caret goes at the end of what was
+            # selected, which is the last quadrilateral's right-hand end.
+            page, quads = found[-1]
+            found = [(page, [quads[-1]])] if quads else []
+            if not found:
+                return False
         self.marks_drawn.emit(
             self.OVER_TEXT.get(tool, tool),
             [(page, list(quads)) for page, quads in found])
@@ -3065,7 +3110,7 @@ class PageCanvas(QAbstractScrollArea):
     #: Subtypes a click can land on. The text markups are areas you can aim
     #: at; a note is reached by its icon, which `note_at` already answers for.
     SELECTABLE = ("/Highlight", "/StrikeOut", "/Underline", "/Squiggly",
-                  markup.TEXT, markup.STAMP)
+                  markup.TEXT, markup.STAMP, markup.CARET)
 
     #: Of those, the ones drawn *over* a run of words. A comment's icon is
     #: the odd one: it is placed rather than sized, so it has no run to
@@ -3083,7 +3128,8 @@ class PageCanvas(QAbstractScrollArea):
         """
         found = [(mark, False) for mark in self._file_marks.visible(index + 1)
                  if mark.subtype in self.SELECTABLE
-                 and not markup.is_reply(mark)]
+                 and not markup.is_reply(mark)
+                 and not self._paired_caret(index, mark)]
         if self.marks is not None:
             try:
                 mine = self.marks(index) or ()
@@ -3092,7 +3138,8 @@ class PageCanvas(QAbstractScrollArea):
             found += [(mark, True) for mark in mine
                       if mark.kind in self.SELECTABLE
                       and not markup.is_reply(mark)
-                      and not markup.is_status(mark)]
+                      and not markup.is_status(mark)
+                      and not self._paired_caret(index, mark)]
         return found
 
     @staticmethod
@@ -4074,6 +4121,24 @@ class PageCanvas(QAbstractScrollArea):
             event.accept()
             return
 
+        if (event.button() == Qt.LeftButton and self._tool == self.INSERT
+                and not self._selection and self._press is not None):
+            # A click puts the caret in the gap between two characters
+            # nearest the pointer -- and only on text: a click in a margin
+            # or on a picture has no gap to go in, and makes nothing.
+            here = QPointF(event.position())
+            still = ((here - self._press).manhattanLength()
+                     <= QApplication.startDragDistance())
+            at = self._press
+            self._press = None
+            self._selecting = False
+            if still:
+                placed = self.insertion_point(at)
+                if placed is not None:
+                    self.mark_drawn.emit(self._tool, placed[0], [placed[1]])
+                event.accept()
+                return
+
         if (event.button() == Qt.LeftButton and self._tool == self.NOTE
                 and not self._selection and self._press is not None):
             # **The comment tool's other half.** It marks text like the
@@ -4227,6 +4292,16 @@ class PageCanvas(QAbstractScrollArea):
 
         return menu
 
+    @classmethod
+    def _is_over_text(cls, mark) -> bool:
+        """Whether ``mark`` takes the menu for a mark over text, with *Copy
+        Text* and *Enable Text Selection*. Not either comment, which the
+        comment tool's highlight counts as, and not an Insert Text caret,
+        which sits between two characters and covers none."""
+        kind = (mark.kind if isinstance(mark, markup.Annotation)
+                else mark.subtype)
+        return not cls._is_a_comment(mark) and kind != markup.CARET
+
     @staticmethod
     def _is_a_comment(mark) -> bool:
         """Whether a comment tool made this mark, either way it makes one.
@@ -4308,7 +4383,7 @@ class PageCanvas(QAbstractScrollArea):
         # foot. Reader offers these two on a highlight, an underline and a
         # cross-out and on nothing else. The second would be strange on an
         # icon in any case: there is no text under a glyph to let through.
-        if not self._is_a_comment(mark):
+        if self._is_over_text(mark):
             text = self.mark_text(index, mark)
             copy = menu.addAction(_("Copy Text"))
             copy.setEnabled(bool(text))
@@ -4928,14 +5003,19 @@ class PageCanvas(QAbstractScrollArea):
         """
         # Through `note_bearer`, because a *Replace Selected Text* pair
         # keeps its note on the caret and wears the badge on the strikeout.
+        # An Insert Text caret wears one too: it is not a comment, so its
+        # note needs the sign a strikethrough's does.
+        badged = self.QUADDED_SELECTABLE + (markup.CARET,)
         found = [m for m in self._file_marks.visible(index + 1)
-                 if m.subtype in self.QUADDED_SELECTABLE
+                 if m.subtype in badged
                  and not markup.is_reply(m)
+                 and not self._paired_caret(index, m)
                  and markup.has_note(self.note_bearer(index, m))]
         try:
             if self.marks:
                 found += [m for m in (self.marks(index) or ())
-                          if m.kind in self.QUADDED_SELECTABLE
+                          if m.kind in badged
+                          and not self._paired_caret(index, m)
                           and markup.has_note(self.note_bearer(index, m))]
         except Exception:       # noqa: BLE001 - a repaint must not fail
             pass
@@ -5327,6 +5407,12 @@ class PageCanvas(QAbstractScrollArea):
                     and markup._answers(other) == name):
                 return other
         return mark
+
+    def _paired_caret(self, index: int, mark) -> bool:
+        """Whether ``mark`` is the caret of a Replace Selected Text pair,
+        which is never a mark of its own -- its strikeout stands for both.
+        An Insert Text caret is a mark by itself."""
+        return self.head_of(index, mark) is not mark
 
     def note_bearer(self, index: int, mark):
         """The annotation that holds ``mark``'s note: its caret for a pair,
@@ -5827,7 +5913,7 @@ class PageCanvas(QAbstractScrollArea):
 
     def _paint_replace_caret(self, painter, index: int, mark, colour,
                              offset) -> None:
-        """Draw a *Replace Selected Text* caret made in this session.
+        """Draw a caret made in this session, Replace's or Insert Text's.
 
         Acrobat's drawing, `markup.caret_path`, mapped from the caret's box
         on the page to where that box is on screen -- so what is shown is

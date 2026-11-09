@@ -89,6 +89,9 @@ KIND_LABELS = {
     # joined as one mark, and its form is the strikeout's under the mark's
     # own name.
     "replace_text": N_("Replace Selected Text"),
+    # A caret on its own is Insert Text; the caret of a Replace pair never
+    # opens a form, being reached through its strikeout.
+    "/Caret": N_("Insert Text"),
 }
 
 

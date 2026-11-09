@@ -1104,14 +1104,14 @@ class TestTheFormOnOneMark(unittest.TestCase):
         the generic title on a form the user opens every day.
 
         **Every mark, not every annotation.** A mark annotates the document
-        with one or more annotations, and the form belongs to the mark: the
-        caret of *Replace Selected Text* is half of that mark, has no form
-        of its own, and so needs no title. The mark it belongs to does.
+        with one or more annotations, and the form belongs to the mark.
+        Replace Selected Text is two annotations and has a title of its own;
+        a caret on its own is Insert Text, and is titled as that.
         """
         from pdfarranger_qt import markup
         from pdfarranger_qt.properties import KIND_LABELS
 
-        marks = (set(markup.KINDS) - {markup.CARET}) | {"replace_text"}
+        marks = set(markup.KINDS) | {"replace_text"}
         self.assertEqual(marks - set(KIND_LABELS), set())
 
     def test_the_opacity_is_a_field_as_well_as_a_slider(self):

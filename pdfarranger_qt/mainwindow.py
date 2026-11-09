@@ -843,6 +843,8 @@ class MainWindow(QMainWindow):
         # one mark; the strikeout is the kind named here because it is what
         # stands for the pair, and `_place_mark` adds its caret.
         "replace": markup.STRIKEOUT,
+        # *Insert Text*: a caret on its own, between two characters.
+        "insert": markup.CARET,
     }
 
     #: The gestures above that are not tools, and the tool each acts as --
@@ -863,7 +865,8 @@ class MainWindow(QMainWindow):
     #: By the canvas's names, because that is what reports a finished
     #: gesture -- `"note"` is the comment tool placing its icon. The caret
     #: pair is here too: the replacement wording is the point of it.
-    REQUIRES_TEXT = (markup.NOTE_ON_TEXT, "note", "stamp", "replace")
+    REQUIRES_TEXT = (markup.NOTE_ON_TEXT, "note", "stamp", "replace",
+                     "insert")
 
     #: Strip tool -> the canvas's own name for it. Only the tools that have
     #: been built appear: the strip offers twenty and the canvas implements
@@ -875,6 +878,7 @@ class MainWindow(QMainWindow):
         "comment": "note",
         "scalable_comment": "stamp",
         "replace_text": "replace",
+        "insert_text": "insert",
         "draw": "draw",
     }
 
@@ -915,7 +919,12 @@ class MainWindow(QMainWindow):
         # marked, and `mark_the_selection` refuses it. The tool stays armed
         # afterwards, for the next run of words.
         canvas = self.reader.canvas
-        if canvas.has_selection() and canvas.marks_text():
+        if name == "insert_text" and canvas.has_selection():
+            # *Insert Text* takes a point, never a range, so words already
+            # selected are let go rather than marked: the caret is placed
+            # by the next click.
+            canvas.clear_selection()
+        elif canvas.has_selection() and canvas.marks_text():
             # **The comment tool makes two kinds**, and reaches this the
             # same way the highlighter does: it marks text, so a selection
             # already made is marked at once and the canvas names the
@@ -1056,6 +1065,11 @@ class MainWindow(QMainWindow):
             centre = (rect[0], rect[3])
             rect = markup.stamp_rect(centre[0], centre[1], chosen,
                                      1.0 / page_scale)
+        if subtype == markup.CARET:
+            # *Insert Text*: the canvas sends the character beside the gap,
+            # cut off at the gap, and the caret is sized from its height as
+            # a Replace caret is from its run's.
+            rect = markup.caret_rect(rects[-1])
         # **Which tool, not which subtype.** Two things make a
         # `/Highlight` -- the highlight tool, and the comment tool over a
         # run of words -- and what tells them apart in the file is the
@@ -2844,8 +2858,12 @@ class MainWindow(QMainWindow):
         """
         from .canvas import PageCanvas
 
+        # Not *Insert Text*: it never marks a selection made before it is
+        # chosen -- choosing it lets the selection go -- so refusing it
+        # would protect nothing and take away a way out.
         text_tools = [strip for strip, canvas in self.CANVAS_TOOLS.items()
-                      if canvas in PageCanvas.TEXT_TOOLS]
+                      if canvas in PageCanvas.TEXT_TOOLS
+                      and canvas != PageCanvas.INSERT]
         self.tool_strip.set_tools_enabled(text_tools, not crossing)
         message = _("Text is marked one page at a time.")
         if crossing and self.tool_strip.isVisible():
