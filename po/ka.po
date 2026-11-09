@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  pdfarranger\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-08 22:56+0000\n"
+"POT-Creation-Date: 2026-11-09 03:19+0000\n"
 "PO-Revision-Date: 2026-01-21 05:07+0100\n"
 "Last-Translator: Ekaterine Papava <papava.e@gtu.ge>\n"
 "Language: ka\n"
@@ -2342,6 +2342,11 @@ msgstr "%s-ის გამეო_რება"
 #: pdfarranger_qt/mainwindow.py
 msgid "Signed — read only"
 msgstr "ხელმოწერილი — მხოლოდ კითხვისთვის"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Text is marked one page at a time."
+msgstr "ტექსტი ერთ ჯერზე მხოლოდ ერთ გვერდზე მოინიშნება."
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py

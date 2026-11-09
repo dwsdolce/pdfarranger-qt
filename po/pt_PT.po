@@ -13,7 +13,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  pdfarranger\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-08 22:56+0000\n"
+"POT-Creation-Date: 2026-11-09 03:19+0000\n"
 "PO-Revision-Date: 2025-08-29 21:18+0100\n"
 "Last-Translator: Hugo Carvalho <hugokarvalho@hotmail.com>\n"
 "Language: pt_PT\n"
@@ -2372,6 +2372,11 @@ msgstr "_Refazer %s"
 #: pdfarranger_qt/mainwindow.py
 msgid "Signed — read only"
 msgstr "Assinado — apenas leitura"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Text is marked one page at a time."
+msgstr "O texto é marcado uma página de cada vez."
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py

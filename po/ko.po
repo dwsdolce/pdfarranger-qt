@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pdfarranger - Korean\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-08 22:56+0000\n"
+"POT-Creation-Date: 2026-11-09 03:19+0000\n"
 "PO-Revision-Date: 2026-05-25 00:41+0900\n"
 "Last-Translator: VenusGirl <venusgirl@outlook.com>\n"
 "Language: ko\n"
@@ -2232,6 +2232,11 @@ msgstr "%s 다시 실행(_R)"
 #: pdfarranger_qt/mainwindow.py
 msgid "Signed — read only"
 msgstr "서명됨 — 읽기 전용"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Text is marked one page at a time."
+msgstr "텍스트는 한 번에 한 페이지씩 표시됩니다."
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py

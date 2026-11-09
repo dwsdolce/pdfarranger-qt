@@ -1016,6 +1016,11 @@ class PageCanvas(QAbstractScrollArea):
     current_page_changed = Signal(int)
     #: The text selection appeared or vanished, so a Copy command can follow it.
     selection_changed = Signal(bool)
+    #: Whether the selection now runs across a page break. Such a selection
+    #: cannot be marked: it follows the order the file stores its text in,
+    #: so it takes in the footer, page number and header between, often off
+    #: screen, and a mark made from it would cover text nobody meant to mark.
+    selection_crosses_pages = Signal(bool)
     #: A link to somewhere outside the document was activated. Not opened here:
     #: what a PDF may ask the desktop to do is a policy question, and a widget
     #: is the wrong place to decide it. See ReaderView.
@@ -1035,9 +1040,9 @@ class PageCanvas(QAbstractScrollArea):
     #: out, a text tool one rectangle per run of text it covered. The canvas
     #: reports the gesture and keeps none of it.
     mark_drawn = Signal(str, int, object)
-    #: One gesture over several pages, as ``(tool, [(page, quads), ...])``.
-    #: Separate from `mark_drawn` so that marking a selection which runs
-    #: across a page break is one step to undo rather than one per page.
+    #: A gesture, as ``(tool, [(page, quads), ...])``. Text is marked one
+    #: page at a time, so the list holds one page; it is a list so that a
+    #: gesture is always one step to undo, however much it covered.
     marks_drawn = Signal(str, object)
     #: A note's text was typed and its editor closed: ``(page, which, text)``.
     #: The note is named by its *position* in that page's marks rather than by
@@ -1832,14 +1837,22 @@ class PageCanvas(QAbstractScrollArea):
 
     def clear_selection(self):
         if self._selection:
+            crossed = self.selection_is_across_pages()
             self._selection = {}
             self.viewport().update()
             self.selection_changed.emit(False)
+            if crossed:
+                self.selection_crosses_pages.emit(False)
         self._anchor = None
         self._anchor_span = None
 
     def has_selection(self) -> bool:
         return bool(self._selection)
+
+    def selection_is_across_pages(self) -> bool:
+        """Whether the selection runs across a page break, and so cannot
+        be marked."""
+        return len(self._selection) > 1
 
     def selection_view(self):
         """A PDF destination view for where the selection starts, or None.
@@ -2271,10 +2284,10 @@ class PageCanvas(QAbstractScrollArea):
         page between them entirely.
 
         **Except with a markup tool armed, when it stops at the page it
-        started on.** That is Reader: select first and then apply a mark and
-        you get one mark per page, but arm the tool first and the selection
-        itself will not leave the page. Taken from the owner 2026-11-04,
-        against Reader, for highlight, underline and cross-out alike.
+        started on**, because text is marked one page at a time. A selection
+        made before the tool may still run across pages for reading, and
+        cannot then be marked at all: it carries whatever the file stores
+        between, often off screen.
         """
         if self._anchor is None or self._document is None:
             return
@@ -2306,10 +2319,13 @@ class PageCanvas(QAbstractScrollArea):
 
     def _set_selection(self, selection: dict):
         had = bool(self._selection)
+        crossed = self.selection_is_across_pages()
         self._selection = selection
         self.viewport().update()
         if bool(selection) != had:
             self.selection_changed.emit(bool(selection))
+        if self.selection_is_across_pages() != crossed:
+            self.selection_crosses_pages.emit(not crossed)
 
     def _selection_between(self, page: int, start, end):
         """One page's worth, with a missing end meaning "to the edge of the text".
@@ -2801,8 +2817,7 @@ class PageCanvas(QAbstractScrollArea):
         identical to one dragged out with the tool, rather than nearly so.
 
         The first page of the selection. `selection_quads_by_page` answers
-        for all of them, which is what a mark applied to a selection running
-        across a page break needs: Reader makes one mark per page.
+        for every page it covers.
         """
         found = self.selection_quads_by_page()
         return found[0] if found else None
@@ -2810,11 +2825,9 @@ class PageCanvas(QAbstractScrollArea):
     def selection_quads_by_page(self) -> list:
         """The selection as ``[(page, [rect, ...]), ...]``, in page order.
 
-        **One mark per page, not one mark and a lost half.** A selection may
-        run across a page break and a mark may not, so each page it covers
-        gets its own -- which is what Reader does when a mark is applied to
-        a selection that was made before the tool was chosen. This used to
-        answer the first page alone and call the rest a limitation.
+        Every page it covers, for reading. Marking takes only a selection on
+        one page: one that crosses a page break is refused, because it
+        carries whatever the file stores between the two ends.
         """
         if not self._selection:
             return []
@@ -2858,6 +2871,10 @@ class PageCanvas(QAbstractScrollArea):
         a mark, and leaving the blue over the top of it says there are two
         things there.
         """
+        # Text is marked one page at a time: a selection across a page break
+        # carries whatever lies between, often unseen.
+        if self.selection_is_across_pages():
+            return False
         found = self.selection_quads_by_page()
         if not found:
             return False
@@ -4171,6 +4188,9 @@ class PageCanvas(QAbstractScrollArea):
             # text, styling it, redacting it -- have nothing behind them
             # and are left out.
             menu.addSeparator()
+            # Refused, and shown refused, for a selection across a page
+            # break: text is marked one page at a time.
+            markable = not self.selection_is_across_pages()
             # **Underline is here although Reader does not offer it.**
             # There is no reason for its absence: the tool exists, the
             # gesture is the same selection, and a reader that can
@@ -4180,18 +4200,21 @@ class PageCanvas(QAbstractScrollArea):
                                 (self.UNDERLINE, _("Underline text")),
                                 (self.STRIKEOUT, _("Strikethrough text"))):
                 act = menu.addAction(label)
+                act.setEnabled(markable)
                 act.triggered.connect(
                     lambda _checked=False, t=tool: self.mark_the_selection(t))
             # A note on the words rather than a mark on them: the same
             # gesture, and then the editor opens, because the note is the
             # whole point of the mark.
             note = menu.addAction(_("Add note to text"))
+            note.setEnabled(markable)
             note.triggered.connect(
                 lambda: self.mark_the_selection(self.NOTE_ON_TEXT))
             # *Replace Selected Text*, reached from the words: a
             # strikeout grouped onto a caret that carries what should be
             # there instead.
             replace = menu.addAction(_("Add a comment to replace text"))
+            replace.setEnabled(markable)
             replace.triggered.connect(
                 lambda: self.mark_the_selection(self.REPLACE))
             menu.addSeparator()

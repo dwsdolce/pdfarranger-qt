@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-08 22:56+0000\n"
+"POT-Creation-Date: 2026-11-09 03:19+0000\n"
 "PO-Revision-Date: 2022-09-01 00:40+0900\n"
 "Last-Translator: sicklylife <translation@sicklylife.jp>\n"
 "Language: ja\n"
@@ -2254,6 +2254,11 @@ msgstr "%s をやり直す(_R)"
 #: pdfarranger_qt/mainwindow.py
 msgid "Signed — read only"
 msgstr "署名済み — 読み取り専用"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Text is marked one page at a time."
+msgstr "テキストへのマークは 1 ページずつ行います。"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py

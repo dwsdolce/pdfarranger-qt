@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pdfarranger master\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-08 22:56+0000\n"
+"POT-Creation-Date: 2026-11-09 03:19+0000\n"
 "PO-Revision-Date: 2026-01-04 02:52+0100\n"
 "Last-Translator: Massimo Pissarello <mapi68@gmail.com>\n"
 "Language: it\n"
@@ -2354,6 +2354,11 @@ msgstr "_Rifai: %s"
 #: pdfarranger_qt/mainwindow.py
 msgid "Signed — read only"
 msgstr "Firmato — sola lettura"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Text is marked one page at a time."
+msgstr "Il testo si contrassegna una pagina alla volta."
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py

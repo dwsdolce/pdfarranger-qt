@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-08 22:56+0000\n"
+"POT-Creation-Date: 2026-11-09 03:19+0000\n"
 "PO-Revision-Date: 2025-09-28 16:51+0000\n"
 "Last-Translator: Sveinn í Felli <sv1@fellsnet.is>\n"
 "Language: is\n"
@@ -2352,6 +2352,11 @@ msgstr "Endu_rtaka %s"
 #: pdfarranger_qt/mainwindow.py
 msgid "Signed — read only"
 msgstr "Undirritað — skrifvarið"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Text is marked one page at a time."
+msgstr "Texti er merktur eina síðu í einu."
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py

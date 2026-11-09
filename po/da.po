@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  pdfarranger\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-08 22:56+0000\n"
+"POT-Creation-Date: 2026-11-09 03:19+0000\n"
 "PO-Revision-Date: 2023-10-22 00:28+0200\n"
 "Last-Translator: Lrss <dev@lrss.dk>\n"
 "Language: da\n"
@@ -2370,6 +2370,11 @@ msgstr "_Gentag %s"
 #: pdfarranger_qt/mainwindow.py
 msgid "Signed — read only"
 msgstr "Signeret — skrivebeskyttet"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Text is marked one page at a time."
+msgstr "Tekst markeres én side ad gangen."
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py

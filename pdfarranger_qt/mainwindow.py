@@ -133,6 +133,8 @@ class MainWindow(QMainWindow):
         self.setCentralWidget(self.stack)
         self.reader.page_changed.connect(self._reader_page_changed)
         self.reader.selection_changed.connect(self._reader_selection_changed)
+        self.reader.canvas.selection_crosses_pages.connect(
+            self._selection_crosses_pages)
         # What the canvas asks when it needs to know which appearance to draw,
         # and what it tells us when one is clicked.
         self.reader.canvas.field_values = self._field_value
@@ -909,8 +911,9 @@ class MainWindow(QMainWindow):
         # Reader marks the selection the moment you choose the tool; there
         # is no second action to commit it, and waiting for one left the
         # words sitting there in the tool's colour with no way to apply it.
-        # One mark per page, as `mark_the_selection` does. The tool stays
-        # armed afterwards, for the next run of words.
+        # On one page only: a selection across a page break cannot be
+        # marked, and `mark_the_selection` refuses it. The tool stays armed
+        # afterwards, for the next run of words.
         canvas = self.reader.canvas
         if canvas.has_selection() and canvas.marks_text():
             # **The comment tool makes two kinds**, and reaches this the
@@ -958,11 +961,10 @@ class MainWindow(QMainWindow):
         page's own space, so nothing here has to know about zoom, scroll
         or rotation.
 
-        **One undo step for the gesture, not one per page.** A selection
-        running across a page break makes a mark on each, and taking it
-        back is a single action in Reader because making it was -- where
-        committing per page left you pressing undo once per page to
-        reverse something you did once.
+        **One undo step for the gesture, not one per page.** Text is marked
+        one page at a time, so a gesture reaching here covers one page; the
+        list stays a list so that anything which ever covers more is still
+        one action to take back, as it was one action to make.
         """
         subtype = self.MARK_KINDS.get(tool)
         if subtype is None:
@@ -980,13 +982,8 @@ class MainWindow(QMainWindow):
         if not wanted:
             return
         self.model.undo.commit(_("Add Mark"))
-        for at, (index, rects) in enumerate(wanted):
-            # *Replace Selected Text* over a page break: the pair goes on
-            # the last page, where the selection ends, and every page before
-            # it gets an ordinary strikethrough -- independent of the pair,
-            # since nothing in the file could join them.
-            self._place_mark(tool, subtype, index, rects,
-                             paired=at == len(wanted) - 1)
+        for index, rects in wanted:
+            self._place_mark(tool, subtype, index, rects)
         self._mark_added()
         # The note tools open their editor on the last mark made, which for
         # a gesture over several pages is the one on the last page.
@@ -1000,8 +997,7 @@ class MainWindow(QMainWindow):
             # comment with nothing in it is not a mark anyone meant to
             # make, and asking for the words afterwards would be a second
             # gesture for one action.
-            self._awaiting_text = (index, made[-1], self.model.undo.current,
-                                   len(wanted) == 1)
+            self._awaiting_text = (index, made[-1], self.model.undo.current)
             # **Held, before its window opens.** The thread belongs to the
             # selected mark and closes when the selection moves off it, so
             # a mark nobody has hold of would leave a window that clicking
@@ -1014,13 +1010,8 @@ class MainWindow(QMainWindow):
             canvas.select_mark((index, canvas.head_of(index, made[-1])))
             self.open_note(index, made[-1])
 
-    def _place_mark(self, tool: str, subtype: str, index: int, rects,
-                    paired: bool = True) -> None:
-        """Add one mark to one page. The caller owns the undo step.
-
-        ``paired`` is False on the pages a *Replace Selected Text* crosses
-        before the one it ends on, which get a plain strikethrough.
-        """
+    def _place_mark(self, tool: str, subtype: str, index: int, rects) -> None:
+        """Add one mark to one page. The caller owns the undo step."""
         colour = self._colour_for_canvas_tool(tool)
         page = self.model.pages[index]
         rect = markup.bounding_rect(rects)
@@ -1069,8 +1060,7 @@ class MainWindow(QMainWindow):
         # `/Highlight` -- the highlight tool, and the comment tool over a
         # run of words -- and what tells them apart in the file is the
         # subject and the intent.
-        subject, intent = (self._names_written_by(tool) if paired
-                           else ("", ""))
+        subject, intent = self._names_written_by(tool)
         opacity = self._opacity_for_canvas_tool(tool)
         made = self.model.annotations.add(markup.Annotation(
             subtype, page.uid, rect, colour=colour, quads=quads,
@@ -1078,7 +1068,7 @@ class MainWindow(QMainWindow):
             subject=subject or None, intent=intent or None,
             icon=chosen,
             author=markup.default_author()))
-        if tool == "replace" and quads and paired:
+        if tool == "replace" and quads:
             # **And its caret**, at the end of the run, in the same colour
             # and opacity. Added after the strikeout, which is the order
             # Acrobat writes the pair in; the strikeout names it, and that
@@ -1388,7 +1378,7 @@ class MainWindow(QMainWindow):
         waiting, self._awaiting_text = self._awaiting_text, None
         if waiting is None:
             return
-        index, mark, placed_at, alone = waiting
+        index, mark, placed_at = waiting
         if (mark.contents or "").strip():
             return
         # A pair goes whole: the caret the note was for and its strikeout.
@@ -1402,10 +1392,7 @@ class MainWindow(QMainWindow):
         found = self.reader.canvas.selected_mark()
         if found is not None and found[1] in (mark, head):
             self.reader.canvas.select_mark(None)
-        # The step goes too, unless the gesture left something behind: a
-        # *Replace Selected Text* across a page break keeps the strikethrough
-        # it made on the earlier page, and that still wants undoing.
-        if alone and placed_at == self.model.undo.current:
+        if placed_at == self.model.undo.current:
             self.model.undo.discard_last()
         self._mark_added()
 
@@ -2605,6 +2592,9 @@ class MainWindow(QMainWindow):
         self.statusBar().addWidget(self.status_path, 1)
         self.statusBar().addPermanentWidget(self.status_mode)
         self.statusBar().addPermanentWidget(self.status_selection)
+        # A warning is shown in red and only while it is up: the bar goes
+        # back to its own colour the moment its message changes or expires.
+        self.statusBar().messageChanged.connect(self._status_message_changed)
 
     def _update_status_path(self):
         """Show the document's directory, elided to whatever room there is."""
@@ -2841,6 +2831,51 @@ class MainWindow(QMainWindow):
         bookmark was renamed would be a strange way to spend four seconds.
         """
         self._mark_modified()
+
+    def _selection_crosses_pages(self, crossing: bool) -> None:
+        """A selection that runs across a page break cannot be marked.
+
+        It follows the order the file stores its text in, so it takes in
+        the footer, page number and header between -- often off screen --
+        and a mark made from it would cover text nobody meant to mark. So
+        the text tools are refused while it lasts, and with the strip open,
+        where somebody is marking up, the status bar says why. Reading with
+        the strip shut, there is nothing to explain.
+        """
+        from .canvas import PageCanvas
+
+        text_tools = [strip for strip, canvas in self.CANVAS_TOOLS.items()
+                      if canvas in PageCanvas.TEXT_TOOLS]
+        self.tool_strip.set_tools_enabled(text_tools, not crossing)
+        message = _("Text is marked one page at a time.")
+        if crossing and self.tool_strip.isVisible():
+            self._warn(message, 10000)
+        elif not crossing and self.statusBar().currentMessage() == message:
+            # Gone with what it was explaining.
+            self.statusBar().clearMessage()
+
+    def _warn(self, message: str, timeout: int) -> None:
+        """Show ``message`` in the status bar in red, for ``timeout`` ms.
+
+        Qt colours the whole bar rather than one message, so the bar's own
+        text is turned red for this message and put back when it goes --
+        "Saved" and "Copied" keep the bar's colour. Red on a light bar and
+        the palette's Light Red on a dark one, where plain red is hard to
+        read.
+        """
+        bar = self.statusBar()
+        dark = bar.palette().window().color().lightness() < 128
+        red = markup.swatch("Light Red" if dark else "Red")
+        self._warning = message
+        bar.setStyleSheet("QStatusBar {{ color: rgb({}, {}, {}); }}".format(
+            *(round(255 * v) for v in red[:3])))
+        bar.showMessage(message, timeout)
+
+    def _status_message_changed(self, text: str) -> None:
+        """Put the bar's colour back once the warning is no longer showing."""
+        if getattr(self, "_warning", None) and text != self._warning:
+            self._warning = None
+            self.statusBar().setStyleSheet("")
 
     def _reader_selection_changed(self, has_selection: bool):
         """Copy follows the reader's selection, not the grid's, while reading."""

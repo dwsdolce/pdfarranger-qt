@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PDF Arranger 1.14.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-08 22:56+0000\n"
+"POT-Creation-Date: 2026-11-09 03:19+0000\n"
 "PO-Revision-Date: 2026-06-02 17:09+0800\n"
 "Last-Translator: Puqns67 <me@puqns67.icu>\n"
 "Language: zh_CN\n"
@@ -2176,6 +2176,11 @@ msgstr "重做 %s（_R）"
 #: pdfarranger_qt/mainwindow.py
 msgid "Signed — read only"
 msgstr "已签名 — 只读"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Text is marked one page at a time."
+msgstr "每次只能在一页上标记文本。"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py

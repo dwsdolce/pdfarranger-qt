@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pdfarranger main\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-08 22:56+0000\n"
+"POT-Creation-Date: 2026-11-09 03:19+0000\n"
 "PO-Revision-Date: 2026-04-24 21:19+0300\n"
 "Last-Translator: Oğuz Ersen <oguz@ersen.moe>\n"
 "Language: tr\n"
@@ -2332,6 +2332,11 @@ msgstr "_Yinele %s"
 #: pdfarranger_qt/mainwindow.py
 msgid "Signed — read only"
 msgstr "İmzalı — salt okunur"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Text is marked one page at a time."
+msgstr "Metin her seferinde yalnızca bir sayfada işaretlenir."
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py

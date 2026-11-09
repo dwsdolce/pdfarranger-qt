@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-08 22:56+0000\n"
+"POT-Creation-Date: 2026-11-09 03:19+0000\n"
 "PO-Revision-Date: 2023-06-12 11:22+0300\n"
 "Last-Translator: Yaron Shahrabani <sh.yaron@gmail.com>\n"
 "Language: he\n"
@@ -2327,6 +2327,11 @@ msgstr "ביצוע מ_חדש %s"
 #: pdfarranger_qt/mainwindow.py
 msgid "Signed — read only"
 msgstr "חתום — לקריאה בלבד"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Text is marked one page at a time."
+msgstr "הטקסט מסומן עמוד אחד בכל פעם."
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py

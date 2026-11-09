@@ -558,6 +558,13 @@ class ToolStrip(QFrame):
             if button is not keep and button.menu().isVisible():
                 button.menu().close()
 
+    def set_tools_enabled(self, names, enabled: bool) -> None:
+        """Offer or refuse these tools, greyed in their flyouts when refused."""
+        for name in names:
+            action = self._actions.get(name)
+            if action is not None:
+                action.setEnabled(enabled)
+
     def arm(self, name: str) -> None:
         """Arm a tool, and leave it armed.
 
