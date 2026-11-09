@@ -26,9 +26,8 @@ document. Most marks are one annotation; Replace Selected Text is two that
 act as one mark. It shows on a page, it
 carries notes and a review status, and it has attributes that decide its
 appearance, along with metadata such as who made it and when. Notes and
-status may be empty, and usually are. A mark is on one page: text selected
-across a page break gives a mark on each. A mark can be changed or removed
-after it is made.
+status may be empty, and usually are. A mark is on one page, and is made
+from text on one page. A mark can be changed or removed after it is made.
 
 A mark's attributes can be set from three places: the appearance controls
 in the toolbar, the floating context palette, and the properties form.
@@ -276,8 +275,8 @@ less *Open Pop-Up Note*.
 
 Over selected words, the menu offers *Highlight text*, *Underline text*,
 *Strikethrough text*, *Add note to text* (the comment tool's highlight) and
-*Add a comment to replace text*, which stays disabled until Replace selected
-text is built.
+*Add a comment to replace text*. All five are disabled when the selection
+crosses a page, as Marking text says.
 
 **Departures from Reader.** *Open comment panel*, *Open all Pop-Ups* and
 *Minimize Pop-Ups* are left out, because there is no comment panel here.
@@ -340,8 +339,7 @@ behind as hidden annotations that nothing can reach. Here it goes.
 #### Requirements
 
 - Undo and redo work while reading, for every markup action.
-- One action is one undo step, including a selection across pages that makes
-  a mark on each.
+- One action is one undo step.
 
 ## Marking text
 
@@ -352,9 +350,22 @@ highlight.
 
 - **Tool first:** choose the tool, then drag across words. The selection
   stays on the page where it started.
-- **Words first:** select words, then choose the tool. The words are marked
-  at once. A selection across pages gives one mark per page, undone as one
-  step.
+- **Words first:** select words on one page, then choose the tool. The words
+  are marked at once.
+- **A selection that crosses a page cannot be marked.** While one exists,
+  the text tools in the strip and the marking entries in the right-click
+  menu are disabled. While the tool strip is shown, making such a selection
+  puts a message in the status bar saying that text is marked one page at a
+  time; with the strip closed there is no message.
+
+  The reason: a selection follows the order the file stores its text in,
+  so one that crosses a page takes in whatever lies between -- the footer
+  and page number at the bottom of one page, the header at the top of the
+  next -- often off screen, where the person making it cannot see it. A
+  mark made from it would cover text nobody meant to mark. Two marks made
+  one page at a time are clearer than two made for you from a selection
+  that may have picked up more than it showed. Acrobat marks across a page
+  break and does it unreliably, which is why this departs from it.
 - Double-click, shift-click and dragging past the edge to scroll work the
   same as in ordinary reading.
 - The words taken are those between the two ends in the order the file
@@ -372,6 +383,15 @@ highlight.
 - A resize rebuilds the quadrilaterals from the new pair of ends.
 - Line drawings are scaled to the type: stroke thickness is height / 16, and
   each kind's own ratio places the line.
+- A selection crosses a page when its two ends are on different pages; the
+  canvas says so whenever the selection changes, and the window disables
+  the text tools, the menu entries and shows the message from that.
+- The message is a status-bar message, `showMessage`, as the application
+  already uses for "Saved" and "Copied".
+- **Removed with this:** the words-first split across a page break -- a
+  strikethrough on the earlier page and a Replace Selected Text pair on the
+  last -- and Cancel keeping the undo step for it. Words-first marking of a
+  multi-page selection, for every text tool, goes with it.
 - A recolour drops the producer's appearance stream, so every reader redraws
   the mark from `/QuadPoints` and `/C`.
 
@@ -529,15 +549,6 @@ keeps *Insert Text* for the caret.
   Marking text, and it has the strikethrough's menu, notes, badge, opacity
   and resize handles. The caret follows the end of the selection, while a
   handle is being dragged as well as after.
-- **Words first, across a page break**, every page before the last gets an
-  ordinary Strikethrough mark, with no note and no badge, and the last page
-  gets the Replace Selected Text mark. Making them is one undo step,
-  because it was one action. After that they are independent marks:
-  deleting, resizing, recolouring or locking one leaves the other alone,
-  and cancelling the note removes only the Replace Selected Text mark.
-  Nothing in the file joins them, so any link kept here would be lost the
-  first time the document was saved. With the tool chosen first the
-  selection stays on one page, so there is only ever the one mark.
 - The caret is part of the mark and acts no differently from the rest of
   it: clicking it is clicking the mark.
 - Selected, its outline is the strikethrough's box round the struck run,
@@ -576,10 +587,9 @@ Replies and statuses hang off the caret.
 **Across a page break**, Acrobat writes the earlier page's part as a
 `/StrikeOut` with `/IT /StrikeOutTextEdit` and nothing else of the pair: no
 `/RT`, no `/IRT`, no caret and no note. Acrobat shows an empty note badge on
-it. Here it is written as a plain strikethrough, with no `/IT`, so it is a
-strikethrough in every application, and one read from a file -- a
-text-edit strikeout with no caret -- is treated as a plain strikethrough
-too.
+it. This application never makes one, since a selection that crosses a page
+cannot be marked; one read from a file -- a text-edit strikeout with no
+caret -- is treated as a plain strikethrough.
 
 **The caret's geometry** comes from the struck run's last quadrilateral,
 where h is the quadrilateral's height. It holds to four figures on both pairs:
@@ -617,14 +627,12 @@ where h is the quadrilateral's height. It holds to four figures on both pairs:
 
 **Making it**
 
-9. The tool marks text as Strikethrough does, in both orders. On the last
-   page it covers, `Annotations` holds the pair as two `Annotation`s, the
-   strikeout naming the caret by `/NM` and written with `/RT /Group`; on any
-   page before that it writes a plain strikethrough.
+9. The tool marks text as Strikethrough does, in both orders, on one page.
+   `Annotations` holds the pair as two `Annotation`s, the strikeout naming
+   the caret by `/NM` and written with `/RT /Group`.
 10. The note window opens on the caret. The tool joins the tools whose mark
     needs text, so Cancel, or closing the window empty, removes both halves
-    of the pair and nothing else. The undo step is kept while it still holds
-    a strikethrough from an earlier page.
+    of the pair and the step that made it.
 11. A strikeout is the pair's only when it is grouped with a caret. One with
     the text-edit intent and no caret is a Strikethrough: its form, its
     title, its menu, and the Strikethrough tool's defaults.
