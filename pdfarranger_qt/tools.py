@@ -120,7 +120,7 @@ TOOLS: List[Tool] = [
     # subtype: this one writes a `/Stamp`, which is ink on the page rather
     # than a marker fixed to it, so it scales, resizes and turns.
     Tool("scalable_comment", COMMENT, N_("Add a scalable comment"),
-         "comment-plus", "/Stamp with /Name, or /Highlight over words",
+         "comment-plus", "/Stamp /Name /Comment, with the icon in /IT",
          colour='Purple'),
     Tool("replace_text", COMMENT, N_("Replace selected text"), "find-replace",
          "/Caret /IT /Replace and /StrikeOut, joined by /IRT + /RT /Group",

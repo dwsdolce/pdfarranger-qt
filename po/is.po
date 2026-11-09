@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-07 17:59+0000\n"
+"POT-Creation-Date: 2026-11-08 22:56+0000\n"
 "PO-Revision-Date: 2025-09-28 16:51+0000\n"
 "Last-Translator: Sveinn í Felli <sv1@fellsnet.is>\n"
 "Language: is\n"
@@ -3025,6 +3025,11 @@ msgstr "Yfirstrikun"
 #: pdfarranger_qt/properties.py
 msgid "Scalable Comment"
 msgstr "Kvarðanleg athugasemd"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Replace Selected Text"
+msgstr "Skipta út völdum texta"
 
 #: pdfarranger_qt/properties.py
 msgid "Review History"

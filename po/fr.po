@@ -13,7 +13,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-07 17:59+0000\n"
+"POT-Creation-Date: 2026-11-08 22:56+0000\n"
 "PO-Revision-Date: 2024-02-24 20:47+0100\n"
 "Last-Translator: Jérôme Robert <jeromerobert@gmx.com>\n"
 "Language: fr\n"
@@ -3070,6 +3070,11 @@ msgstr "Barrer"
 #: pdfarranger_qt/properties.py
 msgid "Scalable Comment"
 msgstr "Commentaire redimensionnable"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Replace Selected Text"
+msgstr "Remplacer le texte sélectionné"
 
 #: pdfarranger_qt/properties.py
 msgid "Review History"

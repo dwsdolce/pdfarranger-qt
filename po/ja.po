@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-07 17:59+0000\n"
+"POT-Creation-Date: 2026-11-08 22:56+0000\n"
 "PO-Revision-Date: 2022-09-01 00:40+0900\n"
 "Last-Translator: sicklylife <translation@sicklylife.jp>\n"
 "Language: ja\n"
@@ -2919,6 +2919,11 @@ msgstr "取り消し線"
 #: pdfarranger_qt/properties.py
 msgid "Scalable Comment"
 msgstr "拡大縮小できるコメント"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Replace Selected Text"
+msgstr "選択したテキストを置換"
 
 #: pdfarranger_qt/properties.py
 msgid "Review History"

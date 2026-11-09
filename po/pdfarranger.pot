@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pdfarranger-qt VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/dwsdolce/pdfarranger-qt/issues\n"
-"POT-Creation-Date: 2026-11-07 17:59+0000\n"
+"POT-Creation-Date: 2026-11-08 22:56+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -2397,6 +2397,10 @@ msgstr ""
 
 #: pdfarranger_qt/properties.py
 msgid "Scalable Comment"
+msgstr ""
+
+#: pdfarranger_qt/properties.py
+msgid "Replace Selected Text"
 msgstr ""
 
 #: pdfarranger_qt/properties.py

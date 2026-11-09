@@ -85,6 +85,10 @@ KIND_LABELS = {
     # this one has handles and that one does not, and a form headed the
     # same for both would leave you guessing which you had hold of.
     "/Stamp": N_("Scalable Comment"),
+    # Not a subtype: *Replace Selected Text* is a strikeout and a caret
+    # joined as one mark, and its form is the strikeout's under the mark's
+    # own name.
+    "replace_text": N_("Replace Selected Text"),
 }
 
 

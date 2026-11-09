@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-07 17:59+0000\n"
+"POT-Creation-Date: 2026-11-08 22:56+0000\n"
 "PO-Revision-Date: 2022-08-13 11:15+0200\n"
 "Last-Translator: Juanma1980 <juanma1980@gmail.com>\n"
 "Language: ca@valencia\n"
@@ -3084,6 +3084,11 @@ msgstr "Ratllat"
 #: pdfarranger_qt/properties.py
 msgid "Scalable Comment"
 msgstr "Comentari escalable"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Replace Selected Text"
+msgstr "Substituïx el text seleccionat"
 
 #: pdfarranger_qt/properties.py
 msgid "Review History"

@@ -74,7 +74,13 @@ SQUIGGLY = "/Squiggly"
 #: and it turns. Nothing about NoZoom applies to one.
 STAMP = "/Stamp"
 
-KINDS = (TEXT, HIGHLIGHT, STRIKEOUT, UNDERLINE, SQUIGGLY, STAMP)
+#: The caret at the end of a run of struck words, which carries the words
+#: that should be there instead. Never a mark on its own here: it is half
+#: of *Replace Selected Text*, and the strikeout it is grouped with stands
+#: for the pair.
+CARET = "/Caret"
+
+KINDS = (TEXT, HIGHLIGHT, STRIKEOUT, UNDERLINE, SQUIGGLY, STAMP, CARET)
 
 #: The two subtypes one tool writes, and which of them means what. A style
 #: is not a value inside the dictionary: it is which dictionary gets
@@ -98,6 +104,13 @@ QUADDED = (HIGHLIGHT, STRIKEOUT, UNDERLINE, SQUIGGLY)
 #: `Markup Comment.pdf`, 2026-11-06. Reached from the right-click menu's
 #: *Add note to text*, which is an entry in that menu and not a tool.
 COMMENT_ON_TEXT = ("Comment on Text", "/HighlightNote")
+
+#: What *Replace Selected Text* writes on each half, `(subject, intent)`.
+#: Read off `tests/fixtures/markup_replace_text.pdf`, made in Acrobat: the
+#: strikeout says it is a text edit, the caret says it replaces, and the
+#: strikeout's `/IRT` with `/RT /Group` is what joins them.
+REPLACE_STRIKE = ("Cross-Out", "/StrikeOutTextEdit")
+REPLACE_CARET = ("Inserted Text", "/Replace")
 
 #: What that gesture is called where it has to be named -- by the canvas
 #: that reports it and the window that writes it. **Not a tool**: there is
@@ -133,6 +146,74 @@ def stamp_icon(annot) -> str:
         return "" if intent == TEXT_NOTE else intent
     return str(annot.get(pikepdf.Name.Name, ""))
 
+
+#: Where a document built to be shown keeps the colour a scalable
+#: comment's drawing painted in, once the drawing has been emptied out of
+#: it. Never written to a document that is saved.
+SHOWN_INK = pikepdf.Name("/PDFArrangerShownInk")
+
+
+def is_scalable_comment(subtype: str, icon: str) -> bool:
+    """Whether a stamp is a scalable comment rather than a stamp's artwork.
+
+    The canvas draws these itself, as it draws a comment's icon, so that a
+    drag can carry the glyph with the pointer. A stamp such as Approved is
+    artwork the canvas has no drawing for, so the renderer keeps it.
+    """
+    return subtype == STAMP and (icon or "") in noteicons.ICONS
+
+
+def drawn_colour(annot, icon: str):
+    """The colour a scalable comment's appearance actually paints in.
+
+    **Not always `/C`.** Acrobat offers a colour for a stamp, writes `/C`
+    and leaves the drawing as it was, so a scalable comment recoloured
+    there still paints the old colour -- and the canvas, which draws these
+    instead of the renderer, has to paint what the file shows. Found by
+    matching the appearance against the icon's own stream with the fill
+    left open, so anything that is not our drawing answers None and the
+    caller falls back to `/C`.
+    """
+    found = noteicons.ICONS.get(icon or "")
+    if found is None or noteicons.FILL not in found[2]:
+        return None
+    width, height, body = found
+    if (icon or "") == DEFAULT_ICON:
+        body = balloon_stream(width, height)
+    # Every place the fill is set, and the same colour in each: New
+    # Paragraph sets it twice.
+    first, *rest = body.split(noteicons.FILL)
+    pattern = re.compile(
+        re.escape(first)
+        + r"([-\d.]+) ([-\d.]+) ([-\d.]+) rg"
+        + "".join(re.escape(part) if at == len(rest) - 1
+                  else re.escape(part) + r"\1 \2 \3 rg"
+                  for at, part in enumerate(rest)))
+    try:
+        normal = annot[pikepdf.Name.AP][pikepdf.Name.N]
+    except (KeyError, TypeError):
+        return None
+    # The drawing itself, or the drawing inside a fade -- ours wraps it in
+    # a group to carry the opacity, and so does Acrobat's.
+    waiting, seen = [normal], set()
+    while waiting:
+        stream = waiting.pop()
+        if not isinstance(stream, pikepdf.Stream) or stream.objgen in seen:
+            continue
+        if stream.objgen != (0, 0):
+            seen.add(stream.objgen)
+        try:
+            text = stream.read_bytes().decode("latin-1")
+        except Exception:  # noqa: BLE001 - an unreadable stream is not ours
+            continue
+        match = pattern.fullmatch(text)
+        if match:
+            return tuple(float(v) for v in match.groups())
+        forms = (stream.get(pikepdf.Name.Resources) or {}).get(
+            pikepdf.Name.XObject) or {}
+        waiting.extend(forms[key] for key in forms.keys())
+    return None
+
 SUBJECTS = {HIGHLIGHT: "Highlight", STRIKEOUT: "Cross-Out",
             TEXT: "Sticky Note",
             # Both styles say Underline, because both come from the one
@@ -144,7 +225,8 @@ SUBJECTS = {HIGHLIGHT: "Highlight", STRIKEOUT: "Cross-Out",
             # what the mark *is* to the person reading the comment list,
             # and both are a sticky note there; what tells them apart is
             # the subtype, which a reader already has.
-            STAMP: "Sticky Note"}
+            STAMP: "Sticky Note",
+            CARET: "Inserted Text"}
 
 #: Bit 3 of `/F`, Print. Without it a mark shows on screen and vanishes from
 #: paper, which is not what anybody means by annotating a document.
@@ -625,7 +707,7 @@ class Annotation:
                  "opacity", "author", "created", "modified", "name",
                  "irt", "rotate",
                  "popup_rect", "state", "rich", "subject", "locked",
-                 "intent", "icon")
+                 "intent", "icon", "group")
 
     def __init__(self, kind: str, page: int, rect: Tuple[float, ...],
                  contents: str = "", colour=None, author: Optional[str] = None,
@@ -636,11 +718,15 @@ class Annotation:
                  state: Optional[str] = None, rich: Optional[str] = None,
                  subject: Optional[str] = None, locked: bool = False,
                  intent: Optional[str] = None,
-                 icon: Optional[str] = None):
+                 icon: Optional[str] = None, group: bool = False):
         if kind not in KINDS:
             raise ValueError(f"unknown annotation kind: {kind}")
         self.kind = kind
         self.page = page
+        #: Whether ``irt`` joins this mark to another as one object --
+        #: `/RT /Group` -- rather than making it a reply. The strikeout of
+        #: a *Replace Selected Text* pair, which names its caret.
+        self.group = group
         #: The `/NM` of the mark this answers, for a reply, and None for
         #: anything else. A reply is a mark in its own right -- it draws an
         #: icon, it can be selected and deleted -- and all that makes it a
@@ -932,7 +1018,23 @@ def apply_edit(annot, edit, pdf=None) -> None:
             flags & ~LOCKED)
     redrawn = (colour is not None or opacity is not None or quads
                or style in UNDERLINE_STYLES)
-    if redrawn and str(annot.get(pikepdf.Name.Subtype, "")) == STAMP:
+    if str(annot.get(pikepdf.Name.Subtype, "")) == CARET:
+        # **A caret is drawn again, like a stamp.** Nothing regenerates one
+        # from its keys, so dropping the appearance would leave a reader to
+        # substitute its own -- and the colour, the fade and the box are all
+        # inside the drawing. Moved by `rect` when the struck run it ends is
+        # resized, which changes `/RD` with it.
+        if (redrawn or rect) and pdf is not None:
+            box = [float(v) for v in annot.get(pikepdf.Name.Rect,
+                                               [0, 0, 0, 0])]
+            annot[pikepdf.Name.RD] = pikepdf.Array([caret_inset(box)] * 4)
+            painted = annot.get(pikepdf.Name.C)
+            annot[pikepdf.Name.AP] = pikepdf.Dictionary(N=_caret_appearance(
+                pdf, box,
+                tuple(float(v) for v in painted) if painted is not None
+                else None,
+                _number(annot.get(pikepdf.Name.CA), 1.0)))
+    elif redrawn and str(annot.get(pikepdf.Name.Subtype, "")) == STAMP:
         # **A stamp is drawn again rather than undressed.** It is the one
         # mark with nothing to fall back on: no quads for a reader to
         # colour in, and no glyph substituted for a missing appearance, so
@@ -1024,7 +1126,12 @@ def patch_page_marks(page, edits, pdf=None) -> int:
 
 
 def blank_note_icons(pdf) -> int:
-    """Empty every `/Text` annotation's appearance, and say how many.
+    """Empty every comment icon's appearance, and say how many.
+
+    **Scalable comments too**, which the canvas also draws: a stamp left to
+    the renderer is baked into the page and stays where it was while a drag
+    carries its outline away. Only ours -- any other stamp is artwork the
+    canvas cannot draw.
 
     **For a document built to be shown, never for one being saved.** A
     comment's icon is drawn by the canvas and not by the renderer, because
@@ -1052,8 +1159,17 @@ def blank_note_icons(pdf) -> int:
     for page in pdf.pages:
         for annot in page.obj.get(pikepdf.Name.Annots) or []:
             try:
-                if str(annot.get(pikepdf.Name.Subtype, "")) != TEXT:
+                subtype = str(annot.get(pikepdf.Name.Subtype, ""))
+                if subtype != TEXT and not is_scalable_comment(
+                        subtype, stamp_icon(annot)):
                     continue
+                if subtype == STAMP:
+                    # The colour the drawing paints in goes with the drawing
+                    # and the canvas still needs it, so it is kept on this
+                    # copy -- which is shown and never saved.
+                    drawn = drawn_colour(annot, stamp_icon(annot))
+                    if drawn is not None:
+                        annot[SHOWN_INK] = pikepdf.Array([*drawn])
                 if pikepdf.Name.AP not in annot:
                     # **Especially one with no appearance at all.** Changing
                     # a mark's icon drops `/AP` so the new glyph is built
@@ -1345,7 +1461,7 @@ def _flags_for(annotation) -> int:
     """`/F` for a mark, before the lock bit is folded in."""
     if annotation.state:
         return UNSEEN
-    if annotation.irt:
+    if annotation.irt and not annotation.group:
         return ANCHORED
     if annotation.kind == TEXT:
         return ANCHORED
@@ -1484,6 +1600,17 @@ def to_dictionary(pdf, annotation: Annotation, page=None) -> pikepdf.Dictionary:
             entry[pikepdf.Name.CA] = solidity(annotation)
         entry[pikepdf.Name.AP] = pikepdf.Dictionary(
             N=_appearance(pdf, annotation))
+    if annotation.group:
+        # Joined to the annotation `/IRT` names as one object, not a reply
+        # to it. `/IRT` itself is resolved by `add_to_page`, which knows the
+        # page.
+        entry[pikepdf.Name.RT] = pikepdf.Name.Group
+    if annotation.kind == CARET:
+        entry[pikepdf.Name.RD] = pikepdf.Array([caret_inset(annotation.rect)] * 4)
+        if solidity(annotation) != 1.0:
+            entry[pikepdf.Name.CA] = solidity(annotation)
+        entry[pikepdf.Name.AP] = pikepdf.Dictionary(N=_caret_appearance(
+            pdf, annotation.rect, annotation.colour, solidity(annotation)))
     if annotation.author:
         entry[pikepdf.Name.T] = pikepdf.String(annotation.author)
     if annotation.colour is not None:
@@ -1587,7 +1714,7 @@ def nearest_swatch(colour):
 #: has to be seen through or it hides the words it marks; a line drawn over
 #: them does not.
 TRANSPARENCY = {HIGHLIGHT: 0.4, STRIKEOUT: 1.0,
-                UNDERLINE: 1.0, SQUIGGLY: 1.0}
+                UNDERLINE: 1.0, SQUIGGLY: 1.0, CARET: 1.0}
 
 
 def opacity_of(mark) -> float:
@@ -1973,6 +2100,108 @@ def bounding_rect(quads) -> "tuple":
     return (min(lefts), min(bottoms), max(rights), max(tops))
 
 
+#: A *Replace Selected Text* caret's box, as fractions of the height of the
+#: struck run's last quadrilateral. Measured on both pairs in
+#: `tests/fixtures/markup_replace_text.pdf`, to four figures: `/Rect` is
+#: 0.810 of it wide and 0.660 tall, and `/RD` -- which is also the width of
+#: the caret's line -- 0.055 on every side.
+CARET_WIDE = 0.81
+CARET_TALL = 0.66
+CARET_INSET = 0.055
+
+#: Acrobat's caret, as it draws one, in the box `/RD` leaves inside `/Rect`
+#: -- 11.2476 by 8.8373 on the fixture -- with the box's lower left as the
+#: origin. Kept as Acrobat wrote it, odd control points and all, and scaled
+#: to whatever box a caret has, so ours and Acrobat's are the same drawing.
+CARET_BOX = (11.2476, 8.8373)
+CARET_PATH = (
+    ("m", (0.4912, 0.5892)),
+    ("l", (0.0, 0.5892)),
+    ("l", (0.0, 0.0)),
+    ("l", (11.2476, 0.0)),
+    ("l", (11.2476, 0.5892)),
+    ("l", (10.7564, 0.5892)),
+    ("c", (6.5324, 0.5892, 5.4519, 1.7478, 5.8448, 7.659)),
+    ("l", (5.8448, 8.8373)),
+    ("l", (5.3537, 8.8373)),
+    ("l", (5.3537, 7.659)),
+    ("c", (5.8448, 1.7478, 4.1257, 0.5892, 1.4735, 0.5892)),
+)
+
+
+def caret_rect(box) -> "tuple":
+    """Where a caret goes for a struck run whose last quadrilateral is ``box``.
+
+    Centred on the run's right-hand end, and with the bottom of `/Rect` one
+    `/RD` below the bottom of the quadrilateral, which puts the caret's
+    foot on it.
+    """
+    left, bottom, right, top = box[:4]
+    height = top - bottom
+    inset = height * CARET_INSET
+    wide, tall = height * CARET_WIDE, height * CARET_TALL
+    return (right - wide / 2.0, bottom - inset,
+            right + wide / 2.0, bottom - inset + tall)
+
+
+def caret_inset(rect) -> float:
+    """`/RD` for a caret in ``rect``, and the width of its line."""
+    return (float(rect[3]) - float(rect[1])) * CARET_INSET / CARET_TALL
+
+
+def caret_path(rect):
+    """The caret's drawing for ``rect``, in the page's own coordinates.
+
+    ``[(op, (x, y, ...)), ...]`` with ``op`` one of `m`, `l` and `c`; the
+    path is closed and filled.
+    """
+    inset = caret_inset(rect)
+    wide = float(rect[2]) - float(rect[0]) - 2.0 * inset
+    tall = float(rect[3]) - float(rect[1]) - 2.0 * inset
+    sx, sy = wide / CARET_BOX[0], tall / CARET_BOX[1]
+    x0, y0 = float(rect[0]) + inset, float(rect[1]) + inset
+    return [(op, tuple(x0 + v * sx if n % 2 == 0 else y0 + v * sy
+                       for n, v in enumerate(values)))
+            for op, values in CARET_PATH]
+
+
+def _caret_appearance(pdf, rect, colour, opacity):
+    """A caret's drawing, built as Acrobat builds one.
+
+    The box inside `/RD` is the form's own space, with `/BBox` reaching out
+    by the inset and `/Matrix` moving it back, and the opacity in an
+    ExtGState of its own -- the shape read off the fixture.
+    """
+    colour = colour or swatch("Light Red")
+    inset = caret_inset(rect)
+    wide = float(rect[2]) - float(rect[0]) - 2.0 * inset
+    tall = float(rect[3]) - float(rect[1]) - 2.0 * inset
+    sx, sy = wide / CARET_BOX[0], tall / CARET_BOX[1]
+    paint = "{:.6g} {:.6g} {:.6g}".format(*colour[:3])
+    lines = ["{} RG".format(paint), "{:.4f} w".format(inset),
+             "{} rg".format(paint)]
+    for op, values in CARET_PATH:
+        scaled_values = [v * (sx if n % 2 == 0 else sy)
+                         for n, v in enumerate(values)]
+        lines.append(" ".join("{:.4f}".format(v) for v in scaled_values)
+                     + " " + op)
+    lines += ["h", "f"]
+    resources = pikepdf.Dictionary(ProcSet=pikepdf.Array([pikepdf.Name.PDF]))
+    if opacity is not None and float(opacity) < 1.0:
+        lines.insert(0, "/R0 gs")
+        resources[pikepdf.Name.ExtGState] = pikepdf.Dictionary(
+            R0=pikepdf.Dictionary(Type=pikepdf.Name.ExtGState, AIS=False,
+                                  CA=float(opacity), ca=float(opacity)))
+    stream = pikepdf.Stream(pdf, ("\n".join(lines) + "\n").encode())
+    stream[pikepdf.Name.Type] = pikepdf.Name.XObject
+    stream[pikepdf.Name.Subtype] = pikepdf.Name.Form
+    stream[pikepdf.Name.BBox] = pikepdf.Array(
+        [-inset, -inset, wide + inset, tall + inset])
+    stream[pikepdf.Name.Matrix] = pikepdf.Array([1, 0, 0, 1, inset, inset])
+    stream[pikepdf.Name.Resources] = resources
+    return pdf.make_indirect(stream)
+
+
 #: The window a viewer opens to show a mark's note, in points. Measured on
 #: 44 of Reader's own: 184 by 92, its left edge exactly at the page width --
 #: parked *off* the page, to the right -- and its top aligned with the
@@ -2059,28 +2288,33 @@ def add_to_page(pdf, page, marks, factor: float = 1.0) -> int:
     target = getattr(page, "obj", page)
     media = [float(v) for v in target.get(pikepdf.Name.MediaBox,
                                           [0, 0, 612, 792])]
+    pointing = []
     for annotation in marks:
         placed = scaled(annotation, factor)
         entry = to_dictionary(pdf, placed, page=target)
         if pikepdf.Name.Annots not in page:
             page[pikepdf.Name.Annots] = pdf.make_indirect(pikepdf.Array([]))
         page[pikepdf.Name.Annots].append(entry)
+        if placed.irt:
+            pointing.append((entry, placed.irt))
         # Its window, which goes in `/Annots` beside it and is pointed at
         # from it. Written for every mark, commented or not, because that is
         # what Reader writes.
-        if placed.irt:
-            # Resolved here rather than in `to_dictionary`, because it points
-            # at *another annotation on this page* and only the page knows
-            # which: the mark answered may be one the file brought, written
-            # long before this one existed.
-            answered = _named(page, placed.irt)
-            if answered is not None:
-                entry[pikepdf.Name.IRT] = answered
         window = popup_for(pdf, entry, placed.rect, media[2],
                            placed.popup_rect)
         entry[pikepdf.Name.Popup] = window
         page[pikepdf.Name.Annots].append(window)
         written += 1
+    # `/IRT` resolved here rather than in `to_dictionary`, because it points
+    # at *another annotation on this page* and only the page knows which:
+    # the mark answered may be one the file brought, written long before
+    # this one existed. And after every mark is on the page, not as each
+    # arrives: a *Replace Selected Text* strikeout comes before the caret it
+    # names, as Acrobat writes the pair.
+    for entry, name in pointing:
+        answered = _named(page, name)
+        if answered is not None:
+            entry[pikepdf.Name.IRT] = answered
     return written
 
 
@@ -2123,14 +2357,14 @@ class Mark:
                  "opacity", "contents", "author", "name", "parent", "state",
                  "hidden", "when", "popup_open", "popup_rect", "rich",
                  "locked", "subject", "intent", "scales", "icon",
-                 "rotate")
+                 "rotate", "ink", "group")
 
     def __init__(self, page, subtype, rect, quads=(), colour=None,
                  opacity=None, contents="", name=None, parent=None,
                  state=None, hidden=False, index=-1, author="", when="",
                  popup_open=False, popup_rect=None, rich="", locked=False,
                  subject="", intent="", scales=False, icon="",
-                 rotate=0.0):
+                 rotate=0.0, ink=None, group=False):
         self.uid = next(_mark_uids)
         #: Where this mark sits among the markup annotations on its page, in
         #: the order the file has them. What `MarkEdits` keys an edit by, and
@@ -2198,6 +2432,14 @@ class Mark:
         #: answered that wrongly after a round trip while this was dropped
         #: on the way in.
         self.intent = intent
+        #: The colour a scalable comment's drawing paints in, beside the
+        #: `/C` it was read with: ``(colour, drawn)``, or None. See
+        #: `shown_colour`.
+        self.ink = ink
+        #: `/RT /Group`: ``parent`` joins this mark to another as one
+        #: object rather than making it a reply. The strikeout of a
+        #: *Replace Selected Text* pair, whose parent is its caret.
+        self.group = group
 
     def boxes(self) -> "list[tuple]":
         """The quadrilaterals as ``(left, bottom, right, top)`` rectangles.
@@ -2253,14 +2495,51 @@ def _answers(mark):
     return parent if parent is not None else getattr(mark, "irt", None)
 
 
+def _ink_of(annot, subtype: str, colour):
+    """``(the /C read, the colour drawn)`` for a scalable comment, or None.
+
+    From the drawing, or from what `blank_note_icons` kept of it on a
+    document built to be shown, whose drawing is gone.
+    """
+    icon = stamp_icon(annot) if subtype == STAMP else ""
+    if not is_scalable_comment(subtype, icon):
+        return None
+    kept = annot.get(SHOWN_INK)
+    drawn = (tuple(_number(v, 0.0) for v in kept) if kept is not None
+             else drawn_colour(annot, icon))
+    if drawn is None:
+        return None
+    recorded = (tuple(_number(v, 0.0) for v in colour)
+                if colour is not None else None)
+    return (recorded, drawn)
+
+
+def shown_colour(mark):
+    """The colour to paint ``mark`` in: what its drawing shows.
+
+    `/C`, except on a scalable comment whose drawing paints something else
+    -- Acrobat's recolour, which records and does not repaint. Only while
+    `/C` is still what was read: a colour chosen here rebuilds the drawing
+    from `/C`, and then `/C` is what shows.
+    """
+    ink = getattr(mark, "ink", None)
+    if ink is not None and mark.colour == ink[0]:
+        return ink[1]
+    return mark.colour
+
+
 def is_status(mark) -> bool:
     """A review state recorded against something, rather than a mark."""
     return getattr(mark, "state", None) is not None
 
 
 def is_reply(mark) -> bool:
-    """An answer to another mark. A status change is not one."""
-    return _answers(mark) is not None and not is_status(mark)
+    """An answer to another mark. A status change is not one, and nor is
+    half of a group: `/IRT` with `/RT /Group` joins two annotations into
+    one object, which is how a *Replace Selected Text* strikeout names its
+    caret."""
+    return (_answers(mark) is not None and not is_status(mark)
+            and not getattr(mark, "group", False))
 
 
 def has_note(mark) -> bool:
@@ -2329,6 +2608,8 @@ def marks_in(pdf) -> "list[Mark]":
                     rotate=_number(annot.get(pikepdf.Name.Rotate), 0.0),
                     icon=(stamp_icon(annot) if subtype == STAMP
                           else str(annot.get(pikepdf.Name.Name, ""))),
+                    ink=_ink_of(annot, subtype, colour),
+                    group=(str(annot.get(pikepdf.Name.RT, "")) == "/Group"),
                     author=str(annot.get(pikepdf.Name.T, "")),
                     when=str(annot.get(pikepdf.Name.M,
                                        annot.get(pikepdf.Name.CreationDate,

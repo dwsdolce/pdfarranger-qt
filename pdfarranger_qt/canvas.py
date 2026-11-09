@@ -2484,12 +2484,6 @@ class PageCanvas(QAbstractScrollArea):
 
     # -- sticky notes ------------------------------------------------------
 
-    #: How big a note's editor is, in logical pixels. Not derived from the
-    #: zoom: a note is prose about the page rather than part of it, and an
-    #: editor that shrank with the page would be unreadable at the zoom where
-    #: a note is most often placed.
-    NOTE_EDITOR = (240, 120)
-
     def note_icon_rect(self, index: int, mark, offset=None):
         """Where a note's icon is in the viewport, or None if it is not drawn.
 
@@ -2581,12 +2575,13 @@ class PageCanvas(QAbstractScrollArea):
         marks = [m for m in marks
                  if not markup.is_reply(m) and not markup.is_status(m)]
         marks += self._file_notes(index)
-        # And the stamps the file brought, which `_file_notes` leaves out
-        # because the renderer draws those -- they are page content. They
-        # are still comments to take hold of.
+        # And the other stamps the file brought, which `_file_notes` leaves
+        # out because the renderer draws those -- they are page content.
+        # They are still marks to take hold of.
         try:
             marks += [m for m in self._file_marks.visible(index + 1)
-                      if m.subtype == markup.STAMP and not m.is_reply()]
+                      if m.subtype == markup.STAMP and not m.is_reply()
+                      and not markup.is_scalable_comment(m.subtype, m.icon)]
         except Exception:       # noqa: BLE001 - a click must not raise
             pass
         # Last first: the most recently placed note is the one on top, which
@@ -2601,23 +2596,6 @@ class PageCanvas(QAbstractScrollArea):
             if where is not None and where.contains(point):
                 return (index, which, mark)
         return None
-
-    def _note_editor_rect(self, icon: QRectF) -> QRectF:
-        """Where the editor goes: beside the icon, and inside the viewport.
-
-        Beside rather than over, so that the note being edited stays visible
-        -- it is the thing being talked about. Clamped, because a note placed
-        in the bottom right corner would otherwise open off the screen.
-        """
-        width, height = self.NOTE_EDITOR
-        area = QRectF(self.viewport().rect())
-        left = icon.right() + 6
-        top = icon.top()
-        if left + width > area.right():
-            left = max(area.left(), icon.left() - 6 - width)
-        if top + height > area.bottom():
-            top = max(area.top(), area.bottom() - height)
-        return QRectF(left, top, width, height)
 
     def focusNextPrevChild(self, forward: bool) -> bool:
         """Tab steps through the form rather than out of the canvas.
@@ -2743,6 +2721,11 @@ class PageCanvas(QAbstractScrollArea):
     NOTE_ON_TEXT = markup.NOTE_ON_TEXT
     DRAW = "draw"
 
+    #: *Replace Selected Text*: a strikeout over the words and a caret at
+    #: their end, which the window writes as a pair. To the canvas it is a
+    #: text tool like the strikeout it draws.
+    REPLACE = "replace"
+
     #: The comment tool's twin, placing a `/Stamp` instead of a `/Text`.
     #: Its gesture is the same -- a point, and then the words -- and the
     #: only difference the canvas sees is where the point goes: a stamp is
@@ -2753,7 +2736,8 @@ class PageCanvas(QAbstractScrollArea):
     #: out a selection, exactly as reading does, because the quadrilaterals a
     #: `/Highlight` wants are what a text selection already produces -- which
     #: is why highlighting comes before the marks that need new hit-testing.
-    TEXT_TOOLS = (HIGHLIGHT, STRIKEOUT, UNDERLINE, NOTE_ON_TEXT, NOTE)
+    TEXT_TOOLS = (HIGHLIGHT, STRIKEOUT, UNDERLINE, NOTE_ON_TEXT, NOTE,
+                  REPLACE)
 
     #: What a tool writes when its gesture turns out to be a run of words
     #: rather than a point. The comment tool is the only one with two, and
@@ -3156,6 +3140,14 @@ class PageCanvas(QAbstractScrollArea):
             where = self.quad_on_screen(index, quad, offset, scaled=is_mine)
             if where is not None:
                 found.append(where)
+        # A *Replace Selected Text* pair is outlined as one mark: the box
+        # round the run's last line takes in the caret at its end.
+        caret = self.caret_of(index, mark)
+        if caret is not None and found:
+            where = self.quad_on_screen(index, caret.rect, offset,
+                                        scaled=is_mine)
+            if where is not None:
+                found[-1] = found[-1].united(where)
         return found
 
     def ink_on_screen(self, index: int, mark, quad, scaled: bool):
@@ -3197,6 +3189,17 @@ class PageCanvas(QAbstractScrollArea):
             for quad in self.mark_boxes(mark):
                 where = self.ink_on_screen(index, mark, quad, is_mine)
                 if where is not None and where.contains(point):
+                    return (index, mark)
+            # The caret is part of the mark, so clicking it is clicking the
+            # strikeout that stands for the pair.
+            caret = self.caret_of(index, mark)
+            if caret is not None:
+                where = self.quad_on_screen(index, caret.rect,
+                                            scaled=is_mine)
+                if where is not None and where.adjusted(
+                        -self.INK_TOLERANCE, -self.INK_TOLERANCE,
+                        self.INK_TOLERANCE,
+                        self.INK_TOLERANCE).contains(point):
                     return (index, mark)
         return None
 
@@ -3321,10 +3324,17 @@ class PageCanvas(QAbstractScrollArea):
                 return ()
             quads = tuple(self.to_source(index, q) for q in self._preview)
             del which
-            return (markup.Annotation(
+            band = markup.Annotation(
                 kind, index, markup.bounding_rect(quads),
                 colour=self.DRAGGED, quads=quads,
-                opacity=self.DRAGGED_OPACITY),)
+                opacity=self.DRAGGED_OPACITY)
+            if quads and self.caret_of(index, mark) is not None:
+                # A pair's caret follows the end of the run being proposed,
+                # in the same neutral grey, while the old one stays put.
+                return (band, markup.Annotation(
+                    markup.CARET, index, markup.caret_rect(quads[-1]),
+                    colour=self.DRAGGED, opacity=self.DRAGGED_OPACITY))
+            return (band,)
         # A markup tool in flight has no preview of its own: what it is
         # about to mark is the selection, drawn in the colour it will be
         # made in by `_paint_selection`.
@@ -3530,8 +3540,11 @@ class PageCanvas(QAbstractScrollArea):
 
         if self._dragging_note is not None and event.buttons() & Qt.LeftButton:
             page, mark, grab, at, moved = self._dragging_note
-            if not moved and ((position - at).manhattanLength()
-                              > QApplication.startDragDistance()):
+            # A locked mark stays where it is, so the press is only ever a
+            # click: it still selects the mark and opens its note.
+            if not moved and not getattr(mark, "locked", False) and (
+                    (position - at).manhattanLength()
+                    > QApplication.startDragDistance()):
                 moved = True
             if moved:
                 self._dragging_note = (page, mark, grab, position, True)
@@ -3619,8 +3632,10 @@ class PageCanvas(QAbstractScrollArea):
             over_stamp = (note[2].kind
                           if isinstance(note[2], markup.Annotation)
                           else note[2].subtype) == markup.STAMP
+            # And no crosshair on a locked one, which cannot be dragged.
             self.viewport().setCursor(
-                Qt.ArrowCursor if over_stamp and not holding
+                Qt.ArrowCursor if (over_stamp and not holding)
+                or getattr(note[2], "locked", False)
                 else Qt.CrossCursor)
             named = True
             self._set_tooltip(note[2].contents or _("Empty note"))
@@ -4173,12 +4188,12 @@ class PageCanvas(QAbstractScrollArea):
             note = menu.addAction(_("Add note to text"))
             note.triggered.connect(
                 lambda: self.mark_the_selection(self.NOTE_ON_TEXT))
-            # Drawn and refused, waiting for its own step. Replacing text
-            # is a pair -- a `/StrikeOut` grouped onto a `/Caret` that
-            # carries what should be there instead -- and neither half can
-            # be written until the pair is built.
-            menu.addAction(
-                _("Add a comment to replace text")).setEnabled(False)
+            # *Replace Selected Text*, reached from the words: a
+            # strikeout grouped onto a caret that carries what should be
+            # there instead.
+            replace = menu.addAction(_("Add a comment to replace text"))
+            replace.triggered.connect(
+                lambda: self.mark_the_selection(self.REPLACE))
             menu.addSeparator()
 
         select_all = menu.addAction(_("Select All"))
@@ -4191,15 +4206,15 @@ class PageCanvas(QAbstractScrollArea):
 
     @staticmethod
     def _is_a_comment(mark) -> bool:
-        """Whether the comment tool made this mark, either way it makes one.
+        """Whether a comment tool made this mark, either way it makes one.
 
-        An icon placed on the page, or a highlight laid over a run of
-        words -- told apart from the highlight tool's by `/Subj` and
-        `/IT`, which is what the file records.
+        An icon placed on the page, a scalable comment, or a highlight laid
+        over a run of words -- told apart from the highlight tool's by
+        `/Subj` and `/IT`, which is what the file records.
         """
         kind = (mark.kind if isinstance(mark, markup.Annotation)
                 else mark.subtype)
-        if kind == markup.TEXT:
+        if kind in (markup.TEXT, markup.STAMP):
             return True
         return kind == markup.HIGHLIGHT and (
             (getattr(mark, "subject", "") or "",
@@ -4220,8 +4235,13 @@ class PageCanvas(QAbstractScrollArea):
         the step that turns it on.
         """
         menu = QMenu(self)
-        children = self.chain_of(mark)[1:]
-        has_note = bool(getattr(mark, "contents", "") or children)
+        # Asked about from inside the note window, a pair arrives as the
+        # caret its note is on; the menu is the strikeout's.
+        mark = self.head_of(index, mark)
+        # A pair's note, replies and statuses are on its caret.
+        said = self.note_bearer(index, mark)
+        children = [m for m in self.chain_of(said)[1:] if m is not mark]
+        has_note = bool(getattr(said, "contents", "") or children)
         replied = any(getattr(m, "is_reply", bool) and m.is_reply()
                       for m in children)
 
@@ -4236,7 +4256,7 @@ class PageCanvas(QAbstractScrollArea):
         if has_note:
             reply = menu.addAction(_("Reply"))
             reply.triggered.connect(
-                lambda: self.reply_wanted.emit(index, mark))
+                lambda: self.reply_wanted.emit(index, said))
         remove = menu.addAction(_("Delete Thread") if replied else _("Delete"))
         remove.triggered.connect(
             lambda: self.mark_deleted.emit(index, mark))
@@ -4245,7 +4265,7 @@ class PageCanvas(QAbstractScrollArea):
         # refused, 2026-11-03.
         remove.setEnabled(not getattr(mark, "locked", False))
         status = menu.addMenu(_("Set status"))
-        now = self.status_of(mark, index)
+        now = self.status_of(said, index)
         for state in markup.STATUSES:
             act = status.addAction(_(markup.STATUS_LABELS[state]))
             act.setCheckable(True)
@@ -4254,7 +4274,7 @@ class PageCanvas(QAbstractScrollArea):
             # completed has one status, Completed.
             act.setChecked(state == now)
             act.triggered.connect(
-                lambda _checked=False, m=mark, st=state:
+                lambda _checked=False, m=said, st=state:
                 self.status_wanted.emit(index, m, st))
         menu.addSeparator()
 
@@ -4330,7 +4350,7 @@ class PageCanvas(QAbstractScrollArea):
             return []
         return [ours for ours in self._session_marks(index)
                 if getattr(ours, "irt", None) == name
-                and not getattr(ours, "state", None)]
+                and markup.is_reply(ours)]
 
     def _session_marks(self, index: int):
         """This session's own marks on a page, as the window supplies them.
@@ -4700,7 +4720,8 @@ class PageCanvas(QAbstractScrollArea):
                 # crossing between them made the outline change size and the
                 # hover panel come and go.
                 continue
-            colour = QColor.fromRgbF(*(mark.colour or (1.0, 1.0, 0.0)))
+            colour = QColor.fromRgbF(
+                *(markup.shown_colour(mark) or (1.0, 1.0, 0.0)))
             kind = (mark.kind if isinstance(mark, markup.Annotation)
                     else mark.subtype)
             if kind == markup.TEXT:
@@ -4708,6 +4729,10 @@ class PageCanvas(QAbstractScrollArea):
                 continue
             if kind == markup.STAMP:
                 self._paint_stamp(painter, index, mark, colour, offset)
+                continue
+            if kind == markup.CARET:
+                self._paint_replace_caret(painter, index, mark, colour,
+                                          offset)
                 continue
             # **At the solidity the file will show**, which the quadded
             # marks were drawn without: a highlight of ours is written
@@ -4806,8 +4831,9 @@ class PageCanvas(QAbstractScrollArea):
             # newest one's colour is what Reader shows. One made here
             # cannot be answered until it has been written, so it speaks
             # for itself.
-            speaks_for = (mark if isinstance(mark, markup.Annotation)
-                          else self.latest_reply(mark) or mark)
+            said = self.note_bearer(index, mark)
+            speaks_for = (said if isinstance(said, markup.Annotation)
+                          else self.latest_reply(said) or said)
             colour = QColor.fromRgbF(
                 *(speaks_for.colour or mark.colour or (1.0, 0.82, 0.25)))
             faded = getattr(speaks_for, "opacity", None)
@@ -4877,14 +4903,17 @@ class PageCanvas(QAbstractScrollArea):
         this session had no badge, could not be hovered, and appeared only
         once the document had been saved and opened again.
         """
+        # Through `note_bearer`, because a *Replace Selected Text* pair
+        # keeps its note on the caret and wears the badge on the strikeout.
         found = [m for m in self._file_marks.visible(index + 1)
                  if m.subtype in self.QUADDED_SELECTABLE
-                 and markup.has_note(m)]
+                 and not markup.is_reply(m)
+                 and markup.has_note(self.note_bearer(index, m))]
         try:
             if self.marks:
                 found += [m for m in (self.marks(index) or ())
-                          if markup.has_note(m)
-                          and m.kind in self.QUADDED_SELECTABLE]
+                          if m.kind in self.QUADDED_SELECTABLE
+                          and markup.has_note(self.note_bearer(index, m))]
         except Exception:       # noqa: BLE001 - a repaint must not fail
             pass
         return found
@@ -4897,7 +4926,7 @@ class PageCanvas(QAbstractScrollArea):
         for mark in self.noted_marks(index):
             where = self._badge_rect(index, mark)
             if where is not None and where.contains(point):
-                return (index, mark)
+                return (index, self.note_bearer(index, mark))
         return None
 
     def note_window_is_shut(self, index: int, mark) -> bool:
@@ -4920,10 +4949,14 @@ class PageCanvas(QAbstractScrollArea):
         else:
             self._shut_notes.discard(key)
 
-    @staticmethod
-    def _note_key(index: int, mark):
+    def _note_key(self, index: int, mark):
         """What identifies a mark between one hover and the next: its `/NM`
-        where it has one, and the object itself where it does not."""
+        where it has one, and the object itself where it does not.
+
+        The note's own annotation, so a pair is one window whether it was
+        asked about by its strikeout or by the caret the note is on.
+        """
+        mark = self.note_bearer(index, mark)
         return (index, getattr(mark, "name", None) or id(mark))
 
     def _marked_note_at(self, point: QPointF):
@@ -4934,9 +4967,12 @@ class PageCanvas(QAbstractScrollArea):
         underline you had just commented on showed nothing at all.
         """
         found = self.mark_at(point)
-        if found is None or not markup.has_note(found[1]):
+        if found is None:
             return None
-        return found
+        said = self.note_bearer(*found)
+        if not markup.has_note(said):
+            return None
+        return (found[0], said)
 
     #: How wide the panel may get before its text wraps, in pixels.
     NOTE_PANEL_WIDTH = 260
@@ -5215,7 +5251,65 @@ class PageCanvas(QAbstractScrollArea):
         """
         if isinstance(mark, markup.Annotation):
             return [mark]
-        return [mark] + self._file_marks.children(mark)
+        caret = self.caret_of(mark.page - 1, mark)
+        if caret is None:
+            return [mark] + self._file_marks.children(mark)
+        # **A pair goes as one**: the strikeout, the caret it is grouped
+        # with, and everything hanging off the caret -- which is where the
+        # note's replies and statuses are. The strikeout is among the
+        # caret's children, being joined to it, and is not listed twice.
+        return [mark, caret] + [m for m in self._file_marks.children(caret)
+                                if m is not mark]
+
+    def _everything_on(self, index: int):
+        """Every mark on a page, the file's and this session's, hidden or not."""
+        try:
+            found = list(self._file_marks.for_page(index + 1))
+        except Exception:   # noqa: BLE001 - a lookup must not raise
+            found = []
+        return found + list(self._session_marks(index))
+
+    def caret_of(self, index: int, mark):
+        """The caret a *Replace Selected Text* strikeout is grouped with.
+
+        None for anything else. **The strikeout stands for the pair**: it is
+        what is clicked, outlined, given handles and opened in the menu and
+        the form, and this is how everything that needs the other half
+        finds it -- by the name the strikeout's `/IRT` holds.
+        """
+        if mark is None or not getattr(mark, "group", False):
+            return None
+        name = markup._answers(mark)
+        if not name:
+            return None
+        for other in self._everything_on(index):
+            if other is not mark and getattr(other, "name", None) == name:
+                return other
+        return None
+
+    def head_of(self, index: int, mark):
+        """The strikeout a caret belongs to, or ``mark`` itself.
+
+        For the places a caret can arrive from -- the note window lists it
+        first, because the note is on it -- and has to be turned back into
+        the mark that stands for the pair.
+        """
+        kind = (mark.kind if isinstance(mark, markup.Annotation)
+                else getattr(mark, "subtype", None))
+        name = getattr(mark, "name", None)
+        if kind != markup.CARET or not name:
+            return mark
+        for other in self._everything_on(index):
+            if (getattr(other, "group", False)
+                    and markup._answers(other) == name):
+                return other
+        return mark
+
+    def note_bearer(self, index: int, mark):
+        """The annotation that holds ``mark``'s note: its caret for a pair,
+        where Acrobat puts the note, its replies and its statuses; else the
+        mark itself."""
+        return self.caret_of(index, mark) or mark
 
     def forget_marks(self, marks) -> None:
         """Stop drawing and hit-testing these, without rebuilding."""
@@ -5631,6 +5725,12 @@ class PageCanvas(QAbstractScrollArea):
         emptying them out of the document being shown -- which it does so
         that one glyph answers for every comment, saved or not.
 
+        **Scalable comments as well**, for a different reason: left to the
+        renderer they are baked into the page, so dragging one moved its
+        outline and left the glyph behind until the button came up. Drawn
+        here they follow the gesture like everything else that asks
+        `_shape_of`.
+
         **Replies are not among them.** A reply is a `/Text` like the mark
         it answers and carries `/F` the same way, so it reaches here and
         has to be turned away: it is seen in the thread, not on the paper.
@@ -5640,7 +5740,9 @@ class PageCanvas(QAbstractScrollArea):
         """
         try:
             return [m for m in self._file_marks.visible(index + 1)
-                    if m.subtype == markup.TEXT and not m.is_reply()]
+                    if (m.subtype == markup.TEXT
+                        or markup.is_scalable_comment(m.subtype, m.icon))
+                    and not m.is_reply()]
         except Exception:       # noqa: BLE001 - a repaint must not fail
             return []
 
@@ -5698,6 +5800,44 @@ class PageCanvas(QAbstractScrollArea):
         was = painter.opacity()
         painter.setOpacity(max(0.0, min(1.0, float(opacity))))
         painter.drawImage(box.topLeft(), image)
+        painter.setOpacity(was)
+
+    def _paint_replace_caret(self, painter, index: int, mark, colour,
+                             offset) -> None:
+        """Draw a *Replace Selected Text* caret made in this session.
+
+        Acrobat's drawing, `markup.caret_path`, mapped from the caret's box
+        on the page to where that box is on screen -- so what is shown is
+        what will be written.
+        """
+        where = self.quad_on_screen(index, mark.rect, offset, scaled=True)
+        if where is None or not where.intersects(QRectF(self.viewport().rect())):
+            return
+        left, bottom, right, top = (float(v) for v in mark.rect)
+        if right <= left or top <= bottom:
+            return
+        sx = where.width() / (right - left)
+        sy = where.height() / (top - bottom)
+
+        def at(x, y):
+            return QPointF(where.left() + (x - left) * sx,
+                           where.bottom() - (y - bottom) * sy)
+
+        path = QPainterPath()
+        for op, values in markup.caret_path(mark.rect):
+            points = [at(values[n], values[n + 1])
+                      for n in range(0, len(values), 2)]
+            if op == "m":
+                path.moveTo(points[0])
+            elif op == "l":
+                path.lineTo(points[0])
+            else:
+                path.cubicTo(*points)
+        path.closeSubpath()
+        was = painter.opacity()
+        painter.setOpacity(self._solidity(mark))
+        painter.setRenderHint(QPainter.Antialiasing, True)
+        painter.fillPath(path, colour)
         painter.setOpacity(was)
 
     def _paint_stamp(self, painter, index: int, mark, colour, offset) -> None:

@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PDF Arranger 1.9.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-07 17:59+0000\n"
+"POT-Creation-Date: 2026-11-08 22:56+0000\n"
 "PO-Revision-Date: 2023-06-12 10:30+0300\n"
 "Last-Translator: Manussos Pulinakis "
 "<38626261+manussos@users.noreply.github.com>\n"
@@ -3092,6 +3092,11 @@ msgstr "Διακριτή διαγραφή"
 #: pdfarranger_qt/properties.py
 msgid "Scalable Comment"
 msgstr "Κλιμακούμενο σχόλιο"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Replace Selected Text"
+msgstr "Αντικατάσταση επιλεγμένου κειμένου"
 
 #: pdfarranger_qt/properties.py
 msgid "Review History"

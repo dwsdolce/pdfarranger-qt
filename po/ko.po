@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pdfarranger - Korean\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-07 17:59+0000\n"
+"POT-Creation-Date: 2026-11-08 22:56+0000\n"
 "PO-Revision-Date: 2026-05-25 00:41+0900\n"
 "Last-Translator: VenusGirl <venusgirl@outlook.com>\n"
 "Language: ko\n"
@@ -2893,6 +2893,11 @@ msgstr "취소선"
 #: pdfarranger_qt/properties.py
 msgid "Scalable Comment"
 msgstr "크기 조절 가능한 설명"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Replace Selected Text"
+msgstr "선택한 텍스트 바꾸기"
 
 #: pdfarranger_qt/properties.py
 msgid "Review History"

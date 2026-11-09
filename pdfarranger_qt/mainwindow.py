@@ -837,6 +837,10 @@ class MainWindow(QMainWindow):
         # and never should have been.
         markup.NOTE_ON_TEXT: markup.HIGHLIGHT,
         "stamp": markup.STAMP,
+        # *Replace Selected Text* writes a strikeout and a caret, joined as
+        # one mark; the strikeout is the kind named here because it is what
+        # stands for the pair, and `_place_mark` adds its caret.
+        "replace": markup.STRIKEOUT,
     }
 
     #: The gestures above that are not tools, and the tool each acts as --
@@ -856,8 +860,8 @@ class MainWindow(QMainWindow):
     #:
     #: By the canvas's names, because that is what reports a finished
     #: gesture -- `"note"` is the comment tool placing its icon. The caret
-    #: pair belongs here too, once it exists.
-    REQUIRES_TEXT = (markup.NOTE_ON_TEXT, "note", "stamp")
+    #: pair is here too: the replacement wording is the point of it.
+    REQUIRES_TEXT = (markup.NOTE_ON_TEXT, "note", "stamp", "replace")
 
     #: Strip tool -> the canvas's own name for it. Only the tools that have
     #: been built appear: the strip offers twenty and the canvas implements
@@ -868,6 +872,7 @@ class MainWindow(QMainWindow):
         "underline": "underline",
         "comment": "note",
         "scalable_comment": "stamp",
+        "replace_text": "replace",
         "draw": "draw",
     }
 
@@ -975,8 +980,13 @@ class MainWindow(QMainWindow):
         if not wanted:
             return
         self.model.undo.commit(_("Add Mark"))
-        for index, rects in wanted:
-            self._place_mark(tool, subtype, index, rects)
+        for at, (index, rects) in enumerate(wanted):
+            # *Replace Selected Text* over a page break: the pair goes on
+            # the last page, where the selection ends, and every page before
+            # it gets an ordinary strikethrough -- independent of the pair,
+            # since nothing in the file could join them.
+            self._place_mark(tool, subtype, index, rects,
+                             paired=at == len(wanted) - 1)
         self._mark_added()
         # The note tools open their editor on the last mark made, which for
         # a gesture over several pages is the one on the last page.
@@ -990,17 +1000,27 @@ class MainWindow(QMainWindow):
             # comment with nothing in it is not a mark anyone meant to
             # make, and asking for the words afterwards would be a second
             # gesture for one action.
-            self._awaiting_text = (index, made[-1], self.model.undo.current)
+            self._awaiting_text = (index, made[-1], self.model.undo.current,
+                                   len(wanted) == 1)
             # **Held, before its window opens.** The thread belongs to the
             # selected mark and closes when the selection moves off it, so
             # a mark nobody has hold of would leave a window that clicking
             # away could not shut -- and clicking the icon again would find
             # it already showing and open no editor.
-            self.reader.canvas.select_mark((index, made[-1]))
+            #
+            # The last mark made is a pair's caret, where its note goes;
+            # what is held is the strikeout that stands for the pair.
+            canvas = self.reader.canvas
+            canvas.select_mark((index, canvas.head_of(index, made[-1])))
             self.open_note(index, made[-1])
 
-    def _place_mark(self, tool: str, subtype: str, index: int, rects) -> None:
-        """Add one mark to one page. The caller owns the undo step."""
+    def _place_mark(self, tool: str, subtype: str, index: int, rects,
+                    paired: bool = True) -> None:
+        """Add one mark to one page. The caller owns the undo step.
+
+        ``paired`` is False on the pages a *Replace Selected Text* crosses
+        before the one it ends on, which get a plain strikethrough.
+        """
         colour = self._colour_for_canvas_tool(tool)
         page = self.model.pages[index]
         rect = markup.bounding_rect(rects)
@@ -1049,13 +1069,27 @@ class MainWindow(QMainWindow):
         # `/Highlight` -- the highlight tool, and the comment tool over a
         # run of words -- and what tells them apart in the file is the
         # subject and the intent.
-        subject, intent = self._names_written_by(tool)
-        self.model.annotations.add(markup.Annotation(
+        subject, intent = (self._names_written_by(tool) if paired
+                           else ("", ""))
+        opacity = self._opacity_for_canvas_tool(tool)
+        made = self.model.annotations.add(markup.Annotation(
             subtype, page.uid, rect, colour=colour, quads=quads,
-            opacity=self._opacity_for_canvas_tool(tool),
+            opacity=opacity,
             subject=subject or None, intent=intent or None,
             icon=chosen,
             author=markup.default_author()))
+        if tool == "replace" and quads and paired:
+            # **And its caret**, at the end of the run, in the same colour
+            # and opacity. Added after the strikeout, which is the order
+            # Acrobat writes the pair in; the strikeout names it, and that
+            # is what makes the two one mark rather than a reply.
+            subject, intent = markup.REPLACE_CARET
+            caret = self.model.annotations.add(markup.Annotation(
+                markup.CARET, page.uid, markup.caret_rect(quads[-1]),
+                colour=colour, opacity=opacity, subject=subject,
+                intent=intent, author=markup.default_author()))
+            made.irt = caret.name
+            made.group = True
 
     @staticmethod
     def _names_written_by(tool: str):
@@ -1063,6 +1097,8 @@ class MainWindow(QMainWindow):
         whose subtype already says what it is."""
         if tool == markup.NOTE_ON_TEXT:
             return markup.COMMENT_ON_TEXT
+        if tool == "replace":
+            return markup.REPLACE_STRIKE
         return "", ""
 
     def colour_for(self, tool: str):
@@ -1188,11 +1224,14 @@ class MainWindow(QMainWindow):
         straight after this and finds the window already showing.
         """
         found = self.reader.canvas.selected_mark()
+        # A pair's note is on its caret, so that is what the window holds.
+        said = (None if found is None
+                else self.reader.canvas.note_bearer(*found))
         if self._noted is not None and (
-                found is None or found[1] is not self._noted[1][0]):
+                found is None or said is not self._noted[1][0]):
             self.note_panel.hide()
             self._noted = None
-        if found is not None and markup.has_note(found[1]):
+        if found is not None and markup.has_note(said):
             self.open_note(*found)
         if found is None:
             self.tool_strip.unfollow()
@@ -1230,17 +1269,26 @@ class MainWindow(QMainWindow):
             return
         if getattr(mark, "locked", False):
             return
+        # A pair's caret follows the end of the run, as one mark.
+        caret = self.reader.canvas.caret_of(index, mark)
         if isinstance(mark, markup.Annotation):
             self.model.undo.commit(_("Resize Mark"))
             mark.quads = tuple(tuple(q) for q in quads)
             mark.rect = markup.bounding_rect(mark.quads)
             mark.touch()
+            if caret is not None:
+                caret.rect = markup.caret_rect(mark.quads[-1])
+                caret.touch()
             self._after_mark_change(index)
             return
         uid = self.model.pages[index].uid
         self.model.undo.commit(_("Resize Mark"))
         boxes = tuple(tuple(q) for q in quads)
         self.model.mark_edits.change(uid, mark.index, quads=boxes)
+        if caret is not None:
+            moved = markup.caret_rect(boxes[-1])
+            self.model.mark_edits.change(uid, caret.index, rect=moved)
+            caret.rect = moved
         # Back into the shape a `Mark` holds: `/QuadPoints` corner groups,
         # not the rectangles the rest of this works in. Assigning the
         # rectangles made `boxes()` fall through to `/Rect`, so a resized
@@ -1258,6 +1306,8 @@ class MainWindow(QMainWindow):
         is kept is the shape it ended at. The rectangle carries the size --
         there is nowhere to write a scale -- so the two travel together.
         """
+        if getattr(mark, "locked", False):
+            return
         rect = tuple(float(v) for v in rect)
         rotate = float(rotate)
         if isinstance(mark, markup.Annotation):
@@ -1282,7 +1332,12 @@ class MainWindow(QMainWindow):
         and the date and leaves everything else -- the size, the appearance,
         the thread, the popup's own window -- exactly as it was, which is
         what Reader writes when one is dragged.
+
+        Not a locked one: a lock holds a mark where it is as well as the
+        size it is.
         """
+        if getattr(mark, "locked", False):
+            return
         rect = tuple(float(v) for v in rect)
         if isinstance(mark, markup.Annotation):
             self.model.undo.commit(_("Move Mark"))
@@ -1333,18 +1388,24 @@ class MainWindow(QMainWindow):
         waiting, self._awaiting_text = self._awaiting_text, None
         if waiting is None:
             return
-        index, mark, placed_at = waiting
+        index, mark, placed_at, alone = waiting
         if (mark.contents or "").strip():
             return
-        self.model.annotations.remove(mark)
+        # A pair goes whole: the caret the note was for and its strikeout.
+        head = self.reader.canvas.head_of(index, mark)
+        for going in {id(m): m for m in (mark, head)}.values():
+            self.model.annotations.remove(going)
         # **And let go of it.** It is held the moment it is placed, so that
         # its thread belongs to a selection; dropping it without letting go
         # left its outline, its handles and its buttons sitting over a mark
         # that was no longer there.
         found = self.reader.canvas.selected_mark()
-        if found is not None and found[1] is mark:
+        if found is not None and found[1] in (mark, head):
             self.reader.canvas.select_mark(None)
-        if placed_at == self.model.undo.current:
+        # The step goes too, unless the gesture left something behind: a
+        # *Replace Selected Text* across a page break keeps the strikethrough
+        # it made on the earlier page, and that still wants undoing.
+        if alone and placed_at == self.model.undo.current:
             self.model.undo.discard_last()
         self._mark_added()
 
@@ -1364,6 +1425,8 @@ class MainWindow(QMainWindow):
         """
         if not 0 <= index < len(self.model.pages):
             return
+        # A *Replace Selected Text* pair's note is on its caret.
+        mark = self.reader.canvas.note_bearer(index, mark)
         # Asked for, so closing it earlier says nothing any more: the
         # pointer offers the window again from here on.
         self.reader.canvas.note_window_shut(index, mark, False)
@@ -1429,7 +1492,7 @@ class MainWindow(QMainWindow):
             # window listed "Completed set by dws" as something somebody
             # had written.
             found += [a for a in self.model.annotations.for_page(uid)
-                      if a.irt == name and not a.state]
+                      if a.irt == name and markup.is_reply(a)]
         return found
 
     def reply_to(self, index: int, mark) -> None:
@@ -1440,6 +1503,7 @@ class MainWindow(QMainWindow):
         the editor is empty: there is no way to make a reply that says
         nothing.
         """
+        mark = self.reader.canvas.note_bearer(index, mark)
         if self._noted is None or self._noted[0] != index:
             self.open_note(index, mark)
         if self._noted is None:
@@ -1488,6 +1552,8 @@ class MainWindow(QMainWindow):
         if self._noted is not None and self._noted[0] == index:
             self.note_panel.post_now()
         canvas = self.reader.canvas
+        # A pair's statuses hang off its caret, with its note.
+        mark = canvas.note_bearer(index, mark)
         if canvas.status_of(mark, index) == state:
             return
         answered = self._last_link(index, mark)
@@ -1516,9 +1582,15 @@ class MainWindow(QMainWindow):
         """
         if not 0 <= index < len(self.model.pages):
             return
+        # A pair is the strikeout's form, titled for the pair, with the
+        # caret's history -- which is where its statuses are.
+        canvas = self.reader.canvas
+        mark = canvas.head_of(index, mark)
+        said = canvas.note_bearer(index, mark)
         mine = isinstance(mark, markup.Annotation)
         form = MarkProperties(Properties(
-            kind=mark.kind if mine else mark.subtype,
+            kind=("replace_text" if said is not mark
+                  else mark.kind if mine else mark.subtype),
             author=(getattr(mark, "author", "") or markup.default_author()),
             subject=(getattr(mark, "subject", "") or markup.SUBJECTS.get(
                 mark.kind if mine else mark.subtype, "")),
@@ -1530,7 +1602,7 @@ class MainWindow(QMainWindow):
             opacity=(markup.solidity(mark) if mine
                      else getattr(mark, "opacity", None)),
             locked=bool(getattr(mark, "locked", False)),
-            history=self._history_of(index, mark),
+            history=self._history_of(index, said),
             style=self._style_of(mark),
             icon=getattr(mark, "icon", "") or "",
             icons=self._icons_for(mark.kind if mine else mark.subtype),
@@ -1590,17 +1662,41 @@ class MainWindow(QMainWindow):
         and re-render the page that shows it."""
         page = self.model.pages[index]
         scale = page.scale if page.scale else 1.0
+        partner = self._partner_fields(index, mark, fields)
         if mine:
             for name, value in fields.items():
                 self._set_mark_field(mark, name, value, scale)
             mark.touch()
+            if partner is not None:
+                for name, value in partner[1].items():
+                    self._set_mark_field(partner[0], name, value, scale)
+                partner[0].touch()
             self._after_mark_change(index)
             return
         uid = page.uid
         self.model.mark_edits.change(uid, mark.index, **fields)
         for name, value in fields.items():
             self._set_mark_field(mark, name, value, scale)
+        if partner is not None:
+            self.model.mark_edits.change(uid, partner[0].index, **partner[1])
+            for name, value in partner[1].items():
+                self._set_mark_field(partner[0], name, value, scale)
         self._after_mark_change(index, uid)
+
+    #: What a *Replace Selected Text* caret takes from a change to its
+    #: strikeout: the two are always one colour and one opacity, and a lock
+    #: holds the whole mark.
+    PAIRED_FIELDS = ("colour", "opacity", "locked")
+
+    def _partner_fields(self, index: int, mark, fields: dict):
+        """``(caret, fields)`` for the half of a pair a change also reaches,
+        or None for a mark that is not one."""
+        caret = self.reader.canvas.caret_of(index, mark)
+        if caret is None:
+            return None
+        shared = {name: value for name, value in fields.items()
+                  if name in self.PAIRED_FIELDS}
+        return (caret, shared) if shared else None
 
     @staticmethod
     def _set_mark_field(mark, name: str, value, scale: float = 1.0) -> None:
@@ -1955,6 +2051,13 @@ class MainWindow(QMainWindow):
                      getattr(mark, "intent", "") or "")
             if names == markup.COMMENT_ON_TEXT:
                 return "comment"
+        if kind == markup.STRIKEOUT and getattr(mark, "group", False):
+            # The other kind two tools make: a strikeout grouped with a
+            # caret is half of *Replace Selected Text*. One that only says
+            # it is a text edit, with no caret -- what Acrobat leaves on the
+            # earlier page of a selection across a break -- is a
+            # strikethrough.
+            return "replace_text"
         if kind in markup.UNDERLINE_STYLES.values():
             # Both styles are the one tool: the style *is* the subtype, so
             # a squiggly is not a kind of its own to be traced back.
@@ -2043,11 +2146,14 @@ class MainWindow(QMainWindow):
         """
         if not 0 <= index < len(self.model.pages):
             return
+        canvas = self.reader.canvas
+        # From inside the note window a pair arrives as its caret; it is
+        # deleted as the strikeout that stands for it.
+        mark = canvas.head_of(index, mark)
         if getattr(mark, "locked", False):
             # Locked is the one attribute that refuses here rather than in
             # the menu: the Delete key reaches this too.
             return
-        canvas = self.reader.canvas
         going = canvas.chain_of(mark)
         # What hangs *off* it, not it. Deleting a reply is deleting one
         # reply, and warning that somebody else's answers will go with it
@@ -2056,10 +2162,17 @@ class MainWindow(QMainWindow):
                for m in going[1:]) and not self._confirm_mark_delete():
             return
         self.model.undo.commit(_("Delete Mark"))
+        said = canvas.note_bearer(index, mark)
         root = self._noted is not None and any(
-            m is mark for m in self._noted[1][:1])
+            m is said for m in self._noted[1][:1])
         if isinstance(mark, markup.Annotation):
             self.model.annotations.remove(mark)
+            if said is not mark:
+                # A pair made here: its caret too, and whatever was written
+                # under the caret's note in this session.
+                for one in self._made_here_under(index, said):
+                    self.model.annotations.remove(one)
+                self.model.annotations.remove(said)
             canvas.select_mark(None)
             self._after_mark_change(index)
             self._thread_lost(index, mark, root)
@@ -2073,6 +2186,20 @@ class MainWindow(QMainWindow):
         canvas.forget_marks(going)
         self._after_mark_change(index, uid)
         self._thread_lost(index, mark, root)
+
+    def _made_here_under(self, index: int, mark) -> list:
+        """This session's replies and statuses under ``mark``, followed
+        link by link, as a status points at the link before it."""
+        if not 0 <= index < len(self.model.pages):
+            return []
+        mine = self.model.annotations.for_page(self.model.pages[index].uid)
+        found, names = [], {getattr(mark, "name", None)}
+        while names:
+            step = [a for a in mine if a.irt in names and a not in found
+                    and not a.group]
+            found += step
+            names = {a.name for a in step}
+        return found
 
     def _thread_lost(self, index: int, mark, root: bool) -> None:
         """Put the window right after something in it was deleted.
@@ -2138,16 +2265,25 @@ class MainWindow(QMainWindow):
             return
         uid = self.model.pages[index].uid
         self.model.undo.commit(_("Change Mark"))
+        partner = self._partner_fields(index, mark, fields)
         if isinstance(mark, markup.Annotation):
             for name, value in fields.items():
                 setattr(mark, name, value)
             mark.touch()
+            if partner is not None:
+                for name, value in partner[1].items():
+                    setattr(partner[0], name, value)
+                partner[0].touch()
             self.mark_buttons.set_mark(mark.colour, markup.solidity(mark))
             self._mark_added()
             return
         self.model.mark_edits.change(uid, mark.index, **fields)
         for name, value in fields.items():
             setattr(mark, name, value)
+        if partner is not None:
+            self.model.mark_edits.change(uid, partner[0].index, **partner[1])
+            for name, value in partner[1].items():
+                setattr(partner[0], name, value)
         self.mark_buttons.set_mark(mark.colour, mark.opacity)
         # Only this page: a mark changed on one page is not a reason to
         # re-render every thumbnail in the document, and `_mark_added` touches

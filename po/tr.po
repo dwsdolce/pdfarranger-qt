@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pdfarranger main\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-07 17:59+0000\n"
+"POT-Creation-Date: 2026-11-08 22:56+0000\n"
 "PO-Revision-Date: 2026-04-24 21:19+0300\n"
 "Last-Translator: Oğuz Ersen <oguz@ersen.moe>\n"
 "Language: tr\n"
@@ -2997,6 +2997,11 @@ msgstr "Üstü çizili"
 #: pdfarranger_qt/properties.py
 msgid "Scalable Comment"
 msgstr "Ölçeklenebilir yorum"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Replace Selected Text"
+msgstr "Seçili metni değiştir"
 
 #: pdfarranger_qt/properties.py
 msgid "Review History"

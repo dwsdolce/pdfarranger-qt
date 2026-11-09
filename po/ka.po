@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  pdfarranger\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-07 17:59+0000\n"
+"POT-Creation-Date: 2026-11-08 22:56+0000\n"
 "PO-Revision-Date: 2026-01-21 05:07+0100\n"
 "Last-Translator: Ekaterine Papava <papava.e@gtu.ge>\n"
 "Language: ka\n"
@@ -3013,6 +3013,11 @@ msgstr "გადახაზვა"
 #: pdfarranger_qt/properties.py
 msgid "Scalable Comment"
 msgstr "მასშტაბირებადი კომენტარი"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Replace Selected Text"
+msgstr "მონიშნული ტექსტის ჩანაცვლება"
 
 #: pdfarranger_qt/properties.py
 msgid "Review History"

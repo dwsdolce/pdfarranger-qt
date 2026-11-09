@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-07 17:59+0000\n"
+"POT-Creation-Date: 2026-11-08 22:56+0000\n"
 "PO-Revision-Date: 2023-06-12 11:22+0300\n"
 "Last-Translator: Yaron Shahrabani <sh.yaron@gmail.com>\n"
 "Language: he\n"
@@ -3009,6 +3009,11 @@ msgstr "קו חוצה"
 #: pdfarranger_qt/properties.py
 msgid "Scalable Comment"
 msgstr "הערה מתכווננת"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Replace Selected Text"
+msgstr "החלפת הטקסט הנבחר"
 
 #: pdfarranger_qt/properties.py
 msgid "Review History"
