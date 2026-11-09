@@ -490,10 +490,16 @@ class TestTheOutlineUnderThePointer(SelectionCase):
                 continue
             for box in self.canvas.mark_boxes(found):
                 seen = self.canvas.quad_on_screen(0, box, scaled=False)
+                # **And one the pointer finds there.** A mark can lie under
+                # another: hovering its centre then finds the one on top,
+                # and the two pictures outline two different marks.
+                hit = (self.canvas.mark_at(seen.center())
+                       if seen is not None else None)
                 if (seen is not None and seen.width() > 4
                         and seen.height() > 4
                         and self.canvas.viewport().rect().contains(
-                            seen.center().toPoint())):
+                            seen.center().toPoint())
+                        and hit is not None and hit[1] is found):
                     mark, where = found, seen
                     break
             if mark is not None:
