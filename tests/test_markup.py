@@ -285,7 +285,7 @@ class TestAMarkBelongsToOnePage(unittest.TestCase):
     thing *on a page* and has nowhere to go when the page ends, so dragging
     one past the bottom simply takes the rest of that page. Selecting first
     and applying a mark afterwards is the other case, where the selection
-    may cross and each page gets a mark -- `TestAMarkPerPage`.
+    may cross but then cannot be marked -- `TestTextIsMarkedOnePageAtATime`.
     """
 
     def setUp(self):
@@ -379,15 +379,24 @@ class TestAMarkBelongsToOnePage(unittest.TestCase):
                          [tuple(quad) for quad in kept.quads])
 
 
-class TestAMarkPerPage(unittest.TestCase):
-    """Select first, then apply a mark: every page the selection covers.
+class TestTextIsMarkedOnePageAtATime(unittest.TestCase):
+    """Select first, then apply a mark -- on one page only.
 
     The other case to `TestAMarkBelongsToOnePage`, where the tool is armed
-    first. A selection made before any tool was chosen may run across a
-    page break; a mark may not, so each page gets its own -- and because
-    making them was one action, taking them back is one too. Choosing the
-    tool is itself what applies it, as in Reader.
+    first. A selection made before any tool was chosen may still run across
+    a page break, for reading; it cannot then be marked. It follows the
+    order the file stores its text in, so it takes in whatever lies between
+    -- footer, page number, header -- often off screen, and a mark made from
+    it would cover text nobody meant to mark. While one exists the text
+    tools are refused, and with the strip open the status bar says why.
+
+    On one page, choosing the tool is itself what applies it, as in Reader.
     """
+
+    #: The strip's tools that mark text, and so are refused for a selection
+    #: across a page break.
+    TEXT_TOOLS = ("highlight", "underline", "strikethrough", "comment",
+                  "replace_text")
 
     def setUp(self):
         from PySide6.QtWidgets import QApplication  # noqa: F401
@@ -402,8 +411,10 @@ class TestAMarkPerPage(unittest.TestCase):
         self.win.set_read_mode(True)
         settle(timeout_ms=1400)
         self.canvas = self.win.reader.canvas
+        self.strip = self.win.tool_strip
         self.addCleanup(self.win.close)
         self.addCleanup(lambda: setattr(self.win, "modified", False))
+        self.addCleanup(lambda: self.win.show_markup_tools(False))
 
     def counts(self):
         return [len(self.win.model.annotations.for_page(page.uid))
@@ -416,7 +427,22 @@ class TestAMarkPerPage(unittest.TestCase):
         pages = sorted(self.canvas._selection)
         self.assertEqual(pages, [0, 1],
                          "the selection did not reach the second page, so "
-                         "this proves nothing about marking both")
+                         "this proves nothing about refusing it")
+
+    def select_on_one_page(self):
+        self.canvas.select_between(0, 4, 0, 20)
+        settle(timeout_ms=250)
+        self.assertEqual(sorted(self.canvas._selection), [0])
+
+    def choose(self, name):
+        """Choose a tool the way the strip's flyout does: through its
+        action, which a refused tool does not answer."""
+        self.strip._actions[name].trigger()
+        settle(timeout_ms=600)
+
+    def enabled(self):
+        return {name: self.strip._actions[name].isEnabled()
+                for name in self.TEXT_TOOLS + ("select",)}
 
     def test_the_selection_may_cross_with_no_tool_armed(self):
         """The clamp belongs to the markup tools, not to selecting."""
@@ -425,48 +451,89 @@ class TestAMarkPerPage(unittest.TestCase):
             [page for page, _quads in self.canvas.selection_quads_by_page()],
             [0, 1])
 
-    def test_arming_a_tool_marks_every_page_it_covers(self):
+    def test_a_selection_across_pages_is_not_marked(self):
+        """Neither from the strip nor from the right-click menu's entries,
+        which mark through `mark_the_selection`."""
         self.select_across()
         before = self.counts()
-        self.win.tool_strip.arm("highlight")
-        settle(timeout_ms=600)
-        self.assertEqual([now - was for was, now in zip(before, self.counts())],
-                         [1, 1])
+        self.choose("highlight")
+        self.assertEqual(self.counts(), before)
+        for tool in (self.canvas.HIGHLIGHT, self.canvas.UNDERLINE,
+                     self.canvas.STRIKEOUT, self.canvas.NOTE_ON_TEXT,
+                     self.canvas.REPLACE):
+            self.assertFalse(self.canvas.mark_the_selection(tool), tool)
+        self.assertEqual(self.counts(), before)
+
+    def test_the_text_tools_are_refused_while_it_crosses(self):
+        """And offered again once it no longer does -- cleared, or made on
+        one page. Select is never refused: it makes no mark."""
+        everything = dict.fromkeys(self.TEXT_TOOLS + ("select",), True)
+        self.assertEqual(self.enabled(), everything)
+        self.select_across()
+        self.assertEqual(self.enabled(),
+                         {**dict.fromkeys(self.TEXT_TOOLS, False),
+                          "select": True})
+        self.canvas.clear_selection()
+        settle(timeout_ms=100)
+        self.assertEqual(self.enabled(), everything)
+        self.select_across()
+        self.select_on_one_page()
+        self.assertEqual(self.enabled(), everything)
+
+    def test_the_message_is_shown_only_with_the_strip_open(self):
+        """Somebody marking up is told why; somebody reading is not. And
+        it goes with the selection it explained."""
+        from pdfarranger_qt.i18n import _
+
+        said = _("Text is marked one page at a time.")
+        bar = self.win.statusBar()
+        self.select_across()
+        self.assertEqual(bar.currentMessage(), "",
+                         "the strip is shut, so nobody is marking up")
+        self.canvas.clear_selection()
+        settle(timeout_ms=100)
+        self.win.show_markup_tools(True)
+        settle(timeout_ms=200)
+        self.select_across()
+        self.assertEqual(bar.currentMessage(), said)
+        self.assertIn("color", bar.styleSheet(), "the warning is not red")
+        self.canvas.clear_selection()
+        settle(timeout_ms=100)
+        self.assertEqual(bar.currentMessage(), "")
+        self.assertEqual(bar.styleSheet(), "",
+                         "the bar kept the warning's colour")
 
     def test_choosing_the_tool_is_what_applies_it(self):
         """Reader marks the words the moment the tool is chosen. There is no
         second action, and waiting for one left the selection wearing the
         tool's colour with no way to commit it."""
-        self.select_across()
-        self.win.tool_strip.arm("underline")
-        settle(timeout_ms=600)
+        self.select_on_one_page()
+        before = self.counts()
+        self.choose("underline")
+        self.assertEqual([now - was for was, now in zip(before, self.counts())],
+                         [1, 0])
         self.assertFalse(self.canvas.has_selection(),
                          "the selection outlived the mark made from it")
-        self.assertEqual(self.win.tool_strip.armed(), "underline",
+        self.assertEqual(self.strip.armed(), "underline",
                          "the tool should stay armed for the next run")
 
-    def test_the_whole_gesture_is_one_undo(self):
-        """It was one action, so it comes back in one. Committing per page
-        left you pressing undo once for each page of something you did
-        once."""
-        self.select_across()
+    def test_the_gesture_is_one_undo(self):
+        self.select_on_one_page()
         before = self.counts()
-        self.win.tool_strip.arm("highlight")
-        settle(timeout_ms=600)
+        self.choose("highlight")
         self.assertEqual([now - was for was, now in zip(before, self.counts())],
-                         [1, 1])
+                         [1, 0])
         self.win.undo()
         settle(timeout_ms=500)
         self.assertEqual(self.counts(), before)
         self.win.redo()
         settle(timeout_ms=500)
         self.assertEqual([now - was for was, now in zip(before, self.counts())],
-                         [1, 1])
+                         [1, 0])
 
     def test_arming_a_tool_with_nothing_selected_marks_nothing(self):
         before = self.counts()
-        self.win.tool_strip.arm("strikethrough")
-        settle(timeout_ms=400)
+        self.choose("strikethrough")
         self.assertEqual(self.counts(), before)
 
 
