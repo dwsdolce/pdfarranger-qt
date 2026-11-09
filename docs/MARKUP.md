@@ -737,7 +737,15 @@ Made by the Add Text Comment tool. Next.
   downward as the text wraps or Return is pressed.
 - A box may be left empty: unlike a note, it needs no text to exist.
 - Eight handles, resizing without keeping the proportions.
-- **Double-click goes into the text.** While editing, the strip's colour
+- **Dragged to move**, whether or not it is selected, as the comment marker
+  is. The pointer changes to the move cursor only once the box is selected,
+  as in Acrobat.
+- **Three modes.** *Unselected.* *Selected*, with its handles. *Editing*,
+  with no handles and a text cursor in the box, ready to type. A click on a
+  box selects it; a double-click goes into the text with the cursor where
+  the double-click landed. **A box just made opens in editing**, cursor in
+  it, so a click with the tool is followed straight away by typing. While
+  editing, the strip's colour
   swatch is replaced by the text's: a palette with the font, size, colour,
   alignment, bold, italic, underline, strikethrough, superscript and
   subscript, each a property of the run it is applied to.
@@ -757,8 +765,8 @@ Made by the Add Text Comment tool. Next.
   spelling and dictionary entries are not offered, as for notes.
 - **The properties form is *Text Box Properties*.** Appearance holds Style,
   Border Color, Opacity, Thickness and Fill Color, beside the standard tabs.
-  Style is one of ten: No Border, solid, dotted, five dash patterns, and a
-  small and a large cloud.
+  Style is one of nine: No Border, Straight, Short, Medium and Long dotted,
+  Short and Long Dash Dot, and a Small and a Large Cloud.
 
 **Departure from Acrobat.** Acrobat writes Helvetica without embedding it.
 Here the font used is embedded, as the page-number and watermark dialogs
@@ -767,9 +775,9 @@ and with every system font on offer, most would not be there.
 
 ### Plan
 
-The fixture is `corpus/Markup Text Comment.pdf`: four boxes on page 1, two of
-them empty, one with a 3 point border and an orange fill, and the newest made
-by a single click.
+The fixture is `corpus/Markup Text Comment.pdf`: on page 1, boxes made by a
+click and by a drag, two left empty, one with a 3 point border and an orange
+fill, and one of each border style, labelled with its name.
 
 **What Acrobat writes**: a `/FreeText` with `/Subj Text Box`, `/F 4`, no
 `/IT` and no `/Popup`. The three colours are in three places:
@@ -789,7 +797,27 @@ half its width; then the text, clipped to the box inset by twice the
 border's width, in lines 1.2 times the size apart -- 14.4 points at 12.
 
 **The click-made box** is 108 by 18.4 points: one 14.4 point line and 2
-points above and below.
+points above and below. **Each further line adds 12 points**, the font
+size: a box with a second line, typed or made by Return, is 30.4 points.
+
+**The border styles**, read off one box of each in the fixture, each
+labelled with its style:
+
+    No Border        /BS /W 0          filled, not stroked; text clipped
+                                       to the whole box
+    Straight         no /BS            /BS /W only for a thickness other
+                                       than 1
+    Short dotted     /BS /S /D /D [2 2]
+    Medium dotted    /BS /S /D /D [3 3]
+    Long dotted      /BS /S /D /D [4 4]
+    Short Dash Dot   /BS /S /D /D [4 3 2 3]
+    Long Dash Dot    /BS /S /D /D [4 3 16 3]
+    Small Cloud      /BE /S /C /I 1    rectangle grown by /RD 5.09
+    Large Cloud      /BE /S /C /I 2    rectangle grown by /RD 9.28
+
+The drawing sets the same dash pattern in its own stream, and draws a cloud
+as curves. No Border keeps the border colour in `/DA`, so it is there again
+if a thickness is set.
 
 **Ours**: fonts offered through `fonts.FontChooser`, the one picker every
 font choice uses; drawn through `QPdfWriter`, which embeds a subset of each
@@ -801,15 +829,3 @@ The Add Text Comment tool's starting colour in `tools.py` is White, which was
 read off Acrobat's fill; the mark's colour is the border's, which starts
 Light Red, and the tool's colour changes to match.
 
-### Open
-
-- **How each border style is written.** The fixture has only solid borders.
-  A box with each of the dotted, dashed and cloudy styles, made in Acrobat,
-  would show whether they are `/BS /D` dash arrays and `/BE` clouds, and at
-  what values.
-- **How much the box grows per line.** Two lines come to 30.41 points in the
-  fixture where one line and a second 14.4 would make 32.8. Not established.
-- **Whether a box can be moved.** The notes do not say; Acrobat lets one be
-  dragged.
-- **Whether a click goes straight into the text**, ready to type, or makes
-  an empty box that a double-click then opens.
