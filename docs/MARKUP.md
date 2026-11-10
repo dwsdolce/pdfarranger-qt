@@ -901,3 +901,44 @@ Four stages, each one tried in the application before the next:
 - **Left for later**: typing, the text palette and fonts (stages 2 and 3);
   the properties form, so fill, thickness and style can be read and drawn
   in stage 1 but changed only from stage 4.
+
+**Stage 2.** Typing, in one font, size and colour -- the box's default --
+with the per-run styling left for stage 3:
+
+- **Editing mode.** A box just made opens in it, and a double-click on a
+  box opens it with the cursor where the double-click landed. While editing
+  the box shows no handles. Typing, Backspace, Delete, the arrow keys,
+  selecting with the mouse and the keyboard, cut, copy, paste and select all
+  work as in any text box. **A click outside the box or Escape ends
+  editing**, and both keep what was typed.
+- **The editor sits on the page**: a text editor laid over the box at the
+  page's zoom, in the box's font, so what is typed is seen at the size and
+  place it will have in the file.
+- **Wrapping and growth.** Lines break between words, and a word too long
+  for the line is broken across lines. The width stays as made; the box
+  grows downward as the text wraps or Return is pressed, by the line
+  spacing, so every line stays whole -- 14.4 points a line at 12 point.
+  **Departure from Acrobat**, which grows it by the font size, 12 points,
+  while setting the lines 14.4 apart, and so cuts off the bottom of the last
+  line of a box of several.
+- **What it settles to when editing ends**: the larger of the height it had
+  when the editing began and the height its text now needs. So lines added
+  and then removed in the same editing give their growth back, while a box
+  that was already that tall -- made so, or grown in an earlier editing --
+  never shrinks below it.
+- **The text is drawn by the canvas** while the box is shown, in every box
+  -- the file's as well as this session's -- so a box from the file moves
+  with the pointer as a new one does. The file's boxes are left out of the
+  page image to make that possible, as comments and scalable comments are.
+- **Written as Acrobat writes it**: the text in `/Contents`, and in `/RC` as
+  a single span in the box's default style, which is `/DS`; the appearance
+  is the fill and border with the text drawn inside, through `QPdfWriter`
+  with the font embedded, clipped to the box inset by twice the border's
+  width as Acrobat clips it.
+- **One undo step** for each time the box is edited, taken when editing
+  ends.
+- **A box from the file with text becomes editable** -- its look and its
+  size too -- when its text is in one font, size and colour, which is all
+  stage 2 can draw. One whose text mixes styles stays as stage 1 left it
+  until stage 3.
+
