@@ -4514,8 +4514,16 @@ class PageCanvas(QAbstractScrollArea):
         such marks behind -- so it wears the badge, shows on hover and opens
         on selection like any other. Asked of the annotation the note is on,
         which for a Replace pair is its caret.
+
+        **Never a text box**, even one Reader has given replies: its words
+        are on the page, and Acrobat shows it no badge, no hover summary and
+        no note window, whatever hangs off it. Its replies are kept and
+        written back untouched, for a comments panel to show.
         """
         said = self.note_bearer(index, mark)
+        if (said.kind if isinstance(said, markup.Annotation)
+                else said.subtype) == markup.FREETEXT:
+            return False
         if markup.is_reply(said) or markup.is_status(said):
             return False
         if markup.has_note(said):

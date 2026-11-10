@@ -13,7 +13,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-10 04:42+0000\n"
+"POT-Creation-Date: 2026-11-10 05:23+0000\n"
 "PO-Revision-Date: 2024-02-24 20:47+0100\n"
 "Last-Translator: Jérôme Robert <jeromerobert@gmx.com>\n"
 "Language: fr\n"
@@ -3115,6 +3115,26 @@ msgstr "Icône"
 #: pdfarranger_qt/properties.py pdfarranger_qt/reader.py
 msgid "Style"
 msgstr "Style"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "No Border"
+msgstr "Aucune bordure"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Border Colour"
+msgstr "Couleur de bordure"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Thickness"
+msgstr "Épaisseur"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Fill Colour"
+msgstr "Couleur de remplissage"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/properties.py

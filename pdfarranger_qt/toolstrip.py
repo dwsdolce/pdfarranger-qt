@@ -794,13 +794,15 @@ class MarkButtons(QWidget):
         self._restyle()
         self.hide()
 
-    def set_mark(self, colour, opacity, locked: bool = False) -> None:
+    def set_mark(self, colour, opacity, locked: bool = False,
+                 notes: bool = True) -> None:
         """What the selected mark looks like now, for the popup to show.
 
-        ``locked`` greys the two buttons that would change it. Shown and
-        refused rather than taken away: the bar is how a selected mark says
-        what can be done to it, and a bar that loses buttons says the mark
-        is a different kind of thing.
+        ``locked`` greys the two buttons that would change it, and
+        ``notes`` False greys Comment, for a text box, which has no note.
+        Shown and refused rather than taken away: the bar is how a selected
+        mark says what can be done to it, and a bar that loses buttons says
+        the mark is a different kind of thing.
         """
         self._colour, self._opacity = colour, opacity
         self.buttons["colour"].setEnabled(not locked)
@@ -809,7 +811,7 @@ class MarkButtons(QWidget):
         # edit, replying to one writes a new annotation rather than
         # changing the locked one, and the editor on a locked item refuses
         # for itself.
-        self.buttons["comment"].setEnabled(True)
+        self.buttons["comment"].setEnabled(notes)
 
     def _open_palette(self) -> None:
         button = self.buttons["colour"]

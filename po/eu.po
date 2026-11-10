@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-10 04:42+0000\n"
+"POT-Creation-Date: 2026-11-10 05:23+0000\n"
 "PO-Revision-Date: 2023-01-19 20:27+0100\n"
 "Last-Translator: alexgabi\n"
 "Language: eu\n"
@@ -3124,6 +3124,26 @@ msgstr "Ikonoa"
 #: pdfarranger_qt/properties.py pdfarranger_qt/reader.py
 msgid "Style"
 msgstr "Estiloa"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "No Border"
+msgstr "Ertzik gabe"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Border Colour"
+msgstr "Ertzaren kolorea"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Thickness"
+msgstr "Lodiera"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Fill Colour"
+msgstr "Betegarriaren kolorea"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/properties.py

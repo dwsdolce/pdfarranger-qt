@@ -219,6 +219,9 @@ class MainWindow(QMainWindow):
         #: And the icon a comment is made with. One more appearance
         #: attribute the properties form can send over as a default.
         self._icons: dict = {}
+        #: And a text box's border and fill: ``{"fill", "thickness",
+        #: "border_style"}`` per tool, for the next box it makes.
+        self._boxes: dict = {}
         self._load_tool_defaults()
         self.armed_opacity = None
         self.tool_strip.colour_armed.connect(self._colour_armed)
@@ -1093,14 +1096,19 @@ class MainWindow(QMainWindow):
         # subject and the intent.
         subject, intent = self._names_written_by(tool)
         opacity = self._opacity_for_canvas_tool(tool)
+        # A text box's border and fill as the tool was last told to make
+        # them, or white, 1 point and straight.
+        box = self._boxes.get(self.CANVAS_TO_STRIP.get(tool, tool), {})
         made = self.model.annotations.add(markup.Annotation(
             subtype, page.uid, rect, colour=colour, quads=quads,
             opacity=opacity,
             subject=subject or None, intent=intent or None,
             icon=chosen,
             author=markup.default_author(),
-            fill=(markup.swatch("White") if subtype == markup.FREETEXT
-                  else None)))
+            fill=((box.get("fill") or markup.swatch("White"))
+                  if subtype == markup.FREETEXT else None),
+            thickness=box.get("thickness", 1.0),
+            border_style=box.get("border_style", "straight")))
         if tool == "replace" and quads:
             # **And its caret**, at the end of the run, in the same colour
             # and opacity. Added after the strikeout, which is the order
@@ -1168,6 +1176,10 @@ class MainWindow(QMainWindow):
                 {k: str(v) for k, v in stored.get("styles", {}).items()})
             self._icons.update(
                 {k: str(v) for k, v in stored.get("icons", {}).items()})
+            self._boxes.update(
+                {k: {"fill": tuple(v["fill"]), "thickness": float(v["thickness"]),
+                     "border_style": str(v["border_style"])}
+                 for k, v in stored.get("boxes", {}).items()})
         except Exception:  # noqa: BLE001 - a bad preference is no preference
             logging.getLogger(__name__).debug(
                 "tool defaults could not be read", exc_info=True)
@@ -1179,6 +1191,9 @@ class MainWindow(QMainWindow):
             "opacities": dict(self._opacities),
             "styles": dict(self._styles),
             "icons": dict(self._icons),
+            "boxes": {k: {"fill": list(v["fill"]), "thickness": v["thickness"],
+                          "border_style": v["border_style"]}
+                      for k, v in self._boxes.items()},
         }))
 
     def _icon_for(self, tool: str) -> str:
@@ -1268,7 +1283,8 @@ class MainWindow(QMainWindow):
             mark.colour,
             markup.solidity(mark) if isinstance(mark, markup.Annotation)
             else mark.opacity,
-            bool(getattr(mark, "locked", False)))
+            bool(getattr(mark, "locked", False)),
+            notes=not self._is_text_box(mark))
 
     def mark_recoloured(self, colour) -> None:
         """A colour was picked for the selected mark."""
@@ -1632,6 +1648,7 @@ class MainWindow(QMainWindow):
         mark = canvas.head_of(index, mark)
         said = canvas.note_bearer(index, mark)
         mine = isinstance(mark, markup.Annotation)
+        is_box = (mark.kind if mine else mark.subtype) == markup.FREETEXT
         form = MarkProperties(Properties(
             kind=("replace_text" if said is not mark
                   else mark.kind if mine else mark.subtype),
@@ -1652,6 +1669,10 @@ class MainWindow(QMainWindow):
             icons=self._icons_for(mark.kind if mine else mark.subtype),
             icons_fixed=markup.is_reply(mark),
             styles=self._styles_for(mark.kind if mine else mark.subtype),
+            box=is_box,
+            fill=getattr(mark, "fill", None) if is_box else None,
+            thickness=float(getattr(mark, "thickness", 1.0) or 0.0),
+            border_style=getattr(mark, "border_style", "straight") or "straight",
         ), self)
         # **The appearance is live, as Acrobat's is**: the slider shows on
         # the page while it is dragged rather than when the form is
@@ -1661,9 +1682,15 @@ class MainWindow(QMainWindow):
         was_modified = self.modified
         was = {"colour": getattr(mark, "colour", None),
                "opacity": getattr(mark, "opacity", None)}
+        if is_box:
+            was.update(fill=getattr(mark, "fill", None),
+                       thickness=getattr(mark, "thickness", 1.0),
+                       border_style=getattr(mark, "border_style", "straight"))
         form.previewed.connect(
             lambda colour, opacity: self._preview_mark(
                 index, mark, colour, opacity, taken))
+        form.restyled.connect(
+            lambda fields: self._preview_box(index, mark, fields, taken))
         accepted = form.exec() == MarkProperties.DialogCode.Accepted
         if accepted and form.make_default:
             self.mark_is_the_default(mark)
@@ -1738,12 +1765,46 @@ class MainWindow(QMainWindow):
             index, mark, {"colour": colour, "opacity": opacity},
             isinstance(mark, markup.Annotation))
 
+    def _preview_box(self, index: int, mark, fields: dict, taken) -> None:
+        """Show a text box's border or fill the form is still holding,
+        through the same path as accepting it, as `_preview_mark` does."""
+        self._commit_properties(taken, index, mark)
+        self._write_mark_fields(index, mark, dict(fields),
+                                isinstance(mark, markup.Annotation))
+
+    @staticmethod
+    def _box_reach(mark, fields: dict):
+        """``(rect, inset)`` for a text box the file brought, restyled by
+        ``fields``, or None when they do not restyle it.
+
+        **A file box's rectangle takes in a cloud's reach**, and the reach
+        changes with the style and the thickness -- so a restyle moves the
+        rectangle while the box inside it stays put. Sent with the restyle,
+        so that what is held says where the box is for the style it now
+        has."""
+        if (isinstance(mark, markup.Annotation)
+                or mark.subtype != markup.FREETEXT
+                or not ({"border_style", "thickness"} & set(fields))):
+            return None
+        inside = markup.text_box_of(mark)
+        style = markup.BORDER_STYLES.get(
+            fields.get("border_style", mark.border_style), {})
+        thickness = float(fields.get("thickness", mark.thickness))
+        reach = (markup.cloud_inset(inside, style["cloud"], thickness)
+                 if "cloud" in style else 0.0)
+        left, bottom, right, top = inside
+        return (left - reach, bottom - reach, right + reach, top + reach), reach
+
     def _write_mark_fields(self, index: int, mark, fields: dict,
                            mine: bool) -> None:
         """Record fields on a mark of ours, or beside one the file brought,
         and re-render the page that shows it."""
         page = self.model.pages[index]
         scale = page.scale if page.scale else 1.0
+        reach = self._box_reach(mark, fields)
+        if reach is not None:
+            fields = dict(fields, rect=reach[0])
+            mark.inset = reach[1]
         partner = self._partner_fields(index, mark, fields)
         if mine:
             for name, value in fields.items():
@@ -2180,10 +2241,16 @@ class MainWindow(QMainWindow):
         if style is not None:
             self._styles[tool] = style
         icon = getattr(mark, "icon", None)
-        if icon is not None and (
-                mark.kind if isinstance(mark, markup.Annotation)
-                else mark.subtype) == markup.TEXT:
+        kind = (mark.kind if isinstance(mark, markup.Annotation)
+                else mark.subtype)
+        if icon is not None and kind == markup.TEXT:
             self._icons[tool] = icon
+        if kind == markup.FREETEXT:
+            self._boxes[tool] = {
+                "fill": tuple(getattr(mark, "fill", None)
+                              or markup.swatch("White")),
+                "thickness": float(getattr(mark, "thickness", 1.0) or 1.0),
+                "border_style": getattr(mark, "border_style", "straight")}
         self._remember_tool_defaults()
         self.tool_strip.arm_colour(self.colour_for(self.tool_strip.armed()))
 
@@ -2195,8 +2262,15 @@ class MainWindow(QMainWindow):
         Two ways in, one window.
         """
         found = self.reader.canvas.selected_mark()
-        if found is not None:
+        if found is not None and not self._is_text_box(found[1]):
+            # Not a text box's: its words are on the page and it has no
+            # note to open or reply to.
             self.open_note(*found)
+
+    @staticmethod
+    def _is_text_box(mark) -> bool:
+        return (mark.kind if isinstance(mark, markup.Annotation)
+                else mark.subtype) == markup.FREETEXT
 
     def delete_selected_mark(self) -> None:
         """The trash in the bar beside the selected mark."""
@@ -2356,7 +2430,8 @@ class MainWindow(QMainWindow):
                 for name, value in partner[1].items():
                     setattr(partner[0], name, value)
                 partner[0].touch()
-            self.mark_buttons.set_mark(mark.colour, markup.solidity(mark))
+            self.mark_buttons.set_mark(mark.colour, markup.solidity(mark),
+                                       notes=not self._is_text_box(mark))
             self._mark_added()
             return
         self.model.mark_edits.change(uid, mark.index, **fields)
@@ -2366,7 +2441,8 @@ class MainWindow(QMainWindow):
             self.model.mark_edits.change(uid, partner[0].index, **partner[1])
             for name, value in partner[1].items():
                 setattr(partner[0], name, value)
-        self.mark_buttons.set_mark(mark.colour, mark.opacity)
+        self.mark_buttons.set_mark(mark.colour, mark.opacity,
+                                   notes=not self._is_text_box(mark))
         # Only this page: a mark changed on one page is not a reason to
         # re-render every thumbnail in the document, and `_mark_added` touches
         # them all because adding a mark was the only thing that got here.

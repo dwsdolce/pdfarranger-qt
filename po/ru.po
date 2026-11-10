@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pdfarranger master\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-10 04:42+0000\n"
+"POT-Creation-Date: 2026-11-10 05:23+0000\n"
 "PO-Revision-Date: 2026-09-04 09:59+0000\n"
 "Last-Translator: Lumenman <28367232+Lumenman@users.noreply.github.com>\n"
 "Language: ru\n"
@@ -2901,6 +2901,26 @@ msgstr "Значок"
 #: pdfarranger_qt/properties.py pdfarranger_qt/reader.py
 msgid "Style"
 msgstr "Стиль"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "No Border"
+msgstr "Без рамки"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Border Colour"
+msgstr "Цвет рамки"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Thickness"
+msgstr "Толщина"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Fill Colour"
+msgstr "Цвет заливки"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/properties.py

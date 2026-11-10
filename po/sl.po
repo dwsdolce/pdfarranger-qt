@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  pdfarranger\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-10 04:42+0000\n"
+"POT-Creation-Date: 2026-11-10 05:23+0000\n"
 "PO-Revision-Date: 2023-06-06 13:27+0200\n"
 "Last-Translator: Janez G <janezgac@gmail.com>\n"
 "Language: sl_SI\n"
@@ -3090,6 +3090,26 @@ msgstr "Ikona"
 #: pdfarranger_qt/properties.py pdfarranger_qt/reader.py
 msgid "Style"
 msgstr "Slog"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "No Border"
+msgstr "Brez obrobe"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Border Colour"
+msgstr "Barva obrobe"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Thickness"
+msgstr "Debelina"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Fill Colour"
+msgstr "Barva polnila"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/properties.py

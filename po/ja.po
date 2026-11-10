@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-10 04:42+0000\n"
+"POT-Creation-Date: 2026-11-10 05:23+0000\n"
 "PO-Revision-Date: 2022-09-01 00:40+0900\n"
 "Last-Translator: sicklylife <translation@sicklylife.jp>\n"
 "Language: ja\n"
@@ -2964,6 +2964,26 @@ msgstr "アイコン"
 #: pdfarranger_qt/properties.py pdfarranger_qt/reader.py
 msgid "Style"
 msgstr "スタイル"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "No Border"
+msgstr "枠線なし"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Border Colour"
+msgstr "枠線の色"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Thickness"
+msgstr "太さ"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Fill Colour"
+msgstr "塗りつぶしの色"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/properties.py

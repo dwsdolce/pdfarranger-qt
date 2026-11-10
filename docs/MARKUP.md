@@ -48,7 +48,7 @@ time.
 | | Add a scalable comment | Scalable Comment | a note icon that is part of the page: it scales, resizes and turns | complete |
 | | Replace selected text | Replace Selected Text | propose new wording for words that are struck out | complete |
 | | Insert text | Insert Text | propose words to insert at a point | complete |
-| | Add text comment | Text Box | words written straight onto the page in a box | stages 1 and 2 of 4 built |
+| | Add text comment | Text Box | words written straight onto the page in a box | complete |
 | | Attach file | | a file carried in the document at a point | not started |
 | Text markup | Highlight | Highlight | colour behind a run of words | complete |
 | | Underline | Underline | a straight or wavy line under a run of words | complete |
@@ -730,7 +730,7 @@ Acrobat exactly.
 
 ## Text Box
 
-Made by the Add Text Comment tool. Stages 1 and 2 built; stage 3 next.
+Made by the Add Text Comment tool. Complete.
 
 ### Requirements
 
@@ -753,7 +753,8 @@ Made by the Add Text Comment tool. Stages 1 and 2 built; stage 3 next.
   it, so a click with the tool is followed straight away by typing.
 - **The text palette.** While editing, the strip's colour swatch is
   replaced by an **Aa** button, and the palette opens beside it by itself
-  as soon as the box can be typed in. It stays open, and every control in
+  as soon as the box can be typed in -- opening the strip too if it was
+  closed, which closes again when the editing ends. It stays open, and every control in
   it can be used again and again, for as long as the box is being edited;
   it closes when editing ends, or when Aa is clicked. It holds the font,
   the size and a colour; left, centre, right and justify; bold, italic,
@@ -1024,4 +1025,55 @@ with the per-run styling left for stage 3:
   for the rest. It reads the editor's selection whenever it changes.
 - **Pasting** reads what was pasted as rich text and keeps only what a run
   can hold, one run at a time, as the requirements say.
+- **The editor follows its box.** It is laid over the page rather than part
+  of it, so a scroll, a zoom or a resized window places it again over the
+  box, and a zoom puts its words back at the new scale. The editor's own
+  undo starts again after a zoom; the whole edit is still one step in the
+  window's undo.
+- **The strip opens for the palette.** A box double-clicked with the strip
+  closed opens the strip with the palette, so the palette sits beside its
+  Aa button rather than floating beside nothing; it is not written to the
+  settings, and the strip closes again when the editing ends.
+
+**Stage 4.** The properties form and status:
+
+- **The Appearance tab** is laid out as Acrobat's: Style, Border Color and
+  Opacity on the left, Thickness and Fill Color on the right, beside the
+  standard General and Review History tabs.
+- **Style** is a drop-down of the nine styles, each drawn as a sample line
+  rather than named, No Border at the top in words.
+- **Border Color** and **Fill Color** each open the twenty-one swatches;
+  Border Color is the mark's colour, the one the strip's swatch shows.
+  **Departure from Acrobat**: its Fill Color opens the system's full colour
+  picker, with sliders, a hex value, its own opacity and a Transparent
+  box -- too much for the fill of a text box, and a second opacity beside
+  the mark's. Here the fill is one of the same swatches as every other
+  colour, and a box is always filled.
+  **Opacity** is the slider and percentage every mark has.
+- Changes show on the page while the form is open, as colour does now.
+- **Make Properties Default** sends the border colour, opacity, fill,
+  thickness and style to the tool, for the next box.
+- **Thickness** is whole points from 1 to 12, typed or stepped with the
+  arrows, as Acrobat's. No Border is a style, not a thickness of 0, and
+  the Thickness box is greyed while it is chosen.
+- **The labels are this application's spelling**: Border Colour and Fill
+  Colour, as Colour is spelled everywhere else here.
+- **A restyle moves a file box's rectangle, not the box.** `/Rect` takes in
+  a cloud's reach, which changes with the style and the thickness, so the
+  window sends the new rectangle with every restyle and the box inside it
+  stays where it was; `/BS`, `/BE` and `/RD` are written afresh for the
+  new style, so a cloud changed to a dash keeps nothing of the cloud.
+- **Status** was already there: the box's menu has had *Set status* since
+  stage 1, with the history in the form's Review History tab.
+- **No note, wherever it is asked for.** The selected mark's bar greys its
+  Comment button on a text box, and the box shows no badge, no hover
+  summary and no note window -- even one Reader has given replies, which
+  its comments panel allows. Acrobat shows none of those on a text box
+  either. Such replies are kept and written back untouched.
+- **Open, for a comments panel**: whether a text box's words can be
+  edited there. Either not at all, or with the same editing and palette
+  as in the box -- and if so, the box would be treated like any other mark,
+  with the hover summary, the note window and replies. Acrobat's panel
+  edits them badly: changes take before they are posted, and changing
+  the formatting does not work.
 

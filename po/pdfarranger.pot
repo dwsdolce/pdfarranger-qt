@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pdfarranger-qt VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/dwsdolce/pdfarranger-qt/issues\n"
-"POT-Creation-Date: 2026-11-10 04:42+0000\n"
+"POT-Creation-Date: 2026-11-10 05:23+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -2436,6 +2436,22 @@ msgstr ""
 
 #: pdfarranger_qt/properties.py pdfarranger_qt/reader.py
 msgid "Style"
+msgstr ""
+
+#: pdfarranger_qt/properties.py
+msgid "No Border"
+msgstr ""
+
+#: pdfarranger_qt/properties.py
+msgid "Border Colour"
+msgstr ""
+
+#: pdfarranger_qt/properties.py
+msgid "Thickness"
+msgstr ""
+
+#: pdfarranger_qt/properties.py
+msgid "Fill Colour"
 msgstr ""
 
 #: pdfarranger_qt/properties.py

@@ -1122,6 +1122,24 @@ def _patch_text_box(annot, edit, pdf=None) -> None:
     rect = edit.get("rect")
     if rect:
         annot[pikepdf.Name.Rect] = pikepdf.Array([*rect])
+    # The border as it ends up. **A rectangle held with a restyle is the one
+    # for the new style** -- the window sends one with every change of
+    # style or thickness -- so the box inside it is found by that style;
+    # one with nothing held is the producer's, inside its own `/RD`.
+    style_name = edit.get("border_style") or reading["border_style"]
+    thickness = float(edit["thickness"] if edit.get("thickness") is not None
+                      else reading["thickness"])
+    if rect:
+        box_rect = box_inside(rect, style_name, thickness)
+    else:
+        inset = reading["inset"]
+        outer = [float(v) for v in annot.Rect]
+        box_rect = (outer[0] + inset, outer[1] + inset,
+                    outer[2] - inset, outer[3] - inset)
+    restyled = (edit.get("border_style") is not None
+                or edit.get("thickness") is not None)
+    if restyled:
+        _write_border(annot, style_name, thickness, box_rect)
     for key, name in (("author", pikepdf.Name.T), ("subject", pikepdf.Name.Subj)):
         if edit.get(key) is not None:
             annot[name] = pikepdf.String(edit[key])
@@ -1146,24 +1164,71 @@ def _patch_text_box(annot, edit, pdf=None) -> None:
                 if key in annot:
                     del annot[key]
     redrawn = (colour is not None or fill is not None or opacity is not None
-               or contents is not None
+               or contents is not None or restyled
                or (rect and reading.get("box_size") != _size(rect)))
     if redrawn and pdf is not None:
-        box = Annotation(FREETEXT, 0, [float(v) for v in annot.Rect],
+        box = Annotation(FREETEXT, 0, list(box_rect),
                          colour=colour or reading["colour"],
                          fill=fill or reading["fill"],
-                         thickness=reading["thickness"],
-                         border_style=reading["border_style"],
+                         thickness=thickness,
+                         border_style=style_name,
                          opacity=_number(annot.get(pikepdf.Name.CA)),
                          contents=str(annot.get(pikepdf.Name.Contents, "")),
                          rich=(str(annot[pikepdf.Name.RC])
                                if pikepdf.Name.RC in annot else None),
                          text_font=family, text_size=size, text_colour=ink)
-        inset = reading["inset"]
-        box.rect = (box.rect[0] + inset, box.rect[1] + inset,
-                    box.rect[2] - inset, box.rect[3] - inset)
         annot[pikepdf.Name.AP] = pikepdf.Dictionary(
             N=_freetext_appearance(pdf, box, [float(v) for v in annot.Rect]))
+
+
+def _write_border(entry, style_name: str, thickness: float, box) -> "tuple":
+    """A text box's border keys for ``style_name`` and ``thickness``,
+    around ``box``, its own rectangle: `/BS` for the width and a dash,
+    `/BE` and `/RD` for a cloud, and `/Rect` grown by the cloud's reach.
+    Keys the style does not use are taken away, so a box changed from a
+    cloud to a dash keeps nothing of the cloud. Answers the new `/Rect`."""
+    style = BORDER_STYLES.get(style_name, {})
+    for key in (pikepdf.Name.BS, pikepdf.Name.BE, pikepdf.Name.RD):
+        if key in entry:
+            del entry[key]
+    thickness = float(thickness)
+    outer = tuple(float(v) for v in box)
+    if "width" in style:
+        entry[pikepdf.Name.BS] = pikepdf.Dictionary(W=float(style["width"]))
+    elif "dash" in style:
+        bs = pikepdf.Dictionary(S=pikepdf.Name.D,
+                                D=pikepdf.Array([*style["dash"]]))
+        if thickness != 1.0:
+            bs[pikepdf.Name.W] = thickness
+        entry[pikepdf.Name.BS] = bs
+    elif "cloud" in style:
+        entry[pikepdf.Name.BE] = pikepdf.Dictionary(
+            S=pikepdf.Name.C, I=float(style["cloud"]))
+        grow = cloud_inset(box, style["cloud"], thickness)
+        entry[pikepdf.Name.RD] = pikepdf.Array([grow] * 4)
+        if thickness != 1.0:
+            entry[pikepdf.Name.BS] = pikepdf.Dictionary(W=thickness)
+        left, bottom, right, top = outer
+        outer = (left - grow, bottom - grow, right + grow, top + grow)
+    elif thickness != 1.0:
+        entry[pikepdf.Name.BS] = pikepdf.Dictionary(W=thickness)
+    entry[pikepdf.Name.Rect] = pikepdf.Array([*outer])
+    return outer
+
+
+def box_inside(outer, style_name: str, thickness: float) -> "tuple":
+    """A text box's own rectangle, from its `/Rect` and its style: the
+    rectangle less a cloud's reach, which depends on the box it is drawn
+    round, so found by refining a first guess."""
+    style = BORDER_STYLES.get(style_name, {})
+    left, bottom, right, top = (float(v) for v in outer)
+    if "cloud" not in style:
+        return (left, bottom, right, top)
+    grow = cloud_radius(style["cloud"], thickness) + thickness / 2.0
+    for _ in range(3):
+        box = (left + grow, bottom + grow, right - grow, top - grow)
+        grow = cloud_inset(box, style["cloud"], thickness)
+    return (left + grow, bottom + grow, right - grow, top - grow)
 
 
 def _size(rect) -> "tuple":
@@ -1478,7 +1543,8 @@ class MarkEdits:
     #: to be written in one go or not at all.
     FIELDS = ("colour", "opacity", "quads", "deleted", "contents", "popup",
               "rich", "author", "subject", "locked", "style", "icon",
-              "rect", "rotate", "modified")
+              "rect", "rotate", "modified", "fill", "thickness",
+              "border_style")
 
     def __init__(self, by_page=None):
         self._by_page: Dict[int, Dict[int, dict]] = {}
@@ -1763,7 +1829,6 @@ def _write_text_box(pdf, entry, annotation) -> None:
     default text style in `/DS`; the style in `/BS` or `/BE` with the
     cloud's reach in `/RD`; no `/Popup`, since a text box has no note.
     """
-    style = BORDER_STYLES.get(annotation.border_style, {})
     border = annotation.colour or swatch("Light Red")
     fill = annotation.fill if annotation.fill is not None else (1.0, 1.0, 1.0)
     family, size, ink = text_style_of(annotation)
@@ -1781,23 +1846,8 @@ def _write_text_box(pdf, entry, annotation) -> None:
         entry[pikepdf.Name.RC] = pikepdf.String(
             annotation.rich
             or text_box_rich(annotation.contents, family, size, ink))
-    if "width" in style:
-        entry[pikepdf.Name.BS] = pikepdf.Dictionary(W=float(style["width"]))
-    elif "dash" in style:
-        bs = pikepdf.Dictionary(S=pikepdf.Name.D,
-                                D=pikepdf.Array([*style["dash"]]))
-        if annotation.thickness != 1.0:
-            bs[pikepdf.Name.W] = annotation.thickness
-        entry[pikepdf.Name.BS] = bs
-    elif "cloud" in style:
-        entry[pikepdf.Name.BE] = pikepdf.Dictionary(
-            S=pikepdf.Name.C, I=float(style["cloud"]))
-        grow = outer[2] - annotation.rect[2]
-        entry[pikepdf.Name.RD] = pikepdf.Array([grow] * 4)
-        if annotation.thickness != 1.0:
-            entry[pikepdf.Name.BS] = pikepdf.Dictionary(W=annotation.thickness)
-    elif annotation.thickness != 1.0:
-        entry[pikepdf.Name.BS] = pikepdf.Dictionary(W=annotation.thickness)
+    _write_border(entry, annotation.border_style, annotation.thickness,
+                  annotation.rect)
     if solidity(annotation) != 1.0:
         entry[pikepdf.Name.CA] = solidity(annotation)
     entry[pikepdf.Name.AP] = pikepdf.Dictionary(

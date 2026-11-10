@@ -34,7 +34,7 @@ and the colour popup already use.
 
 from typing import NamedTuple, Optional, Tuple
 
-from PySide6.QtCore import QPoint, QRectF, QSignalBlocker, Qt, Signal
+from PySide6.QtCore import QPoint, QPointF, QRectF, QSignalBlocker, QSize, Qt, Signal
 from PySide6.QtGui import QColor, QIcon, QImage, QPainter, QPen, QPixmap, QValidator
 from PySide6.QtWidgets import (
     QCheckBox,
@@ -42,6 +42,7 @@ from PySide6.QtWidgets import (
     QDialog,
     QDialogButtonBox,
     QFormLayout,
+    QGridLayout,
     QHBoxLayout,
     QLabel,
     QLineEdit,
@@ -49,11 +50,13 @@ from PySide6.QtWidgets import (
     QListWidgetItem,
     QPushButton,
     QSlider,
+    QSpinBox,
     QTabWidget,
     QVBoxLayout,
     QWidget,
 )
 
+from . import markup
 from .i18n import N_
 from .i18n import gettext_ as _
 from .toolstrip import ColourPopup
@@ -141,6 +144,13 @@ class Properties(NamedTuple):
     #: comment's, and a reply draws nothing at all.
     icons_fixed: bool = False
     icons: Tuple[Tuple[str, str], ...] = ()
+    #: Whether this is a text box, whose Appearance tab is its own: Style,
+    #: Border Color and Opacity, then Thickness and Fill Color, laid out as
+    #: Acrobat lays them. Its colour is the border's.
+    box: bool = False
+    fill: Optional[Tuple[float, ...]] = None
+    thickness: float = 1.0
+    border_style: str = "straight"
     #: Whether the mark grows with the page. Offered only where an icon
     #: is: it is the one place the size is the mark's rather than the
     #: text's. Reader always fixes it and never offers the choice.
@@ -245,6 +255,9 @@ class MarkProperties(QDialog):
     #: is dragged, not when the form is accepted. The window above applies
     #: it; Cancel undoes whatever was applied.
     previewed = Signal(object, object)
+    #: A text box's border and fill as they are being changed, live in the
+    #: same way: ``{"fill", "thickness", "border_style"}``.
+    restyled = Signal(dict)
 
     def __init__(self, props: Properties, parent=None):
         super().__init__(parent)
@@ -255,6 +268,7 @@ class MarkProperties(QDialog):
         #: is used rather than when it closes.
         self._colour = props.colour
         self._opacity = props.opacity
+        self._fill = props.fill
 
         outer = QVBoxLayout(self)
         tabs = QTabWidget(self)
@@ -302,6 +316,8 @@ class MarkProperties(QDialog):
         slider are two things to keep in step.
         """
         page = QWidget(self)
+        if self._was.box:
+            return self._box_appearance(page)
         form = QFormLayout(page)
         self.swatch = _Swatch(page)
         self.swatch.set_colour(self._colour)
@@ -360,6 +376,100 @@ class MarkProperties(QDialog):
         self.palette_popup.faded.connect(
             lambda value: self.slider.setValue(round(value * 100)))
         return page
+
+    def _opacity_column(self, page) -> QVBoxLayout:
+        """The percentage you can type into and the slider under it."""
+        column = QVBoxLayout()
+        self.percent = QLineEdit(self._percent(), page)
+        self.percent.setValidator(_PercentValidator(self.percent))
+        self.percent.setMinimumWidth(80)
+        self.percent.editingFinished.connect(self._typed)
+        self.percent.textEdited.connect(self._typing)
+        column.addWidget(self.percent)
+        self.slider = QSlider(Qt.Horizontal, page)
+        self.slider.setRange(0, 100)
+        self.slider.setValue(self._as_percent())
+        self.slider.valueChanged.connect(self._slid)
+        column.addWidget(self.slider)
+        return column
+
+    def _box_appearance(self, page) -> QWidget:
+        """A text box's: Style, Border Color and Opacity on the left,
+        Thickness and Fill Color on the right, as Acrobat's form has them.
+
+        **Both colours are the twenty-one swatches**, the border's being
+        the mark's colour. Acrobat's Fill Color opens the system's colour
+        picker, with sliders, a hex value, an opacity of its own and a
+        Transparent box -- too much for the fill of a box, and a second
+        opacity beside the mark's.
+        """
+        grid = QGridLayout(page)
+        grid.setHorizontalSpacing(24)
+        left, right = QFormLayout(), QFormLayout()
+        grid.addLayout(left, 0, 0, Qt.AlignTop)
+        grid.addLayout(right, 0, 1, Qt.AlignTop)
+        self.border_style = QComboBox(page)
+        self.border_style.setIconSize(_StyleSample.SIZE)
+        for name in markup.BORDER_STYLES:
+            if name == "none":
+                self.border_style.addItem(_("No Border"), name)
+            else:
+                self.border_style.addItem(_StyleSample.icon(name, self), "", name)
+        at = self.border_style.findData(self._was.border_style)
+        self.border_style.setCurrentIndex(max(0, at))
+        self.border_style.currentIndexChanged.connect(self._box_changed)
+        left.addRow(_("Style"), self.border_style)
+        self.swatch = _Swatch(page)
+        self.swatch.set_colour(self._colour)
+        self.swatch.clicked.connect(self._pick_colour)
+        left.addRow(_("Border Colour"), self.swatch)
+        left.addRow(_("Opacity"), self._opacity_column(page))
+        self.thickness = QSpinBox(page)
+        self.thickness.setRange(1, 12)
+        self.thickness.setSuffix(" pt")
+        self.thickness.setValue(max(1, min(12, round(self._was.thickness or 1))))
+        self.thickness.valueChanged.connect(self._box_changed)
+        right.addRow(_("Thickness"), self.thickness)
+        self.fill_swatch = _Swatch(page)
+        self.fill_swatch.set_colour(self._fill)
+        self.fill_swatch.clicked.connect(self._pick_fill)
+        right.addRow(_("Fill Colour"), self.fill_swatch)
+        self.palette_popup = ColourPopup(self)
+        self.palette_popup.chosen.connect(self._coloured)
+        self.palette_popup.faded.connect(
+            lambda value: self.slider.setValue(round(value * 100)))
+        self.fill_popup = ColourPopup(self, opacity=False)
+        self.fill_popup.chosen.connect(self._filled)
+        self._thickness_matters()
+        return page
+
+    def _thickness_matters(self) -> None:
+        """No Border has no thickness to set."""
+        self.thickness.setEnabled(self.border_style.currentData() != "none"
+                                  and not self.locked_now())
+
+    def locked_now(self) -> bool:
+        box = getattr(self, "locked", None)
+        return bool(box is not None and box.isChecked())
+
+    def _box_state(self) -> dict:
+        return {"fill": self._fill,
+                "thickness": float(self.thickness.value()),
+                "border_style": self.border_style.currentData()}
+
+    def _box_changed(self, *_args) -> None:
+        self._thickness_matters()
+        self.restyled.emit(self._box_state())
+
+    def _pick_fill(self) -> None:
+        below = self.fill_swatch.mapToGlobal(
+            QPoint(0, self.fill_swatch.height() + 2))
+        self.fill_popup.show_for(self._fill or (1.0, 1.0, 1.0), None, below)
+
+    def _filled(self, colour) -> None:
+        self._fill = tuple(colour)
+        self.fill_swatch.set_colour(self._fill)
+        self.restyled.emit(self._box_state())
 
     @staticmethod
     def title_for(kind: str) -> str:
@@ -473,6 +583,10 @@ class MarkProperties(QDialog):
             self.style.setEnabled(not on)
         if self._was.icons:
             self.icons.setEnabled(not on and not self._was.icons_fixed)
+        if self._was.box:
+            self.border_style.setEnabled(not on)
+            self.fill_swatch.setEnabled(not on)
+            self._thickness_matters()
 
     @property
     def make_default(self) -> bool:
@@ -502,6 +616,18 @@ class MarkProperties(QDialog):
             picked = self.style.currentData()
             if picked != self._was.style:
                 now["style"] = picked
+        if self._was.box:
+            state = self._box_state()
+            if state["fill"] != self._was.fill:
+                now["fill"] = state["fill"]
+            if state["border_style"] != self._was.border_style:
+                # With its thickness, which the old style may have had none
+                # of: No Border is a width of 0.
+                now["border_style"] = state["border_style"]
+                now["thickness"] = state["thickness"]
+            elif (state["border_style"] != "none"
+                  and state["thickness"] != float(self._was.thickness)):
+                now["thickness"] = state["thickness"]
         if self._was.icons:
             row = self.icons.currentItem()
             picked = row.data(Qt.UserRole) if row is not None else None
@@ -517,3 +643,40 @@ class MarkProperties(QDialog):
             event.accept()
             return
         super().keyPressEvent(event)
+
+
+class _StyleSample:
+    """A border style drawn as a sample, for the Style list -- Acrobat's
+    list shows each style as a line and names only No Border."""
+
+    SIZE = QSize(96, 16)
+
+    @staticmethod
+    def icon(name: str, widget) -> QIcon:
+        style = markup.BORDER_STYLES.get(name, {})
+        scale = 2
+        pixmap = QPixmap(_StyleSample.SIZE * scale)
+        pixmap.fill(Qt.transparent)
+        pixmap.setDevicePixelRatio(scale)
+        painter = QPainter(pixmap)
+        painter.setRenderHint(QPainter.Antialiasing, True)
+        pen = QPen(widget.palette().text().color())
+        pen.setWidthF(1.2)
+        width, height = _StyleSample.SIZE.width(), _StyleSample.SIZE.height()
+        middle = height / 2.0
+        if "cloud" in style:
+            # Scallops along the line, bigger for the large cloud.
+            radius = 3.0 if style["cloud"] == 1 else 5.0
+            painter.setPen(pen)
+            x = 4.0
+            while x + 2 * radius <= width - 4:
+                painter.drawArc(QRectF(x, middle - radius, 2 * radius,
+                                       2 * radius), 0, 180 * 16)
+                x += 2 * radius
+        else:
+            if "dash" in style:
+                pen.setDashPattern([v / pen.widthF() for v in style["dash"]])
+            painter.setPen(pen)
+            painter.drawLine(QPointF(4, middle), QPointF(width - 4, middle))
+        painter.end()
+        return QIcon(pixmap)
