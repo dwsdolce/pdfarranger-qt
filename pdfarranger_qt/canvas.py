@@ -2528,10 +2528,10 @@ class PageCanvas(QAbstractScrollArea):
             return None
         rect, _angle = self._shape_of(mark)
         if (mark.kind if isinstance(mark, markup.Annotation)
-                else mark.subtype) == markup.STAMP:
+                else mark.subtype) in (markup.STAMP, markup.FREETEXT):
             # A stamp's box is its rectangle, at the page's own scale: it
             # is ink on the page, so none of the holding-still below
-            # applies to it.
+            # applies to it. Nor to a text box, which is the same.
             return self.quad_on_screen(
                 index, rect, offset,
                 scaled=isinstance(mark, markup.Annotation))
@@ -2598,6 +2598,10 @@ class PageCanvas(QAbstractScrollArea):
             marks += [m for m in self._file_marks.visible(index + 1)
                       if m.subtype == markup.STAMP and not m.is_reply()
                       and not markup.is_scalable_comment(m.subtype, m.icon)]
+            # And the text boxes, which are taken hold of and dragged the
+            # way a stamp is.
+            marks += [m for m in self._file_marks.visible(index + 1)
+                      if m.subtype == markup.FREETEXT]
         except Exception:       # noqa: BLE001 - a click must not raise
             pass
         # Last first: the most recently placed note is the one on top, which
@@ -2606,7 +2610,7 @@ class PageCanvas(QAbstractScrollArea):
             mark = marks[which]
             kind = (mark.kind if isinstance(mark, markup.Annotation)
                     else mark.subtype)
-            if kind not in (markup.TEXT, markup.STAMP):
+            if kind not in (markup.TEXT, markup.STAMP, markup.FREETEXT):
                 continue
             where = self.note_icon_rect(index, mark)
             if where is not None and where.contains(point):
@@ -2746,6 +2750,10 @@ class PageCanvas(QAbstractScrollArea):
     #: do -- and the caret goes at the end of what it selected -- but what
     #: it makes is a point, never a run.
     INSERT = "insert"
+    #: *Add Text Comment*: a Text Box, made by a click -- a box of the
+    #: standard size, its top left at the click -- or drawn by a drag from
+    #: its top left to its bottom right.
+    TEXTBOX = "textbox"
 
     #: The comment tool's twin, placing a `/Stamp` instead of a `/Text`.
     #: Its gesture is the same -- a point, and then the words -- and the
@@ -3110,7 +3118,7 @@ class PageCanvas(QAbstractScrollArea):
     #: Subtypes a click can land on. The text markups are areas you can aim
     #: at; a note is reached by its icon, which `note_at` already answers for.
     SELECTABLE = ("/Highlight", "/StrikeOut", "/Underline", "/Squiggly",
-                  markup.TEXT, markup.STAMP, markup.CARET)
+                  markup.TEXT, markup.STAMP, markup.CARET, markup.FREETEXT)
 
     #: Of those, the ones drawn *over* a run of words. A comment's icon is
     #: the odd one: it is placed rather than sized, so it has no run to
@@ -3191,8 +3199,8 @@ class PageCanvas(QAbstractScrollArea):
         """
         kind = (mark.kind if isinstance(mark, markup.Annotation)
                 else mark.subtype)
-        if kind in (markup.TEXT, markup.STAMP):
-            # Both comments, and through one call: it is the one that knows
+        if kind in (markup.TEXT, markup.STAMP, markup.FREETEXT):
+            # Both comments, and a text box, through one call: it is the one that knows
             # a comment mark holds its size and a stamp does not, and the
             # one that
             # knows a gesture in flight outranks what is on record.
@@ -3626,7 +3634,13 @@ class PageCanvas(QAbstractScrollArea):
 
         if self._dragging_stamp is not None and event.buttons() & Qt.LeftButton:
             page, mark, which, centre = self._dragging_stamp
-            shaped = self._stamp_shaped(page, mark, which, centre, position)
+            if (mark.kind if isinstance(mark, markup.Annotation)
+                    else mark.subtype) == markup.FREETEXT:
+                shaped = self._text_box_shaped(page, mark, which, centre,
+                                               position)
+            else:
+                shaped = self._stamp_shaped(page, mark, which, centre,
+                                            position)
             if shaped is not None and (
                     self._shaping is None or self._shaping[1:] != shaped):
                 self._shaping = (mark, shaped[0], shaped[1])
@@ -3691,18 +3705,21 @@ class PageCanvas(QAbstractScrollArea):
             # icon shows one whenever the pointer is over it; a stamp shows
             # one once it has been picked up, and an arrow before that --
             # it is a thing on the page until you have hold of it.
-            holding = (self._selected is not None
-                       and self._selected[1] is note[2])
-            over_stamp = (note[2].kind
-                          if isinstance(note[2], markup.Annotation)
-                          else note[2].subtype) == markup.STAMP
-            # And no crosshair on a locked one, which cannot be dragged.
+            kind_here = (note[2].kind
+                         if isinstance(note[2], markup.Annotation)
+                         else note[2].subtype)
+            # **The move cursor over anything that can be dragged**, held
+            # or not, and over nothing that cannot: a locked mark stays put.
+            # One rule for the comment, the scalable comment and the text
+            # box, where Acrobat has three -- a crosshair over one, an arrow
+            # until picked up over another, nothing until picked up over
+            # the third.
             self.viewport().setCursor(
-                Qt.ArrowCursor if (over_stamp and not holding)
-                or getattr(note[2], "locked", False)
-                else Qt.CrossCursor)
+                Qt.ArrowCursor if getattr(note[2], "locked", False)
+                else Qt.SizeAllCursor)
             named = True
-            self._set_tooltip(note[2].contents or _("Empty note"))
+            if kind_here != markup.FREETEXT:
+                self._set_tooltip(note[2].contents or _("Empty note"))
 
         # A note hanging off a highlight reads the same way. The badge is
         # what says there is one; this is what says what it says, and it
@@ -3811,8 +3828,14 @@ class PageCanvas(QAbstractScrollArea):
         if which is None or self._selected is None:
             return None
         index, mark = self._selected
-        if (mark.kind if isinstance(mark, markup.Annotation)
-                else mark.subtype) != markup.STAMP:
+        kind = (mark.kind if isinstance(mark, markup.Annotation)
+                else mark.subtype)
+        if kind == markup.FREETEXT:
+            # Corners on the diagonals, the middles of the sides across.
+            return (Qt.SizeFDiagCursor, Qt.SizeBDiagCursor, Qt.SizeFDiagCursor,
+                    Qt.SizeBDiagCursor, Qt.SizeVerCursor, Qt.SizeHorCursor,
+                    Qt.SizeVerCursor, Qt.SizeHorCursor)[which] if 0 <= which < 8 else None
+        if kind != markup.STAMP:
             return None
         if which == 4:
             return self._turning_cursor()
@@ -3919,6 +3942,19 @@ class PageCanvas(QAbstractScrollArea):
             # placed a second mark instead of reshaping the first -- every
             # time, because on a small stamp the handles cover most of it.
             grip = self.grip_at(position)
+            if grip is not None and self._selected is not None and (
+                    self._selected[1].kind
+                    if isinstance(self._selected[1], markup.Annotation)
+                    else self._selected[1].subtype) == markup.FREETEXT:
+                page, mark = self._selected
+                # The rectangle it started with, which each move of the
+                # handle is measured from.
+                self._dragging_stamp = (page, mark, grip, tuple(mark.rect))
+                self._shaping = (mark, tuple(mark.rect), 0.0)
+                self._place_mark_buttons()
+                self.viewport().update()
+                event.accept()
+                return
             if grip is not None and self._selected is not None and (
                     self._selected[1].kind
                     if isinstance(self._selected[1], markup.Annotation)
@@ -4060,6 +4096,8 @@ class PageCanvas(QAbstractScrollArea):
                     event.accept()
                     return
                 placed = self.icon_rect(start)
+            elif self._tool == self.TEXTBOX:
+                placed = self._text_box_made(start, QPointF(event.position()))
             else:
                 placed = self.mark_rect(start, QPointF(event.position()))
             if placed is not None:
@@ -4092,7 +4130,9 @@ class PageCanvas(QAbstractScrollArea):
                 # opens. A comment used to get the bare text box on the page
                 # instead, and it was the only mark that did.
                 self.select_mark((page, mark))
-                self.note_wanted.emit(page, mark)
+                if (mark.kind if isinstance(mark, markup.Annotation)
+                        else mark.subtype) != markup.FREETEXT:
+                    self.note_wanted.emit(page, mark)
             else:
                 rect = self._note_rect_at(page, mark, at - grab)
                 if rect is not None:
@@ -4300,7 +4340,8 @@ class PageCanvas(QAbstractScrollArea):
         which sits between two characters and covers none."""
         kind = (mark.kind if isinstance(mark, markup.Annotation)
                 else mark.subtype)
-        return not cls._is_a_comment(mark) and kind != markup.CARET
+        return (not cls._is_a_comment(mark)
+                and kind not in (markup.CARET, markup.FREETEXT))
 
     @staticmethod
     def _is_a_comment(mark) -> bool:
@@ -4339,11 +4380,16 @@ class PageCanvas(QAbstractScrollArea):
         # A pair's note, replies and statuses are on its caret.
         said = self.note_bearer(index, mark)
         children = [m for m in self.chain_of(said)[1:] if m is not mark]
-        has_note = bool(getattr(said, "contents", "") or children)
+        # A text box has no note: its words are on the page. So neither the
+        # entry that opens a note nor the one that answers it.
+        noteless = (mark.kind if isinstance(mark, markup.Annotation)
+                    else mark.subtype) == markup.FREETEXT
+        has_note = (not noteless
+                    and bool(getattr(said, "contents", "") or children))
         replied = any(getattr(m, "is_reply", bool) and m.is_reply()
                       for m in children)
 
-        if not inside:
+        if not inside and not noteless:
             # Not inside the window itself: there is nothing to open, the
             # thread is already showing. Acrobat leaves it out there too.
             note = menu.addAction(_("Open Pop-Up Note"))
@@ -4854,6 +4900,9 @@ class PageCanvas(QAbstractScrollArea):
                 self._paint_replace_caret(painter, index, mark, colour,
                                           offset)
                 continue
+            if kind == markup.FREETEXT:
+                self._paint_text_box(painter, index, mark, offset)
+                continue
             # **At the solidity the file will show**, which the quadded
             # marks were drawn without: a highlight of ours is written
             # `/CA 0.4` and was painted at full strength, so it was darker
@@ -5290,6 +5339,10 @@ class PageCanvas(QAbstractScrollArea):
             if getattr(mark, "locked", False):
                 return []
             return self._stamp_grips(index, mark, offset)
+        if kind == markup.FREETEXT:
+            if getattr(mark, "locked", False) or self.text_box_frozen(mark):
+                return []
+            return self._text_box_grips(index, mark, offset)
         if kind not in self.QUADDED_SELECTABLE:
             # A comment's icon is placed, not sized: there is no run to
             # take hold of, and a handle on a glyph offers a drag that
@@ -5488,6 +5541,89 @@ class PageCanvas(QAbstractScrollArea):
         size = float(self.GRIP)
         return [QRectF(p.x() - size / 2, p.y() - size / 2, size, size)
                 for p in found]
+
+    def _text_box_made(self, start: QPointF, end: QPointF):
+        """``(page, rect)`` for a text box made by a press and a release.
+
+        **A click** makes the standard box, its top left at the click. **A
+        drag** makes the box it drew, from the press to the release, which
+        Acrobat takes as top left and bottom right whichever way it went.
+        """
+        if (end - start).manhattanLength() > QApplication.startDragDistance():
+            found = self.mark_rect(start, end)
+            if found is None:
+                return None
+            index, (x0, y0, x1, y1) = found
+            return index, (min(x0, x1), min(y0, y1), max(x0, x1), max(y0, y1))
+        index = self.page_at(start)
+        if index is None:
+            return None
+        at = self.page_point(index, start)
+        if at is None:
+            return None
+        wide, tall = markup.TEXT_BOX_SIZE
+        return index, self.to_source(
+            index, (at[0], at[1] - tall, at[0] + wide, at[1]))
+
+    def text_box_frozen(self, mark) -> bool:
+        """Whether a text box's look cannot be changed yet: one the file
+        brought with text in it, whose text this application cannot draw
+        until typing arrives -- rebuilding its drawing would wipe the words
+        off the page. It can still be moved, deleted and given a status."""
+        return (not isinstance(mark, markup.Annotation)
+                and getattr(mark, "subtype", None) == markup.FREETEXT
+                and bool(getattr(mark, "contents", "")))
+
+    #: A text box's handles, in order: the corners clockwise from the top
+    #: left, then the middles of the top, right, bottom and left sides.
+    TEXT_BOX_HANDLES = ((0, 1), (1, 1), (1, 0), (0, 0),
+                        (0.5, 1), (1, 0.5), (0.5, 0), (0, 0.5))
+
+    def _text_box_grips(self, index: int, mark, offset=None):
+        """A text box's eight handles, as viewport squares."""
+        rect, _angle = self._shape_of(mark)
+        left, bottom, right, top = rect
+        is_mine = isinstance(mark, markup.Annotation)
+        size = float(self.GRIP)
+        found = []
+        for fx, fy in self.TEXT_BOX_HANDLES:
+            x, y = left + (right - left) * fx, bottom + (top - bottom) * fy
+            where = self.quad_on_screen(index, (x, y, x, y), offset,
+                                        scaled=is_mine)
+            if where is None:
+                return []
+            p = where.center()
+            found.append(QRectF(p.x() - size / 2, p.y() - size / 2, size, size))
+        return found
+
+    #: The smallest a text box can be pulled to, in points.
+    SMALLEST_TEXT_BOX = 6.0
+
+    def _text_box_shaped(self, index: int, mark, which: int, start, point):
+        """``(rect, 0)`` for a text box whose handle ``which`` is at ``point``.
+
+        **The opposite side holds still** and the proportions are free: a
+        corner moves the two sides that meet there, a side's middle moves
+        that side alone. Measured from the rectangle the drag began with.
+        """
+        at = self.page_point(index, point)
+        if at is None:
+            return None
+        x, y = at
+        if isinstance(mark, markup.Annotation):
+            x, y = self.to_source(index, (x, y, x, y))[:2]
+        left, bottom, right, top = start
+        fx, fy = self.TEXT_BOX_HANDLES[which]
+        small = self.SMALLEST_TEXT_BOX
+        if fx == 0:
+            left = min(x, right - small)
+        elif fx == 1:
+            right = max(x, left + small)
+        if fy == 0:
+            bottom = min(y, top - small)
+        elif fy == 1:
+            top = max(y, bottom + small)
+        return ((left, bottom, right, top), 0.0)
 
     def _shape_of(self, mark):
         """``(rect, rotate)`` for a mark: the gesture's, or its own.
@@ -5841,7 +5977,7 @@ class PageCanvas(QAbstractScrollArea):
             wide, tall = markup.icon_size(
                 getattr(mark, "icon", markup.DEFAULT_ICON))
         if (mark.kind if isinstance(mark, markup.Annotation)
-                else mark.subtype) == markup.STAMP:
+                else mark.subtype) in (markup.STAMP, markup.FREETEXT):
             # Moved, not reshaped: the box keeps the size and the angle it
             # was given and only its corner changes, which is what dragging
             # the body of one means.
@@ -5931,6 +6067,59 @@ class PageCanvas(QAbstractScrollArea):
         was = painter.opacity()
         painter.setOpacity(max(0.0, min(1.0, float(opacity))))
         painter.drawImage(box.topLeft(), image)
+        painter.setOpacity(was)
+
+    def _paint_text_box(self, painter, index: int, mark, offset) -> None:
+        """Draw a text box made in this session: its fill and its border.
+
+        The same drawing `markup` writes into the file -- the fill, then the
+        border inset by half its width, dashed or clouded as its style says
+        -- mapped from the page to where the box is on screen, at the
+        rectangle a drag in flight has given it.
+        """
+        rect, _angle = self._shape_of(mark)
+        where = self.quad_on_screen(index, rect, offset, scaled=True)
+        if where is None or not where.intersects(QRectF(self.viewport().rect())):
+            return
+        left, bottom, right, top = (float(v) for v in rect)
+        if right <= left or top <= bottom:
+            return
+        sx = where.width() / (right - left)
+        sy = where.height() / (top - bottom)
+
+        def at(x, y):
+            return QPointF(where.left() + (x - left) * sx,
+                           where.bottom() - (y - bottom) * sy)
+
+        style = markup.BORDER_STYLES.get(mark.border_style, {})
+        width = float(style.get("width", mark.thickness))
+        fill = QColor.fromRgbF(*(mark.fill or (1.0, 1.0, 1.0))[:3])
+        border = QColor.fromRgbF(*(mark.colour or markup.swatch("Light Red"))[:3])
+        path = QPainterPath()
+        if "cloud" in style:
+            found = markup.cloud_path(rect, style["cloud"], width)
+            if found is None:
+                return
+            begin, curves = found
+            path.moveTo(at(*begin))
+            for c in curves:
+                path.cubicTo(at(c[0], c[1]), at(c[2], c[3]), at(c[4], c[5]))
+            path.closeSubpath()
+        else:
+            half = width / 2.0
+            path.addRect(QRectF(at(left + half, top - half),
+                                at(right - half, bottom + half)))
+        was = painter.opacity()
+        painter.setOpacity(self._solidity(mark))
+        painter.setRenderHint(QPainter.Antialiasing, True)
+        painter.fillPath(path, fill)
+        if width > 0:
+            pen = QPen(border)
+            pen.setWidthF(max(width * sx, 0.5))
+            if "dash" in style:
+                # Qt measures a dash in pen widths, the file in points.
+                pen.setDashPattern([v / max(width, 0.01) for v in style["dash"]])
+            painter.strokePath(path, pen)
         painter.setOpacity(was)
 
     def _paint_replace_caret(self, painter, index: int, mark, colour,

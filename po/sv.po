@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  pdfarranger\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-09 05:40+0000\n"
+"POT-Creation-Date: 2026-11-09 23:48+0000\n"
 "PO-Revision-Date: 2026-05-24 07:36+0300\n"
 "Last-Translator: kbengs\n"
 "Language: sv\n"
@@ -3019,6 +3019,11 @@ msgstr "Skalbar kommentar"
 #: pdfarranger_qt/properties.py
 msgid "Replace Selected Text"
 msgstr "Ersätt markerad text"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Text Box"
+msgstr "Textruta"
 
 #: pdfarranger_qt/properties.py
 msgid "Review History"

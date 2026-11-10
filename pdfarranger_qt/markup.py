@@ -80,7 +80,13 @@ STAMP = "/Stamp"
 #: for the pair.
 CARET = "/Caret"
 
-KINDS = (TEXT, HIGHLIGHT, STRIKEOUT, UNDERLINE, SQUIGGLY, STAMP, CARET)
+#: A box of text written on the page: what Add Text Comment makes, and
+#: what Acrobat calls a Text Box. Its colour is its border's, kept in `/DA`
+#: -- `/C` on this subtype is the fill.
+FREETEXT = "/FreeText"
+
+KINDS = (TEXT, HIGHLIGHT, STRIKEOUT, UNDERLINE, SQUIGGLY, STAMP, CARET,
+         FREETEXT)
 
 #: The two subtypes one tool writes, and which of them means what. A style
 #: is not a value inside the dictionary: it is which dictionary gets
@@ -226,7 +232,8 @@ SUBJECTS = {HIGHLIGHT: "Highlight", STRIKEOUT: "Cross-Out",
             # and both are a sticky note there; what tells them apart is
             # the subtype, which a reader already has.
             STAMP: "Sticky Note",
-            CARET: "Inserted Text"}
+            CARET: "Inserted Text",
+            FREETEXT: "Text Box"}
 
 #: Bit 3 of `/F`, Print. Without it a mark shows on screen and vanishes from
 #: paper, which is not what anybody means by annotating a document.
@@ -707,7 +714,8 @@ class Annotation:
                  "opacity", "author", "created", "modified", "name",
                  "irt", "rotate",
                  "popup_rect", "state", "rich", "subject", "locked",
-                 "intent", "icon", "group")
+                 "intent", "icon", "group", "fill", "thickness",
+                 "border_style")
 
     def __init__(self, kind: str, page: int, rect: Tuple[float, ...],
                  contents: str = "", colour=None, author: Optional[str] = None,
@@ -718,7 +726,9 @@ class Annotation:
                  state: Optional[str] = None, rich: Optional[str] = None,
                  subject: Optional[str] = None, locked: bool = False,
                  intent: Optional[str] = None,
-                 icon: Optional[str] = None, group: bool = False):
+                 icon: Optional[str] = None, group: bool = False,
+                 fill=None, thickness: float = 1.0,
+                 border_style: str = "straight"):
         if kind not in KINDS:
             raise ValueError(f"unknown annotation kind: {kind}")
         self.kind = kind
@@ -727,6 +737,12 @@ class Annotation:
         #: `/RT /Group` -- rather than making it a reply. The strikeout of
         #: a *Replace Selected Text* pair, which names its caret.
         self.group = group
+        #: A text box's own appearance beside its colour, which is its
+        #: border's: the fill (`/C` on a `/FreeText`), the border's
+        #: thickness (`/BS /W`) and its style, one of `BORDER_STYLES`.
+        self.fill = tuple(fill) if fill is not None else None
+        self.thickness = float(thickness)
+        self.border_style = border_style
         #: The `/NM` of the mark this answers, for a reply, and None for
         #: anything else. A reply is a mark in its own right -- it draws an
         #: icon, it can be selected and deleted -- and all that makes it a
@@ -900,6 +916,9 @@ def apply_edit(annot, edit, pdf=None) -> None:
     stays -- the thread, the author, the dates, the status chain -- and only
     the keys named here are rewritten.
     """
+    if str(annot.get(pikepdf.Name.Subtype, "")) == FREETEXT:
+        _patch_text_box(annot, edit, pdf)
+        return
     colour = edit.get("colour")
     if colour is not None:
         annot[pikepdf.Name.C] = pikepdf.Array([*colour])
@@ -1067,6 +1086,66 @@ def apply_edit(annot, edit, pdf=None) -> None:
         # producer's artwork for a change that does not affect what is
         # drawn at all.
         del annot[pikepdf.Name.AP]
+
+
+def _patch_text_box(annot, edit, pdf=None) -> None:
+    """Write one text box's edits onto the dictionary it arrived with.
+
+    Its colour is the border's, so it goes into `/DA`, and its fill into
+    `/C`. A move rewrites `/Rect` and nothing else: the drawing is mapped
+    onto the rectangle, so it follows. Anything that changes what is drawn
+    rebuilds the drawing -- for an empty box only, until text can be drawn
+    here; a box with text keeps the producer's.
+    """
+    reading = _text_box_reading(annot)
+    colour = edit.get("colour")
+    if colour is not None:
+        old = str(annot.get(pikepdf.Name.DA, ""))
+        rgb = "{:.4g} {:.4g} {:.4g} rg".format(*colour[:3])
+        annot[pikepdf.Name.DA] = pikepdf.String(
+            _DA_COLOUR.sub(rgb, old, count=1) if _DA_COLOUR.search(old)
+            else f"{rgb} {old}".strip())
+    fill = edit.get("fill")
+    if fill is not None:
+        annot[pikepdf.Name.C] = pikepdf.Array([*fill[:3]])
+    opacity = edit.get("opacity")
+    if opacity is not None:
+        if float(opacity) != 1.0:
+            annot[pikepdf.Name.CA] = float(opacity)
+        elif pikepdf.Name.CA in annot:
+            del annot[pikepdf.Name.CA]
+    rect = edit.get("rect")
+    if rect:
+        annot[pikepdf.Name.Rect] = pikepdf.Array([*rect])
+    for key, name in (("author", pikepdf.Name.T), ("subject", pikepdf.Name.Subj)):
+        if edit.get(key) is not None:
+            annot[name] = pikepdf.String(edit[key])
+    locked = edit.get("locked")
+    if locked is not None:
+        flags = int(annot.get(pikepdf.Name.F, 0))
+        annot[pikepdf.Name.F] = (flags | LOCKED) if locked else (flags & ~LOCKED)
+    modified = edit.get("modified")
+    if modified:
+        annot[pikepdf.Name.M] = pikepdf.String(modified)
+    redrawn = (colour is not None or fill is not None or opacity is not None
+               or (rect and reading.get("box_size") != _size(rect)))
+    if redrawn and pdf is not None and not str(annot.get(pikepdf.Name.Contents, "")):
+        box = Annotation(FREETEXT, 0, [float(v) for v in annot.Rect],
+                         colour=colour or reading["colour"],
+                         fill=fill or reading["fill"],
+                         thickness=reading["thickness"],
+                         border_style=reading["border_style"],
+                         opacity=_number(annot.get(pikepdf.Name.CA)))
+        inset = reading["inset"]
+        box.rect = (box.rect[0] + inset, box.rect[1] + inset,
+                    box.rect[2] - inset, box.rect[3] - inset)
+        annot[pikepdf.Name.AP] = pikepdf.Dictionary(
+            N=_freetext_appearance(pdf, box, [float(v) for v in annot.Rect]))
+
+
+def _size(rect) -> "tuple":
+    return (round(float(rect[2]) - float(rect[0]), 3),
+            round(float(rect[3]) - float(rect[1]), 3))
 
 
 def patch_page_marks(page, edits, pdf=None) -> int:
@@ -1605,6 +1684,8 @@ def to_dictionary(pdf, annotation: Annotation, page=None) -> pikepdf.Dictionary:
         # to it. `/IRT` itself is resolved by `add_to_page`, which knows the
         # page.
         entry[pikepdf.Name.RT] = pikepdf.Name.Group
+    if annotation.kind == FREETEXT:
+        _write_text_box(pdf, entry, annotation)
     if annotation.kind == CARET:
         entry[pikepdf.Name.RD] = pikepdf.Array([caret_inset(annotation.rect)] * 4)
         if solidity(annotation) != 1.0:
@@ -1613,9 +1694,58 @@ def to_dictionary(pdf, annotation: Annotation, page=None) -> pikepdf.Dictionary:
             pdf, annotation.rect, annotation.colour, solidity(annotation)))
     if annotation.author:
         entry[pikepdf.Name.T] = pikepdf.String(annotation.author)
-    if annotation.colour is not None:
+    if annotation.colour is not None and annotation.kind != FREETEXT:
+        # On a text box `/C` is the fill, and its colour -- the border's --
+        # is in `/DA`; `_write_text_box` has written both.
         entry[pikepdf.Name.C] = pikepdf.Array([*annotation.colour])
     return pdf.make_indirect(entry)
+
+
+#: What a text box's text looks like until the typing stage gives it a
+#: font: Acrobat's own default, 12 point Helvetica in Green.
+TEXT_BOX_FONT = ("Helvetica", 12.0)
+
+
+def _write_text_box(pdf, entry, annotation) -> None:
+    """The keys only a text box has, as Acrobat writes them.
+
+    The fill in `/C`; the border's colour in `/DA`, with the font; the
+    default text style in `/DS`; the style in `/BS` or `/BE` with the
+    cloud's reach in `/RD`; no `/Popup`, since a text box has no note.
+    """
+    style = BORDER_STYLES.get(annotation.border_style, {})
+    border = annotation.colour or swatch("Light Red")
+    fill = annotation.fill if annotation.fill is not None else (1.0, 1.0, 1.0)
+    family, size = TEXT_BOX_FONT
+    outer = text_box_rect(annotation)
+    entry[pikepdf.Name.Rect] = pikepdf.Array([*outer])
+    entry[pikepdf.Name.C] = pikepdf.Array([*fill[:3]])
+    entry[pikepdf.Name.DA] = pikepdf.String(
+        "{:.4g} {:.4g} {:.4g} rg /Helv {:g} Tf".format(*border[:3], size))
+    entry[pikepdf.Name.DS] = pikepdf.String(
+        f"font: {family},sans-serif {size:.1f}pt; text-align:left; "
+        f"color:{_hex(swatch('Green'))} ")
+    if "width" in style:
+        entry[pikepdf.Name.BS] = pikepdf.Dictionary(W=float(style["width"]))
+    elif "dash" in style:
+        bs = pikepdf.Dictionary(S=pikepdf.Name.D,
+                                D=pikepdf.Array([*style["dash"]]))
+        if annotation.thickness != 1.0:
+            bs[pikepdf.Name.W] = annotation.thickness
+        entry[pikepdf.Name.BS] = bs
+    elif "cloud" in style:
+        entry[pikepdf.Name.BE] = pikepdf.Dictionary(
+            S=pikepdf.Name.C, I=float(style["cloud"]))
+        grow = outer[2] - annotation.rect[2]
+        entry[pikepdf.Name.RD] = pikepdf.Array([grow] * 4)
+        if annotation.thickness != 1.0:
+            entry[pikepdf.Name.BS] = pikepdf.Dictionary(W=annotation.thickness)
+    elif annotation.thickness != 1.0:
+        entry[pikepdf.Name.BS] = pikepdf.Dictionary(W=annotation.thickness)
+    if solidity(annotation) != 1.0:
+        entry[pikepdf.Name.CA] = solidity(annotation)
+    entry[pikepdf.Name.AP] = pikepdf.Dictionary(
+        N=_freetext_appearance(pdf, annotation, outer))
 
 
 #: The colours a mark can be given, as Acrobat offers them: seven hues, the
@@ -1714,7 +1844,7 @@ def nearest_swatch(colour):
 #: has to be seen through or it hides the words it marks; a line drawn over
 #: them does not.
 TRANSPARENCY = {HIGHLIGHT: 0.4, STRIKEOUT: 1.0,
-                UNDERLINE: 1.0, SQUIGGLY: 1.0, CARET: 1.0}
+                UNDERLINE: 1.0, SQUIGGLY: 1.0, CARET: 1.0, FREETEXT: 1.0}
 
 
 def opacity_of(mark) -> float:
@@ -2202,6 +2332,228 @@ def _caret_appearance(pdf, rect, colour, opacity):
     return pdf.make_indirect(stream)
 
 
+#: A text box's border styles, in Acrobat's order, and how each is written.
+#: Read off one labelled box of each in `corpus/Markup Text Comment.pdf`: a
+#: dash array in `/BS /D`, a cloud's intensity in `/BE /I`, and No Border
+#: as a thickness of nought. The names are the ones the boxes were labelled
+#: with.
+BORDER_STYLES = {
+    "none": {"width": 0.0},
+    "straight": {},
+    "short dotted": {"dash": (2, 2)},
+    "medium dotted": {"dash": (3, 3)},
+    "long dotted": {"dash": (4, 4)},
+    "short dash dot": {"dash": (4, 3, 2, 3)},
+    "long dash dot": {"dash": (4, 3, 16, 3)},
+    "small cloud": {"cloud": 1},
+    "large cloud": {"cloud": 2},
+}
+
+#: The size a text box made by a click is given, in points: 108 wide -- an
+#: inch and a half -- and one line of 12 point text tall, measured on the
+#: fixture's click-made box.
+TEXT_BOX_SIZE = (108.0, 18.4)
+
+#: A cloud's geometry, as fractions of a scallop's radius. Fitted to both
+#: clouds in the fixture, where every one of them holds to three figures:
+#: each scallop is a large arc and a small curl hooking back to where the
+#: next begins.
+CLOUD_SPACING = 5.0 / 3.0
+CLOUD_CURL = 0.6729
+CLOUD_CURL_AHEAD = 0.3088
+CLOUD_CURL_OUT = 0.1165
+
+
+def cloud_radius(intensity: float, width: float) -> float:
+    """A scallop's radius: four points per step of intensity, plus half the
+    line width -- 4.5 at `/I 1` and 8.5 at `/I 2` on a 1 point line."""
+    return 4.0 * float(intensity) + width / 2.0
+
+
+def _circle_meet(c1, r1, c2, r2):
+    """The two points where two circles cross, or None."""
+    dx, dy = c2[0] - c1[0], c2[1] - c1[1]
+    d = math.hypot(dx, dy)
+    if d == 0 or d > r1 + r2 or d < abs(r1 - r2):
+        return None
+    a = (r1 * r1 - r2 * r2 + d * d) / (2 * d)
+    h = math.sqrt(max(r1 * r1 - a * a, 0.0))
+    mx, my = c1[0] + a * dx / d, c1[1] + a * dy / d
+    return ((mx + h * dy / d, my - h * dx / d),
+            (mx - h * dy / d, my + h * dx / d))
+
+
+def _arc(centre, radius, start, sweep):
+    """``[(x1, y1, x2, y2, x3, y3), ...]``: an arc as cubic curves of at most
+    a quarter turn each, from angle ``start`` turning by ``sweep``."""
+    pieces = max(1, int(math.ceil(abs(sweep) / (math.pi / 2) - 1e-9)))
+    step = sweep / pieces
+    k = 4.0 / 3.0 * math.tan(step / 4.0)
+    out, angle = [], start
+    for _ in range(pieces):
+        a0, a1 = angle, angle + step
+        p0 = (centre[0] + radius * math.cos(a0), centre[1] + radius * math.sin(a0))
+        p3 = (centre[0] + radius * math.cos(a1), centre[1] + radius * math.sin(a1))
+        out.append((p0[0] - k * radius * math.sin(a0), p0[1] + k * radius * math.cos(a0),
+                    p3[0] + k * radius * math.sin(a1), p3[1] - k * radius * math.cos(a1),
+                    p3[0], p3[1]))
+        angle = a1
+    return out
+
+
+def cloud_path(box, intensity: float, width: float):
+    """A cloud round ``box``, as ``(start, [curve, ...])`` in page space.
+
+    Scallop centres run clockwise round the box inset by half the line
+    width, starting at each corner and 5/3 of a radius apart, as many as
+    start before the next corner. Each scallop is the outer arc of its
+    circle; between two at the full spacing it hands over to a small curl,
+    turning the other way, which hooks back to where the next begins. Where
+    the last scallop on an edge is squeezed in before a corner there is no
+    room for a curl, and the two scallops simply meet where their circles
+    cross.
+    """
+    left, bottom, right, top = (float(v) for v in box)
+    inset = width / 2.0
+    radius = cloud_radius(intensity, width)
+    step = radius * CLOUD_SPACING
+    corners = [(left + inset, top - inset), (right - inset, top - inset),
+               (right - inset, bottom + inset), (left + inset, bottom + inset)]
+    normals = [(0.0, 1.0), (1.0, 0.0), (0.0, -1.0), (-1.0, 0.0)]
+    centres = []
+    for n, a in enumerate(corners):
+        b = corners[(n + 1) % 4]
+        length = math.dist(a, b)
+        ux, uy = ((b[0] - a[0]) / length, (b[1] - a[1]) / length) if length else (0.0, 0.0)
+        t = 0.0
+        # As many as start before the next corner, however close the last
+        # comes to it: Acrobat's last scallop on an edge sits two points
+        # short of the corner's own on the fixture's small cloud.
+        while t < length - 1e-6:
+            centres.append(((a[0] + ux * t, a[1] + uy * t), normals[n]))
+            t += step
+    count = len(centres)
+    if count < 3:
+        return None
+    curl = radius * CLOUD_CURL
+
+    def outward(points, centre, normal):
+        return max(points, key=lambda p: (p[0] - centre[0]) * normal[0]
+                   + (p[1] - centre[1]) * normal[1])
+
+    # How each scallop hands over to the next: through a curl, or -- when
+    # squeezed in before a corner -- straight where the two circles cross.
+    exits, entries, curls = [None] * count, [None] * count, [None] * count
+    for i, (c, n) in enumerate(centres):
+        nxt, nn = centres[(i + 1) % count]
+        d = math.dist(c, nxt) or 1.0
+        ux, uy = (nxt[0] - c[0]) / d, (nxt[1] - c[1]) / d
+        both = (n[0] + nn[0], n[1] + nn[1])
+        handed = False
+        if d >= step - 1e-6:
+            centre = (c[0] + radius * (CLOUD_CURL_AHEAD * ux + CLOUD_CURL_OUT * n[0]),
+                      c[1] + radius * (CLOUD_CURL_AHEAD * uy + CLOUD_CURL_OUT * n[1]))
+            out = _circle_meet(c, radius, centre, curl)
+            back = _circle_meet(centre, curl, nxt, radius)
+            if out is not None and back is not None:
+                exits[i] = max(out, key=lambda p: (p[0] - c[0]) * ux
+                               + (p[1] - c[1]) * uy)
+                entries[(i + 1) % count] = outward(back, nxt, both)
+                curls[i] = centre
+                handed = True
+        if not handed:
+            meet = _circle_meet(c, radius, nxt, radius)
+            if meet is None:
+                return None
+            exits[i] = entries[(i + 1) % count] = outward(meet, c, both)
+    curves = []
+    for i, (c, n) in enumerate(centres):
+        enter, leave = entries[i], exits[i]
+        a0 = math.atan2(enter[1] - c[1], enter[0] - c[0])
+        a1 = math.atan2(leave[1] - c[1], leave[0] - c[0])
+        curves += _arc(c, radius, a0, (a1 - a0) % (2 * math.pi) - 2 * math.pi)
+        if curls[i] is not None:
+            centre, onward = curls[i], entries[(i + 1) % count]
+            s0 = math.atan2(leave[1] - centre[1], leave[0] - centre[0])
+            s1 = math.atan2(onward[1] - centre[1], onward[0] - centre[0])
+            curves += _arc(centre, curl, s0, (s1 - s0) % (2 * math.pi))
+    return entries[0], curves
+
+
+def cloud_inset(box, intensity: float, width: float) -> float:
+    """How far a cloud reaches beyond its box: `/RD`, on every side."""
+    found = cloud_path(box, intensity, width)
+    left, bottom, right, top = (float(v) for v in box)
+    if found is None:
+        return cloud_radius(intensity, width) + width / 2.0
+    begin, curves = found
+    xs = [begin[0]] + [v for c in curves for v in c[0::2]]
+    ys = [begin[1]] + [v for c in curves for v in c[1::2]]
+    return max(left - min(xs), max(xs) - right, bottom - min(ys),
+               max(ys) - top) + width / 2.0
+
+
+def text_box_rect(annotation) -> "tuple":
+    """`/Rect` for a text box: its box, grown by a cloud's reach."""
+    style = BORDER_STYLES.get(annotation.border_style, {})
+    if "cloud" not in style:
+        return tuple(annotation.rect)
+    grow = cloud_inset(annotation.rect, style["cloud"], annotation.thickness)
+    left, bottom, right, top = annotation.rect
+    return (left - grow, bottom - grow, right + grow, top + grow)
+
+
+def _freetext_appearance(pdf, annotation, outer):
+    """A text box's drawing: its fill, then its border in its style.
+
+    The shape read off Acrobat's: one path filled and stroked, the border
+    inset by half its width so it stays inside the box; a dash pattern set
+    in the stream for the dotted styles; the cloud as curves; No Border
+    filled and not stroked. Text arrives with the next stage.
+    """
+    style = BORDER_STYLES.get(annotation.border_style, {})
+    width = float(style.get("width", annotation.thickness))
+    fill = annotation.fill if annotation.fill is not None else (1.0, 1.0, 1.0)
+    border = annotation.colour or swatch("Light Red")
+    lines = ["{:.6g} {:.6g} {:.6g} rg".format(*fill[:3]),
+             "{:.6g} {:.6g} {:.6g} RG".format(*border[:3]),
+             "{:.4g} w".format(width)]
+    opacity = solidity(annotation)
+    resources = pikepdf.Dictionary(ProcSet=pikepdf.Array([pikepdf.Name.PDF]))
+    if opacity < 1.0:
+        lines.insert(0, "/R0 gs")
+        resources[pikepdf.Name.ExtGState] = pikepdf.Dictionary(
+            R0=pikepdf.Dictionary(Type=pikepdf.Name.ExtGState, AIS=False,
+                                  CA=opacity, ca=opacity))
+    left, bottom, right, top = (float(v) for v in annotation.rect)
+    if "cloud" in style:
+        found = cloud_path(annotation.rect, style["cloud"], width)
+        if found is not None:
+            begin, curves = found
+            lines.append("{:.4f} {:.4f} m".format(*begin))
+            lines += ["{:.4f} {:.4f} {:.4f} {:.4f} {:.4f} {:.4f} c".format(*c)
+                      for c in curves]
+            lines.append("h B")
+    else:
+        if "dash" in style:
+            lines.append("[{}] 0 d".format(" ".join(f"{v:g}" for v in style["dash"])))
+        half = width / 2.0
+        lines.append("{:.4f} {:.4f} {:.4f} {:.4f} re".format(
+            left + half, bottom + half, right - left - width, top - bottom - width))
+        lines.append("B" if width > 0 else "f")
+    stream = pikepdf.Stream(pdf, ("\n".join(lines) + "\n").encode())
+    stream[pikepdf.Name.Type] = pikepdf.Name.XObject
+    stream[pikepdf.Name.Subtype] = pikepdf.Name.Form
+    stream[pikepdf.Name.BBox] = pikepdf.Array([*outer])
+    stream[pikepdf.Name.Resources] = resources
+    return pdf.make_indirect(stream)
+
+
+def _hex(colour) -> str:
+    return "#" + "".join(f"{round(255 * max(0.0, min(1.0, v))):02X}"
+                         for v in colour[:3])
+
+
 #: The window a viewer opens to show a mark's note, in points. Measured on
 #: 44 of Reader's own: 184 by 92, its left edge exactly at the page width --
 #: parked *off* the page, to the right -- and its top aligned with the
@@ -2299,11 +2651,13 @@ def add_to_page(pdf, page, marks, factor: float = 1.0) -> int:
             pointing.append((entry, placed.irt))
         # Its window, which goes in `/Annots` beside it and is pointed at
         # from it. Written for every mark, commented or not, because that is
-        # what Reader writes.
-        window = popup_for(pdf, entry, placed.rect, media[2],
-                           placed.popup_rect)
-        entry[pikepdf.Name.Popup] = window
-        page[pikepdf.Name.Annots].append(window)
+        # what Reader writes -- except a text box, which has no note and
+        # gets none from Acrobat either.
+        if placed.kind != FREETEXT:
+            window = popup_for(pdf, entry, placed.rect, media[2],
+                               placed.popup_rect)
+            entry[pikepdf.Name.Popup] = window
+            page[pikepdf.Name.Annots].append(window)
         written += 1
     # `/IRT` resolved here rather than in `to_dictionary`, because it points
     # at *another annotation on this page* and only the page knows which:
@@ -2357,14 +2711,16 @@ class Mark:
                  "opacity", "contents", "author", "name", "parent", "state",
                  "hidden", "when", "popup_open", "popup_rect", "rich",
                  "locked", "subject", "intent", "scales", "icon",
-                 "rotate", "ink", "group")
+                 "rotate", "ink", "group", "fill", "thickness",
+                 "border_style", "inset")
 
     def __init__(self, page, subtype, rect, quads=(), colour=None,
                  opacity=None, contents="", name=None, parent=None,
                  state=None, hidden=False, index=-1, author="", when="",
                  popup_open=False, popup_rect=None, rich="", locked=False,
                  subject="", intent="", scales=False, icon="",
-                 rotate=0.0, ink=None, group=False):
+                 rotate=0.0, ink=None, group=False, fill=None,
+                 thickness=1.0, border_style="straight", inset=0.0):
         self.uid = next(_mark_uids)
         #: Where this mark sits among the markup annotations on its page, in
         #: the order the file has them. What `MarkEdits` keys an edit by, and
@@ -2440,6 +2796,13 @@ class Mark:
         #: object rather than making it a reply. The strikeout of a
         #: *Replace Selected Text* pair, whose parent is its caret.
         self.group = group
+        #: A text box's fill, border thickness and style, as `Annotation`
+        #: has them, and ``inset`` -- `/RD` -- how far a cloud reaches
+        #: beyond the box, which ``rect`` includes.
+        self.fill = fill
+        self.thickness = thickness
+        self.border_style = border_style
+        self.inset = inset
 
     def boxes(self) -> "list[tuple]":
         """The quadrilaterals as ``(left, bottom, right, top)`` rectangles.
@@ -2493,6 +2856,50 @@ def _answers(mark):
     """
     parent = getattr(mark, "parent", None)
     return parent if parent is not None else getattr(mark, "irt", None)
+
+
+_DA_COLOUR = re.compile(r"([\d.]+)\s+([\d.]+)\s+([\d.]+)\s+rg")
+
+
+def _text_box_reading(annot) -> dict:
+    """A text box's own keys, read the way `_write_text_box` writes them."""
+    found = {}
+    match = _DA_COLOUR.search(str(annot.get(pikepdf.Name.DA, "")))
+    found["colour"] = (tuple(float(v) for v in match.groups())
+                       if match else None)
+    fill = annot.get(pikepdf.Name.C)
+    found["fill"] = (tuple(_number(v, 0.0) for v in fill)
+                     if fill is not None else None)
+    bs = annot.get(pikepdf.Name.BS) or {}
+    be = annot.get(pikepdf.Name.BE) or {}
+    width = _number(bs.get(pikepdf.Name.W), 1.0)
+    found["thickness"] = width
+    style = "straight"
+    if width == 0:
+        style = "none"
+    elif str(be.get(pikepdf.Name.S, "")) == "/C":
+        style = ("large cloud" if _number(be.get(pikepdf.Name.I), 1.0) >= 1.5
+                 else "small cloud")
+    elif str(bs.get(pikepdf.Name.S, "")) == "/D":
+        dash = tuple(int(round(_number(v, 0.0)))
+                     for v in (bs.get(pikepdf.Name.D) or [3]))
+        style = next((name for name, spec in BORDER_STYLES.items()
+                      if spec.get("dash") == dash), "medium dotted")
+    found["border_style"] = style
+    rd = annot.get(pikepdf.Name.RD)
+    found["inset"] = _number(rd[0], 0.0) if rd is not None and len(rd) else 0.0
+    rect = annot.get(pikepdf.Name.Rect)
+    found["box_size"] = _size(rect) if rect is not None and len(rect) == 4 else None
+    return found
+
+
+def text_box_of(mark) -> "tuple":
+    """A text box's own box: its rectangle less a cloud's reach."""
+    inset = float(getattr(mark, "inset", 0.0) or 0.0)
+    left, bottom, right, top = mark.rect
+    if not isinstance(mark, Mark):
+        return tuple(mark.rect)
+    return (left + inset, bottom + inset, right - inset, top - inset)
 
 
 def _ink_of(annot, subtype: str, colour):
@@ -2550,6 +2957,11 @@ def has_note(mark) -> bool:
     question asked twice in two shapes is the same question answered two
     ways the first time one of them changes.
     """
+    kind = getattr(mark, "kind", None) or getattr(mark, "subtype", None)
+    if kind == FREETEXT:
+        # Its `/Contents` is the text in the box, not a note: a text box
+        # has no note window at all.
+        return False
     return bool(getattr(mark, "contents", "")) and _answers(mark) is None
 
 
@@ -2587,7 +2999,14 @@ def marks_in(pdf) -> "list[Mark]":
                          for at in range(0, len(raw) - 7, 8)]
                 colour = annot.get(pikepdf.Name.C)
                 parent = annot.get(pikepdf.Name.IRT)
-                found.append(Mark(
+                box = {}
+                if subtype == FREETEXT:
+                    # A text box's colour is its border's, in `/DA`; its
+                    # `/C` is the fill.
+                    box = _text_box_reading(annot)
+                    colour = box.pop("colour", None)
+                    box.pop("box_size", None)
+                found.append(Mark(**box,
                     page=number,
                     index=at,
                     subtype=subtype,

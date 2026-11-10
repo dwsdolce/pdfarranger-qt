@@ -845,6 +845,8 @@ class MainWindow(QMainWindow):
         "replace": markup.STRIKEOUT,
         # *Insert Text*: a caret on its own, between two characters.
         "insert": markup.CARET,
+        # *Add Text Comment*, whose mark is a Text Box.
+        "textbox": markup.FREETEXT,
     }
 
     #: The gestures above that are not tools, and the tool each acts as --
@@ -879,6 +881,7 @@ class MainWindow(QMainWindow):
         "scalable_comment": "stamp",
         "replace_text": "replace",
         "insert_text": "insert",
+        "text_comment": "textbox",
         "draw": "draw",
     }
 
@@ -998,6 +1001,10 @@ class MainWindow(QMainWindow):
         # a gesture over several pages is the one on the last page.
         index = wanted[-1][0]
         made = self._marks_on_page(index)
+        if subtype == markup.FREETEXT:
+            # Held, with its handles. It opens ready to type once typing
+            # exists; until then there is nothing to type into.
+            self.reader.canvas.select_mark((index, made[-1]))
         if tool in self.REQUIRES_TEXT:
             # **The note window, which is the one every other mark uses.**
             # Author, time, Cancel and Post -- not the bare text box on the
@@ -1065,6 +1072,10 @@ class MainWindow(QMainWindow):
             centre = (rect[0], rect[3])
             rect = markup.stamp_rect(centre[0], centre[1], chosen,
                                      1.0 / page_scale)
+        if subtype == markup.FREETEXT:
+            # The box the canvas made, by a click or a drag, as it is: a
+            # text box is sized by whoever made it.
+            rect = tuple(rects[-1])
         if subtype == markup.CARET:
             # *Insert Text*: the canvas sends the character beside the gap,
             # cut off at the gap, and the caret is sized from its height as
@@ -1081,7 +1092,9 @@ class MainWindow(QMainWindow):
             opacity=opacity,
             subject=subject or None, intent=intent or None,
             icon=chosen,
-            author=markup.default_author()))
+            author=markup.default_author(),
+            fill=(markup.swatch("White") if subtype == markup.FREETEXT
+                  else None)))
         if tool == "replace" and quads:
             # **And its caret**, at the end of the run, in the same colour
             # and opacity. Added after the strikeout, which is the order
@@ -1310,7 +1323,8 @@ class MainWindow(QMainWindow):
         is kept is the shape it ended at. The rectangle carries the size --
         there is nowhere to write a scale -- so the two travel together.
         """
-        if getattr(mark, "locked", False):
+        if (getattr(mark, "locked", False)
+                or self.reader.canvas.text_box_frozen(mark)):
             return
         rect = tuple(float(v) for v in rect)
         rotate = float(rotate)
@@ -1701,6 +1715,13 @@ class MainWindow(QMainWindow):
         and re-render the page that shows it."""
         page = self.model.pages[index]
         scale = page.scale if page.scale else 1.0
+        if self.reader.canvas.text_box_frozen(mark):
+            # Its look waits for its words to be drawable here; who made it,
+            # what it is called and its lock do not.
+            fields = {name: value for name, value in fields.items()
+                      if name not in ("colour", "opacity", "fill")}
+            if not fields:
+                return
         partner = self._partner_fields(index, mark, fields)
         if mine:
             for name, value in fields.items():
@@ -2302,6 +2323,11 @@ class MainWindow(QMainWindow):
             # Refused here rather than only in the surfaces that offer it,
             # so a colour, an opacity and a resize are all one answer.
             return
+        if self.reader.canvas.text_box_frozen(mark):
+            # A text box the file brought with words in it keeps its look
+            # until its words can be drawn here: rebuilding its drawing
+            # would take them off the page.
+            return
         uid = self.model.pages[index].uid
         self._commit_mark_change(_("Change Mark"), index, mark)
         partner = self._partner_fields(index, mark, fields)
@@ -2611,6 +2637,11 @@ class MainWindow(QMainWindow):
         self.toolbar.addAction(self.act_duplicate)
         self.toolbar.addAction(self.act_delete)
 
+        # Undo and redo while reading too: markup is edited here, and its
+        # history is the same one Arrange keeps.
+        self.reader_toolbar.addAction(self.act_undo)
+        self.reader_toolbar.addAction(self.act_redo)
+        self.reader_toolbar.addSeparator()
         self.reader_toolbar.addAction(self.act_prev_page)
         self.reader_toolbar.addWidget(self.reader.page_selector)
         self.toolbar_page_total = QLabel("")

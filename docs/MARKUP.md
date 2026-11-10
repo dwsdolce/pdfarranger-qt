@@ -47,7 +47,7 @@ taken up, not guessed ahead of time.
 | | Add a scalable comment | Scalable Comment | a note icon that is part of the page: it scales, resizes and turns | complete |
 | | Replace selected text | Replace Selected Text | propose new wording for words that are struck out | complete |
 | | Insert text | Insert Text | propose words to insert at a point | complete |
-| | Add text comment | Text Box | words written straight onto the page in a box | next |
+| | Add text comment | Text Box | words written straight onto the page in a box | stage 1 of 4 built |
 | | Attach file | | a file carried in the document at a point | not started |
 | Text markup | Highlight | Highlight | colour behind a run of words | complete |
 | | Underline | Underline | a straight or wavy line under a run of words | complete |
@@ -155,7 +155,14 @@ says only where it differs.
   delete) and its note window.
 - The pointer says what a press will do: an I-beam over words, including
   words under an underline or a strikethrough; an arrow over a mark that
-  covers its words, such as a highlight.
+  covers its words, such as a highlight; and **the move cursor over any mark
+  that can be dragged** -- a comment's icon, a scalable comment, a text box
+  -- selected or not, unless it is locked.
+
+  **Departure from Acrobat**, which has three rules for those three: a
+  crosshair over a comment's icon, an arrow over a scalable comment until it
+  is picked up, and no change over a text box until it is. One rule is
+  easier to learn than three.
 - Escape, or a click on bare page, lets go of the mark.
 - *Enable Text Selection* in a mark's menu lets the next click through to
   the words underneath, for text that is otherwise covered.
@@ -484,7 +491,7 @@ either; ours keeps them.
 - The icon keeps its size as the page is zoomed and its way up as the page
   is turned. It has no handles and no badge, since the icon is already the
   sign of a note.
-- Over the icon the pointer is a crosshair, and the icon can be dragged
+- Over the icon the pointer is the move cursor, and the icon can be dragged
   anywhere; the point grabbed is the point that lands.
 - Changing the icon keeps its top left corner where it was.
 - The menu has no Copy Text or Enable Text Selection, on the icon or on the
@@ -538,9 +545,8 @@ keeps *Insert Text* for the caret.
 - It is part of the page: it scales with the zoom.
 - When selected it has four corner handles, which resize it keeping its
   proportions, and a turning handle. Both work about its centre.
-- Pointer: an arrow over it while unselected, a crosshair once selected
-  (drag to move), a resize arrow over a corner handle, a curved arrow over
-  the turning handle.
+- Pointer: the move cursor over it, selected or not; a resize arrow over a
+  corner handle; a curved arrow over the turning handle.
 - No badge.
 - The right-click menu is the comment's: no Copy Text and no Enable Text
   Selection.
@@ -723,7 +729,7 @@ Acrobat exactly.
 
 ## Text Box
 
-Made by the Add Text Comment tool. Next.
+Made by the Add Text Comment tool. Stage 1 built; being verified.
 
 ### Requirements
 
@@ -738,8 +744,7 @@ Made by the Add Text Comment tool. Next.
 - A box may be left empty: unlike a note, it needs no text to exist.
 - Eight handles, resizing without keeping the proportions.
 - **Dragged to move**, whether or not it is selected, as the comment marker
-  is. The pointer changes to the move cursor only once the box is selected,
-  as in Acrobat.
+  is, and the pointer is the move cursor over it either way.
 - **Three modes.** *Unselected.* *Selected*, with its handles. *Editing*,
   with no handles and a text cursor in the box, ready to type. A click on a
   box selects it; a double-click goes into the text with the cursor where
@@ -858,8 +863,7 @@ Four stages, each one tried in the application before the next:
   its bottom right, shown as it is dragged. Until stage 2 a new box comes out selected rather
   than in editing, since there is nothing to type into yet.
 - **Selecting and moving.** A click anywhere on the box selects it; a drag
-  moves it, selected or not. The pointer changes to the move cursor only
-  once it is selected.
+  moves it, selected or not, with the move cursor over it either way.
 - **Resizing.** Eight handles, corners and edge midpoints, with no
   proportion kept -- the handle machinery the scalable comment has, with four
   more handles and the aspect free.
@@ -877,8 +881,23 @@ Four stages, each one tried in the application before the next:
   curves -- 196 about 2.3 points apart on the small cloud, 104 about 4.5
   apart on the large. Drawn by the method of Apache PDFBox's `CloudyBorder`,
   a reconstruction of Acrobat's own written to match it, and checked against
-  the fixture's two clouds.
+  the fixture's two clouds: Acrobat's curve lies a median 0.07 point from
+  ours on the small cloud and 0.13 on the large. The one visible difference
+  is at the corners, where Acrobat keeps a small curl on the scallop
+  squeezed in before the corner and ours lets the two scallops meet.
+- **A box the file brought with text in it keeps its look in stage 1.**
+  Its words are in Acrobat's drawing, and this application cannot draw
+  them until stage 2, so rebuilding the drawing for a new colour, fill or
+  size would take them off the page. Such a box can be selected, moved --
+  the drawing follows a move unchanged -- deleted and given a status, and
+  shows no handles; its colour and size wait for stage 2. Empty boxes, and
+  boxes made here, change freely.
+- **A box from the file moves late.** It is part of the page image, so
+  while it is dragged only its outline follows, and it shows in its new
+  place once the page is redrawn. Boxes made here are drawn by the canvas
+  and follow the pointer. Drawing the file's boxes on the canvas too waits
+  for stage 2, so that boxes with text, which need their text drawn, change
+  with the empty ones.
 - **Left for later**: typing, the text palette and fonts (stages 2 and 3);
   the properties form, so fill, thickness and style can be read and drawn
   in stage 1 but changed only from stage 4.
-

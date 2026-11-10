@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-09 05:40+0000\n"
+"POT-Creation-Date: 2026-11-09 23:48+0000\n"
 "PO-Revision-Date: 2025-12-15 00:59+0700\n"
 "Last-Translator: Loc Huynh <https://github.com/hthienloc>\n"
 "Language: vi\n"
@@ -3015,6 +3015,11 @@ msgstr "Chú thích co giãn"
 #: pdfarranger_qt/properties.py
 msgid "Replace Selected Text"
 msgstr "Thay thế văn bản đã chọn"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Text Box"
+msgstr "Hộp văn bản"
 
 #: pdfarranger_qt/properties.py
 msgid "Review History"

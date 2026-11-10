@@ -13,7 +13,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  pdfarranger\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-09 05:40+0000\n"
+"POT-Creation-Date: 2026-11-09 23:48+0000\n"
 "PO-Revision-Date: 2025-08-29 21:18+0100\n"
 "Last-Translator: Hugo Carvalho <hugokarvalho@hotmail.com>\n"
 "Language: pt_PT\n"
@@ -3059,6 +3059,11 @@ msgstr "Comentário escalável"
 #: pdfarranger_qt/properties.py
 msgid "Replace Selected Text"
 msgstr "Substituir o texto selecionado"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Text Box"
+msgstr "Caixa de texto"
 
 #: pdfarranger_qt/properties.py
 msgid "Review History"

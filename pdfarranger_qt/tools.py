@@ -128,9 +128,11 @@ TOOLS: List[Tool] = [
     Tool("insert_text", COMMENT, N_("Insert text"), "cursor-text",
          "/Caret",
          colour='Fuchsia'),
+    # The mark's colour is its border's, which Acrobat starts Light Red; the
+    # White read off it earlier was the box's fill.
     Tool("text_comment", COMMENT, N_("Add text comment"), "text-box-outline",
          "/FreeText",
-         colour='White'),
+         colour='Light Red'),
     Tool("attach_file", COMMENT, N_("Attach file"), "paperclip",
          "/FileAttachment, /Name /Paperclip, /FS /EF",
          colour='Red'),

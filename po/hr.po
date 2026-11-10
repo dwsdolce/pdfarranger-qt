@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  pdfarranger\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-09 05:40+0000\n"
+"POT-Creation-Date: 2026-11-09 23:48+0000\n"
 "PO-Revision-Date: 2023-06-06 13:27+0200\n"
 "Last-Translator: Milo Ivir <mail@milotype.de>\n"
 "Language: hr\n"
@@ -3068,6 +3068,11 @@ msgstr "Skalabilni komentar"
 #: pdfarranger_qt/properties.py
 msgid "Replace Selected Text"
 msgstr "Zamijeni odabrani tekst"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Text Box"
+msgstr "Tekstni okvir"
 
 #: pdfarranger_qt/properties.py
 msgid "Review History"

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-09 05:40+0000\n"
+"POT-Creation-Date: 2026-11-09 23:48+0000\n"
 "PO-Revision-Date: 2026-02-15 15:16+0100\n"
 "Last-Translator: Quentin PAGÈS\n"
 "Language: oc\n"
@@ -3039,6 +3039,11 @@ msgstr "Comentari redimensionable"
 #: pdfarranger_qt/properties.py
 msgid "Replace Selected Text"
 msgstr "Remplaçar lo tèxte seleccionat"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Text Box"
+msgstr "Zòna de tèxte"
 
 #: pdfarranger_qt/properties.py
 msgid "Review History"

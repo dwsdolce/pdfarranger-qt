@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-09 05:40+0000\n"
+"POT-Creation-Date: 2026-11-09 23:48+0000\n"
 "PO-Revision-Date: 2023-01-19 20:27+0100\n"
 "Last-Translator: alexgabi\n"
 "Language: eu\n"
@@ -3089,6 +3089,11 @@ msgstr "Iruzkin eskalagarria"
 #: pdfarranger_qt/properties.py
 msgid "Replace Selected Text"
 msgstr "Ordeztu hautatutako testua"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Text Box"
+msgstr "Testu-koadroa"
 
 #: pdfarranger_qt/properties.py
 msgid "Review History"

@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  pdfarranger\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-09 05:40+0000\n"
+"POT-Creation-Date: 2026-11-09 23:48+0000\n"
 "PO-Revision-Date: 2023-07-10 15:37+0000\n"
 "Last-Translator: PavelZ\n"
 "Language: cs_CZ\n"
@@ -3054,6 +3054,11 @@ msgstr "Škálovatelný komentář"
 #: pdfarranger_qt/properties.py
 msgid "Replace Selected Text"
 msgstr "Nahradit vybraný text"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Text Box"
+msgstr "Textové pole"
 
 #: pdfarranger_qt/properties.py
 msgid "Review History"

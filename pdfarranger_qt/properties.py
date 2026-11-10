@@ -92,6 +92,8 @@ KIND_LABELS = {
     # A caret on its own is Insert Text; the caret of a Replace pair never
     # opens a form, being reached through its strikeout.
     "/Caret": N_("Insert Text"),
+    # What Add Text Comment makes, under Acrobat's name for it.
+    "/FreeText": N_("Text Box"),
 }
 
 

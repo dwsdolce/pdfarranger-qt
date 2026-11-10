@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pdfarranger master\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-09 05:40+0000\n"
+"POT-Creation-Date: 2026-11-09 23:48+0000\n"
 "PO-Revision-Date: 2026-09-04 09:59+0000\n"
 "Last-Translator: Lumenman <28367232+Lumenman@users.noreply.github.com>\n"
 "Language: ru\n"
@@ -2867,6 +2867,11 @@ msgstr "Масштабируемый комментарий"
 #: pdfarranger_qt/properties.py
 msgid "Replace Selected Text"
 msgstr "Заменить выделенный текст"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Text Box"
+msgstr "Текстовое поле"
 
 #: pdfarranger_qt/properties.py
 msgid "Review History"
