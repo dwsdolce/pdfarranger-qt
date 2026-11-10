@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pdfarranger master\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-09 23:48+0000\n"
+"POT-Creation-Date: 2026-11-10 00:34+0000\n"
 "PO-Revision-Date: 2026-01-04 02:52+0100\n"
 "Last-Translator: Massimo Pissarello <mapi68@gmail.com>\n"
 "Language: it\n"
@@ -2140,6 +2140,11 @@ msgstr "Ridimensiona contrassegno"
 #: pdfarranger_qt/mainwindow.py
 msgid "Reshape Mark"
 msgstr "Rimodella contrassegno"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Edit Text"
+msgstr "Modifica testo"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py

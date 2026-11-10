@@ -39,6 +39,20 @@ PDF = os.path.join(FIXTURES, "markup.pdf")
 RUN = os.path.join(FIXTURES, "markup_highlight.pdf")
 
 
+def recolourable(marks):
+    """The first of ``marks`` a colour change reaches.
+
+    **Not simply the first.** The first mark on the sample's first page is
+    a text box whose words mix styles, and that kind keeps its colour and
+    its drawing until the rich text stage -- so since text boxes were read
+    at all, every test here that took the first mark was recolouring
+    something that cannot be recoloured.
+    """
+    found = [m for m in marks if m.subtype != markup.FREETEXT]
+    assert found, "the page carries no mark a colour change reaches"
+    return found[0]
+
+
 class TestThePalette(unittest.TestCase):
     """Twenty-one colours, sampled from Reader's picker.
 
@@ -342,7 +356,8 @@ class TestShowingAChangeWithoutRebuilding(unittest.TestCase):
         with open(PDF, "rb") as handle:
             self.data = handle.read()
         with pikepdf.open(PDF) as pdf:
-            self.mark = [m for m in markup.marks_in(pdf) if m.page == 1][0]
+            self.mark = recolourable(
+                m for m in markup.marks_in(pdf) if m.page == 1)
 
     def test_nothing_to_show_is_no_document(self):
         """So the caller can put the page back on the ordinary render path
@@ -414,14 +429,23 @@ class TestShowingAChangeWithoutRebuilding(unittest.TestCase):
     def test_the_appearance_the_producer_wrote_goes_with_it(self):
         """It still draws the old colour, and a stream that disagrees with
         `/C` is worse than none: every reader falls back to the
-        quadrilaterals when there is no stream to prefer."""
+        quadrilaterals when there is no stream to prefer.
+
+        On a mark drawn from its quadrilaterals. A comment's drawing in this
+        copy is the empty one `markup.blank_note_icons` gives it so the
+        canvas can paint the icon, which is a different rule."""
+        with pikepdf.open(PDF) as pdf:
+            mark = [m for m in markup.marks_in(pdf)
+                    if m.page == 1 and m.subtype in markup.QUADDED][0]
         patched = markup.one_page_with_edits(
-            self.data, 0, {self.mark.index: {"colour": (0.0, 1.0, 1.0)}})
+            self.data, 0, {mark.index: {"colour": (0.0, 1.0, 1.0)}})
         with pikepdf.open(io.BytesIO(patched)) as one:
             annots = [a for a in (one.pages[0].get("/Annots") or [])
                       if str(a.get("/Subtype"))
                       not in ("/Widget", "/Popup", "/Link")]
-            self.assertNotIn("/AP", annots[self.mark.index])
+            self.assertEqual(str(annots[mark.index].get("/Subtype")),
+                             mark.subtype)
+            self.assertNotIn("/AP", annots[mark.index])
 
     def test_the_widgets_come_with_the_page(self):
         """The one-page copy has no `/AcroForm`, which pikepdf warns about
@@ -459,7 +483,8 @@ class TestItReachesTheSavedFile(unittest.TestCase):
         self.docs = DocumentSet()
         self.pages = self.docs.add_file(PDF)
         with pikepdf.open(PDF) as pdf:
-            self.mark = [m for m in markup.marks_in(pdf) if m.page == 1][0]
+            self.mark = recolourable(
+                m for m in markup.marks_in(pdf) if m.page == 1)
 
     def saved(self, edits):
         from pdfarranger_qt.export import export
@@ -555,9 +580,8 @@ class ColourCase(unittest.TestCase):
             self.win.settings.remove(key)
 
     def a_mark(self):
-        found = [m for m, mine in self.canvas.marks_on(0) if not mine]
-        self.assertTrue(found, "the page carries no mark to pick")
-        return found[0]
+        return recolourable(m for m, mine in self.canvas.marks_on(0)
+                            if not mine)
 
     def uid(self):
         return self.win.model.pages[0].uid

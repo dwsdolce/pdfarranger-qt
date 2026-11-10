@@ -715,7 +715,7 @@ class Annotation:
                  "irt", "rotate",
                  "popup_rect", "state", "rich", "subject", "locked",
                  "intent", "icon", "group", "fill", "thickness",
-                 "border_style")
+                 "border_style", "text_font", "text_size", "text_colour")
 
     def __init__(self, kind: str, page: int, rect: Tuple[float, ...],
                  contents: str = "", colour=None, author: Optional[str] = None,
@@ -728,7 +728,8 @@ class Annotation:
                  intent: Optional[str] = None,
                  icon: Optional[str] = None, group: bool = False,
                  fill=None, thickness: float = 1.0,
-                 border_style: str = "straight"):
+                 border_style: str = "straight", text_font=None,
+                 text_size=None, text_colour=None):
         if kind not in KINDS:
             raise ValueError(f"unknown annotation kind: {kind}")
         self.kind = kind
@@ -743,6 +744,11 @@ class Annotation:
         self.fill = tuple(fill) if fill is not None else None
         self.thickness = float(thickness)
         self.border_style = border_style
+        #: A text box's text: its font, size and colour, all one style
+        #: until the rich text arrives. None means `TEXT_BOX_FONT` in Green.
+        self.text_font = text_font
+        self.text_size = text_size
+        self.text_colour = tuple(text_colour) if text_colour is not None else None
         #: The `/NM` of the mark this answers, for a reply, and None for
         #: anything else. A reply is a mark in its own right -- it draws an
         #: icon, it can be selected and deleted -- and all that makes it a
@@ -1127,15 +1133,33 @@ def _patch_text_box(annot, edit, pdf=None) -> None:
     modified = edit.get("modified")
     if modified:
         annot[pikepdf.Name.M] = pikepdf.String(modified)
+    contents = edit.get("contents")
+    family, size, ink = (reading["text_font"] or TEXT_BOX_FONT[0],
+                         reading["text_size"] or TEXT_BOX_FONT[1],
+                         reading["text_colour"] or swatch("Green"))
+    if contents is not None:
+        if contents:
+            annot[pikepdf.Name.Contents] = pikepdf.String(contents)
+            annot[pikepdf.Name.RC] = pikepdf.String(
+                text_box_rich(contents, family, size, ink))
+        else:
+            for key in (pikepdf.Name.Contents, pikepdf.Name.RC):
+                if key in annot:
+                    del annot[key]
     redrawn = (colour is not None or fill is not None or opacity is not None
+               or contents is not None
                or (rect and reading.get("box_size") != _size(rect)))
-    if redrawn and pdf is not None and not str(annot.get(pikepdf.Name.Contents, "")):
+    # Rebuilt whenever its words are in one style, which this application
+    # draws; a box whose rich text mixes styles keeps the producer's drawing.
+    if redrawn and pdf is not None and not reading["styled"]:
         box = Annotation(FREETEXT, 0, [float(v) for v in annot.Rect],
                          colour=colour or reading["colour"],
                          fill=fill or reading["fill"],
                          thickness=reading["thickness"],
                          border_style=reading["border_style"],
-                         opacity=_number(annot.get(pikepdf.Name.CA)))
+                         opacity=_number(annot.get(pikepdf.Name.CA)),
+                         contents=str(annot.get(pikepdf.Name.Contents, "")),
+                         text_font=family, text_size=size, text_colour=ink)
         inset = reading["inset"]
         box.rect = (box.rect[0] + inset, box.rect[1] + inset,
                     box.rect[2] - inset, box.rect[3] - inset)
@@ -1239,7 +1263,11 @@ def blank_note_icons(pdf) -> int:
         for annot in page.obj.get(pikepdf.Name.Annots) or []:
             try:
                 subtype = str(annot.get(pikepdf.Name.Subtype, ""))
-                if subtype != TEXT and not is_scalable_comment(
+                # And a text box in one style, which the canvas draws whole
+                # -- fill, border and words -- so a drag carries it.
+                text_box = (subtype == FREETEXT
+                            and not _text_box_reading(annot)["styled"])
+                if subtype != TEXT and not text_box and not is_scalable_comment(
                         subtype, stamp_icon(annot)):
                     continue
                 if subtype == STAMP:
@@ -1701,9 +1729,33 @@ def to_dictionary(pdf, annotation: Annotation, page=None) -> pikepdf.Dictionary:
     return pdf.make_indirect(entry)
 
 
-#: What a text box's text looks like until the typing stage gives it a
-#: font: Acrobat's own default, 12 point Helvetica in Green.
+#: What a text box's text starts as: Acrobat's own default, 12 point
+#: Helvetica, in Green.
 TEXT_BOX_FONT = ("Helvetica", 12.0)
+
+
+def text_style_of(mark) -> "tuple":
+    """``(family, size, colour)`` for a text box's text."""
+    family, size = TEXT_BOX_FONT
+    return (getattr(mark, "text_font", None) or family,
+            float(getattr(mark, "text_size", None) or size),
+            tuple(getattr(mark, "text_colour", None) or swatch("Green")))
+
+
+def text_box_rich(text: str, family: str, size: float, colour) -> str:
+    """`/RC` for a text box in one style, in the shape Acrobat writes: the
+    style on the body, each paragraph a `<p>`."""
+    style = (f"font-size:{size:.1f}pt;text-align:left;color:{_hex(colour)};"
+             f"font-weight:normal;font-style:normal;font-family:{family};"
+             "font-stretch:normal")
+    paragraphs = "".join(f'<p dir="ltr">{escape(line) or "&#8203;"}</p>'
+                         for line in text.split("\n"))
+    return (RICH_HEAD.replace("<body ", f'<body style="{style}" ', 1)
+            if "<body " in RICH_HEAD else RICH_HEAD) + paragraphs + "</body>"
+
+
+_DS_FONT = re.compile(r"font:\s*([^,;]+?)(?:,[^;]*?)?\s+([\d.]+)pt")
+_STYLE_COLOUR = re.compile(r"color:\s*#([0-9A-Fa-f]{6})")
 
 
 def _write_text_box(pdf, entry, annotation) -> None:
@@ -1716,7 +1768,7 @@ def _write_text_box(pdf, entry, annotation) -> None:
     style = BORDER_STYLES.get(annotation.border_style, {})
     border = annotation.colour or swatch("Light Red")
     fill = annotation.fill if annotation.fill is not None else (1.0, 1.0, 1.0)
-    family, size = TEXT_BOX_FONT
+    family, size, ink = text_style_of(annotation)
     outer = text_box_rect(annotation)
     entry[pikepdf.Name.Rect] = pikepdf.Array([*outer])
     entry[pikepdf.Name.C] = pikepdf.Array([*fill[:3]])
@@ -1724,7 +1776,12 @@ def _write_text_box(pdf, entry, annotation) -> None:
         "{:.4g} {:.4g} {:.4g} rg /Helv {:g} Tf".format(*border[:3], size))
     entry[pikepdf.Name.DS] = pikepdf.String(
         f"font: {family},sans-serif {size:.1f}pt; text-align:left; "
-        f"color:{_hex(swatch('Green'))} ")
+        f"color:{_hex(ink)} ")
+    if annotation.contents:
+        # The rich text in the shape Acrobat writes for a text box: the
+        # style on the body, a paragraph a line -- not a note's spans.
+        entry[pikepdf.Name.RC] = pikepdf.String(
+            text_box_rich(annotation.contents, family, size, ink))
     if "width" in style:
         entry[pikepdf.Name.BS] = pikepdf.Dictionary(W=float(style["width"]))
     elif "dash" in style:
@@ -2526,6 +2583,7 @@ def _freetext_appearance(pdf, annotation, outer):
             R0=pikepdf.Dictionary(Type=pikepdf.Name.ExtGState, AIS=False,
                                   CA=opacity, ca=opacity))
     left, bottom, right, top = (float(v) for v in annotation.rect)
+    text = getattr(annotation, "contents", "") or ""
     if "cloud" in style:
         found = cloud_path(annotation.rect, style["cloud"], width)
         if found is not None:
@@ -2541,6 +2599,25 @@ def _freetext_appearance(pdf, annotation, outer):
         lines.append("{:.4f} {:.4f} {:.4f} {:.4f} re".format(
             left + half, bottom + half, right - left - width, top - bottom - width))
         lines.append("B" if width > 0 else "f")
+    if text:
+        # The words, drawn by `textbox` with their font embedded, clipped to
+        # the box inset by twice the border's width as Acrobat clips them,
+        # and hung from the top left of that inset box.
+        from . import textbox
+
+        family, size, ink = text_style_of(annotation)
+        inset = 2.0 * width
+        inner = max(right - left - 2 * inset, 1.0)
+        form = textbox.text_form(pdf, text, family, size, ink, inner)
+        if form is not None:
+            tall = float(form.BBox[3])
+            resources[pikepdf.Name.XObject] = pikepdf.Dictionary(Tx=form)
+            lines += ["q", "{:.4f} {:.4f} {:.4f} {:.4f} re W n".format(
+                          left + inset, bottom + inset, inner,
+                          max(top - bottom - 2 * inset, 0.0)),
+                      "1 0 0 1 {:.4f} {:.4f} cm".format(
+                          left + inset, top - inset - tall),
+                      "/Tx Do", "Q"]
     stream = pikepdf.Stream(pdf, ("\n".join(lines) + "\n").encode())
     stream[pikepdf.Name.Type] = pikepdf.Name.XObject
     stream[pikepdf.Name.Subtype] = pikepdf.Name.Form
@@ -2712,7 +2789,8 @@ class Mark:
                  "hidden", "when", "popup_open", "popup_rect", "rich",
                  "locked", "subject", "intent", "scales", "icon",
                  "rotate", "ink", "group", "fill", "thickness",
-                 "border_style", "inset")
+                 "border_style", "inset", "text_font", "text_size",
+                 "text_colour", "styled")
 
     def __init__(self, page, subtype, rect, quads=(), colour=None,
                  opacity=None, contents="", name=None, parent=None,
@@ -2720,7 +2798,9 @@ class Mark:
                  popup_open=False, popup_rect=None, rich="", locked=False,
                  subject="", intent="", scales=False, icon="",
                  rotate=0.0, ink=None, group=False, fill=None,
-                 thickness=1.0, border_style="straight", inset=0.0):
+                 thickness=1.0, border_style="straight", inset=0.0,
+                 text_font=None, text_size=None, text_colour=None,
+                 styled=False):
         self.uid = next(_mark_uids)
         #: Where this mark sits among the markup annotations on its page, in
         #: the order the file has them. What `MarkEdits` keys an edit by, and
@@ -2803,6 +2883,12 @@ class Mark:
         self.thickness = thickness
         self.border_style = border_style
         self.inset = inset
+        #: A text box's text style, read off `/DS` and `/RC`, and whether its
+        #: rich text mixes styles -- which nothing here can draw yet.
+        self.text_font = text_font
+        self.text_size = text_size
+        self.text_colour = text_colour
+        self.styled = styled
 
     def boxes(self) -> "list[tuple]":
         """The quadrilaterals as ``(left, bottom, right, top)`` rectangles.
@@ -2888,6 +2974,24 @@ def _text_box_reading(annot) -> dict:
     found["border_style"] = style
     rd = annot.get(pikepdf.Name.RD)
     found["inset"] = _number(rd[0], 0.0) if rd is not None and len(rd) else 0.0
+    # The text's style: font and size from `/DS`, colour from the rich
+    # text -- which is what Acrobat draws in, where `/DS` can carry a
+    # different one -- and whether the rich text mixes styles. The colour
+    # is the span's when one span holds all the text, because Acrobat draws
+    # in that and not in the body's: it can leave the body red round a
+    # span it made blue.
+    ds = str(annot.get(pikepdf.Name.DS, ""))
+    rc = str(annot.get(pikepdf.Name.RC, ""))
+    font = _DS_FONT.search(ds)
+    found["text_font"] = font.group(1).strip() if font else None
+    found["text_size"] = float(font.group(2)) if font else None
+    spans = rc.count("<span")
+    span = (_STYLE_COLOUR.search(rc, rc.index("<span")) if spans == 1
+            else None)
+    colour = span or _STYLE_COLOUR.search(rc) or _STYLE_COLOUR.search(ds)
+    found["text_colour"] = (tuple(int(colour.group(1)[k:k + 2], 16) / 255.0
+                                  for k in (0, 2, 4)) if colour else None)
+    found["styled"] = spans > 1
     rect = annot.get(pikepdf.Name.Rect)
     found["box_size"] = _size(rect) if rect is not None and len(rect) == 4 else None
     return found

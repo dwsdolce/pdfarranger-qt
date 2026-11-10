@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-09 23:48+0000\n"
+"POT-Creation-Date: 2026-11-10 00:34+0000\n"
 "PO-Revision-Date: 2023-06-08 10:00+0700\n"
 "Last-Translator: Abdul Munif Hanafi <amunifhanafi@gmail.com>\n"
 "Language: id\n"
@@ -2184,6 +2184,11 @@ msgstr "Ubah Ukuran Tanda"
 #: pdfarranger_qt/mainwindow.py
 msgid "Reshape Mark"
 msgstr "Bentuk Ulang Tanda"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Edit Text"
+msgstr "Sunting Teks"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py

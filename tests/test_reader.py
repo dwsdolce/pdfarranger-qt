@@ -403,10 +403,17 @@ class TestModeAffordances(unittest.TestCase):
 
     def test_editing_commands_are_only_on_the_arrange_toolbar(self):
         for action in (self.win.act_rotate_left, self.win.act_delete,
-                       self.win.act_undo, self.win.act_duplicate):
+                       self.win.act_duplicate):
             self.assertIn(action, self.win.toolbar.actions(), action.text())
             self.assertNotIn(action, self.win.reader_toolbar.actions(),
                              action.text())
+
+    def test_undo_and_redo_are_on_both(self):
+        """Marks are made while reading, so what undoes them is on the
+        reader's toolbar too, as it is on the arranger's."""
+        for action in (self.win.act_undo, self.win.act_redo):
+            for bar in (self.win.toolbar, self.win.reader_toolbar):
+                self.assertIn(action, bar.actions(), action.text())
 
     def test_open_and_save_are_on_both(self):
         """The way out of a mode should not move."""

@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-09 23:48+0000\n"
+"POT-Creation-Date: 2026-11-10 00:34+0000\n"
 "PO-Revision-Date: 2022-09-01 00:40+0900\n"
 "Last-Translator: sicklylife <translation@sicklylife.jp>\n"
 "Language: ja\n"
@@ -2038,6 +2038,11 @@ msgstr "マークのサイズを変更"
 #: pdfarranger_qt/mainwindow.py
 msgid "Reshape Mark"
 msgstr "マークの形を変更"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Edit Text"
+msgstr "テキストを編集"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py

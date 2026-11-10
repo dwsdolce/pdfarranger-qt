@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  pdfarranger\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-09 23:48+0000\n"
+"POT-Creation-Date: 2026-11-10 00:34+0000\n"
 "PO-Revision-Date: 2023-10-22 00:28+0200\n"
 "Last-Translator: Lrss <dev@lrss.dk>\n"
 "Language: da\n"
@@ -2154,6 +2154,11 @@ msgstr "Ændr størrelse på mærke"
 #: pdfarranger_qt/mainwindow.py
 msgid "Reshape Mark"
 msgstr "Omform mærke"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Edit Text"
+msgstr "Rediger tekst"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py

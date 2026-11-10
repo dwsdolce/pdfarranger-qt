@@ -15,7 +15,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  pdfarranger\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-09 23:48+0000\n"
+"POT-Creation-Date: 2026-11-10 00:34+0000\n"
 "PO-Revision-Date: 2025-07-09 08:35+0200\n"
 "Last-Translator: Sebastian Scherch\n"
 "Language: de\n"
@@ -2160,6 +2160,11 @@ msgstr "Markierungsgröße ändern"
 #: pdfarranger_qt/mainwindow.py
 msgid "Reshape Mark"
 msgstr "Markierung umformen"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Edit Text"
+msgstr "Text bearbeiten"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-09 23:48+0000\n"
+"POT-Creation-Date: 2026-11-10 00:34+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: hu\n"
@@ -2169,6 +2169,11 @@ msgstr "Jelölés átméretezése"
 #: pdfarranger_qt/mainwindow.py
 msgid "Reshape Mark"
 msgstr "Jelölés átalakítása"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Edit Text"
+msgstr "Szöveg szerkesztése"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py

@@ -1922,17 +1922,20 @@ class TestAScalableCommentIsReshaped(unittest.TestCase):
         return self.canvas.viewport().cursor().shape()
 
     def test_the_pointer_says_what_it_can_do(self):
-        """Five cases, read off Reader: away from it the text cursor, over
-        an unselected one an arrow, over a selected one a crosshair, over a
-        corner the arrow that points the way it would move, and over the
-        turning handle something curved."""
+        """Over the stamp the move cursor, selected or not, because it can
+        be moved either way; over a corner the arrow that points the way it
+        would move; over the turning handle something of its own.
+
+        Reader offers an arrow over an unselected stamp and a crosshair over
+        a selected one. This application shows the move cursor over every
+        mark that can be moved, the same for all of them."""
         from PySide6.QtCore import QPointF, Qt
 
         mark = self.a_stamp()
         middle = self.canvas.quad_on_screen(0, mark.rect, scaled=True).center()
 
-        self.assertEqual(self.hover(middle), Qt.CrossCursor,
-                         "a stamp you have hold of should offer a crosshair")
+        self.assertEqual(self.hover(middle), Qt.SizeAllCursor,
+                         "a stamp you have hold of can be moved")
         corner = self.canvas.grips()[2].center()
         self.assertIn(self.hover(corner),
                       (Qt.SizeFDiagCursor, Qt.SizeBDiagCursor,
@@ -1946,8 +1949,8 @@ class TestAScalableCommentIsReshaped(unittest.TestCase):
 
         self.canvas.select_mark(None)
         settle(timeout_ms=150)
-        self.assertEqual(self.hover(middle), Qt.ArrowCursor,
-                         "a stamp nobody has hold of is a thing, not a point")
+        self.assertEqual(self.hover(middle), Qt.SizeAllCursor,
+                         "a stamp nobody has hold of can be moved too")
         away = QPointF(middle.x(), middle.y() + 160)
         self.assertNotEqual(self.hover(away), Qt.CrossCursor,
                             "the crosshair followed the pointer off the stamp")
@@ -2805,7 +2808,8 @@ class TestWhatColourEachToolStartsIn(unittest.TestCase):
         for name, colour in (("comment", "Purple"),
                              ("replace_text", "Light Red"),
                              ("insert_text", "Fuchsia"),
-                             ("text_comment", "White"),
+                             # Its border's; White was the box's fill.
+                             ("text_comment", "Light Red"),
                              ("highlight", "Orange"),
                              ("underline", "Blue"),
                              ("strikethrough", "Light Red"),

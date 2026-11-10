@@ -1061,24 +1061,23 @@ class TestTheFormOnOneMark(unittest.TestCase):
             with self.subTest(kind=kind):
                 self.assertEqual(self.form(kind=kind).windowTitle(), expected)
 
-    def test_every_title_names_something_in_the_strip(self):
-        """A title naming what the user cannot find in the toolbar is the
-        defect this replaced -- Reader's *Cross-Out*, which appears nowhere
-        in its own interface.
+    def test_every_title_names_a_mark_a_tool_makes(self):
+        """A form is titled with the mark's name from the tools table, and
+        a title naming a mark no tool makes is the defect this replaced --
+        Reader's *Cross-Out*, which appears nowhere in its own interface.
 
-        Named *in*, not equal to: the comment tool's button reads *Add a
-        comment* and its form reads *Comment Properties*, which is the
-        same word and the shorter form of it.
+        **The mark's name, not the tool's.** This used to look for the
+        title in the tools' labels, which held only while every mark was
+        named like its tool; *Add text comment* makes a Text Box.
         """
         from pdfarranger_qt import tools
         from pdfarranger_qt.properties import KIND_LABELS
 
-        labels = [tool.label.lower() for tool in tools.TOOLS]
+        marks = {mark for tool in tools.TOOLS for mark in tool.marks}
         for shown in set(KIND_LABELS.values()):
             with self.subTest(title=shown):
-                self.assertTrue(
-                    any(shown.lower() in label for label in labels),
-                    "no tool in the strip is called %r" % shown)
+                self.assertIn(shown, marks,
+                              "no tool makes a mark called %r" % shown)
 
     def test_one_tool_making_two_kinds_titles_each_by_what_it_is(self):
         """The comment tool makes a `/Text` on a point and a `/Highlight`

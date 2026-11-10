@@ -72,6 +72,7 @@ from PySide6.QtGui import (
     QPalette,
     QPen,
     QTextDocument,
+    QTextOption,
 )
 from PySide6.QtPdf import (
     QPdfDocument,
@@ -85,10 +86,11 @@ from PySide6.QtWidgets import (
     QLineEdit,
     QMenu,
     QStyle,
+    QTextEdit,
 )
 
 from . import forms as forms_module
-from . import markup, noteicons
+from . import markup, noteicons, textbox
 from .fieldlayer import AppearanceRenderer
 from .i18n import gettext_ as _
 from .render import ANNOTATIONS, DEFAULT_CACHE_PIXELS, BytesDocument, Renderer
@@ -1215,6 +1217,10 @@ class PageCanvas(QAbstractScrollArea):
         #: which handle has hold of it and the point both the scaling and
         #: the turning happen about.
         self._dragging_stamp = None
+        #: The text box being typed into: ``(page, mark, editor, began)``,
+        #: ``began`` the rectangle it had when editing began. None when no
+        #: box is being edited.
+        self._text_editing = None
         #: ``(mark, rect, rotate)`` while a comment is being dragged or
         #: reshaped: the shape the gesture is asking for, which everything
         #: that draws the mark reads instead of what is on record. Nothing
@@ -2670,6 +2676,7 @@ class PageCanvas(QAbstractScrollArea):
         clicking away from a field moved the focus to another one and drew a
         ring round it.
         """
+        self.finish_text_box()
         if self._editing is None:
             return
         field, editor = self._editing
@@ -4056,7 +4063,21 @@ class PageCanvas(QAbstractScrollArea):
         navigate away from it.
         """
         if event.button() == Qt.LeftButton:
-            found = self.to_page(QPointF(event.position()))
+            here = QPointF(event.position())
+            note = self.note_at(here)
+            if note is not None and (
+                    note[2].kind if isinstance(note[2], markup.Annotation)
+                    else note[2].subtype) == markup.FREETEXT:
+                # Into the text, with the cursor where the double-click
+                # landed -- unless the box is locked, or mixes styles this
+                # stage cannot draw.
+                if (not getattr(note[2], "locked", False)
+                        and not self.text_box_frozen(note[2])):
+                    self.edit_text_box(note[0], note[2], here)
+                self._press = None
+                event.accept()
+                return
+            found = self.to_page(here)
             if found is not None and self.select_word_at(*found):
                 # The anchor is left alone: select_word_at has just set it to
                 # the word, so a shift+click after this extends from the word's
@@ -5386,6 +5407,9 @@ class PageCanvas(QAbstractScrollArea):
     #: own space. The canvas reports the new run and keeps none of it, the
     #: same way `mark_drawn` reports a new one.
     mark_moved = Signal(int, object, object)
+    #: A text box's editing ended: ``(page, mark, text, rect)``, the rect
+    #: the box has settled to. Sent only when something changed.
+    text_box_edited = Signal(int, object, str, object)
 
     #: A stamp's handle was let go: ``(page, mark, rect, rotate)`` in the
     #: page's own space and degrees. One signal for both handles, because
@@ -5565,14 +5589,130 @@ class PageCanvas(QAbstractScrollArea):
         return index, self.to_source(
             index, (at[0], at[1] - tall, at[0] + wide, at[1]))
 
+    def _text_area(self, index: int, mark, rect):
+        """``(screen rect, width in points, border width)`` of the part of a
+        text box its words go in: the box inset by twice the border."""
+        is_mine = isinstance(mark, markup.Annotation)
+        if not is_mine:
+            inset = float(getattr(mark, "inset", 0.0) or 0.0)
+            rect = (rect[0] + inset, rect[1] + inset,
+                    rect[2] - inset, rect[3] - inset)
+        style = markup.BORDER_STYLES.get(mark.border_style, {})
+        width = float(style.get("width", mark.thickness))
+        pad = 2.0 * width
+        left, bottom, right, top = rect
+        area = (left + pad, bottom + pad, right - pad, top - pad)
+        where = self.quad_on_screen(index, area, scaled=is_mine)
+        return where, max(right - left - 2 * pad, 1.0), width
+
+    def edit_text_box(self, index: int, mark, at: Optional[QPointF] = None):
+        """Open a text box for typing: the cursor at ``at``, or at the end.
+
+        **On the page**: an editor laid over the box at the zoom, in the
+        box's font and laid out by the rules the file is, so what is typed
+        is seen where and how it will be written. No handles while typing.
+        """
+        self.finish_editing()
+        rect = tuple(mark.rect)
+        where, wide, _width = self._text_area(index, mark, rect)
+        if where is None:
+            return
+        family, size, ink = markup.text_style_of(mark)
+        scale = where.width() / wide if wide else 1.0
+        editor = _TextBoxEditor(self.viewport())
+        editor.setFrameStyle(QFrame.NoFrame)
+        editor.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        editor.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        editor.setStyleSheet("QTextEdit { background: transparent; }")
+        editor.setWordWrapMode(QTextOption.WrapAtWordBoundaryOrAnywhere)
+        editor.document().setDocumentMargin(0)
+        # Points to screen pixels: the size times the zoom, by way of the
+        # screen's dots an inch, which is what a font's point size means.
+        editor.document().setDefaultFont(textbox.font_for(
+            family, size * scale * 72.0 / max(editor.logicalDpiY(), 1)))
+        palette = editor.palette()
+        palette.setColor(QPalette.Text, QColor.fromRgbF(*ink[:3]))
+        editor.setPalette(palette)
+        editor.setPlainText(getattr(mark, "contents", "") or "")
+        self.select_mark(None)
+        self._text_editing = (index, mark, editor, rect)
+        self._place_editor(editor, where, size * scale)
+        editor.textChanged.connect(self._text_box_changed)
+        editor.finished.connect(self.finish_text_box)
+        editor.show()
+        editor.setFocus()
+        if at is not None:
+            editor.setTextCursor(editor.cursorForPosition(
+                editor.mapFrom(self.viewport(), at.toPoint())))
+        else:
+            cursor = editor.textCursor()
+            cursor.movePosition(cursor.MoveOperation.End)
+            editor.setTextCursor(cursor)
+        self.viewport().update()
+
+    def _text_box_changed(self) -> None:
+        """Grow the box as the text needs, never below where it began."""
+        if self._text_editing is None:
+            return
+        index, mark, editor, began = self._text_editing
+        family, size, _ink = markup.text_style_of(mark)
+        where, wide, width = self._text_area(index, mark, began)
+        if where is None:
+            return
+        needed = textbox.needed_height(editor.toPlainText(), family, size, wide)
+        left, bottom, right, top = began
+        tall = max(top - bottom, needed + 4.0 * width
+                   + 2.0 * float(getattr(mark, "inset", 0.0) or 0.0))
+        rect = (left, top - tall, right, top)
+        self._shaping = (mark, rect, 0.0)
+        grown, _wide, _w = self._text_area(index, mark, rect)
+        if grown is not None:
+            self._place_editor(editor, grown, size * grown.width() / wide)
+        self.viewport().update()
+
+    @staticmethod
+    def _place_editor(editor, where: QRectF, size: float) -> None:
+        """Space the editor's lines for text ``size`` pixels high and lay it
+        over ``where``, raised by however far Qt puts its first line below
+        where the painted text has it, so typing does not move the words."""
+        editor.blockSignals(True)
+        try:
+            low = textbox.apply_spacing(editor.document(), size,
+                                        editor.logicalDpiY())
+        finally:
+            editor.blockSignals(False)
+        editor.setGeometry(where.adjusted(0, -low, 0, 0).toAlignedRect())
+
+    def finish_text_box(self) -> None:
+        """End typing into a text box, keeping what was typed: a click
+        outside it or Escape. The box settles to the larger of where it
+        began and what its text needs, which is the shape typing left."""
+        if self._text_editing is None:
+            return
+        index, mark, editor, began = self._text_editing
+        self._text_editing = None
+        text = editor.toPlainText()
+        rect = (tuple(self._shaping[1])
+                if self._shaping is not None and self._shaping[0] is mark
+                else began)
+        self._shaping = None
+        editor.hide()
+        editor.deleteLater()
+        self.setFocus()
+        self.viewport().update()
+        if text != (getattr(mark, "contents", "") or "") or rect != began:
+            self.text_box_edited.emit(index, mark, text, rect)
+
     def text_box_frozen(self, mark) -> bool:
         """Whether a text box's look cannot be changed yet: one the file
-        brought with text in it, whose text this application cannot draw
-        until typing arrives -- rebuilding its drawing would wipe the words
-        off the page. It can still be moved, deleted and given a status."""
+        brought whose rich text mixes styles, which this application cannot
+        draw until the rich text stage -- rebuilding its drawing would put
+        its words back in one style. It can still be moved, deleted and
+        given a status."""
         return (not isinstance(mark, markup.Annotation)
                 and getattr(mark, "subtype", None) == markup.FREETEXT
-                and bool(getattr(mark, "contents", "")))
+                and bool(getattr(mark, "contents", ""))
+                and bool(getattr(mark, "styled", False)))
 
     #: A text box's handles, in order: the corners clockwise from the top
     #: left, then the middles of the top, right, bottom and left sides.
@@ -6008,7 +6148,8 @@ class PageCanvas(QAbstractScrollArea):
         try:
             return [m for m in self._file_marks.visible(index + 1)
                     if (m.subtype == markup.TEXT
-                        or markup.is_scalable_comment(m.subtype, m.icon))
+                        or markup.is_scalable_comment(m.subtype, m.icon)
+                        or (m.subtype == markup.FREETEXT and not m.styled))
                     and not m.is_reply()]
         except Exception:       # noqa: BLE001 - a repaint must not fail
             return []
@@ -6078,7 +6219,13 @@ class PageCanvas(QAbstractScrollArea):
         rectangle a drag in flight has given it.
         """
         rect, _angle = self._shape_of(mark)
-        where = self.quad_on_screen(index, rect, offset, scaled=True)
+        is_mine = isinstance(mark, markup.Annotation)
+        if not is_mine:
+            # A file's box: its rectangle takes in a cloud's reach.
+            inset = float(getattr(mark, "inset", 0.0) or 0.0)
+            rect = (rect[0] + inset, rect[1] + inset,
+                    rect[2] - inset, rect[3] - inset)
+        where = self.quad_on_screen(index, rect, offset, scaled=is_mine)
         if where is None or not where.intersects(QRectF(self.viewport().rect())):
             return
         left, bottom, right, top = (float(v) for v in rect)
@@ -6120,6 +6267,22 @@ class PageCanvas(QAbstractScrollArea):
                 # Qt measures a dash in pen widths, the file in points.
                 pen.setDashPattern([v / max(width, 0.01) for v in style["dash"]])
             painter.strokePath(path, pen)
+        text = getattr(mark, "contents", "") or ""
+        editing = (self._text_editing is not None
+                   and self._text_editing[1] is mark)
+        if text and not editing:
+            # The words, laid out as the file lays them out, inside the
+            # border inset by twice its width; the editor shows them while
+            # they are being typed.
+            family, size, ink = markup.text_style_of(mark)
+            inset = 2.0 * width
+            painter.save()
+            painter.translate(at(left + inset, top - inset))
+            painter.scale(sx, sy)
+            textbox.paint(painter, text, family, size, ink,
+                          max(right - left - 2 * inset, 1.0),
+                          max(top - bottom - 2 * inset, 0.0))
+            painter.restore()
         painter.setOpacity(was)
 
     def _paint_replace_caret(self, painter, index: int, mark, colour,
@@ -6432,3 +6595,18 @@ class PageCanvas(QAbstractScrollArea):
         if rect is None:
             return
         painter.fillRect(rect.translated(-offset), self.palette().text().color())
+
+
+class _TextBoxEditor(QTextEdit):
+    """The editor laid over a text box while it is typed into. Escape ends
+    the typing and keeps it, as a click outside the box does."""
+
+    finished = Signal()
+
+    def keyPressEvent(self, event):
+        if event.key() == Qt.Key_Escape:
+            self.finished.emit()
+            event.accept()
+            return
+        super().keyPressEvent(event)
+

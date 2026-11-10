@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PDF-Shuffler 0.7\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-09 23:48+0000\n"
+"POT-Creation-Date: 2026-11-10 00:34+0000\n"
 "PO-Revision-Date: 2025-05-26 10:43+0200\n"
 "Last-Translator: Heimen Stoffels <vistausss@fastmail.com>\n"
 "Language: nl\n"
@@ -2168,6 +2168,11 @@ msgstr "Markeringsgrootte wijzigen"
 #: pdfarranger_qt/mainwindow.py
 msgid "Reshape Mark"
 msgstr "Markeringsvorm wijzigen"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Edit Text"
+msgstr "Tekst bewerken"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py

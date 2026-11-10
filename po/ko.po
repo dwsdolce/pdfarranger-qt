@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pdfarranger - Korean\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-09 23:48+0000\n"
+"POT-Creation-Date: 2026-11-10 00:34+0000\n"
 "PO-Revision-Date: 2026-05-25 00:41+0900\n"
 "Last-Translator: VenusGirl <venusgirl@outlook.com>\n"
 "Language: ko\n"
@@ -2018,6 +2018,11 @@ msgstr "표시 크기 변경"
 #: pdfarranger_qt/mainwindow.py
 msgid "Reshape Mark"
 msgstr "표시 모양 변경"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Edit Text"
+msgstr "텍스트 편집"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py

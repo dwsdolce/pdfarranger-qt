@@ -35,9 +35,10 @@ in the toolbar, the floating context palette, and the properties form.
 ## The tools
 
 In the order the strip shows them. **Tool** is the entry in the strip.
-**Mark** is the name of the mark and of the tool that makes it, and it is the
-name the properties form is titled with. It is filled in when the tool is
-taken up, not guessed ahead of time.
+**Mark** is the name of what the tool makes, and the properties form is
+titled with it. It can differ from the tool's name: *Add text comment* makes
+a Text Box. It is filled in when the tool is taken up, not guessed ahead of
+time.
 
 | Family | Tool | Mark | What it is for | State |
 |---|---|---|---|---|
@@ -47,7 +48,7 @@ taken up, not guessed ahead of time.
 | | Add a scalable comment | Scalable Comment | a note icon that is part of the page: it scales, resizes and turns | complete |
 | | Replace selected text | Replace Selected Text | propose new wording for words that are struck out | complete |
 | | Insert text | Insert Text | propose words to insert at a point | complete |
-| | Add text comment | Text Box | words written straight onto the page in a box | stage 1 of 4 built |
+| | Add text comment | Text Box | words written straight onto the page in a box | stages 1 and 2 of 4 built |
 | | Attach file | | a file carried in the document at a point | not started |
 | Text markup | Highlight | Highlight | colour behind a run of words | complete |
 | | Underline | Underline | a straight or wavy line under a run of words | complete |
@@ -921,15 +922,30 @@ with the per-run styling left for stage 3:
   **Departure from Acrobat**, which grows it by the font size, 12 points,
   while setting the lines 14.4 apart, and so cuts off the bottom of the last
   line of a box of several.
+- **Where the lines go.** Qt breaks the lines and this application places
+  them where Acrobat does: the first baseline 0.83 times the size below the
+  top of the text -- 9.96 points at 12, in every box of the fixture,
+  whatever its border or cloud -- and each next one 1.2 times the size
+  below that. Measured at 12 points only. Qt's own fixed line height was
+  not used: it put the spare room above each line, so the text sat lower
+  than Acrobat's, and it scales the height by the main screen's
+  resolution, so lines came out 14.4 points apart offscreen and 19.2 on a
+  Mac. The editor still spaces its lines through Qt, converted for the
+  screen, and is raised by however far Qt puts its first line below the
+  painted one, so the words do not move when editing starts or ends.
 - **What it settles to when editing ends**: the larger of the height it had
   when the editing began and the height its text now needs. So lines added
   and then removed in the same editing give their growth back, while a box
   that was already that tall -- made so, or grown in an earlier editing --
   never shrinks below it.
-- **The text is drawn by the canvas** while the box is shown, in every box
-  -- the file's as well as this session's -- so a box from the file moves
-  with the pointer as a new one does. The file's boxes are left out of the
-  page image to make that possible, as comments and scalable comments are.
+- **The text is drawn by the canvas** while the box is shown, in this
+  session's boxes and in the file's whose text is in one style, so such a
+  box from the file moves with the pointer as a new one does. Those boxes
+  are left out of the page image to make that possible, as comments and
+  scalable comments are. **A box from the file whose text mixes styles
+  still moves late**: it keeps Acrobat's drawing as part of the page image,
+  shows in its new place only once the page is redrawn, and waits for
+  stage 3.
 - **Written as Acrobat writes it**: the text in `/Contents`, and in `/RC` as
   a single span in the box's default style, which is `/DS`; the appearance
   is the fill and border with the text drawn inside, through `QPdfWriter`
@@ -941,4 +957,8 @@ with the per-run styling left for stage 3:
   size too -- when its text is in one font, size and colour, which is all
   stage 2 can draw. One whose text mixes styles stays as stage 1 left it
   until stage 3.
+- **The text's colour is read from the rich text.** When one span holds all
+  of it, the span's colour is the text's, not the body's: Acrobat can leave
+  the body red round a span it made blue, and draws the blue. Otherwise the
+  body's, and failing that `/DS`.
 

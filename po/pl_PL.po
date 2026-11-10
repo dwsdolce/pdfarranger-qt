@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PDF-Shuffler 0.7\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-09 23:48+0000\n"
+"POT-Creation-Date: 2026-11-10 00:34+0000\n"
 "PO-Revision-Date: 2021-12-30 17:13+0100\n"
 "Last-Translator: Toratora <darex7@o2.pl>\n"
 "Language: pl_PL\n"
@@ -2196,6 +2196,11 @@ msgstr "Zmień rozmiar znacznika"
 #: pdfarranger_qt/mainwindow.py
 msgid "Reshape Mark"
 msgstr "Zmień kształt znacznika"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Edit Text"
+msgstr "Edytuj tekst"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py

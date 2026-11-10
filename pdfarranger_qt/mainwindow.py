@@ -135,6 +135,7 @@ class MainWindow(QMainWindow):
         self.reader.selection_changed.connect(self._reader_selection_changed)
         self.reader.canvas.selection_crosses_pages.connect(
             self._selection_crosses_pages)
+        self.reader.canvas.text_box_edited.connect(self.text_box_edited)
         # What the canvas asks when it needs to know which appearance to draw,
         # and what it tells us when one is clicked.
         self.reader.canvas.field_values = self._field_value
@@ -1002,9 +1003,8 @@ class MainWindow(QMainWindow):
         index = wanted[-1][0]
         made = self._marks_on_page(index)
         if subtype == markup.FREETEXT:
-            # Held, with its handles. It opens ready to type once typing
-            # exists; until then there is nothing to type into.
-            self.reader.canvas.select_mark((index, made[-1]))
+            # Straight into typing: a new box opens with its cursor in it.
+            self.reader.canvas.edit_text_box(index, made[-1])
         if tool in self.REQUIRES_TEXT:
             # **The note window, which is the one every other mark uses.**
             # Author, time, Cancel and Post -- not the bare text box on the
@@ -1341,6 +1341,28 @@ class MainWindow(QMainWindow):
                                      rect=rect, rotate=rotate)
         mark.rect = rect
         mark.rotate = rotate
+        self._after_mark_change(index, uid)
+
+    def text_box_edited(self, index: int, mark, text: str, rect) -> None:
+        """A text box's typing ended: keep its words and the size it settled
+        to, as one step to undo."""
+        if not 0 <= index < len(self.model.pages):
+            return
+        if (getattr(mark, "locked", False)
+                or self.reader.canvas.text_box_frozen(mark)):
+            return
+        rect = tuple(float(v) for v in rect)
+        self.model.undo.commit(_("Edit Text"))
+        if isinstance(mark, markup.Annotation):
+            mark.contents = text
+            mark.rect = rect
+            mark.touch()
+            self._after_mark_change(index)
+            return
+        uid = self.model.pages[index].uid
+        self.model.mark_edits.change(uid, mark.index, contents=text, rect=rect)
+        mark.contents = text
+        mark.rect = rect
         self._after_mark_change(index, uid)
 
     def mark_moved(self, index: int, mark, rect) -> None:

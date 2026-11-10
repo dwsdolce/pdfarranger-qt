@@ -16,18 +16,16 @@
 
 """Every markup tool, declared once.
 
-The strip, its flyouts, the tick on the armed tool and -- later -- the tail of
-attribute controls are all generated from this list. Nothing about a tool is
-written twice, because using Reader turns up new attributes faster than they
-can be designed and each one has to be a row here rather than a panel
-somewhere.
+The strip, its flyouts, the tick on the armed tool and the colour swatch in
+its tail are all generated from this list. Nothing about a tool is written
+twice: its label, icon, starting colour and the names of the marks it makes
+are a row here rather than a panel somewhere.
 
-**A declaration is not an implementation.** Every tool below can be armed and
-none of them does anything yet: what a tool *makes* is decided one tool at a
-time, starting at step 4.3, and a tool arrives with its gesture and its
-attributes together. So there is no attribute column here. Adding twenty
-tools' worth of attributes before building one would be deciding what nobody
-is building.
+**A declaration is not an implementation.** Every tool below can be armed,
+but what a tool *makes* is built one tool at a time, with its gesture and
+its attributes together. So there is no column of attributes here beyond
+the colour every mark has. An attribute arrives with the tool that needs
+it, in the code that draws it.
 
 Families are Reader's own grouping, which groups by **what the gesture is**
 rather than by what the mark carries. That is why `Text callout` sits with the
@@ -42,7 +40,7 @@ The same set and the same library as the other Qt application in this family,
 chosen there because Qt's own ``SP_*`` standard pixmaps render blank on macOS.
 """
 
-from typing import List, NamedTuple
+from typing import List, NamedTuple, Tuple
 
 from .i18n import N_
 
@@ -98,6 +96,10 @@ class Tool(NamedTuple):
     #: subject and no intent.
     subject: str = ""
     intent: str = ""
+    #: The names of the marks this tool makes, which is what a properties
+    #: form is titled with. **Not the tool's label**: *Add text comment* makes a Text Box.
+    #: Empty for a tool that makes no mark or is not built yet.
+    marks: Tuple[str, ...] = ()
 
 
 #: Every tool, in the order each family shows them. Reader's order, which is
@@ -115,37 +117,37 @@ TOOLS: List[Tool] = [
     # Reader. What it writes over words is `markup.COMMENT_ON_TEXT`.
     Tool("comment", COMMENT, N_("Add a comment"), "comment-plus-outline",
          "/Text with /Name, or /Highlight /IT /HighlightNote over words",
-         colour='Purple'),
+         colour='Purple', marks=("Comment", "Highlight")),
     # The comment tool's twin, and everything about them is shared but the
     # subtype: this one writes a `/Stamp`, which is ink on the page rather
     # than a marker fixed to it, so it scales, resizes and turns.
     Tool("scalable_comment", COMMENT, N_("Add a scalable comment"),
          "comment-plus", "/Stamp /Name /Comment, with the icon in /IT",
-         colour='Purple'),
+         colour='Purple', marks=("Scalable Comment",)),
     Tool("replace_text", COMMENT, N_("Replace selected text"), "find-replace",
          "/Caret /IT /Replace and /StrikeOut, joined by /IRT + /RT /Group",
-         colour='Light Red'),
+         colour='Light Red', marks=("Replace Selected Text",)),
     Tool("insert_text", COMMENT, N_("Insert text"), "cursor-text",
          "/Caret",
-         colour='Fuchsia'),
+         colour='Fuchsia', marks=("Insert Text",)),
     # The mark's colour is its border's, which Acrobat starts Light Red; the
     # White read off it earlier was the box's fill.
     Tool("text_comment", COMMENT, N_("Add text comment"), "text-box-outline",
          "/FreeText",
-         colour='Light Red'),
+         colour='Light Red', marks=("Text Box",)),
     Tool("attach_file", COMMENT, N_("Attach file"), "paperclip",
          "/FileAttachment, /Name /Paperclip, /FS /EF",
          colour='Red'),
 
     Tool("highlight", TEXT_MARKUP, N_("Highlight"), "format-color-highlight",
          "/Highlight, /QuadPoints, /CA",
-         colour='Orange'),
+         colour='Orange', marks=("Highlight",)),
     Tool("underline", TEXT_MARKUP, N_("Underline"), "format-underline",
          "/Underline, /QuadPoints",
-         colour='Blue'),
+         colour='Blue', marks=("Underline",)),
     Tool("strikethrough", TEXT_MARKUP, N_("Strikethrough"),
          "format-strikethrough", "/StrikeOut, /QuadPoints",
-         colour='Light Red'),
+         colour='Light Red', marks=("Strikethrough",)),
 
     Tool("draw", DRAWING, N_("Draw"), "draw", "/Ink, /InkList, /BS /W"),
     Tool("line", DRAWING, N_("Line"), "minus", "/Line, /L"),

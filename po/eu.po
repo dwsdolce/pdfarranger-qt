@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-09 23:48+0000\n"
+"POT-Creation-Date: 2026-11-10 00:34+0000\n"
 "PO-Revision-Date: 2023-01-19 20:27+0100\n"
 "Last-Translator: alexgabi\n"
 "Language: eu\n"
@@ -2189,6 +2189,11 @@ msgstr "Aldatu markaren tamaina"
 #: pdfarranger_qt/mainwindow.py
 msgid "Reshape Mark"
 msgstr "Birmoldatu marka"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Edit Text"
+msgstr "Editatu testua"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py

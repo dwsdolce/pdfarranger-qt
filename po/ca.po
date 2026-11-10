@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-09 23:48+0000\n"
+"POT-Creation-Date: 2026-11-10 00:34+0000\n"
 "PO-Revision-Date: 2022-10-03 23:44+0200\n"
 "Last-Translator: Ícar N. S. <icar.nin@protonmail.com>\n"
 "Language: ca\n"
@@ -2188,6 +2188,11 @@ msgstr "Redimensiona la marca"
 #: pdfarranger_qt/mainwindow.py
 msgid "Reshape Mark"
 msgstr "Remodela la marca"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Edit Text"
+msgstr "Edita el text"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
