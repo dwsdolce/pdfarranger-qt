@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  pdfarranger\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-10 00:34+0000\n"
+"POT-Creation-Date: 2026-11-10 04:42+0000\n"
 "PO-Revision-Date: 2026-01-21 05:07+0100\n"
 "Last-Translator: Ekaterine Papava <papava.e@gtu.ge>\n"
 "Language: ka\n"
@@ -158,6 +158,12 @@ msgstr "%d სტატუსი"
 msgid "Status"
 msgstr "სტატუსი"
 
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py pdfarranger_qt/properties.py
+#: pdfarranger_qt/textpalette.py pdfarranger_qt/tools.py
+msgid "Strikethrough"
+msgstr "გადახაზვა"
+
 #: pdfarranger_qt/core.py pdfarranger_qt/mainwindow.py
 msgid "Image files are only supported with img2pdf"
 msgstr "გამოსახულების ფაილები მხარდაჭერილია, მხოლოდ, img2pdf-ისთან ერთად"
@@ -297,11 +303,11 @@ msgstr "მინდვრების დამალვა"
 msgid "Crop Margins"
 msgstr "მინდვრების ამჭრა"
 
-#: pdfarranger_qt/dialogs.py
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/textpalette.py
 msgid "Left"
 msgstr "მარცხენა"
 
-#: pdfarranger_qt/dialogs.py
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/textpalette.py
 msgid "Right"
 msgstr "მარჯვენა"
 
@@ -387,21 +393,23 @@ msgstr "იერსახე"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py pdfarranger_qt/notepanel.py pdfarranger_qt/reader.py
+#: pdfarranger_qt/textpalette.py
 msgid "Bold"
 msgstr "სქელი"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py pdfarranger_qt/notepanel.py pdfarranger_qt/reader.py
+#: pdfarranger_qt/textpalette.py
 msgid "Italic"
 msgstr "დახრილი"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/dialogs.py
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/textpalette.py
 msgid "Font"
 msgstr "ფონტი"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/dialogs.py
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/textpalette.py
 msgid "Size"
 msgstr "ზომა"
 
@@ -585,7 +593,7 @@ msgid "Underlay"
 msgstr "ქვესადები"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/dialogs.py pdfarranger_qt/stamp.py
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/stamp.py pdfarranger_qt/textpalette.py
 msgid "Centre"
 msgstr "ცენტრში"
 
@@ -2945,23 +2953,23 @@ msgstr "ცვლილების დროით"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/notepanel.py pdfarranger_qt/properties.py
-#: pdfarranger_qt/tools.py
+#: pdfarranger_qt/textpalette.py pdfarranger_qt/tools.py
 msgid "Underline"
 msgstr "ხაზგასმა"
 
-#: pdfarranger_qt/notepanel.py
+#: pdfarranger_qt/notepanel.py pdfarranger_qt/textpalette.py
 msgid "Superscript"
 msgstr "ზედა ინდექსი"
 
-#: pdfarranger_qt/notepanel.py
+#: pdfarranger_qt/notepanel.py pdfarranger_qt/textpalette.py
 msgid "Subscript"
 msgstr "ქვედა ინდექსი"
 
-#: pdfarranger_qt/notepanel.py
+#: pdfarranger_qt/notepanel.py pdfarranger_qt/toolstrip.py
 msgid "Text Style"
 msgstr "ტექსტის სტილი"
 
-#: pdfarranger_qt/notepanel.py
+#: pdfarranger_qt/notepanel.py pdfarranger_qt/textpalette.py
 msgid "Text Colour"
 msgstr "ტექსტის ფერი"
 
@@ -3013,11 +3021,6 @@ msgstr "16 გვერდი თითო ფურცელზე"
 #: pdfarranger_qt/properties.py pdfarranger_qt/tools.py
 msgid "Highlight"
 msgstr "გამოკვეთა"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/properties.py pdfarranger_qt/tools.py
-msgid "Strikethrough"
-msgstr "გადახაზვა"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/properties.py
@@ -3239,6 +3242,17 @@ msgstr "ქვემოთ ცენტრში"
 #: pdfarranger_qt/stamp.py
 msgid "Bottom right"
 msgstr "ქვემოთ მარჯვნივ"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/textpalette.py
+msgid "Justify"
+msgstr "ორივე მხარეს სწორება"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/textpalette.py
+#, python-format
+msgid "%s (missing)"
+msgstr "%s (აკლია)"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/tools.py

@@ -15,7 +15,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  pdfarranger\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-10 00:34+0000\n"
+"POT-Creation-Date: 2026-11-10 04:42+0000\n"
 "PO-Revision-Date: 2025-07-09 08:35+0200\n"
 "Last-Translator: Sebastian Scherch\n"
 "Language: de\n"
@@ -166,6 +166,12 @@ msgstr "%d Status"
 msgid "Status"
 msgstr "Status"
 
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py pdfarranger_qt/properties.py
+#: pdfarranger_qt/textpalette.py pdfarranger_qt/tools.py
+msgid "Strikethrough"
+msgstr "Durchstreichen"
+
 #: pdfarranger_qt/core.py pdfarranger_qt/mainwindow.py
 msgid "Image files are only supported with img2pdf"
 msgstr "Bilddateien werden nur mit img2pdf unterstützt"
@@ -305,11 +311,11 @@ msgstr "Ränder verbergen"
 msgid "Crop Margins"
 msgstr "Seitenränder beschneiden"
 
-#: pdfarranger_qt/dialogs.py
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/textpalette.py
 msgid "Left"
 msgstr "Links"
 
-#: pdfarranger_qt/dialogs.py
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/textpalette.py
 msgid "Right"
 msgstr "Rechts"
 
@@ -393,21 +399,23 @@ msgstr "Darstellung"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py pdfarranger_qt/notepanel.py pdfarranger_qt/reader.py
+#: pdfarranger_qt/textpalette.py
 msgid "Bold"
 msgstr "Fett"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py pdfarranger_qt/notepanel.py pdfarranger_qt/reader.py
+#: pdfarranger_qt/textpalette.py
 msgid "Italic"
 msgstr "Kursiv"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/dialogs.py
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/textpalette.py
 msgid "Font"
 msgstr "Schriftart"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/dialogs.py
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/textpalette.py
 msgid "Size"
 msgstr "Größe"
 
@@ -593,7 +601,7 @@ msgid "Underlay"
 msgstr "Hintergrund"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/dialogs.py pdfarranger_qt/stamp.py
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/stamp.py pdfarranger_qt/textpalette.py
 msgid "Centre"
 msgstr "Mitte"
 
@@ -2986,23 +2994,23 @@ msgstr "Geändert"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/notepanel.py pdfarranger_qt/properties.py
-#: pdfarranger_qt/tools.py
+#: pdfarranger_qt/textpalette.py pdfarranger_qt/tools.py
 msgid "Underline"
 msgstr "Unterstreichen"
 
-#: pdfarranger_qt/notepanel.py
+#: pdfarranger_qt/notepanel.py pdfarranger_qt/textpalette.py
 msgid "Superscript"
 msgstr "Hochgestellt"
 
-#: pdfarranger_qt/notepanel.py
+#: pdfarranger_qt/notepanel.py pdfarranger_qt/textpalette.py
 msgid "Subscript"
 msgstr "Tiefgestellt"
 
-#: pdfarranger_qt/notepanel.py
+#: pdfarranger_qt/notepanel.py pdfarranger_qt/toolstrip.py
 msgid "Text Style"
 msgstr "Textstil"
 
-#: pdfarranger_qt/notepanel.py
+#: pdfarranger_qt/notepanel.py pdfarranger_qt/textpalette.py
 msgid "Text Colour"
 msgstr "Textfarbe"
 
@@ -3054,11 +3062,6 @@ msgstr "16 Seiten pro Blatt"
 #: pdfarranger_qt/properties.py pdfarranger_qt/tools.py
 msgid "Highlight"
 msgstr "Hervorheben"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/properties.py pdfarranger_qt/tools.py
-msgid "Strikethrough"
-msgstr "Durchstreichen"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/properties.py
@@ -3280,6 +3283,17 @@ msgstr "Unten mittig"
 #: pdfarranger_qt/stamp.py
 msgid "Bottom right"
 msgstr "Unten rechts"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/textpalette.py
+msgid "Justify"
+msgstr "Blocksatz"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/textpalette.py
+#, python-format
+msgid "%s (missing)"
+msgstr "%s (fehlt)"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/tools.py

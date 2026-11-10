@@ -242,6 +242,8 @@ class NoteEditor(QTextEdit):
             return fmt.fontItalic()
         if how == "underline":
             return fmt.fontUnderline()
+        if how == "strike":
+            return fmt.fontStrikeOut()
         if how == "super":
             return (fmt.verticalAlignment()
                     == QTextCharFormat.VerticalAlignment.AlignSuperScript)
@@ -265,6 +267,8 @@ class NoteEditor(QTextEdit):
             fmt.setFontItalic(on)
         elif how == "underline":
             fmt.setFontUnderline(on)
+        elif how == "strike":
+            fmt.setFontStrikeOut(on)
         elif how in ("super", "sub"):
             fmt.setVerticalAlignment(
                 (QTextCharFormat.VerticalAlignment.AlignSuperScript
@@ -350,8 +354,11 @@ def _style_of(fmt) -> dict:
         style["font-weight"] = "bold"
     if fmt.fontItalic():
         style["font-style"] = "italic"
-    if fmt.fontUnderline():
-        style["text-decoration"] = "underline"
+    decoration = " ".join(word for word, on in (
+        ("underline", fmt.fontUnderline()), ("line-through", fmt.fontStrikeOut()))
+        if on)
+    if decoration:
+        style["text-decoration"] = decoration
     where = fmt.verticalAlignment()
     if where == QTextCharFormat.VerticalAlignment.AlignSuperScript:
         style["vertical-align"] = "super"

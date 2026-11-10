@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  pdfarranger\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-10 00:34+0000\n"
+"POT-Creation-Date: 2026-11-10 04:42+0000\n"
 "PO-Revision-Date: 2023-06-06 13:27+0200\n"
 "Last-Translator: Milo Ivir <mail@milotype.de>\n"
 "Language: hr\n"
@@ -158,6 +158,12 @@ msgstr "%d stanje"
 #: pdfarranger_qt/canvas.py pdfarranger_qt/notepanel.py
 msgid "Status"
 msgstr "Stanje"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py pdfarranger_qt/properties.py
+#: pdfarranger_qt/textpalette.py pdfarranger_qt/tools.py
+msgid "Strikethrough"
+msgstr "Precrtano"
 
 #: pdfarranger_qt/core.py pdfarranger_qt/mainwindow.py
 msgid "Image files are only supported with img2pdf"
@@ -312,11 +318,11 @@ msgstr "Sakrij margine"
 msgid "Crop Margins"
 msgstr "Odreži margine"
 
-#: pdfarranger_qt/dialogs.py
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/textpalette.py
 msgid "Left"
 msgstr "Lijevo"
 
-#: pdfarranger_qt/dialogs.py
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/textpalette.py
 msgid "Right"
 msgstr "Desno"
 
@@ -400,21 +406,23 @@ msgstr "Izgled"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py pdfarranger_qt/notepanel.py pdfarranger_qt/reader.py
+#: pdfarranger_qt/textpalette.py
 msgid "Bold"
 msgstr "Podebljano"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py pdfarranger_qt/notepanel.py pdfarranger_qt/reader.py
+#: pdfarranger_qt/textpalette.py
 msgid "Italic"
 msgstr "Kurziv"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/dialogs.py
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/textpalette.py
 msgid "Font"
 msgstr "Font"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/dialogs.py
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/textpalette.py
 msgid "Size"
 msgstr "Veličina"
 
@@ -598,7 +606,7 @@ msgid "Underlay"
 msgstr "Stražnji sloj"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/dialogs.py pdfarranger_qt/stamp.py
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/stamp.py pdfarranger_qt/textpalette.py
 msgid "Centre"
 msgstr "Sredina"
 
@@ -2990,23 +2998,23 @@ msgstr "Promijenjeno"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/notepanel.py pdfarranger_qt/properties.py
-#: pdfarranger_qt/tools.py
+#: pdfarranger_qt/textpalette.py pdfarranger_qt/tools.py
 msgid "Underline"
 msgstr "Podcrtano"
 
-#: pdfarranger_qt/notepanel.py
+#: pdfarranger_qt/notepanel.py pdfarranger_qt/textpalette.py
 msgid "Superscript"
 msgstr "Eksponent"
 
-#: pdfarranger_qt/notepanel.py
+#: pdfarranger_qt/notepanel.py pdfarranger_qt/textpalette.py
 msgid "Subscript"
 msgstr "Indeks"
 
-#: pdfarranger_qt/notepanel.py
+#: pdfarranger_qt/notepanel.py pdfarranger_qt/toolstrip.py
 msgid "Text Style"
 msgstr "Stil teksta"
 
-#: pdfarranger_qt/notepanel.py
+#: pdfarranger_qt/notepanel.py pdfarranger_qt/textpalette.py
 msgid "Text Colour"
 msgstr "Boja teksta"
 
@@ -3058,11 +3066,6 @@ msgstr "16 stranica po listu"
 #: pdfarranger_qt/properties.py pdfarranger_qt/tools.py
 msgid "Highlight"
 msgstr "Istakni"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/properties.py pdfarranger_qt/tools.py
-msgid "Strikethrough"
-msgstr "Precrtano"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/properties.py
@@ -3284,6 +3287,17 @@ msgstr "Dolje po sredini"
 #: pdfarranger_qt/stamp.py
 msgid "Bottom right"
 msgstr "Dolje desno"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/textpalette.py
+msgid "Justify"
+msgstr "Obostrano poravnanje"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/textpalette.py
+#, python-format
+msgid "%s (missing)"
+msgstr "%s (nedostaje)"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/tools.py

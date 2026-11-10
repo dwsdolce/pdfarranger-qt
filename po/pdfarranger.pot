@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pdfarranger-qt VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/dwsdolce/pdfarranger-qt/issues\n"
-"POT-Creation-Date: 2026-11-10 00:34+0000\n"
+"POT-Creation-Date: 2026-11-10 04:42+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -130,6 +130,11 @@ msgstr ""
 
 #: pdfarranger_qt/canvas.py pdfarranger_qt/notepanel.py
 msgid "Status"
+msgstr ""
+
+#: pdfarranger_qt/canvas.py pdfarranger_qt/properties.py
+#: pdfarranger_qt/textpalette.py pdfarranger_qt/tools.py
+msgid "Strikethrough"
 msgstr ""
 
 #: pdfarranger_qt/core.py pdfarranger_qt/mainwindow.py
@@ -262,11 +267,11 @@ msgstr ""
 msgid "Crop Margins"
 msgstr ""
 
-#: pdfarranger_qt/dialogs.py
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/textpalette.py
 msgid "Left"
 msgstr ""
 
-#: pdfarranger_qt/dialogs.py
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/textpalette.py
 msgid "Right"
 msgstr ""
 
@@ -339,18 +344,20 @@ msgid "Appearance"
 msgstr ""
 
 #: pdfarranger_qt/dialogs.py pdfarranger_qt/notepanel.py pdfarranger_qt/reader.py
+#: pdfarranger_qt/textpalette.py
 msgid "Bold"
 msgstr ""
 
 #: pdfarranger_qt/dialogs.py pdfarranger_qt/notepanel.py pdfarranger_qt/reader.py
+#: pdfarranger_qt/textpalette.py
 msgid "Italic"
 msgstr ""
 
-#: pdfarranger_qt/dialogs.py
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/textpalette.py
 msgid "Font"
 msgstr ""
 
-#: pdfarranger_qt/dialogs.py
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/textpalette.py
 msgid "Size"
 msgstr ""
 
@@ -496,7 +503,7 @@ msgstr ""
 msgid "Underlay"
 msgstr ""
 
-#: pdfarranger_qt/dialogs.py pdfarranger_qt/stamp.py
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/stamp.py pdfarranger_qt/textpalette.py
 msgid "Centre"
 msgstr ""
 
@@ -2339,23 +2346,23 @@ msgid "Modified"
 msgstr ""
 
 #: pdfarranger_qt/notepanel.py pdfarranger_qt/properties.py
-#: pdfarranger_qt/tools.py
+#: pdfarranger_qt/textpalette.py pdfarranger_qt/tools.py
 msgid "Underline"
 msgstr ""
 
-#: pdfarranger_qt/notepanel.py
+#: pdfarranger_qt/notepanel.py pdfarranger_qt/textpalette.py
 msgid "Superscript"
 msgstr ""
 
-#: pdfarranger_qt/notepanel.py
+#: pdfarranger_qt/notepanel.py pdfarranger_qt/textpalette.py
 msgid "Subscript"
 msgstr ""
 
-#: pdfarranger_qt/notepanel.py
+#: pdfarranger_qt/notepanel.py pdfarranger_qt/toolstrip.py
 msgid "Text Style"
 msgstr ""
 
-#: pdfarranger_qt/notepanel.py
+#: pdfarranger_qt/notepanel.py pdfarranger_qt/textpalette.py
 msgid "Text Colour"
 msgstr ""
 
@@ -2397,10 +2404,6 @@ msgstr ""
 
 #: pdfarranger_qt/properties.py pdfarranger_qt/tools.py
 msgid "Highlight"
-msgstr ""
-
-#: pdfarranger_qt/properties.py pdfarranger_qt/tools.py
-msgid "Strikethrough"
 msgstr ""
 
 #: pdfarranger_qt/properties.py
@@ -2583,6 +2586,15 @@ msgstr ""
 
 #: pdfarranger_qt/stamp.py
 msgid "Bottom right"
+msgstr ""
+
+#: pdfarranger_qt/textpalette.py
+msgid "Justify"
+msgstr ""
+
+#: pdfarranger_qt/textpalette.py
+#, python-format
+msgid "%s (missing)"
 msgstr ""
 
 #: pdfarranger_qt/tools.py

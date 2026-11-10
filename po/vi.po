@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-10 00:34+0000\n"
+"POT-Creation-Date: 2026-11-10 04:42+0000\n"
 "PO-Revision-Date: 2025-12-15 00:59+0700\n"
 "Last-Translator: Loc Huynh <https://github.com/hthienloc>\n"
 "Language: vi\n"
@@ -157,6 +157,12 @@ msgstr "%d trạng thái"
 msgid "Status"
 msgstr "Trạng thái"
 
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py pdfarranger_qt/properties.py
+#: pdfarranger_qt/textpalette.py pdfarranger_qt/tools.py
+msgid "Strikethrough"
+msgstr "Gạch ngang"
+
 #: pdfarranger_qt/core.py pdfarranger_qt/mainwindow.py
 msgid "Image files are only supported with img2pdf"
 msgstr "Tệp hình ảnh chỉ được hỗ trợ với img2pdf"
@@ -296,11 +302,11 @@ msgstr "Ẩn lề"
 msgid "Crop Margins"
 msgstr "Cắt lề"
 
-#: pdfarranger_qt/dialogs.py
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/textpalette.py
 msgid "Left"
 msgstr "Bên trái"
 
-#: pdfarranger_qt/dialogs.py
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/textpalette.py
 msgid "Right"
 msgstr "Phải"
 
@@ -384,21 +390,23 @@ msgstr "Diện mạo"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py pdfarranger_qt/notepanel.py pdfarranger_qt/reader.py
+#: pdfarranger_qt/textpalette.py
 msgid "Bold"
 msgstr "Đậm"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py pdfarranger_qt/notepanel.py pdfarranger_qt/reader.py
+#: pdfarranger_qt/textpalette.py
 msgid "Italic"
 msgstr "Nghiêng"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/dialogs.py
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/textpalette.py
 msgid "Font"
 msgstr "Phông chữ"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/dialogs.py
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/textpalette.py
 msgid "Size"
 msgstr "Cỡ"
 
@@ -584,7 +592,7 @@ msgid "Underlay"
 msgstr "Lớp lót"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/dialogs.py pdfarranger_qt/stamp.py
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/stamp.py pdfarranger_qt/textpalette.py
 msgid "Centre"
 msgstr "Giữa"
 
@@ -2937,23 +2945,23 @@ msgstr "Đã sửa đổi"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/notepanel.py pdfarranger_qt/properties.py
-#: pdfarranger_qt/tools.py
+#: pdfarranger_qt/textpalette.py pdfarranger_qt/tools.py
 msgid "Underline"
 msgstr "Gạch chân"
 
-#: pdfarranger_qt/notepanel.py
+#: pdfarranger_qt/notepanel.py pdfarranger_qt/textpalette.py
 msgid "Superscript"
 msgstr "Chỉ số trên"
 
-#: pdfarranger_qt/notepanel.py
+#: pdfarranger_qt/notepanel.py pdfarranger_qt/textpalette.py
 msgid "Subscript"
 msgstr "Chỉ số dưới"
 
-#: pdfarranger_qt/notepanel.py
+#: pdfarranger_qt/notepanel.py pdfarranger_qt/toolstrip.py
 msgid "Text Style"
 msgstr "Kiểu chữ"
 
-#: pdfarranger_qt/notepanel.py
+#: pdfarranger_qt/notepanel.py pdfarranger_qt/textpalette.py
 msgid "Text Colour"
 msgstr "Màu chữ"
 
@@ -3005,11 +3013,6 @@ msgstr "16 trang mỗi tờ"
 #: pdfarranger_qt/properties.py pdfarranger_qt/tools.py
 msgid "Highlight"
 msgstr "Tô sáng"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/properties.py pdfarranger_qt/tools.py
-msgid "Strikethrough"
-msgstr "Gạch ngang"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/properties.py
@@ -3231,6 +3234,17 @@ msgstr "Dưới giữa"
 #: pdfarranger_qt/stamp.py
 msgid "Bottom right"
 msgstr "Dưới phải"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/textpalette.py
+msgid "Justify"
+msgstr "Căn đều hai bên"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/textpalette.py
+#, python-format
+msgid "%s (missing)"
+msgstr "%s (thiếu)"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/tools.py

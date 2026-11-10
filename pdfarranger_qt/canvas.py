@@ -71,7 +71,11 @@ from PySide6.QtGui import (
     QPainterPath,
     QPalette,
     QPen,
+    QTextBlockFormat,
+    QTextCharFormat,
+    QTextCursor,
     QTextDocument,
+    QTextFormat,
     QTextOption,
 )
 from PySide6.QtPdf import (
@@ -86,13 +90,14 @@ from PySide6.QtWidgets import (
     QLineEdit,
     QMenu,
     QStyle,
-    QTextEdit,
 )
 
 from . import forms as forms_module
 from . import markup, noteicons, textbox
 from .fieldlayer import AppearanceRenderer
+from .i18n import N_
 from .i18n import gettext_ as _
+from .notepanel import NoteEditor
 from .render import ANNOTATIONS, DEFAULT_CACHE_PIXELS, BytesDocument, Renderer
 from .textlayer import TextLayer
 
@@ -1463,6 +1468,7 @@ class PageCanvas(QAbstractScrollArea):
         # bar beside it is neither: it is interface, drawn at one size over
         # whatever the page has become.
         self._place_mark_buttons()
+        self._follow_editor()
 
     def zoom_to_width(self):
         """Fit the width, and keep fitting it as the window changes.
@@ -1777,6 +1783,7 @@ class PageCanvas(QAbstractScrollArea):
         # keep the old scale, which is why the mode is remembered.
         self._reapply_fit()
         self._place_mark_buttons()
+        self._follow_editor()
 
     def _page_arrived(self, index: int):
         """A render finished. Repaint only if it is on screen."""
@@ -4069,10 +4076,8 @@ class PageCanvas(QAbstractScrollArea):
                     note[2].kind if isinstance(note[2], markup.Annotation)
                     else note[2].subtype) == markup.FREETEXT:
                 # Into the text, with the cursor where the double-click
-                # landed -- unless the box is locked, or mixes styles this
-                # stage cannot draw.
-                if (not getattr(note[2], "locked", False)
-                        and not self.text_box_frozen(note[2])):
+                # landed -- unless the box is locked.
+                if not getattr(note[2], "locked", False):
                     self.edit_text_box(note[0], note[2], here)
                 self._press = None
                 event.accept()
@@ -4787,9 +4792,11 @@ class PageCanvas(QAbstractScrollArea):
         bar.setValue(bar.value() + delta * self.viewport().height())
 
     def scrollContentsBy(self, dx: int, dy: int):
-        """The page moved under the bar, so the bar moves with it."""
+        """The page moved under the bar, so the bar moves with it -- and the
+        editor of a box being typed in."""
         super().scrollContentsBy(dx, dy)
         self._place_mark_buttons()
+        self._follow_editor()
 
     def wheelEvent(self, event):
         """Ctrl+wheel zooms about the cursor, as the grid does.
@@ -5361,7 +5368,7 @@ class PageCanvas(QAbstractScrollArea):
                 return []
             return self._stamp_grips(index, mark, offset)
         if kind == markup.FREETEXT:
-            if getattr(mark, "locked", False) or self.text_box_frozen(mark):
+            if getattr(mark, "locked", False):
                 return []
             return self._text_box_grips(index, mark, offset)
         if kind not in self.QUADDED_SELECTABLE:
@@ -5407,9 +5414,14 @@ class PageCanvas(QAbstractScrollArea):
     #: own space. The canvas reports the new run and keeps none of it, the
     #: same way `mark_drawn` reports a new one.
     mark_moved = Signal(int, object, object)
-    #: A text box's editing ended: ``(page, mark, text, rect)``, the rect
-    #: the box has settled to. Sent only when something changed.
-    text_box_edited = Signal(int, object, str, object)
+    #: A text box's editing ended: ``(page, mark, text, rich, rect)`` -- the
+    #: plain text, the rich text as `/RC` (None for an empty box) and the
+    #: rect the box has settled to. Sent only when something changed.
+    text_box_edited = Signal(int, object, str, object, object)
+    #: A text box can be typed in: the editor, for the text palette to
+    #: work on. And the editing has ended.
+    text_editing_started = Signal(object)
+    text_editing_ended = Signal()
 
     #: A stamp's handle was let go: ``(page, mark, rect, rotate)`` in the
     #: page's own space and degrees. One signal for both handles, because
@@ -5617,26 +5629,24 @@ class PageCanvas(QAbstractScrollArea):
         where, wide, _width = self._text_area(index, mark, rect)
         if where is None:
             return
-        family, size, ink = markup.text_style_of(mark)
+        content = textbox.content_of(mark)
         scale = where.width() / wide if wide else 1.0
         editor = _TextBoxEditor(self.viewport())
+        # Points to the editor's own: the size times the zoom, by way of the
+        # screen's dots an inch, which is what a font's point size means.
+        editor.factor = scale * 72.0 / max(editor.logicalDpiY(), 1)
+        editor.content = content
         editor.setFrameStyle(QFrame.NoFrame)
         editor.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         editor.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         editor.setStyleSheet("QTextEdit { background: transparent; }")
         editor.setWordWrapMode(QTextOption.WrapAtWordBoundaryOrAnywhere)
         editor.document().setDocumentMargin(0)
-        # Points to screen pixels: the size times the zoom, by way of the
-        # screen's dots an inch, which is what a font's point size means.
-        editor.document().setDefaultFont(textbox.font_for(
-            family, size * scale * 72.0 / max(editor.logicalDpiY(), 1)))
-        palette = editor.palette()
-        palette.setColor(QPalette.Text, QColor.fromRgbF(*ink[:3]))
-        editor.setPalette(palette)
-        editor.setPlainText(getattr(mark, "contents", "") or "")
+        textbox.fill(editor.document(), content, editor.factor)
+        editor.document().clearUndoRedoStacks()
         self.select_mark(None)
         self._text_editing = (index, mark, editor, rect)
-        self._place_editor(editor, where, size * scale)
+        self._place_editor(editor, where)
         editor.textChanged.connect(self._text_box_changed)
         editor.finished.connect(self.finish_text_box)
         editor.show()
@@ -5649,17 +5659,17 @@ class PageCanvas(QAbstractScrollArea):
             cursor.movePosition(cursor.MoveOperation.End)
             editor.setTextCursor(cursor)
         self.viewport().update()
+        self.text_editing_started.emit(editor)
 
     def _text_box_changed(self) -> None:
         """Grow the box as the text needs, never below where it began."""
         if self._text_editing is None:
             return
         index, mark, editor, began = self._text_editing
-        family, size, _ink = markup.text_style_of(mark)
         where, wide, width = self._text_area(index, mark, began)
         if where is None:
             return
-        needed = textbox.needed_height(editor.toPlainText(), family, size, wide)
+        needed = textbox.needed_height(editor.typed(), wide)
         left, bottom, right, top = began
         tall = max(top - bottom, needed + 4.0 * width
                    + 2.0 * float(getattr(mark, "inset", 0.0) or 0.0))
@@ -5667,21 +5677,59 @@ class PageCanvas(QAbstractScrollArea):
         self._shaping = (mark, rect, 0.0)
         grown, _wide, _w = self._text_area(index, mark, rect)
         if grown is not None:
-            self._place_editor(editor, grown, size * grown.width() / wide)
+            self._place_editor(editor, grown)
         self.viewport().update()
 
+    def _follow_editor(self) -> None:
+        """Keep the editor over its box when the page moves under it.
+
+        **Laid over the page, not part of it**, so a scroll, a zoom or a
+        window resized moves the box and leaves the editor where it was --
+        the words stayed put while their box scrolled away. Placed again
+        from where the box is now; and after a zoom its words are put back
+        at the new scale, from the box's words as they stand, the cursor
+        and selection kept. The editor's own undo starts again at that
+        point; the whole edit is still one step in the window's undo.
+        """
+        if self._text_editing is None:
+            return
+        index, mark, editor, began = self._text_editing
+        rect = (tuple(self._shaping[1])
+                if self._shaping is not None and self._shaping[0] is mark
+                else began)
+        where, wide, _width = self._text_area(index, mark, rect)
+        if where is None:
+            return
+        factor = ((where.width() / wide if wide else 1.0)
+                  * 72.0 / max(editor.logicalDpiY(), 1))
+        if abs(factor - editor.factor) > 1e-6:
+            typed = editor.typed()
+            cursor = editor.textCursor()
+            anchor, position = cursor.anchor(), cursor.position()
+            editor.blockSignals(True)
+            try:
+                editor.factor = factor
+                textbox.fill(editor.document(), typed, factor)
+                editor.document().clearUndoRedoStacks()
+                cursor = editor.textCursor()
+                end = max(0, editor.document().characterCount() - 1)
+                cursor.setPosition(min(anchor, end))
+                cursor.setPosition(min(position, end), QTextCursor.KeepAnchor)
+                editor.setTextCursor(cursor)
+            finally:
+                editor.blockSignals(False)
+        self._place_editor(editor, where)
+
     @staticmethod
-    def _place_editor(editor, where: QRectF, size: float) -> None:
-        """Space the editor's lines for text ``size`` pixels high and lay it
-        over ``where``, raised by however far Qt puts its first line below
-        where the painted text has it, so typing does not move the words."""
+    def _place_editor(editor, where: QRectF) -> None:
+        """Space the editor's lines as the drawn text's are and lay it over
+        ``where``."""
         editor.blockSignals(True)
         try:
-            low = textbox.apply_spacing(editor.document(), size,
-                                        editor.logicalDpiY())
+            textbox.apply_spacing(editor.document())
         finally:
             editor.blockSignals(False)
-        editor.setGeometry(where.adjusted(0, -low, 0, 0).toAlignedRect())
+        editor.setGeometry(where.toAlignedRect())
 
     def finish_text_box(self) -> None:
         """End typing into a text box, keeping what was typed: a click
@@ -5691,7 +5739,7 @@ class PageCanvas(QAbstractScrollArea):
             return
         index, mark, editor, began = self._text_editing
         self._text_editing = None
-        text = editor.toPlainText()
+        typed = editor.typed()
         rect = (tuple(self._shaping[1])
                 if self._shaping is not None and self._shaping[0] is mark
                 else began)
@@ -5700,19 +5748,9 @@ class PageCanvas(QAbstractScrollArea):
         editor.deleteLater()
         self.setFocus()
         self.viewport().update()
-        if text != (getattr(mark, "contents", "") or "") or rect != began:
-            self.text_box_edited.emit(index, mark, text, rect)
-
-    def text_box_frozen(self, mark) -> bool:
-        """Whether a text box's look cannot be changed yet: one the file
-        brought whose rich text mixes styles, which this application cannot
-        draw until the rich text stage -- rebuilding its drawing would put
-        its words back in one style. It can still be moved, deleted and
-        given a status."""
-        return (not isinstance(mark, markup.Annotation)
-                and getattr(mark, "subtype", None) == markup.FREETEXT
-                and bool(getattr(mark, "contents", ""))
-                and bool(getattr(mark, "styled", False)))
+        self.text_editing_ended.emit()
+        if typed[:2] != editor.content[:2] or rect != began:
+            self.text_box_edited.emit(index, mark, typed.text, typed.rich, rect)
 
     #: A text box's handles, in order: the corners clockwise from the top
     #: left, then the middles of the top, right, bottom and left sides.
@@ -6149,7 +6187,7 @@ class PageCanvas(QAbstractScrollArea):
             return [m for m in self._file_marks.visible(index + 1)
                     if (m.subtype == markup.TEXT
                         or markup.is_scalable_comment(m.subtype, m.icon)
-                        or (m.subtype == markup.FREETEXT and not m.styled))
+                        or m.subtype == markup.FREETEXT)
                     and not m.is_reply()]
         except Exception:       # noqa: BLE001 - a repaint must not fail
             return []
@@ -6267,19 +6305,18 @@ class PageCanvas(QAbstractScrollArea):
                 # Qt measures a dash in pen widths, the file in points.
                 pen.setDashPattern([v / max(width, 0.01) for v in style["dash"]])
             painter.strokePath(path, pen)
-        text = getattr(mark, "contents", "") or ""
+        content = textbox.content_of(mark)
         editing = (self._text_editing is not None
                    and self._text_editing[1] is mark)
-        if text and not editing:
+        if not content.empty and not editing:
             # The words, laid out as the file lays them out, inside the
             # border inset by twice its width; the editor shows them while
             # they are being typed.
-            family, size, ink = markup.text_style_of(mark)
             inset = 2.0 * width
             painter.save()
             painter.translate(at(left + inset, top - inset))
             painter.scale(sx, sy)
-            textbox.paint(painter, text, family, size, ink,
+            textbox.paint(painter, content,
                           max(right - left - 2 * inset, 1.0),
                           max(top - bottom - 2 * inset, 0.0))
             painter.restore()
@@ -6597,11 +6634,25 @@ class PageCanvas(QAbstractScrollArea):
         painter.fillRect(rect.translated(-offset), self.palette().text().color())
 
 
-class _TextBoxEditor(QTextEdit):
-    """The editor laid over a text box while it is typed into. Escape ends
-    the typing and keeps it, as a click outside the box does."""
+class _TextBoxEditor(NoteEditor):
+    """The editor laid over a text box while it is typed into.
+
+    The note window's, which already styles runs and has the *Text Style*
+    menu, with what a text box adds: strikethrough, the font, the size and
+    alignment, which the text palette sets. It holds the box's words at the
+    zoom -- every size times `factor` -- and hands them back in points.
+    Escape ends the typing and keeps it, as a click outside the box does.
+    """
 
     finished = Signal()
+
+    STYLES = NoteEditor.STYLES[:3] + (
+        (N_("Strikethrough"), "", "strike"),) + NoteEditor.STYLES[3:]
+
+    #: Points to the editor's own sizes, and the box's words as they were
+    #: when editing began; set by the canvas.
+    factor = 1.0
+    content = None
 
     def keyPressEvent(self, event):
         if event.key() == Qt.Key_Escape:
@@ -6609,4 +6660,188 @@ class _TextBoxEditor(QTextEdit):
             event.accept()
             return
         super().keyPressEvent(event)
+
+    def typed(self) -> "textbox.Content":
+        """What is in the box now, as a box's words."""
+        rich, text = textbox.rich_of(self.document(), self.content, self.factor)
+        return self.content._replace(rich=rich, text=text)
+
+    def _default(self) -> "textbox.Style":
+        c = self.content
+        return textbox.Style(c.family, float(c.size), tuple(c.colour))
+
+    def _formats(self):
+        """The character formats of the selection, or the one at the cursor
+        when nothing is selected."""
+        cursor = self.textCursor()
+        if not cursor.hasSelection():
+            return [self.currentCharFormat()]
+        start, end = cursor.selectionStart(), cursor.selectionEnd()
+        found = []
+        block = self.document().findBlock(start)
+        while block.isValid() and block.position() <= end:
+            piece = block.begin()
+            while not piece.atEnd():
+                fragment = piece.fragment()
+                if (fragment.isValid() and fragment.length()
+                        and fragment.position() < end
+                        and fragment.position() + fragment.length() > start):
+                    found.append(fragment.charFormat())
+                piece += 1
+            block = block.next()
+        return found or [self.currentCharFormat()]
+
+    def selection_state(self) -> dict:
+        """What the selection has, for the palette: each value, or None
+        where the selection mixes them; each style True only when all of
+        it has that style; the alignment None when its paragraphs differ."""
+        styles = [textbox.style_of(f, self._default(), self.factor)
+                  for f in self._formats()]
+
+        def one(values):
+            values = set(values)
+            return values.pop() if len(values) == 1 else None
+
+        cursor = self.textCursor()
+        aligns = set()
+        block = self.document().findBlock(cursor.selectionStart())
+        last = self.document().findBlock(cursor.selectionEnd())
+        while block.isValid():
+            aligns.add(textbox.alignment_of(block.blockFormat()))
+            if block == last:
+                break
+            block = block.next()
+        return {
+            "family": one(s.family for s in styles),
+            "size": one(round(s.size, 1) for s in styles),
+            "colour": one(tuple(round(v, 3) for v in s.colour) for s in styles),
+            "bold": all(s.bold for s in styles),
+            "italic": all(s.italic for s in styles),
+            "underline": all(s.underline for s in styles),
+            "strike": all(s.strike for s in styles),
+            "super": all(s.shift == "super" for s in styles),
+            "sub": all(s.shift == "sub" for s in styles),
+            "align": aligns.pop() if len(aligns) == 1 else None,
+        }
+
+    def _is(self, how: str) -> bool:
+        """Whether all of what is selected already carries this, so that
+        a style is taken off only when every part of it had it."""
+        state = self.selection_state()
+        return bool(state.get(how, False))
+
+    def _merge(self, fmt: QTextCharFormat) -> None:
+        cursor = self.textCursor()
+        if cursor.hasSelection():
+            cursor.mergeCharFormat(fmt)
+        self.mergeCurrentCharFormat(fmt)
+
+    def set_family(self, family: str) -> None:
+        fmt = QTextCharFormat()
+        fmt.setFontFamilies([family])
+        self._merge(fmt)
+
+    def set_size(self, points: float) -> None:
+        fmt = QTextCharFormat()
+        fmt.setFontPointSize(float(points) * self.factor)
+        self._merge(fmt)
+
+    def align(self, how: str) -> None:
+        """Align the paragraphs the selection touches."""
+        fmt = QTextBlockFormat()
+        fmt.setAlignment(textbox.block_format(how).alignment())
+        self.textCursor().mergeBlockFormat(fmt)
+
+    def createMimeDataFromSelection(self):
+        """What is copied, with its sizes in points rather than at this
+        zoom, so it pastes the same size into a box at any zoom."""
+        mime = super().createMimeDataFromSelection()
+        copy = QTextDocument()
+        QTextCursor(copy).insertFragment(self.textCursor().selection())
+        cursor = QTextCursor(copy)
+        block = copy.begin()
+        while block.isValid():
+            piece = block.begin()
+            while not piece.atEnd():
+                fragment = piece.fragment()
+                if fragment.isValid() and fragment.charFormat().fontPointSize() > 0:
+                    cursor.setPosition(fragment.position())
+                    cursor.setPosition(fragment.position() + fragment.length(),
+                                       QTextCursor.KeepAnchor)
+                    fmt = QTextCharFormat()
+                    fmt.setFontPointSize(fragment.charFormat().fontPointSize()
+                                         / self.factor)
+                    cursor.mergeCharFormat(fmt)
+                piece += 1
+            block = block.next()
+        mime.setHtml(copy.toHtml())
+        return mime
+
+    def insertFromMimeData(self, source):
+        """Paste what a text box can hold.
+
+        Every style a run can carry comes with it -- colour, size, bold,
+        italic, underline, strikethrough, superscript and subscript -- and
+        the font, when it is installed and may be embedded; otherwise the
+        font at the cursor. Anything else -- capitals, shading, links,
+        images, tables -- is left behind, and the words arrive as their
+        text.
+        """
+        if not source.hasHtml():
+            super().insertFromMimeData(source)
+            return
+        from . import fonts
+
+        pasted = QTextDocument()
+        pasted.setHtml(source.html())
+        here = self.currentCharFormat()
+        allowed = fonts.embeddable_families()
+        cursor = self.textCursor()
+        cursor.beginEditBlock()
+        block, first = pasted.begin(), True
+        while block.isValid():
+            if not block.next().isValid() and not block.text() and not first:
+                break       # the empty paragraph a table leaves at the end
+            if not first:
+                cursor.insertBlock()
+            first = False
+            piece = block.begin()
+            while not piece.atEnd():
+                fragment = piece.fragment()
+                if fragment.isValid():
+                    words = fragment.text().replace("￼", "")
+                    if words:
+                        cursor.insertText(words, self._kept(
+                            fragment.charFormat(), here, allowed))
+                piece += 1
+            block = block.next()
+        cursor.endEditBlock()
+        self.setTextCursor(cursor)
+
+    def _kept(self, given: QTextCharFormat, here: QTextCharFormat,
+              allowed) -> QTextCharFormat:
+        """A pasted run's format reduced to what a text box can hold, over
+        the format at the cursor."""
+        fmt = QTextCharFormat(here)
+        families = (given.fontFamilies()
+                    if given.hasProperty(QTextFormat.Property.FontFamilies) else None)
+        if families and families[0] in allowed:
+            fmt.setFontFamilies([families[0]])
+        points = given.fontPointSize()
+        if points <= 0 and given.hasProperty(QTextFormat.Property.FontPixelSize):
+            points = given.intProperty(QTextFormat.Property.FontPixelSize) * 0.75
+        if points > 0:
+            fmt.setFontPointSize(points * self.factor)
+        # A link arrives as its words: the blue and the underline are the
+        # link's, not the text's.
+        link = given.isAnchor()
+        if given.hasProperty(QTextFormat.Property.ForegroundBrush) and not link:
+            fmt.setForeground(given.foreground())
+        fmt.setFontWeight(QFont.Weight.Bold if given.fontWeight() >= QFont.Weight.DemiBold
+                          else QFont.Weight.Normal)
+        fmt.setFontItalic(given.fontItalic())
+        fmt.setFontUnderline(given.fontUnderline() and not link)
+        fmt.setFontStrikeOut(given.fontStrikeOut())
+        fmt.setVerticalAlignment(given.verticalAlignment())
+        return fmt
 

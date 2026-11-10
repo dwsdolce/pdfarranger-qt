@@ -730,7 +730,7 @@ Acrobat exactly.
 
 ## Text Box
 
-Made by the Add Text Comment tool. Stage 1 built; being verified.
+Made by the Add Text Comment tool. Stages 1 and 2 built; stage 3 next.
 
 ### Requirements
 
@@ -750,11 +750,38 @@ Made by the Add Text Comment tool. Stage 1 built; being verified.
   with no handles and a text cursor in the box, ready to type. A click on a
   box selects it; a double-click goes into the text with the cursor where
   the double-click landed. **A box just made opens in editing**, cursor in
-  it, so a click with the tool is followed straight away by typing. While
-  editing, the strip's colour
-  swatch is replaced by the text's: a palette with the font, size, colour,
-  alignment, bold, italic, underline, strikethrough, superscript and
-  subscript, each a property of the run it is applied to.
+  it, so a click with the tool is followed straight away by typing.
+- **The text palette.** While editing, the strip's colour swatch is
+  replaced by an **Aa** button, and the palette opens beside it by itself
+  as soon as the box can be typed in. It stays open, and every control in
+  it can be used again and again, for as long as the box is being edited;
+  it closes when editing ends, or when Aa is clicked. It holds the font,
+  the size and a colour; left, centre, right and justify; bold, italic,
+  underline and strikethrough; superscript and subscript. Each applies to
+  the selected words, or to what is typed next when nothing is selected,
+  and alignment to whole paragraphs. Typing goes on in the box while it is
+  open: the palette never takes the keyboard away from the text.
+- **The palette tells the truth about the selection.** Each control shows
+  what the selected text has: a style button is blue when all of it has
+  that style, and the font, size and colour show their real value, even a
+  size off the list or a font this computer does not have. A selection
+  that mixes them shows the box empty. Choosing applies to all of it, and
+  a style button removes the style when all of it already had it.
+  Superscript and subscript exclude each other.
+- **Sizes**: 6, 8, 9, 10, 12, 14, 18, 20, 22, 24, 26, 28, 36, 48 and 72,
+  chosen from the list or typed; a typed size not on the list is not
+  accepted.
+- **A font the computer does not have** is drawn in a substitute, and the
+  font box names it with "(missing)". The substitute is what is embedded
+  if the box is changed.
+- **Pasting** keeps every style a text box can hold -- colour, size, bold,
+  italic, underline, strikethrough, superscript and subscript -- and the
+  font, if it is installed and may be embedded; otherwise the font of the
+  box at the cursor. Styles a text box cannot hold, such as all capitals,
+  are dropped, and links, images and tables arrive as their text.
+- Cmd+B, Cmd+I and Cmd+U work while editing. Undo while editing steps
+  back through the changes in the box; once editing ends, the whole edit
+  is one step in the window's undo.
 - **Every font on the system that may be embedded** is offered -- the rule
   for every font picker, in [DESIGN.md](DESIGN.md). Acrobat's list leaves out
   the same fonts. Helvetica 12 point to start.
@@ -831,9 +858,9 @@ font used and takes any language, and lifted into the appearance as the page
 numbers and watermarks are. `/RC` records each run's font family and size
 beside the styles notes already keep, so Acrobat reads back what was chosen.
 
-The Add Text Comment tool's starting colour in `tools.py` is White, which was
-read off Acrobat's fill; the mark's colour is the border's, which starts
-Light Red, and the tool's colour changes to match.
+The Add Text Comment tool's starting colour in `tools.py` is Light Red, the
+border's: the mark's colour is the border's. The White read off Acrobat
+earlier was the fill.
 
 ### Building it
 
@@ -922,17 +949,23 @@ with the per-run styling left for stage 3:
   **Departure from Acrobat**, which grows it by the font size, 12 points,
   while setting the lines 14.4 apart, and so cuts off the bottom of the last
   line of a box of several.
-- **Where the lines go.** Qt breaks the lines and this application places
-  them where Acrobat does: the first baseline 0.83 times the size below the
-  top of the text -- 9.96 points at 12, in every box of the fixture,
-  whatever its border or cloud -- and each next one 1.2 times the size
-  below that. Measured at 12 points only. Qt's own fixed line height was
-  not used: it put the spare room above each line, so the text sat lower
-  than Acrobat's, and it scales the height by the main screen's
-  resolution, so lines came out 14.4 points apart offscreen and 19.2 on a
-  Mac. The editor still spaces its lines through Qt, converted for the
-  screen, and is raised by however far Qt puts its first line below the
-  painted one, so the words do not move when editing starts or ends.
+- **Where the lines go: Qt lays them out, the same way everywhere.** The
+  editor, the canvas and the file's drawing all use one rich text layout,
+  each line 1.2 times its natural height -- 14.4 points for 12 point
+  Helvetica -- so what is typed is exactly what is shown and written, in
+  any font, at any size, and aligned however it is set. The box grows to
+  that layout's height.
+  **Departure from Acrobat**, decided 2026-11-09: do what is right rather
+  than copy it. Acrobat's spacing is per font and cannot be derived from
+  the fonts -- the gap into a line is the deepest reach below the line
+  above plus the tallest reach above it, 0.83 and 0.37 times the size for
+  Helvetica but 0.63 and 0.57 for Courier Std and about 0.86 and 0.46 for
+  Songti SC, read off `corpus/Markup Text Comment Font Test.pdf` -- and its
+  drawing ignores justify: the text is justified while it is typed and
+  falls back to the left when editing ends, though `/RC` keeps
+  `text-align:justify`. Ours sits about 0.7 point higher than Acrobat's in
+  plain 12 point Helvetica, spaces mixed lines by each font's own measure,
+  and justifies.
 - **What it settles to when editing ends**: the larger of the height it had
   when the editing began and the height its text now needs. So lines added
   and then removed in the same editing give their growth back, while a box
@@ -961,4 +994,34 @@ with the per-run styling left for stage 3:
   of it, the span's colour is the text's, not the body's: Acrobat can leave
   the body red round a span it made blue, and draws the blue. Otherwise the
   body's, and failing that `/DS`.
+
+**Stage 3.** The rich text and the text palette:
+
+- **The rich text is the box's text.** `/RC` is read into a Qt text
+  document run by run -- font, size, colour, weight, style, underline,
+  strikethrough, superscript, subscript, and each paragraph's alignment --
+  and that one document is what the editor edits, the canvas paints and
+  `QPdfWriter` draws into the file, every font used embedded. A run takes
+  what it does not say from the body's style, and the body from `/DS`.
+- **Written as Acrobat writes it**: the box's default style on the body
+  and in `/DS`; a `<p>` a paragraph; a span a run, carrying its font, size
+  and colour and whichever styles it has. Underline is `text-decoration:
+  word`, strikethrough `line-through`, both `word line-through`;
+  superscript and subscript `vertical-align:+0.0pt` and `-0.0pt`, Acrobat
+  recording only the sign; alignment `text-align` on the run, where
+  Acrobat puts it. Read back from either the run or the paragraph.
+  `/Contents` is the plain text.
+- **No box is frozen any more.** Every box from the file is drawn by the
+  canvas, so every one follows a drag, and every one can be edited,
+  recoloured and resized.
+- **The editor** is the note window's, which already styles runs, with
+  strikethrough, size, font and alignment added; its right-click menu is
+  that window's too -- Paste, Select All and *Text Style*. It holds the
+  document at the zoom, every size scaled, and hands it back in points.
+- **The palette** is a panel beside the strip, built from the strip's own
+  parts: the font picker every font choice uses, a size box over the list
+  above, the twenty-one swatches without the opacity slider, and buttons
+  for the rest. It reads the editor's selection whenever it changes.
+- **Pasting** reads what was pasted as rich text and keeps only what a run
+  can hold, one run at a time, as the requirements say.
 

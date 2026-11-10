@@ -222,6 +222,12 @@ class MainWindow(QMainWindow):
         self._load_tool_defaults()
         self.armed_opacity = None
         self.tool_strip.colour_armed.connect(self._colour_armed)
+        # The text palette works on whichever box is being typed in.
+        self.reader.canvas.text_editing_started.connect(self._text_editing_started)
+        self.reader.canvas.text_editing_ended.connect(self._text_editing_ended)
+        #: Whether the strip was opened only for the box being typed in, and
+        #: so closes again when the typing ends.
+        self._strip_for_text = False
         self.tool_strip.opacity_armed.connect(self._opacity_armed)
         self.reader.canvas.mark_selected.connect(self._selected_mark_changed)
         self.reader.canvas.marks = self._marks_on_page
@@ -1323,8 +1329,7 @@ class MainWindow(QMainWindow):
         is kept is the shape it ended at. The rectangle carries the size --
         there is nowhere to write a scale -- so the two travel together.
         """
-        if (getattr(mark, "locked", False)
-                or self.reader.canvas.text_box_frozen(mark)):
+        if getattr(mark, "locked", False):
             return
         rect = tuple(float(v) for v in rect)
         rotate = float(rotate)
@@ -1343,25 +1348,27 @@ class MainWindow(QMainWindow):
         mark.rotate = rotate
         self._after_mark_change(index, uid)
 
-    def text_box_edited(self, index: int, mark, text: str, rect) -> None:
-        """A text box's typing ended: keep its words and the size it settled
-        to, as one step to undo."""
+    def text_box_edited(self, index: int, mark, text: str, rich, rect) -> None:
+        """A text box's typing ended: keep its words, their rich text and
+        the size it settled to, as one step to undo."""
         if not 0 <= index < len(self.model.pages):
             return
-        if (getattr(mark, "locked", False)
-                or self.reader.canvas.text_box_frozen(mark)):
+        if getattr(mark, "locked", False):
             return
         rect = tuple(float(v) for v in rect)
         self.model.undo.commit(_("Edit Text"))
         if isinstance(mark, markup.Annotation):
             mark.contents = text
+            mark.rich = rich
             mark.rect = rect
             mark.touch()
             self._after_mark_change(index)
             return
         uid = self.model.pages[index].uid
-        self.model.mark_edits.change(uid, mark.index, contents=text, rect=rect)
+        self.model.mark_edits.change(uid, mark.index, contents=text,
+                                     rich=rich, rect=rect)
         mark.contents = text
+        mark.rich = rich or ""
         mark.rect = rect
         self._after_mark_change(index, uid)
 
@@ -1737,13 +1744,6 @@ class MainWindow(QMainWindow):
         and re-render the page that shows it."""
         page = self.model.pages[index]
         scale = page.scale if page.scale else 1.0
-        if self.reader.canvas.text_box_frozen(mark):
-            # Its look waits for its words to be drawable here; who made it,
-            # what it is called and its lock do not.
-            fields = {name: value for name, value in fields.items()
-                      if name not in ("colour", "opacity", "fill")}
-            if not fields:
-                return
         partner = self._partner_fields(index, mark, fields)
         if mine:
             for name, value in fields.items():
@@ -2345,11 +2345,6 @@ class MainWindow(QMainWindow):
             # Refused here rather than only in the surfaces that offer it,
             # so a colour, an opacity and a resize are all one answer.
             return
-        if self.reader.canvas.text_box_frozen(mark):
-            # A text box the file brought with words in it keeps its look
-            # until its words can be drawn here: rebuilding its drawing
-            # would take them off the page.
-            return
         uid = self.model.pages[index].uid
         self._commit_mark_change(_("Change Mark"), index, mark)
         partner = self._partner_fields(index, mark, fields)
@@ -2439,6 +2434,30 @@ class MainWindow(QMainWindow):
             self.tool_strip.disarm()
             return
         super().keyPressEvent(event)
+
+    def _text_editing_started(self, editor) -> None:
+        """A box can be typed in: open the text palette on it -- and the
+        strip with it, if the strip was closed.
+
+        **The palette belongs beside its Aa button.** A double-click on a
+        box with the strip closed showed the palette floating beside
+        nothing; editing looks one way whether the strip was open or not.
+        Not written to the settings: the strip closes again when the typing
+        ends, as it was left.
+        """
+        if not self.tool_strip.isVisible() and self.act_markup_tools.isEnabled():
+            self._strip_for_text = True
+            self.tool_strip.place(self.settings.value("reader/markup-tools-at"))
+            self.tool_strip.show()
+            self.tool_strip.raise_()
+        self.tool_strip.edit_text(editor)
+
+    def _text_editing_ended(self) -> None:
+        self.tool_strip.end_text()
+        if self._strip_for_text:
+            self._strip_for_text = False
+            if not self.settings.value("reader/markup-tools", False, type=bool):
+                self.tool_strip.hide()
 
     def show_markup_tools(self, on: bool) -> None:
         """Open or close the strip.

@@ -1100,8 +1100,7 @@ def _patch_text_box(annot, edit, pdf=None) -> None:
     Its colour is the border's, so it goes into `/DA`, and its fill into
     `/C`. A move rewrites `/Rect` and nothing else: the drawing is mapped
     onto the rectangle, so it follows. Anything that changes what is drawn
-    rebuilds the drawing -- for an empty box only, until text can be drawn
-    here; a box with text keeps the producer's.
+    rebuilds the drawing from the box's rich text.
     """
     reading = _text_box_reading(annot)
     colour = edit.get("colour")
@@ -1141,7 +1140,7 @@ def _patch_text_box(annot, edit, pdf=None) -> None:
         if contents:
             annot[pikepdf.Name.Contents] = pikepdf.String(contents)
             annot[pikepdf.Name.RC] = pikepdf.String(
-                text_box_rich(contents, family, size, ink))
+                edit.get("rich") or text_box_rich(contents, family, size, ink))
         else:
             for key in (pikepdf.Name.Contents, pikepdf.Name.RC):
                 if key in annot:
@@ -1149,9 +1148,7 @@ def _patch_text_box(annot, edit, pdf=None) -> None:
     redrawn = (colour is not None or fill is not None or opacity is not None
                or contents is not None
                or (rect and reading.get("box_size") != _size(rect)))
-    # Rebuilt whenever its words are in one style, which this application
-    # draws; a box whose rich text mixes styles keeps the producer's drawing.
-    if redrawn and pdf is not None and not reading["styled"]:
+    if redrawn and pdf is not None:
         box = Annotation(FREETEXT, 0, [float(v) for v in annot.Rect],
                          colour=colour or reading["colour"],
                          fill=fill or reading["fill"],
@@ -1159,6 +1156,8 @@ def _patch_text_box(annot, edit, pdf=None) -> None:
                          border_style=reading["border_style"],
                          opacity=_number(annot.get(pikepdf.Name.CA)),
                          contents=str(annot.get(pikepdf.Name.Contents, "")),
+                         rich=(str(annot[pikepdf.Name.RC])
+                               if pikepdf.Name.RC in annot else None),
                          text_font=family, text_size=size, text_colour=ink)
         inset = reading["inset"]
         box.rect = (box.rect[0] + inset, box.rect[1] + inset,
@@ -1263,10 +1262,9 @@ def blank_note_icons(pdf) -> int:
         for annot in page.obj.get(pikepdf.Name.Annots) or []:
             try:
                 subtype = str(annot.get(pikepdf.Name.Subtype, ""))
-                # And a text box in one style, which the canvas draws whole
-                # -- fill, border and words -- so a drag carries it.
-                text_box = (subtype == FREETEXT
-                            and not _text_box_reading(annot)["styled"])
+                # And a text box, which the canvas draws whole -- fill,
+                # border and words -- so a drag carries it.
+                text_box = subtype == FREETEXT
                 if subtype != TEXT and not text_box and not is_scalable_comment(
                         subtype, stamp_icon(annot)):
                     continue
@@ -1779,9 +1777,10 @@ def _write_text_box(pdf, entry, annotation) -> None:
         f"color:{_hex(ink)} ")
     if annotation.contents:
         # The rich text in the shape Acrobat writes for a text box: the
-        # style on the body, a paragraph a line -- not a note's spans.
+        # default style on the body, a paragraph a line, a span a run.
         entry[pikepdf.Name.RC] = pikepdf.String(
-            text_box_rich(annotation.contents, family, size, ink))
+            annotation.rich
+            or text_box_rich(annotation.contents, family, size, ink))
     if "width" in style:
         entry[pikepdf.Name.BS] = pikepdf.Dictionary(W=float(style["width"]))
     elif "dash" in style:
@@ -2566,7 +2565,7 @@ def _freetext_appearance(pdf, annotation, outer):
     The shape read off Acrobat's: one path filled and stroked, the border
     inset by half its width so it stays inside the box; a dash pattern set
     in the stream for the dotted styles; the cloud as curves; No Border
-    filled and not stroked. Text arrives with the next stage.
+    filled and not stroked; then the words.
     """
     style = BORDER_STYLES.get(annotation.border_style, {})
     width = float(style.get("width", annotation.thickness))
@@ -2583,7 +2582,6 @@ def _freetext_appearance(pdf, annotation, outer):
             R0=pikepdf.Dictionary(Type=pikepdf.Name.ExtGState, AIS=False,
                                   CA=opacity, ca=opacity))
     left, bottom, right, top = (float(v) for v in annotation.rect)
-    text = getattr(annotation, "contents", "") or ""
     if "cloud" in style:
         found = cloud_path(annotation.rect, style["cloud"], width)
         if found is not None:
@@ -2599,16 +2597,16 @@ def _freetext_appearance(pdf, annotation, outer):
         lines.append("{:.4f} {:.4f} {:.4f} {:.4f} re".format(
             left + half, bottom + half, right - left - width, top - bottom - width))
         lines.append("B" if width > 0 else "f")
-    if text:
-        # The words, drawn by `textbox` with their font embedded, clipped to
+    from . import textbox
+
+    content = textbox.content_of(annotation)
+    if not content.empty:
+        # The words, drawn by `textbox` with their fonts embedded, clipped to
         # the box inset by twice the border's width as Acrobat clips them,
         # and hung from the top left of that inset box.
-        from . import textbox
-
-        family, size, ink = text_style_of(annotation)
         inset = 2.0 * width
         inner = max(right - left - 2 * inset, 1.0)
-        form = textbox.text_form(pdf, text, family, size, ink, inner)
+        form = textbox.text_form(pdf, content, inner)
         if form is not None:
             tall = float(form.BBox[3])
             resources[pikepdf.Name.XObject] = pikepdf.Dictionary(Tx=form)

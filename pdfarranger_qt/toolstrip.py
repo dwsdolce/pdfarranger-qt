@@ -344,7 +344,21 @@ class ToolStrip(QFrame):
         self.swatch.setFixedSize(_Swatch.TAIL, _Swatch.TAIL)
         self.swatch.clicked.connect(self._open_palette)
         self.tail_layout.addWidget(self.swatch)
+        #: In the swatch's place while a text box is typed in: it opens and
+        #: closes the text palette, which styles the words rather than the
+        #: mark.
+        self.text_button = QToolButton(self.tail)
+        self.text_button.setText("Aa")
+        self.text_button.setToolTip(_("Text Style"))
+        self.text_button.setCheckable(True)
+        self.text_button.setFocusPolicy(Qt.NoFocus)
+        self.text_button.setFixedHeight(_Swatch.TAIL + 4)
+        self.text_button.clicked.connect(self._toggle_text_palette)
+        self.text_button.hide()
+        self.tail_layout.addWidget(self.text_button)
         self.tail_layout.addStretch(1)
+        self.text_palette = None
+        self._text_editor = None
         self._palette = None
         self._opacity = 0.4
         #: What the swatch showed before it started following a selection.
@@ -504,7 +518,10 @@ class ToolStrip(QFrame):
         """
         tool = tools.by_name(self._armed) if self._armed else None
         makes_marks = tool is not None and tool.family != tools.POINTER
-        self.tail.setVisible(makes_marks or self._before is not None)
+        typing = self._text_editor is not None
+        self.swatch.setVisible(not typing)
+        self.text_button.setVisible(typing)
+        self.tail.setVisible(makes_marks or self._before is not None or typing)
 
     def _show_armed(self) -> None:
         """Each family button in the colour its state calls for."""
@@ -527,6 +544,76 @@ class ToolStrip(QFrame):
         elif event.type() == QEvent.LanguageChange:
             self.retranslate()
         super().changeEvent(event)
+
+    # -- the text palette --------------------------------------------------
+
+    def edit_text(self, editor) -> None:
+        """A text box can be typed in: show Aa for the swatch, and open the
+        text palette on ``editor`` by itself."""
+        from .textpalette import TextPalette
+
+        self._text_editor = editor
+        if self.text_palette is None:
+            self.text_palette = TextPalette(self.parentWidget())
+        self.text_palette.attach(editor)
+        self._show_tail()
+        self.adjustSize()
+        self.text_button.setChecked(True)
+        self._show_text_palette()
+
+    def end_text(self) -> None:
+        """The typing has ended: close the palette and bring the swatch
+        back."""
+        self._text_editor = None
+        if self.text_palette is not None:
+            self.text_palette.detach()
+            self.text_palette.hide()
+        self.text_button.setChecked(False)
+        self._show_tail()
+        self.adjustSize()
+        self.refresh()
+
+    def _toggle_text_palette(self) -> None:
+        if self.text_palette is None or self._text_editor is None:
+            return
+        if self.text_palette.isVisible():
+            self.text_palette.hide()
+        else:
+            self._show_text_palette()
+        self.text_button.setChecked(self.text_palette.isVisible())
+        self._text_editor.setFocus()
+
+    def _show_text_palette(self) -> None:
+        palette = self.text_palette
+        if palette is None:
+            return
+        palette.adjustSize()
+        self._place_text_palette()
+        palette.show()
+        palette.raise_()
+
+    def _place_text_palette(self) -> None:
+        """Beside the strip, its top level with the Aa button, kept inside
+        the reader."""
+        palette = self.text_palette
+        if palette is None:
+            return
+        host = self.parentWidget()
+        if host is None:
+            return
+        at = self.mapTo(host, QPoint(self.width() + GAP,
+                                     self.tail.y() + self.text_button.y()))
+        if at.x() + palette.width() > host.width():
+            at.setX(self.x() - GAP - palette.width())
+        at.setY(min(max(0, at.y()), max(0, host.height() - palette.height())))
+        at.setX(max(0, at.x()))
+        palette.move(at)
+
+    def moveEvent(self, event):
+        """Take the palette along when the strip is dragged."""
+        super().moveEvent(event)
+        if self.text_palette is not None and self.text_palette.isVisible():
+            self._place_text_palette()
 
     # -- arming ------------------------------------------------------------
 
@@ -797,7 +884,7 @@ class ColourPopup(QWidget):
     CELL = 26
     GAP = 4
 
-    def __init__(self, parent=None):
+    def __init__(self, parent=None, opacity: bool = True):
         super().__init__(parent, Qt.Popup)
         self.setAutoFillBackground(True)
         outer = QVBoxLayout(self)
@@ -844,6 +931,12 @@ class ColourPopup(QWidget):
         self.slider.valueChanged.connect(
             lambda v: self.percent.setText(f"{v}%"))
         outer.addLayout(row)
+        # Without the slider for a text's colour, which has no opacity of
+        # its own: the box's opacity is the mark's.
+        for n in range(row.count()):
+            widget = row.itemAt(n).widget()
+            if widget is not None:
+                widget.setVisible(opacity)
 
     def _picked(self, at: int, colour) -> None:
         """A colour was clicked: tick it, then pass it on.
