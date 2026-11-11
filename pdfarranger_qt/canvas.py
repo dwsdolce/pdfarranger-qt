@@ -1099,6 +1099,10 @@ class PageCanvas(QAbstractScrollArea):
         self._tool = self.SELECT
         #: ``(start, current)`` in viewport points while a mark is being drawn.
         self._marking = None
+        #: Whether a shape is being made by clicks rather than a drag: the
+        #: first click has landed and the band follows the pointer to the
+        #: second.
+        self._clicked_shape = False
         #: One `forms.displayed_box` per page, for placing a mark. Plain data
         #: and separate from the field map, because a page with no widgets
         #: still has a box and a mark can be placed on it.
@@ -2541,10 +2545,12 @@ class PageCanvas(QAbstractScrollArea):
             return None
         rect, _angle = self._shape_of(mark)
         if (mark.kind if isinstance(mark, markup.Annotation)
-                else mark.subtype) in (markup.STAMP, markup.FREETEXT):
+                else mark.subtype) in (markup.STAMP, markup.FREETEXT,
+                                       *markup.SHAPES):
             # A stamp's box is its rectangle, at the page's own scale: it
             # is ink on the page, so none of the holding-still below
-            # applies to it. Nor to a text box, which is the same.
+            # applies to it. Nor to a text box, a rectangle or an oval,
+            # which are the same.
             return self.quad_on_screen(
                 index, rect, offset,
                 scaled=isinstance(mark, markup.Annotation))
@@ -2623,7 +2629,12 @@ class PageCanvas(QAbstractScrollArea):
             mark = marks[which]
             kind = (mark.kind if isinstance(mark, markup.Annotation)
                     else mark.subtype)
-            if kind not in (markup.TEXT, markup.STAMP, markup.FREETEXT):
+            if kind not in (markup.TEXT, markup.STAMP, markup.FREETEXT,
+                            *markup.SHAPES):
+                continue
+            if kind in markup.SHAPES:
+                if self._shape_hit(index, mark, point):
+                    return (index, which, mark)
                 continue
             where = self.note_icon_rect(index, mark)
             if where is not None and where.contains(point):
@@ -2768,6 +2779,12 @@ class PageCanvas(QAbstractScrollArea):
     #: standard size, its top left at the click -- or drawn by a drag from
     #: its top left to its bottom right.
     TEXTBOX = "textbox"
+    #: *Rectangle/Square* and *Oval/Circle*: a box dragged out, or clicked
+    #: out -- a click, a move and a second click -- from either corner;
+    #: Shift makes it a square or a circle.
+    RECTANGLE = "rectangle"
+    OVAL = "oval"
+    SHAPE_TOOLS = (RECTANGLE, OVAL)
 
     #: The comment tool's twin, placing a `/Stamp` instead of a `/Text`.
     #: Its gesture is the same -- a point, and then the words -- and the
@@ -2810,6 +2827,11 @@ class PageCanvas(QAbstractScrollArea):
             return
         self._tool = tool
         self._marking = None
+        self._clicked_shape = False
+        if tool in self.SHAPE_TOOLS:
+            # A shape is drawn over the page, not over words: a selection
+            # left from before is not what it is for.
+            self.clear_selection()
         self._dragging_grip = None
         self._dragging_note = None
         self._preview = ()
@@ -3132,7 +3154,8 @@ class PageCanvas(QAbstractScrollArea):
     #: Subtypes a click can land on. The text markups are areas you can aim
     #: at; a note is reached by its icon, which `note_at` already answers for.
     SELECTABLE = ("/Highlight", "/StrikeOut", "/Underline", "/Squiggly",
-                  markup.TEXT, markup.STAMP, markup.CARET, markup.FREETEXT)
+                  markup.TEXT, markup.STAMP, markup.CARET, markup.FREETEXT,
+                  *markup.SHAPES)
 
     #: Of those, the ones drawn *over* a run of words. A comment's icon is
     #: the odd one: it is placed rather than sized, so it has no run to
@@ -3187,6 +3210,10 @@ class PageCanvas(QAbstractScrollArea):
             # bounding box of what it draws, at whatever size and angle it
             # has been given, which is what the fit to `/Rect` guarantees.
             return [tuple(mark.rect)]
+        if kind in markup.SHAPES:
+            # The box it is drawn in, without a cloud's reach: where its
+            # badge hangs from.
+            return [markup.shape_box(mark)]
         if isinstance(mark, markup.Annotation):
             return list(mark.quads) or [mark.rect]
         return mark.boxes()
@@ -3213,8 +3240,9 @@ class PageCanvas(QAbstractScrollArea):
         """
         kind = (mark.kind if isinstance(mark, markup.Annotation)
                 else mark.subtype)
-        if kind in (markup.TEXT, markup.STAMP, markup.FREETEXT):
-            # Both comments, and a text box, through one call: it is the one that knows
+        if kind in (markup.TEXT, markup.STAMP, markup.FREETEXT,
+                    *markup.SHAPES):
+            # Both comments, a text box and the shapes, through one call: it is the one that knows
             # a comment mark holds its size and a stamp does not, and the
             # one that
             # knows a gesture in flight outranks what is on record.
@@ -3619,7 +3647,8 @@ class PageCanvas(QAbstractScrollArea):
         self._hover_mark(None if event.buttons() & Qt.LeftButton
                          else self.mark_at(position))
 
-        if self._marking is not None and event.buttons() & Qt.LeftButton:
+        if self._marking is not None and (
+                event.buttons() & Qt.LeftButton or self._clicked_shape):
             self._marking = (self._marking[0], position)
             self.viewport().update()
             return
@@ -3648,10 +3677,14 @@ class PageCanvas(QAbstractScrollArea):
 
         if self._dragging_stamp is not None and event.buttons() & Qt.LeftButton:
             page, mark, which, centre = self._dragging_stamp
-            if (mark.kind if isinstance(mark, markup.Annotation)
-                    else mark.subtype) == markup.FREETEXT:
+            kind = (mark.kind if isinstance(mark, markup.Annotation)
+                    else mark.subtype)
+            if kind == markup.FREETEXT:
                 shaped = self._text_box_shaped(page, mark, which, centre,
                                                position)
+            elif kind in markup.SHAPES:
+                shaped = self._shape_shaped(page, mark, which, centre,
+                                            position)
             else:
                 shaped = self._stamp_shaped(page, mark, which, centre,
                                             position)
@@ -3732,7 +3765,7 @@ class PageCanvas(QAbstractScrollArea):
                 Qt.ArrowCursor if getattr(note[2], "locked", False)
                 else Qt.SizeAllCursor)
             named = True
-            if kind_here != markup.FREETEXT:
+            if kind_here == markup.TEXT or kind_here == markup.STAMP:
                 self._set_tooltip(note[2].contents or _("Empty note"))
 
         # A note hanging off a highlight reads the same way. The badge is
@@ -3844,7 +3877,7 @@ class PageCanvas(QAbstractScrollArea):
         index, mark = self._selected
         kind = (mark.kind if isinstance(mark, markup.Annotation)
                 else mark.subtype)
-        if kind == markup.FREETEXT:
+        if kind == markup.FREETEXT or kind in markup.SHAPES:
             # Corners on the diagonals, the middles of the sides across.
             return (Qt.SizeFDiagCursor, Qt.SizeBDiagCursor, Qt.SizeFDiagCursor,
                     Qt.SizeBDiagCursor, Qt.SizeVerCursor, Qt.SizeHorCursor,
@@ -3959,7 +3992,8 @@ class PageCanvas(QAbstractScrollArea):
             if grip is not None and self._selected is not None and (
                     self._selected[1].kind
                     if isinstance(self._selected[1], markup.Annotation)
-                    else self._selected[1].subtype) == markup.FREETEXT:
+                    else self._selected[1].subtype) in (markup.FREETEXT,
+                                                        *markup.SHAPES):
                 page, mark = self._selected
                 # The rectangle it started with, which each move of the
                 # handle is measured from.
@@ -3991,6 +4025,17 @@ class PageCanvas(QAbstractScrollArea):
                 self._dragging_grip = (grip, page, mark, anchor)
                 self._preview = self._grip_quads(page, anchor, position)
                 self.viewport().update()
+                event.accept()
+                return
+            if self._clicked_shape and self._marking is not None:
+                # The second click of a shape made by clicks.
+                start = self._marking[0]
+                self._marking = None
+                self._clicked_shape = False
+                self.viewport().update()
+                placed = self._shape_made(start, position)
+                if placed is not None:
+                    self.mark_drawn.emit(self._tool, placed[0], [placed[1]])
                 event.accept()
                 return
             if self.marks_area():
@@ -4124,6 +4169,17 @@ class PageCanvas(QAbstractScrollArea):
                 placed = self.icon_rect(start)
             elif self._tool == self.TEXTBOX:
                 placed = self._text_box_made(start, QPointF(event.position()))
+            elif self._tool in self.SHAPE_TOOLS:
+                end = QPointF(event.position())
+                if ((end - start).manhattanLength()
+                        <= QApplication.startDragDistance()):
+                    # A click, not a drag: the first of two. The band now
+                    # follows the pointer to the second click.
+                    self._marking = (start, end)
+                    self._clicked_shape = True
+                    event.accept()
+                    return
+                placed = self._shape_made(start, end)
             else:
                 placed = self.mark_rect(start, QPointF(event.position()))
             if placed is not None:
@@ -4156,8 +4212,11 @@ class PageCanvas(QAbstractScrollArea):
                 # opens. A comment used to get the bare text box on the page
                 # instead, and it was the only mark that did.
                 self.select_mark((page, mark))
+                # A comment's note window opens on a click, being the
+                # comment; a text box has none, and a shape's opens with its
+                # selection when it has one, as a highlight's does.
                 if (mark.kind if isinstance(mark, markup.Annotation)
-                        else mark.subtype) != markup.FREETEXT:
+                        else mark.subtype) in (markup.TEXT, markup.STAMP):
                     self.note_wanted.emit(page, mark)
             else:
                 rect = self._note_rect_at(page, mark, at - grab)
@@ -4367,7 +4426,8 @@ class PageCanvas(QAbstractScrollArea):
         kind = (mark.kind if isinstance(mark, markup.Annotation)
                 else mark.subtype)
         return (not cls._is_a_comment(mark)
-                and kind not in (markup.CARET, markup.FREETEXT))
+                and kind not in (markup.CARET, markup.FREETEXT,
+                                 *markup.SHAPES))
 
     @staticmethod
     def _is_a_comment(mark) -> bool:
@@ -4939,6 +4999,9 @@ class PageCanvas(QAbstractScrollArea):
             if kind == markup.FREETEXT:
                 self._paint_text_box(painter, index, mark, offset)
                 continue
+            if kind in markup.SHAPES:
+                self._paint_shape(painter, index, mark, offset)
+                continue
             # **At the solidity the file will show**, which the quadded
             # marks were drawn without: a highlight of ours is written
             # `/CA 0.4` and was painted at full strength, so it was darker
@@ -5112,7 +5175,7 @@ class PageCanvas(QAbstractScrollArea):
         # keeps its note on the caret and wears the badge on the strikeout.
         # An Insert Text caret wears one too: it is not a comment, so its
         # note needs the sign a strikethrough's does.
-        badged = self.QUADDED_SELECTABLE + (markup.CARET,)
+        badged = self.QUADDED_SELECTABLE + (markup.CARET, *markup.SHAPES)
         found = [m for m in self._file_marks.visible(index + 1)
                  if m.subtype in badged
                  and not markup.is_reply(m)
@@ -5379,6 +5442,10 @@ class PageCanvas(QAbstractScrollArea):
             if getattr(mark, "locked", False):
                 return []
             return self._text_box_grips(index, mark, offset)
+        if kind in markup.SHAPES:
+            if getattr(mark, "locked", False):
+                return []
+            return self._shape_grips(index, mark, offset)
         if kind not in self.QUADDED_SELECTABLE:
             # A comment's icon is placed, not sized: there is no run to
             # take hold of, and a handle on a glyph offers a drag that
@@ -5608,6 +5675,99 @@ class PageCanvas(QAbstractScrollArea):
         wide, tall = markup.TEXT_BOX_SIZE
         return index, self.to_source(
             index, (at[0], at[1] - tall, at[0] + wide, at[1]))
+
+    @staticmethod
+    def _shift_held() -> bool:
+        return bool(QApplication.keyboardModifiers() & Qt.ShiftModifier)
+
+    def _evened(self, start: QPointF, end: QPointF) -> QPointF:
+        """``end``, moved to make a square with ``start`` while Shift is
+        held: the side is the larger of the two distances, in the direction
+        the pointer went."""
+        if not self._shift_held():
+            return end
+        dx, dy = end.x() - start.x(), end.y() - start.y()
+        side = max(abs(dx), abs(dy))
+        return QPointF(start.x() + math.copysign(side, dx or 1.0),
+                       start.y() + math.copysign(side, dy or 1.0))
+
+    def _shape_made(self, start: QPointF, end: QPointF):
+        """``(page, box)`` for a rectangle or an oval made from ``start`` to
+        ``end``, either of which may be any corner; square with Shift.
+        None when the two are too close to make anything."""
+        end = self._evened(start, end)
+        found = self.mark_rect(start, end)
+        if found is None:
+            return None
+        index, (x0, y0, x1, y1) = found
+        box = (min(x0, x1), min(y0, y1), max(x0, x1), max(y0, y1))
+        if box[2] - box[0] < 1.0 or box[3] - box[1] < 1.0:
+            return None
+        return index, box
+
+    def _shape_grips(self, index: int, mark, offset=None):
+        """A rectangle's or an oval's eight handles, on the box it is drawn
+        in, as viewport squares."""
+        found = self._shape_on_screen(index, mark, offset)
+        if found is None:
+            return []
+        where = found[0]
+        size = float(self.GRIP)
+        grips = []
+        for fx, fy in self.TEXT_BOX_HANDLES:
+            p = QPointF(where.left() + where.width() * fx,
+                        where.bottom() - where.height() * fy)
+            grips.append(QRectF(p.x() - size / 2, p.y() - size / 2, size, size))
+        return grips
+
+    def _shape_shaped(self, index: int, mark, which: int, start, point):
+        """``(rect, 0)`` for a rectangle or an oval whose handle ``which`` is
+        at ``point``, from the rectangle the drag began with.
+
+        **The handle says whether the shape is kept.** On a square or a
+        circle a corner keeps it so and a side stretches it into a rectangle
+        or an oval; on a rectangle or an oval every handle is free, and
+        Shift on a corner makes it a square or a circle -- the opposite
+        corner held, the side the larger of the two distances to the
+        pointer. The rectangle answered is the mark's own: for one the file
+        brought, the box grown again by its `/RD`."""
+        at = self.page_point(index, point)
+        if at is None:
+            return None
+        x, y = at
+        is_mine = isinstance(mark, markup.Annotation)
+        if is_mine:
+            x, y = self.to_source(index, (x, y, x, y))[:2]
+        rd = (getattr(mark, "rd", None) or (0.0,) * 4) if not is_mine else (0.0,) * 4
+        left, bottom, right, top = (start[0] + rd[0], start[1] + rd[1],
+                                    start[2] - rd[2], start[3] - rd[3])
+        fx, fy = self.TEXT_BOX_HANDLES[which]
+        small = self.SMALLEST_TEXT_BOX
+        even = abs((right - left) - (top - bottom)) <= markup.EVEN_WITHIN
+        corner = fx != 0.5 and fy != 0.5
+        if corner and (even or self._shift_held()):
+            # The opposite corner holds still; the side follows the pointer.
+            hold_x = right if fx == 0 else left
+            hold_y = top if fy == 0 else bottom
+            side = max(abs(x - hold_x), abs(y - hold_y), small)
+            if fx == 0:
+                left, right = hold_x - side, hold_x
+            else:
+                left, right = hold_x, hold_x + side
+            if fy == 0:
+                bottom, top = hold_y - side, hold_y
+            else:
+                bottom, top = hold_y, hold_y + side
+        else:
+            if fx == 0:
+                left = min(x, right - small)
+            elif fx == 1:
+                right = max(x, left + small)
+            if fy == 0:
+                bottom = min(y, top - small)
+            elif fy == 1:
+                top = max(y, bottom + small)
+        return ((left - rd[0], bottom - rd[1], right + rd[2], top + rd[3]), 0.0)
 
     def _text_area(self, index: int, mark, rect):
         """``(screen rect, width in points, border width)`` of the part of a
@@ -6163,7 +6323,8 @@ class PageCanvas(QAbstractScrollArea):
             wide, tall = markup.icon_size(
                 getattr(mark, "icon", markup.DEFAULT_ICON))
         if (mark.kind if isinstance(mark, markup.Annotation)
-                else mark.subtype) in (markup.STAMP, markup.FREETEXT):
+                else mark.subtype) in (markup.STAMP, markup.FREETEXT,
+                                       *markup.SHAPES):
             # Moved, not reshaped: the box keeps the size and the angle it
             # was given and only its corner changes, which is what dragging
             # the body of one means.
@@ -6195,7 +6356,8 @@ class PageCanvas(QAbstractScrollArea):
             return [m for m in self._file_marks.visible(index + 1)
                     if (m.subtype == markup.TEXT
                         or markup.is_scalable_comment(m.subtype, m.icon)
-                        or m.subtype == markup.FREETEXT)
+                        or m.subtype == markup.FREETEXT
+                        or m.subtype in markup.SHAPES)
                     and not m.is_reply()]
         except Exception:       # noqa: BLE001 - a repaint must not fail
             return []
@@ -6329,6 +6491,153 @@ class PageCanvas(QAbstractScrollArea):
                           max(top - bottom - 2 * inset, 0.0))
             painter.restore()
         painter.setOpacity(was)
+
+    def _shape_on_screen(self, index: int, mark, offset=None):
+        """``(box, at, sx, sy)`` for a rectangle or an oval: the box it is
+        drawn in on screen, a function from page space to screen, and the
+        scale each way -- at the rectangle a drag in flight has given it."""
+        rect, _angle = self._shape_of(mark)
+        is_mine = isinstance(mark, markup.Annotation)
+        rd = getattr(mark, "rd", None) if not is_mine else None
+        if rd:
+            rect = (rect[0] + rd[0], rect[1] + rd[1],
+                    rect[2] - rd[2], rect[3] - rd[3])
+        where = self.quad_on_screen(index, rect, offset, scaled=is_mine)
+        left, bottom, right, top = (float(v) for v in rect)
+        if where is None or right <= left or top <= bottom:
+            return None
+        sx = where.width() / (right - left)
+        sy = where.height() / (top - bottom)
+
+        def at(x, y):
+            return QPointF(where.left() + (x - left) * sx,
+                           where.bottom() - (y - bottom) * sy)
+
+        return where, rect, at, sx, sy
+
+    def _shape_path(self, mark, rect, at) -> Optional[QPainterPath]:
+        """The line a rectangle or an oval is drawn along, on screen: the
+        box or the oval inset by half the line, or the cloud round it."""
+        kind = (mark.kind if isinstance(mark, markup.Annotation)
+                else mark.subtype)
+        style = markup.BORDER_STYLES.get(mark.border_style, {})
+        width = float(style.get("width", mark.thickness))
+        path = QPainterPath()
+        if "cloud" in style:
+            found = (markup.cloud_oval_path(rect, style["cloud"], width)
+                     if kind == markup.CIRCLE
+                     else markup.cloud_path(rect, style["cloud"], width))
+            if found is None:
+                return None
+            begin, curves = found
+            path.moveTo(at(*begin))
+            for c in curves:
+                path.cubicTo(at(c[0], c[1]), at(c[2], c[3]), at(c[4], c[5]))
+            path.closeSubpath()
+            return path
+        left, bottom, right, top = rect
+        half = width / 2.0
+        box = QRectF(at(left + half, top - half), at(right - half, bottom + half))
+        if kind == markup.CIRCLE:
+            path.addEllipse(box)
+        else:
+            path.addRect(box)
+        return path
+
+    def _paint_shape(self, painter, index: int, mark, offset) -> None:
+        """Draw a rectangle or an oval: its fill, then its line in its
+        style -- dashed, or a cloud -- at the rectangle a drag in flight has
+        given it. **One that draws nothing** -- no line and no fill, which
+        a file can bring -- shows a thin dashed outline while it is under the
+        pointer or selected, so that it can be found and deleted."""
+        found = self._shape_on_screen(index, mark, offset)
+        if found is None:
+            return
+        where, rect, at, sx, _sy = found
+        if not where.adjusted(-40, -40, 40, 40).intersects(
+                QRectF(self.viewport().rect())):
+            return
+        path = self._shape_path(mark, rect, at)
+        if path is None:
+            return
+        style = markup.BORDER_STYLES.get(mark.border_style, {})
+        width = float(style.get("width", mark.thickness))
+        was = painter.opacity()
+        painter.save()
+        painter.setRenderHint(QPainter.Antialiasing, True)
+        if markup.draws_nothing(mark):
+            held = [m for m in (self._hovered, self._selected)
+                    if m is not None and m[1] is mark]
+            if held:
+                pen = QPen(QColor(*self.SELECTED))
+                pen.setWidthF(1.0)
+                pen.setStyle(Qt.DashLine)
+                painter.setPen(pen)
+                painter.setBrush(Qt.NoBrush)
+                painter.drawPath(path)
+            painter.restore()
+            return
+        painter.setOpacity(was * self._solidity(mark))
+        fill = getattr(mark, "fill", None)
+        if fill is not None:
+            painter.fillPath(path, QColor.fromRgbF(*fill[:3]))
+        if width > 0:
+            pen = QPen(QColor.fromRgbF(*(mark.colour or (1.0, 0.0, 0.0))[:3]))
+            pen.setWidthF(max(width * sx, 0.5))
+            if "dash" in style:
+                # Qt measures a dash in pen widths, the file in points.
+                pen.setDashPattern([v / max(width, 0.01) for v in style["dash"]])
+            painter.setPen(pen)
+            painter.setBrush(Qt.NoBrush)
+            painter.drawPath(path)
+        painter.restore()
+
+    def _shape_hit(self, index: int, mark, point: QPointF) -> bool:
+        """Whether a viewport point takes hold of a rectangle or an oval.
+
+        **By its line**, within the ink tolerance, and anywhere inside as
+        well when it is filled -- or when it draws nothing at all, which is
+        then the only way to find it. A cloud's line is the band its
+        scallops reach across. For an oval, the oval and not its box."""
+        found = self._shape_on_screen(index, mark)
+        if found is None:
+            return False
+        where, rect, _at, sx, _sy = found
+        kind = (mark.kind if isinstance(mark, markup.Annotation)
+                else mark.subtype)
+        style = markup.BORDER_STYLES.get(mark.border_style, {})
+        width = float(style.get("width", mark.thickness))
+        tolerance = self.INK_TOLERANCE
+        inward = width * sx + tolerance
+        outward = tolerance
+        if "cloud" in style:
+            reach = (markup.cloud_oval_radius(style["cloud"], width)
+                     if kind == markup.CIRCLE
+                     else markup.cloud_radius(style["cloud"], width))
+            outward += reach * sx
+            inward += reach * sx
+        solid = (getattr(mark, "fill", None) is not None
+                 or markup.draws_nothing(mark))
+        if kind == markup.CIRCLE:
+            cx, cy = where.center().x(), where.center().y()
+            a, b = where.width() / 2.0, where.height() / 2.0
+            dx, dy = point.x() - cx, point.y() - cy
+            far = math.hypot(dx, dy)
+            if a <= 0 or b <= 0:
+                return False
+            if far == 0:
+                return solid or min(a, b) <= inward
+            # The oval's own distance from its centre that way.
+            edge = a * b / math.hypot(b * dx / far, a * dy / far)
+            off = far - edge
+            return off <= outward and (solid or off >= -inward)
+        grown = where.adjusted(-outward, -outward, outward, outward)
+        if not grown.contains(point):
+            return False
+        if solid:
+            return True
+        inner = where.adjusted(inward, inward, -inward, -inward)
+        return not (inner.isValid() and inner.contains(point))
 
     def _paint_replace_caret(self, painter, index: int, mark, colour,
                              offset) -> None:
@@ -6532,8 +6841,26 @@ class PageCanvas(QAbstractScrollArea):
             # make anything of.
             return
         start, current = self._marking
+        if self._tool in self.SHAPE_TOOLS:
+            current = self._evened(start, current)
         band = QRectF(start, current).normalized()
         if band.width() < 1 and band.height() < 1:
+            return
+        if self._tool in self.SHAPE_TOOLS:
+            # The shape itself, so a circle is seen as a circle while it is
+            # drawn rather than as the box it will be drawn in.
+            painter.save()
+            painter.setRenderHint(QPainter.Antialiasing, True)
+            pen = QPen(MARKING)
+            pen.setStyle(Qt.DashLine)
+            pen.setWidth(1)
+            painter.setPen(pen)
+            painter.setBrush(Qt.NoBrush)
+            if self._tool == self.OVAL:
+                painter.drawEllipse(band)
+            else:
+                painter.drawRect(band)
+            painter.restore()
             return
         painter.save()
         pen = QPen(MARKING)

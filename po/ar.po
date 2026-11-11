@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-10 05:23+0000\n"
+"POT-Creation-Date: 2026-11-11 00:38+0000\n"
 "PO-Revision-Date: 2024-09-05 17:05+0300\n"
 "Last-Translator: Abdullah Albaroty <albaroty@gmail.com>\n"
 "Language: ar\n"
@@ -2109,6 +2109,11 @@ msgstr "إضافة علامة"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
+msgid "Change Mark"
+msgstr "تغيير العلامة"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
 msgid "Resize Mark"
 msgstr "تغيير حجم العلامة"
 
@@ -2161,7 +2166,7 @@ msgid "Checkmark"
 msgstr "علامة صح"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py pdfarranger_qt/tools.py
+#: pdfarranger_qt/mainwindow.py
 msgid "Circle"
 msgstr "دائرة"
 
@@ -2255,11 +2260,6 @@ msgstr "هذه العلامة تحتوي على ردود."
 #: pdfarranger_qt/mainwindow.py
 msgid "Deleting this mark will also delete any replies to it."
 msgstr "سيؤدي حذف هذه العلامة إلى حذف أي ردود عليها."
-
-# machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
-msgid "Change Mark"
-msgstr "تغيير العلامة"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
@@ -3046,6 +3046,16 @@ msgstr "استبدال النص المحدد"
 msgid "Text Box"
 msgstr "مربع نص"
 
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py pdfarranger_qt/tools.py
+msgid "Rectangle/Square"
+msgstr "مستطيل/مربع"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py pdfarranger_qt/tools.py
+msgid "Oval/Circle"
+msgstr "بيضاوي/دائرة"
+
 #: pdfarranger_qt/properties.py
 msgid "Review History"
 msgstr "سجل المراجعة"
@@ -3355,11 +3365,6 @@ msgstr "سهم"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/tools.py
-msgid "Rectangle"
-msgstr "مستطيل"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/tools.py
 msgid "Text callout"
 msgstr "وسيلة شرح نصية"
 
@@ -3382,6 +3387,16 @@ msgstr "خطوط متصلة"
 #: pdfarranger_qt/tools.py
 msgid "Stamps palette"
 msgstr "لوحة الأختام"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/toolstrip.py
+msgid "Line Thickness"
+msgstr "سُمك الخط"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/toolstrip.py
+msgid "No Colour"
+msgstr "بلا لون"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/viewer.py
@@ -3864,4 +3879,8 @@ msgstr "أظهر العنوان بدل اسم الملف"
 # machine translation, unreviewed
 #~ msgid "Comment colour"
 #~ msgstr "لون التعليق"
+
+# machine translation, unreviewed
+#~ msgid "Rectangle"
+#~ msgstr "مستطيل"
 

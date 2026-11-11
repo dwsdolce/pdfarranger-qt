@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-10 05:23+0000\n"
+"POT-Creation-Date: 2026-11-11 00:38+0000\n"
 "PO-Revision-Date: 2023-06-08 10:00+0700\n"
 "Last-Translator: Abdul Munif Hanafi <amunifhanafi@gmail.com>\n"
 "Language: id\n"
@@ -2185,6 +2185,11 @@ msgstr "Tambah markah"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
+msgid "Change Mark"
+msgstr "Ubah Tanda"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
 msgid "Resize Mark"
 msgstr "Ubah Ukuran Tanda"
 
@@ -2237,7 +2242,7 @@ msgid "Checkmark"
 msgstr "Tanda centang"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py pdfarranger_qt/tools.py
+#: pdfarranger_qt/mainwindow.py
 msgid "Circle"
 msgstr "Lingkaran"
 
@@ -2331,11 +2336,6 @@ msgstr "Tanda ini memiliki balasan."
 #: pdfarranger_qt/mainwindow.py
 msgid "Deleting this mark will also delete any replies to it."
 msgstr "Menghapus tanda ini juga akan menghapus semua balasan untuknya."
-
-# machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
-msgid "Change Mark"
-msgstr "Ubah Tanda"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
@@ -3100,6 +3100,16 @@ msgstr "Ganti teks terpilih"
 msgid "Text Box"
 msgstr "Kotak Teks"
 
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py pdfarranger_qt/tools.py
+msgid "Rectangle/Square"
+msgstr "Persegi panjang/Persegi"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py pdfarranger_qt/tools.py
+msgid "Oval/Circle"
+msgstr "Oval/Lingkaran"
+
 #: pdfarranger_qt/properties.py
 msgid "Review History"
 msgstr "Riwayat Tinjauan"
@@ -3409,11 +3419,6 @@ msgstr "Panah"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/tools.py
-msgid "Rectangle"
-msgstr "Persegi panjang"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/tools.py
 msgid "Text callout"
 msgstr "Keterangan teks"
 
@@ -3436,6 +3441,16 @@ msgstr "Garis terhubung"
 #: pdfarranger_qt/tools.py
 msgid "Stamps palette"
 msgstr "Palet stempel"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/toolstrip.py
+msgid "Line Thickness"
+msgstr "Ketebalan garis"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/toolstrip.py
+msgid "No Colour"
+msgstr "Tanpa warna"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/viewer.py
@@ -3920,4 +3935,8 @@ msgstr "Tampilkan judul alih-alih nama berkas"
 # machine translation, unreviewed
 #~ msgid "Comment colour"
 #~ msgstr "Warna komentar"
+
+# machine translation, unreviewed
+#~ msgid "Rectangle"
+#~ msgstr "Persegi panjang"
 

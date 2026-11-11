@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  pdfarranger\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-10 05:23+0000\n"
+"POT-Creation-Date: 2026-11-11 00:38+0000\n"
 "PO-Revision-Date: 2024-03-24 19:16+0200\n"
 "Last-Translator: \n"
 "Language: fi\n"
@@ -2163,6 +2163,11 @@ msgstr "Lisää merkintä"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
+msgid "Change Mark"
+msgstr "Muuta merkintää"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
 msgid "Resize Mark"
 msgstr "Muuta merkinnän kokoa"
 
@@ -2215,7 +2220,7 @@ msgid "Checkmark"
 msgstr "Valintamerkki"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py pdfarranger_qt/tools.py
+#: pdfarranger_qt/mainwindow.py
 msgid "Circle"
 msgstr "Ympyrä"
 
@@ -2309,11 +2314,6 @@ msgstr "Tällä merkinnällä on vastauksia."
 #: pdfarranger_qt/mainwindow.py
 msgid "Deleting this mark will also delete any replies to it."
 msgstr "Merkinnän poistaminen poistaa myös kaikki siihen tulleet vastaukset."
-
-# machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
-msgid "Change Mark"
-msgstr "Muuta merkintää"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
@@ -3078,6 +3078,16 @@ msgstr "Korvaa valittu teksti"
 msgid "Text Box"
 msgstr "Tekstiruutu"
 
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py pdfarranger_qt/tools.py
+msgid "Rectangle/Square"
+msgstr "Suorakulmio/neliö"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py pdfarranger_qt/tools.py
+msgid "Oval/Circle"
+msgstr "Soikio/ympyrä"
+
 #: pdfarranger_qt/properties.py
 msgid "Review History"
 msgstr "Tarkistushistoria"
@@ -3387,11 +3397,6 @@ msgstr "Nuoli"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/tools.py
-msgid "Rectangle"
-msgstr "Suorakulmio"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/tools.py
 msgid "Text callout"
 msgstr "Tekstiseloste"
 
@@ -3414,6 +3419,16 @@ msgstr "Yhdistetyt viivat"
 #: pdfarranger_qt/tools.py
 msgid "Stamps palette"
 msgstr "Leimapaletti"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/toolstrip.py
+msgid "Line Thickness"
+msgstr "Viivan paksuus"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/toolstrip.py
+msgid "No Colour"
+msgstr "Ei väriä"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/viewer.py
@@ -3893,4 +3908,8 @@ msgstr "Näytä otsikko tiedostonimen sijaan"
 # machine translation, unreviewed
 #~ msgid "Comment colour"
 #~ msgstr "Kommentin väri"
+
+# machine translation, unreviewed
+#~ msgid "Rectangle"
+#~ msgstr "Suorakulmio"
 

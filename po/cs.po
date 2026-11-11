@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  pdfarranger\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-10 05:23+0000\n"
+"POT-Creation-Date: 2026-11-11 00:38+0000\n"
 "PO-Revision-Date: 2023-07-10 15:37+0000\n"
 "Last-Translator: PavelZ\n"
 "Language: cs_CZ\n"
@@ -2149,6 +2149,11 @@ msgstr "Přidat značku"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
+msgid "Change Mark"
+msgstr "Změnit značku"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
 msgid "Resize Mark"
 msgstr "Změnit velikost značky"
 
@@ -2201,7 +2206,7 @@ msgid "Checkmark"
 msgstr "Fajfka"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py pdfarranger_qt/tools.py
+#: pdfarranger_qt/mainwindow.py
 msgid "Circle"
 msgstr "Kruh"
 
@@ -2295,11 +2300,6 @@ msgstr "Tato značka má odpovědi."
 #: pdfarranger_qt/mainwindow.py
 msgid "Deleting this mark will also delete any replies to it."
 msgstr "Odstraněním této značky se odstraní i všechny odpovědi na ni."
-
-# machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
-msgid "Change Mark"
-msgstr "Změnit značku"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
@@ -3068,6 +3068,16 @@ msgstr "Nahradit vybraný text"
 msgid "Text Box"
 msgstr "Textové pole"
 
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py pdfarranger_qt/tools.py
+msgid "Rectangle/Square"
+msgstr "Obdélník/čtverec"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py pdfarranger_qt/tools.py
+msgid "Oval/Circle"
+msgstr "Ovál/kruh"
+
 #: pdfarranger_qt/properties.py
 msgid "Review History"
 msgstr "Historie revizí"
@@ -3377,11 +3387,6 @@ msgstr "Šipka"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/tools.py
-msgid "Rectangle"
-msgstr "Obdélník"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/tools.py
 msgid "Text callout"
 msgstr "Textová bublina"
 
@@ -3404,6 +3409,16 @@ msgstr "Spojené čáry"
 #: pdfarranger_qt/tools.py
 msgid "Stamps palette"
 msgstr "Paleta razítek"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/toolstrip.py
+msgid "Line Thickness"
+msgstr "Tloušťka čáry"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/toolstrip.py
+msgid "No Colour"
+msgstr "Bez barvy"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/viewer.py
@@ -3886,4 +3901,8 @@ msgstr "Zobrazit název místo jména souboru"
 # machine translation, unreviewed
 #~ msgid "Comment colour"
 #~ msgstr "Barva komentáře"
+
+# machine translation, unreviewed
+#~ msgid "Rectangle"
+#~ msgstr "Obdélník"
 

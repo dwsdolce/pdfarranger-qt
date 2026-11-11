@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-10 05:23+0000\n"
+"POT-Creation-Date: 2026-11-11 00:38+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: hu\n"
@@ -2170,6 +2170,11 @@ msgstr "Jelölés hozzáadása"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
+msgid "Change Mark"
+msgstr "Jelölés módosítása"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
 msgid "Resize Mark"
 msgstr "Jelölés átméretezése"
 
@@ -2222,7 +2227,7 @@ msgid "Checkmark"
 msgstr "Pipajel"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py pdfarranger_qt/tools.py
+#: pdfarranger_qt/mainwindow.py
 msgid "Circle"
 msgstr "Kör"
 
@@ -2316,11 +2321,6 @@ msgstr "Ennek a jelölésnek vannak válaszai."
 #: pdfarranger_qt/mainwindow.py
 msgid "Deleting this mark will also delete any replies to it."
 msgstr "A jelölés törlésével a rá adott válaszok is törlődnek."
-
-# machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
-msgid "Change Mark"
-msgstr "Jelölés módosítása"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
@@ -3085,6 +3085,16 @@ msgstr "Kijelölt szöveg cseréje"
 msgid "Text Box"
 msgstr "Szövegdoboz"
 
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py pdfarranger_qt/tools.py
+msgid "Rectangle/Square"
+msgstr "Téglalap/négyzet"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py pdfarranger_qt/tools.py
+msgid "Oval/Circle"
+msgstr "Ovális/kör"
+
 #: pdfarranger_qt/properties.py
 msgid "Review History"
 msgstr "Átnézési előzmények"
@@ -3394,11 +3404,6 @@ msgstr "Nyíl"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/tools.py
-msgid "Rectangle"
-msgstr "Téglalap"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/tools.py
 msgid "Text callout"
 msgstr "Szöveges buborék"
 
@@ -3421,6 +3426,16 @@ msgstr "Összekötött vonalak"
 #: pdfarranger_qt/tools.py
 msgid "Stamps palette"
 msgstr "Bélyegzőpaletta"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/toolstrip.py
+msgid "Line Thickness"
+msgstr "Vonalvastagság"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/toolstrip.py
+msgid "No Colour"
+msgstr "Nincs szín"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/viewer.py
@@ -3910,4 +3925,8 @@ msgstr "A cím megjelenítése a fájlnév helyett"
 # machine translation, unreviewed
 #~ msgid "Comment colour"
 #~ msgstr "Megjegyzés színe"
+
+# machine translation, unreviewed
+#~ msgid "Rectangle"
+#~ msgstr "Téglalap"
 

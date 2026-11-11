@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pdfarranger main\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-10 05:23+0000\n"
+"POT-Creation-Date: 2026-11-11 00:38+0000\n"
 "PO-Revision-Date: 2026-04-24 21:19+0300\n"
 "Last-Translator: Oğuz Ersen <oguz@ersen.moe>\n"
 "Language: tr\n"
@@ -2119,6 +2119,11 @@ msgstr "İşaret ekle"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
+msgid "Change Mark"
+msgstr "İşareti değiştir"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
 msgid "Resize Mark"
 msgstr "İşareti yeniden boyutlandır"
 
@@ -2171,7 +2176,7 @@ msgid "Checkmark"
 msgstr "Onay işareti"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py pdfarranger_qt/tools.py
+#: pdfarranger_qt/mainwindow.py
 msgid "Circle"
 msgstr "Daire"
 
@@ -2265,11 +2270,6 @@ msgstr "Bu işaretin yanıtları var."
 #: pdfarranger_qt/mainwindow.py
 msgid "Deleting this mark will also delete any replies to it."
 msgstr "Bu işareti silmek, ona verilen tüm yanıtları da siler."
-
-# machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
-msgid "Change Mark"
-msgstr "İşareti değiştir"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
@@ -3021,6 +3021,16 @@ msgstr "Seçili metni değiştir"
 msgid "Text Box"
 msgstr "Metin kutusu"
 
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py pdfarranger_qt/tools.py
+msgid "Rectangle/Square"
+msgstr "Dikdörtgen/Kare"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py pdfarranger_qt/tools.py
+msgid "Oval/Circle"
+msgstr "Oval/Daire"
+
 #: pdfarranger_qt/properties.py
 msgid "Review History"
 msgstr "İnceleme geçmişi"
@@ -3330,11 +3340,6 @@ msgstr "Ok"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/tools.py
-msgid "Rectangle"
-msgstr "Dikdörtgen"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/tools.py
 msgid "Text callout"
 msgstr "Metin balonu"
 
@@ -3357,6 +3362,16 @@ msgstr "Bağlı çizgiler"
 #: pdfarranger_qt/tools.py
 msgid "Stamps palette"
 msgstr "Damga paleti"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/toolstrip.py
+msgid "Line Thickness"
+msgstr "Çizgi kalınlığı"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/toolstrip.py
+msgid "No Colour"
+msgstr "Renk yok"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/viewer.py
@@ -3872,4 +3887,8 @@ msgstr "Dosya adı yerine başlığı göster"
 # machine translation, unreviewed
 #~ msgid "Comment colour"
 #~ msgstr "Yorum rengi"
+
+# machine translation, unreviewed
+#~ msgid "Rectangle"
+#~ msgstr "Dikdörtgen"
 

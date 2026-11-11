@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  pdfarranger\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-10 05:23+0000\n"
+"POT-Creation-Date: 2026-11-11 00:38+0000\n"
 "PO-Revision-Date: 2023-06-06 13:27+0200\n"
 "Last-Translator: Janez G <janezgac@gmail.com>\n"
 "Language: sl_SI\n"
@@ -2146,6 +2146,11 @@ msgstr "Dodaj oznako"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
+msgid "Change Mark"
+msgstr "Spremeni oznako"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
 msgid "Resize Mark"
 msgstr "Spremeni velikost oznake"
 
@@ -2198,7 +2203,7 @@ msgid "Checkmark"
 msgstr "Oznaka kljukice"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py pdfarranger_qt/tools.py
+#: pdfarranger_qt/mainwindow.py
 msgid "Circle"
 msgstr "Krog"
 
@@ -2292,11 +2297,6 @@ msgstr "Ta oznaka ima odgovore."
 #: pdfarranger_qt/mainwindow.py
 msgid "Deleting this mark will also delete any replies to it."
 msgstr "Z izbrisom te oznake bodo izbrisani tudi vsi odgovori nanjo."
-
-# machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
-msgid "Change Mark"
-msgstr "Spremeni oznako"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
@@ -3069,6 +3069,16 @@ msgstr "Zamenjaj izbrano besedilo"
 msgid "Text Box"
 msgstr "Polje z besedilom"
 
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py pdfarranger_qt/tools.py
+msgid "Rectangle/Square"
+msgstr "Pravokotnik/kvadrat"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py pdfarranger_qt/tools.py
+msgid "Oval/Circle"
+msgstr "Oval/krog"
+
 #: pdfarranger_qt/properties.py
 msgid "Review History"
 msgstr "Zgodovina pregleda"
@@ -3378,11 +3388,6 @@ msgstr "Puščica"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/tools.py
-msgid "Rectangle"
-msgstr "Pravokotnik"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/tools.py
 msgid "Text callout"
 msgstr "Besedilni oblaček"
 
@@ -3405,6 +3410,16 @@ msgstr "Povezane črte"
 #: pdfarranger_qt/tools.py
 msgid "Stamps palette"
 msgstr "Paleta žigov"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/toolstrip.py
+msgid "Line Thickness"
+msgstr "Debelina črte"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/toolstrip.py
+msgid "No Colour"
+msgstr "Brez barve"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/viewer.py
@@ -3889,4 +3904,8 @@ msgstr "Pokaži naslov namesto imena datoteke"
 # machine translation, unreviewed
 #~ msgid "Comment colour"
 #~ msgstr "Barva komentarja"
+
+# machine translation, unreviewed
+#~ msgid "Rectangle"
+#~ msgstr "Pravokotnik"
 

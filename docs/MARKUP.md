@@ -56,8 +56,8 @@ time.
 | Drawing | Draw | | freehand ink | not started |
 | | Line | | a straight line | not started |
 | | Arrow | | a line with an arrowhead | not started |
-| | Rectangle | | a box | not started |
-| | Circle | | an oval | not started |
+| | Rectangle/Square | Rectangle/Square | a box, square with Shift | complete |
+| | Oval/Circle | Oval/Circle | an oval, a circle with Shift | complete |
 | | Text callout | | a text box with a line pointing at something | not started |
 | | Polygon | | a closed shape of straight sides | not started |
 | | Cloud | | a polygon drawn with a scalloped edge | not started |
@@ -1076,4 +1076,214 @@ with the per-run styling left for stage 3:
   with the hover summary, the note window and replies. Acrobat's panel
   edits them badly: changes take before they are posted, and changing
   the formatting does not work.
+
+## Drawing
+
+What every drawing tool shares. Each tool's own section adds to it.
+
+### Requirements
+
+- **Line thickness** is whole points from 1 to 12, or 0 to 12 for a shape
+  with a fill: a line of 0 with no fill draws nothing.
+- **Colours**: the line's and the fill's both come from the twenty-one
+  swatches, and the fill also offers **No Colour**, which leaves the shape
+  see-through. Spelled Colour wherever the user sees it, as everywhere
+  else here.
+- **Line style** is the one the Text Box has: No Border, Straight, the
+  three dotted, the two dash-dot and the two clouds.
+- **The strip** adds a line thickness control to its tail, a slider from 0
+  to 12 points, beside the colour swatch.
+- **The right-click menu** is the one most marks have: Open Pop-Up Note,
+  Delete, Set status, then the panel entries, then Make current
+  properties default and Properties.
+- **Notes, badges, the hover summary, the note window, replies and status**
+  are as for most marks, unlike the Text Box.
+- **A shape that draws nothing** -- a line of 0 and no fill, which a file
+  can bring though the rule above stops one being made here -- is still
+  found and selected by clicking inside it, and shows a thin dashed outline
+  while it is under the pointer or selected, so it can be seen and
+  deleted. Otherwise it is left as it is. **Departure from Acrobat**, where
+  such a shape cannot be found or selected at all and stays in the file.
+
+## Rectangle/Square
+
+Made by the Rectangle/Square tool. Complete.
+
+### Requirements
+
+- **One tool and one mark, two shapes.** The tool and the mark are both
+  Rectangle/Square, and the properties form is *Rectangle/Square
+  Properties*: what differs between a square and a rectangle is how its
+  handles and Shift behave, not what it is called.
+- **A square is a square by its shape**: the box inside the border has
+  equal sides, to within half a point. Nothing else is written to say so,
+  and a square that arrived from Acrobat is one exactly as a square made
+  here is. A rectangle resized until its sides are equal becomes a square.
+- **Making one.** Any text selection is cleared when the tool is chosen. A
+  press, a drag and a release make it, or a click, a move and a second
+  click; the first point is one corner and the second the opposite one,
+  in any direction.
+  **Shift makes a square**, its side the larger of the two distances from
+  the first point to the pointer.
+- **Handles.** Eight, on a rectangle and a square alike:
+  - on a rectangle, every handle resizes freely; **Shift on a corner
+    squares it**, the opposite corner staying put and the side being the
+    larger of the two distances from it to the pointer -- so it becomes a
+    square the size of its longest side and follows the pointer from there;
+  - on a square, **a corner handle keeps it square**, and **a side handle
+    stretches it into a rectangle**: which handle is grabbed is the way to
+    keep the shape or change it.
+  **Departure from the first notes**, which gave a square corner handles
+  only, so that nothing could turn it back into a rectangle; decided
+  2026-11-10, rather than writing an identifier only this application
+  would know.
+- **Moving.** Selecting it shows its handles and the selected mark's bar,
+  and its note if it has one. Without a fill it is moved by its outline;
+  with one, by the outline or anywhere inside.
+- **The properties form**: colour, line thickness, line style, fill colour
+  and opacity.
+
+### Plan
+
+The fixture is `corpus/Markup Drawing.pdf`: on page 1, four of these and
+two of the Oval/Circle's. **What Acrobat writes** is a `/Square` with
+`/Subj Rectangle` -- for the square too, which differs from the rectangles
+in nothing but its equal sides -- and no `/IT`. The line's colour is `/C`,
+the fill `/IC`, absent for No Colour; the thickness `/BS /W`, absent at
+1; a cloud `/BE /S /C /I 1` or `2` with its reach in `/RD`, and `/RD` is
+half the line on a plain box; opacity `/CA`. One of the four has a line
+of 0 and no fill, and its drawing is a rectangle path neither stroked
+nor filled: it draws nothing, in a corner of the page.
+
+### Building them
+
+**Both shapes at once**, the Rectangle/Square and the Oval/Circle, since
+they differ in little but the curve drawn in the box. Three stages, each
+tried in the application before the next:
+
+1. **The marks.** `/Square` and `/Circle` become kinds this application
+   knows. A file's are read -- line colour `/C`, fill `/IC`, thickness,
+   style, a cloud's reach in `/RD`, opacity -- and drawn by the canvas,
+   left out of the page image as comments and text boxes are, so that a
+   drag carries them. They are selected and moved by the rules above --
+   the outline, or anywhere inside when filled; for the oval, the oval and
+   not its box -- and a shape that draws nothing shows its dashed outline.
+   The selected mark's bar, the right-click menu, notes, replies, badges
+   and status come from what every mark already has.
+2. **Making and reshaping them.** The two tools, under their own names in
+   the strip; made by a press, drag and release or by a click, move and
+   click, Shift for a square or a circle; the eight handles with the
+   square's and circle's own rules and Shift on a corner. Written as
+   Acrobat writes them -- `/Subj Rectangle` or `Oval`, and the keys above
+   -- with a drawing of their own: the fill, then the line in its style,
+   the dash and the cloud as the Text Box draws them, the cloud following
+   the oval where the shape is one.
+3. **The properties form and the strip.** *Rectangle/Square Properties*
+   and *Oval/Circle Properties*: Style, Colour, Thickness from 0 to 12 --
+   0 only with a fill -- Fill Colour with No Colour, and Opacity, live as
+   the Text Box's are; Make Properties Default for the next one. The
+   strip's thickness slider beside the swatch.
+
+**Stage 1, as built:**
+
+- **The cloud round an oval is not the rectangle's.** Read off the
+  fixture's oval: the scallops are larger, 4.75 points per step of
+  intensity plus half the line -- 5.3 measured, the rule Apache PDFBox
+  records -- their centres lie on the oval inset by half the line, as many
+  as fit at 5/3 of a radius apart and then spaced to close up exactly (60
+  at 8.85 points on the fixture's), and each meets the next where their
+  circles cross, with no curl. Drawn so, ours reaches 4.75 points beyond
+  the box on every side where Acrobat's reaches 4.85 to 5.09.
+- **Taking hold.** Within the ink tolerance of the line -- a cloud's line
+  being the band its scallops cross -- and anywhere inside a filled shape
+  or one that draws nothing; an oval by the oval, so a corner of its box
+  does not take it. A shape's note window opens with its selection when
+  it has a note, as a highlight's does, not on every click as a
+  comment's does.
+- **A move** writes `/Rect` and leaves the producer's drawing, which is
+  mapped onto the rectangle and so follows it.
+
+**Stage 2, as built:**
+
+- **Made** by a drag, or by a click and a second click with the band
+  following the pointer between them; the preview is the shape itself, a
+  dashed rectangle or oval. Shift squares it from the first point, the side
+  the larger of the two distances. A press on a mark already there takes
+  that mark, with the tool armed or not, as for every tool.
+- **Written as Acrobat writes them**: `/Subj Rectangle` or `Oval`, `/C`,
+  `/IC` for a fill, `/BS` for a line other than 1, `/BE` for a cloud, `/RD`
+  half the line on a plain shape and the cloud's reach on a cloudy one,
+  `/Rect` the box grown by `/RD`, `/CA` below full opacity; and a drawing
+  of our own, the line inset by half its width inside the box, as the
+  fixture's are. An oval is four Bezier curves.
+- **A shape from the file is drawn afresh** when its colour, opacity or
+  size changes -- a recolour from the selected mark's bar left Acrobat's
+  drawing in the old colour until this -- and keeps Acrobat's drawing when
+  it is only moved. A shape does not turn: the angle a handle's drag
+  reports beside the rectangle is a stamp's, and is not written.
+
+**Stage 3, as built:**
+
+- **The form** is the Text Box's, titled *Rectangle/Square Properties* or
+  *Oval/Circle Properties*, with Colour where the Text Box has Border
+  Colour, and Fill Colour's swatches with **No Colour** beneath them.
+  Thickness goes down to 0 only while there is a fill: choosing No Colour
+  lifts a 0 back to 1. Every change shows live, as the Text Box's do.
+- **A restyle moves a file shape's rectangle, not its box**: `/RD` is
+  worked out again for the new style and thickness, side by side, and the
+  rectangle is the box grown by it.
+- **No Colour** is held in an edit as an empty colour, since None there
+  means "not changed", and written as no `/IC`.
+- **The strip's thickness** is a button beside the swatch, opening a
+  slider from 1 -- or 0 for a filled shape -- to 12 points that reads out
+  its value. With a shape selected it sets that shape's line; otherwise
+  the next one the armed tool makes. Shown only for the two tools and a
+  selected shape.
+- **Make Properties Default** sends the fill, thickness and style, with
+  the colour and opacity every mark sends, to the tool for its next shape.
+- **The strip's tail is a column**, the thickness under the swatch, as
+  Acrobat's is; and **the swatch is round**, as Acrobat's is, while the
+  palette's cells stay square. The selected mark's bar shows its colour
+  the same way, a round swatch in the mark's colour, where it had a
+  palette glyph.
+
+**Settled 2026-11-10:**
+
+- **A cloud round an oval** is laid as round a rectangle, the scallops'
+  points on the curve. The fixture's small-cloud oval has `/BE /S /C /I 1`
+  and a reach in `/RD` of about 6 points, not quite even on every side
+  as the rectangle's is, and its drawing is 300 curves.
+- **Either corner can come first.** The first point is whichever corner
+  the second point makes it -- top left, top right, bottom left or bottom
+  right -- and the box is the two points' rectangle.
+
+## Oval/Circle
+
+Made by the Oval/Circle tool. Built with the Rectangle/Square, in the
+stages given there. Complete.
+
+### Requirements
+
+- **One tool and one mark, two shapes**, as the Rectangle/Square: the tool
+  and the mark are both Oval/Circle, and the form *Oval/Circle Properties*.
+- **A circle is a circle by its shape**: the box it is drawn in has equal
+  sides, to within half a point, as for a square.
+- **Making one** is as for the Rectangle/Square, the oval drawn in the box
+  the two points make; **Shift makes a circle**.
+- **Handles** are as for the Rectangle/Square: eight on both; on an oval
+  every handle resizes freely and Shift on a corner makes a circle the
+  size of the box's longer side; on a circle a corner keeps it a circle
+  and a side stretches it into an oval. Acrobat shows why: a circle
+  resized there without Shift became an oval with no way back, since
+  nothing in the file says it was a circle.
+- **Moving.** Without a fill it is moved by its outline; with one, by the
+  outline or anywhere inside -- the oval, not the box it is drawn in.
+- **The properties form**: colour, line thickness, line style, fill colour
+  and opacity.
+
+### Plan
+
+**What Acrobat writes** is a `/Circle` with `/Subj Oval` -- for the circle
+too, which in the fixture is 143.48 points both ways and has nothing else
+to tell it from the ovals -- and the same keys as the Rectangle/Square.
 

@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pdfarranger-qt VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/dwsdolce/pdfarranger-qt/issues\n"
-"POT-Creation-Date: 2026-11-10 05:23+0000\n"
+"POT-Creation-Date: 2026-11-11 00:38+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1660,6 +1660,10 @@ msgid "Add Mark"
 msgstr ""
 
 #: pdfarranger_qt/mainwindow.py
+msgid "Change Mark"
+msgstr ""
+
+#: pdfarranger_qt/mainwindow.py
 msgid "Resize Mark"
 msgstr ""
 
@@ -1704,7 +1708,7 @@ msgstr ""
 msgid "Checkmark"
 msgstr ""
 
-#: pdfarranger_qt/mainwindow.py pdfarranger_qt/tools.py
+#: pdfarranger_qt/mainwindow.py
 msgid "Circle"
 msgstr ""
 
@@ -1779,10 +1783,6 @@ msgstr ""
 
 #: pdfarranger_qt/mainwindow.py
 msgid "Deleting this mark will also delete any replies to it."
-msgstr ""
-
-#: pdfarranger_qt/mainwindow.py
-msgid "Change Mark"
 msgstr ""
 
 #: pdfarranger_qt/mainwindow.py
@@ -2418,6 +2418,14 @@ msgstr ""
 msgid "Text Box"
 msgstr ""
 
+#: pdfarranger_qt/properties.py pdfarranger_qt/tools.py
+msgid "Rectangle/Square"
+msgstr ""
+
+#: pdfarranger_qt/properties.py pdfarranger_qt/tools.py
+msgid "Oval/Circle"
+msgstr ""
+
 #: pdfarranger_qt/properties.py
 msgid "Review History"
 msgstr ""
@@ -2670,10 +2678,6 @@ msgid "Arrow"
 msgstr ""
 
 #: pdfarranger_qt/tools.py
-msgid "Rectangle"
-msgstr ""
-
-#: pdfarranger_qt/tools.py
 msgid "Text callout"
 msgstr ""
 
@@ -2691,6 +2695,14 @@ msgstr ""
 
 #: pdfarranger_qt/tools.py
 msgid "Stamps palette"
+msgstr ""
+
+#: pdfarranger_qt/toolstrip.py
+msgid "Line Thickness"
+msgstr ""
+
+#: pdfarranger_qt/toolstrip.py
+msgid "No Colour"
 msgstr ""
 
 #: pdfarranger_qt/viewer.py

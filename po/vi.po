@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-10 05:23+0000\n"
+"POT-Creation-Date: 2026-11-11 00:38+0000\n"
 "PO-Revision-Date: 2025-12-15 00:59+0700\n"
 "Last-Translator: Loc Huynh <https://github.com/hthienloc>\n"
 "Language: vi\n"
@@ -2125,6 +2125,11 @@ msgstr "Thêm dấu"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
+msgid "Change Mark"
+msgstr "Đổi dấu"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
 msgid "Resize Mark"
 msgstr "Đổi kích thước dấu"
 
@@ -2177,7 +2182,7 @@ msgid "Checkmark"
 msgstr "Dấu tích"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py pdfarranger_qt/tools.py
+#: pdfarranger_qt/mainwindow.py
 msgid "Circle"
 msgstr "Hình tròn"
 
@@ -2271,11 +2276,6 @@ msgstr "Dấu này có các trả lời."
 #: pdfarranger_qt/mainwindow.py
 msgid "Deleting this mark will also delete any replies to it."
 msgstr "Xoá dấu này cũng sẽ xoá mọi trả lời cho nó."
-
-# machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
-msgid "Change Mark"
-msgstr "Đổi dấu"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
@@ -3029,6 +3029,16 @@ msgstr "Thay thế văn bản đã chọn"
 msgid "Text Box"
 msgstr "Hộp văn bản"
 
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py pdfarranger_qt/tools.py
+msgid "Rectangle/Square"
+msgstr "Hình chữ nhật/Hình vuông"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py pdfarranger_qt/tools.py
+msgid "Oval/Circle"
+msgstr "Hình bầu dục/Hình tròn"
+
 #: pdfarranger_qt/properties.py
 msgid "Review History"
 msgstr "Lịch sử duyệt"
@@ -3338,11 +3348,6 @@ msgstr "Mũi tên"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/tools.py
-msgid "Rectangle"
-msgstr "Hình chữ nhật"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/tools.py
 msgid "Text callout"
 msgstr "Chú giải văn bản"
 
@@ -3365,6 +3370,16 @@ msgstr "Đường nối"
 #: pdfarranger_qt/tools.py
 msgid "Stamps palette"
 msgstr "Bảng con dấu"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/toolstrip.py
+msgid "Line Thickness"
+msgstr "Độ dày nét"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/toolstrip.py
+msgid "No Colour"
+msgstr "Không màu"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/viewer.py
@@ -3860,4 +3875,8 @@ msgstr "Hiện tiêu đề thay cho tên tập tin"
 # machine translation, unreviewed
 #~ msgid "Comment colour"
 #~ msgstr "Màu chú thích"
+
+# machine translation, unreviewed
+#~ msgid "Rectangle"
+#~ msgstr "Hình chữ nhật"
 

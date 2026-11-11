@@ -35,14 +35,24 @@ some.
 from typing import Dict, Optional
 
 import qtawesome as qta
-from PySide6.QtCore import QEvent, QPoint, QPointF, QRectF, Qt, Signal
-from PySide6.QtGui import QAction, QActionGroup, QColor, QPainter, QPen, QPolygonF
+from PySide6.QtCore import QEvent, QPoint, QPointF, QRectF, Qt, QTimer, Signal
+from PySide6.QtGui import (
+    QAction,
+    QActionGroup,
+    QColor,
+    QIcon,
+    QPainter,
+    QPen,
+    QPixmap,
+    QPolygonF,
+)
 from PySide6.QtWidgets import (
     QFrame,
     QGridLayout,
     QHBoxLayout,
     QLabel,
     QMenu,
+    QPushButton,
     QSizePolicy,
     QSlider,
     QToolButton,
@@ -300,6 +310,9 @@ class ToolStrip(QFrame):
     colour_armed = Signal(tuple)
     #: And its opacity, 0 to 1.
     opacity_armed = Signal(float)
+    #: A line thickness, in points, chosen from the tail's slider: for the
+    #: selected shape, or the next one the armed tool makes.
+    thickness_armed = Signal(float)
 
     def __init__(self, parent: Optional[QWidget] = None):
         super().__init__(parent)
@@ -331,7 +344,9 @@ class ToolStrip(QFrame):
         #: Where a tool's own controls will go. Present from the start so the
         #: strip does not change shape the first time a tool brings one.
         self.tail = QWidget(self)
-        self.tail_layout = QHBoxLayout(self.tail)
+        # A column, as the families above it are and as Acrobat's strip has
+        # its swatch and line thickness, one under the other.
+        self.tail_layout = QVBoxLayout(self.tail)
         self.tail_layout.setContentsMargins(0, 0, 0, 0)
         self.tail_layout.setSpacing(4)
         self.tail.setVisible(False)
@@ -340,7 +355,8 @@ class ToolStrip(QFrame):
         #: kind rather than one per kind: Reader carries a single current
         #: colour at the foot of its tool list and it colours whatever is
         #: made next, icon or highlight or shape alike.
-        self.swatch = _Swatch((1.0, 0.7569, 0.0118), _("Colour"), self.tail)
+        self.swatch = _Swatch((1.0, 0.7569, 0.0118), _("Colour"), self.tail,
+                              round_=True)
         self.swatch.setFixedSize(_Swatch.TAIL, _Swatch.TAIL)
         self.swatch.clicked.connect(self._open_palette)
         self.tail_layout.addWidget(self.swatch)
@@ -356,6 +372,19 @@ class ToolStrip(QFrame):
         self.text_button.clicked.connect(self._toggle_text_palette)
         self.text_button.hide()
         self.tail_layout.addWidget(self.text_button)
+        #: The line thickness, for the drawing tools: a button beside the
+        #: swatch that opens a slider, as Acrobat's does. Shown only where
+        #: there is a line to thicken.
+        self.thickness_button = QToolButton(self.tail)
+        self.thickness_button.setToolTip(_("Line Thickness"))
+        self.thickness_button.setFocusPolicy(Qt.NoFocus)
+        self.thickness_button.setFixedSize(_Swatch.TAIL + 4, _Swatch.TAIL + 4)
+        self.thickness_button.clicked.connect(self._open_thickness)
+        self.thickness_button.hide()
+        self.tail_layout.addWidget(self.thickness_button)
+        self._thickness = None
+        self._thickness_zero = False
+        self._thickness_popup = None
         self.tail_layout.addStretch(1)
         self.text_palette = None
         self._text_editor = None
@@ -422,6 +451,8 @@ class ToolStrip(QFrame):
         palette = self.palette()
         resting = palette.buttonText().color()
         armed = palette.highlightedText().color()
+        if hasattr(self, "thickness_button"):
+            self.thickness_button.setIcon(icon_for("format-line-weight", resting))
         for tool in tools.TOOLS:
             self._resting[tool.name] = icon_for(tool.icon, resting)
             self._armed_icons[tool.name] = icon_for(tool.icon, armed)
@@ -521,6 +552,7 @@ class ToolStrip(QFrame):
         typing = self._text_editor is not None
         self.swatch.setVisible(not typing)
         self.text_button.setVisible(typing)
+        self.thickness_button.setVisible(not typing and self._thickness is not None)
         self.tail.setVisible(makes_marks or self._before is not None or typing)
 
     def _show_armed(self) -> None:
@@ -544,6 +576,34 @@ class ToolStrip(QFrame):
         elif event.type() == QEvent.LanguageChange:
             self.retranslate()
         super().changeEvent(event)
+
+    # -- the line thickness ------------------------------------------------
+
+    def offer_thickness(self, points, zero: bool = False) -> None:
+        """Show the thickness control at ``points``, or hide it with None.
+        ``zero`` lets the slider reach 0, which only a filled shape can
+        have."""
+        self._thickness = None if points is None else float(points)
+        self._thickness_zero = bool(zero)
+        if self._thickness_popup is not None and points is None:
+            self._thickness_popup.hide()
+        self._show_tail()
+        self.adjustSize()
+        self.refresh()
+
+    def _open_thickness(self) -> None:
+        if self._thickness is None:
+            return
+        if self._thickness_popup is None:
+            self._thickness_popup = ThicknessPopup(self)
+            self._thickness_popup.chosen.connect(self._thickness_picked)
+        button = self.thickness_button
+        at = button.mapToGlobal(QPoint(button.width() + GAP, 0))
+        self._thickness_popup.show_for(self._thickness, self._thickness_zero, at)
+
+    def _thickness_picked(self, points: float) -> None:
+        self._thickness = float(points)
+        self.thickness_armed.emit(float(points))
 
     # -- the text palette --------------------------------------------------
 
@@ -805,6 +865,7 @@ class MarkButtons(QWidget):
         the mark is a different kind of thing.
         """
         self._colour, self._opacity = colour, opacity
+        self._show_colour()
         self.buttons["colour"].setEnabled(not locked)
         self.buttons["delete"].setEnabled(not locked)
         # Comment stays live on a locked mark: reading a thread is not an
@@ -821,7 +882,26 @@ class MarkButtons(QWidget):
     def _restyle(self) -> None:
         colour = self.palette().buttonText().color()
         for name, glyph, _label in self.BUTTONS:
+            if name == "colour":
+                self._show_colour()
+                continue
             self.buttons[name].setIcon(icon_for(glyph, colour))
+
+    def _show_colour(self) -> None:
+        """The colour button as the mark's own colour in a round swatch,
+        as Acrobat's bar shows it and as the strip's swatch is drawn --
+        not a palette glyph, which says what the button does but not what
+        the mark is."""
+        side = 18
+        ratio = self.devicePixelRatioF() or 1.0
+        pixmap = QPixmap(round(side * ratio), round(side * ratio))
+        pixmap.setDevicePixelRatio(ratio)
+        pixmap.fill(Qt.transparent)
+        painter = QPainter(pixmap)
+        _Swatch.paint_round(painter, QRectF(1, 1, side - 2, side - 2),
+                            self._colour or (1.0, 0.0, 0.0))
+        painter.end()
+        self.buttons["colour"].setIcon(QIcon(pixmap))
 
     def retranslate(self) -> None:
         for name, _glyph, label in self.BUTTONS:
@@ -886,7 +966,7 @@ class ColourPopup(QWidget):
     CELL = 26
     GAP = 4
 
-    def __init__(self, parent=None, opacity: bool = True):
+    def __init__(self, parent=None, opacity: bool = True, none: bool = False):
         super().__init__(parent, Qt.Popup)
         self.setAutoFillBackground(True)
         outer = QVBoxLayout(self)
@@ -913,6 +993,14 @@ class ColourPopup(QWidget):
                            n % markup.PALETTE_COLUMNS)
             self.cells.append(cell)
         outer.addLayout(grid)
+        #: *No Colour*, for a fill that may be left see-through: chosen as
+        #: an empty colour, which the window above writes as no `/IC`.
+        self.no_colour = QPushButton(_("No Colour"), self)
+        self.no_colour.setCheckable(True)
+        self.no_colour.setFocusPolicy(Qt.NoFocus)
+        self.no_colour.clicked.connect(lambda: self._picked(-1, ()))
+        self.no_colour.setVisible(none)
+        outer.addWidget(self.no_colour)
 
         row = QHBoxLayout()
         row.setSpacing(8)
@@ -949,6 +1037,7 @@ class ColourPopup(QWidget):
         """
         for n, cell in enumerate(self.cells):
             cell.set_chosen(n == at)
+        self.no_colour.setChecked(at < 0)
         self.chosen.emit(colour)
 
     def _nudged(self, action):
@@ -957,14 +1046,70 @@ class ColourPopup(QWidget):
 
     def show_for(self, colour, opacity, at) -> None:
         """Open at ``at``, ticking ``colour`` and reading ``opacity``."""
-        chosen = markup.nearest_swatch(colour)
+        chosen = markup.nearest_swatch(colour) if colour else -1
         for n, cell in enumerate(self.cells):
             cell.set_chosen(n == chosen)
+        self.no_colour.setChecked(not colour)
         value = 100 if opacity is None else max(0, min(100, round(opacity * 100)))
         self.slider.blockSignals(True)
         self.slider.setValue(value)
         self.slider.blockSignals(False)
         self.percent.setText(f"{value}%")
+        self.adjustSize()
+        self.move(at)
+        self.show()
+
+
+class ThicknessPopup(QWidget):
+    """A line's thickness, 0 or 1 to 12 points, on a slider that reads out
+    what it is set to -- the panel Acrobat opens from its strip.
+
+    A popup rather than a menu, as the colour popup is, so the slider can
+    be dragged. The choice is sent when the slider is let go, or stepped
+    with the keyboard or a click on the groove."""
+
+    chosen = Signal(float)
+
+    def __init__(self, parent=None):
+        super().__init__(parent, Qt.Popup)
+        self.setAutoFillBackground(True)
+        outer = QVBoxLayout(self)
+        outer.setContentsMargins(12, 10, 12, 10)
+        outer.setSpacing(6)
+        title = QLabel(_("Line Thickness"), self)
+        font = title.font()
+        font.setBold(True)
+        title.setFont(font)
+        outer.addWidget(title)
+        row = QHBoxLayout()
+        self.slider = QSlider(Qt.Horizontal, self)
+        self.slider.setRange(1, 12)
+        self.slider.setMinimumWidth(140)
+        self.slider.sliderReleased.connect(self._send)
+        self.slider.actionTriggered.connect(self._nudged)
+        row.addWidget(self.slider, 1)
+        self.points = QLabel("1 pt", self)
+        self.points.setMinimumWidth(40)
+        self.points.setAlignment(Qt.AlignRight | Qt.AlignVCenter)
+        row.addWidget(self.points)
+        self.slider.valueChanged.connect(
+            lambda v: self.points.setText(f"{v} pt"))
+        outer.addLayout(row)
+
+    def _send(self) -> None:
+        self.chosen.emit(float(self.slider.value()))
+
+    def _nudged(self, action) -> None:
+        if action != QSlider.SliderMove:
+            # The value moves after this signal, so it is read once it has.
+            QTimer.singleShot(0, self._send)
+
+    def show_for(self, points: float, zero: bool, at) -> None:
+        self.slider.blockSignals(True)
+        self.slider.setMinimum(0 if zero else 1)
+        self.slider.setValue(int(round(points)))
+        self.slider.blockSignals(False)
+        self.points.setText(f"{self.slider.value()} pt")
         self.adjustSize()
         self.move(at)
         self.show()
@@ -981,10 +1126,13 @@ class _Swatch(QToolButton):
     #: alone and has to read as the current colour rather than as a choice.
     TAIL = 22
 
-    def __init__(self, colour, label, parent=None):
+    def __init__(self, colour, label, parent=None, round_: bool = False):
         super().__init__(parent)
         self.colour = tuple(colour)
         self._chosen = False
+        #: Round for the strip's swatch, as Acrobat's is; the palette's
+        #: cells stay square, as Acrobat's are.
+        self.round = round_
         self.setToolTip(label)
         self.setFixedSize(ColourPopup.CELL, ColourPopup.CELL)
         self.setFocusPolicy(Qt.NoFocus)
@@ -993,6 +1141,16 @@ class _Swatch(QToolButton):
     def set_colour(self, colour) -> None:
         self.colour = tuple(colour)
         self.update()
+
+    @staticmethod
+    def paint_round(painter, where: QRectF, colour) -> None:
+        """A colour as a filled circle, outlined when it is light enough to
+        be lost against the background."""
+        painter.setRenderHint(QPainter.Antialiasing, True)
+        painter.setBrush(QColor.fromRgbF(*colour[:3]))
+        light = sum(colour[:3]) / 3 > 0.6
+        painter.setPen(QPen(QColor(0, 0, 0, 60) if light else Qt.NoPen))
+        painter.drawEllipse(where)
 
     def set_chosen(self, chosen: bool) -> None:
         if chosen != self._chosen:
@@ -1009,6 +1167,10 @@ class _Swatch(QToolButton):
         """
         painter = QPainter(self)
         painter.setRenderHint(QPainter.Antialiasing, True)
+        if self.round:
+            _Swatch.paint_round(painter, QRectF(1, 1, self.width() - 2,
+                                                self.height() - 2), self.colour)
+            return
         fill = QColor.fromRgbF(*self.colour)
         painter.setBrush(fill)
         light = sum(self.colour) / 3 > 0.6

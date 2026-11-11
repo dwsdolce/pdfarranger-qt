@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PDF Arranger 1.9.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-10 05:23+0000\n"
+"POT-Creation-Date: 2026-11-11 00:38+0000\n"
 "PO-Revision-Date: 2023-06-12 10:30+0300\n"
 "Last-Translator: Manussos Pulinakis "
 "<38626261+manussos@users.noreply.github.com>\n"
@@ -2199,6 +2199,11 @@ msgstr "Προσθήκη σήμανσης"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
+msgid "Change Mark"
+msgstr "Αλλαγή σήμανσης"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
 msgid "Resize Mark"
 msgstr "Αλλαγή μεγέθους σήμανσης"
 
@@ -2251,7 +2256,7 @@ msgid "Checkmark"
 msgstr "Τσεκ"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py pdfarranger_qt/tools.py
+#: pdfarranger_qt/mainwindow.py
 msgid "Circle"
 msgstr "Κύκλος"
 
@@ -2345,11 +2350,6 @@ msgstr "Αυτή η σήμανση έχει απαντήσεις."
 #: pdfarranger_qt/mainwindow.py
 msgid "Deleting this mark will also delete any replies to it."
 msgstr "Η διαγραφή αυτής της σήμανσης θα διαγράψει και τυχόν απαντήσεις σε αυτήν."
-
-# machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
-msgid "Change Mark"
-msgstr "Αλλαγή σήμανσης"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
@@ -3116,6 +3116,16 @@ msgstr "Αντικατάσταση επιλεγμένου κειμένου"
 msgid "Text Box"
 msgstr "Πλαίσιο κειμένου"
 
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py pdfarranger_qt/tools.py
+msgid "Rectangle/Square"
+msgstr "Ορθογώνιο/Τετράγωνο"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py pdfarranger_qt/tools.py
+msgid "Oval/Circle"
+msgstr "Οβάλ/Κύκλος"
+
 #: pdfarranger_qt/properties.py
 msgid "Review History"
 msgstr "Ιστορικό αναθεώρησης"
@@ -3425,11 +3435,6 @@ msgstr "Βέλος"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/tools.py
-msgid "Rectangle"
-msgstr "Ορθογώνιο"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/tools.py
 msgid "Text callout"
 msgstr "Επεξήγηση κειμένου"
 
@@ -3452,6 +3457,16 @@ msgstr "Συνδεδεμένες γραμμές"
 #: pdfarranger_qt/tools.py
 msgid "Stamps palette"
 msgstr "Παλέτα σφραγίδων"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/toolstrip.py
+msgid "Line Thickness"
+msgstr "Πάχος γραμμής"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/toolstrip.py
+msgid "No Colour"
+msgstr "Χωρίς χρώμα"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/viewer.py
@@ -3935,4 +3950,8 @@ msgstr "Εμφάνιση του τίτλου αντί του ονόματος α
 # machine translation, unreviewed
 #~ msgid "Comment colour"
 #~ msgstr "Χρώμα σχολίου"
+
+# machine translation, unreviewed
+#~ msgid "Rectangle"
+#~ msgstr "Ορθογώνιο"
 

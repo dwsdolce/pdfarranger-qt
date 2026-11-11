@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-10 05:23+0000\n"
+"POT-Creation-Date: 2026-11-11 00:38+0000\n"
 "PO-Revision-Date: 2024-03-20 17:20+0800\n"
 "Last-Translator: 錢政維 <e.cwchien@gmail.com>\n"
 "Language: zh_TW\n"
@@ -1999,6 +1999,11 @@ msgstr "加入標註"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
+msgid "Change Mark"
+msgstr "變更標記"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
 msgid "Resize Mark"
 msgstr "調整標記大小"
 
@@ -2051,7 +2056,7 @@ msgid "Checkmark"
 msgstr "打勾"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py pdfarranger_qt/tools.py
+#: pdfarranger_qt/mainwindow.py
 msgid "Circle"
 msgstr "圓形"
 
@@ -2145,11 +2150,6 @@ msgstr "此標記有回覆。"
 #: pdfarranger_qt/mainwindow.py
 msgid "Deleting this mark will also delete any replies to it."
 msgstr "刪除此標記將一併刪除對它的所有回覆。"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
-msgid "Change Mark"
-msgstr "變更標記"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
@@ -2898,6 +2898,16 @@ msgstr "取代選取的文字"
 msgid "Text Box"
 msgstr "文字方塊"
 
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py pdfarranger_qt/tools.py
+msgid "Rectangle/Square"
+msgstr "矩形/正方形"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py pdfarranger_qt/tools.py
+msgid "Oval/Circle"
+msgstr "橢圓/圓形"
+
 #: pdfarranger_qt/properties.py
 msgid "Review History"
 msgstr "審閱歷程記錄"
@@ -3207,11 +3217,6 @@ msgstr "箭頭"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/tools.py
-msgid "Rectangle"
-msgstr "矩形"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/tools.py
 msgid "Text callout"
 msgstr "文字圖說"
 
@@ -3234,6 +3239,16 @@ msgstr "連接線"
 #: pdfarranger_qt/tools.py
 msgid "Stamps palette"
 msgstr "印章面板"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/toolstrip.py
+msgid "Line Thickness"
+msgstr "線條粗細"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/toolstrip.py
+msgid "No Colour"
+msgstr "無色彩"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/viewer.py
@@ -3701,4 +3716,8 @@ msgstr "顯示標題而非檔案名稱"
 # machine translation, unreviewed
 #~ msgid "Comment colour"
 #~ msgstr "註解顏色"
+
+# machine translation, unreviewed
+#~ msgid "Rectangle"
+#~ msgstr "矩形"
 

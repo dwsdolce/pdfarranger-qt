@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-10 05:23+0000\n"
+"POT-Creation-Date: 2026-11-11 00:38+0000\n"
 "PO-Revision-Date: 2023-06-12 11:22+0300\n"
 "Last-Translator: Yaron Shahrabani <sh.yaron@gmail.com>\n"
 "Language: he\n"
@@ -2112,6 +2112,11 @@ msgstr "הוספת סימון"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
+msgid "Change Mark"
+msgstr "שינוי סימון"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
 msgid "Resize Mark"
 msgstr "שינוי גודל הסימון"
 
@@ -2164,7 +2169,7 @@ msgid "Checkmark"
 msgstr "סימן וי"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py pdfarranger_qt/tools.py
+#: pdfarranger_qt/mainwindow.py
 msgid "Circle"
 msgstr "עיגול"
 
@@ -2258,11 +2263,6 @@ msgstr "לסימון הזה יש תגובות."
 #: pdfarranger_qt/mainwindow.py
 msgid "Deleting this mark will also delete any replies to it."
 msgstr "מחיקת הסימון הזה תמחק גם את כל התגובות אליו."
-
-# machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
-msgid "Change Mark"
-msgstr "שינוי סימון"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
@@ -3033,6 +3033,16 @@ msgstr "החלפת הטקסט הנבחר"
 msgid "Text Box"
 msgstr "תיבת טקסט"
 
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py pdfarranger_qt/tools.py
+msgid "Rectangle/Square"
+msgstr "מלבן/ריבוע"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py pdfarranger_qt/tools.py
+msgid "Oval/Circle"
+msgstr "אליפסה/עיגול"
+
 #: pdfarranger_qt/properties.py
 msgid "Review History"
 msgstr "היסטוריית סקירה"
@@ -3342,11 +3352,6 @@ msgstr "חץ"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/tools.py
-msgid "Rectangle"
-msgstr "מלבן"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/tools.py
 msgid "Text callout"
 msgstr "הסבר טקסט"
 
@@ -3369,6 +3374,16 @@ msgstr "קווים מחוברים"
 #: pdfarranger_qt/tools.py
 msgid "Stamps palette"
 msgstr "לוח חותמות"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/toolstrip.py
+msgid "Line Thickness"
+msgstr "עובי קו"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/toolstrip.py
+msgid "No Colour"
+msgstr "ללא צבע"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/viewer.py
@@ -3847,4 +3862,8 @@ msgstr "הצגת הכותרת במקום שם הקובץ"
 # machine translation, unreviewed
 #~ msgid "Comment colour"
 #~ msgstr "צבע ההערה"
+
+# machine translation, unreviewed
+#~ msgid "Rectangle"
+#~ msgstr "מלבן"
 

@@ -225,6 +225,7 @@ class MainWindow(QMainWindow):
         self._load_tool_defaults()
         self.armed_opacity = None
         self.tool_strip.colour_armed.connect(self._colour_armed)
+        self.tool_strip.thickness_armed.connect(self._thickness_armed)
         # The text palette works on whichever box is being typed in.
         self.reader.canvas.text_editing_started.connect(self._text_editing_started)
         self.reader.canvas.text_editing_ended.connect(self._text_editing_ended)
@@ -857,6 +858,9 @@ class MainWindow(QMainWindow):
         "insert": markup.CARET,
         # *Add Text Comment*, whose mark is a Text Box.
         "textbox": markup.FREETEXT,
+        # *Rectangle/Square* and *Oval/Circle*.
+        "rectangle": markup.SQUARE,
+        "oval": markup.CIRCLE,
     }
 
     #: The gestures above that are not tools, and the tool each acts as --
@@ -892,6 +896,8 @@ class MainWindow(QMainWindow):
         "replace_text": "replace",
         "insert_text": "insert",
         "text_comment": "textbox",
+        "rectangle": "rectangle",
+        "circle": "oval",
         "draw": "draw",
     }
 
@@ -924,6 +930,7 @@ class MainWindow(QMainWindow):
         # its own and the swatch has to show what the next mark will be.
         if name in self.MARK_KINDS or name in self.CANVAS_TOOLS:
             self.tool_strip.arm_colour(self.colour_for(name))
+        self._offer_thickness()
         # **With text already selected, arming the tool is the gesture.**
         # Reader marks the selection the moment you choose the tool; there
         # is no second action to commit it, and waiting for one left the
@@ -1081,9 +1088,9 @@ class MainWindow(QMainWindow):
             centre = (rect[0], rect[3])
             rect = markup.stamp_rect(centre[0], centre[1], chosen,
                                      1.0 / page_scale)
-        if subtype == markup.FREETEXT:
+        if subtype == markup.FREETEXT or subtype in markup.SHAPES:
             # The box the canvas made, by a click or a drag, as it is: a
-            # text box is sized by whoever made it.
+            # text box, a rectangle or an oval is sized by whoever made it.
             rect = tuple(rects[-1])
         if subtype == markup.CARET:
             # *Insert Text*: the canvas sends the character beside the gap,
@@ -1106,7 +1113,8 @@ class MainWindow(QMainWindow):
             icon=chosen,
             author=markup.default_author(),
             fill=((box.get("fill") or markup.swatch("White"))
-                  if subtype == markup.FREETEXT else None),
+                  if subtype == markup.FREETEXT
+                  else box.get("fill") if subtype in markup.SHAPES else None),
             thickness=box.get("thickness", 1.0),
             border_style=box.get("border_style", "straight")))
         if tool == "replace" and quads:
@@ -1177,7 +1185,8 @@ class MainWindow(QMainWindow):
             self._icons.update(
                 {k: str(v) for k, v in stored.get("icons", {}).items()})
             self._boxes.update(
-                {k: {"fill": tuple(v["fill"]), "thickness": float(v["thickness"]),
+                {k: {"fill": tuple(v["fill"]) if v.get("fill") else None,
+                     "thickness": float(v["thickness"]),
                      "border_style": str(v["border_style"])}
                  for k, v in stored.get("boxes", {}).items()})
         except Exception:  # noqa: BLE001 - a bad preference is no preference
@@ -1191,7 +1200,8 @@ class MainWindow(QMainWindow):
             "opacities": dict(self._opacities),
             "styles": dict(self._styles),
             "icons": dict(self._icons),
-            "boxes": {k: {"fill": list(v["fill"]), "thickness": v["thickness"],
+            "boxes": {k: {"fill": list(v["fill"]) if v["fill"] else None,
+                          "thickness": v["thickness"],
                           "border_style": v["border_style"]}
                       for k, v in self._boxes.items()},
         }))
@@ -1273,8 +1283,10 @@ class MainWindow(QMainWindow):
             self.open_note(*found)
         if found is None:
             self.tool_strip.unfollow()
+            self._offer_thickness()
             return
         mark = found[1]
+        self._offer_thickness(mark)
         self.tool_strip.follow(
             mark.colour,
             markup.solidity(mark) if isinstance(mark, markup.Annotation)
@@ -1285,6 +1297,51 @@ class MainWindow(QMainWindow):
             else mark.opacity,
             bool(getattr(mark, "locked", False)),
             notes=not self._is_text_box(mark))
+
+    #: The strip's tools whose marks have a line to thicken.
+    LINED_TOOLS = ("rectangle", "circle")
+
+    def _offer_thickness(self, mark=None) -> None:
+        """Show the strip's thickness at ``mark``'s, for a selected shape;
+        otherwise at what the armed tool would make, or not at all."""
+        if mark is not None:
+            kind = (mark.kind if isinstance(mark, markup.Annotation)
+                    else mark.subtype)
+            if kind in markup.SHAPES:
+                self.tool_strip.offer_thickness(
+                    float(getattr(mark, "thickness", 1.0) or 0.0),
+                    zero=getattr(mark, "fill", None) is not None)
+                return
+        tool = self.tool_strip.armed()
+        if tool in self.LINED_TOOLS:
+            box = self._boxes.get(tool, {})
+            self.tool_strip.offer_thickness(float(box.get("thickness", 1.0)),
+                                            zero=box.get("fill") is not None)
+        else:
+            self.tool_strip.offer_thickness(None)
+
+    def _thickness_armed(self, points: float) -> None:
+        """A thickness from the strip: the selected shape's, or the armed
+        tool's for the next one it makes."""
+        found = self.reader.canvas.selected_mark()
+        if found is not None:
+            index, mark = found
+            kind = (mark.kind if isinstance(mark, markup.Annotation)
+                    else mark.subtype)
+            if kind in markup.SHAPES:
+                if getattr(mark, "locked", False):
+                    return
+                self._commit_mark_change(_("Change Mark"), index, mark)
+                self._write_mark_fields(index, mark, {"thickness": float(points)},
+                                        isinstance(mark, markup.Annotation))
+                return
+        tool = self.tool_strip.armed()
+        if tool in self.LINED_TOOLS:
+            box = dict(self._boxes.get(tool, {"fill": None, "thickness": 1.0,
+                                              "border_style": "straight"}))
+            box["thickness"] = float(points)
+            self._boxes[tool] = box
+            self._remember_tool_defaults()
 
     def mark_recoloured(self, colour) -> None:
         """A colour was picked for the selected mark."""
@@ -1648,7 +1705,8 @@ class MainWindow(QMainWindow):
         mark = canvas.head_of(index, mark)
         said = canvas.note_bearer(index, mark)
         mine = isinstance(mark, markup.Annotation)
-        is_box = (mark.kind if mine else mark.subtype) == markup.FREETEXT
+        kind_here = mark.kind if mine else mark.subtype
+        is_box = kind_here == markup.FREETEXT or kind_here in markup.SHAPES
         form = MarkProperties(Properties(
             kind=("replace_text" if said is not mark
                   else mark.kind if mine else mark.subtype),
@@ -1670,6 +1728,7 @@ class MainWindow(QMainWindow):
             icons_fixed=markup.is_reply(mark),
             styles=self._styles_for(mark.kind if mine else mark.subtype),
             box=is_box,
+            fill_optional=kind_here in markup.SHAPES,
             fill=getattr(mark, "fill", None) if is_box else None,
             thickness=float(getattr(mark, "thickness", 1.0) or 0.0),
             border_style=getattr(mark, "border_style", "straight") or "straight",
@@ -1783,9 +1842,19 @@ class MainWindow(QMainWindow):
         so that what is held says where the box is for the style it now
         has."""
         if (isinstance(mark, markup.Annotation)
-                or mark.subtype != markup.FREETEXT
+                or mark.subtype not in (markup.FREETEXT, *markup.SHAPES)
                 or not ({"border_style", "thickness"} & set(fields))):
             return None
+        if mark.subtype in markup.SHAPES:
+            # Side by side, as `/RD` has it, and half the line even without
+            # a cloud.
+            inside = markup.shape_box(mark)
+            reach = markup.shape_reach(
+                mark.subtype, fields.get("border_style", mark.border_style),
+                float(fields.get("thickness", mark.thickness)), inside)
+            left, bottom, right, top = inside
+            return ((left - reach[0], bottom - reach[1],
+                     right + reach[2], top + reach[3]), reach)
         inside = markup.text_box_of(mark)
         style = markup.BORDER_STYLES.get(
             fields.get("border_style", mark.border_style), {})
@@ -1804,7 +1873,10 @@ class MainWindow(QMainWindow):
         reach = self._box_reach(mark, fields)
         if reach is not None:
             fields = dict(fields, rect=reach[0])
-            mark.inset = reach[1]
+            if mark.subtype in markup.SHAPES:
+                mark.rd = reach[1]
+            else:
+                mark.inset = reach[1]
         partner = self._partner_fields(index, mark, fields)
         if mine:
             for name, value in fields.items():
@@ -1862,6 +1934,10 @@ class MainWindow(QMainWindow):
             return
         kind = (mark.kind if isinstance(mark, markup.Annotation)
                 else mark.subtype)
+        if name == "fill" and value == markup.NO_COLOUR:
+            # No Colour: held in an edit as an empty colour, because None
+            # there already means "not changed"; on the mark it is none.
+            value = None
         was = getattr(mark, "icon", "")
         setattr(mark, name, value)
         if name == "icon" and kind == markup.TEXT:
@@ -2245,6 +2321,12 @@ class MainWindow(QMainWindow):
                 else mark.subtype)
         if icon is not None and kind == markup.TEXT:
             self._icons[tool] = icon
+        if kind in markup.SHAPES:
+            fill = getattr(mark, "fill", None)
+            self._boxes[tool] = {
+                "fill": tuple(fill) if fill else None,
+                "thickness": float(getattr(mark, "thickness", 1.0) or 0.0),
+                "border_style": getattr(mark, "border_style", "straight")}
         if kind == markup.FREETEXT:
             self._boxes[tool] = {
                 "fill": tuple(getattr(mark, "fill", None)

@@ -15,7 +15,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  pdfarranger\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-10 05:23+0000\n"
+"POT-Creation-Date: 2026-11-11 00:38+0000\n"
 "PO-Revision-Date: 2025-07-09 08:35+0200\n"
 "Last-Translator: Sebastian Scherch\n"
 "Language: de\n"
@@ -2161,6 +2161,11 @@ msgstr "Markierung hinzufügen"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
+msgid "Change Mark"
+msgstr "Markierung ändern"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
 msgid "Resize Mark"
 msgstr "Markierungsgröße ändern"
 
@@ -2213,7 +2218,7 @@ msgid "Checkmark"
 msgstr "Häkchen"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py pdfarranger_qt/tools.py
+#: pdfarranger_qt/mainwindow.py
 msgid "Circle"
 msgstr "Kreis"
 
@@ -2307,11 +2312,6 @@ msgstr "Diese Markierung hat Antworten."
 #: pdfarranger_qt/mainwindow.py
 msgid "Deleting this mark will also delete any replies to it."
 msgstr "Beim Löschen dieser Markierung werden auch alle Antworten darauf gelöscht."
-
-# machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
-msgid "Change Mark"
-msgstr "Markierung ändern"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
@@ -3078,6 +3078,16 @@ msgstr "Markierten Text ersetzen"
 msgid "Text Box"
 msgstr "Textfeld"
 
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py pdfarranger_qt/tools.py
+msgid "Rectangle/Square"
+msgstr "Rechteck/Quadrat"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py pdfarranger_qt/tools.py
+msgid "Oval/Circle"
+msgstr "Oval/Kreis"
+
 #: pdfarranger_qt/properties.py
 msgid "Review History"
 msgstr "Überprüfungsverlauf"
@@ -3387,11 +3397,6 @@ msgstr "Pfeil"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/tools.py
-msgid "Rectangle"
-msgstr "Rechteck"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/tools.py
 msgid "Text callout"
 msgstr "Textlegende"
 
@@ -3414,6 +3419,16 @@ msgstr "Verbundene Linien"
 #: pdfarranger_qt/tools.py
 msgid "Stamps palette"
 msgstr "Stempelpalette"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/toolstrip.py
+msgid "Line Thickness"
+msgstr "Linienstärke"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/toolstrip.py
+msgid "No Colour"
+msgstr "Keine Farbe"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/viewer.py
@@ -3944,4 +3959,8 @@ msgstr "Den Titel statt des Dateinamens anzeigen"
 # machine translation, unreviewed
 #~ msgid "Comment colour"
 #~ msgstr "Kommentarfarbe"
+
+# machine translation, unreviewed
+#~ msgid "Rectangle"
+#~ msgstr "Rechteck"
 

@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PDF-Shuffler 0.7\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-10 05:23+0000\n"
+"POT-Creation-Date: 2026-11-11 00:38+0000\n"
 "PO-Revision-Date: 2021-12-30 17:13+0100\n"
 "Last-Translator: Toratora <darex7@o2.pl>\n"
 "Language: pl_PL\n"
@@ -2197,6 +2197,11 @@ msgstr "Dodaj adnotację"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
+msgid "Change Mark"
+msgstr "Zmień znacznik"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
 msgid "Resize Mark"
 msgstr "Zmień rozmiar znacznika"
 
@@ -2249,7 +2254,7 @@ msgid "Checkmark"
 msgstr "Znacznik wyboru"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py pdfarranger_qt/tools.py
+#: pdfarranger_qt/mainwindow.py
 msgid "Circle"
 msgstr "Okrąg"
 
@@ -2345,11 +2350,6 @@ msgid "Deleting this mark will also delete any replies to it."
 msgstr ""
 "Usunięcie tego znacznika spowoduje też usunięcie wszystkich odpowiedzi na "
 "niego."
-
-# machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
-msgid "Change Mark"
-msgstr "Zmień znacznik"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
@@ -3131,6 +3131,16 @@ msgstr "Zastąp zaznaczony tekst"
 msgid "Text Box"
 msgstr "Pole tekstowe"
 
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py pdfarranger_qt/tools.py
+msgid "Rectangle/Square"
+msgstr "Prostokąt/kwadrat"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py pdfarranger_qt/tools.py
+msgid "Oval/Circle"
+msgstr "Owal/koło"
+
 #: pdfarranger_qt/properties.py
 msgid "Review History"
 msgstr "Historia recenzji"
@@ -3440,11 +3450,6 @@ msgstr "Strzałka"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/tools.py
-msgid "Rectangle"
-msgstr "Prostokąt"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/tools.py
 msgid "Text callout"
 msgstr "Objaśnienie tekstowe"
 
@@ -3467,6 +3472,16 @@ msgstr "Linie łamane"
 #: pdfarranger_qt/tools.py
 msgid "Stamps palette"
 msgstr "Paleta stempli"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/toolstrip.py
+msgid "Line Thickness"
+msgstr "Grubość linii"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/toolstrip.py
+msgid "No Colour"
+msgstr "Brak koloru"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/viewer.py
@@ -3950,4 +3965,8 @@ msgstr "Pokaż tytuł zamiast nazwy pliku"
 # machine translation, unreviewed
 #~ msgid "Comment colour"
 #~ msgstr "Kolor komentarza"
+
+# machine translation, unreviewed
+#~ msgid "Rectangle"
+#~ msgstr "Prostokąt"
 

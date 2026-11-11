@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PDF-Shuffler 0.7\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-10 05:23+0000\n"
+"POT-Creation-Date: 2026-11-11 00:38+0000\n"
 "PO-Revision-Date: 2025-05-26 10:43+0200\n"
 "Last-Translator: Heimen Stoffels <vistausss@fastmail.com>\n"
 "Language: nl\n"
@@ -2169,6 +2169,11 @@ msgstr "Markering toevoegen"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
+msgid "Change Mark"
+msgstr "Markering wijzigen"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
 msgid "Resize Mark"
 msgstr "Markeringsgrootte wijzigen"
 
@@ -2221,7 +2226,7 @@ msgid "Checkmark"
 msgstr "Vinkteken"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py pdfarranger_qt/tools.py
+#: pdfarranger_qt/mainwindow.py
 msgid "Circle"
 msgstr "Cirkel"
 
@@ -2315,11 +2320,6 @@ msgstr "Deze markering heeft antwoorden."
 #: pdfarranger_qt/mainwindow.py
 msgid "Deleting this mark will also delete any replies to it."
 msgstr "Als u deze markering verwijdert, worden ook alle antwoorden erop verwijderd."
-
-# machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
-msgid "Change Mark"
-msgstr "Markering wijzigen"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
@@ -3085,6 +3085,16 @@ msgstr "Geselecteerde tekst vervangen"
 msgid "Text Box"
 msgstr "Tekstvak"
 
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py pdfarranger_qt/tools.py
+msgid "Rectangle/Square"
+msgstr "Rechthoek/vierkant"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py pdfarranger_qt/tools.py
+msgid "Oval/Circle"
+msgstr "Ovaal/cirkel"
+
 #: pdfarranger_qt/properties.py
 msgid "Review History"
 msgstr "Revisiegeschiedenis"
@@ -3394,11 +3404,6 @@ msgstr "Pijl"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/tools.py
-msgid "Rectangle"
-msgstr "Rechthoek"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/tools.py
 msgid "Text callout"
 msgstr "Tekstballon"
 
@@ -3421,6 +3426,16 @@ msgstr "Verbonden lijnen"
 #: pdfarranger_qt/tools.py
 msgid "Stamps palette"
 msgstr "Stempelpalet"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/toolstrip.py
+msgid "Line Thickness"
+msgstr "Lijndikte"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/toolstrip.py
+msgid "No Colour"
+msgstr "Geen kleur"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/viewer.py
@@ -3923,4 +3938,8 @@ msgstr "De titel tonen in plaats van de bestandsnaam"
 # machine translation, unreviewed
 #~ msgid "Comment colour"
 #~ msgstr "Opmerkingskleur"
+
+# machine translation, unreviewed
+#~ msgid "Rectangle"
+#~ msgstr "Rechthoek"
 

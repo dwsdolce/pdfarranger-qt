@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  pdfarranger\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-10 05:23+0000\n"
+"POT-Creation-Date: 2026-11-11 00:38+0000\n"
 "PO-Revision-Date: 2023-10-22 00:28+0200\n"
 "Last-Translator: Lrss <dev@lrss.dk>\n"
 "Language: da\n"
@@ -2155,6 +2155,11 @@ msgstr "Tilføj mærke"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
+msgid "Change Mark"
+msgstr "Ændr mærke"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
 msgid "Resize Mark"
 msgstr "Ændr størrelse på mærke"
 
@@ -2207,7 +2212,7 @@ msgid "Checkmark"
 msgstr "Hak"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py pdfarranger_qt/tools.py
+#: pdfarranger_qt/mainwindow.py
 msgid "Circle"
 msgstr "Cirkel"
 
@@ -2301,11 +2306,6 @@ msgstr "Dette mærke har svar."
 #: pdfarranger_qt/mainwindow.py
 msgid "Deleting this mark will also delete any replies to it."
 msgstr "Hvis du sletter dette mærke, slettes også alle svar på det."
-
-# machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
-msgid "Change Mark"
-msgstr "Ændr mærke"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
@@ -3070,6 +3070,16 @@ msgstr "Erstat markeret tekst"
 msgid "Text Box"
 msgstr "Tekstfelt"
 
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py pdfarranger_qt/tools.py
+msgid "Rectangle/Square"
+msgstr "Rektangel/kvadrat"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py pdfarranger_qt/tools.py
+msgid "Oval/Circle"
+msgstr "Oval/cirkel"
+
 #: pdfarranger_qt/properties.py
 msgid "Review History"
 msgstr "Gennemgangshistorik"
@@ -3379,11 +3389,6 @@ msgstr "Pil"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/tools.py
-msgid "Rectangle"
-msgstr "Rektangel"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/tools.py
 msgid "Text callout"
 msgstr "Tekstboble"
 
@@ -3406,6 +3411,16 @@ msgstr "Forbundne linjer"
 #: pdfarranger_qt/tools.py
 msgid "Stamps palette"
 msgstr "Stempelpalet"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/toolstrip.py
+msgid "Line Thickness"
+msgstr "Stregtykkelse"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/toolstrip.py
+msgid "No Colour"
+msgstr "Ingen farve"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/viewer.py
@@ -3893,4 +3908,8 @@ msgstr "Vis titlen frem for filnavnet"
 # machine translation, unreviewed
 #~ msgid "Comment colour"
 #~ msgstr "Kommentarfarve"
+
+# machine translation, unreviewed
+#~ msgid "Rectangle"
+#~ msgstr "Rektangel"
 

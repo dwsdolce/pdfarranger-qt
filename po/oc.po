@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-10 05:23+0000\n"
+"POT-Creation-Date: 2026-11-11 00:38+0000\n"
 "PO-Revision-Date: 2026-02-15 15:16+0100\n"
 "Last-Translator: Quentin PAGÈS\n"
 "Language: oc\n"
@@ -2139,6 +2139,11 @@ msgstr "Apondre una marca"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
+msgid "Change Mark"
+msgstr "Modificar la marca"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
 msgid "Resize Mark"
 msgstr "Redimensionar la marca"
 
@@ -2191,7 +2196,7 @@ msgid "Checkmark"
 msgstr "Marca de verificacion"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py pdfarranger_qt/tools.py
+#: pdfarranger_qt/mainwindow.py
 msgid "Circle"
 msgstr "Cercle"
 
@@ -2287,11 +2292,6 @@ msgid "Deleting this mark will also delete any replies to it."
 msgstr ""
 "La supression d'aquesta marca suprimirà tanben las responsas que i son "
 "ligadas."
-
-# machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
-msgid "Change Mark"
-msgstr "Modificar la marca"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
@@ -3053,6 +3053,16 @@ msgstr "Remplaçar lo tèxte seleccionat"
 msgid "Text Box"
 msgstr "Zòna de tèxte"
 
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py pdfarranger_qt/tools.py
+msgid "Rectangle/Square"
+msgstr "Rectangle/Carrat"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py pdfarranger_qt/tools.py
+msgid "Oval/Circle"
+msgstr "Oval/Cercle"
+
 #: pdfarranger_qt/properties.py
 msgid "Review History"
 msgstr "Istoric de revision"
@@ -3362,11 +3372,6 @@ msgstr "Sageta"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/tools.py
-msgid "Rectangle"
-msgstr "Rectangle"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/tools.py
 msgid "Text callout"
 msgstr "Legenda de tèxte"
 
@@ -3389,6 +3394,16 @@ msgstr "Linhas connectadas"
 #: pdfarranger_qt/tools.py
 msgid "Stamps palette"
 msgstr "Paleta de timbres"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/toolstrip.py
+msgid "Line Thickness"
+msgstr "Espessor de la linha"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/toolstrip.py
+msgid "No Colour"
+msgstr "Pas cap de color"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/viewer.py
@@ -3915,4 +3930,8 @@ msgstr "Mostrar lo títol puslèu que lo nom del fichièr"
 # machine translation, unreviewed
 #~ msgid "Comment colour"
 #~ msgstr "Color del comentari"
+
+# machine translation, unreviewed
+#~ msgid "Rectangle"
+#~ msgstr "Rectangle"
 

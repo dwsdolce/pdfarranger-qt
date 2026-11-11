@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-10 05:23+0000\n"
+"POT-Creation-Date: 2026-11-11 00:38+0000\n"
 "PO-Revision-Date: 2025-09-28 16:51+0000\n"
 "Last-Translator: Sveinn í Felli <sv1@fellsnet.is>\n"
 "Language: is\n"
@@ -2139,6 +2139,11 @@ msgstr "Bæta við merki"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
+msgid "Change Mark"
+msgstr "Breyta merki"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
 msgid "Resize Mark"
 msgstr "Breyta stærð merkis"
 
@@ -2191,7 +2196,7 @@ msgid "Checkmark"
 msgstr "Hakmerki"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py pdfarranger_qt/tools.py
+#: pdfarranger_qt/mainwindow.py
 msgid "Circle"
 msgstr "Hringur"
 
@@ -2285,11 +2290,6 @@ msgstr "Þetta merki er með svör."
 #: pdfarranger_qt/mainwindow.py
 msgid "Deleting this mark will also delete any replies to it."
 msgstr "Ef þú eyðir þessu merki er einnig öllum svörum við því eytt."
-
-# machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
-msgid "Change Mark"
-msgstr "Breyta merki"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
@@ -3049,6 +3049,16 @@ msgstr "Skipta út völdum texta"
 msgid "Text Box"
 msgstr "Textareitur"
 
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py pdfarranger_qt/tools.py
+msgid "Rectangle/Square"
+msgstr "Rétthyrningur/ferningur"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py pdfarranger_qt/tools.py
+msgid "Oval/Circle"
+msgstr "Sporaskja/hringur"
+
 #: pdfarranger_qt/properties.py
 msgid "Review History"
 msgstr "Yfirferðarsaga"
@@ -3358,11 +3368,6 @@ msgstr "Ör"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/tools.py
-msgid "Rectangle"
-msgstr "Ferhyrningur"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/tools.py
 msgid "Text callout"
 msgstr "Textabóla"
 
@@ -3385,6 +3390,16 @@ msgstr "Tengdar línur"
 #: pdfarranger_qt/tools.py
 msgid "Stamps palette"
 msgstr "Stimpilspjald"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/toolstrip.py
+msgid "Line Thickness"
+msgstr "Línuþykkt"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/toolstrip.py
+msgid "No Colour"
+msgstr "Enginn litur"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/viewer.py
@@ -3882,4 +3897,8 @@ msgstr "Sýna titilinn í stað skráarnafnsins"
 # machine translation, unreviewed
 #~ msgid "Comment colour"
 #~ msgstr "Litur athugasemdar"
+
+# machine translation, unreviewed
+#~ msgid "Rectangle"
+#~ msgstr "Ferhyrningur"
 

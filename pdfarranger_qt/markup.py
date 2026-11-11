@@ -85,8 +85,16 @@ CARET = "/Caret"
 #: -- `/C` on this subtype is the fill.
 FREETEXT = "/FreeText"
 
+#: What the Rectangle/Square and Oval/Circle tools make. **One kind each,
+#: two shapes**: Acrobat writes a square as a `/Square` with `/Subj
+#: Rectangle` exactly like a rectangle, and a circle as an oval, so which
+#: one a mark is is read off its shape -- `is_even` -- and nothing else.
+SQUARE = "/Square"
+CIRCLE = "/Circle"
+SHAPES = (SQUARE, CIRCLE)
+
 KINDS = (TEXT, HIGHLIGHT, STRIKEOUT, UNDERLINE, SQUIGGLY, STAMP, CARET,
-         FREETEXT)
+         FREETEXT, SQUARE, CIRCLE)
 
 #: The two subtypes one tool writes, and which of them means what. A style
 #: is not a value inside the dictionary: it is which dictionary gets
@@ -233,7 +241,10 @@ SUBJECTS = {HIGHLIGHT: "Highlight", STRIKEOUT: "Cross-Out",
             # the subtype, which a reader already has.
             STAMP: "Sticky Note",
             CARET: "Inserted Text",
-            FREETEXT: "Text Box"}
+            FREETEXT: "Text Box",
+            # For the square and the circle too: Acrobat does not tell them
+            # apart in the file.
+            SQUARE: "Rectangle", CIRCLE: "Oval"}
 
 #: Bit 3 of `/F`, Print. Without it a mark shows on screen and vanishes from
 #: paper, which is not what anybody means by annotating a document.
@@ -922,9 +933,27 @@ def apply_edit(annot, edit, pdf=None) -> None:
     stays -- the thread, the author, the dates, the status chain -- and only
     the keys named here are rewritten.
     """
-    if str(annot.get(pikepdf.Name.Subtype, "")) == FREETEXT:
+    subtype = str(annot.get(pikepdf.Name.Subtype, ""))
+    if subtype == FREETEXT:
         _patch_text_box(annot, edit, pdf)
         return
+    if subtype in SHAPES:
+        rd = annot.get(pikepdf.Name.RD)
+        was_rd = (tuple(_number(v, 0.0) for v in rd)
+                  if rd is not None and len(rd) == 4 else (0.0,) * 4)
+        was_size = _size(annot.Rect)
+        # A shape does not turn: the angle a handle's drag reports beside
+        # the rectangle is a stamp's, and the shared path drops a drawing
+        # for any angle it is given.
+        edit = {k: v for k, v in edit.items() if k != "rotate"}
+        _apply_common_edit(annot, edit, pdf)
+        _redraw_shape(annot, edit, pdf, was_rd, was_size)
+        return
+    _apply_common_edit(annot, edit, pdf)
+
+
+def _apply_common_edit(annot, edit, pdf=None) -> None:
+    """`apply_edit` for every kind but a text box."""
     colour = edit.get("colour")
     if colour is not None:
         annot[pikepdf.Name.C] = pikepdf.Array([*colour])
@@ -1181,12 +1210,19 @@ def _patch_text_box(annot, edit, pdf=None) -> None:
             N=_freetext_appearance(pdf, box, [float(v) for v in annot.Rect]))
 
 
-def _write_border(entry, style_name: str, thickness: float, box) -> "tuple":
+def _write_border(entry, style_name: str, thickness: float, box,
+                  shape: Optional[str] = None) -> "tuple":
     """A text box's border keys for ``style_name`` and ``thickness``,
     around ``box``, its own rectangle: `/BS` for the width and a dash,
     `/BE` and `/RD` for a cloud, and `/Rect` grown by the cloud's reach.
     Keys the style does not use are taken away, so a box changed from a
-    cloud to a dash keeps nothing of the cloud. Answers the new `/Rect`."""
+    cloud to a dash keeps nothing of the cloud. Answers the new `/Rect`.
+
+    ``shape`` is `SQUARE` or `CIRCLE` for a rectangle or an oval, which
+    Acrobat writes with `/RD` of half the line even without a cloud, and
+    whose cloud round an oval reaches differently on each side."""
+    if shape in SHAPES:
+        return _write_shape_border(entry, style_name, thickness, box, shape)
     style = BORDER_STYLES.get(style_name, {})
     for key in (pikepdf.Name.BS, pikepdf.Name.BE, pikepdf.Name.RD):
         if key in entry:
@@ -1214,6 +1250,182 @@ def _write_border(entry, style_name: str, thickness: float, box) -> "tuple":
         entry[pikepdf.Name.BS] = pikepdf.Dictionary(W=thickness)
     entry[pikepdf.Name.Rect] = pikepdf.Array([*outer])
     return outer
+
+
+def _write_shape_border(entry, style_name, thickness, box, shape) -> "tuple":
+    """`_write_border` for a rectangle or an oval: `/RD` half the line on a
+    plain one, the cloud's reach side by side on a cloudy one, none at a
+    line of 0 -- each as the fixture has it."""
+    style = BORDER_STYLES.get(style_name, {})
+    for key in (pikepdf.Name.BS, pikepdf.Name.BE, pikepdf.Name.RD):
+        if key in entry:
+            del entry[key]
+    width = float(style.get("width", thickness))
+    reach = shape_reach(shape, style_name, thickness, box)
+    if "width" in style or width == 0:
+        entry[pikepdf.Name.BS] = pikepdf.Dictionary(W=0)
+    elif "dash" in style:
+        bs = pikepdf.Dictionary(S=pikepdf.Name.D,
+                                D=pikepdf.Array([*style["dash"]]))
+        if width != 1.0:
+            bs[pikepdf.Name.W] = width
+        entry[pikepdf.Name.BS] = bs
+    else:
+        if "cloud" in style:
+            entry[pikepdf.Name.BE] = pikepdf.Dictionary(
+                S=pikepdf.Name.C, I=float(style["cloud"]))
+        if width != 1.0:
+            entry[pikepdf.Name.BS] = pikepdf.Dictionary(W=width)
+    if any(reach):
+        entry[pikepdf.Name.RD] = pikepdf.Array([*reach])
+    left, bottom, right, top = (float(v) for v in box)
+    outer = (left - reach[0], bottom - reach[1], right + reach[2], top + reach[3])
+    entry[pikepdf.Name.Rect] = pikepdf.Array([*outer])
+    return outer
+
+
+def shape_reach(shape, style_name: str, thickness: float, box) -> "tuple":
+    """How far a rectangle's or an oval's rectangle reaches beyond its box,
+    side by side -- left, bottom, right, top, as `/RD` has them."""
+    style = BORDER_STYLES.get(style_name, {})
+    width = float(style.get("width", thickness))
+    if width <= 0:
+        return (0.0, 0.0, 0.0, 0.0)
+    if "cloud" not in style:
+        return (width / 2.0,) * 4
+    found = (cloud_oval_path(box, style["cloud"], width) if shape == CIRCLE
+             else cloud_path(box, style["cloud"], width))
+    left, bottom, right, top = (float(v) for v in box)
+    if found is None:
+        return (cloud_radius(style["cloud"], width) + width / 2.0,) * 4
+    begin, curves = found
+    xs = [begin[0]] + [v for c in curves for v in c[0::2]]
+    ys = [begin[1]] + [v for c in curves for v in c[1::2]]
+    half = width / 2.0
+    return (max(left - min(xs), 0.0) + half, max(bottom - min(ys), 0.0) + half,
+            max(max(xs) - right, 0.0) + half, max(max(ys) - top, 0.0) + half)
+
+
+def _write_shape(pdf, entry, annotation) -> None:
+    """The keys only a rectangle or an oval has, as Acrobat writes them:
+    the fill in `/IC`, absent for No Colour; the line in `/BS` and `/BE`
+    with its reach in `/RD` and `/Rect`; the opacity; and a drawing."""
+    if annotation.fill is not None:
+        entry[pikepdf.Name.IC] = pikepdf.Array([*annotation.fill[:3]])
+    elif pikepdf.Name.IC in entry:
+        del entry[pikepdf.Name.IC]
+    outer = _write_border(entry, annotation.border_style, annotation.thickness,
+                          annotation.rect, shape=annotation.kind)
+    if solidity(annotation) != 1.0:
+        entry[pikepdf.Name.CA] = solidity(annotation)
+    elif pikepdf.Name.CA in entry:
+        del entry[pikepdf.Name.CA]
+    entry[pikepdf.Name.AP] = pikepdf.Dictionary(
+        N=_shape_appearance(pdf, annotation, outer))
+
+
+#: Four Bezier curves draw an ellipse to within a fraction of a point:
+#: each control point this far along the tangent, in radii.
+_KAPPA = 0.5522847498
+
+
+def _shape_appearance(pdf, annotation, outer):
+    """A rectangle's or an oval's drawing: the fill and the line in one
+    path, the line inset by half its width so it stays inside the box --
+    where the fixture's are drawn -- dashed or clouded as its style says;
+    filled and stroked, filled, stroked, or neither."""
+    style = BORDER_STYLES.get(annotation.border_style, {})
+    width = float(style.get("width", annotation.thickness))
+    fill = annotation.fill
+    colour = annotation.colour or swatch("Red")
+    lines = ["{:.6g} {:.6g} {:.6g} RG".format(*colour[:3]),
+             "{:.4g} w".format(width)]
+    if fill is not None:
+        lines.append("{:.6g} {:.6g} {:.6g} rg".format(*fill[:3]))
+    opacity = solidity(annotation)
+    resources = pikepdf.Dictionary(ProcSet=pikepdf.Array([pikepdf.Name.PDF]))
+    if opacity < 1.0:
+        lines.insert(0, "/R0 gs")
+        resources[pikepdf.Name.ExtGState] = pikepdf.Dictionary(
+            R0=pikepdf.Dictionary(Type=pikepdf.Name.ExtGState, AIS=False,
+                                  CA=opacity, ca=opacity))
+    box = annotation.rect
+    left, bottom, right, top = (float(v) for v in box)
+    if "cloud" in style:
+        found = (cloud_oval_path(box, style["cloud"], width)
+                 if annotation.kind == CIRCLE
+                 else cloud_path(box, style["cloud"], width))
+        if found is not None:
+            begin, curves = found
+            lines.append("{:.4f} {:.4f} m".format(*begin))
+            lines += ["{:.4f} {:.4f} {:.4f} {:.4f} {:.4f} {:.4f} c".format(*c)
+                      for c in curves]
+            lines.append("h")
+    else:
+        if "dash" in style:
+            lines.append("[{}] 0 d".format(" ".join(f"{v:g}" for v in style["dash"])))
+        half = width / 2.0
+        x0, y0, x1, y1 = left + half, bottom + half, right - half, top - half
+        if annotation.kind == CIRCLE:
+            cx, cy = (x0 + x1) / 2.0, (y0 + y1) / 2.0
+            a, b = (x1 - x0) / 2.0, (y1 - y0) / 2.0
+            ka, kb = a * _KAPPA, b * _KAPPA
+            lines += ["{:.4f} {:.4f} m".format(cx, y1),
+                      "{:.4f} {:.4f} {:.4f} {:.4f} {:.4f} {:.4f} c".format(
+                          cx + ka, y1, x1, cy + kb, x1, cy),
+                      "{:.4f} {:.4f} {:.4f} {:.4f} {:.4f} {:.4f} c".format(
+                          x1, cy - kb, cx + ka, y0, cx, y0),
+                      "{:.4f} {:.4f} {:.4f} {:.4f} {:.4f} {:.4f} c".format(
+                          cx - ka, y0, x0, cy - kb, x0, cy),
+                      "{:.4f} {:.4f} {:.4f} {:.4f} {:.4f} {:.4f} c".format(
+                          x0, cy + kb, cx - ka, y1, cx, y1),
+                      "h"]
+        else:
+            lines.append("{:.4f} {:.4f} {:.4f} {:.4f} re".format(
+                x0, y0, x1 - x0, y1 - y0))
+    lines.append({(True, True): "B", (True, False): "f",
+                  (False, True): "S", (False, False): "n"}[
+                      (fill is not None, width > 0)])
+    stream = pikepdf.Stream(pdf, ("\n".join(lines) + "\n").encode())
+    stream[pikepdf.Name.Type] = pikepdf.Name.XObject
+    stream[pikepdf.Name.Subtype] = pikepdf.Name.Form
+    stream[pikepdf.Name.BBox] = pikepdf.Array([*outer])
+    stream[pikepdf.Name.Resources] = resources
+    return pdf.make_indirect(stream)
+
+
+def _redraw_shape(annot, edit, pdf, was_rd, was_size) -> None:
+    """Give a rectangle or an oval the file brought a drawing of its own,
+    when an edit has changed how it looks or how big it is. A move alone
+    keeps the producer's, which is mapped onto the rectangle and follows."""
+    looks = any(edit.get(key) is not None
+                for key in ("colour", "opacity", "fill", "thickness",
+                            "border_style"))
+    left, bottom, right, top = (float(v) for v in annot.Rect)
+    box = (left + was_rd[0], bottom + was_rd[1],
+           right - was_rd[2], top - was_rd[3])
+    resized = _size(annot.Rect) != was_size
+    if not (looks or resized or pikepdf.Name.AP not in annot) or pdf is None:
+        return
+    reading = _shape_reading(annot)
+    if edit.get("fill") is not None:
+        reading["fill"] = None if edit["fill"] == NO_COLOUR else tuple(edit["fill"])
+    colour = annot.get(pikepdf.Name.C)
+    shape = Annotation(
+        str(annot.get(pikepdf.Name.Subtype)), 0, list(box),
+        colour=(tuple(_number(v, 0.0) for v in colour)
+                if colour is not None else None),
+        fill=reading["fill"],
+        thickness=float(edit["thickness"] if edit.get("thickness") is not None
+                        else reading["thickness"]),
+        border_style=edit.get("border_style") or reading["border_style"],
+        opacity=_number(annot.get(pikepdf.Name.CA)))
+    _write_shape(pdf, annot, shape)
+
+
+#: What a fill of No Colour is held as in an edit, where None already means
+#: "not changed".
+NO_COLOUR = ()
 
 
 def box_inside(outer, style_name: str, thickness: float) -> "tuple":
@@ -1328,8 +1540,9 @@ def blank_note_icons(pdf) -> int:
             try:
                 subtype = str(annot.get(pikepdf.Name.Subtype, ""))
                 # And a text box, which the canvas draws whole -- fill,
-                # border and words -- so a drag carries it.
-                text_box = subtype == FREETEXT
+                # border and words -- so a drag carries it; and a rectangle
+                # or an oval, for the same reason.
+                text_box = subtype == FREETEXT or subtype in SHAPES
                 if subtype != TEXT and not text_box and not is_scalable_comment(
                         subtype, stamp_icon(annot)):
                     continue
@@ -1778,6 +1991,8 @@ def to_dictionary(pdf, annotation: Annotation, page=None) -> pikepdf.Dictionary:
         entry[pikepdf.Name.RT] = pikepdf.Name.Group
     if annotation.kind == FREETEXT:
         _write_text_box(pdf, entry, annotation)
+    if annotation.kind in SHAPES:
+        _write_shape(pdf, entry, annotation)
     if annotation.kind == CARET:
         entry[pikepdf.Name.RD] = pikepdf.Array([caret_inset(annotation.rect)] * 4)
         if solidity(annotation) != 1.0:
@@ -1950,7 +2165,8 @@ def nearest_swatch(colour):
 #: has to be seen through or it hides the words it marks; a line drawn over
 #: them does not.
 TRANSPARENCY = {HIGHLIGHT: 0.4, STRIKEOUT: 1.0,
-                UNDERLINE: 1.0, SQUIGGLY: 1.0, CARET: 1.0, FREETEXT: 1.0}
+                UNDERLINE: 1.0, SQUIGGLY: 1.0, CARET: 1.0, FREETEXT: 1.0,
+                SQUARE: 1.0, CIRCLE: 1.0}
 
 
 def opacity_of(mark) -> float:
@@ -2525,19 +2741,87 @@ def cloud_path(box, intensity: float, width: float):
     step = radius * CLOUD_SPACING
     corners = [(left + inset, top - inset), (right - inset, top - inset),
                (right - inset, bottom + inset), (left + inset, bottom + inset)]
-    normals = [(0.0, 1.0), (1.0, 0.0), (0.0, -1.0), (-1.0, 0.0)]
+    centres = _edge_centres(corners, step)
+    return _scallops(centres, radius, step)
+
+
+def cloud_oval_radius(intensity: float, width: float) -> float:
+    """A scallop's radius round an oval, larger than round a rectangle:
+    4.75 points per step of intensity plus half the line -- 5.25 at `/I 1`,
+    read off the fixture's oval as 5.3, and the rule Apache PDFBox records
+    from Acrobat's drawings."""
+    return 4.75 * float(intensity) + width / 2.0
+
+
+def cloud_oval_path(box, intensity: float, width: float):
+    """A cloud round the oval drawn in ``box``, as Acrobat draws one.
+
+    **Not the rectangle's rule.** Read off the fixture's oval: the scallops
+    are larger (`cloud_oval_radius`), their centres lie on the oval inset
+    by half the line, they are spread evenly all the way round -- as many
+    as fit at 5/3 of a radius apart, then spaced to close up exactly, 60 on
+    the fixture's at 8.85 points -- and each meets the next where their
+    circles cross, with no curl between."""
+    left, bottom, right, top = (float(v) for v in box)
+    inset = width / 2.0
+    radius = cloud_oval_radius(intensity, width)
+    cx, cy = (left + right) / 2.0, (bottom + top) / 2.0
+    a = max((right - left) / 2.0 - inset, 0.0)
+    b = max((top - bottom) / 2.0 - inset, 0.0)
+    if a <= 0 or b <= 0:
+        return None
+    # The oval walked clockwise from the top in fine steps, its length
+    # summed as it goes, so the centres can be put an even step apart.
+    samples = 720
+    points = [(cx + a * math.sin(2 * math.pi * k / samples),
+               cy + b * math.cos(2 * math.pi * k / samples))
+              for k in range(samples + 1)]
+    perimeter = sum(math.dist(points[k], points[k + 1]) for k in range(samples))
+    count = int(perimeter // (radius * CLOUD_SPACING))
+    if count < 3:
+        return None
+    step = perimeter / count
+    centres, walked, due = [], 0.0, 0.0
+    for k in range(samples):
+        p, q = points[k], points[k + 1]
+        piece = math.dist(p, q)
+        while due <= walked + piece and piece > 0:
+            t = (due - walked) / piece
+            x, y = p[0] + (q[0] - p[0]) * t, p[1] + (q[1] - p[1]) * t
+            nx, ny = (x - cx) / (a * a), (y - cy) / (b * b)
+            length = math.hypot(nx, ny) or 1.0
+            centres.append(((x, y), (nx / length, ny / length)))
+            due += step
+        walked += piece
+    del centres[count:]
+    return _scallops(centres, radius, step, curls=False)
+
+
+def _edge_centres(corners, step):
+    """Scallop centres along a closed run of straight edges, each with the
+    edge's outward normal, starting at each corner."""
     centres = []
+    count = len(corners)
     for n, a in enumerate(corners):
-        b = corners[(n + 1) % 4]
+        b = corners[(n + 1) % count]
         length = math.dist(a, b)
         ux, uy = ((b[0] - a[0]) / length, (b[1] - a[1]) / length) if length else (0.0, 0.0)
+        # Clockwise, so outward is the edge's direction turned left.
+        normal = (-uy, ux)
         t = 0.0
         # As many as start before the next corner, however close the last
         # comes to it: Acrobat's last scallop on an edge sits two points
         # short of the corner's own on the fixture's small cloud.
         while t < length - 1e-6:
-            centres.append(((a[0] + ux * t, a[1] + uy * t), normals[n]))
+            centres.append(((a[0] + ux * t, a[1] + uy * t), normal))
             t += step
+    return centres
+
+
+def _scallops(centres, radius: float, step: float, curls: bool = True):
+    """The cloud through ``centres``, each ``((x, y), outward normal)``:
+    a curl between two scallops a full step apart, unless ``curls`` is
+    False, when every scallop meets the next where their circles cross."""
     count = len(centres)
     if count < 3:
         return None
@@ -2556,7 +2840,7 @@ def cloud_path(box, intensity: float, width: float):
         ux, uy = (nxt[0] - c[0]) / d, (nxt[1] - c[1]) / d
         both = (n[0] + nn[0], n[1] + nn[1])
         handed = False
-        if d >= step - 1e-6:
+        if curls and d >= step - 1e-6:
             centre = (c[0] + radius * (CLOUD_CURL_AHEAD * ux + CLOUD_CURL_OUT * n[0]),
                       c[1] + radius * (CLOUD_CURL_AHEAD * uy + CLOUD_CURL_OUT * n[1]))
             out = _circle_meet(c, radius, centre, curl)
@@ -2838,7 +3122,7 @@ class Mark:
                  "locked", "subject", "intent", "scales", "icon",
                  "rotate", "ink", "group", "fill", "thickness",
                  "border_style", "inset", "text_font", "text_size",
-                 "text_colour", "styled")
+                 "text_colour", "styled", "rd")
 
     def __init__(self, page, subtype, rect, quads=(), colour=None,
                  opacity=None, contents="", name=None, parent=None,
@@ -2848,7 +3132,7 @@ class Mark:
                  rotate=0.0, ink=None, group=False, fill=None,
                  thickness=1.0, border_style="straight", inset=0.0,
                  text_font=None, text_size=None, text_colour=None,
-                 styled=False):
+                 styled=False, rd=None):
         self.uid = next(_mark_uids)
         #: Where this mark sits among the markup annotations on its page, in
         #: the order the file has them. What `MarkEdits` keys an edit by, and
@@ -2936,6 +3220,9 @@ class Mark:
         self.text_font = text_font
         self.text_size = text_size
         self.text_colour = text_colour
+        #: `/RD` side by side, for a rectangle or an oval: how far its
+        #: rectangle reaches beyond the box it is drawn in.
+        self.rd = rd
         self.styled = styled
 
     def boxes(self) -> "list[tuple]":
@@ -2995,19 +3282,12 @@ def _answers(mark):
 _DA_COLOUR = re.compile(r"([\d.]+)\s+([\d.]+)\s+([\d.]+)\s+rg")
 
 
-def _text_box_reading(annot) -> dict:
-    """A text box's own keys, read the way `_write_text_box` writes them."""
-    found = {}
-    match = _DA_COLOUR.search(str(annot.get(pikepdf.Name.DA, "")))
-    found["colour"] = (tuple(float(v) for v in match.groups())
-                       if match else None)
-    fill = annot.get(pikepdf.Name.C)
-    found["fill"] = (tuple(_number(v, 0.0) for v in fill)
-                     if fill is not None else None)
+def _border_reading(annot) -> "tuple":
+    """``(thickness, style)`` from `/BS` and `/BE`: the line's width, and
+    which of `BORDER_STYLES` it is drawn in."""
     bs = annot.get(pikepdf.Name.BS) or {}
     be = annot.get(pikepdf.Name.BE) or {}
     width = _number(bs.get(pikepdf.Name.W), 1.0)
-    found["thickness"] = width
     style = "straight"
     if width == 0:
         style = "none"
@@ -3019,7 +3299,63 @@ def _text_box_reading(annot) -> dict:
                      for v in (bs.get(pikepdf.Name.D) or [3]))
         style = next((name for name, spec in BORDER_STYLES.items()
                       if spec.get("dash") == dash), "medium dotted")
-    found["border_style"] = style
+    return width, style
+
+
+def _shape_reading(annot) -> dict:
+    """A rectangle's or an oval's own keys: the fill in `/IC`, absent for
+    No Colour; the line's width and style; and `/RD`, side by side, which
+    on an oval with a cloud is not the same on every side."""
+    found = {}
+    fill = annot.get(pikepdf.Name.IC)
+    found["fill"] = (tuple(_number(v, 0.0) for v in fill)
+                     if fill is not None and len(fill) >= 3 else None)
+    found["thickness"], found["border_style"] = _border_reading(annot)
+    rd = annot.get(pikepdf.Name.RD)
+    found["rd"] = (tuple(_number(v, 0.0) for v in rd)
+                   if rd is not None and len(rd) == 4 else None)
+    return found
+
+
+def shape_box(mark) -> "tuple":
+    """A rectangle's or an oval's own box: what it is drawn in, less `/RD`
+    side by side. A mark made here keeps its box as its rectangle."""
+    left, bottom, right, top = (float(v) for v in mark.rect)
+    rd = getattr(mark, "rd", None) if isinstance(mark, Mark) else None
+    if not rd:
+        return (left, bottom, right, top)
+    return (left + rd[0], bottom + rd[1], right - rd[2], top - rd[3])
+
+
+#: How near to equal a box's sides have to be for it to be a square or a
+#: circle, in points: rounding in a file is not a choice of shape.
+EVEN_WITHIN = 0.5
+
+
+def is_even(mark) -> bool:
+    """Whether a rectangle is a square, or an oval a circle: its box has
+    equal sides."""
+    left, bottom, right, top = shape_box(mark)
+    return abs((right - left) - (top - bottom)) <= EVEN_WITHIN
+
+
+def draws_nothing(mark) -> bool:
+    """Whether a shape has no line and no fill, so nothing of it shows."""
+    style = BORDER_STYLES.get(getattr(mark, "border_style", "straight"), {})
+    width = float(style.get("width", getattr(mark, "thickness", 1.0) or 0.0))
+    return width <= 0 and getattr(mark, "fill", None) is None
+
+
+def _text_box_reading(annot) -> dict:
+    """A text box's own keys, read the way `_write_text_box` writes them."""
+    found = {}
+    match = _DA_COLOUR.search(str(annot.get(pikepdf.Name.DA, "")))
+    found["colour"] = (tuple(float(v) for v in match.groups())
+                       if match else None)
+    fill = annot.get(pikepdf.Name.C)
+    found["fill"] = (tuple(_number(v, 0.0) for v in fill)
+                     if fill is not None else None)
+    found["thickness"], found["border_style"] = _border_reading(annot)
     rd = annot.get(pikepdf.Name.RD)
     found["inset"] = _number(rd[0], 0.0) if rd is not None and len(rd) else 0.0
     # The text's style: font and size from `/DS`, colour from the rich
@@ -3158,6 +3494,8 @@ def marks_in(pdf) -> "list[Mark]":
                     box = _text_box_reading(annot)
                     colour = box.pop("colour", None)
                     box.pop("box_size", None)
+                elif subtype in SHAPES:
+                    box = _shape_reading(annot)
                 found.append(Mark(**box,
                     page=number,
                     index=at,

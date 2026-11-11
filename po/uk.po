@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: unnamed project\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-10 05:23+0000\n"
+"POT-Creation-Date: 2026-11-11 00:38+0000\n"
 "PO-Revision-Date: 2026-05-27 19:30+0300\n"
 "Last-Translator: Dymko <Dymkovych@proton.me>\n"
 "Language: uk\n"
@@ -2131,6 +2131,11 @@ msgstr "Додати позначку"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
+msgid "Change Mark"
+msgstr "Змінити позначку"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
 msgid "Resize Mark"
 msgstr "Змінити розмір позначки"
 
@@ -2183,7 +2188,7 @@ msgid "Checkmark"
 msgstr "Позначка"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py pdfarranger_qt/tools.py
+#: pdfarranger_qt/mainwindow.py
 msgid "Circle"
 msgstr "Коло"
 
@@ -2277,11 +2282,6 @@ msgstr "Ця позначка має відповіді."
 #: pdfarranger_qt/mainwindow.py
 msgid "Deleting this mark will also delete any replies to it."
 msgstr "Вилучення цієї позначки призведе до вилучення всіх відповідей на неї."
-
-# machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
-msgid "Change Mark"
-msgstr "Змінити позначку"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
@@ -3051,6 +3051,16 @@ msgstr "Замінити позначений текст"
 msgid "Text Box"
 msgstr "Текстове поле"
 
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py pdfarranger_qt/tools.py
+msgid "Rectangle/Square"
+msgstr "Прямокутник/квадрат"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py pdfarranger_qt/tools.py
+msgid "Oval/Circle"
+msgstr "Овал/коло"
+
 #: pdfarranger_qt/properties.py
 msgid "Review History"
 msgstr "Історія рецензування"
@@ -3360,11 +3370,6 @@ msgstr "Стрілка"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/tools.py
-msgid "Rectangle"
-msgstr "Прямокутник"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/tools.py
 msgid "Text callout"
 msgstr "Текстова виноска"
 
@@ -3387,6 +3392,16 @@ msgstr "Сполучені лінії"
 #: pdfarranger_qt/tools.py
 msgid "Stamps palette"
 msgstr "Палітра штампів"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/toolstrip.py
+msgid "Line Thickness"
+msgstr "Товщина лінії"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/toolstrip.py
+msgid "No Colour"
+msgstr "Без кольору"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/viewer.py
@@ -3908,4 +3923,8 @@ msgstr "Показувати заголовок замість імені фай
 # machine translation, unreviewed
 #~ msgid "Comment colour"
 #~ msgstr "Колір коментаря"
+
+# machine translation, unreviewed
+#~ msgid "Rectangle"
+#~ msgstr "Прямокутник"
 

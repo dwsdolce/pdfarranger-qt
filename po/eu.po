@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-10 05:23+0000\n"
+"POT-Creation-Date: 2026-11-11 00:38+0000\n"
 "PO-Revision-Date: 2023-01-19 20:27+0100\n"
 "Last-Translator: alexgabi\n"
 "Language: eu\n"
@@ -2190,6 +2190,11 @@ msgstr "Gehitu marka"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
+msgid "Change Mark"
+msgstr "Aldatu marka"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
 msgid "Resize Mark"
 msgstr "Aldatu markaren tamaina"
 
@@ -2242,7 +2247,7 @@ msgid "Checkmark"
 msgstr "Egiaztapen-marka"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py pdfarranger_qt/tools.py
+#: pdfarranger_qt/mainwindow.py
 msgid "Circle"
 msgstr "Zirkulua"
 
@@ -2336,11 +2341,6 @@ msgstr "Marka honek erantzunak ditu."
 #: pdfarranger_qt/mainwindow.py
 msgid "Deleting this mark will also delete any replies to it."
 msgstr "Marka hau ezabatzean, bertako erantzun guztiak ere ezabatuko dira."
-
-# machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
-msgid "Change Mark"
-msgstr "Aldatu marka"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
@@ -3103,6 +3103,16 @@ msgstr "Ordeztu hautatutako testua"
 msgid "Text Box"
 msgstr "Testu-koadroa"
 
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py pdfarranger_qt/tools.py
+msgid "Rectangle/Square"
+msgstr "Laukizuzena/Karratua"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py pdfarranger_qt/tools.py
+msgid "Oval/Circle"
+msgstr "Obaloa/Zirkulua"
+
 #: pdfarranger_qt/properties.py
 msgid "Review History"
 msgstr "Berrikuspen-historia"
@@ -3414,11 +3424,6 @@ msgstr "Gezia"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/tools.py
-msgid "Rectangle"
-msgstr "Laukizuzena"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/tools.py
 msgid "Text callout"
 msgstr "Testu-deia"
 
@@ -3441,6 +3446,16 @@ msgstr "Lotutako marrak"
 #: pdfarranger_qt/tools.py
 msgid "Stamps palette"
 msgstr "Zigilu-paleta"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/toolstrip.py
+msgid "Line Thickness"
+msgstr "Lerroaren lodiera"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/toolstrip.py
+msgid "No Colour"
+msgstr "Kolorerik gabe"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/viewer.py
@@ -3926,4 +3941,8 @@ msgstr "Erakutsi izenburua fitxategi-izenaren ordez"
 # machine translation, unreviewed
 #~ msgid "Comment colour"
 #~ msgstr "Iruzkinaren kolorea"
+
+# machine translation, unreviewed
+#~ msgid "Rectangle"
+#~ msgstr "Laukizuzena"
 

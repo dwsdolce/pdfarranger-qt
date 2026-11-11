@@ -97,6 +97,10 @@ KIND_LABELS = {
     "/Caret": N_("Insert Text"),
     # What Add Text Comment makes, under Acrobat's name for it.
     "/FreeText": N_("Text Box"),
+    # One name for both shapes each: the file does not tell a square from a
+    # rectangle or a circle from an oval, and the form is the same.
+    "/Square": N_("Rectangle/Square"),
+    "/Circle": N_("Oval/Circle"),
 }
 
 
@@ -148,6 +152,10 @@ class Properties(NamedTuple):
     #: Border Color and Opacity, then Thickness and Fill Color, laid out as
     #: Acrobat lays them. Its colour is the border's.
     box: bool = False
+    #: A rectangle's or an oval's: its colour is the line's, its fill may be
+    #: No Colour, and its thickness may then go to 0 -- with a fill only,
+    #: since a line of 0 and no fill draws nothing.
+    fill_optional: bool = False
     fill: Optional[Tuple[float, ...]] = None
     thickness: float = 1.0
     border_style: str = "straight"
@@ -422,12 +430,14 @@ class MarkProperties(QDialog):
         self.swatch = _Swatch(page)
         self.swatch.set_colour(self._colour)
         self.swatch.clicked.connect(self._pick_colour)
-        left.addRow(_("Border Colour"), self.swatch)
+        left.addRow(_("Colour") if self._was.fill_optional
+                    else _("Border Colour"), self.swatch)
         left.addRow(_("Opacity"), self._opacity_column(page))
         self.thickness = QSpinBox(page)
-        self.thickness.setRange(1, 12)
+        self.thickness.setRange(self._thinnest(), 12)
         self.thickness.setSuffix(" pt")
-        self.thickness.setValue(max(1, min(12, round(self._was.thickness or 1))))
+        self.thickness.setValue(max(self._thinnest(),
+                                    min(12, round(self._was.thickness or 0))))
         self.thickness.valueChanged.connect(self._box_changed)
         right.addRow(_("Thickness"), self.thickness)
         self.fill_swatch = _Swatch(page)
@@ -438,10 +448,16 @@ class MarkProperties(QDialog):
         self.palette_popup.chosen.connect(self._coloured)
         self.palette_popup.faded.connect(
             lambda value: self.slider.setValue(round(value * 100)))
-        self.fill_popup = ColourPopup(self, opacity=False)
+        self.fill_popup = ColourPopup(self, opacity=False,
+                                      none=self._was.fill_optional)
         self.fill_popup.chosen.connect(self._filled)
         self._thickness_matters()
         return page
+
+    def _thinnest(self) -> int:
+        """0 for a shape with a fill, which can do without a line; 1 for
+        everything else."""
+        return 0 if self._was.fill_optional and self._fill is not None else 1
 
     def _thickness_matters(self) -> None:
         """No Border has no thickness to set."""
@@ -453,7 +469,7 @@ class MarkProperties(QDialog):
         return bool(box is not None and box.isChecked())
 
     def _box_state(self) -> dict:
-        return {"fill": self._fill,
+        return {"fill": self._fill if self._fill is not None else markup.NO_COLOUR,
                 "thickness": float(self.thickness.value()),
                 "border_style": self.border_style.currentData()}
 
@@ -464,11 +480,16 @@ class MarkProperties(QDialog):
     def _pick_fill(self) -> None:
         below = self.fill_swatch.mapToGlobal(
             QPoint(0, self.fill_swatch.height() + 2))
-        self.fill_popup.show_for(self._fill or (1.0, 1.0, 1.0), None, below)
+        self.fill_popup.show_for(
+            self._fill if self._fill is not None or self._was.fill_optional
+            else (1.0, 1.0, 1.0), None, below)
 
     def _filled(self, colour) -> None:
-        self._fill = tuple(colour)
+        # An empty colour is No Colour.
+        self._fill = tuple(colour) if colour else None
         self.fill_swatch.set_colour(self._fill)
+        # Without a fill a line of 0 draws nothing, so 0 goes with it.
+        self.thickness.setMinimum(self._thinnest())
         self.restyled.emit(self._box_state())
 
     @staticmethod
@@ -618,7 +639,7 @@ class MarkProperties(QDialog):
                 now["style"] = picked
         if self._was.box:
             state = self._box_state()
-            if state["fill"] != self._was.fill:
+            if self._fill != self._was.fill:
                 now["fill"] = state["fill"]
             if state["border_style"] != self._was.border_style:
                 # With its thickness, which the old style may have had none

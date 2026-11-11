@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pdfarranger - Korean\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-10 05:23+0000\n"
+"POT-Creation-Date: 2026-11-11 00:38+0000\n"
 "PO-Revision-Date: 2026-05-25 00:41+0900\n"
 "Last-Translator: VenusGirl <venusgirl@outlook.com>\n"
 "Language: ko\n"
@@ -2019,6 +2019,11 @@ msgstr "표시 추가"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
+msgid "Change Mark"
+msgstr "표시 변경"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
 msgid "Resize Mark"
 msgstr "표시 크기 변경"
 
@@ -2071,7 +2076,7 @@ msgid "Checkmark"
 msgstr "체크 표시"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py pdfarranger_qt/tools.py
+#: pdfarranger_qt/mainwindow.py
 msgid "Circle"
 msgstr "원"
 
@@ -2165,11 +2170,6 @@ msgstr "이 표시에 답글이 있습니다."
 #: pdfarranger_qt/mainwindow.py
 msgid "Deleting this mark will also delete any replies to it."
 msgstr "이 표시를 삭제하면 표시에 달린 답글도 모두 삭제됩니다."
-
-# machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
-msgid "Change Mark"
-msgstr "표시 변경"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
@@ -2917,6 +2917,16 @@ msgstr "선택한 텍스트 바꾸기"
 msgid "Text Box"
 msgstr "텍스트 상자"
 
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py pdfarranger_qt/tools.py
+msgid "Rectangle/Square"
+msgstr "직사각형/정사각형"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py pdfarranger_qt/tools.py
+msgid "Oval/Circle"
+msgstr "타원/원"
+
 #: pdfarranger_qt/properties.py
 msgid "Review History"
 msgstr "검토 기록"
@@ -3226,11 +3236,6 @@ msgstr "화살표"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/tools.py
-msgid "Rectangle"
-msgstr "사각형"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/tools.py
 msgid "Text callout"
 msgstr "텍스트 설명선"
 
@@ -3253,6 +3258,16 @@ msgstr "연결선"
 #: pdfarranger_qt/tools.py
 msgid "Stamps palette"
 msgstr "스탬프 팔레트"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/toolstrip.py
+msgid "Line Thickness"
+msgstr "선 두께"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/toolstrip.py
+msgid "No Colour"
+msgstr "색 없음"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/viewer.py
@@ -3768,4 +3783,8 @@ msgstr "파일 이름 대신 제목 보이기"
 # machine translation, unreviewed
 #~ msgid "Comment colour"
 #~ msgstr "주석 색상"
+
+# machine translation, unreviewed
+#~ msgid "Rectangle"
+#~ msgstr "사각형"
 

@@ -153,8 +153,15 @@ TOOLS: List[Tool] = [
     Tool("line", DRAWING, N_("Line"), "minus", "/Line, /L"),
     Tool("arrow", DRAWING, N_("Arrow"), "arrow-top-right",
          "/Line /IT /LineArrow, /LE [/None /OpenArrow], /BS /W"),
-    Tool("rectangle", DRAWING, N_("Rectangle"), "square-outline", "/Square, /RD"),
-    Tool("circle", DRAWING, N_("Circle"), "circle-outline", "/Circle, /RD"),
+    # One tool each for two shapes: Shift makes the square or the circle,
+    # and the mark is named for both, since the file does not tell them
+    # apart.
+    Tool("rectangle", DRAWING, N_("Rectangle/Square"), "square-outline",
+         "/Square /Subj Rectangle, /IC, /BS, /BE, /RD",
+         marks=("Rectangle/Square",)),
+    Tool("circle", DRAWING, N_("Oval/Circle"), "circle-outline",
+         "/Circle /Subj Oval, /IC, /BS, /BE, /RD",
+         marks=("Oval/Circle",)),
     Tool("callout", DRAWING, N_("Text callout"), "comment-text-outline",
          "/FreeText /IT /FreeTextCallout, /CL, /LE /OpenArrow",
          colour='White'),
