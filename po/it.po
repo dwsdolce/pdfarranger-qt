@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pdfarranger master\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-12 20:29+0000\n"
+"POT-Creation-Date: 2026-11-12 22:27+0000\n"
 "PO-Revision-Date: 2026-01-04 02:52+0100\n"
 "Last-Translator: Massimo Pissarello <mapi68@gmail.com>\n"
 "Language: it\n"
@@ -43,8 +43,18 @@ msgstr "Annulla"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
+msgid "Remove Last Stroke"
+msgstr "Rimuovi l'ultimo tratto"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
 msgid "Complete"
 msgstr "Completa"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Remove Last Point"
+msgstr "Rimuovi l'ultimo punto"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
@@ -3107,6 +3117,11 @@ msgstr "Poligono"
 #: pdfarranger_qt/properties.py
 msgid "Polyline"
 msgstr "Polilinea"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Pencil"
+msgstr "Matita"
 
 #: pdfarranger_qt/properties.py
 msgid "Review History"

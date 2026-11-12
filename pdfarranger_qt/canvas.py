@@ -70,8 +70,10 @@ from PySide6.QtGui import (
     QKeySequence,
     QPainter,
     QPainterPath,
+    QPainterPathStroker,
     QPalette,
     QPen,
+    QPixmap,
     QPolygonF,
     QTextBlockFormat,
     QTextCharFormat,
@@ -1049,6 +1051,13 @@ class PageCanvas(QAbstractScrollArea):
     #: out, a text tool one rectangle per run of text it covered. The canvas
     #: reports the gesture and keeps none of it.
     mark_drawn = Signal(str, int, object)
+    #: A Pencil or a polygon being made has gained or lost a stroke or a
+    #: point, or been finished or thrown away: whether Undo has something
+    #: of its own to take back has changed.
+    drawing_changed = Signal()
+    #: *Properties...* in the menu of a mark being made: the armed tool's
+    #: form, since there is no mark yet to have one.
+    tool_form_wanted = Signal()
     #: A gesture, as ``(tool, [(page, quads), ...])``. Text is marked one
     #: page at a time, so the list holds one page; it is a list so that a
     #: gesture is always one step to undo, however much it covered.
@@ -1114,6 +1123,18 @@ class PageCanvas(QAbstractScrollArea):
         #: polygon's or a polyline's vertices is dragged.
         self._poly_shaping = None
         self._dragging_vertex = None
+        #: ``{"page", "strokes", "live", "last"}`` while a Pencil is being
+        #: drawn: its strokes so far, each a list of points in the space a
+        #: mark made here keeps, whether the button is down on the last of
+        #: them, and where the pointer last added one.
+        self._ink_drawing = None
+        #: ``(page, mark, which, fixed)`` while a Pencil's corner is
+        #: dragged, ``fixed`` the opposite corner of what it draws and the
+        #: way from it to the corner held; the points go in `_poly_shaping`.
+        self._ink_resizing = None
+        #: The line a mark made with a tool would have now, as ``(thickness,
+        #: opacity)``, asked of the window as `mark_colour` is.
+        self.mark_stroke = None
         #: Where the last context menu was asked for, for the entries that
         #: depend on it: Insert Vertex goes where it was clicked.
         self._menu_point = None
@@ -2563,7 +2584,7 @@ class PageCanvas(QAbstractScrollArea):
         if (mark.kind if isinstance(mark, markup.Annotation)
                 else mark.subtype) in (markup.STAMP, markup.FREETEXT,
                                        *markup.SHAPES, markup.LINE,
-                                       *markup.POLYS):
+                                       *markup.POLYS, markup.INK):
             # A stamp's box is its rectangle, at the page's own scale: it
             # is ink on the page, so none of the holding-still below
             # applies to it. Nor to a text box, a rectangle or an oval,
@@ -2648,7 +2669,7 @@ class PageCanvas(QAbstractScrollArea):
                     else mark.subtype)
             if kind not in (markup.TEXT, markup.STAMP, markup.FREETEXT,
                             *markup.SHAPES, markup.LINE,
-                                       *markup.POLYS):
+                                       *markup.POLYS, markup.INK):
                 continue
             if kind in markup.SHAPES:
                 if self._shape_hit(index, mark, point):
@@ -2660,6 +2681,10 @@ class PageCanvas(QAbstractScrollArea):
                 continue
             if kind in markup.POLYS:
                 if self._poly_hit(index, mark, point):
+                    return (index, which, mark)
+                continue
+            if kind == markup.INK:
+                if self._ink_hit(index, mark, point):
                     return (index, which, mark)
                 continue
             where = self.note_icon_rect(index, mark)
@@ -2790,6 +2815,9 @@ class PageCanvas(QAbstractScrollArea):
     #: an icon, so it writes a `/Highlight`. It had an entry in the strip
     #: for two days, which Reader never had.
     NOTE_ON_TEXT = markup.NOTE_ON_TEXT
+    #: *Draw*: a Pencil, a stroke at each press, drag and release, all of
+    #: them one mark until it is finished by Complete, Return or another
+    #: tool, and thrown away by Cancel or Escape.
     DRAW = "draw"
 
     #: *Replace Selected Text*: a strikeout over the words and a caret at
@@ -2865,11 +2893,14 @@ class PageCanvas(QAbstractScrollArea):
         tool = tool or self.SELECT
         if tool == self._tool:
             return
+        # A Pencil under way is kept, not lost, when another tool is chosen.
+        self.finish_ink()
         self._tool = tool
         self._marking = None
         self._clicked_shape = False
         self._poly_drawing = None
-        if tool in self.CLICK_TOOLS or tool in self.POLY_TOOLS:
+        self.drawing_changed.emit()
+        if tool in self.CLICK_TOOLS or tool in self.POLY_TOOLS or tool == self.DRAW:
             # A shape or a line is drawn over the page, not over words: a
             # selection left from before is not what it is for.
             self.clear_selection()
@@ -3197,7 +3228,7 @@ class PageCanvas(QAbstractScrollArea):
     SELECTABLE = ("/Highlight", "/StrikeOut", "/Underline", "/Squiggly",
                   markup.TEXT, markup.STAMP, markup.CARET, markup.FREETEXT,
                   *markup.SHAPES, markup.LINE,
-                                       *markup.POLYS)
+                                       *markup.POLYS, markup.INK)
 
     #: Of those, the ones drawn *over* a run of words. A comment's icon is
     #: the odd one: it is placed rather than sized, so it has no run to
@@ -3284,7 +3315,7 @@ class PageCanvas(QAbstractScrollArea):
                 else mark.subtype)
         if kind in (markup.TEXT, markup.STAMP, markup.FREETEXT,
                     *markup.SHAPES, markup.LINE,
-                                       *markup.POLYS):
+                                       *markup.POLYS, markup.INK):
             # Both comments, a text box, the shapes and a line, through one
             # call: it is the one that knows a comment mark holds its size
             # and a stamp does not, and the one that knows a gesture in
@@ -3360,6 +3391,10 @@ class PageCanvas(QAbstractScrollArea):
                 continue
             if kind in markup.POLYS:
                 if self._poly_hit(index, mark, point):
+                    return (index, mark)
+                continue
+            if kind == markup.INK:
+                if self._ink_hit(index, mark, point):
                     return (index, mark)
                 continue
             for quad in self.mark_boxes(mark):
@@ -3743,6 +3778,15 @@ class PageCanvas(QAbstractScrollArea):
             self.viewport().update()
             return
 
+        if self._ink_drawing is not None and self._ink_drawing["live"]:
+            if event.buttons() & Qt.LeftButton:
+                self._ink_add(position)
+            return
+
+        if self._ink_resizing is not None and event.buttons() & Qt.LeftButton:
+            self._ink_resized(position)
+            return
+
         if self._dragging_vertex is not None and event.buttons() & Qt.LeftButton:
             page, mark, which = self._dragging_vertex
             points = list(self._poly_shaping[1])
@@ -3925,7 +3969,7 @@ class PageCanvas(QAbstractScrollArea):
             # A crosshair everywhere, including over a field: the field still
             # takes the press, and a cursor that promised otherwise would be
             # the lie. The I-beam is wrong here either way.
-            self.viewport().setCursor(Qt.CrossCursor)
+            self._ink_cursor()
             self._set_tooltip("")
             super().mouseMoveEvent(event)
             return
@@ -3977,6 +4021,10 @@ class PageCanvas(QAbstractScrollArea):
                 else mark.subtype)
         if kind == markup.LINE or kind in markup.POLYS:
             return Qt.CrossCursor
+        if kind == markup.INK:
+            # Its four corners, on the diagonals.
+            return ((Qt.SizeFDiagCursor, Qt.SizeBDiagCursor)[which % 2]
+                    if 0 <= which < 4 else None)
         if kind == markup.FREETEXT or kind in markup.SHAPES:
             # Corners on the diagonals, the middles of the sides across.
             return (Qt.SizeFDiagCursor, Qt.SizeBDiagCursor, Qt.SizeFDiagCursor,
@@ -4038,12 +4086,18 @@ class PageCanvas(QAbstractScrollArea):
         extends by is decided by whether the gesture turns out to be a click or
         a drag, which is `extend_to` and `_extend_selection` respectively.
         """
+        if event.button() == Qt.LeftButton and self._ink_drawing is not None:
+            # A Pencil on its way: every press starts its next stroke.
+            self._ink_press(QPointF(event.position()))
+            event.accept()
+            return
         if event.button() == Qt.LeftButton and self._poly_drawing is not None:
             # A polygon on its way: every press is its next point.
             page, points, _pointer = self._poly_drawing
             points.append(self._angled(points[-1], QPointF(event.position())))
             self._poly_drawing = (page, points, QPointF(event.position()))
             self.viewport().update()
+            self.drawing_changed.emit()
             event.accept()
             return
         if event.button() == Qt.LeftButton:
@@ -4097,6 +4151,15 @@ class PageCanvas(QAbstractScrollArea):
             # placed a second mark instead of reshaping the first -- every
             # time, because on a small stamp the handles cover most of it.
             grip = self.grip_at(position)
+            if grip is not None and self._selected is not None and (
+                    self._selected[1].kind
+                    if isinstance(self._selected[1], markup.Annotation)
+                    else self._selected[1].subtype) == markup.INK:
+                if self._ink_resize_from(grip):
+                    self._place_mark_buttons()
+                    self.viewport().update()
+                    event.accept()
+                    return
             if grip is not None and self._selected is not None and (
                     self._selected[1].kind
                     if isinstance(self._selected[1], markup.Annotation)
@@ -4172,6 +4235,10 @@ class PageCanvas(QAbstractScrollArea):
                     self.mark_drawn.emit(self._tool, placed[0], [placed[1]])
                 event.accept()
                 return
+            if self._tool == self.DRAW:
+                if self._ink_press(position):
+                    event.accept()
+                    return
             if self._tool in self.POLY_TOOLS:
                 page = self.page_at(position)
                 if page is not None:
@@ -4179,6 +4246,7 @@ class PageCanvas(QAbstractScrollArea):
                     # made the second.
                     self._poly_drawing = (page, [position], position)
                     self._poly_pressed = position
+                    self.drawing_changed.emit()
                     event.accept()
                     return
             if self.marks_area():
@@ -4257,6 +4325,12 @@ class PageCanvas(QAbstractScrollArea):
         or double-clicking a word inside a link would select it and then
         navigate away from it.
         """
+        if event.button() == Qt.LeftButton and self._ink_drawing is not None:
+            # Not a finish: a stroke ends at its release, so the second
+            # press of a double-click starts another.
+            self._ink_press(QPointF(event.position()))
+            event.accept()
+            return
         if event.button() == Qt.LeftButton and self._poly_drawing is not None:
             # The double-click's own press already placed the last point.
             self.finish_poly()
@@ -4337,6 +4411,27 @@ class PageCanvas(QAbstractScrollArea):
             event.accept()
             return
 
+        if event.button() == Qt.LeftButton and self._ink_drawing is not None:
+            if self._ink_drawing["live"]:
+                self._ink_add(QPointF(event.position()))
+                self._ink_drawing["live"] = False
+                self.viewport().update()
+            event.accept()
+            return
+
+        if event.button() == Qt.LeftButton and self._ink_resizing is not None:
+            page, mark, _which, _fixed = self._ink_resizing
+            shaped = self._poly_shaping
+            self._ink_resizing = None
+            self._poly_shaping = None
+            self._shaping = None
+            self._place_mark_buttons()
+            self.viewport().update()
+            if shaped is not None and tuple(shaped[1]) != tuple(mark.points):
+                self.line_reshaped.emit(page, mark, tuple(shaped[1]))
+            event.accept()
+            return
+
         if event.button() == Qt.LeftButton and self._poly_drawing is not None:
             page, points, _pointer = self._poly_drawing
             pressed = getattr(self, "_poly_pressed", None)
@@ -4346,6 +4441,7 @@ class PageCanvas(QAbstractScrollArea):
                     > QApplication.startDragDistance()):
                 # A press, a drag and a release: the first segment.
                 points.append(self._angled(points[0], end))
+                self.drawing_changed.emit()
             self._poly_pressed = None
             self._poly_drawing = (page, points, end)
             self.viewport().update()
@@ -4518,15 +4614,39 @@ class PageCanvas(QAbstractScrollArea):
         selection because the pointer left the paper is the annoying half of
         that rule without the useful half.
         """
+        if self._ink_drawing is not None:
+            # A Pencil on its way, as a polygon: Cancel throws its strokes
+            # away and Complete keeps them.
+            menu = QMenu(self)
+            cancel = menu.addAction(_("Cancel"))
+            cancel.triggered.connect(self.cancel_ink)
+            back = menu.addAction(_("Remove Last Stroke"))
+            back.setEnabled(self.can_take_back())
+            back.triggered.connect(self.take_back)
+            complete = menu.addAction(_("Complete"))
+            complete.setEnabled(bool(self._ink_drawing["strokes"]))
+            complete.triggered.connect(self.finish_ink)
+            menu.addSeparator()
+            menu.addAction(_("Properties...")).triggered.connect(
+                self.tool_form_wanted.emit)
+            return menu
         if self._poly_drawing is not None:
             # A polygon on its way: Cancel throws it away, Complete keeps the
             # points placed so far -- once there are enough of them.
             menu = QMenu(self)
             cancel = menu.addAction(_("Cancel"))
             cancel.triggered.connect(self.cancel_poly)
+            back = menu.addAction(_("Remove Last Point"))
+            back.setEnabled(self.can_take_back())
+            back.triggered.connect(self.take_back)
             complete = menu.addAction(_("Complete"))
             complete.setEnabled(self._poly_enough())
             complete.triggered.connect(self.finish_poly)
+            # The tool's form: what is changed there, the whole mark is
+            # made with when it is completed.
+            menu.addSeparator()
+            menu.addAction(_("Properties...")).triggered.connect(
+                self.tool_form_wanted.emit)
             return menu
         self._menu_point = position
         found = self.mark_at(position)
@@ -4629,7 +4749,7 @@ class PageCanvas(QAbstractScrollArea):
         return (not cls._is_a_comment(mark)
                 and kind not in (markup.CARET, markup.FREETEXT,
                                  *markup.SHAPES, markup.LINE,
-                                       *markup.POLYS))
+                                       *markup.POLYS, markup.INK))
 
     @staticmethod
     def _is_a_comment(mark) -> bool:
@@ -4949,6 +5069,12 @@ class PageCanvas(QAbstractScrollArea):
         about it, and one table everywhere is the simplicity that was wanted.
         """
         key = event.key()
+        if self._ink_drawing is not None and key in (Qt.Key_Return, Qt.Key_Enter):
+            self.finish_ink()
+            return
+        if self._ink_drawing is not None and key == Qt.Key_Escape:
+            self.cancel_ink()
+            return
         if self._poly_drawing is not None and key in (Qt.Key_Return, Qt.Key_Enter):
             self.finish_poly()
             return
@@ -5164,6 +5290,7 @@ class PageCanvas(QAbstractScrollArea):
         self._paint_caret(painter, offset)
         self._paint_marking(painter)
         self._paint_poly_drawing(painter)
+        self._paint_ink_drawing(painter)
         # Last, and outside the page loop: the panel sits at the pointer in
         # viewport coordinates and belongs over everything, including a mark
         # on the page below the one it describes.
@@ -5185,12 +5312,18 @@ class PageCanvas(QAbstractScrollArea):
         takes the renderer's copy out of the document being shown, so if
         these were not painted a saved comment would vanish.
         """
+        # **The file's first, then ours, then the one being made**: the
+        # order a save writes them in, ours after the file's in `/Annots`,
+        # and the order `mark_at` takes them in. Ours were painted first,
+        # under every mark the file brought, so an opaque stroke made here
+        # showed a faded one of the file's through it -- and Acrobat, given
+        # the saved file, drew it the other way up.
+        marks = list(self._file_notes(index))
         try:
-            marks = list(self.marks(index) or ()) if self.marks else []
+            marks += list(self.marks(index) or ()) if self.marks else []
         except Exception:       # noqa: BLE001 - a repaint must not fail
-            marks = []
+            pass
         marks += self._preview_marks(index)
-        marks += self._file_notes(index)
         if not marks:
             return
         painter.save()
@@ -5235,6 +5368,9 @@ class PageCanvas(QAbstractScrollArea):
                 continue
             if kind in markup.POLYS:
                 self._paint_poly(painter, index, mark, offset)
+                continue
+            if kind == markup.INK:
+                self._paint_ink(painter, index, mark, offset)
                 continue
             # **At the solidity the file will show**, which the quadded
             # marks were drawn without: a highlight of ours is written
@@ -5410,7 +5546,8 @@ class PageCanvas(QAbstractScrollArea):
         # An Insert Text caret wears one too: it is not a comment, so its
         # note needs the sign a strikethrough's does.
         badged = self.QUADDED_SELECTABLE + (markup.CARET, *markup.SHAPES,
-                                            markup.LINE, *markup.POLYS)
+                                            markup.LINE, *markup.POLYS,
+                                            markup.INK)
         found = [m for m in self._file_marks.visible(index + 1)
                  if m.subtype in badged
                  and not markup.is_reply(m)
@@ -5689,6 +5826,10 @@ class PageCanvas(QAbstractScrollArea):
             if getattr(mark, "locked", False):
                 return []
             return self._poly_grips(index, mark, offset)
+        if kind == markup.INK:
+            if getattr(mark, "locked", False):
+                return []
+            return self._ink_grips(index, mark, offset)
         if kind not in self.QUADDED_SELECTABLE:
             # A comment's icon is placed, not sized: there is no run to
             # take hold of, and a handle on a glyph offers a drag that
@@ -6427,7 +6568,7 @@ class PageCanvas(QAbstractScrollArea):
         marks = [m for m in marks if m == self._selected or (
             m[1].kind if isinstance(m[1], markup.Annotation)
             else m[1].subtype) not in (*markup.SHAPES, markup.LINE,
-                                       *markup.POLYS)]
+                                       *markup.POLYS, markup.INK)]
         viewport = QRectF(self.viewport().rect())
         painter.save()
         painter.setRenderHint(QPainter.Antialiasing, True)
@@ -6642,7 +6783,7 @@ class PageCanvas(QAbstractScrollArea):
         if (mark.kind if isinstance(mark, markup.Annotation)
                 else mark.subtype) in (markup.STAMP, markup.FREETEXT,
                                        *markup.SHAPES, markup.LINE,
-                                       *markup.POLYS):
+                                       *markup.POLYS, markup.INK):
             # Moved, not reshaped: the box keeps the size and the angle it
             # was given and only its corner changes, which is what dragging
             # the body of one means.
@@ -6677,7 +6818,8 @@ class PageCanvas(QAbstractScrollArea):
                         or m.subtype == markup.FREETEXT
                         or m.subtype in markup.SHAPES
                         or m.subtype == markup.LINE
-                        or m.subtype in markup.POLYS)
+                        or m.subtype in markup.POLYS
+                        or m.subtype == markup.INK)
                     and not m.is_reply()]
         except Exception:       # noqa: BLE001 - a repaint must not fail
             return []
@@ -7070,6 +7212,7 @@ class PageCanvas(QAbstractScrollArea):
         enough = self._poly_enough()
         self._poly_drawing = None
         self.viewport().update()
+        self.drawing_changed.emit()
         if not enough:
             return
         flat = []
@@ -7088,6 +7231,7 @@ class PageCanvas(QAbstractScrollArea):
         """Throw away the polygon being made -- Cancel or Escape."""
         self._poly_drawing = None
         self.viewport().update()
+        self.drawing_changed.emit()
 
     def _paint_poly_drawing(self, painter) -> None:
         """The polygon being made: its segments so far and the next one to
@@ -7410,6 +7554,301 @@ class PageCanvas(QAbstractScrollArea):
                 if any(near(a, b) for a, b in zip(spots, spots[1:])):
                     return True
         return False
+
+    def _ink_press(self, position: QPointF) -> bool:
+        """Start a stroke of the Pencil being drawn, or of a new one; a
+        press on another page finishes the one under way first. False off
+        every page."""
+        page = self.page_at(position)
+        if page is None:
+            return False
+        if self._ink_drawing is not None and self._ink_drawing["page"] != page:
+            self.finish_ink()
+        if self._ink_drawing is None:
+            self._ink_drawing = {"page": page, "strokes": [], "live": False,
+                                 "last": None}
+        at = self._point_on(page, position, True)
+        if at is None:
+            return False
+        self._ink_drawing["strokes"].append([at])
+        self._ink_drawing["live"] = True
+        self._ink_drawing["last"] = position
+        self._ink_cursor()
+        self.viewport().update()
+        self.drawing_changed.emit()
+        return True
+
+    #: The pencil the pointer becomes while a Pencil is under way, made on
+    #: first use: a cursor needs the application up.
+    _pencil = None
+
+    def _ink_cursor(self) -> None:
+        """The crosshair for a drawing tool, but **a pencil while a Pencil
+        is under way**: the next stroke joins the mark being drawn, which
+        Return leaves no other sign of, since the tool stays armed for the
+        next one."""
+        if not self.marks_area():
+            return
+        if self._tool != self.DRAW or self._ink_drawing is None:
+            self.viewport().setCursor(Qt.CrossCursor)
+            return
+        if PageCanvas._pencil is None:
+            from .toolstrip import icon_for
+
+            size, ratio = 24, 2.0
+            image = QPixmap(int(size * ratio), int(size * ratio))
+            image.setDevicePixelRatio(ratio)
+            image.fill(Qt.transparent)
+            painter = QPainter(image)
+            # Dark with a light rim, to be seen on paper and on ink alike.
+            rim = icon_for("pencil", QColor("white")).pixmap(size - 2)
+            for dx, dy in ((-1, 0), (1, 0), (0, -1), (0, 1)):
+                painter.drawPixmap(1 + dx, 1 + dy, rim)
+            painter.drawPixmap(1, 1, icon_for("pencil", QColor(30, 30, 30)).pixmap(size - 2))
+            painter.end()
+            # The tip, at the glyph's bottom left: measured on the glyph.
+            PageCanvas._pencil = QCursor(image, 5, 18)
+        self.viewport().setCursor(PageCanvas._pencil)
+
+    def _ink_add(self, position: QPointF) -> None:
+        """The pointer's next point on the stroke under way, once it has
+        moved a pixel."""
+        drawing = self._ink_drawing
+        last = drawing["last"]
+        if last is not None and (position - last).manhattanLength() < 1.0:
+            return
+        at = self._point_on(drawing["page"], position, True)
+        if at is None:
+            return
+        drawing["strokes"][-1].append(at)
+        drawing["last"] = position
+        self.viewport().update()
+
+    def _ink_made(self):
+        """The Pencil under way as ``(page, points, counts)``: every point
+        in one flat run and how many each stroke has, or None."""
+        drawing = self._ink_drawing
+        if drawing is None or not drawing["strokes"]:
+            return None
+        points, counts = [], []
+        for stroke in drawing["strokes"]:
+            for x, y in stroke:
+                points += [float(x), float(y)]
+            counts.append(len(stroke))
+        return drawing["page"], tuple(points), tuple(counts)
+
+    def finish_ink(self) -> None:
+        """Keep the Pencil being drawn, with its strokes so far -- Complete,
+        Return, another tool, or a press on another page."""
+        made = self._ink_made()
+        was = self._ink_drawing is not None
+        self._ink_drawing = None
+        self.viewport().update()
+        if was:
+            self._ink_cursor()
+            self.drawing_changed.emit()
+        if made is not None:
+            page, points, counts = made
+            self.mark_drawn.emit(self.DRAW, page, [points, counts])
+
+    def cancel_ink(self) -> None:
+        """Throw away the Pencil being drawn -- Cancel or Escape."""
+        self._ink_drawing = None
+        self._ink_cursor()
+        self.viewport().update()
+        self.drawing_changed.emit()
+
+    def can_take_back(self) -> bool:
+        """Whether a Pencil or a polygon being made has a stroke or a point
+        to take back."""
+        if self._ink_drawing is not None:
+            return bool(self._ink_drawing["strokes"])
+        return self._poly_drawing is not None
+
+    def take_back(self) -> bool:
+        """Remove the last stroke of the Pencil being drawn, or the last
+        point of the polygon -- the menu's entry, and Undo while one is
+        being made, which would otherwise take back whatever was done
+        before it was begun. **The last one taken back ends it**, so Undo
+        reaches what came before only once nothing is being made. False
+        when there is nothing to take back."""
+        if not self.can_take_back():
+            return False
+        if self._ink_drawing is not None:
+            self._ink_drawing["strokes"].pop()
+            self._ink_drawing["live"] = False
+            if not self._ink_drawing["strokes"]:
+                self._ink_drawing = None
+                self._ink_cursor()
+        else:
+            page, points, pointer = self._poly_drawing
+            points.pop()
+            self._poly_drawing = (page, points, pointer) if points else None
+        self.viewport().update()
+        self.drawing_changed.emit()
+        return True
+
+    def _paint_ink_drawing(self, painter) -> None:
+        """The Pencil being drawn, as it will be made: in the tool's colour,
+        thickness and opacity, its strokes fitted as they are drawn."""
+        made = self._ink_made()
+        if made is None:
+            return
+        page, points, counts = made
+        colour = self.mark_colour(self.DRAW) if self.mark_colour else None
+        thickness, opacity = (self.mark_stroke(self.DRAW) if self.mark_stroke
+                              else (1.0, 1.0))
+        pencil = markup.Annotation(
+            markup.INK, 0, markup.ink_rect(points, counts, thickness),
+            colour=colour or markup.swatch("Red"), thickness=thickness,
+            opacity=opacity, points=points, strokes=counts)
+        self._paint_ink(painter, page, pencil, None)
+
+    def _ink_grips(self, index: int, mark, offset=None):
+        """A handle on each corner of a Pencil's box: top left, top right,
+        bottom right, bottom left."""
+        where = self.note_icon_rect(index, mark, offset)
+        if where is None:
+            return []
+        size = float(self.GRIP)
+        return [QRectF(p.x() - size / 2, p.y() - size / 2, size, size)
+                for p in (where.topLeft(), where.topRight(),
+                          where.bottomRight(), where.bottomLeft())]
+
+    def _ink_resize_from(self, grip: int) -> bool:
+        """Take hold of a Pencil's corner: the opposite corner of what it
+        draws -- its box less the line's width -- holds still."""
+        page, mark = self._selected
+        grips = self.grips()
+        if not 0 <= grip < 4 or len(grips) < 4 or not getattr(mark, "points", None):
+            return False
+        mine = isinstance(mark, markup.Annotation)
+        held = self._point_on(page, grips[grip].center(), mine)
+        fixed = self._point_on(page, grips[(grip + 2) % 4].center(), mine)
+        if held is None or fixed is None:
+            return False
+        width = float(getattr(mark, "thickness", 1.0) or 0.0)
+        way = (1.0 if held[0] >= fixed[0] else -1.0,
+               1.0 if held[1] >= fixed[1] else -1.0)
+        inner = (fixed[0] + width * way[0], fixed[1] + width * way[1])
+        self._ink_resizing = (page, mark, grip, (inner, way))
+        self._poly_shaping = (mark, tuple(mark.points))
+        return True
+
+    def _ink_resized(self, position: QPointF) -> None:
+        """A Pencil's corner dragged: **every point scaled about the
+        opposite corner by the same amount across and up**, so it keeps its
+        proportions, by whichever way the pointer has gone further; the
+        line's width does not change."""
+        page, mark, _which, (inner, way) = self._ink_resizing
+        mine = isinstance(mark, markup.Annotation)
+        at = self._point_on(page, position, mine)
+        if at is None:
+            return
+        width = float(getattr(mark, "thickness", 1.0) or 0.0)
+        points = mark.points
+        xs, ys = points[0::2], points[1::2]
+        rect = mark.rect
+        wide = max(rect[2] - rect[0] - 2 * width, 0.0)
+        tall = max(rect[3] - rect[1] - 2 * width, 0.0)
+        if wide < 1e-6 and tall < 1e-6:
+            return
+        reach = ((at[0] - width * way[0] - inner[0]) * way[0],
+                 (at[1] - width * way[1] - inner[1]) * way[1])
+        scales = [r / span for r, span in zip(reach, (wide, tall)) if span >= 1e-6]
+        smallest = 4.0 / max(wide, tall)
+        scale = max(max(scales), smallest)
+        scaled = []
+        for x, y in zip(xs, ys):
+            scaled += [inner[0] + (x - inner[0]) * scale,
+                       inner[1] + (y - inner[1]) * scale]
+        self._poly_shaping = (mark, tuple(scaled))
+        # And its box with it, so the outline and the handles follow.
+        counts = getattr(mark, "strokes", None) or (len(scaled) // 2,)
+        self._shaping = (mark, markup.ink_rect(scaled, counts, width), 0.0)
+        self._place_mark_buttons()
+        self.viewport().update()
+
+    def _ink_path(self, index: int, mark, offset=None):
+        """``(curves, dots, scale)`` for a Pencil on screen: its strokes as
+        the curves fitted to their points, and its clicks as the dots they
+        fill, apart -- or None."""
+        points = self._poly_points(mark)
+        counts = getattr(mark, "strokes", None) or (
+            (len(points) // 2,) if points else ())
+        if not points or not counts:
+            return None
+        rect, _angle = self._shape_of(mark)
+        left, bottom, right, top = (float(v) for v in rect)
+        where = self.quad_on_screen(index, rect, offset,
+                                    scaled=isinstance(mark, markup.Annotation))
+        if where is None or right <= left or top <= bottom:
+            return None
+        sx = where.width() / (right - left)
+        sy = where.height() / (top - bottom)
+
+        def at(x, y):
+            return QPointF(where.left() + (x - left) * sx,
+                           where.bottom() - (y - bottom) * sy)
+
+        # **A dot is filled to its whole width**: Acrobat's circle of half a
+        # point stroked with the line, drawn by Qt -- and by PDFium --
+        # leaves a hole wherever the line is wider than the circle.
+        radius = markup.INK_DOT + float(getattr(mark, "thickness", 1.0) or 0.0) / 2
+        curves, dots = QPainterPath(), QPainterPath()
+        dots.setFillRule(Qt.WindingFill)
+        for stroke in markup.ink_strokes(points, counts):
+            found = markup.ink_curves(stroke)
+            if found is None:
+                continue
+            if found[0] == "dot":
+                dots.addEllipse(at(*found[1]), radius * sx, radius * sy)
+                continue
+            _curves, begin, pieces = found
+            curves.moveTo(at(*begin))
+            for c in pieces:
+                curves.cubicTo(at(c[0], c[1]), at(c[2], c[3]), at(c[4], c[5]))
+        return curves, dots, sx
+
+    def _paint_ink(self, painter, index: int, mark, offset) -> None:
+        """Draw a Pencil: its strokes in its colour and thickness with
+        **round ends and joins**, as Acrobat draws one -- unlike every other
+        drawing's flat ones -- and a click as a dot, filled and stroked;
+        faded as one piece."""
+        found = self._ink_path(index, mark, offset)
+        if found is None:
+            return
+        curves, dots, scale = found
+        width = float(getattr(mark, "thickness", 1.0) or 0.0)
+        colour = QColor.fromRgbF(*(mark.colour or (1.0, 0.0, 0.0))[:3])
+        reach = width * scale + 2.0
+        bounds = curves.boundingRect().united(dots.boundingRect())
+        with self._as_one(painter, bounds.adjusted(-reach, -reach, reach, reach),
+                          painter.opacity() * self._solidity(mark)) as layer:
+            layer.setRenderHint(QPainter.Antialiasing, True)
+            pen = self._line_pen(colour, width, scale, {})
+            pen.setCapStyle(Qt.RoundCap)
+            pen.setJoinStyle(Qt.RoundJoin)
+            layer.setPen(pen)
+            layer.setBrush(Qt.NoBrush)
+            layer.drawPath(curves)
+            layer.fillPath(dots, colour)
+
+    def _ink_hit(self, index: int, mark, point: QPointF) -> bool:
+        """Whether a viewport point takes hold of a Pencil: within the ink
+        tolerance of what it draws."""
+        found = self._ink_path(index, mark)
+        if found is None:
+            return False
+        curves, dots, scale = found
+        width = float(getattr(mark, "thickness", 1.0) or 0.0)
+        stroker = QPainterPathStroker()
+        stroker.setWidth(width * scale + 2 * self.INK_TOLERANCE)
+        stroker.setCapStyle(Qt.RoundCap)
+        stroker.setJoinStyle(Qt.RoundJoin)
+        return (stroker.createStroke(curves).contains(point)
+                or stroker.createStroke(dots).contains(point)
+                or dots.contains(point))
 
     @staticmethod
     def _line_pen(colour, width: float, scale: float, style: dict) -> QPen:

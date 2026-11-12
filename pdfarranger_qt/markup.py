@@ -41,6 +41,7 @@ is carried by both exactly as the annotations already in the file are.
 
 import copy
 import datetime
+import functools
 import getpass
 import itertools
 import math
@@ -107,8 +108,12 @@ POLYLINE = "/PolyLine"
 POLYGON_CLOUD = "/PolygonCloud"
 POLYS = (POLYGON, POLYLINE)
 
+#: What the Draw tool makes, a Pencil: any number of strokes, each its own
+#: run of points in `/InkList`, drawn as curves fitted to them.
+INK = "/Ink"
+
 KINDS = (TEXT, HIGHLIGHT, STRIKEOUT, UNDERLINE, SQUIGGLY, STAMP, CARET,
-         FREETEXT, SQUARE, CIRCLE, LINE, POLYGON, POLYLINE)
+         FREETEXT, SQUARE, CIRCLE, LINE, POLYGON, POLYLINE, INK)
 
 #: The two subtypes one tool writes, and which of them means what. A style
 #: is not a value inside the dictionary: it is which dictionary gets
@@ -260,7 +265,7 @@ SUBJECTS = {HIGHLIGHT: "Highlight", STRIKEOUT: "Cross-Out",
             # apart in the file.
             SQUARE: "Rectangle", CIRCLE: "Oval", LINE: "Line",
             # Acrobat's, kept in the file; the mark is called Polyline here.
-            POLYGON: "Polygon", POLYLINE: "Polygonal Line"}
+            POLYGON: "Polygon", POLYLINE: "Polygonal Line", INK: "Pencil"}
 
 #: Bit 3 of `/F`, Print. Without it a mark shows on screen and vanishes from
 #: paper, which is not what anybody means by annotating a document.
@@ -743,7 +748,7 @@ class Annotation:
                  "popup_rect", "state", "rich", "subject", "locked",
                  "intent", "icon", "group", "fill", "thickness",
                  "border_style", "text_font", "text_size", "text_colour",
-                 "points", "ends")
+                 "points", "ends", "strokes")
 
     def __init__(self, kind: str, page: int, rect: Tuple[float, ...],
                  contents: str = "", colour=None, author: Optional[str] = None,
@@ -757,7 +762,8 @@ class Annotation:
                  icon: Optional[str] = None, group: bool = False,
                  fill=None, thickness: float = 1.0,
                  border_style: str = "straight", text_font=None,
-                 text_size=None, text_colour=None, points=None, ends=None):
+                 text_size=None, text_colour=None, points=None, ends=None,
+                 strokes=None):
         if kind not in KINDS:
             raise ValueError(f"unknown annotation kind: {kind}")
         self.kind = kind
@@ -781,6 +787,8 @@ class Annotation:
         #: names them.
         self.points = tuple(points) if points is not None else None
         self.ends = tuple(ends) if ends is not None else ("/None", "/None")
+        #: A Pencil's strokes, as how many of ``points`` each one has.
+        self.strokes = tuple(strokes) if strokes is not None else None
         #: The `/NM` of the mark this answers, for a reply, and None for
         #: anything else. A reply is a mark in its own right -- it draws an
         #: icon, it can be selected and deleted -- and all that makes it a
@@ -967,6 +975,13 @@ def apply_edit(annot, edit, pdf=None) -> None:
         _apply_common_edit(annot, edit, pdf)
         _redraw_poly(annot, edit, pdf, was_points, was_rect)
         return
+    if subtype == INK:
+        was = _ink_reading(annot)
+        was_rect = tuple(_number(v, 0.0) for v in annot.Rect)
+        edit = {k: v for k, v in edit.items() if k != "rotate"}
+        _apply_common_edit(annot, edit, pdf)
+        _redraw_ink(annot, edit, pdf, was["points"], was_rect)
+        return
     if subtype == LINE:
         points = annot.get(pikepdf.Name.L)
         was_points = (tuple(_number(v, 0.0) for v in points)
@@ -1053,7 +1068,12 @@ def _apply_common_edit(annot, edit, pdf=None) -> None:
         # because a note has none: `/Rect` is the whole of where it is.
         annot[pikepdf.Name.Rect] = pikepdf.Array([*rect])
     points = edit.get("points")
-    if points:
+    if points and str(annot.get(pikepdf.Name.Subtype, "")) == INK:
+        # A Pencil's, cut back into its strokes where the file has them.
+        counts = _ink_reading(annot)["strokes"] or (len(points) // 2,)
+        annot[pikepdf.Name.InkList] = pikepdf.Array(
+            [pikepdf.Array([*run]) for run in ink_strokes(points, counts)])
+    elif points:
         # A line's two points, moved with its rectangle -- or a polygon's
         # or a polyline's, which are its `/Vertices`.
         key = (pikepdf.Name.Vertices
@@ -1609,7 +1629,8 @@ def blank_note_icons(pdf) -> int:
                 # border and words -- so a drag carries it; and a rectangle
                 # or an oval, for the same reason.
                 text_box = (subtype == FREETEXT or subtype in SHAPES
-                            or subtype == LINE or subtype in POLYS)
+                            or subtype == LINE or subtype in POLYS
+                            or subtype == INK)
                 if subtype != TEXT and not text_box and not is_scalable_comment(
                         subtype, stamp_icon(annot)):
                     continue
@@ -2064,6 +2085,8 @@ def to_dictionary(pdf, annotation: Annotation, page=None) -> pikepdf.Dictionary:
         _write_line(pdf, entry, annotation)
     if annotation.kind in POLYS:
         _write_poly(pdf, entry, annotation)
+    if annotation.kind == INK:
+        _write_ink(pdf, entry, annotation)
     if annotation.kind == CARET:
         entry[pikepdf.Name.RD] = pikepdf.Array([caret_inset(annotation.rect)] * 4)
         if solidity(annotation) != 1.0:
@@ -2238,7 +2261,7 @@ def nearest_swatch(colour):
 TRANSPARENCY = {HIGHLIGHT: 0.4, STRIKEOUT: 1.0,
                 UNDERLINE: 1.0, SQUIGGLY: 1.0, CARET: 1.0, FREETEXT: 1.0,
                 SQUARE: 1.0, CIRCLE: 1.0, LINE: 1.0, POLYGON: 1.0,
-                POLYLINE: 1.0}
+                POLYLINE: 1.0, INK: 1.0}
 
 
 def opacity_of(mark) -> float:
@@ -3034,7 +3057,9 @@ def _write_poly(pdf, entry, annotation) -> None:
     the line in `/BS` and `/BE`, `/Rect` round what it draws, and a
     drawing."""
     kind = annotation.kind
-    points = list(annotation.points or ())
+    # Without points of its own, the corners of its box, as a line falls
+    # back to them.
+    points = list(annotation.points or tuple(annotation.rect))
     if kind == POLYGON and len(points) >= 4 and points[:2] != points[-2:]:
         points += points[:2]
     entry[pikepdf.Name.Vertices] = pikepdf.Array([*points])
@@ -3377,6 +3402,316 @@ def polygon_corners(points) -> "list":
     return corners[::-1] if area > 0 else corners
 
 
+def ink_rect(points, counts, width: float) -> "tuple":
+    """A Pencil's `/Rect`: round the curves it draws and its dots, grown by
+    the line's width -- the margin every one of the fixture's has."""
+    xs, ys = [], []
+    for stroke in ink_strokes(points, counts):
+        found = ink_curves(stroke)
+        if found is None:
+            continue
+        if found[0] == "dot":
+            x, y = found[1]
+            xs += [x - INK_DOT, x + INK_DOT]
+            ys += [y - INK_DOT, y + INK_DOT]
+            continue
+        _curves, begin, curves = found
+        xs.append(begin[0])
+        ys.append(begin[1])
+        start = begin
+        for c in curves:
+            bez = (start, c[0:2], c[2:4], c[4:6])
+            for k in range(1, 9):
+                x, y = _bezier_at(bez, k / 8)
+                xs.append(x)
+                ys.append(y)
+            start = c[4:6]
+    if not xs:
+        return (0.0, 0.0, 0.0, 0.0)
+    grow = max(float(width), 0.0)
+    return (min(xs) - grow, min(ys) - grow, max(xs) + grow, max(ys) + grow)
+
+
+def _write_ink(pdf, entry, annotation) -> None:
+    """The keys only a Pencil has, as Acrobat writes them: each stroke its
+    own array in `/InkList`, the width in `/BS /W` only when it is not 1,
+    `/Rect` round what it draws, and a drawing."""
+    points = tuple(annotation.points or ())
+    counts = annotation.strokes or ((len(points) // 2,) if points else ())
+    entry[pikepdf.Name.InkList] = pikepdf.Array(
+        [pikepdf.Array([*run]) for run in ink_strokes(points, counts)])
+    width = float(annotation.thickness)
+    if pikepdf.Name.BS in entry:
+        del entry[pikepdf.Name.BS]
+    if width != 1.0:
+        entry[pikepdf.Name.BS] = pikepdf.Dictionary(W=width)
+    rect = ink_rect(points, counts, width)
+    entry[pikepdf.Name.Rect] = pikepdf.Array([*rect])
+    if solidity(annotation) != 1.0:
+        entry[pikepdf.Name.CA] = solidity(annotation)
+    elif pikepdf.Name.CA in entry:
+        del entry[pikepdf.Name.CA]
+    entry[pikepdf.Name.AP] = pikepdf.Dictionary(
+        N=_ink_appearance(pdf, annotation, points, counts, rect))
+
+
+def _ink_appearance(pdf, annotation, points, counts, rect):
+    """A Pencil's drawing: each stroke its fitted curves, stroked with round
+    ends and joins, and each click **a dot filled to its whole width** --
+    not Acrobat's circle of half a point stroked with the line, which
+    PDFium and Qt draw as a ring."""
+    width = float(annotation.thickness)
+    colour = annotation.colour or swatch("Red")
+    lines = ["{:.6g} {:.6g} {:.6g} RG".format(*colour[:3]),
+             "{:.6g} {:.6g} {:.6g} rg".format(*colour[:3]),
+             "{:.4g} w".format(width), "1 J", "1 j"]
+    resources = pikepdf.Dictionary(ProcSet=pikepdf.Array([pikepdf.Name.PDF]))
+    opacity = solidity(annotation)
+    if opacity < 1.0:
+        lines.insert(0, "/R0 gs")
+        resources[pikepdf.Name.ExtGState] = pikepdf.Dictionary(
+            R0=pikepdf.Dictionary(Type=pikepdf.Name.ExtGState, AIS=False,
+                                  CA=opacity, ca=opacity))
+    dots = []
+    for stroke in ink_strokes(points, counts):
+        found = ink_curves(stroke)
+        if found is None:
+            continue
+        if found[0] == "dot":
+            dots.append(found[1])
+            continue
+        _curves, begin, curves = found
+        lines.append("{:.4f} {:.4f} m".format(*begin))
+        lines += ["{:.4f} {:.4f} {:.4f} {:.4f} {:.4f} {:.4f} c".format(*c)
+                  for c in curves]
+        lines.append("S")
+    r = INK_DOT + width / 2
+    k = r * _KAPPA
+    for cx, cy in dots:
+        lines += ["{:.4f} {:.4f} m".format(cx, cy + r),
+                  "{:.4f} {:.4f} {:.4f} {:.4f} {:.4f} {:.4f} c".format(
+                      cx + k, cy + r, cx + r, cy + k, cx + r, cy),
+                  "{:.4f} {:.4f} {:.4f} {:.4f} {:.4f} {:.4f} c".format(
+                      cx + r, cy - k, cx + k, cy - r, cx, cy - r),
+                  "{:.4f} {:.4f} {:.4f} {:.4f} {:.4f} {:.4f} c".format(
+                      cx - k, cy - r, cx - r, cy - k, cx - r, cy),
+                  "{:.4f} {:.4f} {:.4f} {:.4f} {:.4f} {:.4f} c".format(
+                      cx - r, cy + k, cx - k, cy + r, cx, cy + r),
+                  "h", "f"]
+    stream = pikepdf.Stream(pdf, ("\n".join(lines) + "\n").encode())
+    stream[pikepdf.Name.Type] = pikepdf.Name.XObject
+    stream[pikepdf.Name.Subtype] = pikepdf.Name.Form
+    stream[pikepdf.Name.BBox] = pikepdf.Array([*rect])
+    stream[pikepdf.Name.Resources] = resources
+    return pdf.make_indirect(stream)
+
+
+def _redraw_ink(annot, edit, pdf, was_points, was_rect) -> None:
+    """Give a Pencil the file brought a drawing of its own when an edit has
+    changed how it looks or resized it -- not when it was only moved,
+    which carries the producer's drawing along."""
+    if pdf is None:
+        return
+    looks = any(edit.get(key) is not None
+                for key in ("colour", "opacity", "thickness"))
+    points = edit.get("points")
+    reshaped = False
+    if points and was_points:
+        dx, dy = points[0] - was_points[0], points[1] - was_points[1]
+        moved = edit.get("rect")
+        reshaped = (len(points) != len(was_points)
+                    or any(abs(points[k] - was_points[k] - (dx if k % 2 == 0 else dy)) > 0.01
+                           for k in range(len(points)))
+                    or not moved
+                    or abs(moved[0] - was_rect[0] - dx) > 0.01
+                    or abs(moved[1] - was_rect[1] - dy) > 0.01)
+    if not (looks or reshaped):
+        return
+    reading = _ink_reading(annot)
+    colour = annot.get(pikepdf.Name.C)
+    pencil = Annotation(
+        INK, 0, [float(v) for v in annot.Rect],
+        colour=(tuple(_number(v, 0.0) for v in colour)
+                if colour is not None else None),
+        thickness=float(edit["thickness"] if edit.get("thickness") is not None
+                        else reading["thickness"]),
+        opacity=_number(annot.get(pikepdf.Name.CA)),
+        points=reading["points"], strokes=reading["strokes"])
+    _write_ink(pdf, annot, pencil)
+
+
+def _ink_reading(annot) -> dict:
+    """A Pencil's own keys: its strokes, as one flat run of points and how
+    many each stroke has, and its line -- `/BS /W`, 1 when absent, as
+    Acrobat leaves it out at 1."""
+    points, counts = [], []
+    for run in annot.get(pikepdf.Name.InkList) or []:
+        values = [_number(v, 0.0) for v in run]
+        pairs = len(values) // 2
+        if pairs:
+            points += values[:2 * pairs]
+            counts.append(pairs)
+    border = annot.get(pikepdf.Name.BS)
+    width = border.get(pikepdf.Name.W) if border is not None else None
+    return {"points": tuple(points) or None,
+            "strokes": tuple(counts) or None,
+            "thickness": _number(width, 1.0) if width is not None else 1.0,
+            "border_style": "straight"}
+
+
+def ink_strokes(points, counts) -> "list[tuple]":
+    """A Pencil's flat run of points cut into its strokes, each a flat run
+    of its own."""
+    runs, at = [], 0
+    for count in counts:
+        runs.append(tuple(points[at:at + 2 * count]))
+        at += 2 * count
+    return [run for run in runs if run]
+
+
+#: How far a Pencil's curve may stray from the points it is fitted to, in
+#: points. Acrobat's stray a median 0.2 and at most 1.5 on the fixture's.
+INK_TOLERANCE = 1.0
+
+#: The radius of the circle a click is drawn as, filled and stroked, so the
+#: dot is the line's width and a point across -- read off the fixture's.
+INK_DOT = 0.5
+
+
+def ink_curves(stroke, tolerance: float = INK_TOLERANCE):
+    """One stroke of a Pencil, a flat run of points, as ``("dot", (x, y))``
+    for a click or ``("curves", begin, [(c1x, c1y, c2x, c2y, x, y), ...])``.
+
+    **Fitted, not threaded through every point**, as Acrobat draws one: a
+    chain of cubic Beziers, each beginning and ending on one of the points,
+    every join smooth, no point further than ``tolerance`` from the curve
+    -- Philip J. Schneider's fit, "An Algorithm for Automatically Fitting
+    Digitized Curves", Graphics Gems, 1990. The fixture's strokes of 54
+    points are about 15 curves."""
+    return _ink_curves(tuple(stroke), float(tolerance))
+
+
+@functools.lru_cache(maxsize=512)
+def _ink_curves(stroke, tolerance):
+    pts = []
+    for x, y in zip(stroke[0::2], stroke[1::2]):
+        if not pts or math.hypot(x - pts[-1][0], y - pts[-1][1]) > 1e-6:
+            pts.append((x, y))
+    if not pts:
+        return None
+    if len(pts) == 1:
+        return ("dot", pts[0])
+    curves = []
+    _fit_cubic(pts, 0, len(pts) - 1, _unit(_minus(pts[1], pts[0])),
+               _unit(_minus(pts[-2], pts[-1])), tolerance * tolerance, curves)
+    return ("curves", pts[0], curves)
+
+
+def _minus(a, b):
+    return (a[0] - b[0], a[1] - b[1])
+
+
+def _unit(v):
+    length = math.hypot(*v)
+    return (v[0] / length, v[1] / length) if length > 1e-12 else (0.0, 0.0)
+
+
+def _bezier_at(bez, t):
+    u = 1.0 - t
+    return tuple(u * u * u * bez[0][k] + 3 * u * u * t * bez[1][k]
+                 + 3 * u * t * t * bez[2][k] + t * t * t * bez[3][k]
+                 for k in range(2))
+
+
+def _fit_cubic(pts, first, last, tan1, tan2, error, curves) -> None:
+    """Schneider's fit of ``pts[first..last]``, appended to ``curves``:
+    one curve if it is near enough, else split where it strays most and
+    each half fitted again, meeting smoothly."""
+    if last - first == 1:
+        span = math.dist(pts[first], pts[last]) / 3.0
+        bez = (pts[first], (pts[first][0] + tan1[0] * span, pts[first][1] + tan1[1] * span),
+               (pts[last][0] + tan2[0] * span, pts[last][1] + tan2[1] * span), pts[last])
+        curves.append((*bez[1], *bez[2], *bez[3]))
+        return
+    u = _chord_lengths(pts, first, last)
+    bez = _generate_bezier(pts, first, last, u, tan1, tan2)
+    worst, split = _max_error(pts, first, last, bez, u)
+    if worst < error:
+        curves.append((*bez[1], *bez[2], *bez[3]))
+        return
+    if worst < error * 4.0:
+        for _attempt in range(4):
+            u = [_newton(bez, pts[first + k], u[k]) for k in range(len(u))]
+            bez = _generate_bezier(pts, first, last, u, tan1, tan2)
+            worst, split = _max_error(pts, first, last, bez, u)
+            if worst < error:
+                curves.append((*bez[1], *bez[2], *bez[3]))
+                return
+    centre = _unit(_minus(pts[split - 1], pts[split + 1]))
+    _fit_cubic(pts, first, split, tan1, centre, error, curves)
+    _fit_cubic(pts, split, last, (-centre[0], -centre[1]), tan2, error, curves)
+
+
+def _chord_lengths(pts, first, last):
+    u = [0.0]
+    for k in range(first + 1, last + 1):
+        u.append(u[-1] + math.dist(pts[k], pts[k - 1]))
+    total = u[-1] or 1.0
+    return [v / total for v in u]
+
+
+def _generate_bezier(pts, first, last, u, tan1, tan2):
+    """The curve's two handles along ``tan1`` and ``tan2`` by least squares;
+    a third of the chord each when that fails."""
+    p0, p3 = pts[first], pts[last]
+    c00 = c01 = c11 = x0 = x1 = 0.0
+    for k, t in enumerate(u):
+        s = 1.0 - t
+        b1, b2 = 3 * t * s * s, 3 * t * t * s
+        a1 = (tan1[0] * b1, tan1[1] * b1)
+        a2 = (tan2[0] * b2, tan2[1] * b2)
+        c00 += a1[0] * a1[0] + a1[1] * a1[1]
+        c01 += a1[0] * a2[0] + a1[1] * a2[1]
+        c11 += a2[0] * a2[0] + a2[1] * a2[1]
+        b0, b3 = s * s * s + b1, t * t * t + b2
+        tmp = (pts[first + k][0] - (p0[0] * b0 + p3[0] * b3),
+               pts[first + k][1] - (p0[1] * b0 + p3[1] * b3))
+        x0 += a1[0] * tmp[0] + a1[1] * tmp[1]
+        x1 += a2[0] * tmp[0] + a2[1] * tmp[1]
+    det = c00 * c11 - c01 * c01
+    alpha1 = (x0 * c11 - x1 * c01) / det if abs(det) > 1e-12 else 0.0
+    alpha2 = (c00 * x1 - c01 * x0) / det if abs(det) > 1e-12 else 0.0
+    span = math.dist(p0, p3)
+    if alpha1 < 1e-6 * span or alpha2 < 1e-6 * span:
+        alpha1 = alpha2 = span / 3.0
+    return (p0, (p0[0] + tan1[0] * alpha1, p0[1] + tan1[1] * alpha1),
+            (p3[0] + tan2[0] * alpha2, p3[1] + tan2[1] * alpha2), p3)
+
+
+def _max_error(pts, first, last, bez, u):
+    worst, split = 0.0, (first + last) // 2
+    for k in range(first + 1, last):
+        at = _bezier_at(bez, u[k - first])
+        d = (at[0] - pts[k][0]) ** 2 + (at[1] - pts[k][1]) ** 2
+        if d >= worst:
+            worst, split = d, k
+    return worst, split
+
+
+def _newton(bez, point, t):
+    """``t`` moved by one Newton step towards the curve's nearest point to
+    ``point``."""
+    q = _bezier_at(bez, t)
+    d1 = [tuple(3 * (bez[k + 1][j] - bez[k][j]) for j in range(2)) for k in range(3)]
+    d2 = [tuple(2 * (d1[k + 1][j] - d1[k][j]) for j in range(2)) for k in range(2)]
+    s = 1.0 - t
+    q1 = tuple(s * s * d1[0][j] + 2 * s * t * d1[1][j] + t * t * d1[2][j] for j in range(2))
+    q2 = tuple(s * d2[0][j] + t * d2[1][j] for j in range(2))
+    num = (q[0] - point[0]) * q1[0] + (q[1] - point[1]) * q1[1]
+    den = q1[0] ** 2 + q1[1] ** 2 + (q[0] - point[0]) * q2[0] + (q[1] - point[1]) * q2[1]
+    return t if abs(den) < 1e-12 else t - num / den
+
+
 def cloud_polygon_path(points, intensity: float, width: float):
     """A cloud along a polygon, as Acrobat draws one, read off the
     fixture's two: scallops the rectangle's size, centred on the edges
@@ -3716,7 +4051,7 @@ class Mark:
                  "locked", "subject", "intent", "scales", "icon",
                  "rotate", "ink", "group", "fill", "thickness",
                  "border_style", "inset", "text_font", "text_size",
-                 "text_colour", "styled", "rd", "points", "ends")
+                 "text_colour", "styled", "rd", "points", "ends", "strokes")
 
     def __init__(self, page, subtype, rect, quads=(), colour=None,
                  opacity=None, contents="", name=None, parent=None,
@@ -3726,7 +4061,8 @@ class Mark:
                  rotate=0.0, ink=None, group=False, fill=None,
                  thickness=1.0, border_style="straight", inset=0.0,
                  text_font=None, text_size=None, text_colour=None,
-                 styled=False, rd=None, points=None, ends=None):
+                 styled=False, rd=None, points=None, ends=None,
+                 strokes=None):
         self.uid = next(_mark_uids)
         #: Where this mark sits among the markup annotations on its page, in
         #: the order the file has them. What `MarkEdits` keys an edit by, and
@@ -3820,6 +4156,10 @@ class Mark:
         #: A line's two points, `/L`, and its two ends, `/LE`.
         self.points = points
         self.ends = ends
+        #: A Pencil's strokes, as how many of ``points`` each one has: the
+        #: points are one flat run, so a move shifts them as it shifts a
+        #: polygon's.
+        self.strokes = strokes
         self.styled = styled
 
     def boxes(self) -> "list[tuple]":
@@ -4097,6 +4437,8 @@ def marks_in(pdf) -> "list[Mark]":
                     box = _line_reading(annot)
                 elif subtype in POLYS:
                     box = _poly_reading(annot, subtype)
+                elif subtype == INK:
+                    box = _ink_reading(annot)
                 found.append(Mark(**box,
                     page=number,
                     index=at,

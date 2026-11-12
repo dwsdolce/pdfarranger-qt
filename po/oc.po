@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-12 20:29+0000\n"
+"POT-Creation-Date: 2026-11-12 22:27+0000\n"
 "PO-Revision-Date: 2026-02-15 15:16+0100\n"
 "Last-Translator: Quentin PAGÈS\n"
 "Language: oc\n"
@@ -42,8 +42,18 @@ msgstr "Anullar"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
+msgid "Remove Last Stroke"
+msgstr "Suprimir lo darrièr traç"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
 msgid "Complete"
 msgstr "Acabar"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Remove Last Point"
+msgstr "Suprimir lo darrièr punt"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
@@ -3105,6 +3115,11 @@ msgstr "Poligòn"
 #: pdfarranger_qt/properties.py
 msgid "Polyline"
 msgstr "Polilinha"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Pencil"
+msgstr "Gredon"
 
 #: pdfarranger_qt/properties.py
 msgid "Review History"

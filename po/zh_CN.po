@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PDF Arranger 1.14.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-12 20:29+0000\n"
+"POT-Creation-Date: 2026-11-12 22:27+0000\n"
 "PO-Revision-Date: 2026-06-02 17:09+0800\n"
 "Last-Translator: Puqns67 <me@puqns67.icu>\n"
 "Language: zh_CN\n"
@@ -46,8 +46,18 @@ msgstr "取消"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
+msgid "Remove Last Stroke"
+msgstr "移除最后一笔"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
 msgid "Complete"
 msgstr "完成"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Remove Last Point"
+msgstr "移除最后一个点"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
@@ -2913,6 +2923,11 @@ msgstr "多边形"
 #: pdfarranger_qt/properties.py
 msgid "Polyline"
 msgstr "折线"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Pencil"
+msgstr "铅笔"
 
 #: pdfarranger_qt/properties.py
 msgid "Review History"

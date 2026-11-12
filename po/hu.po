@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-12 20:29+0000\n"
+"POT-Creation-Date: 2026-11-12 22:27+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: hu\n"
@@ -43,8 +43,18 @@ msgstr "Mégse"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
+msgid "Remove Last Stroke"
+msgstr "Utolsó vonás eltávolítása"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
 msgid "Complete"
 msgstr "Befejezés"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Remove Last Point"
+msgstr "Utolsó pont eltávolítása"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
@@ -3137,6 +3147,11 @@ msgstr "Sokszög"
 #: pdfarranger_qt/properties.py
 msgid "Polyline"
 msgstr "Törött vonal"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Pencil"
+msgstr "Ceruza"
 
 #: pdfarranger_qt/properties.py
 msgid "Review History"

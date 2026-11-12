@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pdfarranger main\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-12 20:29+0000\n"
+"POT-Creation-Date: 2026-11-12 22:27+0000\n"
 "PO-Revision-Date: 2026-04-24 21:19+0300\n"
 "Last-Translator: Oğuz Ersen <oguz@ersen.moe>\n"
 "Language: tr\n"
@@ -43,8 +43,18 @@ msgstr "İptal"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
+msgid "Remove Last Stroke"
+msgstr "Son çizgiyi kaldır"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
 msgid "Complete"
 msgstr "Tamamla"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Remove Last Point"
+msgstr "Son noktayı kaldır"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
@@ -3073,6 +3083,11 @@ msgstr "Çokgen"
 #: pdfarranger_qt/properties.py
 msgid "Polyline"
 msgstr "Çoklu çizgi"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Pencil"
+msgstr "Kalem"
 
 #: pdfarranger_qt/properties.py
 msgid "Review History"

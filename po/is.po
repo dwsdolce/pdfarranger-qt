@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-12 20:29+0000\n"
+"POT-Creation-Date: 2026-11-12 22:27+0000\n"
 "PO-Revision-Date: 2025-09-28 16:51+0000\n"
 "Last-Translator: Sveinn í Felli <sv1@fellsnet.is>\n"
 "Language: is\n"
@@ -43,8 +43,18 @@ msgstr "Hætta við"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
+msgid "Remove Last Stroke"
+msgstr "Fjarlægja síðustu stroku"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
 msgid "Complete"
 msgstr "Ljúka"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Remove Last Point"
+msgstr "Fjarlægja síðasta punkt"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
@@ -3101,6 +3111,11 @@ msgstr "Marghyrningur"
 #: pdfarranger_qt/properties.py
 msgid "Polyline"
 msgstr "Fjöllína"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Pencil"
+msgstr "Blýantur"
 
 #: pdfarranger_qt/properties.py
 msgid "Review History"

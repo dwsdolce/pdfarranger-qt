@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  pdfarranger\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-12 20:29+0000\n"
+"POT-Creation-Date: 2026-11-12 22:27+0000\n"
 "PO-Revision-Date: 2026-01-21 05:07+0100\n"
 "Last-Translator: Ekaterine Papava <papava.e@gtu.ge>\n"
 "Language: ka\n"
@@ -42,8 +42,18 @@ msgstr "გაუქმება"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
+msgid "Remove Last Stroke"
+msgstr "ბოლო შტრიხის წაშლა"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
 msgid "Complete"
 msgstr "დასრულება"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Remove Last Point"
+msgstr "ბოლო წერტილის წაშლა"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
@@ -3089,6 +3099,11 @@ msgstr "მრავალკუთხედი"
 #: pdfarranger_qt/properties.py
 msgid "Polyline"
 msgstr "ტეხილი"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Pencil"
+msgstr "ფანქარი"
 
 #: pdfarranger_qt/properties.py
 msgid "Review History"

@@ -15,7 +15,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  pdfarranger\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-12 20:29+0000\n"
+"POT-Creation-Date: 2026-11-12 22:27+0000\n"
 "PO-Revision-Date: 2025-07-09 08:35+0200\n"
 "Last-Translator: Sebastian Scherch\n"
 "Language: de\n"
@@ -50,8 +50,18 @@ msgstr "Abbrechen"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
+msgid "Remove Last Stroke"
+msgstr "Letzten Strich entfernen"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
 msgid "Complete"
 msgstr "Fertigstellen"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Remove Last Point"
+msgstr "Letzten Punkt entfernen"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
@@ -3130,6 +3140,11 @@ msgstr "Vieleck"
 #: pdfarranger_qt/properties.py
 msgid "Polyline"
 msgstr "Linienzug"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Pencil"
+msgstr "Bleistift"
 
 #: pdfarranger_qt/properties.py
 msgid "Review History"

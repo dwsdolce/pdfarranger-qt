@@ -51,6 +51,7 @@ from PySide6.QtWidgets import (
     QPushButton,
     QSlider,
     QSpinBox,
+    QStyle,
     QTabWidget,
     QVBoxLayout,
     QWidget,
@@ -107,6 +108,8 @@ KIND_LABELS = {
     # called Polyline here.
     "/Polygon": N_("Polygon"),
     "/PolyLine": N_("Polyline"),
+    # What the Draw tool makes, under Acrobat's name for it.
+    "/Ink": N_("Pencil"),
 }
 
 
@@ -170,6 +173,9 @@ class Properties(NamedTuple):
     #: its two ends, as `/LE` names them.
     line: bool = False
     ends: Tuple[str, str] = ("/None", "/None")
+    #: A Pencil's: Colour, Opacity and Thickness, 1 to 12 -- no Hairline,
+    #: which is for a mark with a fill -- and nothing else.
+    pencil: bool = False
     #: A tool's next mark rather than a mark: opened from the colour popup's
     #: gear with nothing selected, and saved as the tool's defaults. The
     #: Appearance and General tabs only -- no dates, no Review History, no
@@ -344,6 +350,8 @@ class MarkProperties(QDialog):
         slider are two things to keep in step.
         """
         page = QWidget(self)
+        if self._was.pencil:
+            return self._pencil_appearance(page)
         if self._was.line:
             return self._line_appearance(page)
         if self._was.box:
@@ -423,6 +431,25 @@ class MarkProperties(QDialog):
         column.addWidget(self.slider)
         return column
 
+    @staticmethod
+    def _columns(page):
+        """The two columns every drawing's Appearance tab is laid out in,
+        as ``(left, right)``, so a control is in the same place on each.
+
+        **Each column has its own gap between label and field.** Left
+        unset, a column takes the grid's 24 between the columns: a column
+        of one row gave its label no width at all, and on the others the
+        label ran into its field -- "Thickness2 pt"."""
+        grid = QGridLayout(page)
+        grid.setHorizontalSpacing(24)
+        left, right = QFormLayout(), QFormLayout()
+        gap = page.style().pixelMetric(QStyle.PM_LayoutHorizontalSpacing)
+        for column in (left, right):
+            column.setHorizontalSpacing(gap if gap >= 0 else 6)
+        grid.addLayout(left, 0, 0, Qt.AlignTop)
+        grid.addLayout(right, 0, 1, Qt.AlignTop)
+        return left, right
+
     def _box_appearance(self, page) -> QWidget:
         """A text box's: Style, Border Color and Opacity on the left,
         Thickness and Fill Color on the right, as Acrobat's form has them.
@@ -433,11 +460,7 @@ class MarkProperties(QDialog):
         Transparent box -- too much for the fill of a box, and a second
         opacity beside the mark's.
         """
-        grid = QGridLayout(page)
-        grid.setHorizontalSpacing(24)
-        left, right = QFormLayout(), QFormLayout()
-        grid.addLayout(left, 0, 0, Qt.AlignTop)
-        grid.addLayout(right, 0, 1, Qt.AlignTop)
+        left, right = self._columns(page)
         self.border_style = QComboBox(page)
         self.border_style.setIconSize(_StyleSample.SIZE)
         for name in markup.BOX_STYLES:
@@ -490,11 +513,7 @@ class MarkProperties(QDialog):
         Thickness runs from 0 -- still a line, the thinnest there is -- to
         12, whatever the fill, which only fills the closed ends and may be
         No Colour."""
-        grid = QGridLayout(page)
-        grid.setHorizontalSpacing(24)
-        left, right = QFormLayout(), QFormLayout()
-        grid.addLayout(left, 0, 0, Qt.AlignTop)
-        grid.addLayout(right, 0, 1, Qt.AlignTop)
+        left, right = self._columns(page)
         self.line_ends = []
         for side, layout, label in ((0, left, _("Start")), (1, right, _("End"))):
             box = QComboBox(page)
@@ -532,6 +551,24 @@ class MarkProperties(QDialog):
         self.fill_popup.chosen.connect(self._filled)
         return page
 
+    def _pencil_appearance(self, page) -> QWidget:
+        """A Pencil's: Colour and Opacity on the left, Thickness on the
+        right -- **where every other drawing's form has them**, so the
+        same control is found in the same place on all of them."""
+        left, right = self._columns(page)
+        self.swatch = _Swatch(page)
+        self.swatch.set_colour(self._colour)
+        self.swatch.clicked.connect(self._pick_colour)
+        left.addRow(_("Colour"), self.swatch)
+        left.addRow(_("Opacity"), self._opacity_column(page))
+        self.thickness = self._thickness_box(page)
+        right.addRow(_("Thickness"), self.thickness)
+        self.palette_popup = ColourPopup(self, more=True)
+        self.palette_popup.chosen.connect(self._coloured)
+        self.palette_popup.faded.connect(
+            lambda value: self.slider.setValue(round(value * 100)))
+        return page
+
     @staticmethod
     def _spin_value(thickness) -> int:
         """A thickness as the box shows it: 0 -- read as Hairline -- for the
@@ -544,14 +581,20 @@ class MarkProperties(QDialog):
         thinnest line on the next, and its polygon form stops at 0.01 to
         tell them apart. No line at all is a Style, No Border."""
         box = QSpinBox(page)
-        box.setRange(0, 12)
         box.setSuffix(" pt")
-        box.setSpecialValueText(_("Hairline"))
+        if self._was.pencil:
+            # 1 to 12, as its strip's slider: no fill, so no Hairline.
+            box.setRange(1, 12)
+        else:
+            box.setRange(0, 12)
+            box.setSpecialValueText(_("Hairline"))
         # Some styles, the Mac's among them, count the field a little short
-        # of its widest text and clip Hairline's first letter.
+        # of its widest text and clip Hairline's first letter. The Pencil's
+        # too, so the field is the same width on every form.
         box.setMinimumWidth(box.sizeHint().width()
                             + 2 * box.fontMetrics().averageCharWidth())
-        box.setValue(self._spin_value(self._was.thickness))
+        box.setValue(max(1, self._spin_value(self._was.thickness))
+                     if self._was.pencil else self._spin_value(self._was.thickness))
         box.valueChanged.connect(self._box_changed)
         return box
 
@@ -572,7 +615,7 @@ class MarkProperties(QDialog):
 
     def _thickness_matters(self) -> None:
         """No Border has no thickness to set; a line always has one."""
-        if self._was.line:
+        if self._was.line or self._was.pencil:
             self.thickness.setEnabled(not self.locked_now())
             return
         self.thickness.setEnabled(self.border_style.currentData() != "none"
@@ -583,6 +626,8 @@ class MarkProperties(QDialog):
         return bool(box is not None and box.isChecked())
 
     def _box_state(self) -> dict:
+        if self._was.pencil:
+            return {"thickness": float(self.thickness.value())}
         state = {"fill": self._fill if self._fill is not None else markup.NO_COLOUR,
                  "thickness": float(self.thickness.value()),
                  "border_style": self.border_style.currentData()}
@@ -729,6 +774,8 @@ class MarkProperties(QDialog):
             self.border_style.setEnabled(not on)
             self.fill_swatch.setEnabled(not on)
             self._thickness_matters()
+        if self._was.pencil:
+            self._thickness_matters()
         if self._was.line:
             for box in self.line_ends:
                 box.setEnabled(not on)
@@ -763,6 +810,9 @@ class MarkProperties(QDialog):
                 now["style"] = picked
         thicker = self.thickness.value() != self._spin_value(self._was.thickness) \
             if (self._was.line or self._was.box) else False
+        if self._was.pencil:
+            if self.thickness.value() != max(1, self._spin_value(self._was.thickness)):
+                now["thickness"] = float(self.thickness.value())
         if self._was.line:
             state = self._box_state()
             if self._fill != self._was.fill:

@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PDF-Shuffler 0.7\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-12 20:29+0000\n"
+"POT-Creation-Date: 2026-11-12 22:27+0000\n"
 "PO-Revision-Date: 2021-12-30 17:13+0100\n"
 "Last-Translator: Toratora <darex7@o2.pl>\n"
 "Language: pl_PL\n"
@@ -47,8 +47,18 @@ msgstr "Anuluj"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
+msgid "Remove Last Stroke"
+msgstr "Usuń ostatnie pociągnięcie"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
 msgid "Complete"
 msgstr "Zakończ"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Remove Last Point"
+msgstr "Usuń ostatni punkt"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
@@ -3183,6 +3193,11 @@ msgstr "Wielokąt"
 #: pdfarranger_qt/properties.py
 msgid "Polyline"
 msgstr "Łamana"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Pencil"
+msgstr "Ołówek"
 
 #: pdfarranger_qt/properties.py
 msgid "Review History"

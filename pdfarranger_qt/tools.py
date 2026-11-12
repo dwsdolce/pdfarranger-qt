@@ -149,7 +149,9 @@ TOOLS: List[Tool] = [
          "format-strikethrough", "/StrikeOut, /QuadPoints",
          colour='Light Red', marks=("Strikethrough",)),
 
-    Tool("draw", DRAWING, N_("Draw"), "draw", "/Ink, /InkList, /BS /W"),
+    # A Pencil, Acrobat's name for what its Draw tool makes.
+    Tool("draw", DRAWING, N_("Draw"), "draw", "/Ink, /InkList, /BS /W",
+         marks=("Pencil",)),
     # Two tools, one mark: the Arrow tool's line starts with an open arrow
     # at its end and carries `/IT /LineArrow`.
     Tool("line", DRAWING, N_("Line"), "minus", "/Line, /L, /LE, /IC, /BS",

@@ -306,8 +306,8 @@ class TestTheStripAndTheCanvasAgree(StripCase):
         """The mode is set; there is simply nothing behind it yet."""
         from pdfarranger_qt.canvas import PageCanvas
 
-        self.strip.arm("cloud")
-        self.assertEqual(self.strip.armed(), "cloud")
+        self.strip.arm("stamps")
+        self.assertEqual(self.strip.armed(), "stamps")
         self.assertEqual(self.canvas().tool(), PageCanvas.SELECT)
 
     def test_the_canvas_disarming_itself_moves_the_strip(self):

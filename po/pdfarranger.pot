@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pdfarranger-qt VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/dwsdolce/pdfarranger-qt/issues\n"
-"POT-Creation-Date: 2026-11-12 20:29+0000\n"
+"POT-Creation-Date: 2026-11-12 22:27+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -37,7 +37,15 @@ msgid "Cancel"
 msgstr ""
 
 #: pdfarranger_qt/canvas.py
+msgid "Remove Last Stroke"
+msgstr ""
+
+#: pdfarranger_qt/canvas.py
 msgid "Complete"
+msgstr ""
+
+#: pdfarranger_qt/canvas.py
+msgid "Remove Last Point"
 msgstr ""
 
 #: pdfarranger_qt/canvas.py
@@ -2459,6 +2467,10 @@ msgstr ""
 
 #: pdfarranger_qt/properties.py
 msgid "Polyline"
+msgstr ""
+
+#: pdfarranger_qt/properties.py
+msgid "Pencil"
 msgstr ""
 
 #: pdfarranger_qt/properties.py

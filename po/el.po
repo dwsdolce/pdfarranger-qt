@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PDF Arranger 1.9.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-12 20:29+0000\n"
+"POT-Creation-Date: 2026-11-12 22:27+0000\n"
 "PO-Revision-Date: 2023-06-12 10:30+0300\n"
 "Last-Translator: Manussos Pulinakis "
 "<38626261+manussos@users.noreply.github.com>\n"
@@ -47,8 +47,18 @@ msgstr "Ακύρωση"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
+msgid "Remove Last Stroke"
+msgstr "Αφαίρεση τελευταίας πινελιάς"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
 msgid "Complete"
 msgstr "Ολοκλήρωση"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Remove Last Point"
+msgstr "Αφαίρεση τελευταίου σημείου"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
@@ -3168,6 +3178,11 @@ msgstr "Πολύγωνο"
 #: pdfarranger_qt/properties.py
 msgid "Polyline"
 msgstr "Πολυγραμμή"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Pencil"
+msgstr "Μολύβι"
 
 #: pdfarranger_qt/properties.py
 msgid "Review History"

@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-12 20:29+0000\n"
+"POT-Creation-Date: 2026-11-12 22:27+0000\n"
 "PO-Revision-Date: 2025-12-15 00:59+0700\n"
 "Last-Translator: Loc Huynh <https://github.com/hthienloc>\n"
 "Language: vi\n"
@@ -41,8 +41,18 @@ msgstr "Hủy"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
+msgid "Remove Last Stroke"
+msgstr "Xóa nét cuối"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
 msgid "Complete"
 msgstr "Hoàn tất"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Remove Last Point"
+msgstr "Xóa điểm cuối"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
@@ -3081,6 +3091,11 @@ msgstr "Đa giác"
 #: pdfarranger_qt/properties.py
 msgid "Polyline"
 msgstr "Đường gấp khúc"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Pencil"
+msgstr "Bút chì"
 
 #: pdfarranger_qt/properties.py
 msgid "Review History"

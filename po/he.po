@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-12 20:29+0000\n"
+"POT-Creation-Date: 2026-11-12 22:27+0000\n"
 "PO-Revision-Date: 2023-06-12 11:22+0300\n"
 "Last-Translator: Yaron Shahrabani <sh.yaron@gmail.com>\n"
 "Language: he\n"
@@ -43,8 +43,18 @@ msgstr "ביטול"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
+msgid "Remove Last Stroke"
+msgstr "הסר את הקו האחרון"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
 msgid "Complete"
 msgstr "השלמה"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Remove Last Point"
+msgstr "הסר את הנקודה האחרונה"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
@@ -3085,6 +3095,11 @@ msgstr "מצולע"
 #: pdfarranger_qt/properties.py
 msgid "Polyline"
 msgstr "קו שבור"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Pencil"
+msgstr "עיפרון"
 
 #: pdfarranger_qt/properties.py
 msgid "Review History"

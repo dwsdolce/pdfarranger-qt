@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-12 20:29+0000\n"
+"POT-Creation-Date: 2026-11-12 22:27+0000\n"
 "PO-Revision-Date: 2023-01-19 20:27+0100\n"
 "Last-Translator: alexgabi\n"
 "Language: eu\n"
@@ -47,8 +47,18 @@ msgstr "Utzi"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
+msgid "Remove Last Stroke"
+msgstr "Kendu azken trazua"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
 msgid "Complete"
 msgstr "Osatu"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Remove Last Point"
+msgstr "Kendu azken puntua"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
@@ -3155,6 +3165,11 @@ msgstr "Poligonoa"
 #: pdfarranger_qt/properties.py
 msgid "Polyline"
 msgstr "Polilerroa"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Pencil"
+msgstr "Arkatza"
 
 #: pdfarranger_qt/properties.py
 msgid "Review History"

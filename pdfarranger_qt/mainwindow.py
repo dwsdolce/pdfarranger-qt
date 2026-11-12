@@ -188,6 +188,12 @@ class MainWindow(QMainWindow):
         # the preview is the mark, before it is a mark.
         self.reader.canvas.set_mark_styles(self.MARK_KINDS)
         self.reader.canvas.mark_colour = self._colour_for_canvas_tool
+        self.reader.canvas.mark_stroke = self._stroke_for_canvas_tool
+        self.reader.canvas.drawing_changed.connect(self._refresh_state)
+        # *Properties...* in the menu of a mark being made: the tool's own
+        # form, whose changes the whole mark is made with.
+        self.reader.canvas.tool_form_wanted.connect(
+            lambda: self.tool_defaults_form(self.tool_strip.armed()))
         self.reader.canvas.note_icon = lambda: self._icon_for("comment")
         #: What you can do to the mark that is selected. A child of the
         #: viewport rather than of the reader, because it is placed from the
@@ -877,6 +883,8 @@ class MainWindow(QMainWindow):
         "polygon": markup.POLYGON,
         "cloud": markup.POLYGON,
         "polyline": markup.POLYLINE,
+        # *Draw*, whose mark is a Pencil.
+        "draw": markup.INK,
     }
 
     #: The gestures above that are not tools, and the tool each acts as --
@@ -1069,7 +1077,10 @@ class MainWindow(QMainWindow):
         """Add one mark to one page. The caller owns the undo step."""
         colour = self._colour_for_canvas_tool(tool)
         page = self.model.pages[index]
-        rect = markup.bounding_rect(rects)
+        # A Pencil's are its points and their counts, not rectangles; its
+        # own is worked out below.
+        rect = (markup.bounding_rect(rects) if subtype != markup.INK
+                else (0.0, 0.0, 0.0, 0.0))
         quads = rects if subtype in markup.QUADDED else ()
         # Asked once, by the tool that is making the mark. Both comment
         # tools keep one icon between them, so a literal "comment" here
@@ -1137,6 +1148,13 @@ class MainWindow(QMainWindow):
                 "large cloud" if tool == "cloud" else "straight")
             rect = markup.poly_rect(subtype, points, ends, poly_style,
                                     told.get("thickness", 1.0))
+        strokes = None
+        if subtype == markup.INK:
+            # The strokes the canvas gathered: every point in one flat run,
+            # and how many each stroke has.
+            points, strokes = tuple(rects[0]), tuple(rects[1])
+            told = self._boxes.get(self.CANVAS_TO_STRIP.get(tool, tool), {})
+            rect = markup.ink_rect(points, strokes, told.get("thickness", 1.0))
         if subtype == markup.CARET:
             # *Insert Text*: the canvas sends the character beside the gap,
             # cut off at the gap, and the caret is sized from its height as
@@ -1169,7 +1187,7 @@ class MainWindow(QMainWindow):
                   else None),
             thickness=markup.written_thickness(subtype, box.get("thickness", 1.0)),
             border_style=poly_style or box.get("border_style", "straight"),
-            points=points, ends=ends))
+            points=points, ends=ends, strokes=strokes))
         if tool == "replace" and quads:
             # **And its caret**, at the end of the run, in the same colour
             # and opacity. Added after the strikeout, which is the order
@@ -1289,6 +1307,14 @@ class MainWindow(QMainWindow):
         """
         return self._opacities.get(self.GESTURE_TOOLS.get(tool, tool))
 
+    def _stroke_for_canvas_tool(self, tool: str):
+        """``(thickness, opacity)`` a mark made with the canvas's ``tool``
+        would have now, for what is drawn while it is being made."""
+        box = self._boxes.get(self.CANVAS_TO_STRIP.get(tool, tool), {})
+        opacity = self._opacity_for_canvas_tool(tool)
+        return (float(box.get("thickness", 1.0)),
+                1.0 if opacity is None else float(opacity))
+
     def _opacity_for_canvas_tool(self, tool: str):
         """The same question, asked with the canvas's name for a tool."""
         return self.opacity_for(self.CANVAS_TO_STRIP.get(tool, tool))
@@ -1314,6 +1340,8 @@ class MainWindow(QMainWindow):
         # tool's own colour while the swatch showed another.
         self._colours[self.tool_strip.armed()] = tuple(colour)
         self._remember_tool_defaults()
+        # A Pencil under way shows its strokes in it at once.
+        self.reader.canvas.viewport().update()
 
     def _opacity_armed(self, opacity: float) -> None:
         if self.reader.canvas.selected_mark() is not None:
@@ -1322,6 +1350,7 @@ class MainWindow(QMainWindow):
         self.armed_opacity = float(opacity)
         self._opacities[self.tool_strip.armed()] = float(opacity)
         self._remember_tool_defaults()
+        self.reader.canvas.viewport().update()
 
     def _selected_mark_changed(self, _selected: bool) -> None:
         """Tell the buttons, and the tail's swatch, what is selected.
@@ -1447,7 +1476,7 @@ class MainWindow(QMainWindow):
             thickness=float(box.get("thickness", 1.0)),
             border_style=box.get("border_style") or (
                 "large cloud" if tool == "cloud" else "straight"),
-            line=is_line, ends=tuple(ends),
+            line=is_line, ends=tuple(ends), pencil=kind == markup.INK,
             defaults_only=True), self)
         if form.exec() != MarkProperties.DialogCode.Accepted:
             return
@@ -1477,10 +1506,12 @@ class MainWindow(QMainWindow):
             self._subjects[key] = changed["subject"]
         self._remember_tool_defaults()
         self._offer_thickness()
+        # A Pencil under way shows what the form changed at once.
+        self.reader.canvas.viewport().update()
 
     #: The strip's tools whose marks have a line to thicken.
     LINED_TOOLS = ("rectangle", "circle", "line", "arrow", "polygon", "cloud",
-                   "connected_lines")
+                   "connected_lines", "draw")
 
     def _offer_thickness(self, mark=None) -> None:
         """Show the strip's thickness at ``mark``'s, for a selected shape;
@@ -1496,6 +1527,11 @@ class MainWindow(QMainWindow):
             if kind == markup.LINE or kind in markup.POLYS:
                 self.tool_strip.offer_thickness(
                     float(getattr(mark, "thickness", 1.0) or 0.0), zero=True)
+                return
+            if kind == markup.INK:
+                # 1 to 12: a Pencil has no fill, so no Hairline.
+                self.tool_strip.offer_thickness(
+                    float(getattr(mark, "thickness", 1.0) or 1.0), zero=False)
                 return
         tool = self.tool_strip.armed()
         if tool in self.LINED_TOOLS:
@@ -1514,7 +1550,8 @@ class MainWindow(QMainWindow):
             index, mark = found
             kind = (mark.kind if isinstance(mark, markup.Annotation)
                     else mark.subtype)
-            if kind in markup.SHAPES or kind == markup.LINE or kind in markup.POLYS:
+            if (kind in markup.SHAPES or kind == markup.LINE
+                    or kind in markup.POLYS or kind == markup.INK):
                 if getattr(mark, "locked", False):
                     return
                 self._commit_mark_change(_("Change Mark"), index, mark)
@@ -1528,6 +1565,7 @@ class MainWindow(QMainWindow):
             box["thickness"] = float(points)
             self._boxes[tool] = box
             self._remember_tool_defaults()
+            self.reader.canvas.viewport().update()
 
     def mark_recoloured(self, colour) -> None:
         """A colour was picked for the selected mark."""
@@ -1633,7 +1671,8 @@ class MainWindow(QMainWindow):
 
     def line_reshaped(self, index: int, mark, points) -> None:
         """A line's end dragged, or the line flipped: its two points now,
-        and the rectangle round them and its ends, as one step to undo."""
+        and the rectangle round them and its ends, as one step to undo --
+        or a Pencil resized, its points all scaled."""
         if not 0 <= index < len(self.model.pages):
             return
         if getattr(mark, "locked", False):
@@ -1645,10 +1684,15 @@ class MainWindow(QMainWindow):
         thickness = float(getattr(mark, "thickness", 1.0) or 0.0)
         # A line's rectangle is round it and its ends; a polygon's or a
         # polyline's round what it draws, its cloud included.
-        rect = (markup.poly_rect(kind, points, ends, mark.border_style, thickness)
-                if kind in markup.POLYS
-                else markup.line_rect(points, ends, thickness))
-        self._commit_mark_change(_("Reshape Mark"), index, mark)
+        if kind == markup.INK:
+            rect = markup.ink_rect(points, getattr(mark, "strokes", None)
+                                   or (len(points) // 2,), thickness)
+        else:
+            rect = (markup.poly_rect(kind, points, ends, mark.border_style, thickness)
+                    if kind in markup.POLYS
+                    else markup.line_rect(points, ends, thickness))
+        self._commit_mark_change(_("Resize Mark") if kind == markup.INK
+                                 else _("Reshape Mark"), index, mark)
         if isinstance(mark, markup.Annotation):
             mark.points = points
             mark.rect = rect
@@ -1963,6 +2007,7 @@ class MainWindow(QMainWindow):
                   if is_box or is_line else None),
             line=is_line,
             ends=tuple(getattr(mark, "ends", None) or ("/None", "/None")),
+            pencil=kind_here == markup.INK,
             thickness=float(getattr(mark, "thickness", 1.0) or 0.0),
             border_style=getattr(mark, "border_style", "straight") or "straight",
         ), self)
@@ -1974,6 +2019,8 @@ class MainWindow(QMainWindow):
         was_modified = self.modified
         was = {"colour": getattr(mark, "colour", None),
                "opacity": getattr(mark, "opacity", None)}
+        if kind_here == markup.INK:
+            was.update(thickness=getattr(mark, "thickness", 1.0))
         if is_box or is_line:
             was.update(fill=getattr(mark, "fill", None),
                        thickness=getattr(mark, "thickness", 1.0),
@@ -2119,6 +2166,12 @@ class MainWindow(QMainWindow):
                 kind, mark.points, fields.get("ends", getattr(mark, "ends", None)),
                 fields.get("border_style", mark.border_style),
                 float(fields.get("thickness", mark.thickness) or 0.0)))
+        if kind == markup.INK and "thickness" in fields:
+            # Round what it draws, grown by the line's width.
+            fields = dict(fields, rect=markup.ink_rect(
+                mark.points, getattr(mark, "strokes", None)
+                or (len(mark.points) // 2,),
+                float(fields["thickness"] or 0.0)))
         if kind == markup.LINE and ({"ends", "thickness"} & set(fields)):
             # A line's rectangle is round its ends, which change size with
             # their style and with the line's width.
@@ -2590,6 +2643,11 @@ class MainWindow(QMainWindow):
                 "thickness": float(getattr(mark, "thickness", 1.0) or 0.0),
                 "border_style": getattr(mark, "border_style", "straight"),
                 "ends": tuple(getattr(mark, "ends", None) or ("/None", "/None"))}
+        if kind == markup.INK:
+            self._boxes[tool] = {
+                "fill": None,
+                "thickness": float(getattr(mark, "thickness", 1.0) or 1.0),
+                "border_style": "straight"}
         if kind in markup.SHAPES or kind == markup.POLYGON:
             fill = getattr(mark, "fill", None)
             self._boxes[tool] = {
@@ -3246,7 +3304,8 @@ class MainWindow(QMainWindow):
         # flipped.
         self.act_unlock.setEnabled(
             has_pages and (self.is_encrypted() or bool(self.output_password)))
-        self.act_undo.setEnabled(self.model.undo.can_undo)
+        self.act_undo.setEnabled(self.model.undo.can_undo
+                                 or self.reader.canvas.can_take_back())
         self.act_redo.setEnabled(self.model.undo.can_redo)
         undo_label = self.model.undo.undo_label()
         # A msgid rather than an f-string: built by concatenation the verb
@@ -4443,6 +4502,11 @@ class MainWindow(QMainWindow):
     # -- edit commands -----------------------------------------------------
 
     def undo(self):
+        # A Pencil or a polygon being made takes back its own last stroke
+        # or point first: what was done before it was begun is not what
+        # Undo means while it is under way.
+        if self.reader.canvas.take_back():
+            return
         self.model.undo.undo()
         self._mark_modified()
 

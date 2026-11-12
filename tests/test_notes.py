@@ -1095,7 +1095,7 @@ class TestTheFormOnOneMark(unittest.TestCase):
 
     def test_a_kind_with_no_name_here_still_gets_a_title(self):
         """One out of somebody else's file, from a tool not built here."""
-        self.assertEqual(self.form(kind="/Polygon").windowTitle(),
+        self.assertEqual(self.form(kind="/Sound").windowTitle(),
                          "Mark Properties")
 
     def test_every_mark_it_writes_has_a_name_for_the_title(self):

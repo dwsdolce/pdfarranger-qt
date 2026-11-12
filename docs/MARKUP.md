@@ -53,7 +53,7 @@ time.
 | Text markup | Highlight | Highlight | colour behind a run of words | complete |
 | | Underline | Underline | a straight or wavy line under a run of words | complete |
 | | Strikethrough | Strikethrough | a line through a run of words | complete |
-| Drawing | Draw | | freehand ink | not started |
+| Drawing | Draw | Pencil | freehand ink, any number of strokes | complete |
 | | Line | Line | a straight line, its ends styled | complete |
 | | Arrow | Line | a line that starts with an open arrow at its end | complete |
 | | Rectangle/Square | Rectangle/Square | a box, square with Shift | complete |
@@ -1170,6 +1170,14 @@ What every drawing tool shares. Each tool's own section adds to it.
   while it is under the pointer or selected, so it can be seen and
   deleted. Otherwise it is left as it is. **Departure from Acrobat**, where
   such a shape cannot be found or selected at all and stays in the file.
+- **Stacked as the file stacks them.** The file's marks are painted first,
+  then the ones made this session, then the one being made -- the order a
+  save writes them in, new marks after the file's in `/Annots`, and the
+  order a click takes them in. Ours were painted first until 2026-11-12,
+  under every mark the file brought: an opaque Pencil stroke made here
+  showed a faded one of Acrobat's through it, and Acrobat, given the saved
+  file, drew them the other way up. Not only drawings: any mark made over
+  one the file had.
 
 ## Rectangle/Square
 
@@ -1494,8 +1502,7 @@ next:
 
 ## Polygon and Polyline
 
-Made by the Polygon, Cloud and Connected Lines tools. All three stages
-built; being verified.
+Made by the Polygon, Cloud and Connected Lines tools. Complete.
 
 ### Requirements
 
@@ -1512,7 +1519,12 @@ built; being verified.
   the right-click menu, or **Return**, all of which keep the points placed
   so far; **Cancel** in that menu, or **Escape**, throws it away, and a
   second Escape leaves the tool. Complete is refused until a polygon has 3
-  points and a polyline 2.
+  points and a polyline 2. **Remove Last Point** in that menu, or **Undo**,
+  takes back the last point placed, and the first point taken back ends
+  it: Undo reaches what was done before only once nothing is being made.
+  Added 2026-11-12, with the Pencil's; a click in the wrong place meant
+  starting again. **Properties...** in that menu opens the tool's own
+  form, and the mark is made with what it holds when it is completed.
 - **Handles** on every vertex. Dragging one moves it; **Shift keeps it
   moving in line with where it began** -- straight across, straight up or
   down, or at 45 degrees -- as Illustrator, Figma, Sketch, PowerPoint and
@@ -1628,3 +1640,145 @@ before the next:
   fill away gives it a line again. This replaces the rectangle's and the
   oval's "0 only with a fill".
 
+## Pencil
+
+Made by the Draw tool. Complete.
+
+### Requirements
+
+- **One mark, one tool.** The Draw tool makes a **Pencil** -- Acrobat's
+  name for it -- and its form is *Pencil Properties*.
+- **One mark holds any number of strokes.** Any text selection is cleared
+  when the tool is chosen. A press, a drag and a release make a stroke;
+  the pointer can then move freely, and the next press, drag and release
+  add another stroke to the same mark, apart from the first or not. The
+  strokes drawn so far show while it is being made. It is finished as a
+  polyline is: by **Complete** in the right-click menu, by **Return**, or
+  by choosing another tool -- but not by a double-click, since a stroke
+  ends at its release. **Cancel** in that menu, or **Escape**, throws away
+  the strokes drawn so far, and a second Escape leaves the tool, as for a
+  polyline. **Departure from Acrobat**, where Escape keeps them: the same
+  key does the same thing on every mark made point by point. **Remove
+  Last Stroke** in that menu, or **Undo**, takes back the last stroke --
+  a dot is one -- and the last taken back ends the mark, as a polygon's
+  points do. Once it is finished, the whole Pencil is one step to undo.
+  **A change of colour, thickness or opacity** in the strip, or in the
+  form that **Properties...** in that menu opens, is the whole mark's,
+  seen on the strokes at once -- as on a polygon, whose mark is made with
+  the tool's settings when it is completed. **Departure from Acrobat**,
+  where a change of colour or thickness finishes the mark and the next
+  stroke starts another, and opacity alone is the whole mark's; agreed on
+  2026-11-12 for one rule on all four tools made point by point. It was
+  built Acrobat's way first. **Shift does nothing.**
+- **A click is a dot**: a stroke of one point, drawn as a round dot as
+  wide as the line, as Acrobat draws it.
+- **Smoothed**: each stroke is drawn as a chain of cubic Beziers fitted to
+  its points within a tolerance, as Acrobat's are -- each curve beginning
+  and ending on a point, every join smooth, a point at most about a point
+  off the curve. The points themselves are kept as the mouse gave them.
+- **Moving and the cursor** as for every other drawing: dragged by what is
+  drawn, selected or not, with the move cursor over it.
+- **Handles** on the four corners of its box, shown when it is selected.
+  Dragging one **keeps the mark's proportions**, the opposite corner
+  holding still, and Shift does nothing, as in Acrobat: a handwritten word
+  stretched one way no longer looks like the one written. The strokes are
+  scaled to the new box and **the thickness does not change**.
+- **The properties form**: Colour, Thickness from 1 to 12 -- **no
+  Hairline**, which is only for a mark with a fill -- and Opacity.
+- **The strip**: the colour swatch and the line thickness.
+- **The right-click menu** is the one most marks have.
+- **Notes, badges, the hover summary, the note window, replies and status**
+  as for most marks.
+
+### Plan
+
+The fixture is pages 2 and 3 of `corpus/Markup Drawing.pdf`. **What
+Acrobat writes**: an `/Ink` with `/Subj Pencil`, each stroke one array of
+points in `/InkList` -- one mark has three strokes, another two clicks --
+the colour in `/C`, the width in `/BS /W` only when it is not 1, and
+opacity in `/CA` with a graphics state in the drawing. No `/IT`, no dash,
+no fill. The drawing is the strokes as curves with **round caps** (`1 J`),
+unlike the flat ends of the other drawings; a stroke of one point is a
+circle of radius 0.5 round it, filled and stroked, so the dot is the
+line's width plus one point across.
+
+### Building it
+
+Three stages, each tried in the application before the next:
+
+1. **The mark.** `/Ink` becomes a kind this application knows, read and
+   drawn by the canvas -- the fitted curves, round caps, the dots -- found
+   by what is drawn, and moved.
+2. **Making and resizing.** The Draw tool; strokes gathered into one mark
+   until it is finished; the four corner handles keeping the proportions;
+   written as Acrobat writes it, with a drawing of our own.
+3. **The form and the strip**: Colour, Thickness 1 to 12, Opacity, and the
+   strip's swatch and slider.
+
+**Stage 1, as built:**
+
+- **Read** from `/InkList` as one flat run of points and how many each
+  stroke has, so a move shifts them as it shifts a polygon's; the width
+  from `/BS /W`, 1 when absent.
+- **Drawn** by the canvas, Acrobat's drawing blanked as the other
+  drawings' are: each stroke the curves Schneider's fit gives within 1
+  point -- on the fixture a few fewer curves than Acrobat's, the points
+  as near them -- with round ends and joins, faded as one piece.
+- **A dot is filled to its whole width**, the line's and a point. Acrobat
+  writes a circle of half a point stroked with the line, and Qt and
+  PDFium both draw that as a ring, hollow wherever the line is wider than
+  the circle -- PDFium shows the fixture's two dots as rings.
+- **Taking hold** within the ink tolerance of what it draws; the box shows
+  only once it is selected. **A move** shifts every point and `/Rect` by
+  the same, writes `/InkList` back stroke by stroke and keeps Acrobat's
+  drawing.
+
+**Stage 2, as built:**
+
+- **Made** a stroke at each press, drag and release, the points kept in the
+  page's own space as they come so a scroll mid-way moves nothing; a click
+  is a stroke of one point. Once one is under way every press is its next
+  stroke, over a mark or not, and the second press of a double-click is
+  one more. A press on another page finishes the one under way and starts
+  another there. **Drawn as it will be made** -- in the tool's colour,
+  thickness and opacity, each stroke fitted as it is drawn.
+- **Finished** by Return, Complete, or choosing another tool, as one step
+  to undo; **thrown away** by Escape or Cancel, and a second Escape leaves
+  the tool. **Taken back a stroke at a time** by Remove Last Stroke or
+  Undo -- and a polygon's points the same way, by Remove Last Point --
+  Undo kept enabled while there is one to take back, even on a document
+  with nothing else to undo.
+- **The pointer is a pencil while a Pencil is under way**, from its first
+  press until it is finished or thrown away, and the crosshair otherwise:
+  the tool stays armed after Return, so the pencil is the one sign that
+  the next stroke joins the mark being drawn. Acrobat shows a pencil too,
+  but its Draw tool ends with the mark, so there it needs no such rule.
+- **The corners**: dragging one scales every point about the opposite
+  corner of what it draws -- its box less the line's width -- by the same
+  amount across and up, whichever way the pointer has gone further, and
+  never below 4 points; the box and handles follow, and the thickness does
+  not change.
+- **Written as Acrobat writes it**: `/InkList` a stroke to an array,
+  `/BS /W` only when it is not 1, `/Subj Pencil`, `/Rect` round the curves
+  and dots grown by the line's width, and a drawing of our own -- the
+  curves stroked with round ends and joins, each dot a circle filled to
+  the line's width and a point. A file's Pencil is drawn afresh when it is
+  resized or its look changes, and keeps Acrobat's when only moved.
+
+**Stage 3, as built:**
+
+- **The form**: *Pencil Properties*, Colour and Opacity on the left and
+  Thickness, 1 to 12 with no Hairline, at the top of the right -- where
+  every other drawing's form has them; it was one column at first, which
+  put Thickness somewhere no other form does; the tool's own form the
+  same, and Make Properties Default keeps the thickness for its next one.
+  A new thickness puts `/Rect` round the line at its new width and gives a
+  file's Pencil a drawing of our own.
+- **The strip**: the colour swatch and the thickness, 1 to 12, for the
+  armed tool and for a selected Pencil.
+- **A Pencil under way takes every change** of colour, thickness or
+  opacity, from the strip or the tool's form, on all its strokes at once.
+  Built first to finish the mark on a colour or thickness change, as
+  Acrobat does, and changed the same day for one rule with the polygon.
+- **Properties...** in the menu of any mark being made -- a Pencil, a
+  polygon, a cloud, a polyline -- opens the tool's own form.

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-12 20:29+0000\n"
+"POT-Creation-Date: 2026-11-12 22:27+0000\n"
 "PO-Revision-Date: 2024-09-05 17:05+0300\n"
 "Last-Translator: Abdullah Albaroty <albaroty@gmail.com>\n"
 "Language: ar\n"
@@ -44,8 +44,18 @@ msgstr "ألغِ"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
+msgid "Remove Last Stroke"
+msgstr "إزالة آخر خط"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
 msgid "Complete"
 msgstr "إكمال"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Remove Last Point"
+msgstr "إزالة آخر نقطة"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
@@ -3098,6 +3108,11 @@ msgstr "مضلع"
 #: pdfarranger_qt/properties.py
 msgid "Polyline"
 msgstr "خط متعدد"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Pencil"
+msgstr "قلم رصاص"
 
 #: pdfarranger_qt/properties.py
 msgid "Review History"

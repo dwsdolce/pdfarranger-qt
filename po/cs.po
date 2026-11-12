@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  pdfarranger\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-12 20:29+0000\n"
+"POT-Creation-Date: 2026-11-12 22:27+0000\n"
 "PO-Revision-Date: 2023-07-10 15:37+0000\n"
 "Last-Translator: PavelZ\n"
 "Language: cs_CZ\n"
@@ -39,8 +39,18 @@ msgstr "Zrušit"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
+msgid "Remove Last Stroke"
+msgstr "Odstranit poslední tah"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
 msgid "Complete"
 msgstr "Dokončit"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Remove Last Point"
+msgstr "Odstranit poslední bod"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
@@ -3120,6 +3130,11 @@ msgstr "Mnohoúhelník"
 #: pdfarranger_qt/properties.py
 msgid "Polyline"
 msgstr "Lomená čára"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Pencil"
+msgstr "Tužka"
 
 #: pdfarranger_qt/properties.py
 msgid "Review History"
