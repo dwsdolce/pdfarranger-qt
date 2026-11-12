@@ -1232,8 +1232,9 @@ class ColourPopup(QWidget):
 
 
 class ThicknessPopup(QWidget):
-    """A line's thickness, 0 or 1 to 12 points, on a slider that reads out
-    what it is set to -- the panel Acrobat opens from its strip.
+    """A line's thickness, **Hairline** or 1 to 12 points, on a slider that
+    reads out what it is set to -- the panel Acrobat opens from its strip.
+    Its lowest step reads Hairline, the thinnest line there is, never 0.
 
     A popup rather than a menu, as the colour popup is, so the slider can
     be dragged. The choice is sent when the slider is let go, or stepped
@@ -1260,12 +1261,18 @@ class ThicknessPopup(QWidget):
         self.slider.actionTriggered.connect(self._nudged)
         row.addWidget(self.slider, 1)
         self.points = QLabel("1 pt", self)
-        self.points.setMinimumWidth(40)
+        # As wide as the widest reading, so Hairline is never clipped.
+        metrics = self.points.fontMetrics()
+        self.points.setMinimumWidth(
+            max(metrics.horizontalAdvance(text) for text in (_("Hairline"), "12 pt"))
+            + metrics.averageCharWidth())
         self.points.setAlignment(Qt.AlignRight | Qt.AlignVCenter)
         row.addWidget(self.points)
-        self.slider.valueChanged.connect(
-            lambda v: self.points.setText(f"{v} pt"))
+        self.slider.valueChanged.connect(self._read_out)
         outer.addLayout(row)
+
+    def _read_out(self, value: int) -> None:
+        self.points.setText(_("Hairline") if value <= 0 else f"{value} pt")
 
     def _send(self) -> None:
         self.chosen.emit(float(self.slider.value()))
@@ -1277,10 +1284,10 @@ class ThicknessPopup(QWidget):
 
     def show_for(self, points: float, zero: bool, at) -> None:
         self.slider.blockSignals(True)
-        self.slider.setMinimum(0 if zero else 1)
-        self.slider.setValue(int(round(points)))
+        self.slider.setMinimum(0)
+        self.slider.setValue(0 if markup.is_hairline(points) else int(round(points)))
         self.slider.blockSignals(False)
-        self.points.setText(f"{self.slider.value()} pt")
+        self._read_out(self.slider.value())
         self.adjustSize()
         self.move(at)
         self.show()

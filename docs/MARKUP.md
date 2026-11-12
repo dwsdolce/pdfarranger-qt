@@ -59,9 +59,9 @@ time.
 | | Rectangle/Square | Rectangle/Square | a box, square with Shift | complete |
 | | Oval/Circle | Oval/Circle | an oval, a circle with Shift | complete |
 | | Text callout | | a text box with a line pointing at something | not started |
-| | Polygon | | a closed shape of straight sides | not started |
-| | Cloud | | a polygon drawn with a scalloped edge | not started |
-| | Connected lines | | an open run of straight lines | not started |
+| | Polygon | Polygon | a closed shape of straight sides | complete |
+| | Cloud | Polygon | a polygon drawn with a scalloped edge | complete |
+| | Connected lines | Polyline | an open run of straight lines | complete |
 | | Stamps palette | | a ready-made stamp such as Approved or Draft | not started; whether to offer it is undecided |
 
 Reader's signature and initials tools are not offered: this application
@@ -1122,8 +1122,18 @@ What every drawing tool shares. Each tool's own section adds to it.
 
 ### Requirements
 
-- **Line thickness** is whole points from 1 to 12, or 0 to 12 for a shape
-  with a fill: a line of 0 with no fill draws nothing.
+- **Line thickness** is **Hairline**, then whole points from 1 to 12, on
+  every mark with a line -- in the form and in the strip's slider. Hairline
+  is the thinnest line the screen or printer can draw, always visible; the
+  form and the slider show the word, never 0 or 0.01. **"No line" is a
+  Style, not a thickness**: No Border, offered for a shape only when it has
+  a fill, since a shape with neither draws nothing. Decided 2026-11-12, in
+  place of "0 only with a fill", because Acrobat's 0 means two things -- no
+  line on a rectangle or a polygon, whose drawing at 0 is not stroked, and
+  the thinnest line on a line, whose drawing at 0 is -- and its polygon
+  form stops at 0.01 to tell them apart. **Written** as Acrobat writes the
+  thinnest line: `/BS /W 0` on a line or a polyline, `0.01` on a rectangle,
+  an oval or a polygon, where 0 is No Border; **read** the same way back.
 - **Colours**: the line's and the fill's both come from the twenty-one
   swatches, and the fill also offers **No Colour**, which leaves the shape
   see-through. Spelled Colour wherever the user sees it, as everywhere
@@ -1481,4 +1491,140 @@ next:
   so an arrow's defaults never become the Line tool's.
 - **A line of 0 keeps its dash** when it is read back, where a box's
   border of 0 is No Border.
+
+## Polygon and Polyline
+
+Made by the Polygon, Cloud and Connected Lines tools. All three stages
+built; being verified.
+
+### Requirements
+
+- **Two marks, three tools.** The Polygon and Cloud tools make a
+  **Polygon** -- the Cloud tool's starting with the large cloud as its
+  style -- and Connected Lines makes a **Polyline**. The forms are
+  *Polygon Properties* and *Polyline Properties*.
+- **Making one.** Any text selection is cleared when the tool is chosen.
+  A press, a drag and a release make the first segment, or a click, a
+  move and a click; on the release the next segment is already started,
+  following the pointer, and each press adds a point. **Shift keeps a
+  segment to 45 degrees.** It is finished by a double-click on the last
+  point -- closing a polygon, ending a polyline -- or by **Complete** in
+  the right-click menu, or **Return**, all of which keep the points placed
+  so far; **Cancel** in that menu, or **Escape**, throws it away, and a
+  second Escape leaves the tool. Complete is refused until a polygon has 3
+  points and a polyline 2.
+- **Handles** on every vertex. Dragging one moves it; **Shift keeps it
+  moving in line with where it began** -- straight across, straight up or
+  down, or at 45 degrees -- as Illustrator, Figma, Sketch, PowerPoint and
+  Blender constrain a dragged point. **Departure from Acrobat**, where
+  Shift does nothing to a vertex. Holding both its segments at 45 degrees
+  was agreed and built first, and dropped on 2026-11-12: the vertex jumped
+  away from the pointer to find such a spot, or held only one segment.
+  The vertex goes to the **point on the line nearest the pointer**, so it
+  slides along under the pointer. Turning the pointer's distance onto the
+  line was built first and dropped on 2026-11-12: crossing to the next
+  line swung the vertex round an arc and looked like a jump.
+- **Moving and the cursor** as for every other mark: dragged by what is
+  drawn, selected or not, with the move cursor over it. **Departure** from
+  Acrobat, where it must be selected first unless it has a fill.
+- **The right-click menu** is the one most marks have, and adds **Insert
+  Vertex** over a segment and **Remove Vertex** over a vertex, refused below
+  3 points on a polygon and 2 on a polyline. Insert Vertex is offered only
+  on the line itself -- within the reach that takes hold of it, a cloud's
+  being the band its scallops cross -- and the vertex goes on the line
+  where it was clicked, so the shape is unchanged until it is dragged. It
+  was offered anywhere off a vertex at first, and put the vertex at the
+  click: a right-click in the fill pulled an edge into the middle.
+  **Departure**: Acrobat cannot add or take away a vertex. A polyline's
+  menu has **Flip Line**, as a line's does, which puts the ends' styles at
+  the other ends -- the one change a flip makes that can be seen.
+- **The properties form**: Colour, Thickness, Style, Fill Colour with No
+  Colour, and Opacity; a polyline's adds Start and End, the line's ten end
+  styles. A polygon's styles are the box styles, No Border only with a
+  fill; a polyline's are the line styles. The fill fills a polygon, and a
+  polyline's closed ends.
+- **The strip**: the colour swatch and the line thickness.
+- **Notes, badges, the hover summary, the note window, replies and status**
+  as for most marks.
+
+### Plan
+
+The fixture is page 2 of `corpus/Markup Drawing.pdf`. **What Acrobat
+writes**: a `/Polygon` with `/Subj Polygon`, or a `/PolyLine` with `/Subj
+Polygonal Line` -- kept so in the file, Polyline being only what the mark
+is called here -- the points in `/Vertices`, the line in `/C`, `/BS` and
+`/BE`, the fill in `/IC`, and a polyline's ends in `/LE`. **The Cloud tool's
+polygon carries `/IT /PolygonCloud`** and `/BE /S /C /I 2`; a polygon the
+Polygon tool made and gave a cloud has `/BE` and no `/IT` -- the Arrow's
+pattern again, `/IT` recording the tool. **None of the fixture's clouds
+has `/RD`**, where a rectangle's has: the rectangle is the cloud's reach.
+
+### Building them
+
+Three stages, all three marks together, each tried in the application
+before the next:
+
+1. **The marks.** `/Polygon` and `/PolyLine` become kinds this application
+   knows, read and drawn by the canvas -- the cloud along each edge, a
+   polyline's ends as a line's -- found by what is drawn, and moved.
+2. **Making and reshaping.** The three tools; making by clicks, Shift,
+   Return, Escape and the menu; the vertex handles and their Shift; Insert
+   and Remove Vertex; Flip Line; written as Acrobat writes them, with a
+   drawing of our own.
+3. **The form and the strip**, and **Hairline** for every mark with a line:
+   the form's thickness, the strip's slider, the writing of the thinnest
+   line and No Border as a style for the filled shapes, the rectangle and
+   the oval included.
+
+**Stage 1, as built:**
+
+- **A cloud along a polygon**, read off the fixture's two: scallops the
+  size a rectangle's are, 4 points per step of intensity plus half the
+  line, centred on the polygon's own edges -- not inset as a rectangle's
+  are -- 5/3 of a radius apart from each corner, the last on an edge
+  squeezed in, and **no curls**, each meeting the next where their circles
+  cross, as round an oval. Its rectangle is the cloud's ink grown by the
+  line's width. Ours reaches about half a point further than Acrobat's.
+- **Corners** are read once: Acrobat repeats the first at the end of
+  `/Vertices`, and lays its points clockwise; a cloud is laid clockwise
+  whichever way the points run.
+- **A polyline's ends** are a line's, on its first and last segments, and
+  its line of 0 is the thinnest there is; a polygon's 0 is No Border.
+- **Taking hold**: within the ink tolerance of any segment or a
+  polyline's end, a cloud by the band its scallops cross, and anywhere
+  inside a polygon that is filled or draws nothing. **A move** shifts every
+  point and `/Rect` by the same amount and keeps the producer's drawing.
+
+**Stage 2, as built:**
+
+- **Made** a point at each press, the next segment dashed to the pointer
+  and, for a polygon, back to the first point; the first segment by a drag
+  or a click. Once one is under way every press is its next point, over a
+  mark or not. The Cloud tool's starts with the large cloud and `/IT
+  /PolygonCloud`; a polyline the tool was not told otherwise about has no
+  ends.
+- **Written as Acrobat writes them**: a polygon's `/Vertices` closed with
+  its first point again, `/LE` only when a polyline's end is styled, `/BE`
+  only for a cloud, and `/Rect` what it draws grown by the line's width --
+  the margin the fixture's polylines have as well as its clouds -- with a
+  drawing of our own. A file's polygon or polyline is drawn afresh when its
+  look changes or its points move apart, and keeps Acrobat's when only
+  moved.
+- **Flip Line** reverses a polyline's points, as it swaps a line's: the
+  same thing seen, the ends' styles at the other ends.
+
+**Stage 3, as built:**
+
+- **The forms**: *Polygon Properties* is the Rectangle/Square's, with the
+  box styles and No Border only with a fill; *Polyline Properties* is the
+  Line's, with Start and End. Make Properties Default and the tool's own
+  form keep a cloud's style and a polyline's ends for its next one.
+- **Hairline, on every mark with a line** -- a text box, a rectangle, an
+  oval, a line, a polygon, a polyline: the form's Thickness and the
+  strip's slider read Hairline at their lowest step, and it is written
+  `/BS /W 0` on a line or a polyline and `0.01` on the rest, and drawn one
+  device pixel wide whatever the zoom. **No Border** is offered on a
+  rectangle, an oval or a polygon only while it has a fill, and taking the
+  fill away gives it a line again. This replaces the rectangle's and the
+  oval's "0 only with a fill".
 

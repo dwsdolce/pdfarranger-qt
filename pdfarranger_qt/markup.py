@@ -99,8 +99,16 @@ SHAPES = (SQUARE, CIRCLE)
 LINE = "/Line"
 LINE_ARROW = "/LineArrow"
 
+#: What the Polygon and Cloud tools make, and Connected Lines: points in
+#: `/Vertices`, a polygon closed and a polyline open with styled ends. The
+#: Cloud tool's polygon carries `/IT /PolygonCloud`, recording the tool.
+POLYGON = "/Polygon"
+POLYLINE = "/PolyLine"
+POLYGON_CLOUD = "/PolygonCloud"
+POLYS = (POLYGON, POLYLINE)
+
 KINDS = (TEXT, HIGHLIGHT, STRIKEOUT, UNDERLINE, SQUIGGLY, STAMP, CARET,
-         FREETEXT, SQUARE, CIRCLE, LINE)
+         FREETEXT, SQUARE, CIRCLE, LINE, POLYGON, POLYLINE)
 
 #: The two subtypes one tool writes, and which of them means what. A style
 #: is not a value inside the dictionary: it is which dictionary gets
@@ -250,7 +258,9 @@ SUBJECTS = {HIGHLIGHT: "Highlight", STRIKEOUT: "Cross-Out",
             FREETEXT: "Text Box",
             # For the square and the circle too: Acrobat does not tell them
             # apart in the file.
-            SQUARE: "Rectangle", CIRCLE: "Oval", LINE: "Line"}
+            SQUARE: "Rectangle", CIRCLE: "Oval", LINE: "Line",
+            # Acrobat's, kept in the file; the mark is called Polyline here.
+            POLYGON: "Polygon", POLYLINE: "Polygonal Line"}
 
 #: Bit 3 of `/F`, Print. Without it a mark shows on screen and vanishes from
 #: paper, which is not what anybody means by annotating a document.
@@ -948,6 +958,15 @@ def apply_edit(annot, edit, pdf=None) -> None:
     if subtype == FREETEXT:
         _patch_text_box(annot, edit, pdf)
         return
+    if subtype in POLYS:
+        vertices = annot.get(pikepdf.Name.Vertices)
+        was_points = (tuple(_number(v, 0.0) for v in vertices)
+                      if vertices is not None else None)
+        was_rect = tuple(_number(v, 0.0) for v in annot.Rect)
+        edit = {k: v for k, v in edit.items() if k != "rotate"}
+        _apply_common_edit(annot, edit, pdf)
+        _redraw_poly(annot, edit, pdf, was_points, was_rect)
+        return
     if subtype == LINE:
         points = annot.get(pikepdf.Name.L)
         was_points = (tuple(_number(v, 0.0) for v in points)
@@ -1035,8 +1054,12 @@ def _apply_common_edit(annot, edit, pdf=None) -> None:
         annot[pikepdf.Name.Rect] = pikepdf.Array([*rect])
     points = edit.get("points")
     if points:
-        # A line's two points, moved with its rectangle.
-        annot[pikepdf.Name.L] = pikepdf.Array([*points])
+        # A line's two points, moved with its rectangle -- or a polygon's
+        # or a polyline's, which are its `/Vertices`.
+        key = (pikepdf.Name.Vertices
+               if str(annot.get(pikepdf.Name.Subtype, "")) in POLYS
+               else pikepdf.Name.L)
+        annot[key] = pikepdf.Array([*points])
     quads = edit.get("quads")
     if quads:
         annot[pikepdf.Name.QuadPoints] = pikepdf.Array(
@@ -1451,6 +1474,25 @@ def _redraw_shape(annot, edit, pdf, was_rd, was_size) -> None:
 #: "not changed".
 NO_COLOUR = ()
 
+#: The thinnest line, as written on a mark whose 0 means No Border -- a text
+#: box, a rectangle, an oval, a polygon. Acrobat's polygon form stops here.
+HAIRLINE = 0.01
+
+
+def is_hairline(thickness) -> bool:
+    """Whether a thickness is the thinnest line: shown as Hairline, never
+    as 0 or 0.01."""
+    return float(thickness or 0.0) < 0.5
+
+
+def written_thickness(kind: str, thickness: float) -> float:
+    """``thickness`` as the file holds it for ``kind``: the thinnest line is
+    `/BS /W 0` on a line or a polyline, whose 0 is a line, and `HAIRLINE`
+    on every other mark, whose 0 is No Border."""
+    if not is_hairline(thickness):
+        return float(thickness)
+    return 0.0 if kind in (LINE, POLYLINE) else HAIRLINE
+
 
 def box_inside(outer, style_name: str, thickness: float) -> "tuple":
     """A text box's own rectangle, from its `/Rect` and its style: the
@@ -1567,7 +1609,7 @@ def blank_note_icons(pdf) -> int:
                 # border and words -- so a drag carries it; and a rectangle
                 # or an oval, for the same reason.
                 text_box = (subtype == FREETEXT or subtype in SHAPES
-                            or subtype == LINE)
+                            or subtype == LINE or subtype in POLYS)
                 if subtype != TEXT and not text_box and not is_scalable_comment(
                         subtype, stamp_icon(annot)):
                     continue
@@ -2020,6 +2062,8 @@ def to_dictionary(pdf, annotation: Annotation, page=None) -> pikepdf.Dictionary:
         _write_shape(pdf, entry, annotation)
     if annotation.kind == LINE:
         _write_line(pdf, entry, annotation)
+    if annotation.kind in POLYS:
+        _write_poly(pdf, entry, annotation)
     if annotation.kind == CARET:
         entry[pikepdf.Name.RD] = pikepdf.Array([caret_inset(annotation.rect)] * 4)
         if solidity(annotation) != 1.0:
@@ -2193,7 +2237,8 @@ def nearest_swatch(colour):
 #: them does not.
 TRANSPARENCY = {HIGHLIGHT: 0.4, STRIKEOUT: 1.0,
                 UNDERLINE: 1.0, SQUIGGLY: 1.0, CARET: 1.0, FREETEXT: 1.0,
-                SQUARE: 1.0, CIRCLE: 1.0, LINE: 1.0}
+                SQUARE: 1.0, CIRCLE: 1.0, LINE: 1.0, POLYGON: 1.0,
+                POLYLINE: 1.0}
 
 
 def opacity_of(mark) -> float:
@@ -2940,6 +2985,230 @@ def _redraw_line(annot, edit, pdf, was_points, was_rect) -> None:
     _write_line(pdf, annot, line)
 
 
+def poly_drawing(kind: str, points, ends, style_name: str, width: float):
+    """What a polygon or a polyline draws, in page space: ``(outline,
+    cloud, pieces)`` -- the points it is drawn through, closed for a
+    polygon, with a polyline's first and last pulled back for its ends; a
+    polygon's cloud as `cloud_polygon_path` gives it, or None; and a
+    polyline's ends as `line_end_drawing` gives them."""
+    style = BORDER_STYLES.get(style_name, {})
+    if kind == POLYGON:
+        cloud = (cloud_polygon_path(points, style["cloud"], width)
+                 if "cloud" in style else None)
+        return polygon_corners(points), cloud, []
+    pairs = [(float(x), float(y)) for x, y in zip(points[0::2], points[1::2])]
+    if len(pairs) < 2:
+        return pairs, None, []
+    ends = ends or ("/None", "/None")
+    first, start = line_end_drawing((*pairs[0], *pairs[1]), (ends[0], "/None"), width)
+    last, end = line_end_drawing((*pairs[-2], *pairs[-1]), ("/None", ends[1]), width)
+    pairs[0], pairs[-1] = (first[0], first[1]), (last[2], last[3])
+    return pairs, None, start + end
+
+
+def poly_rect(kind: str, points, ends, style_name: str, width: float) -> "tuple":
+    """A polygon's or a polyline's `/Rect`: what it draws, grown by the
+    line's width -- the margin the fixture's have, clouded or not."""
+    outline, cloud, pieces = poly_drawing(kind, points, ends, style_name, width)
+    xs = [p[0] for p in outline]
+    ys = [p[1] for p in outline]
+    if cloud is not None:
+        begin, curves = cloud
+        xs += [begin[0]] + [v for c in curves for v in c[0::2]]
+        ys += [begin[1]] + [v for c in curves for v in c[1::2]]
+    for piece, data, _filled in pieces:
+        if piece == "circle":
+            xs += [data[0] - data[2], data[0] + data[2]]
+            ys += [data[1] - data[2], data[1] + data[2]]
+        else:
+            xs += [p[0] for p in data]
+            ys += [p[1] for p in data]
+    grow = max(float(width), 1.0)
+    return (min(xs) - grow, min(ys) - grow, max(xs) + grow, max(ys) + grow)
+
+
+def _write_poly(pdf, entry, annotation) -> None:
+    """The keys only a polygon or a polyline has, as Acrobat writes them:
+    `/Vertices` -- a polygon's closed with its first point again -- a
+    polyline's `/LE`, left out when both ends are None, the fill in `/IC`,
+    the line in `/BS` and `/BE`, `/Rect` round what it draws, and a
+    drawing."""
+    kind = annotation.kind
+    points = list(annotation.points or ())
+    if kind == POLYGON and len(points) >= 4 and points[:2] != points[-2:]:
+        points += points[:2]
+    entry[pikepdf.Name.Vertices] = pikepdf.Array([*points])
+    ends = tuple(annotation.ends or ("/None", "/None"))
+    if kind == POLYLINE and any(end != "/None" for end in ends):
+        entry[pikepdf.Name.LE] = pikepdf.Array([pikepdf.Name(e) for e in ends])
+    elif pikepdf.Name.LE in entry:
+        del entry[pikepdf.Name.LE]
+    if annotation.fill is not None:
+        entry[pikepdf.Name.IC] = pikepdf.Array([*annotation.fill[:3]])
+    elif pikepdf.Name.IC in entry:
+        del entry[pikepdf.Name.IC]
+    style = BORDER_STYLES.get(annotation.border_style, {})
+    width = float(style.get("width", annotation.thickness))
+    for key in (pikepdf.Name.BS, pikepdf.Name.BE):
+        if key in entry:
+            del entry[key]
+    if "dash" in style:
+        bs = pikepdf.Dictionary(S=pikepdf.Name.D, D=pikepdf.Array([*style["dash"]]))
+        if width != 1.0:
+            bs[pikepdf.Name.W] = width
+        entry[pikepdf.Name.BS] = bs
+    elif width != 1.0:
+        entry[pikepdf.Name.BS] = pikepdf.Dictionary(W=width)
+    if "cloud" in style and kind == POLYGON:
+        entry[pikepdf.Name.BE] = pikepdf.Dictionary(S=pikepdf.Name.C,
+                                                    I=float(style["cloud"]))
+    rect = poly_rect(kind, points, ends, annotation.border_style, width)
+    entry[pikepdf.Name.Rect] = pikepdf.Array([*rect])
+    if solidity(annotation) != 1.0:
+        entry[pikepdf.Name.CA] = solidity(annotation)
+    elif pikepdf.Name.CA in entry:
+        del entry[pikepdf.Name.CA]
+    entry[pikepdf.Name.AP] = pikepdf.Dictionary(
+        N=_poly_appearance(pdf, annotation, points, ends, rect))
+
+
+def _poly_appearance(pdf, annotation, points, ends, rect):
+    """A polygon's or a polyline's drawing: a polygon's fill and line in
+    one path -- a cloud as curves -- or a polyline's line, then its ends,
+    all in the line's dash; a polygon of No Border filled and not stroked,
+    a polyline of 0 drawn at the thinnest width there is."""
+    kind = annotation.kind
+    style = BORDER_STYLES.get(annotation.border_style, {})
+    width = float(style.get("width", annotation.thickness))
+    colour = annotation.colour or swatch("Red")
+    fill = annotation.fill
+    lines = ["{:.6g} {:.6g} {:.6g} RG".format(*colour[:3]), "{:.4g} w".format(width)]
+    if fill is not None:
+        lines.append("{:.6g} {:.6g} {:.6g} rg".format(*fill[:3]))
+    if "dash" in style:
+        lines.append("[{}] 0 d".format(" ".join(f"{v:g}" for v in style["dash"])))
+    resources = pikepdf.Dictionary(ProcSet=pikepdf.Array([pikepdf.Name.PDF]))
+    opacity = solidity(annotation)
+    if opacity < 1.0:
+        lines.insert(0, "/R0 gs")
+        resources[pikepdf.Name.ExtGState] = pikepdf.Dictionary(
+            R0=pikepdf.Dictionary(Type=pikepdf.Name.ExtGState, AIS=False,
+                                  CA=opacity, ca=opacity))
+    outline, cloud, pieces = poly_drawing(kind, points, ends,
+                                          annotation.border_style, width)
+    if cloud is not None:
+        begin, curves = cloud
+        lines.append("{:.4f} {:.4f} m".format(*begin))
+        lines += ["{:.4f} {:.4f} {:.4f} {:.4f} {:.4f} {:.4f} c".format(*c)
+                  for c in curves]
+        lines.append("h")
+    elif outline:
+        lines.append("{:.4f} {:.4f} m".format(*outline[0]))
+        lines += ["{:.4f} {:.4f} l".format(*p) for p in outline[1:]]
+        if kind == POLYGON:
+            lines.append("h")
+    if kind == POLYGON:
+        lines.append({(True, True): "B", (True, False): "f",
+                      (False, True): "S", (False, False): "n"}[
+                          (fill is not None, width > 0)])
+    else:
+        lines.append("S")
+    for piece, data, filled in pieces:
+        if piece == "circle":
+            cx, cy, r = data
+            k = r * _KAPPA
+            lines += ["{:.4f} {:.4f} m".format(cx, cy + r),
+                      "{:.4f} {:.4f} {:.4f} {:.4f} {:.4f} {:.4f} c".format(
+                          cx + k, cy + r, cx + r, cy + k, cx + r, cy),
+                      "{:.4f} {:.4f} {:.4f} {:.4f} {:.4f} {:.4f} c".format(
+                          cx + r, cy - k, cx + k, cy - r, cx, cy - r),
+                      "{:.4f} {:.4f} {:.4f} {:.4f} {:.4f} {:.4f} c".format(
+                          cx - k, cy - r, cx - r, cy - k, cx - r, cy),
+                      "{:.4f} {:.4f} {:.4f} {:.4f} {:.4f} {:.4f} c".format(
+                          cx - r, cy + k, cx - k, cy + r, cx, cy + r)]
+        else:
+            lines.append("{:.4f} {:.4f} m".format(*data[0]))
+            lines += ["{:.4f} {:.4f} l".format(*p) for p in data[1:]]
+        closed = piece in ("closed", "circle")
+        if closed:
+            lines.append("h")
+        lines.append({(True, True): "B", (True, False): "f",
+                      (False, True): "S", (False, False): "n"}[
+                          (filled and fill is not None, width > 0 or not closed)])
+    stream = pikepdf.Stream(pdf, ("\n".join(lines) + "\n").encode())
+    stream[pikepdf.Name.Type] = pikepdf.Name.XObject
+    stream[pikepdf.Name.Subtype] = pikepdf.Name.Form
+    stream[pikepdf.Name.BBox] = pikepdf.Array([*rect])
+    stream[pikepdf.Name.Resources] = resources
+    return pdf.make_indirect(stream)
+
+
+def _redraw_poly(annot, edit, pdf, was_points, was_rect) -> None:
+    """Give a polygon or a polyline the file brought a drawing of its own
+    when an edit has changed how it looks or where its points are -- not
+    when it was only moved, which carries the producer's drawing along."""
+    if pdf is None:
+        return
+    looks = any(edit.get(key) is not None
+                for key in ("colour", "opacity", "fill", "thickness",
+                            "border_style", "ends"))
+    points = edit.get("points")
+    reshaped = False
+    if points and was_points:
+        dx, dy = points[0] - was_points[0], points[1] - was_points[1]
+        moved = edit.get("rect")
+        reshaped = (len(points) != len(was_points)
+                    or any(abs(points[k] - was_points[k] - (dx if k % 2 == 0 else dy)) > 0.01
+                           for k in range(len(points)))
+                    or not moved
+                    or abs(moved[0] - was_rect[0] - dx) > 0.01
+                    or abs(moved[1] - was_rect[1] - dy) > 0.01)
+    if not (looks or reshaped):
+        return
+    subtype = str(annot.get(pikepdf.Name.Subtype))
+    reading = _poly_reading(annot, subtype)
+    if edit.get("fill") is not None:
+        reading["fill"] = None if edit["fill"] == NO_COLOUR else tuple(edit["fill"])
+    colour = annot.get(pikepdf.Name.C)
+    poly = Annotation(
+        subtype, 0, [float(v) for v in annot.Rect],
+        colour=(tuple(_number(v, 0.0) for v in colour)
+                if colour is not None else None),
+        fill=reading["fill"],
+        thickness=float(edit["thickness"] if edit.get("thickness") is not None
+                        else reading["thickness"]),
+        border_style=edit.get("border_style") or reading["border_style"],
+        opacity=_number(annot.get(pikepdf.Name.CA)),
+        points=reading["points"],
+        ends=(tuple(edit["ends"]) if edit.get("ends")
+              else reading.get("ends", ("/None", "/None"))))
+    _write_poly(pdf, annot, poly)
+
+
+def _poly_reading(annot, subtype) -> dict:
+    """A polygon's or a polyline's own keys: its points, a polyline's ends,
+    the fill and the line -- a polyline's line read as a line's, which at 0
+    is the thinnest there is."""
+    found = {}
+    vertices = annot.get(pikepdf.Name.Vertices)
+    found["points"] = (tuple(_number(v, 0.0) for v in vertices)
+                       if vertices is not None and len(vertices) >= 4 else None)
+    if subtype == POLYLINE:
+        ends = annot.get(pikepdf.Name.LE)
+        found["ends"] = (tuple(str(v) for v in ends)
+                         if ends is not None and len(ends) == 2
+                         else ("/None", "/None"))
+        line = _line_reading(annot)
+        found["thickness"], found["border_style"] = (line["thickness"],
+                                                     line["border_style"])
+    else:
+        found["thickness"], found["border_style"] = _border_reading(annot)
+    fill = annot.get(pikepdf.Name.IC)
+    found["fill"] = (tuple(_number(v, 0.0) for v in fill)
+                     if fill is not None and len(fill) >= 3 else None)
+    return found
+
+
 def _line_reading(annot) -> dict:
     """A line's own keys: its two points, its ends, its fill and its line."""
     found = {}
@@ -3090,6 +3359,36 @@ def cloud_oval_path(box, intensity: float, width: float):
         walked += piece
     del centres[count:]
     return _scallops(centres, radius, step, curls=False)
+
+
+def polygon_corners(points) -> "list":
+    """A polygon's corners from its flat run of points: a corner repeated
+    -- Acrobat closes the run with its first point again -- taken once, and
+    put clockwise, the way a cloud is laid."""
+    corners = []
+    for x, y in zip(points[0::2], points[1::2]):
+        if not corners or math.dist(corners[-1], (x, y)) > 1e-6:
+            corners.append((float(x), float(y)))
+    while len(corners) > 1 and math.dist(corners[0], corners[-1]) <= 1e-6:
+        corners.pop()
+    area = sum(corners[k][0] * corners[(k + 1) % len(corners)][1]
+               - corners[(k + 1) % len(corners)][0] * corners[k][1]
+               for k in range(len(corners)))
+    return corners[::-1] if area > 0 else corners
+
+
+def cloud_polygon_path(points, intensity: float, width: float):
+    """A cloud along a polygon, as Acrobat draws one, read off the
+    fixture's two: scallops the rectangle's size, centred on the edges
+    themselves, 5/3 of a radius apart from each corner, the last on an edge
+    squeezed in -- and no curls, each scallop meeting the next where their
+    circles cross, as round an oval."""
+    corners = polygon_corners(points)
+    if len(corners) < 3:
+        return None
+    radius = cloud_radius(intensity, width)
+    step = radius * CLOUD_SPACING
+    return _scallops(_edge_centres(corners, step), radius, step, curls=False)
 
 
 def _edge_centres(corners, step):
@@ -3796,6 +4095,8 @@ def marks_in(pdf) -> "list[Mark]":
                     box = _shape_reading(annot)
                 elif subtype == LINE:
                     box = _line_reading(annot)
+                elif subtype in POLYS:
+                    box = _poly_reading(annot, subtype)
                 found.append(Mark(**box,
                     page=number,
                     index=at,

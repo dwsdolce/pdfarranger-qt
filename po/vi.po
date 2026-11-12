@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-11 19:12+0000\n"
+"POT-Creation-Date: 2026-11-12 20:29+0000\n"
 "PO-Revision-Date: 2025-12-15 00:59+0700\n"
 "Last-Translator: Loc Huynh <https://github.com/hthienloc>\n"
 "Language: vi\n"
@@ -32,6 +32,17 @@ msgstr "Trang {}"
 #: pdfarranger_qt/canvas.py
 msgid "Empty note"
 msgstr "Ghi chú trống"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py pdfarranger_qt/mainwindow.py
+#: pdfarranger_qt/notepanel.py
+msgid "Cancel"
+msgstr "Hủy"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Complete"
+msgstr "Hoàn tất"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
@@ -162,6 +173,16 @@ msgstr "%d trạng thái"
 #: pdfarranger_qt/canvas.py pdfarranger_qt/notepanel.py
 msgid "Status"
 msgstr "Trạng thái"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Remove Vertex"
+msgstr "Xóa đỉnh"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Insert Vertex"
+msgstr "Chèn đỉnh"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py pdfarranger_qt/properties.py
@@ -2405,11 +2426,6 @@ msgstr "Đang mở %s…"
 msgid "Importing…"
 msgstr "Đang nhập…"
 
-# machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py pdfarranger_qt/notepanel.py
-msgid "Cancel"
-msgstr "Hủy"
-
 #: pdfarranger_qt/mainwindow.py
 msgid "Import"
 msgstr "Nhập"
@@ -3056,6 +3072,16 @@ msgstr "Hình bầu dục/Hình tròn"
 msgid "Line"
 msgstr "Đường thẳng"
 
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py pdfarranger_qt/tools.py
+msgid "Polygon"
+msgstr "Đa giác"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Polyline"
+msgstr "Đường gấp khúc"
+
 #: pdfarranger_qt/properties.py
 msgid "Review History"
 msgstr "Lịch sử duyệt"
@@ -3152,6 +3178,11 @@ msgstr "Đầu"
 #: pdfarranger_qt/properties.py
 msgid "End"
 msgstr "Cuối"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py pdfarranger_qt/toolstrip.py
+msgid "Hairline"
+msgstr "Nét mảnh"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/properties.py
@@ -3417,11 +3448,6 @@ msgstr "Mũi tên"
 #: pdfarranger_qt/tools.py
 msgid "Text callout"
 msgstr "Chú giải văn bản"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/tools.py
-msgid "Polygon"
-msgstr "Đa giác"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/tools.py

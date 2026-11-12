@@ -872,6 +872,11 @@ class MainWindow(QMainWindow):
         # arrow at its end and says so in `/IT`.
         "line": markup.LINE,
         "arrow": markup.LINE,
+        # *Polygon* and *Cloud*, one kind -- the Cloud tool's starting with
+        # the large cloud and saying so in `/IT` -- and *Connected Lines*.
+        "polygon": markup.POLYGON,
+        "cloud": markup.POLYGON,
+        "polyline": markup.POLYLINE,
     }
 
     #: The gestures above that are not tools, and the tool each acts as --
@@ -911,6 +916,9 @@ class MainWindow(QMainWindow):
         "circle": "oval",
         "line": "line",
         "arrow": "arrow",
+        "polygon": "polygon",
+        "cloud": "cloud",
+        "connected_lines": "polyline",
         "draw": "draw",
     }
 
@@ -1117,6 +1125,18 @@ class MainWindow(QMainWindow):
             ends = told.get("ends") or (("/None", "/OpenArrow") if tool == "arrow"
                                         else ("/None", "/None"))
             rect = markup.line_rect(points, ends, told.get("thickness", 1.0))
+        poly_style = None
+        if subtype in markup.POLYS:
+            # The points the canvas collected, start first; a cloud starts
+            # with the large cloud, unless the tool was told otherwise.
+            points = tuple(rects[-1])
+            told = self._boxes.get(self.CANVAS_TO_STRIP.get(tool, tool), {})
+            ends = (told.get("ends") or ("/None", "/None")
+                    if subtype == markup.POLYLINE else ("/None", "/None"))
+            poly_style = told.get("border_style") or (
+                "large cloud" if tool == "cloud" else "straight")
+            rect = markup.poly_rect(subtype, points, ends, poly_style,
+                                    told.get("thickness", 1.0))
         if subtype == markup.CARET:
             # *Insert Text*: the canvas sends the character beside the gap,
             # cut off at the gap, and the caret is sized from its height as
@@ -1147,8 +1167,8 @@ class MainWindow(QMainWindow):
                   else box.get("fill")
                   if subtype in markup.SHAPES or subtype == markup.LINE
                   else None),
-            thickness=box.get("thickness", 1.0),
-            border_style=box.get("border_style", "straight"),
+            thickness=markup.written_thickness(subtype, box.get("thickness", 1.0)),
+            border_style=poly_style or box.get("border_style", "straight"),
             points=points, ends=ends))
         if tool == "replace" and quads:
             # **And its caret**, at the end of the run, in the same colour
@@ -1175,6 +1195,10 @@ class MainWindow(QMainWindow):
             # Acrobat's own mark of the Arrow tool, kept whatever the line's
             # ends become.
             return "", markup.LINE_ARROW
+        if tool == "cloud":
+            # And of the Cloud tool, kept whatever the polygon's style
+            # becomes.
+            return "", markup.POLYGON_CLOUD
         return "", ""
 
     def colour_for(self, tool: str):
@@ -1398,7 +1422,9 @@ class MainWindow(QMainWindow):
         style = self._styles.get(key) or (
             "straight" if kind in markup.UNDERLINE_STYLES.values() else None)
         box = dict(self._boxes.get(key, {}))
-        is_box = kind == markup.FREETEXT or kind in markup.SHAPES
+        is_box = (kind == markup.FREETEXT or kind in markup.SHAPES
+                  or kind == markup.POLYGON)
+        is_line = kind in (markup.LINE, markup.POLYLINE)
         fill = box.get("fill")
         if kind == markup.FREETEXT and not fill:
             fill = markup.swatch("White")
@@ -1415,11 +1441,13 @@ class MainWindow(QMainWindow):
             style=style, styles=self._styles_for(kind),
             icon=self._icon_for(tool) if kind in (markup.TEXT, markup.STAMP) else "",
             icons=self._icons_for(kind),
-            box=is_box, fill_optional=kind in markup.SHAPES,
-            fill=fill if (is_box or kind == markup.LINE) else None,
+            box=is_box,
+            fill_optional=kind in markup.SHAPES or kind == markup.POLYGON,
+            fill=fill if (is_box or is_line) else None,
             thickness=float(box.get("thickness", 1.0)),
-            border_style=box.get("border_style", "straight"),
-            line=kind == markup.LINE, ends=tuple(ends),
+            border_style=box.get("border_style") or (
+                "large cloud" if tool == "cloud" else "straight"),
+            line=is_line, ends=tuple(ends),
             defaults_only=True), self)
         if form.exec() != MarkProperties.DialogCode.Accepted:
             return
@@ -1451,7 +1479,8 @@ class MainWindow(QMainWindow):
         self._offer_thickness()
 
     #: The strip's tools whose marks have a line to thicken.
-    LINED_TOOLS = ("rectangle", "circle", "line", "arrow")
+    LINED_TOOLS = ("rectangle", "circle", "line", "arrow", "polygon", "cloud",
+                   "connected_lines")
 
     def _offer_thickness(self, mark=None) -> None:
         """Show the strip's thickness at ``mark``'s, for a selected shape;
@@ -1464,8 +1493,7 @@ class MainWindow(QMainWindow):
                     float(getattr(mark, "thickness", 1.0) or 0.0),
                     zero=getattr(mark, "fill", None) is not None)
                 return
-            if kind == markup.LINE:
-                # A line of 0 is still a line, the thinnest there is.
+            if kind == markup.LINE or kind in markup.POLYS:
                 self.tool_strip.offer_thickness(
                     float(getattr(mark, "thickness", 1.0) or 0.0), zero=True)
                 return
@@ -1486,7 +1514,7 @@ class MainWindow(QMainWindow):
             index, mark = found
             kind = (mark.kind if isinstance(mark, markup.Annotation)
                     else mark.subtype)
-            if kind in markup.SHAPES or kind == markup.LINE:
+            if kind in markup.SHAPES or kind == markup.LINE or kind in markup.POLYS:
                 if getattr(mark, "locked", False):
                     return
                 self._commit_mark_change(_("Change Mark"), index, mark)
@@ -1611,9 +1639,15 @@ class MainWindow(QMainWindow):
         if getattr(mark, "locked", False):
             return
         points = tuple(float(v) for v in points)
-        rect = markup.line_rect(points, getattr(mark, "ends", None)
-                                or ("/None", "/None"),
-                                float(getattr(mark, "thickness", 1.0) or 0.0))
+        kind = (mark.kind if isinstance(mark, markup.Annotation)
+                else mark.subtype)
+        ends = getattr(mark, "ends", None) or ("/None", "/None")
+        thickness = float(getattr(mark, "thickness", 1.0) or 0.0)
+        # A line's rectangle is round it and its ends; a polygon's or a
+        # polyline's round what it draws, its cloud included.
+        rect = (markup.poly_rect(kind, points, ends, mark.border_style, thickness)
+                if kind in markup.POLYS
+                else markup.line_rect(points, ends, thickness))
         self._commit_mark_change(_("Reshape Mark"), index, mark)
         if isinstance(mark, markup.Annotation):
             mark.points = points
@@ -1645,9 +1679,10 @@ class MainWindow(QMainWindow):
         # and the rectangle only contains them.
         points = getattr(mark, "points", None)
         if points:
+            # Every point of a line, a polygon or a polyline, by the same.
             dx, dy = rect[0] - mark.rect[0], rect[1] - mark.rect[1]
-            points = (points[0] + dx, points[1] + dy,
-                      points[2] + dx, points[3] + dy)
+            points = tuple(v + (dx if k % 2 == 0 else dy)
+                           for k, v in enumerate(points))
         if isinstance(mark, markup.Annotation):
             self._commit_mark_change(_("Move Mark"), index, mark)
             mark.rect = rect
@@ -1899,7 +1934,9 @@ class MainWindow(QMainWindow):
         said = canvas.note_bearer(index, mark)
         mine = isinstance(mark, markup.Annotation)
         kind_here = mark.kind if mine else mark.subtype
-        is_box = kind_here == markup.FREETEXT or kind_here in markup.SHAPES
+        is_box = (kind_here == markup.FREETEXT or kind_here in markup.SHAPES
+                  or kind_here == markup.POLYGON)
+        is_line = kind_here in (markup.LINE, markup.POLYLINE)
         form = MarkProperties(Properties(
             kind=("replace_text" if said is not mark
                   else mark.kind if mine else mark.subtype),
@@ -1921,10 +1958,10 @@ class MainWindow(QMainWindow):
             icons_fixed=markup.is_reply(mark),
             styles=self._styles_for(mark.kind if mine else mark.subtype),
             box=is_box,
-            fill_optional=kind_here in markup.SHAPES,
+            fill_optional=kind_here in markup.SHAPES or kind_here == markup.POLYGON,
             fill=(getattr(mark, "fill", None)
-                  if is_box or kind_here == markup.LINE else None),
-            line=kind_here == markup.LINE,
+                  if is_box or is_line else None),
+            line=is_line,
             ends=tuple(getattr(mark, "ends", None) or ("/None", "/None")),
             thickness=float(getattr(mark, "thickness", 1.0) or 0.0),
             border_style=getattr(mark, "border_style", "straight") or "straight",
@@ -1937,11 +1974,11 @@ class MainWindow(QMainWindow):
         was_modified = self.modified
         was = {"colour": getattr(mark, "colour", None),
                "opacity": getattr(mark, "opacity", None)}
-        if is_box or kind_here == markup.LINE:
+        if is_box or is_line:
             was.update(fill=getattr(mark, "fill", None),
                        thickness=getattr(mark, "thickness", 1.0),
                        border_style=getattr(mark, "border_style", "straight"))
-        if kind_here == markup.LINE:
+        if is_line:
             was.update(ends=tuple(getattr(mark, "ends", None)
                                   or ("/None", "/None")), rect=tuple(mark.rect))
         form.previewed.connect(
@@ -2071,6 +2108,17 @@ class MainWindow(QMainWindow):
         scale = page.scale if page.scale else 1.0
         kind = (mark.kind if isinstance(mark, markup.Annotation)
                 else mark.subtype)
+        if fields.get("thickness") is not None:
+            # Hairline is 0 on a line or a polyline and 0.01 on every other
+            # mark, where 0 is No Border.
+            fields = dict(fields, thickness=markup.written_thickness(
+                kind, fields["thickness"]))
+        if kind in markup.POLYS and (
+                {"ends", "thickness", "border_style"} & set(fields)):
+            fields = dict(fields, rect=markup.poly_rect(
+                kind, mark.points, fields.get("ends", getattr(mark, "ends", None)),
+                fields.get("border_style", mark.border_style),
+                float(fields.get("thickness", mark.thickness) or 0.0)))
         if kind == markup.LINE and ({"ends", "thickness"} & set(fields)):
             # A line's rectangle is round its ends, which change size with
             # their style and with the line's width.
@@ -2492,6 +2540,9 @@ class MainWindow(QMainWindow):
             # The other kind two tools make, told apart by `/IT`.
             return ("arrow" if str(getattr(mark, "intent", "") or "")
                     == markup.LINE_ARROW else "line")
+        if kind == markup.POLYGON:
+            return ("cloud" if str(getattr(mark, "intent", "") or "")
+                    == markup.POLYGON_CLOUD else "polygon")
         for tool, made in self.MARK_KINDS.items():
             if made == kind and tool not in self.GESTURE_TOOLS:
                 return self.CANVAS_TO_STRIP.get(tool, tool)
@@ -2532,14 +2583,14 @@ class MainWindow(QMainWindow):
                 else mark.subtype)
         if icon is not None and kind == markup.TEXT:
             self._icons[tool] = icon
-        if kind == markup.LINE:
+        if kind in (markup.LINE, markup.POLYLINE):
             fill = getattr(mark, "fill", None)
             self._boxes[tool] = {
                 "fill": tuple(fill) if fill else None,
                 "thickness": float(getattr(mark, "thickness", 1.0) or 0.0),
                 "border_style": getattr(mark, "border_style", "straight"),
                 "ends": tuple(getattr(mark, "ends", None) or ("/None", "/None"))}
-        if kind in markup.SHAPES:
+        if kind in markup.SHAPES or kind == markup.POLYGON:
             fill = getattr(mark, "fill", None)
             self._boxes[tool] = {
                 "fill": tuple(fill) if fill else None,

@@ -169,12 +169,14 @@ TOOLS: List[Tool] = [
     Tool("callout", DRAWING, N_("Text callout"), "comment-text-outline",
          "/FreeText /IT /FreeTextCallout, /CL, /LE /OpenArrow",
          colour='White'),
+    # Three tools, two marks: the Cloud tool's polygon starts with the large
+    # cloud and carries `/IT /PolygonCloud`.
     Tool("polygon", DRAWING, N_("Polygon"), "pentagon-outline",
-         "/Polygon, /Vertices"),
+         "/Polygon, /Vertices, /IC, /BS, /BE", marks=("Polygon",)),
     Tool("cloud", DRAWING, N_("Cloud"), "cloud-outline",
-         "/Polygon /IT /PolygonCloud, /BE /I"),
+         "/Polygon /IT /PolygonCloud, /BE /I 2", marks=("Polygon",)),
     Tool("connected_lines", DRAWING, N_("Connected lines"), "vector-polyline",
-         "/PolyLine, /Vertices"),
+         "/PolyLine, /Vertices, /LE", marks=("Polyline",)),
     Tool("stamps", DRAWING, N_("Stamps palette"), "stamper",
          "/Stamp, /Name, and an /AP we do not draw"),
 ]

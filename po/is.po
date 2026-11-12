@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-11 19:12+0000\n"
+"POT-Creation-Date: 2026-11-12 20:29+0000\n"
 "PO-Revision-Date: 2025-09-28 16:51+0000\n"
 "Last-Translator: Sveinn í Felli <sv1@fellsnet.is>\n"
 "Language: is\n"
@@ -34,6 +34,17 @@ msgstr "Síða {}"
 #: pdfarranger_qt/canvas.py
 msgid "Empty note"
 msgstr "Tómur minnispunktur"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py pdfarranger_qt/mainwindow.py
+#: pdfarranger_qt/notepanel.py
+msgid "Cancel"
+msgstr "Hætta við"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Complete"
+msgstr "Ljúka"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
@@ -164,6 +175,16 @@ msgstr "%d staða"
 #: pdfarranger_qt/canvas.py pdfarranger_qt/notepanel.py
 msgid "Status"
 msgstr "Staða"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Remove Vertex"
+msgstr "Fjarlægja hornpunkt"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Insert Vertex"
+msgstr "Setja inn hornpunkt"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py pdfarranger_qt/properties.py
@@ -2420,11 +2441,6 @@ msgstr "Opna %s…"
 msgid "Importing…"
 msgstr "Flyt inn…"
 
-# machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py pdfarranger_qt/notepanel.py
-msgid "Cancel"
-msgstr "Hætta við"
-
 #: pdfarranger_qt/mainwindow.py
 msgid "Import"
 msgstr "Flytja inn"
@@ -3076,6 +3092,16 @@ msgstr "Sporaskja/hringur"
 msgid "Line"
 msgstr "Lína"
 
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py pdfarranger_qt/tools.py
+msgid "Polygon"
+msgstr "Marghyrningur"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Polyline"
+msgstr "Fjöllína"
+
 #: pdfarranger_qt/properties.py
 msgid "Review History"
 msgstr "Yfirferðarsaga"
@@ -3172,6 +3198,11 @@ msgstr "Upphaf"
 #: pdfarranger_qt/properties.py
 msgid "End"
 msgstr "Endir"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py pdfarranger_qt/toolstrip.py
+msgid "Hairline"
+msgstr "Hárlína"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/properties.py
@@ -3437,11 +3468,6 @@ msgstr "Ör"
 #: pdfarranger_qt/tools.py
 msgid "Text callout"
 msgstr "Textabóla"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/tools.py
-msgid "Polygon"
-msgstr "Marghyrningur"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/tools.py

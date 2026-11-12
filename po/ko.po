@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pdfarranger - Korean\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-11 19:12+0000\n"
+"POT-Creation-Date: 2026-11-12 20:29+0000\n"
 "PO-Revision-Date: 2026-05-25 00:41+0900\n"
 "Last-Translator: VenusGirl <venusgirl@outlook.com>\n"
 "Language: ko\n"
@@ -33,6 +33,17 @@ msgstr "{} 페이지"
 #: pdfarranger_qt/canvas.py
 msgid "Empty note"
 msgstr "빈 메모"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py pdfarranger_qt/mainwindow.py
+#: pdfarranger_qt/notepanel.py
+msgid "Cancel"
+msgstr "취소"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Complete"
+msgstr "완료"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
@@ -163,6 +174,16 @@ msgstr "상태 %d개"
 #: pdfarranger_qt/canvas.py pdfarranger_qt/notepanel.py
 msgid "Status"
 msgstr "상태"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Remove Vertex"
+msgstr "꼭짓점 제거"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Insert Vertex"
+msgstr "꼭짓점 삽입"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py pdfarranger_qt/properties.py
@@ -2299,11 +2320,6 @@ msgstr "%s 여는 중…"
 msgid "Importing…"
 msgstr "가져오는 중…"
 
-# machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py pdfarranger_qt/notepanel.py
-msgid "Cancel"
-msgstr "취소"
-
 #: pdfarranger_qt/mainwindow.py
 msgid "Import"
 msgstr "가져오기"
@@ -2944,6 +2960,16 @@ msgstr "타원/원"
 msgid "Line"
 msgstr "선"
 
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py pdfarranger_qt/tools.py
+msgid "Polygon"
+msgstr "다각형"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Polyline"
+msgstr "폴리라인"
+
 #: pdfarranger_qt/properties.py
 msgid "Review History"
 msgstr "검토 기록"
@@ -3040,6 +3066,11 @@ msgstr "시작"
 #: pdfarranger_qt/properties.py
 msgid "End"
 msgstr "끝"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py pdfarranger_qt/toolstrip.py
+msgid "Hairline"
+msgstr "가는 선"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/properties.py
@@ -3305,11 +3336,6 @@ msgstr "화살표"
 #: pdfarranger_qt/tools.py
 msgid "Text callout"
 msgstr "텍스트 설명선"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/tools.py
-msgid "Polygon"
-msgstr "다각형"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/tools.py

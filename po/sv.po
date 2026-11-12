@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  pdfarranger\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-11 19:12+0000\n"
+"POT-Creation-Date: 2026-11-12 20:29+0000\n"
 "PO-Revision-Date: 2026-05-24 07:36+0300\n"
 "Last-Translator: kbengs\n"
 "Language: sv\n"
@@ -33,6 +33,17 @@ msgstr "Sida {}"
 #: pdfarranger_qt/canvas.py
 msgid "Empty note"
 msgstr "Tom anteckning"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py pdfarranger_qt/mainwindow.py
+#: pdfarranger_qt/notepanel.py
+msgid "Cancel"
+msgstr "Avbryt"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Complete"
+msgstr "Slutför"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
@@ -163,6 +174,16 @@ msgstr "%d status"
 #: pdfarranger_qt/canvas.py pdfarranger_qt/notepanel.py
 msgid "Status"
 msgstr "Status"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Remove Vertex"
+msgstr "Ta bort hörn"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Insert Vertex"
+msgstr "Infoga hörn"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py pdfarranger_qt/properties.py
@@ -2402,11 +2423,6 @@ msgstr "Öppnar %s…"
 msgid "Importing…"
 msgstr "Importerar…"
 
-# machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py pdfarranger_qt/notepanel.py
-msgid "Cancel"
-msgstr "Avbryt"
-
 #: pdfarranger_qt/mainwindow.py
 msgid "Import"
 msgstr "Importera"
@@ -3060,6 +3076,16 @@ msgstr "Oval/cirkel"
 msgid "Line"
 msgstr "Linje"
 
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py pdfarranger_qt/tools.py
+msgid "Polygon"
+msgstr "Polygon"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Polyline"
+msgstr "Polylinje"
+
 #: pdfarranger_qt/properties.py
 msgid "Review History"
 msgstr "Granskningshistorik"
@@ -3156,6 +3182,11 @@ msgstr "Början"
 #: pdfarranger_qt/properties.py
 msgid "End"
 msgstr "Slut"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py pdfarranger_qt/toolstrip.py
+msgid "Hairline"
+msgstr "Hårlinje"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/properties.py
@@ -3421,11 +3452,6 @@ msgstr "Pil"
 #: pdfarranger_qt/tools.py
 msgid "Text callout"
 msgstr "Textbubbla"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/tools.py
-msgid "Polygon"
-msgstr "Polygon"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/tools.py

@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-11 19:12+0000\n"
+"POT-Creation-Date: 2026-11-12 20:29+0000\n"
 "PO-Revision-Date: 2024-03-20 17:20+0800\n"
 "Last-Translator: 錢政維 <e.cwchien@gmail.com>\n"
 "Language: zh_TW\n"
@@ -38,6 +38,17 @@ msgstr "第 {} 頁"
 #: pdfarranger_qt/canvas.py
 msgid "Empty note"
 msgstr "空白註解"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py pdfarranger_qt/mainwindow.py
+#: pdfarranger_qt/notepanel.py
+msgid "Cancel"
+msgstr "取消"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Complete"
+msgstr "完成"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
@@ -168,6 +179,16 @@ msgstr "%d 個狀態"
 #: pdfarranger_qt/canvas.py pdfarranger_qt/notepanel.py
 msgid "Status"
 msgstr "狀態"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Remove Vertex"
+msgstr "刪除頂點"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Insert Vertex"
+msgstr "插入頂點"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py pdfarranger_qt/properties.py
@@ -2280,11 +2301,6 @@ msgstr "正在開啟 %s…"
 msgid "Importing…"
 msgstr "正在匯入…"
 
-# machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py pdfarranger_qt/notepanel.py
-msgid "Cancel"
-msgstr "取消"
-
 #: pdfarranger_qt/mainwindow.py
 msgid "Import"
 msgstr "匯入"
@@ -2925,6 +2941,16 @@ msgstr "橢圓/圓形"
 msgid "Line"
 msgstr "直線"
 
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py pdfarranger_qt/tools.py
+msgid "Polygon"
+msgstr "多邊形"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Polyline"
+msgstr "折線"
+
 #: pdfarranger_qt/properties.py
 msgid "Review History"
 msgstr "審閱歷程記錄"
@@ -3021,6 +3047,11 @@ msgstr "起點"
 #: pdfarranger_qt/properties.py
 msgid "End"
 msgstr "終點"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py pdfarranger_qt/toolstrip.py
+msgid "Hairline"
+msgstr "細線"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/properties.py
@@ -3286,11 +3317,6 @@ msgstr "箭頭"
 #: pdfarranger_qt/tools.py
 msgid "Text callout"
 msgstr "文字圖說"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/tools.py
-msgid "Polygon"
-msgstr "多邊形"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/tools.py

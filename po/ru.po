@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pdfarranger master\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-11 19:12+0000\n"
+"POT-Creation-Date: 2026-11-12 20:29+0000\n"
 "PO-Revision-Date: 2026-09-04 09:59+0000\n"
 "Last-Translator: Lumenman <28367232+Lumenman@users.noreply.github.com>\n"
 "Language: ru\n"
@@ -36,6 +36,16 @@ msgstr "Страница {}"
 #: pdfarranger_qt/canvas.py
 msgid "Empty note"
 msgstr "Пустая заметка"
+
+#: pdfarranger_qt/canvas.py pdfarranger_qt/mainwindow.py
+#: pdfarranger_qt/notepanel.py
+msgid "Cancel"
+msgstr "Отмена"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Complete"
+msgstr "Завершить"
 
 #: pdfarranger_qt/canvas.py
 msgid "Open Link"
@@ -158,6 +168,16 @@ msgstr "%d статус"
 #: pdfarranger_qt/canvas.py pdfarranger_qt/notepanel.py
 msgid "Status"
 msgstr "Состояние"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Remove Vertex"
+msgstr "Удалить вершину"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Insert Vertex"
+msgstr "Вставить вершину"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py pdfarranger_qt/properties.py
@@ -2282,10 +2302,6 @@ msgstr "Открытие %s…"
 msgid "Importing…"
 msgstr "Импорт…"
 
-#: pdfarranger_qt/mainwindow.py pdfarranger_qt/notepanel.py
-msgid "Cancel"
-msgstr "Отмена"
-
 #: pdfarranger_qt/mainwindow.py
 msgid "Import"
 msgstr "Импортировать"
@@ -2908,6 +2924,16 @@ msgstr "Овал/круг"
 msgid "Line"
 msgstr "Линия"
 
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py pdfarranger_qt/tools.py
+msgid "Polygon"
+msgstr "Многоугольник"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Polyline"
+msgstr "Ломаная"
+
 #: pdfarranger_qt/properties.py
 msgid "Review History"
 msgstr "История рецензирования"
@@ -3003,6 +3029,11 @@ msgstr "Начало"
 #: pdfarranger_qt/properties.py
 msgid "End"
 msgstr "Конец"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py pdfarranger_qt/toolstrip.py
+msgid "Hairline"
+msgstr "Тонкая линия"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/properties.py
@@ -3245,11 +3276,6 @@ msgstr "Стрелка"
 #: pdfarranger_qt/tools.py
 msgid "Text callout"
 msgstr "Текстовая выноска"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/tools.py
-msgid "Polygon"
-msgstr "Многоугольник"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/tools.py

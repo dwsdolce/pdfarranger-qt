@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PDF-Shuffler 0.7\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-11 19:12+0000\n"
+"POT-Creation-Date: 2026-11-12 20:29+0000\n"
 "PO-Revision-Date: 2025-05-26 10:43+0200\n"
 "Last-Translator: Heimen Stoffels <vistausss@fastmail.com>\n"
 "Language: nl\n"
@@ -37,6 +37,17 @@ msgstr "Pagina {}"
 #: pdfarranger_qt/canvas.py
 msgid "Empty note"
 msgstr "Lege notitie"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py pdfarranger_qt/mainwindow.py
+#: pdfarranger_qt/notepanel.py
+msgid "Cancel"
+msgstr "Annuleren"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Complete"
+msgstr "Voltooien"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
@@ -167,6 +178,16 @@ msgstr "%d status"
 #: pdfarranger_qt/canvas.py pdfarranger_qt/notepanel.py
 msgid "Status"
 msgstr "Status"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Remove Vertex"
+msgstr "Hoekpunt verwijderen"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Insert Vertex"
+msgstr "Hoekpunt invoegen"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py pdfarranger_qt/properties.py
@@ -2450,11 +2471,6 @@ msgstr "%s wordt geopend…"
 msgid "Importing…"
 msgstr "Importeren…"
 
-# machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py pdfarranger_qt/notepanel.py
-msgid "Cancel"
-msgstr "Annuleren"
-
 #: pdfarranger_qt/mainwindow.py
 msgid "Import"
 msgstr "Importeren"
@@ -3112,6 +3128,16 @@ msgstr "Ovaal/cirkel"
 msgid "Line"
 msgstr "Lijn"
 
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py pdfarranger_qt/tools.py
+msgid "Polygon"
+msgstr "Veelhoek"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Polyline"
+msgstr "Polylijn"
+
 #: pdfarranger_qt/properties.py
 msgid "Review History"
 msgstr "Revisiegeschiedenis"
@@ -3208,6 +3234,11 @@ msgstr "Begin"
 #: pdfarranger_qt/properties.py
 msgid "End"
 msgstr "Einde"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py pdfarranger_qt/toolstrip.py
+msgid "Hairline"
+msgstr "Haarlijn"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/properties.py
@@ -3473,11 +3504,6 @@ msgstr "Pijl"
 #: pdfarranger_qt/tools.py
 msgid "Text callout"
 msgstr "Tekstballon"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/tools.py
-msgid "Polygon"
-msgstr "Veelhoek"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/tools.py

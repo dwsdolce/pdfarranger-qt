@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  pdfarranger\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-11 19:12+0000\n"
+"POT-Creation-Date: 2026-11-12 20:29+0000\n"
 "PO-Revision-Date: 2023-07-10 15:37+0000\n"
 "Last-Translator: PavelZ\n"
 "Language: cs_CZ\n"
@@ -30,6 +30,17 @@ msgstr "Stránka {}"
 #: pdfarranger_qt/canvas.py
 msgid "Empty note"
 msgstr "Prázdná poznámka"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py pdfarranger_qt/mainwindow.py
+#: pdfarranger_qt/notepanel.py
+msgid "Cancel"
+msgstr "Zrušit"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Complete"
+msgstr "Dokončit"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
@@ -160,6 +171,16 @@ msgstr "%d stav"
 #: pdfarranger_qt/canvas.py pdfarranger_qt/notepanel.py
 msgid "Status"
 msgstr "Stav"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Remove Vertex"
+msgstr "Odebrat vrchol"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Insert Vertex"
+msgstr "Vložit vrchol"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py pdfarranger_qt/properties.py
@@ -2433,11 +2454,6 @@ msgstr "Otevírá se %s…"
 msgid "Importing…"
 msgstr "Importuje se…"
 
-# machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py pdfarranger_qt/notepanel.py
-msgid "Cancel"
-msgstr "Zrušit"
-
 #: pdfarranger_qt/mainwindow.py
 msgid "Import"
 msgstr "Importovat"
@@ -3095,6 +3111,16 @@ msgstr "Ovál/kruh"
 msgid "Line"
 msgstr "Čára"
 
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py pdfarranger_qt/tools.py
+msgid "Polygon"
+msgstr "Mnohoúhelník"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Polyline"
+msgstr "Lomená čára"
+
 #: pdfarranger_qt/properties.py
 msgid "Review History"
 msgstr "Historie revizí"
@@ -3191,6 +3217,11 @@ msgstr "Začátek"
 #: pdfarranger_qt/properties.py
 msgid "End"
 msgstr "Konec"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py pdfarranger_qt/toolstrip.py
+msgid "Hairline"
+msgstr "Vlasová čára"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/properties.py
@@ -3456,11 +3487,6 @@ msgstr "Šipka"
 #: pdfarranger_qt/tools.py
 msgid "Text callout"
 msgstr "Textová bublina"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/tools.py
-msgid "Polygon"
-msgstr "Mnohoúhelník"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/tools.py

@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PDF Arranger 1.14.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-11 19:12+0000\n"
+"POT-Creation-Date: 2026-11-12 20:29+0000\n"
 "PO-Revision-Date: 2026-06-02 17:09+0800\n"
 "Last-Translator: Puqns67 <me@puqns67.icu>\n"
 "Language: zh_CN\n"
@@ -37,6 +37,17 @@ msgstr "第 {} 页"
 #: pdfarranger_qt/canvas.py
 msgid "Empty note"
 msgstr "空注释"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py pdfarranger_qt/mainwindow.py
+#: pdfarranger_qt/notepanel.py
+msgid "Cancel"
+msgstr "取消"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Complete"
+msgstr "完成"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
@@ -167,6 +178,16 @@ msgstr "%d 个状态"
 #: pdfarranger_qt/canvas.py pdfarranger_qt/notepanel.py
 msgid "Status"
 msgstr "状态"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Remove Vertex"
+msgstr "删除顶点"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Insert Vertex"
+msgstr "插入顶点"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py pdfarranger_qt/properties.py
@@ -2243,11 +2264,6 @@ msgstr "正在打开 %s…"
 msgid "Importing…"
 msgstr "正在导入…"
 
-# machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py pdfarranger_qt/notepanel.py
-msgid "Cancel"
-msgstr "取消"
-
 #: pdfarranger_qt/mainwindow.py
 msgid "Import"
 msgstr "导入"
@@ -2888,6 +2904,16 @@ msgstr "椭圆/圆形"
 msgid "Line"
 msgstr "直线"
 
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py pdfarranger_qt/tools.py
+msgid "Polygon"
+msgstr "多边形"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Polyline"
+msgstr "折线"
+
 #: pdfarranger_qt/properties.py
 msgid "Review History"
 msgstr "审阅历史记录"
@@ -2984,6 +3010,11 @@ msgstr "起点"
 #: pdfarranger_qt/properties.py
 msgid "End"
 msgstr "终点"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py pdfarranger_qt/toolstrip.py
+msgid "Hairline"
+msgstr "细线"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/properties.py
@@ -3249,11 +3280,6 @@ msgstr "箭头"
 #: pdfarranger_qt/tools.py
 msgid "Text callout"
 msgstr "文本标注"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/tools.py
-msgid "Polygon"
-msgstr "多边形"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/tools.py

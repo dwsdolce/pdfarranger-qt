@@ -1107,6 +1107,16 @@ class PageCanvas(QAbstractScrollArea):
         self._clicked_shape = False
         #: ``(mark, points)`` while one of a line's handles is dragged.
         self._line_shaping = None
+        #: ``(page, [viewport points], pointer)`` while a polygon, a cloud or
+        #: a polyline is being made, a point at each press.
+        self._poly_drawing = None
+        #: ``(mark, points)`` and ``(page, mark, which)`` while one of a
+        #: polygon's or a polyline's vertices is dragged.
+        self._poly_shaping = None
+        self._dragging_vertex = None
+        #: Where the last context menu was asked for, for the entries that
+        #: depend on it: Insert Vertex goes where it was clicked.
+        self._menu_point = None
         #: ``(page, mark, which)`` for the handle being dragged.
         self._dragging_line_end = None
         #: One `forms.displayed_box` per page, for placing a mark. Plain data
@@ -2552,7 +2562,8 @@ class PageCanvas(QAbstractScrollArea):
         rect, _angle = self._shape_of(mark)
         if (mark.kind if isinstance(mark, markup.Annotation)
                 else mark.subtype) in (markup.STAMP, markup.FREETEXT,
-                                       *markup.SHAPES, markup.LINE):
+                                       *markup.SHAPES, markup.LINE,
+                                       *markup.POLYS):
             # A stamp's box is its rectangle, at the page's own scale: it
             # is ink on the page, so none of the holding-still below
             # applies to it. Nor to a text box, a rectangle or an oval,
@@ -2636,7 +2647,8 @@ class PageCanvas(QAbstractScrollArea):
             kind = (mark.kind if isinstance(mark, markup.Annotation)
                     else mark.subtype)
             if kind not in (markup.TEXT, markup.STAMP, markup.FREETEXT,
-                            *markup.SHAPES, markup.LINE):
+                            *markup.SHAPES, markup.LINE,
+                                       *markup.POLYS):
                 continue
             if kind in markup.SHAPES:
                 if self._shape_hit(index, mark, point):
@@ -2644,6 +2656,10 @@ class PageCanvas(QAbstractScrollArea):
                 continue
             if kind == markup.LINE:
                 if self._line_hit(index, mark, point):
+                    return (index, which, mark)
+                continue
+            if kind in markup.POLYS:
+                if self._poly_hit(index, mark, point):
                     return (index, which, mark)
                 continue
             where = self.note_icon_rect(index, mark)
@@ -2800,6 +2816,13 @@ class PageCanvas(QAbstractScrollArea):
     LINE = "line"
     ARROW = "arrow"
     LINE_TOOLS = (LINE, ARROW)
+    #: *Polygon*, *Cloud* and *Connected Lines*: a point at each press, the
+    #: next segment following the pointer, finished by a double-click,
+    #: Complete or Return and thrown away by Cancel or Escape.
+    POLYGON = "polygon"
+    CLOUD = "cloud"
+    POLYLINE = "polyline"
+    POLY_TOOLS = (POLYGON, CLOUD, POLYLINE)
     #: The tools that make a mark by two clicks as well as by a drag.
     CLICK_TOOLS = SHAPE_TOOLS + LINE_TOOLS
 
@@ -2845,7 +2868,8 @@ class PageCanvas(QAbstractScrollArea):
         self._tool = tool
         self._marking = None
         self._clicked_shape = False
-        if tool in self.CLICK_TOOLS:
+        self._poly_drawing = None
+        if tool in self.CLICK_TOOLS or tool in self.POLY_TOOLS:
             # A shape or a line is drawn over the page, not over words: a
             # selection left from before is not what it is for.
             self.clear_selection()
@@ -3172,7 +3196,8 @@ class PageCanvas(QAbstractScrollArea):
     #: at; a note is reached by its icon, which `note_at` already answers for.
     SELECTABLE = ("/Highlight", "/StrikeOut", "/Underline", "/Squiggly",
                   markup.TEXT, markup.STAMP, markup.CARET, markup.FREETEXT,
-                  *markup.SHAPES, markup.LINE)
+                  *markup.SHAPES, markup.LINE,
+                                       *markup.POLYS)
 
     #: Of those, the ones drawn *over* a run of words. A comment's icon is
     #: the odd one: it is placed rather than sized, so it has no run to
@@ -3258,7 +3283,8 @@ class PageCanvas(QAbstractScrollArea):
         kind = (mark.kind if isinstance(mark, markup.Annotation)
                 else mark.subtype)
         if kind in (markup.TEXT, markup.STAMP, markup.FREETEXT,
-                    *markup.SHAPES, markup.LINE):
+                    *markup.SHAPES, markup.LINE,
+                                       *markup.POLYS):
             # Both comments, a text box, the shapes and a line, through one
             # call: it is the one that knows a comment mark holds its size
             # and a stamp does not, and the one that knows a gesture in
@@ -3330,6 +3356,10 @@ class PageCanvas(QAbstractScrollArea):
                 continue
             if kind == markup.LINE:
                 if self._line_hit(index, mark, point):
+                    return (index, mark)
+                continue
+            if kind in markup.POLYS:
+                if self._poly_hit(index, mark, point):
                     return (index, mark)
                 continue
             for quad in self.mark_boxes(mark):
@@ -3707,6 +3737,25 @@ class PageCanvas(QAbstractScrollArea):
                 self.viewport().update()
             return
 
+        if self._poly_drawing is not None:
+            page, points, _pointer = self._poly_drawing
+            self._poly_drawing = (page, points, position)
+            self.viewport().update()
+            return
+
+        if self._dragging_vertex is not None and event.buttons() & Qt.LeftButton:
+            page, mark, which = self._dragging_vertex
+            points = list(self._poly_shaping[1])
+            mine = isinstance(mark, markup.Annotation)
+            target = self._vertex_snapped(page, mark, points, which, position)
+            at = self._point_on(page, target, mine)
+            if at is not None:
+                points[2 * which:2 * which + 2] = at
+                self._poly_shaping = (mark, tuple(points))
+                self._place_mark_buttons()
+                self.viewport().update()
+            return
+
         if self._dragging_line_end is not None and event.buttons() & Qt.LeftButton:
             page, mark, which = self._dragging_line_end
             points = list(self._line_shaping[1])
@@ -3926,8 +3975,8 @@ class PageCanvas(QAbstractScrollArea):
         index, mark = self._selected
         kind = (mark.kind if isinstance(mark, markup.Annotation)
                 else mark.subtype)
-        if kind == markup.LINE:
-            return Qt.CrossCursor if which in (0, 1) else None
+        if kind == markup.LINE or kind in markup.POLYS:
+            return Qt.CrossCursor
         if kind == markup.FREETEXT or kind in markup.SHAPES:
             # Corners on the diagonals, the middles of the sides across.
             return (Qt.SizeFDiagCursor, Qt.SizeBDiagCursor, Qt.SizeFDiagCursor,
@@ -3989,6 +4038,14 @@ class PageCanvas(QAbstractScrollArea):
         extends by is decided by whether the gesture turns out to be a click or
         a drag, which is `extend_to` and `_extend_selection` respectively.
         """
+        if event.button() == Qt.LeftButton and self._poly_drawing is not None:
+            # A polygon on its way: every press is its next point.
+            page, points, _pointer = self._poly_drawing
+            points.append(self._angled(points[-1], QPointF(event.position())))
+            self._poly_drawing = (page, points, QPointF(event.position()))
+            self.viewport().update()
+            event.accept()
+            return
         if event.button() == Qt.LeftButton:
             position = QPointF(event.position())
             # A form field takes the press before the text does. Clicking a
@@ -4040,6 +4097,19 @@ class PageCanvas(QAbstractScrollArea):
             # placed a second mark instead of reshaping the first -- every
             # time, because on a small stamp the handles cover most of it.
             grip = self.grip_at(position)
+            if grip is not None and self._selected is not None and (
+                    self._selected[1].kind
+                    if isinstance(self._selected[1], markup.Annotation)
+                    else self._selected[1].subtype) in markup.POLYS:
+                page, mark = self._selected
+                self._dragging_vertex = (page, mark, grip)
+                self._poly_shaping = (mark, tuple(self._poly_vertices(mark)))
+                # Where the vertex began, which Shift keeps it in line with.
+                self._vertex_origin = self.grips()[grip].center()
+                self._place_mark_buttons()
+                self.viewport().update()
+                event.accept()
+                return
             if grip is not None and self._selected is not None and (
                     self._selected[1].kind
                     if isinstance(self._selected[1], markup.Annotation)
@@ -4102,6 +4172,15 @@ class PageCanvas(QAbstractScrollArea):
                     self.mark_drawn.emit(self._tool, placed[0], [placed[1]])
                 event.accept()
                 return
+            if self._tool in self.POLY_TOOLS:
+                page = self.page_at(position)
+                if page is not None:
+                    # The first point; the release decides whether a drag
+                    # made the second.
+                    self._poly_drawing = (page, [position], position)
+                    self._poly_pressed = position
+                    event.accept()
+                    return
             if self.marks_area():
                 # Only here, *after* the field check: over a field there is no
                 # markup, the field takes the press and is edited. A widget
@@ -4178,6 +4257,11 @@ class PageCanvas(QAbstractScrollArea):
         or double-clicking a word inside a link would select it and then
         navigate away from it.
         """
+        if event.button() == Qt.LeftButton and self._poly_drawing is not None:
+            # The double-click's own press already placed the last point.
+            self.finish_poly()
+            event.accept()
+            return
         if event.button() == Qt.LeftButton:
             here = QPointF(event.position())
             note = self.note_at(here)
@@ -4250,6 +4334,33 @@ class PageCanvas(QAbstractScrollArea):
                 placed = self.mark_rect(start, QPointF(event.position()))
             if placed is not None:
                 self.mark_drawn.emit(self._tool, placed[0], [placed[1]])
+            event.accept()
+            return
+
+        if event.button() == Qt.LeftButton and self._poly_drawing is not None:
+            page, points, _pointer = self._poly_drawing
+            pressed = getattr(self, "_poly_pressed", None)
+            end = QPointF(event.position())
+            if (len(points) == 1 and pressed is not None
+                    and (end - pressed).manhattanLength()
+                    > QApplication.startDragDistance()):
+                # A press, a drag and a release: the first segment.
+                points.append(self._angled(points[0], end))
+            self._poly_pressed = None
+            self._poly_drawing = (page, points, end)
+            self.viewport().update()
+            event.accept()
+            return
+
+        if event.button() == Qt.LeftButton and self._dragging_vertex is not None:
+            page, mark, _which = self._dragging_vertex
+            shaped = self._poly_shaping
+            self._dragging_vertex = None
+            self._poly_shaping = None
+            self._place_mark_buttons()
+            self.viewport().update()
+            if shaped is not None and tuple(shaped[1]) != tuple(self._poly_vertices(mark)):
+                self.line_reshaped.emit(page, mark, tuple(shaped[1]))
             event.accept()
             return
 
@@ -4387,6 +4498,7 @@ class PageCanvas(QAbstractScrollArea):
         run rather than failing it -- and a hung suite is worse than a broken
         one, because it tells you nothing.
         """
+        self._menu_point = QPointF(event.pos())
         menu = self.build_context_menu(QPointF(event.pos()))
         menu.exec(event.globalPos())
         event.accept()
@@ -4406,6 +4518,17 @@ class PageCanvas(QAbstractScrollArea):
         selection because the pointer left the paper is the annoying half of
         that rule without the useful half.
         """
+        if self._poly_drawing is not None:
+            # A polygon on its way: Cancel throws it away, Complete keeps the
+            # points placed so far -- once there are enough of them.
+            menu = QMenu(self)
+            cancel = menu.addAction(_("Cancel"))
+            cancel.triggered.connect(self.cancel_poly)
+            complete = menu.addAction(_("Complete"))
+            complete.setEnabled(self._poly_enough())
+            complete.triggered.connect(self.finish_poly)
+            return menu
+        self._menu_point = position
         found = self.mark_at(position)
         if found is not None and not self._text_through and not (
                 self._point_in_live_selection(position)):
@@ -4505,7 +4628,8 @@ class PageCanvas(QAbstractScrollArea):
                 else mark.subtype)
         return (not cls._is_a_comment(mark)
                 and kind not in (markup.CARET, markup.FREETEXT,
-                                 *markup.SHAPES, markup.LINE))
+                                 *markup.SHAPES, markup.LINE,
+                                       *markup.POLYS))
 
     @staticmethod
     def _is_a_comment(mark) -> bool:
@@ -4609,16 +4733,22 @@ class PageCanvas(QAbstractScrollArea):
         details = menu.addAction(_("Properties..."))
         details.triggered.connect(
             lambda: self.properties_wanted.emit(index, mark))
-        if (mark.kind if isinstance(mark, markup.Annotation)
-                else mark.subtype) == markup.LINE and getattr(mark, "points", None):
+        kind = (mark.kind if isinstance(mark, markup.Annotation)
+                else mark.subtype)
+        locked = bool(getattr(mark, "locked", False))
+        if kind in markup.POLYS and getattr(mark, "points", None):
+            self._add_vertex_entries(menu, index, mark, locked)
+        if kind in (markup.LINE, markup.POLYLINE) and getattr(mark, "points", None):
             # At the foot, as Acrobat has it: the start becomes the end, so
-            # the ends' styles change places.
+            # the ends' styles change places -- the one change a flip makes
+            # that can be seen.
             menu.addSeparator()
             flip = menu.addAction(_("Flip Line"))
-            flip.setEnabled(not getattr(mark, "locked", False))
-            p = mark.points
-            flip.triggered.connect(lambda: self.line_reshaped.emit(
-                index, mark, (p[2], p[3], p[0], p[1])))
+            flip.setEnabled(not locked)
+            pairs = list(zip(mark.points[0::2], mark.points[1::2]))[::-1]
+            flipped = tuple(v for pair in pairs for v in pair)
+            flip.triggered.connect(
+                lambda: self.line_reshaped.emit(index, mark, flipped))
         return menu
 
     def status_chain(self, index: int, mark):
@@ -4804,6 +4934,9 @@ class PageCanvas(QAbstractScrollArea):
     def keyPressEvent(self, event):
         """The arrow keys, by one table: the modifier decides the verb.
 
+        A polygon on its way takes Return, which finishes it, and Escape,
+        which throws it away -- before Escape leaves the tool.
+
         nothing = scroll, Option = move the caret, Shift = extend the selection,
         Cmd = jump to an edge, Fn = a bigger jump. Nothing here depends on
         whether a caret exists, which is the point: reading must not behave
@@ -4816,6 +4949,12 @@ class PageCanvas(QAbstractScrollArea):
         about it, and one table everywhere is the simplicity that was wanted.
         """
         key = event.key()
+        if self._poly_drawing is not None and key in (Qt.Key_Return, Qt.Key_Enter):
+            self.finish_poly()
+            return
+        if self._poly_drawing is not None and key == Qt.Key_Escape:
+            self.cancel_poly()
+            return
         if event.matches(QKeySequence.Copy):
             if self.copy():
                 return
@@ -5024,6 +5163,7 @@ class PageCanvas(QAbstractScrollArea):
             self._paint_search(painter, index, offset)
         self._paint_caret(painter, offset)
         self._paint_marking(painter)
+        self._paint_poly_drawing(painter)
         # Last, and outside the page loop: the panel sits at the pointer in
         # viewport coordinates and belongs over everything, including a mark
         # on the page below the one it describes.
@@ -5092,6 +5232,9 @@ class PageCanvas(QAbstractScrollArea):
                 continue
             if kind == markup.LINE:
                 self._paint_line(painter, index, mark, offset)
+                continue
+            if kind in markup.POLYS:
+                self._paint_poly(painter, index, mark, offset)
                 continue
             # **At the solidity the file will show**, which the quadded
             # marks were drawn without: a highlight of ours is written
@@ -5267,7 +5410,7 @@ class PageCanvas(QAbstractScrollArea):
         # An Insert Text caret wears one too: it is not a comment, so its
         # note needs the sign a strikethrough's does.
         badged = self.QUADDED_SELECTABLE + (markup.CARET, *markup.SHAPES,
-                                            markup.LINE)
+                                            markup.LINE, *markup.POLYS)
         found = [m for m in self._file_marks.visible(index + 1)
                  if m.subtype in badged
                  and not markup.is_reply(m)
@@ -5542,6 +5685,10 @@ class PageCanvas(QAbstractScrollArea):
             if getattr(mark, "locked", False):
                 return []
             return self._line_grips(index, mark, offset)
+        if kind in markup.POLYS:
+            if getattr(mark, "locked", False):
+                return []
+            return self._poly_grips(index, mark, offset)
         if kind not in self.QUADDED_SELECTABLE:
             # A comment's icon is placed, not sized: there is no run to
             # take hold of, and a handle on a glyph offers a drag that
@@ -6279,7 +6426,8 @@ class PageCanvas(QAbstractScrollArea):
         # covered the words round it with a frame nobody had asked for.
         marks = [m for m in marks if m == self._selected or (
             m[1].kind if isinstance(m[1], markup.Annotation)
-            else m[1].subtype) not in (*markup.SHAPES, markup.LINE)]
+            else m[1].subtype) not in (*markup.SHAPES, markup.LINE,
+                                       *markup.POLYS)]
         viewport = QRectF(self.viewport().rect())
         painter.save()
         painter.setRenderHint(QPainter.Antialiasing, True)
@@ -6493,7 +6641,8 @@ class PageCanvas(QAbstractScrollArea):
                 getattr(mark, "icon", markup.DEFAULT_ICON))
         if (mark.kind if isinstance(mark, markup.Annotation)
                 else mark.subtype) in (markup.STAMP, markup.FREETEXT,
-                                       *markup.SHAPES, markup.LINE):
+                                       *markup.SHAPES, markup.LINE,
+                                       *markup.POLYS):
             # Moved, not reshaped: the box keeps the size and the angle it
             # was given and only its corner changes, which is what dragging
             # the body of one means.
@@ -6527,7 +6676,8 @@ class PageCanvas(QAbstractScrollArea):
                         or markup.is_scalable_comment(m.subtype, m.icon)
                         or m.subtype == markup.FREETEXT
                         or m.subtype in markup.SHAPES
-                        or m.subtype == markup.LINE)
+                        or m.subtype == markup.LINE
+                        or m.subtype in markup.POLYS)
                     and not m.is_reply()]
         except Exception:       # noqa: BLE001 - a repaint must not fail
             return []
@@ -6640,17 +6790,7 @@ class PageCanvas(QAbstractScrollArea):
             layer.setRenderHint(QPainter.Antialiasing, True)
             layer.fillPath(path, fill)
             if width > 0:
-                pen = QPen(border)
-                pen.setWidthF(max(width * sx, 0.5))
-                # Flat ends, as PDF draws: Qt's square ones grow every dash
-                # by half the line at each end, which closed a thick
-                # dash's gaps altogether.
-                pen.setCapStyle(Qt.FlatCap)
-                pen.setJoinStyle(Qt.MiterJoin)
-                if "dash" in style:
-                    # Qt measures a dash in pen widths, the file in points.
-                    pen.setDashPattern([v / max(width, 0.01) for v in style["dash"]])
-                layer.strokePath(path, pen)
+                layer.strokePath(path, self._line_pen(border, width, sx, style))
             content = textbox.content_of(mark)
             editing = (self._text_editing is not None
                        and self._text_editing[1] is mark)
@@ -6761,15 +6901,9 @@ class PageCanvas(QAbstractScrollArea):
             if fill is not None:
                 layer.fillPath(path, QColor.fromRgbF(*fill[:3]))
             if width > 0:
-                pen = QPen(QColor.fromRgbF(*(mark.colour or (1.0, 0.0, 0.0))[:3]))
-                pen.setWidthF(max(width * sx, 0.5))
-                # Flat ends, as PDF draws; see `_paint_text_box`.
-                pen.setCapStyle(Qt.FlatCap)
-                pen.setJoinStyle(Qt.MiterJoin)
-                if "dash" in style:
-                    # Qt measures a dash in pen widths, the file in points.
-                    pen.setDashPattern([v / max(width, 0.01) for v in style["dash"]])
-                layer.setPen(pen)
+                layer.setPen(self._line_pen(
+                    QColor.fromRgbF(*(mark.colour or (1.0, 0.0, 0.0))[:3]),
+                    width, sx, style))
                 layer.setBrush(Qt.NoBrush)
                 layer.drawPath(path)
 
@@ -6879,22 +7013,11 @@ class PageCanvas(QAbstractScrollArea):
         with self._as_one(painter, bounds.adjusted(-reach, -reach, reach, reach),
                           painter.opacity() * self._solidity(mark)) as layer:
             layer.setRenderHint(QPainter.Antialiasing, True)
-            pen = QPen(colour)
-            # A cosmetic pen at 0: one device pixel whatever the zoom.
-            pen.setWidthF(width * scale if width > 0 else 0.0)
-            pen.setCapStyle(Qt.FlatCap)
-            if "dash" in style and width > 0:
-                pen.setDashPattern([v / width for v in style["dash"]])
-            layer.setPen(pen)
+            layer.setPen(self._line_pen(colour, width, scale, style))
             layer.drawLine(at(segment[0], segment[1]), at(segment[2], segment[3]))
             # The ends take the line's dash, as Acrobat, PDFGear and Stirling
             # PDF all draw them; at 0 they have no outline.
-            end_pen = QPen(colour)
-            end_pen.setWidthF(width * scale if width > 0 else 0.0)
-            end_pen.setJoinStyle(Qt.MiterJoin)
-            end_pen.setCapStyle(Qt.FlatCap)
-            if "dash" in style and width > 0:
-                end_pen.setDashPattern([v / width for v in style["dash"]])
+            end_pen = self._line_pen(colour, width, scale, style)
             for kind, data, filled in pieces:
                 path = QPainterPath()
                 if kind == "circle":
@@ -6912,6 +7035,401 @@ class PageCanvas(QAbstractScrollArea):
                     layer.setPen(end_pen)
                     layer.setBrush(Qt.NoBrush)
                     layer.drawPath(path)
+
+    def _poly_points(self, mark):
+        """A polygon's or a polyline's points as they are now, a flat run:
+        a vertex's drag in flight, else moved with the rectangle a drag in
+        flight has given it."""
+        if self._poly_shaping is not None and self._poly_shaping[0] is mark:
+            return self._poly_shaping[1]
+        points = getattr(mark, "points", None)
+        if not points:
+            return None
+        rect, _angle = self._shape_of(mark)
+        dx, dy = rect[0] - mark.rect[0], rect[1] - mark.rect[1]
+        return tuple(v + (dx if k % 2 == 0 else dy) for k, v in enumerate(points))
+
+    #: How few points a polygon and a polyline can have.
+    FEWEST = {"polygon": 3, "cloud": 3, "polyline": 2}
+
+    def _poly_enough(self) -> bool:
+        if self._poly_drawing is None:
+            return False
+        _page, points, _pointer = self._poly_drawing
+        distinct = [p for n, p in enumerate(points)
+                    if n == 0 or (p - points[n - 1]).manhattanLength() > 1]
+        return len(distinct) >= self.FEWEST.get(self._tool, 2)
+
+    def finish_poly(self) -> None:
+        """Keep the polygon, cloud or polyline being made, with the points
+        placed so far -- a double-click, Complete or Return -- if there are
+        enough of them; a polygon closes by itself."""
+        if self._poly_drawing is None:
+            return
+        page, points, _pointer = self._poly_drawing
+        enough = self._poly_enough()
+        self._poly_drawing = None
+        self.viewport().update()
+        if not enough:
+            return
+        flat = []
+        last = None
+        for p in points:
+            if last is not None and (p - last).manhattanLength() <= 1:
+                continue
+            at = self._point_on(page, p, True)
+            if at is None:
+                continue
+            flat += [at[0], at[1]]
+            last = p
+        self.mark_drawn.emit(self._tool, page, [tuple(flat)])
+
+    def cancel_poly(self) -> None:
+        """Throw away the polygon being made -- Cancel or Escape."""
+        self._poly_drawing = None
+        self.viewport().update()
+
+    def _paint_poly_drawing(self, painter) -> None:
+        """The polygon being made: its segments so far and the next one to
+        the pointer, dashed, and back to the first point for a polygon."""
+        if self._poly_drawing is None:
+            return
+        _page, points, pointer = self._poly_drawing
+        trail = list(points) + [self._angled(points[-1], pointer)]
+        painter.save()
+        painter.setRenderHint(QPainter.Antialiasing, True)
+        pen = QPen(MARKING)
+        pen.setStyle(Qt.DashLine)
+        pen.setWidth(1)
+        painter.setPen(pen)
+        painter.setBrush(Qt.NoBrush)
+        for a, b in zip(trail, trail[1:]):
+            painter.drawLine(a, b)
+        if self._tool != self.POLYLINE and len(trail) > 2:
+            painter.drawLine(trail[-1], trail[0])
+        painter.restore()
+
+    @staticmethod
+    def _poly_vertices(mark):
+        """A mark's vertices as a flat run, a polygon's without the first
+        point Acrobat repeats to close it."""
+        points = list(getattr(mark, "points", None) or ())
+        kind = (mark.kind if isinstance(mark, markup.Annotation)
+                else mark.subtype)
+        if (kind == markup.POLYGON and len(points) >= 6
+                and abs(points[0] - points[-2]) < 1e-6
+                and abs(points[1] - points[-1]) < 1e-6):
+            points = points[:-2]
+        return tuple(points)
+
+    def _poly_grips(self, index: int, mark, offset=None):
+        """A handle on each vertex of a polygon or a polyline."""
+        found = self._poly_on_screen(index, mark, offset)
+        if found is None:
+            return []
+        _points, at, _scale = found
+        shaped = (self._poly_shaping[1] if self._poly_shaping is not None
+                  and self._poly_shaping[0] is mark else None)
+        vertices = shaped or self._poly_vertices(mark)
+        if shaped is None:
+            rect, _angle = self._shape_of(mark)
+            dx, dy = rect[0] - mark.rect[0], rect[1] - mark.rect[1]
+            vertices = tuple(v + (dx if k % 2 == 0 else dy)
+                             for k, v in enumerate(vertices))
+        size = float(self.GRIP)
+        grips = []
+        for x, y in zip(vertices[0::2], vertices[1::2]):
+            p = at(x, y)
+            grips.append(QRectF(p.x() - size / 2, p.y() - size / 2, size, size))
+        return grips
+
+    def _vertex_snapped(self, index: int, mark, points, which: int,
+                        pointer: QPointF) -> QPointF:
+        """Where a dragged vertex goes: the pointer, or with Shift the
+        pointer brought into line with where the vertex began -- straight
+        across, straight up or down, or at 45 degrees.
+
+        **The movement, not the segments**, as Illustrator, Figma, Sketch,
+        PowerPoint and Blender constrain a dragged point. Holding both of a
+        vertex's segments at 45 degrees was tried first and jumped the
+        vertex away from the pointer, or held only one of them.
+
+        **The nearest point on the line**, not the pointer's distance
+        turned onto it: the vertex slides along the line under the pointer,
+        and crossing to the next line steps across instead of swinging
+        round an arc."""
+        origin = getattr(self, "_vertex_origin", None)
+        if not self._shift_held() or origin is None:
+            return pointer
+        dx, dy = pointer.x() - origin.x(), pointer.y() - origin.y()
+        turn = round(math.atan2(dy, dx) / (math.pi / 4)) * (math.pi / 4)
+        along = dx * math.cos(turn) + dy * math.sin(turn)
+        return QPointF(origin.x() + along * math.cos(turn),
+                       origin.y() + along * math.sin(turn))
+
+    def _add_vertex_entries(self, menu, index: int, mark, locked: bool) -> None:
+        """Insert Vertex over a segment and Remove Vertex over a vertex --
+        refused below a polygon's 3 points and a polyline's 2.
+
+        **Only on the line itself**, within the reach that takes hold of it
+        -- a cloud's being the band its scallops cross -- and the new vertex
+        goes on the line where it was clicked, so the shape is unchanged
+        until it is dragged. Offered anywhere off a vertex, it put the
+        vertex at the click: a right-click in a polygon's fill pulled an
+        edge into the middle of it."""
+        here = self._menu_point
+        found = self._poly_on_screen(index, mark)
+        if here is None or found is None:
+            return
+        _points, at, _scale = found
+        vertices = list(self._poly_vertices(mark))
+        pairs = list(zip(vertices[0::2], vertices[1::2]))
+        kind = (mark.kind if isinstance(mark, markup.Annotation)
+                else mark.subtype)
+        fewest = 3 if kind == markup.POLYGON else 2
+        reach = float(self.GRIP)
+        near_vertex = next((n for n, p in enumerate(pairs)
+                            if math.hypot(at(*p).x() - here.x(),
+                                          at(*p).y() - here.y()) <= reach), None)
+        menu.addSeparator()
+        if near_vertex is not None:
+            remove = menu.addAction(_("Remove Vertex"))
+            remove.setEnabled(not locked and len(pairs) > fewest)
+            left = pairs[:near_vertex] + pairs[near_vertex + 1:]
+            remaining = tuple(v for pair in left for v in pair)
+            remove.triggered.connect(
+                lambda: self.line_reshaped.emit(index, mark, remaining))
+            return
+        segments = list(range(len(pairs) - (0 if kind == markup.POLYGON else 1)))
+        best = None
+        for n in segments:
+            a, b = at(*pairs[n]), at(*pairs[(n + 1) % len(pairs)])
+            dx, dy = b.x() - a.x(), b.y() - a.y()
+            span = dx * dx + dy * dy or 1.0
+            t = max(0.0, min(1.0, ((here.x() - a.x()) * dx + (here.y() - a.y()) * dy) / span))
+            on = QPointF(a.x() + t * dx, a.y() + t * dy)
+            distance = math.hypot(here.x() - on.x(), here.y() - on.y())
+            if best is None or distance < best[0]:
+                best = (distance, n, on)
+        if best is None:
+            return
+        style = markup.BORDER_STYLES.get(mark.border_style, {})
+        width = float(style.get("width", mark.thickness) or 0.0)
+        reach = width * _scale / 2.0 + self.INK_TOLERANCE
+        if "cloud" in style and kind == markup.POLYGON:
+            reach += 2 * markup.cloud_radius(style["cloud"], width) * _scale
+        if best[0] > reach:
+            return
+        spot = self._point_on(index, best[2], isinstance(mark, markup.Annotation))
+        if spot is None:
+            return
+        insert = menu.addAction(_("Insert Vertex"))
+        insert.setEnabled(not locked)
+        grown = pairs[:best[1] + 1] + [spot] + pairs[best[1] + 1:]
+        added = tuple(v for pair in grown for v in pair)
+        insert.triggered.connect(
+            lambda: self.line_reshaped.emit(index, mark, added))
+
+    def _poly_on_screen(self, index: int, mark, offset=None):
+        """``(points, at, scale)`` for a polygon or a polyline on screen."""
+        points = self._poly_points(mark)
+        if not points or len(points) < 4:
+            return None
+        rect, _angle = self._shape_of(mark)
+        is_mine = isinstance(mark, markup.Annotation)
+        left, bottom, right, top = (float(v) for v in rect)
+        where = self.quad_on_screen(index, rect, offset, scaled=is_mine)
+        if where is None or right <= left or top <= bottom:
+            return None
+        sx = where.width() / (right - left)
+        sy = where.height() / (top - bottom)
+
+        def at(x, y):
+            return QPointF(where.left() + (x - left) * sx,
+                           where.bottom() - (y - bottom) * sy)
+
+        return points, at, sx
+
+    def _poly_path(self, mark, points, at):
+        """The line a polygon or a polyline is drawn along, on screen: the
+        cloud along a polygon's edges when it has one, else its points,
+        closed for a polygon -- with a polyline's first and last segments
+        pulled back for its ends, as a line's are."""
+        kind = (mark.kind if isinstance(mark, markup.Annotation)
+                else mark.subtype)
+        style = markup.BORDER_STYLES.get(mark.border_style, {})
+        width = float(style.get("width", mark.thickness) or 0.0)
+        path = QPainterPath()
+        if kind == markup.POLYGON:
+            if "cloud" in style:
+                found = markup.cloud_polygon_path(points, style["cloud"], width)
+                if found is not None:
+                    begin, curves = found
+                    path.moveTo(at(*begin))
+                    for c in curves:
+                        path.cubicTo(at(c[0], c[1]), at(c[2], c[3]), at(c[4], c[5]))
+                    path.closeSubpath()
+                    return path, []
+            corners = markup.polygon_corners(points)
+            if len(corners) < 2:
+                return path, []
+            path.moveTo(at(*corners[0]))
+            for corner in corners[1:]:
+                path.lineTo(at(*corner))
+            path.closeSubpath()
+            return path, []
+        pairs = list(zip(points[0::2], points[1::2]))
+        ends = getattr(mark, "ends", None) or ("/None", "/None")
+        first, start_pieces = markup.line_end_drawing(
+            (*pairs[0], *pairs[1]), (ends[0], "/None"), width)
+        last, end_pieces = markup.line_end_drawing(
+            (*pairs[-2], *pairs[-1]), ("/None", ends[1]), width)
+        pairs[0] = (first[0], first[1])
+        pairs[-1] = (last[2], last[3])
+        path.moveTo(at(*pairs[0]))
+        for pair in pairs[1:]:
+            path.lineTo(at(*pair))
+        return path, start_pieces + end_pieces
+
+    def _paint_poly(self, painter, index: int, mark, offset) -> None:
+        """Draw a polygon or a polyline: a polygon's fill, then the line in
+        its colour, thickness and dash -- a cloud along a polygon's edges --
+        and a polyline's ends in their styles, as a line's are; faded as one
+        piece. One that draws nothing shows its dashed outline while it is
+        under the pointer or selected."""
+        found = self._poly_on_screen(index, mark, offset)
+        if found is None:
+            return
+        points, at, scale = found
+        path, pieces = self._poly_path(mark, points, at)
+        kind = (mark.kind if isinstance(mark, markup.Annotation)
+                else mark.subtype)
+        style = markup.BORDER_STYLES.get(mark.border_style, {})
+        width = float(style.get("width", mark.thickness) or 0.0)
+        fill = getattr(mark, "fill", None)
+        colour = QColor.fromRgbF(*(mark.colour or (1.0, 0.0, 0.0))[:3])
+        # A polygon's 0 is No Border; a polyline's is the thinnest line.
+        no_line = kind == markup.POLYGON and width <= 0
+        if no_line and fill is None:
+            held = [m for m in (self._hovered, self._selected)
+                    if m is not None and m[1] is mark]
+            if held:
+                painter.save()
+                pen = QPen(QColor(*self.SELECTED))
+                pen.setWidthF(1.0)
+                pen.setStyle(Qt.DashLine)
+                painter.setPen(pen)
+                painter.setBrush(Qt.NoBrush)
+                painter.drawPath(path)
+                painter.restore()
+            return
+        reach = width * scale + 2.0
+        bounds = path.boundingRect()
+        for _kind, data, _filled in pieces:
+            for p in ([data[:2]] if _kind == "circle" else data):
+                bounds = bounds.united(QRectF(at(*p), QSizeF(1, 1)))
+        reach += 9 * max(width, 1.0) * scale if pieces else 0.0
+        with self._as_one(painter, bounds.adjusted(-reach, -reach, reach, reach),
+                          painter.opacity() * self._solidity(mark)) as layer:
+            layer.setRenderHint(QPainter.Antialiasing, True)
+            if kind == markup.POLYGON and fill is not None:
+                layer.fillPath(path, QColor.fromRgbF(*fill[:3]))
+            pen = self._line_pen(colour, width, scale, style)
+            if not no_line:
+                layer.setPen(pen)
+                layer.setBrush(Qt.NoBrush)
+                layer.drawPath(path)
+            for piece_kind, data, filled in pieces:
+                end = QPainterPath()
+                if piece_kind == "circle":
+                    cx, cy, r = data
+                    end.addEllipse(at(cx, cy), r * scale, r * scale)
+                else:
+                    end.moveTo(at(*data[0]))
+                    for point in data[1:]:
+                        end.lineTo(at(*point))
+                    if piece_kind == "closed":
+                        end.closeSubpath()
+                if filled and fill is not None:
+                    layer.fillPath(end, QColor.fromRgbF(*fill[:3]))
+                if width > 0 or not filled:
+                    layer.setPen(pen)
+                    layer.setBrush(Qt.NoBrush)
+                    layer.drawPath(end)
+
+    def _poly_hit(self, index: int, mark, point: QPointF) -> bool:
+        """Whether a viewport point takes hold of a polygon or a polyline:
+        within the ink tolerance of its line or a polyline's ends -- a
+        cloud's line being the band its scallops cross -- or anywhere inside
+        a polygon that is filled or draws nothing."""
+        found = self._poly_on_screen(index, mark)
+        if found is None:
+            return False
+        points, at, scale = found
+        kind = (mark.kind if isinstance(mark, markup.Annotation)
+                else mark.subtype)
+        style = markup.BORDER_STYLES.get(mark.border_style, {})
+        width = float(style.get("width", mark.thickness) or 0.0)
+        reach = width * scale / 2.0 + self.INK_TOLERANCE
+        if "cloud" in style and kind == markup.POLYGON:
+            reach += 2 * markup.cloud_radius(style["cloud"], width) * scale
+        if kind == markup.POLYGON:
+            corners = [at(*c) for c in markup.polygon_corners(points)]
+            if len(corners) < 2:
+                return False
+            if (getattr(mark, "fill", None) is not None or width <= 0) and \
+                    QPolygonF(corners).containsPoint(point, Qt.OddEvenFill):
+                return True
+            corners.append(corners[0])
+        else:
+            corners = [at(x, y) for x, y in zip(points[0::2], points[1::2])]
+
+        def near(a, b) -> bool:
+            dx, dy = b.x() - a.x(), b.y() - a.y()
+            span = dx * dx + dy * dy
+            t = 0.0 if span == 0 else max(0.0, min(1.0, (
+                (point.x() - a.x()) * dx + (point.y() - a.y()) * dy) / span))
+            return math.hypot(point.x() - (a.x() + t * dx),
+                              point.y() - (a.y() + t * dy)) <= reach
+
+        if any(near(a, b) for a, b in zip(corners, corners[1:])):
+            return True
+        if kind == markup.POLYLINE:
+            _path, pieces = self._poly_path(mark, points, at)
+            for piece_kind, data, _filled in pieces:
+                if piece_kind == "circle":
+                    cx, cy, r = data
+                    if math.hypot(point.x() - at(cx, cy).x(),
+                                  point.y() - at(cx, cy).y()) <= r * scale + reach:
+                        return True
+                    continue
+                spots = [at(*p) for p in data]
+                if piece_kind == "closed" and QPolygonF(spots).containsPoint(
+                        point, Qt.OddEvenFill):
+                    return True
+                if any(near(a, b) for a, b in zip(spots, spots[1:])):
+                    return True
+        return False
+
+    @staticmethod
+    def _line_pen(colour, width: float, scale: float, style: dict) -> QPen:
+        """The pen a mark's line is drawn with, at ``scale`` pixels a point.
+
+        **Flat ends and mitred joins**, as PDF draws: Qt's square ends grow
+        every dash by half the line at each end, which closed a thick
+        dash's gaps altogether. **The thinnest line -- Hairline, written 0
+        or 0.01 -- is one device pixel** whatever the zoom, Qt's cosmetic
+        pen, with its dash measured in pixels rather than in pen widths."""
+        pen = QPen(colour)
+        pen.setCapStyle(Qt.FlatCap)
+        pen.setJoinStyle(Qt.MiterJoin)
+        thin = markup.is_hairline(width) or width * scale < 1.0
+        pen.setWidthF(0.0 if thin else width * scale)
+        if "dash" in style:
+            # Qt measures a dash in pen widths, the file in points.
+            pen.setDashPattern([v * scale if thin else v / width
+                                for v in style["dash"]])
+        return pen
 
     @contextmanager
     def _as_one(self, painter, bounds: QRectF, opacity: float):

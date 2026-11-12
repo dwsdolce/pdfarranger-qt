@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pdfarranger master\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-11 19:12+0000\n"
+"POT-Creation-Date: 2026-11-12 20:29+0000\n"
 "PO-Revision-Date: 2026-01-04 02:52+0100\n"
 "Last-Translator: Massimo Pissarello <mapi68@gmail.com>\n"
 "Language: it\n"
@@ -34,6 +34,17 @@ msgstr "Pagina {}"
 #: pdfarranger_qt/canvas.py
 msgid "Empty note"
 msgstr "Nota vuota"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py pdfarranger_qt/mainwindow.py
+#: pdfarranger_qt/notepanel.py
+msgid "Cancel"
+msgstr "Annulla"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Complete"
+msgstr "Completa"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
@@ -164,6 +175,16 @@ msgstr "%d stato"
 #: pdfarranger_qt/canvas.py pdfarranger_qt/notepanel.py
 msgid "Status"
 msgstr "Stato"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Remove Vertex"
+msgstr "Rimuovi vertice"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Insert Vertex"
+msgstr "Inserisci vertice"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py pdfarranger_qt/properties.py
@@ -2424,11 +2445,6 @@ msgstr "Apertura di %s…"
 msgid "Importing…"
 msgstr "Importazione…"
 
-# machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py pdfarranger_qt/notepanel.py
-msgid "Cancel"
-msgstr "Annulla"
-
 #: pdfarranger_qt/mainwindow.py
 msgid "Import"
 msgstr "Importa"
@@ -3082,6 +3098,16 @@ msgstr "Ovale/Cerchio"
 msgid "Line"
 msgstr "Linea"
 
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py pdfarranger_qt/tools.py
+msgid "Polygon"
+msgstr "Poligono"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Polyline"
+msgstr "Polilinea"
+
 #: pdfarranger_qt/properties.py
 msgid "Review History"
 msgstr "Cronologia revisioni"
@@ -3178,6 +3204,11 @@ msgstr "Inizio"
 #: pdfarranger_qt/properties.py
 msgid "End"
 msgstr "Fine"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py pdfarranger_qt/toolstrip.py
+msgid "Hairline"
+msgstr "Linea sottile"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/properties.py
@@ -3443,11 +3474,6 @@ msgstr "Freccia"
 #: pdfarranger_qt/tools.py
 msgid "Text callout"
 msgstr "Didascalia di testo"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/tools.py
-msgid "Polygon"
-msgstr "Poligono"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/tools.py

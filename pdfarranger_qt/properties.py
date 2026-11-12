@@ -103,6 +103,10 @@ KIND_LABELS = {
     "/Circle": N_("Oval/Circle"),
     # Whichever tool made it, Line or Arrow.
     "/Line": N_("Line"),
+    # The Cloud tool's polygon is a polygon; Acrobat's "Polygonal Line" is
+    # called Polyline here.
+    "/Polygon": N_("Polygon"),
+    "/PolyLine": N_("Polyline"),
 }
 
 
@@ -451,12 +455,7 @@ class MarkProperties(QDialog):
         left.addRow(_("Colour") if self._was.fill_optional
                     else _("Border Colour"), self.swatch)
         left.addRow(_("Opacity"), self._opacity_column(page))
-        self.thickness = QSpinBox(page)
-        self.thickness.setRange(self._thinnest(), 12)
-        self.thickness.setSuffix(" pt")
-        self.thickness.setValue(max(self._thinnest(),
-                                    min(12, round(self._was.thickness or 0))))
-        self.thickness.valueChanged.connect(self._box_changed)
+        self.thickness = self._thickness_box(page)
         right.addRow(_("Thickness"), self.thickness)
         self.fill_swatch = _Swatch(page)
         self.fill_swatch.set_colour(self._fill)
@@ -469,6 +468,7 @@ class MarkProperties(QDialog):
         self.fill_popup = ColourPopup(self, opacity=False,
                                       none=self._was.fill_optional, more=True)
         self.fill_popup.chosen.connect(self._filled)
+        self._no_border_allowed()
         self._thickness_matters()
         return page
 
@@ -518,11 +518,7 @@ class MarkProperties(QDialog):
         self.swatch.clicked.connect(self._pick_colour)
         left.addRow(_("Colour"), self.swatch)
         left.addRow(_("Opacity"), self._opacity_column(page))
-        self.thickness = QSpinBox(page)
-        self.thickness.setRange(0, 12)
-        self.thickness.setSuffix(" pt")
-        self.thickness.setValue(max(0, min(12, round(self._was.thickness or 0))))
-        self.thickness.valueChanged.connect(self._box_changed)
+        self.thickness = self._thickness_box(page)
         right.addRow(_("Thickness"), self.thickness)
         self.fill_swatch = _Swatch(page)
         self.fill_swatch.set_colour(self._fill)
@@ -536,12 +532,43 @@ class MarkProperties(QDialog):
         self.fill_popup.chosen.connect(self._filled)
         return page
 
-    def _thinnest(self) -> int:
-        """0 for a line, which is still drawn at 0, and for a shape with a
-        fill, which can do without a line; 1 for everything else."""
-        if self._was.line:
-            return 0
-        return 0 if self._was.fill_optional and self._fill is not None else 1
+    @staticmethod
+    def _spin_value(thickness) -> int:
+        """A thickness as the box shows it: 0 -- read as Hairline -- for the
+        thinnest line, else whole points."""
+        return 0 if markup.is_hairline(thickness) else max(1, min(12, round(thickness)))
+
+    def _thickness_box(self, page) -> QSpinBox:
+        """**Hairline**, then 1 to 12 points. The lowest value shows the word
+        and not a number: Acrobat's 0 is no line on one mark and the
+        thinnest line on the next, and its polygon form stops at 0.01 to
+        tell them apart. No line at all is a Style, No Border."""
+        box = QSpinBox(page)
+        box.setRange(0, 12)
+        box.setSuffix(" pt")
+        box.setSpecialValueText(_("Hairline"))
+        # Some styles, the Mac's among them, count the field a little short
+        # of its widest text and clip Hairline's first letter.
+        box.setMinimumWidth(box.sizeHint().width()
+                            + 2 * box.fontMetrics().averageCharWidth())
+        box.setValue(self._spin_value(self._was.thickness))
+        box.valueChanged.connect(self._box_changed)
+        return box
+
+    def _no_border_allowed(self) -> None:
+        """No Border, for a rectangle, an oval or a polygon, only while it
+        has a fill: with neither it draws nothing. Taking the fill away from
+        one with No Border gives it a line again."""
+        if not self._was.fill_optional:
+            return
+        at = self.border_style.findData("none")
+        if at < 0:
+            return
+        item = self.border_style.model().item(at)
+        if item is not None:
+            item.setEnabled(self._fill is not None)
+        if self._fill is None and self.border_style.currentData() == "none":
+            self.border_style.setCurrentIndex(self.border_style.findData("straight"))
 
     def _thickness_matters(self) -> None:
         """No Border has no thickness to set; a line always has one."""
@@ -579,8 +606,7 @@ class MarkProperties(QDialog):
         # An empty colour is No Colour.
         self._fill = tuple(colour) if colour else None
         self.fill_swatch.set_colour(self._fill)
-        # Without a fill a line of 0 draws nothing, so 0 goes with it.
-        self.thickness.setMinimum(self._thinnest())
+        self._no_border_allowed()
         self.restyled.emit(self._box_state())
 
     @staticmethod
@@ -735,13 +761,15 @@ class MarkProperties(QDialog):
             picked = self.style.currentData()
             if picked != self._was.style:
                 now["style"] = picked
+        thicker = self.thickness.value() != self._spin_value(self._was.thickness) \
+            if (self._was.line or self._was.box) else False
         if self._was.line:
             state = self._box_state()
             if self._fill != self._was.fill:
                 now["fill"] = state["fill"]
             if state["border_style"] != self._was.border_style:
                 now["border_style"] = state["border_style"]
-            if state["thickness"] != float(self._was.thickness):
+            if thicker:
                 now["thickness"] = state["thickness"]
             if state["ends"] != tuple(self._was.ends or ("/None", "/None")):
                 now["ends"] = state["ends"]
@@ -754,8 +782,7 @@ class MarkProperties(QDialog):
                 # of: No Border is a width of 0.
                 now["border_style"] = state["border_style"]
                 now["thickness"] = state["thickness"]
-            elif (state["border_style"] != "none"
-                  and state["thickness"] != float(self._was.thickness)):
+            elif state["border_style"] != "none" and thicker:
                 now["thickness"] = state["thickness"]
         if self._was.icons:
             row = self.icons.currentItem()

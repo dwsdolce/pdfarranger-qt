@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  pdfarranger\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-11 19:12+0000\n"
+"POT-Creation-Date: 2026-11-12 20:29+0000\n"
 "PO-Revision-Date: 2023-06-06 13:27+0200\n"
 "Last-Translator: Milo Ivir <mail@milotype.de>\n"
 "Language: hr\n"
@@ -34,6 +34,17 @@ msgstr "Stranica {}"
 #: pdfarranger_qt/canvas.py
 msgid "Empty note"
 msgstr "Prazna bilješka"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py pdfarranger_qt/mainwindow.py
+#: pdfarranger_qt/notepanel.py
+msgid "Cancel"
+msgstr "Odustani"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Complete"
+msgstr "Dovrši"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
@@ -164,6 +175,16 @@ msgstr "%d stanje"
 #: pdfarranger_qt/canvas.py pdfarranger_qt/notepanel.py
 msgid "Status"
 msgstr "Stanje"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Remove Vertex"
+msgstr "Ukloni vrh"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Insert Vertex"
+msgstr "Umetni vrh"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py pdfarranger_qt/properties.py
@@ -2445,11 +2466,6 @@ msgstr "Otvaranje %s…"
 msgid "Importing…"
 msgstr "Uvozim…"
 
-# machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py pdfarranger_qt/notepanel.py
-msgid "Cancel"
-msgstr "Odustani"
-
 #: pdfarranger_qt/mainwindow.py
 msgid "Import"
 msgstr "Uvezi"
@@ -3109,6 +3125,16 @@ msgstr "Oval/krug"
 msgid "Line"
 msgstr "Linija"
 
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py pdfarranger_qt/tools.py
+msgid "Polygon"
+msgstr "Mnogokut"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Polyline"
+msgstr "Izlomljena crta"
+
 #: pdfarranger_qt/properties.py
 msgid "Review History"
 msgstr "Povijest pregleda"
@@ -3205,6 +3231,11 @@ msgstr "Početak"
 #: pdfarranger_qt/properties.py
 msgid "End"
 msgstr "Kraj"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py pdfarranger_qt/toolstrip.py
+msgid "Hairline"
+msgstr "Tanka crta"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/properties.py
@@ -3470,11 +3501,6 @@ msgstr "Strelica"
 #: pdfarranger_qt/tools.py
 msgid "Text callout"
 msgstr "Tekstni oblačić"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/tools.py
-msgid "Polygon"
-msgstr "Mnogokut"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/tools.py

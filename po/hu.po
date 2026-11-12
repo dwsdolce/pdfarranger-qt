@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-11 19:12+0000\n"
+"POT-Creation-Date: 2026-11-12 20:29+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: hu\n"
@@ -34,6 +34,17 @@ msgstr "Oldal {}"
 #: pdfarranger_qt/canvas.py
 msgid "Empty note"
 msgstr "Üres jegyzet"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py pdfarranger_qt/mainwindow.py
+#: pdfarranger_qt/notepanel.py
+msgid "Cancel"
+msgstr "Mégse"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Complete"
+msgstr "Befejezés"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
@@ -164,6 +175,16 @@ msgstr "%d állapot"
 #: pdfarranger_qt/canvas.py pdfarranger_qt/notepanel.py
 msgid "Status"
 msgstr "Állapot"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Remove Vertex"
+msgstr "Csúcspont eltávolítása"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Insert Vertex"
+msgstr "Csúcspont beszúrása"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py pdfarranger_qt/properties.py
@@ -2452,11 +2473,6 @@ msgstr "%s megnyitása…"
 msgid "Importing…"
 msgstr "Importálás…"
 
-# machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py pdfarranger_qt/notepanel.py
-msgid "Cancel"
-msgstr "Mégse"
-
 #: pdfarranger_qt/mainwindow.py
 msgid "Import"
 msgstr "Importálás"
@@ -3112,6 +3128,16 @@ msgstr "Ovális/kör"
 msgid "Line"
 msgstr "Vonal"
 
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py pdfarranger_qt/tools.py
+msgid "Polygon"
+msgstr "Sokszög"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Polyline"
+msgstr "Törött vonal"
+
 #: pdfarranger_qt/properties.py
 msgid "Review History"
 msgstr "Átnézési előzmények"
@@ -3208,6 +3234,11 @@ msgstr "Kezdet"
 #: pdfarranger_qt/properties.py
 msgid "End"
 msgstr "Vég"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py pdfarranger_qt/toolstrip.py
+msgid "Hairline"
+msgstr "Hajszálvonal"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/properties.py
@@ -3473,11 +3504,6 @@ msgstr "Nyíl"
 #: pdfarranger_qt/tools.py
 msgid "Text callout"
 msgstr "Szöveges buborék"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/tools.py
-msgid "Polygon"
-msgstr "Sokszög"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/tools.py
