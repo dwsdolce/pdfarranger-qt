@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pdfarranger master\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-11 00:38+0000\n"
+"POT-Creation-Date: 2026-11-11 19:12+0000\n"
 "PO-Revision-Date: 2026-09-04 09:59+0000\n"
 "Last-Translator: Lumenman <28367232+Lumenman@users.noreply.github.com>\n"
 "Language: ru\n"
@@ -127,8 +127,14 @@ msgstr "Сделать текущие свойства стандартными"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py pdfarranger_qt/mainwindow.py
+#: pdfarranger_qt/toolstrip.py
 msgid "Properties..."
 msgstr "Свойства..."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Flip Line"
+msgstr "Развернуть линию"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
@@ -399,8 +405,8 @@ msgid "Size"
 msgstr "Размер"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/dialogs.py pdfarranger_qt/properties.py
-#: pdfarranger_qt/toolstrip.py
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+#: pdfarranger_qt/properties.py pdfarranger_qt/toolstrip.py
 msgid "Colour"
 msgstr "Цвет"
 
@@ -2011,6 +2017,12 @@ msgstr "Добавить пометку"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "%s Colour"
+msgstr "Цвет: %s"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
 msgid "Change Mark"
 msgstr "Изменить пометку"
 
@@ -2634,7 +2646,7 @@ msgid "Rotate"
 msgstr "Повернуть"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/markup.py
+#: pdfarranger_qt/markup.py pdfarranger_qt/properties.py
 msgid "None"
 msgstr "Нет"
 
@@ -2891,6 +2903,11 @@ msgstr "Прямоугольник/квадрат"
 msgid "Oval/Circle"
 msgstr "Овал/круг"
 
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py pdfarranger_qt/tools.py
+msgid "Line"
+msgstr "Линия"
+
 #: pdfarranger_qt/properties.py
 msgid "Review History"
 msgstr "История рецензирования"
@@ -2931,6 +2948,61 @@ msgstr "Толщина"
 #: pdfarranger_qt/properties.py
 msgid "Fill Colour"
 msgstr "Цвет заливки"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Open Arrow"
+msgstr "Открытая стрелка"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Closed Arrow"
+msgstr "Закрытая стрелка"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Open Arrow (Reverse)"
+msgstr "Открытая стрелка (обратная)"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Closed Arrow (Reverse)"
+msgstr "Закрытая стрелка (обратная)"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Butt"
+msgstr "Поперечная черта"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Diamond"
+msgstr "Ромб"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Round"
+msgstr "Круглый"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Square"
+msgstr "Квадрат"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Slash"
+msgstr "Косая черта"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Start"
+msgstr "Начало"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "End"
+msgstr "Конец"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/properties.py
@@ -3166,11 +3238,6 @@ msgstr "Рисовать"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/tools.py
-msgid "Line"
-msgstr "Линия"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/tools.py
 msgid "Arrow"
 msgstr "Стрелка"
 
@@ -3208,6 +3275,27 @@ msgstr "Толщина линии"
 #: pdfarranger_qt/toolstrip.py
 msgid "No Colour"
 msgstr "Без цвета"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/toolstrip.py
+msgid "Swatches"
+msgstr "Образцы"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/toolstrip.py
+msgid "More Colours"
+msgstr "Другие цвета"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/toolstrip.py
+msgid "Done"
+msgstr "Готово"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/toolstrip.py
+#, python-format
+msgid "The colour in use, %s, is not one of these swatches."
+msgstr "Используемый цвет, %s, не совпадает ни с одним из этих образцов."
 
 # machine translation, unreviewed
 #: pdfarranger_qt/viewer.py

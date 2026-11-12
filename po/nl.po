@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PDF-Shuffler 0.7\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-11 00:38+0000\n"
+"POT-Creation-Date: 2026-11-11 19:12+0000\n"
 "PO-Revision-Date: 2025-05-26 10:43+0200\n"
 "Last-Translator: Heimen Stoffels <vistausss@fastmail.com>\n"
 "Language: nl\n"
@@ -136,8 +136,14 @@ msgstr "Huidige eigenschappen als standaard instellen"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py pdfarranger_qt/mainwindow.py
+#: pdfarranger_qt/toolstrip.py
 msgid "Properties..."
 msgstr "Eigenschappen..."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Flip Line"
+msgstr "Lijn omdraaien"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
@@ -418,8 +424,8 @@ msgid "Size"
 msgstr "Grootte"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/dialogs.py pdfarranger_qt/properties.py
-#: pdfarranger_qt/toolstrip.py
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+#: pdfarranger_qt/properties.py pdfarranger_qt/toolstrip.py
 msgid "Colour"
 msgstr "Kleur"
 
@@ -2169,6 +2175,12 @@ msgstr "Markering toevoegen"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "%s Colour"
+msgstr "Kleur: %s"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
 msgid "Change Mark"
 msgstr "Markering wijzigen"
 
@@ -2838,7 +2850,7 @@ msgid "Rotate"
 msgstr "Draaien"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/markup.py
+#: pdfarranger_qt/markup.py pdfarranger_qt/properties.py
 msgid "None"
 msgstr "Geen"
 
@@ -3095,6 +3107,11 @@ msgstr "Rechthoek/vierkant"
 msgid "Oval/Circle"
 msgstr "Ovaal/cirkel"
 
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py pdfarranger_qt/tools.py
+msgid "Line"
+msgstr "Lijn"
+
 #: pdfarranger_qt/properties.py
 msgid "Review History"
 msgstr "Revisiegeschiedenis"
@@ -3136,6 +3153,61 @@ msgstr "Dikte"
 #: pdfarranger_qt/properties.py
 msgid "Fill Colour"
 msgstr "Vulkleur"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Open Arrow"
+msgstr "Open pijl"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Closed Arrow"
+msgstr "Gesloten pijl"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Open Arrow (Reverse)"
+msgstr "Open pijl (omgekeerd)"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Closed Arrow (Reverse)"
+msgstr "Gesloten pijl (omgekeerd)"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Butt"
+msgstr "Dwarsstreep"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Diamond"
+msgstr "Ruit"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Round"
+msgstr "Rond"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Square"
+msgstr "Vierkant"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Slash"
+msgstr "Schuine streep"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Start"
+msgstr "Begin"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "End"
+msgstr "Einde"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/properties.py
@@ -3394,11 +3466,6 @@ msgstr "Tekenen"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/tools.py
-msgid "Line"
-msgstr "Lijn"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/tools.py
 msgid "Arrow"
 msgstr "Pijl"
 
@@ -3436,6 +3503,27 @@ msgstr "Lijndikte"
 #: pdfarranger_qt/toolstrip.py
 msgid "No Colour"
 msgstr "Geen kleur"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/toolstrip.py
+msgid "Swatches"
+msgstr "Stalen"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/toolstrip.py
+msgid "More Colours"
+msgstr "Meer kleuren"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/toolstrip.py
+msgid "Done"
+msgstr "Klaar"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/toolstrip.py
+#, python-format
+msgid "The colour in use, %s, is not one of these swatches."
+msgstr "De gebruikte kleur, %s, is geen van deze stalen."
 
 # machine translation, unreviewed
 #: pdfarranger_qt/viewer.py

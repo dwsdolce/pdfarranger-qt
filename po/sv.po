@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  pdfarranger\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-11 00:38+0000\n"
+"POT-Creation-Date: 2026-11-11 19:12+0000\n"
 "PO-Revision-Date: 2026-05-24 07:36+0300\n"
 "Last-Translator: kbengs\n"
 "Language: sv\n"
@@ -132,8 +132,14 @@ msgstr "Gör aktuella egenskaper till standard"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py pdfarranger_qt/mainwindow.py
+#: pdfarranger_qt/toolstrip.py
 msgid "Properties..."
 msgstr "Egenskaper..."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Flip Line"
+msgstr "Vänd linje"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
@@ -412,8 +418,8 @@ msgid "Size"
 msgstr "Storlek"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/dialogs.py pdfarranger_qt/properties.py
-#: pdfarranger_qt/toolstrip.py
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+#: pdfarranger_qt/properties.py pdfarranger_qt/toolstrip.py
 msgid "Colour"
 msgstr "Färg"
 
@@ -2121,6 +2127,12 @@ msgstr "Lägg till markering"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "%s Colour"
+msgstr "Färg: %s"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
 msgid "Change Mark"
 msgstr "Ändra markering"
 
@@ -2786,7 +2798,7 @@ msgid "Rotate"
 msgstr "Rotera"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/markup.py
+#: pdfarranger_qt/markup.py pdfarranger_qt/properties.py
 msgid "None"
 msgstr "Ingen"
 
@@ -3043,6 +3055,11 @@ msgstr "Rektangel/kvadrat"
 msgid "Oval/Circle"
 msgstr "Oval/cirkel"
 
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py pdfarranger_qt/tools.py
+msgid "Line"
+msgstr "Linje"
+
 #: pdfarranger_qt/properties.py
 msgid "Review History"
 msgstr "Granskningshistorik"
@@ -3084,6 +3101,61 @@ msgstr "Tjocklek"
 #: pdfarranger_qt/properties.py
 msgid "Fill Colour"
 msgstr "Fyllnadsfärg"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Open Arrow"
+msgstr "Öppen pil"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Closed Arrow"
+msgstr "Stängd pil"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Open Arrow (Reverse)"
+msgstr "Öppen pil (omvänd)"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Closed Arrow (Reverse)"
+msgstr "Stängd pil (omvänd)"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Butt"
+msgstr "Tvärstreck"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Diamond"
+msgstr "Romb"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Round"
+msgstr "Rund"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Square"
+msgstr "Kvadrat"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Slash"
+msgstr "Snedstreck"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Start"
+msgstr "Början"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "End"
+msgstr "Slut"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/properties.py
@@ -3342,11 +3414,6 @@ msgstr "Rita"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/tools.py
-msgid "Line"
-msgstr "Linje"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/tools.py
 msgid "Arrow"
 msgstr "Pil"
 
@@ -3384,6 +3451,27 @@ msgstr "Linjetjocklek"
 #: pdfarranger_qt/toolstrip.py
 msgid "No Colour"
 msgstr "Ingen färg"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/toolstrip.py
+msgid "Swatches"
+msgstr "Färgrutor"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/toolstrip.py
+msgid "More Colours"
+msgstr "Fler färger"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/toolstrip.py
+msgid "Done"
+msgstr "Klar"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/toolstrip.py
+#, python-format
+msgid "The colour in use, %s, is not one of these swatches."
+msgstr "Färgen som används, %s, är ingen av dessa färgrutor."
 
 # machine translation, unreviewed
 #: pdfarranger_qt/viewer.py

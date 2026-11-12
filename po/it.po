@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pdfarranger master\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-11 00:38+0000\n"
+"POT-Creation-Date: 2026-11-11 19:12+0000\n"
 "PO-Revision-Date: 2026-01-04 02:52+0100\n"
 "Last-Translator: Massimo Pissarello <mapi68@gmail.com>\n"
 "Language: it\n"
@@ -133,8 +133,14 @@ msgstr "Imposta le proprietà correnti come predefinite"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py pdfarranger_qt/mainwindow.py
+#: pdfarranger_qt/toolstrip.py
 msgid "Properties..."
 msgstr "Proprietà..."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Flip Line"
+msgstr "Inverti linea"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
@@ -415,8 +421,8 @@ msgid "Size"
 msgstr "Dimensione"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/dialogs.py pdfarranger_qt/properties.py
-#: pdfarranger_qt/toolstrip.py
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+#: pdfarranger_qt/properties.py pdfarranger_qt/toolstrip.py
 msgid "Colour"
 msgstr "Colore"
 
@@ -2141,6 +2147,12 @@ msgstr "Aggiungi marcatura"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "%s Colour"
+msgstr "Colore: %s"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
 msgid "Change Mark"
 msgstr "Modifica contrassegno"
 
@@ -2808,7 +2820,7 @@ msgid "Rotate"
 msgstr "Ruota"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/markup.py
+#: pdfarranger_qt/markup.py pdfarranger_qt/properties.py
 msgid "None"
 msgstr "Nessuno"
 
@@ -3065,6 +3077,11 @@ msgstr "Rettangolo/Quadrato"
 msgid "Oval/Circle"
 msgstr "Ovale/Cerchio"
 
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py pdfarranger_qt/tools.py
+msgid "Line"
+msgstr "Linea"
+
 #: pdfarranger_qt/properties.py
 msgid "Review History"
 msgstr "Cronologia revisioni"
@@ -3106,6 +3123,61 @@ msgstr "Spessore"
 #: pdfarranger_qt/properties.py
 msgid "Fill Colour"
 msgstr "Colore riempimento"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Open Arrow"
+msgstr "Freccia aperta"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Closed Arrow"
+msgstr "Freccia chiusa"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Open Arrow (Reverse)"
+msgstr "Freccia aperta (inversa)"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Closed Arrow (Reverse)"
+msgstr "Freccia chiusa (inversa)"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Butt"
+msgstr "Taglio"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Diamond"
+msgstr "Rombo"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Round"
+msgstr "Rotondo"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Square"
+msgstr "Quadrato"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Slash"
+msgstr "Barra"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Start"
+msgstr "Inizio"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "End"
+msgstr "Fine"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/properties.py
@@ -3364,11 +3436,6 @@ msgstr "Disegna"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/tools.py
-msgid "Line"
-msgstr "Linea"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/tools.py
 msgid "Arrow"
 msgstr "Freccia"
 
@@ -3406,6 +3473,27 @@ msgstr "Spessore linea"
 #: pdfarranger_qt/toolstrip.py
 msgid "No Colour"
 msgstr "Nessun colore"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/toolstrip.py
+msgid "Swatches"
+msgstr "Campioni"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/toolstrip.py
+msgid "More Colours"
+msgstr "Altri colori"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/toolstrip.py
+msgid "Done"
+msgstr "Fine"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/toolstrip.py
+#, python-format
+msgid "The colour in use, %s, is not one of these swatches."
+msgstr "Il colore in uso, %s, non è tra questi campioni."
 
 # machine translation, unreviewed
 #: pdfarranger_qt/viewer.py

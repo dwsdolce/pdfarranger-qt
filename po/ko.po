@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pdfarranger - Korean\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-11 00:38+0000\n"
+"POT-Creation-Date: 2026-11-11 19:12+0000\n"
 "PO-Revision-Date: 2026-05-25 00:41+0900\n"
 "Last-Translator: VenusGirl <venusgirl@outlook.com>\n"
 "Language: ko\n"
@@ -132,8 +132,14 @@ msgstr "현재 속성을 기본값으로 설정"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py pdfarranger_qt/mainwindow.py
+#: pdfarranger_qt/toolstrip.py
 msgid "Properties..."
 msgstr "속성..."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Flip Line"
+msgstr "선 뒤집기"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
@@ -411,8 +417,8 @@ msgid "Size"
 msgstr "크기"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/dialogs.py pdfarranger_qt/properties.py
-#: pdfarranger_qt/toolstrip.py
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+#: pdfarranger_qt/properties.py pdfarranger_qt/toolstrip.py
 msgid "Colour"
 msgstr "색"
 
@@ -2019,6 +2025,12 @@ msgstr "표시 추가"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "%s Colour"
+msgstr "%s 색"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
 msgid "Change Mark"
 msgstr "표시 변경"
 
@@ -2670,7 +2682,7 @@ msgid "Rotate"
 msgstr "회전"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/markup.py
+#: pdfarranger_qt/markup.py pdfarranger_qt/properties.py
 msgid "None"
 msgstr "없음"
 
@@ -2927,6 +2939,11 @@ msgstr "직사각형/정사각형"
 msgid "Oval/Circle"
 msgstr "타원/원"
 
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py pdfarranger_qt/tools.py
+msgid "Line"
+msgstr "선"
+
 #: pdfarranger_qt/properties.py
 msgid "Review History"
 msgstr "검토 기록"
@@ -2968,6 +2985,61 @@ msgstr "두께"
 #: pdfarranger_qt/properties.py
 msgid "Fill Colour"
 msgstr "채우기 색"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Open Arrow"
+msgstr "열린 화살표"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Closed Arrow"
+msgstr "닫힌 화살표"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Open Arrow (Reverse)"
+msgstr "열린 화살표(반전)"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Closed Arrow (Reverse)"
+msgstr "닫힌 화살표(반전)"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Butt"
+msgstr "버트"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Diamond"
+msgstr "마름모"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Round"
+msgstr "원형"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Square"
+msgstr "정사각형"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Slash"
+msgstr "사선"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Start"
+msgstr "시작"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "End"
+msgstr "끝"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/properties.py
@@ -3226,11 +3298,6 @@ msgstr "그리기"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/tools.py
-msgid "Line"
-msgstr "선"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/tools.py
 msgid "Arrow"
 msgstr "화살표"
 
@@ -3268,6 +3335,27 @@ msgstr "선 두께"
 #: pdfarranger_qt/toolstrip.py
 msgid "No Colour"
 msgstr "색 없음"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/toolstrip.py
+msgid "Swatches"
+msgstr "견본"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/toolstrip.py
+msgid "More Colours"
+msgstr "다른 색"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/toolstrip.py
+msgid "Done"
+msgstr "완료"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/toolstrip.py
+#, python-format
+msgid "The colour in use, %s, is not one of these swatches."
+msgstr "사용 중인 색 %s은(는) 이 견본에 없습니다."
 
 # machine translation, unreviewed
 #: pdfarranger_qt/viewer.py

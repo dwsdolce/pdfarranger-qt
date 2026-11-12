@@ -101,6 +101,8 @@ KIND_LABELS = {
     # rectangle or a circle from an oval, and the form is the same.
     "/Square": N_("Rectangle/Square"),
     "/Circle": N_("Oval/Circle"),
+    # Whichever tool made it, Line or Arrow.
+    "/Line": N_("Line"),
 }
 
 
@@ -159,6 +161,17 @@ class Properties(NamedTuple):
     fill: Optional[Tuple[float, ...]] = None
     thickness: float = 1.0
     border_style: str = "straight"
+    #: A line's: its Appearance tab is Start, Style, Colour and Opacity, then
+    #: End, Thickness and Fill Colour, laid out as Acrobat lays them; and
+    #: its two ends, as `/LE` names them.
+    line: bool = False
+    ends: Tuple[str, str] = ("/None", "/None")
+    #: A tool's next mark rather than a mark: opened from the colour popup's
+    #: gear with nothing selected, and saved as the tool's defaults. The
+    #: Appearance and General tabs only -- no dates, no Review History, no
+    #: Locked and no Make Properties Default, none of which a mark not yet
+    #: made can have.
+    defaults_only: bool = False
     #: Whether the mark grows with the page. Offered only where an icon
     #: is: it is the one place the size is the mark's rather than the
     #: text's. Reader always fixes it and never offers the choice.
@@ -283,7 +296,8 @@ class MarkProperties(QDialog):
         if props.has_colour:
             tabs.addTab(self._appearance(), _("Appearance"))
         tabs.addTab(self._general(props), _("General"))
-        tabs.addTab(self._history(props), _("Review History"))
+        if not props.defaults_only:
+            tabs.addTab(self._history(props), _("Review History"))
         outer.addWidget(tabs)
 
         footer = QHBoxLayout()
@@ -304,6 +318,8 @@ class MarkProperties(QDialog):
         #: leaves it live too.
         self.make_default_box = QCheckBox(_("Make Properties Default"), self)
         footer.addWidget(self.make_default_box)
+        self.locked.setVisible(not props.defaults_only)
+        self.make_default_box.setVisible(not props.defaults_only)
         footer.addStretch(1)
         buttons = QDialogButtonBox(
             QDialogButtonBox.Ok | QDialogButtonBox.Cancel, self)
@@ -324,6 +340,8 @@ class MarkProperties(QDialog):
         slider are two things to keep in step.
         """
         page = QWidget(self)
+        if self._was.line:
+            return self._line_appearance(page)
         if self._was.box:
             return self._box_appearance(page)
         form = QFormLayout(page)
@@ -376,7 +394,7 @@ class MarkProperties(QDialog):
                 self.style.setCurrentIndex(at)
             form.addRow(_("Style"), self.style)
 
-        self.palette_popup = ColourPopup(self)
+        self.palette_popup = ColourPopup(self, more=True)
         self.palette_popup.chosen.connect(self._coloured)
         # The popup carries a slider of its own, because it is the strip's
         # picker as well. The two are kept in step rather than one of them
@@ -418,7 +436,7 @@ class MarkProperties(QDialog):
         grid.addLayout(right, 0, 1, Qt.AlignTop)
         self.border_style = QComboBox(page)
         self.border_style.setIconSize(_StyleSample.SIZE)
-        for name in markup.BORDER_STYLES:
+        for name in markup.BOX_STYLES:
             if name == "none":
                 self.border_style.addItem(_("No Border"), name)
             else:
@@ -444,23 +462,92 @@ class MarkProperties(QDialog):
         self.fill_swatch.set_colour(self._fill)
         self.fill_swatch.clicked.connect(self._pick_fill)
         right.addRow(_("Fill Colour"), self.fill_swatch)
-        self.palette_popup = ColourPopup(self)
+        self.palette_popup = ColourPopup(self, more=True)
         self.palette_popup.chosen.connect(self._coloured)
         self.palette_popup.faded.connect(
             lambda value: self.slider.setValue(round(value * 100)))
         self.fill_popup = ColourPopup(self, opacity=False,
-                                      none=self._was.fill_optional)
+                                      none=self._was.fill_optional, more=True)
         self.fill_popup.chosen.connect(self._filled)
         self._thickness_matters()
         return page
 
+    #: A line end's label, by its `/LE` name. **"Open Arrow", not Acrobat's
+    #: bare "Open"**: that word is already in the catalogues as the File
+    #: menu's verb, and a translator cannot tell the two apart.
+    END_LABELS = {"/None": N_("None"), "/OpenArrow": N_("Open Arrow"),
+                  "/ClosedArrow": N_("Closed Arrow"),
+                  "/ROpenArrow": N_("Open Arrow (Reverse)"),
+                  "/RClosedArrow": N_("Closed Arrow (Reverse)"),
+                  "/Butt": N_("Butt"), "/Diamond": N_("Diamond"),
+                  "/Circle": N_("Round"), "/Square": N_("Square"),
+                  "/Slash": N_("Slash")}
+
+    def _line_appearance(self, page) -> QWidget:
+        """A line's: Start, Style, Colour and Opacity on the left, End,
+        Thickness and Fill Colour on the right, as Acrobat's form has them.
+
+        Thickness runs from 0 -- still a line, the thinnest there is -- to
+        12, whatever the fill, which only fills the closed ends and may be
+        No Colour."""
+        grid = QGridLayout(page)
+        grid.setHorizontalSpacing(24)
+        left, right = QFormLayout(), QFormLayout()
+        grid.addLayout(left, 0, 0, Qt.AlignTop)
+        grid.addLayout(right, 0, 1, Qt.AlignTop)
+        self.line_ends = []
+        for side, layout, label in ((0, left, _("Start")), (1, right, _("End"))):
+            box = QComboBox(page)
+            for _name, end in markup.LINE_ENDS:
+                box.addItem(_(self.END_LABELS[end]), end)
+            at = box.findData(self._was.ends[side] if self._was.ends else "/None")
+            box.setCurrentIndex(max(0, at))
+            box.currentIndexChanged.connect(self._box_changed)
+            layout.addRow(label, box)
+            self.line_ends.append(box)
+        self.border_style = QComboBox(page)
+        self.border_style.setIconSize(_StyleSample.SIZE)
+        for name in markup.LINE_STYLES:
+            self.border_style.addItem(_StyleSample.icon(name, self), "", name)
+        at = self.border_style.findData(self._was.border_style)
+        self.border_style.setCurrentIndex(max(0, at))
+        self.border_style.currentIndexChanged.connect(self._box_changed)
+        left.addRow(_("Style"), self.border_style)
+        self.swatch = _Swatch(page)
+        self.swatch.set_colour(self._colour)
+        self.swatch.clicked.connect(self._pick_colour)
+        left.addRow(_("Colour"), self.swatch)
+        left.addRow(_("Opacity"), self._opacity_column(page))
+        self.thickness = QSpinBox(page)
+        self.thickness.setRange(0, 12)
+        self.thickness.setSuffix(" pt")
+        self.thickness.setValue(max(0, min(12, round(self._was.thickness or 0))))
+        self.thickness.valueChanged.connect(self._box_changed)
+        right.addRow(_("Thickness"), self.thickness)
+        self.fill_swatch = _Swatch(page)
+        self.fill_swatch.set_colour(self._fill)
+        self.fill_swatch.clicked.connect(self._pick_fill)
+        right.addRow(_("Fill Colour"), self.fill_swatch)
+        self.palette_popup = ColourPopup(self, more=True)
+        self.palette_popup.chosen.connect(self._coloured)
+        self.palette_popup.faded.connect(
+            lambda value: self.slider.setValue(round(value * 100)))
+        self.fill_popup = ColourPopup(self, opacity=False, none=True, more=True)
+        self.fill_popup.chosen.connect(self._filled)
+        return page
+
     def _thinnest(self) -> int:
-        """0 for a shape with a fill, which can do without a line; 1 for
-        everything else."""
+        """0 for a line, which is still drawn at 0, and for a shape with a
+        fill, which can do without a line; 1 for everything else."""
+        if self._was.line:
+            return 0
         return 0 if self._was.fill_optional and self._fill is not None else 1
 
     def _thickness_matters(self) -> None:
-        """No Border has no thickness to set."""
+        """No Border has no thickness to set; a line always has one."""
+        if self._was.line:
+            self.thickness.setEnabled(not self.locked_now())
+            return
         self.thickness.setEnabled(self.border_style.currentData() != "none"
                                   and not self.locked_now())
 
@@ -469,9 +556,12 @@ class MarkProperties(QDialog):
         return bool(box is not None and box.isChecked())
 
     def _box_state(self) -> dict:
-        return {"fill": self._fill if self._fill is not None else markup.NO_COLOUR,
-                "thickness": float(self.thickness.value()),
-                "border_style": self.border_style.currentData()}
+        state = {"fill": self._fill if self._fill is not None else markup.NO_COLOUR,
+                 "thickness": float(self.thickness.value()),
+                 "border_style": self.border_style.currentData()}
+        if self._was.line:
+            state["ends"] = tuple(box.currentData() for box in self.line_ends)
+        return state
 
     def _box_changed(self, *_args) -> None:
         self._thickness_matters()
@@ -481,8 +571,9 @@ class MarkProperties(QDialog):
         below = self.fill_swatch.mapToGlobal(
             QPoint(0, self.fill_swatch.height() + 2))
         self.fill_popup.show_for(
-            self._fill if self._fill is not None or self._was.fill_optional
-            else (1.0, 1.0, 1.0), None, below)
+            self._fill if (self._fill is not None or self._was.fill_optional
+                           or self._was.line)
+            else (1.0, 1.0, 1.0), None, below, _("Fill Colour"))
 
     def _filled(self, colour) -> None:
         # An empty colour is No Colour.
@@ -514,8 +605,9 @@ class MarkProperties(QDialog):
         form.addRow(_("Author"), self.author)
         self.subject = QLineEdit(props.subject, page)
         form.addRow(_("Subject"), self.subject)
-        form.addRow(_("Date modified"), QLabel(props.when, page))
-        form.addRow(_("Created"), QLabel(props.created, page))
+        if not props.defaults_only:
+            form.addRow(_("Date modified"), QLabel(props.when, page))
+            form.addRow(_("Created"), QLabel(props.created, page))
         return page
 
     def _history(self, props: Properties) -> QWidget:
@@ -576,7 +668,10 @@ class MarkProperties(QDialog):
 
     def _pick_colour(self) -> None:
         below = self.swatch.mapToGlobal(QPoint(0, self.swatch.height() + 2))
-        self.palette_popup.show_for(self._colour, self._opacity, below)
+        self.palette_popup.show_for(
+            self._colour, self._opacity, below,
+            _("Border Colour") if self._was.box and not self._was.fill_optional
+            else _("Colour"))
 
     def _coloured(self, colour) -> None:
         self._colour = tuple(colour)
@@ -604,10 +699,13 @@ class MarkProperties(QDialog):
             self.style.setEnabled(not on)
         if self._was.icons:
             self.icons.setEnabled(not on and not self._was.icons_fixed)
-        if self._was.box:
+        if self._was.box or self._was.line:
             self.border_style.setEnabled(not on)
             self.fill_swatch.setEnabled(not on)
             self._thickness_matters()
+        if self._was.line:
+            for box in self.line_ends:
+                box.setEnabled(not on)
 
     @property
     def make_default(self) -> bool:
@@ -637,7 +735,17 @@ class MarkProperties(QDialog):
             picked = self.style.currentData()
             if picked != self._was.style:
                 now["style"] = picked
-        if self._was.box:
+        if self._was.line:
+            state = self._box_state()
+            if self._fill != self._was.fill:
+                now["fill"] = state["fill"]
+            if state["border_style"] != self._was.border_style:
+                now["border_style"] = state["border_style"]
+            if state["thickness"] != float(self._was.thickness):
+                now["thickness"] = state["thickness"]
+            if state["ends"] != tuple(self._was.ends or ("/None", "/None")):
+                now["ends"] = state["ends"]
+        elif self._was.box:
             state = self._box_state()
             if self._fill != self._was.fill:
                 now["fill"] = state["fill"]

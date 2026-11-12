@@ -150,9 +150,13 @@ TOOLS: List[Tool] = [
          colour='Light Red', marks=("Strikethrough",)),
 
     Tool("draw", DRAWING, N_("Draw"), "draw", "/Ink, /InkList, /BS /W"),
-    Tool("line", DRAWING, N_("Line"), "minus", "/Line, /L"),
+    # Two tools, one mark: the Arrow tool's line starts with an open arrow
+    # at its end and carries `/IT /LineArrow`.
+    Tool("line", DRAWING, N_("Line"), "minus", "/Line, /L, /LE, /IC, /BS",
+         marks=("Line",)),
     Tool("arrow", DRAWING, N_("Arrow"), "arrow-top-right",
-         "/Line /IT /LineArrow, /LE [/None /OpenArrow], /BS /W"),
+         "/Line /IT /LineArrow, /LE [/None /OpenArrow], /BS /W",
+         marks=("Line",)),
     # One tool each for two shapes: Shift makes the square or the circle,
     # and the mark is named for both, since the file does not tell them
     # apart.

@@ -93,8 +93,14 @@ SQUARE = "/Square"
 CIRCLE = "/Circle"
 SHAPES = (SQUARE, CIRCLE)
 
+#: What the Line and Arrow tools make: two points in `/L`, each end styled
+#: by `/LE`. **One kind, two tools**, told apart by `/IT /LineArrow` on the
+#: Arrow tool's, which records the tool and not how the ends look.
+LINE = "/Line"
+LINE_ARROW = "/LineArrow"
+
 KINDS = (TEXT, HIGHLIGHT, STRIKEOUT, UNDERLINE, SQUIGGLY, STAMP, CARET,
-         FREETEXT, SQUARE, CIRCLE)
+         FREETEXT, SQUARE, CIRCLE, LINE)
 
 #: The two subtypes one tool writes, and which of them means what. A style
 #: is not a value inside the dictionary: it is which dictionary gets
@@ -244,7 +250,7 @@ SUBJECTS = {HIGHLIGHT: "Highlight", STRIKEOUT: "Cross-Out",
             FREETEXT: "Text Box",
             # For the square and the circle too: Acrobat does not tell them
             # apart in the file.
-            SQUARE: "Rectangle", CIRCLE: "Oval"}
+            SQUARE: "Rectangle", CIRCLE: "Oval", LINE: "Line"}
 
 #: Bit 3 of `/F`, Print. Without it a mark shows on screen and vanishes from
 #: paper, which is not what anybody means by annotating a document.
@@ -726,7 +732,8 @@ class Annotation:
                  "irt", "rotate",
                  "popup_rect", "state", "rich", "subject", "locked",
                  "intent", "icon", "group", "fill", "thickness",
-                 "border_style", "text_font", "text_size", "text_colour")
+                 "border_style", "text_font", "text_size", "text_colour",
+                 "points", "ends")
 
     def __init__(self, kind: str, page: int, rect: Tuple[float, ...],
                  contents: str = "", colour=None, author: Optional[str] = None,
@@ -740,7 +747,7 @@ class Annotation:
                  icon: Optional[str] = None, group: bool = False,
                  fill=None, thickness: float = 1.0,
                  border_style: str = "straight", text_font=None,
-                 text_size=None, text_colour=None):
+                 text_size=None, text_colour=None, points=None, ends=None):
         if kind not in KINDS:
             raise ValueError(f"unknown annotation kind: {kind}")
         self.kind = kind
@@ -760,6 +767,10 @@ class Annotation:
         self.text_font = text_font
         self.text_size = text_size
         self.text_colour = tuple(text_colour) if text_colour is not None else None
+        #: A line's two points, start then end, and its ends as `/LE`
+        #: names them.
+        self.points = tuple(points) if points is not None else None
+        self.ends = tuple(ends) if ends is not None else ("/None", "/None")
         #: The `/NM` of the mark this answers, for a reply, and None for
         #: anything else. A reply is a mark in its own right -- it draws an
         #: icon, it can be selected and deleted -- and all that makes it a
@@ -937,6 +948,15 @@ def apply_edit(annot, edit, pdf=None) -> None:
     if subtype == FREETEXT:
         _patch_text_box(annot, edit, pdf)
         return
+    if subtype == LINE:
+        points = annot.get(pikepdf.Name.L)
+        was_points = (tuple(_number(v, 0.0) for v in points)
+                      if points is not None and len(points) == 4 else None)
+        was_rect = tuple(_number(v, 0.0) for v in annot.Rect)
+        edit = {k: v for k, v in edit.items() if k != "rotate"}
+        _apply_common_edit(annot, edit, pdf)
+        _redraw_line(annot, edit, pdf, was_points, was_rect)
+        return
     if subtype in SHAPES:
         rd = annot.get(pikepdf.Name.RD)
         was_rd = (tuple(_number(v, 0.0) for v in rd)
@@ -1013,6 +1033,10 @@ def _apply_common_edit(annot, edit, pdf=None) -> None:
         # A comment's icon, moved. On its own and not through `quads`,
         # because a note has none: `/Rect` is the whole of where it is.
         annot[pikepdf.Name.Rect] = pikepdf.Array([*rect])
+    points = edit.get("points")
+    if points:
+        # A line's two points, moved with its rectangle.
+        annot[pikepdf.Name.L] = pikepdf.Array([*points])
     quads = edit.get("quads")
     if quads:
         annot[pikepdf.Name.QuadPoints] = pikepdf.Array(
@@ -1542,7 +1566,8 @@ def blank_note_icons(pdf) -> int:
                 # And a text box, which the canvas draws whole -- fill,
                 # border and words -- so a drag carries it; and a rectangle
                 # or an oval, for the same reason.
-                text_box = subtype == FREETEXT or subtype in SHAPES
+                text_box = (subtype == FREETEXT or subtype in SHAPES
+                            or subtype == LINE)
                 if subtype != TEXT and not text_box and not is_scalable_comment(
                         subtype, stamp_icon(annot)):
                     continue
@@ -1757,7 +1782,7 @@ class MarkEdits:
     FIELDS = ("colour", "opacity", "quads", "deleted", "contents", "popup",
               "rich", "author", "subject", "locked", "style", "icon",
               "rect", "rotate", "modified", "fill", "thickness",
-              "border_style")
+              "border_style", "points", "ends")
 
     def __init__(self, by_page=None):
         self._by_page: Dict[int, Dict[int, dict]] = {}
@@ -1993,6 +2018,8 @@ def to_dictionary(pdf, annotation: Annotation, page=None) -> pikepdf.Dictionary:
         _write_text_box(pdf, entry, annotation)
     if annotation.kind in SHAPES:
         _write_shape(pdf, entry, annotation)
+    if annotation.kind == LINE:
+        _write_line(pdf, entry, annotation)
     if annotation.kind == CARET:
         entry[pikepdf.Name.RD] = pikepdf.Array([caret_inset(annotation.rect)] * 4)
         if solidity(annotation) != 1.0:
@@ -2166,7 +2193,7 @@ def nearest_swatch(colour):
 #: them does not.
 TRANSPARENCY = {HIGHLIGHT: 0.4, STRIKEOUT: 1.0,
                 UNDERLINE: 1.0, SQUIGGLY: 1.0, CARET: 1.0, FREETEXT: 1.0,
-                SQUARE: 1.0, CIRCLE: 1.0}
+                SQUARE: 1.0, CIRCLE: 1.0, LINE: 1.0}
 
 
 def opacity_of(mark) -> float:
@@ -2669,7 +2696,275 @@ BORDER_STYLES = {
     "long dash dot": {"dash": (4, 3, 16, 3)},
     "small cloud": {"cloud": 1},
     "large cloud": {"cloud": 2},
+    # 8 on and 4 off, then 4 on and 4 off: in every style list, after the
+    # dash-dots. Read first off a line and taken for a line's own; it is
+    # the text box's, the rectangle's and the oval's too.
+    "long dash": {"dash": (8, 4, 4, 4)},
 }
+
+#: The styles a text box, a rectangle or an oval offers, in Acrobat's order.
+BOX_STYLES = ("none", "straight", "short dotted", "medium dotted",
+              "long dotted", "short dash dot", "long dash dot", "long dash",
+              "small cloud", "large cloud")
+
+#: The styles a line offers: no No Border, since there is always a line, and
+#: no clouds.
+LINE_STYLES = ("straight", "short dotted", "medium dotted", "long dotted",
+               "short dash dot", "long dash dot", "long dash")
+
+#: A line's end styles, as the form names them and `/LE` writes them, in
+#: Acrobat's order.
+LINE_ENDS = (("none", "/None"), ("open", "/OpenArrow"),
+             ("closed", "/ClosedArrow"), ("open reverse", "/ROpenArrow"),
+             ("closed reverse", "/RClosedArrow"), ("butt", "/Butt"),
+             ("diamond", "/Diamond"), ("round", "/Circle"),
+             ("square", "/Square"), ("slash", "/Slash"))
+_END_OF_NAME = {name: end for end, name in LINE_ENDS}
+
+
+def line_end_drawing(points, ends, width: float):
+    """How a line and its two ends are drawn, read off Acrobat's drawings.
+
+    Answers ``(segment, pieces)``: the line's own two points, which an
+    arrow, a diamond, a circle or a square pulls back by the line's width
+    so its point or centre lands on the line's end, and each end's pieces,
+    ``(kind, data, filled)`` -- a ``"poly"`` of points, ``"closed"`` when it
+    is a shape, or a ``"circle"`` of ``(x, y, radius)``. Sizes are in line
+    widths, a width of 0 drawn as 1: an arrow's arms 9 long at 30 degrees
+    either side of the line, a diamond 3 from its centre to each point, a
+    circle of radius 3, a square 6 a side -- the last three square to the
+    page, not turned with the line, as Acrobat draws them -- a butt 6 long
+    across the line, and a slash 18 long at 60 degrees to it.
+
+    Acrobat pulls an end back along the page's x axis only, which is under
+    a point from the line on the fixture; here it is pulled back along the
+    line, as it is meant to be."""
+    x0, y0, x1, y1 = (float(v) for v in points)
+    w = max(float(width), 1.0)
+    length = math.hypot(x1 - x0, y1 - y0) or 1.0
+    ux, uy = (x1 - x0) / length, (y1 - y0) / length
+    segment = [x0, y0, x1, y1]
+    pieces = []
+    for at, (end, sign) in enumerate(((ends[0], -1.0), (ends[1], 1.0))):
+        end = (end or "/None")
+        px, py = (x0, y0) if at == 0 else (x1, y1)
+        # Outward along the line from this end.
+        ox, oy = ux * sign, uy * sign
+        pulled = (px - ox * w, py - oy * w)
+        if end in ("/OpenArrow", "/ClosedArrow", "/Diamond", "/Circle",
+                   "/Square"):
+            segment[2 * at:2 * at + 2] = pulled
+        if end in ("/OpenArrow", "/ClosedArrow", "/ROpenArrow", "/RClosedArrow"):
+            reverse = end.startswith("/R")
+            tip = ((px + ox * w, py + oy * w) if reverse else pulled)
+            # The arms run back from the tip -- or, reversed, on outward.
+            back = (ox, oy) if reverse else (-ox, -oy)
+            arms = []
+            for turn in (math.radians(30), -math.radians(30)):
+                c, s_ = math.cos(turn), math.sin(turn)
+                dx, dy = back[0] * c - back[1] * s_, back[0] * s_ + back[1] * c
+                arms.append((tip[0] + dx * 9 * w, tip[1] + dy * 9 * w))
+            closed = end in ("/ClosedArrow", "/RClosedArrow")
+            pieces.append(("closed" if closed else "poly",
+                           [arms[0], tip, arms[1]], closed))
+        elif end == "/Diamond":
+            cx, cy = pulled
+            r = 3 * w
+            pieces.append(("closed", [(cx - r, cy), (cx, cy + r),
+                                      (cx + r, cy), (cx, cy - r)], True))
+        elif end == "/Square":
+            cx, cy = pulled
+            r = 3 * w
+            pieces.append(("closed", [(cx - r, cy - r), (cx - r, cy + r),
+                                      (cx + r, cy + r), (cx + r, cy - r)], True))
+        elif end == "/Circle":
+            pieces.append(("circle", (pulled[0], pulled[1], 3 * w), True))
+        elif end == "/Butt":
+            nx, ny = -uy, ux
+            pieces.append(("poly", [(px - nx * 3 * w, py - ny * 3 * w),
+                                    (px + nx * 3 * w, py + ny * 3 * w)], False))
+        elif end == "/Slash":
+            turn = math.radians(60)
+            c, s_ = math.cos(turn), math.sin(turn)
+            dx, dy = ux * c - uy * s_, ux * s_ + uy * c
+            pieces.append(("poly", [(px - dx * 9 * w, py - dy * 9 * w),
+                                    (px + dx * 9 * w, py + dy * 9 * w)], False))
+    return segment, pieces
+
+
+def line_rect(points, ends, width: float) -> "tuple":
+    """A line's `/Rect`: the line and its ends grown by 5 points and half
+    the line's width, which is the margin every line in the fixture has."""
+    segment, pieces = line_end_drawing(points, ends, width)
+    xs, ys = [segment[0], segment[2]], [segment[1], segment[3]]
+    for kind, data, _filled in pieces:
+        if kind == "circle":
+            cx, cy, r = data
+            xs += [cx - r, cx + r]
+            ys += [cy - r, cy + r]
+        else:
+            xs += [p[0] for p in data]
+            ys += [p[1] for p in data]
+    grow = 5.0 + max(float(width), 0.0) / 2.0
+    return (min(xs) - grow, min(ys) - grow, max(xs) + grow, max(ys) + grow)
+
+
+def _write_line(pdf, entry, annotation) -> None:
+    """The keys only a line has, as Acrobat writes them: `/L`, `/LE` --
+    left out when both ends are None -- the fill in `/IC`, the line in
+    `/BS`, `/Rect` round the line and its ends, and a drawing."""
+    points = annotation.points or tuple(annotation.rect)
+    entry[pikepdf.Name.L] = pikepdf.Array([*points])
+    ends = tuple(annotation.ends or ("/None", "/None"))
+    if any(end != "/None" for end in ends):
+        entry[pikepdf.Name.LE] = pikepdf.Array([pikepdf.Name(e) for e in ends])
+    elif pikepdf.Name.LE in entry:
+        del entry[pikepdf.Name.LE]
+    if annotation.fill is not None:
+        entry[pikepdf.Name.IC] = pikepdf.Array([*annotation.fill[:3]])
+    elif pikepdf.Name.IC in entry:
+        del entry[pikepdf.Name.IC]
+    style = BORDER_STYLES.get(annotation.border_style, {})
+    width = float(annotation.thickness)
+    if pikepdf.Name.BS in entry:
+        del entry[pikepdf.Name.BS]
+    if "dash" in style:
+        bs = pikepdf.Dictionary(S=pikepdf.Name.D,
+                                D=pikepdf.Array([*style["dash"]]))
+        if width != 1.0:
+            bs[pikepdf.Name.W] = width
+        entry[pikepdf.Name.BS] = bs
+    elif width != 1.0:
+        entry[pikepdf.Name.BS] = pikepdf.Dictionary(W=width)
+    rect = line_rect(points, ends, width)
+    entry[pikepdf.Name.Rect] = pikepdf.Array([*rect])
+    if solidity(annotation) != 1.0:
+        entry[pikepdf.Name.CA] = solidity(annotation)
+    elif pikepdf.Name.CA in entry:
+        del entry[pikepdf.Name.CA]
+    entry[pikepdf.Name.AP] = pikepdf.Dictionary(
+        N=_line_appearance(pdf, annotation, points, ends, rect))
+
+
+def _line_appearance(pdf, annotation, points, ends, rect):
+    """A line's drawing: the line, then each end in its style, all in the
+    line's dash -- as Acrobat's drawing sets the dash once for both -- a
+    closed end filled with `/IC` and outlined unless the line is 0, a line
+    of 0 drawn at the thinnest width there is."""
+    style = BORDER_STYLES.get(annotation.border_style, {})
+    width = float(annotation.thickness)
+    colour = annotation.colour or swatch("Red")
+    fill = annotation.fill
+    lines = ["{:.6g} {:.6g} {:.6g} RG".format(*colour[:3]),
+             "{:.4g} w".format(width)]
+    if fill is not None:
+        lines.append("{:.6g} {:.6g} {:.6g} rg".format(*fill[:3]))
+    if "dash" in style:
+        lines.append("[{}] 0 d".format(" ".join(f"{v:g}" for v in style["dash"])))
+    resources = pikepdf.Dictionary(ProcSet=pikepdf.Array([pikepdf.Name.PDF]))
+    opacity = solidity(annotation)
+    if opacity < 1.0:
+        lines.insert(0, "/R0 gs")
+        resources[pikepdf.Name.ExtGState] = pikepdf.Dictionary(
+            R0=pikepdf.Dictionary(Type=pikepdf.Name.ExtGState, AIS=False,
+                                  CA=opacity, ca=opacity))
+    segment, pieces = line_end_drawing(points, ends, width)
+    lines.append("{:.4f} {:.4f} m {:.4f} {:.4f} l S".format(*segment))
+    for kind, data, filled in pieces:
+        if kind == "circle":
+            cx, cy, r = data
+            k = r * _KAPPA
+            lines += ["{:.4f} {:.4f} m".format(cx, cy + r),
+                      "{:.4f} {:.4f} {:.4f} {:.4f} {:.4f} {:.4f} c".format(
+                          cx + k, cy + r, cx + r, cy + k, cx + r, cy),
+                      "{:.4f} {:.4f} {:.4f} {:.4f} {:.4f} {:.4f} c".format(
+                          cx + r, cy - k, cx + k, cy - r, cx, cy - r),
+                      "{:.4f} {:.4f} {:.4f} {:.4f} {:.4f} {:.4f} c".format(
+                          cx - k, cy - r, cx - r, cy - k, cx - r, cy),
+                      "{:.4f} {:.4f} {:.4f} {:.4f} {:.4f} {:.4f} c".format(
+                          cx - r, cy + k, cx - k, cy + r, cx, cy + r)]
+        else:
+            lines.append("{:.4f} {:.4f} m".format(*data[0]))
+            lines += ["{:.4f} {:.4f} l".format(*p) for p in data[1:]]
+        closed = kind in ("closed", "circle")
+        fills = filled and fill is not None
+        if closed:
+            lines.append("h")
+        lines.append({(True, True): "B", (True, False): "f",
+                      (False, True): "S", (False, False): "n"}[
+                          (fills, width > 0 or not closed)])
+    stream = pikepdf.Stream(pdf, ("\n".join(lines) + "\n").encode())
+    stream[pikepdf.Name.Type] = pikepdf.Name.XObject
+    stream[pikepdf.Name.Subtype] = pikepdf.Name.Form
+    stream[pikepdf.Name.BBox] = pikepdf.Array([*rect])
+    stream[pikepdf.Name.Resources] = resources
+    return pdf.make_indirect(stream)
+
+
+def _redraw_line(annot, edit, pdf, was_points, was_rect) -> None:
+    """Give a line the file brought a drawing of its own when an edit has
+    changed how it looks or where its ends are -- not when it was only
+    moved, which carries the producer's drawing along with `/Rect`."""
+    if pdf is None:
+        return
+    looks = any(edit.get(key) is not None
+                for key in ("colour", "opacity", "fill", "thickness",
+                            "border_style", "ends"))
+    points = edit.get("points")
+    reshaped = False
+    if points and was_points:
+        dx, dy = points[0] - was_points[0], points[1] - was_points[1]
+        moved_rect = edit.get("rect")
+        reshaped = (abs(points[2] - was_points[2] - dx) > 0.01
+                    or abs(points[3] - was_points[3] - dy) > 0.01
+                    or not moved_rect
+                    or abs(moved_rect[0] - was_rect[0] - dx) > 0.01
+                    or abs(moved_rect[1] - was_rect[1] - dy) > 0.01)
+    if not (looks or reshaped):
+        return
+    reading = _line_reading(annot)
+    if edit.get("fill") is not None:
+        reading["fill"] = None if edit["fill"] == NO_COLOUR else tuple(edit["fill"])
+    colour = annot.get(pikepdf.Name.C)
+    line = Annotation(
+        LINE, 0, [float(v) for v in annot.Rect],
+        colour=(tuple(_number(v, 0.0) for v in colour)
+                if colour is not None else None),
+        fill=reading["fill"],
+        thickness=float(edit["thickness"] if edit.get("thickness") is not None
+                        else reading["thickness"]),
+        border_style=edit.get("border_style") or reading["border_style"],
+        opacity=_number(annot.get(pikepdf.Name.CA)),
+        points=reading["points"],
+        ends=tuple(edit["ends"]) if edit.get("ends") else reading["ends"])
+    _write_line(pdf, annot, line)
+
+
+def _line_reading(annot) -> dict:
+    """A line's own keys: its two points, its ends, its fill and its line."""
+    found = {}
+    points = annot.get(pikepdf.Name.L)
+    found["points"] = (tuple(_number(v, 0.0) for v in points)
+                       if points is not None and len(points) == 4 else None)
+    ends = annot.get(pikepdf.Name.LE)
+    found["ends"] = (tuple(str(v) for v in ends)
+                     if ends is not None and len(ends) == 2
+                     else ("/None", "/None"))
+    fill = annot.get(pikepdf.Name.IC)
+    found["fill"] = (tuple(_number(v, 0.0) for v in fill)
+                     if fill is not None and len(fill) >= 3 else None)
+    found["thickness"], found["border_style"] = _border_reading(annot)
+    if found["border_style"] == "none":
+        # A line of 0 is still a line, the thinnest there is -- and keeps
+        # its dash, which a box's border of 0 does not have.
+        bs = annot.get(pikepdf.Name.BS) or {}
+        dash = (tuple(int(round(_number(v, 0.0))) for v in bs.get(pikepdf.Name.D))
+                if str(bs.get(pikepdf.Name.S, "")) == "/D"
+                and bs.get(pikepdf.Name.D) is not None else None)
+        found["border_style"] = next(
+            (name for name in LINE_STYLES
+             if BORDER_STYLES[name].get("dash") == dash), "straight")
+    return found
 
 #: The size a text box made by a click is given, in points: 108 wide -- an
 #: inch and a half -- and one line of 12 point text tall, measured on the
@@ -3122,7 +3417,7 @@ class Mark:
                  "locked", "subject", "intent", "scales", "icon",
                  "rotate", "ink", "group", "fill", "thickness",
                  "border_style", "inset", "text_font", "text_size",
-                 "text_colour", "styled", "rd")
+                 "text_colour", "styled", "rd", "points", "ends")
 
     def __init__(self, page, subtype, rect, quads=(), colour=None,
                  opacity=None, contents="", name=None, parent=None,
@@ -3132,7 +3427,7 @@ class Mark:
                  rotate=0.0, ink=None, group=False, fill=None,
                  thickness=1.0, border_style="straight", inset=0.0,
                  text_font=None, text_size=None, text_colour=None,
-                 styled=False, rd=None):
+                 styled=False, rd=None, points=None, ends=None):
         self.uid = next(_mark_uids)
         #: Where this mark sits among the markup annotations on its page, in
         #: the order the file has them. What `MarkEdits` keys an edit by, and
@@ -3223,6 +3518,9 @@ class Mark:
         #: `/RD` side by side, for a rectangle or an oval: how far its
         #: rectangle reaches beyond the box it is drawn in.
         self.rd = rd
+        #: A line's two points, `/L`, and its two ends, `/LE`.
+        self.points = points
+        self.ends = ends
         self.styled = styled
 
     def boxes(self) -> "list[tuple]":
@@ -3496,6 +3794,8 @@ def marks_in(pdf) -> "list[Mark]":
                     box.pop("box_size", None)
                 elif subtype in SHAPES:
                     box = _shape_reading(annot)
+                elif subtype == LINE:
+                    box = _line_reading(annot)
                 found.append(Mark(**box,
                     page=number,
                     index=at,

@@ -91,7 +91,7 @@ from .model import PageListModel
 from .notepanel import Item as NoteItem
 from .notepanel import NotePanel, when_text
 from .outline import Outline
-from .properties import MarkProperties, Properties
+from .properties import KIND_LABELS, MarkProperties, Properties
 from .recent import RecentFiles
 from .render import Renderer
 from .search import SearchIndex
@@ -160,6 +160,7 @@ class MainWindow(QMainWindow):
         self.reader.mark_drawn.connect(self.mark_drawn)
         self.reader.marks_drawn.connect(self.marks_drawn)
         self.reader.mark_reshaped.connect(self.mark_reshaped)
+        self.reader.line_reshaped.connect(self.line_reshaped)
         self.reader.mark_moved.connect(self.mark_moved)
         self.reader.mark_resized.connect(self.mark_resized)
         self.reader.mark_deleted.connect(self.mark_deleted)
@@ -199,6 +200,7 @@ class MainWindow(QMainWindow):
         self.mark_buttons.faded.connect(self.mark_faded)
         self.mark_buttons.deleted.connect(self.delete_selected_mark)
         self.mark_buttons.commented.connect(self.comment_on_selected_mark)
+        self.mark_buttons.properties_wanted.connect(self._properties_of_selected)
         #: What the next mark will be made in, once the tail's swatch has
         #: been used. None until then, so each tool keeps the colour readers
         #: expect of it rather than everything starting out yellow.
@@ -222,10 +224,15 @@ class MainWindow(QMainWindow):
         #: And a text box's border and fill: ``{"fill", "thickness",
         #: "border_style"}`` per tool, for the next box it makes.
         self._boxes: dict = {}
+        #: And who a tool's marks are by and what they are called, set only
+        #: in the form the colour popup's gear opens with nothing selected.
+        self._authors: dict = {}
+        self._subjects: dict = {}
         self._load_tool_defaults()
         self.armed_opacity = None
         self.tool_strip.colour_armed.connect(self._colour_armed)
         self.tool_strip.thickness_armed.connect(self._thickness_armed)
+        self.tool_strip.properties_wanted.connect(self._properties_of_selected)
         # The text palette works on whichever box is being typed in.
         self.reader.canvas.text_editing_started.connect(self._text_editing_started)
         self.reader.canvas.text_editing_ended.connect(self._text_editing_ended)
@@ -861,6 +868,10 @@ class MainWindow(QMainWindow):
         # *Rectangle/Square* and *Oval/Circle*.
         "rectangle": markup.SQUARE,
         "oval": markup.CIRCLE,
+        # *Line* and *Arrow*, one kind: the Arrow tool's starts with an open
+        # arrow at its end and says so in `/IT`.
+        "line": markup.LINE,
+        "arrow": markup.LINE,
     }
 
     #: The gestures above that are not tools, and the tool each acts as --
@@ -898,6 +909,8 @@ class MainWindow(QMainWindow):
         "text_comment": "textbox",
         "rectangle": "rectangle",
         "circle": "oval",
+        "line": "line",
+        "arrow": "arrow",
         "draw": "draw",
     }
 
@@ -931,6 +944,8 @@ class MainWindow(QMainWindow):
         if name in self.MARK_KINDS or name in self.CANVAS_TOOLS:
             self.tool_strip.arm_colour(self.colour_for(name))
         self._offer_thickness()
+        if self.reader.canvas.selected_mark() is None:
+            self._name_palette()
         # **With text already selected, arming the tool is the gesture.**
         # Reader marks the selection the moment you choose the tool; there
         # is no second action to commit it, and waiting for one left the
@@ -1092,6 +1107,16 @@ class MainWindow(QMainWindow):
             # The box the canvas made, by a click or a drag, as it is: a
             # text box, a rectangle or an oval is sized by whoever made it.
             rect = tuple(rects[-1])
+        points = ends = None
+        if subtype == markup.LINE:
+            # A line's two points, start first; its rectangle is worked out
+            # round them and its ends -- the tool's, as it was last told to
+            # make them, or none, or the Arrow tool's open arrow at its end.
+            points = tuple(rects[-1])
+            told = self._boxes.get(self.CANVAS_TO_STRIP.get(tool, tool), {})
+            ends = told.get("ends") or (("/None", "/OpenArrow") if tool == "arrow"
+                                        else ("/None", "/None"))
+            rect = markup.line_rect(points, ends, told.get("thickness", 1.0))
         if subtype == markup.CARET:
             # *Insert Text*: the canvas sends the character beside the gap,
             # cut off at the gap, and the caret is sized from its height as
@@ -1103,6 +1128,11 @@ class MainWindow(QMainWindow):
         # subject and the intent.
         subject, intent = self._names_written_by(tool)
         opacity = self._opacity_for_canvas_tool(tool)
+        # Who it is by and what it is called, where the tool was told.
+        strip_tool = self.GESTURE_TOOLS.get(self.CANVAS_TO_STRIP.get(tool, tool),
+                                            self.CANVAS_TO_STRIP.get(tool, tool))
+        author = self._authors.get(strip_tool) or markup.default_author()
+        subject = subject or self._subjects.get(strip_tool) or ""
         # A text box's border and fill as the tool was last told to make
         # them, or white, 1 point and straight.
         box = self._boxes.get(self.CANVAS_TO_STRIP.get(tool, tool), {})
@@ -1111,12 +1141,15 @@ class MainWindow(QMainWindow):
             opacity=opacity,
             subject=subject or None, intent=intent or None,
             icon=chosen,
-            author=markup.default_author(),
+            author=author,
             fill=((box.get("fill") or markup.swatch("White"))
                   if subtype == markup.FREETEXT
-                  else box.get("fill") if subtype in markup.SHAPES else None),
+                  else box.get("fill")
+                  if subtype in markup.SHAPES or subtype == markup.LINE
+                  else None),
             thickness=box.get("thickness", 1.0),
-            border_style=box.get("border_style", "straight")))
+            border_style=box.get("border_style", "straight"),
+            points=points, ends=ends))
         if tool == "replace" and quads:
             # **And its caret**, at the end of the run, in the same colour
             # and opacity. Added after the strikeout, which is the order
@@ -1126,7 +1159,7 @@ class MainWindow(QMainWindow):
             caret = self.model.annotations.add(markup.Annotation(
                 markup.CARET, page.uid, markup.caret_rect(quads[-1]),
                 colour=colour, opacity=opacity, subject=subject,
-                intent=intent, author=markup.default_author()))
+                intent=intent, author=author))
             made.irt = caret.name
             made.group = True
 
@@ -1138,6 +1171,10 @@ class MainWindow(QMainWindow):
             return markup.COMMENT_ON_TEXT
         if tool == "replace":
             return markup.REPLACE_STRIKE
+        if tool == "arrow":
+            # Acrobat's own mark of the Arrow tool, kept whatever the line's
+            # ends become.
+            return "", markup.LINE_ARROW
         return "", ""
 
     def colour_for(self, tool: str):
@@ -1185,10 +1222,16 @@ class MainWindow(QMainWindow):
             self._icons.update(
                 {k: str(v) for k, v in stored.get("icons", {}).items()})
             self._boxes.update(
-                {k: {"fill": tuple(v["fill"]) if v.get("fill") else None,
-                     "thickness": float(v["thickness"]),
-                     "border_style": str(v["border_style"])}
+                {k: dict({"fill": tuple(v["fill"]) if v.get("fill") else None,
+                          "thickness": float(v["thickness"]),
+                          "border_style": str(v["border_style"])},
+                         **({"ends": tuple(str(e) for e in v["ends"])}
+                            if v.get("ends") else {}))
                  for k, v in stored.get("boxes", {}).items()})
+            self._authors.update(
+                {k: str(v) for k, v in stored.get("authors", {}).items()})
+            self._subjects.update(
+                {k: str(v) for k, v in stored.get("subjects", {}).items()})
         except Exception:  # noqa: BLE001 - a bad preference is no preference
             logging.getLogger(__name__).debug(
                 "tool defaults could not be read", exc_info=True)
@@ -1200,10 +1243,13 @@ class MainWindow(QMainWindow):
             "opacities": dict(self._opacities),
             "styles": dict(self._styles),
             "icons": dict(self._icons),
-            "boxes": {k: {"fill": list(v["fill"]) if v["fill"] else None,
-                          "thickness": v["thickness"],
-                          "border_style": v["border_style"]}
+            "boxes": {k: dict({"fill": list(v["fill"]) if v["fill"] else None,
+                               "thickness": v["thickness"],
+                               "border_style": v["border_style"]},
+                              **({"ends": list(v["ends"])} if v.get("ends") else {}))
                       for k, v in self._boxes.items()},
+            "authors": dict(self._authors),
+            "subjects": dict(self._subjects),
         }))
 
     def _icon_for(self, tool: str) -> str:
@@ -1284,9 +1330,11 @@ class MainWindow(QMainWindow):
         if found is None:
             self.tool_strip.unfollow()
             self._offer_thickness()
+            self._name_palette()
             return
         mark = found[1]
         self._offer_thickness(mark)
+        self.tool_strip.name_palette(self._colour_title(*found), gear=True)
         self.tool_strip.follow(
             mark.colour,
             markup.solidity(mark) if isinstance(mark, markup.Annotation)
@@ -1296,10 +1344,114 @@ class MainWindow(QMainWindow):
             markup.solidity(mark) if isinstance(mark, markup.Annotation)
             else mark.opacity,
             bool(getattr(mark, "locked", False)),
-            notes=not self._is_text_box(mark))
+            notes=not self._is_text_box(mark),
+            title=self._colour_title(*found))
+
+    def _colour_title(self, index: int, mark) -> str:
+        """What a colour popup is headed for ``mark``: its name, as its
+        properties form is titled, "Oval/Circle Colour"."""
+        canvas = self.reader.canvas
+        mark = canvas.head_of(index, mark)
+        mine = isinstance(mark, markup.Annotation)
+        kind = ("replace_text" if canvas.note_bearer(index, mark) is not mark
+                else mark.kind if mine else mark.subtype)
+        known = KIND_LABELS.get(kind)
+        return _("%s Colour") % _(known) if known else _("Colour")
+
+    def _name_palette(self) -> None:
+        """Head the strip's colour popup for the armed tool's next mark,
+        with the gear when the tool makes a mark whose defaults it can
+        set."""
+        armed = self.tool_strip.armed()
+        marks = tools.by_name(armed).marks if armed else ()
+        self.tool_strip.name_palette(
+            _("%s Colour") % _(marks[0]) if marks else None,
+            gear=self._kind_of_tool(armed) is not None)
+
+    def _kind_of_tool(self, tool):
+        """The kind of mark a strip tool makes, or None for one that makes
+        none -- or none yet."""
+        return self.MARK_KINDS.get(self.CANVAS_TOOLS.get(tool or "", ""))
+
+    def _properties_of_selected(self) -> None:
+        """A colour popup's gear: the selected mark's properties form, or,
+        with nothing selected, the armed tool's defaults."""
+        found = self.reader.canvas.selected_mark()
+        if found is not None:
+            self.show_mark_properties(*found)
+        else:
+            self.tool_defaults_form(self.tool_strip.armed())
+
+    def tool_defaults_form(self, tool: str) -> None:
+        """The properties form for ``tool``'s next mark.
+
+        **What is set here is what the next mark is made with**: colour,
+        opacity and whatever else the kind has, and its author and subject
+        -- the only place those become defaults, where a typed name is a
+        deliberate choice. Saved as the tool's defaults on OK, kept between
+        sessions; no mark changes and nothing goes on the undo stack.
+        """
+        kind = self._kind_of_tool(tool)
+        if kind is None:
+            return
+        key = self.GESTURE_TOOLS.get(tool, tool)
+        style = self._styles.get(key) or (
+            "straight" if kind in markup.UNDERLINE_STYLES.values() else None)
+        box = dict(self._boxes.get(key, {}))
+        is_box = kind == markup.FREETEXT or kind in markup.SHAPES
+        fill = box.get("fill")
+        if kind == markup.FREETEXT and not fill:
+            fill = markup.swatch("White")
+        ends = box.get("ends") or (("/None", "/OpenArrow") if tool == "arrow"
+                                   else ("/None", "/None"))
+        opacity = self.opacity_for(tool)
+        if opacity is None:
+            opacity = markup.TRANSPARENCY.get(kind, 1.0)
+        form = MarkProperties(Properties(
+            kind="replace_text" if tool == "replace_text" else kind,
+            author=self._authors.get(key) or markup.default_author(),
+            subject=self._subjects.get(key) or markup.SUBJECTS.get(kind, ""),
+            colour=self.colour_for(tool), opacity=opacity,
+            style=style, styles=self._styles_for(kind),
+            icon=self._icon_for(tool) if kind in (markup.TEXT, markup.STAMP) else "",
+            icons=self._icons_for(kind),
+            box=is_box, fill_optional=kind in markup.SHAPES,
+            fill=fill if (is_box or kind == markup.LINE) else None,
+            thickness=float(box.get("thickness", 1.0)),
+            border_style=box.get("border_style", "straight"),
+            line=kind == markup.LINE, ends=tuple(ends),
+            defaults_only=True), self)
+        if form.exec() != MarkProperties.DialogCode.Accepted:
+            return
+        changed = form.changed()
+        if "colour" in changed:
+            self._colours[key] = tuple(changed["colour"])
+            self.tool_strip.arm_colour(tuple(changed["colour"]))
+        if "opacity" in changed:
+            self._opacities[key] = float(changed["opacity"])
+        if "style" in changed:
+            self._styles[key] = changed["style"]
+        if "icon" in changed:
+            self._icons[key] = changed["icon"]
+        if {"fill", "thickness", "border_style", "ends"} & set(changed):
+            box = {"fill": fill, "thickness": float(box.get("thickness", 1.0)),
+                   "border_style": box.get("border_style", "straight"), **box}
+            for name in ("thickness", "border_style", "ends"):
+                if name in changed:
+                    box[name] = changed[name]
+            if "fill" in changed:
+                box["fill"] = (None if changed["fill"] == markup.NO_COLOUR
+                               else tuple(changed["fill"]))
+            self._boxes[key] = box
+        if "author" in changed:
+            self._authors[key] = changed["author"]
+        if "subject" in changed:
+            self._subjects[key] = changed["subject"]
+        self._remember_tool_defaults()
+        self._offer_thickness()
 
     #: The strip's tools whose marks have a line to thicken.
-    LINED_TOOLS = ("rectangle", "circle")
+    LINED_TOOLS = ("rectangle", "circle", "line", "arrow")
 
     def _offer_thickness(self, mark=None) -> None:
         """Show the strip's thickness at ``mark``'s, for a selected shape;
@@ -1312,11 +1464,17 @@ class MainWindow(QMainWindow):
                     float(getattr(mark, "thickness", 1.0) or 0.0),
                     zero=getattr(mark, "fill", None) is not None)
                 return
+            if kind == markup.LINE:
+                # A line of 0 is still a line, the thinnest there is.
+                self.tool_strip.offer_thickness(
+                    float(getattr(mark, "thickness", 1.0) or 0.0), zero=True)
+                return
         tool = self.tool_strip.armed()
         if tool in self.LINED_TOOLS:
             box = self._boxes.get(tool, {})
-            self.tool_strip.offer_thickness(float(box.get("thickness", 1.0)),
-                                            zero=box.get("fill") is not None)
+            self.tool_strip.offer_thickness(
+                float(box.get("thickness", 1.0)),
+                zero=tool in ("line", "arrow") or box.get("fill") is not None)
         else:
             self.tool_strip.offer_thickness(None)
 
@@ -1328,7 +1486,7 @@ class MainWindow(QMainWindow):
             index, mark = found
             kind = (mark.kind if isinstance(mark, markup.Annotation)
                     else mark.subtype)
-            if kind in markup.SHAPES:
+            if kind in markup.SHAPES or kind == markup.LINE:
                 if getattr(mark, "locked", False):
                     return
                 self._commit_mark_change(_("Change Mark"), index, mark)
@@ -1445,6 +1603,30 @@ class MainWindow(QMainWindow):
         mark.rect = rect
         self._after_mark_change(index, uid)
 
+    def line_reshaped(self, index: int, mark, points) -> None:
+        """A line's end dragged, or the line flipped: its two points now,
+        and the rectangle round them and its ends, as one step to undo."""
+        if not 0 <= index < len(self.model.pages):
+            return
+        if getattr(mark, "locked", False):
+            return
+        points = tuple(float(v) for v in points)
+        rect = markup.line_rect(points, getattr(mark, "ends", None)
+                                or ("/None", "/None"),
+                                float(getattr(mark, "thickness", 1.0) or 0.0))
+        self._commit_mark_change(_("Reshape Mark"), index, mark)
+        if isinstance(mark, markup.Annotation):
+            mark.points = points
+            mark.rect = rect
+            mark.touch()
+            self._after_mark_change(index)
+            return
+        uid = self.model.pages[index].uid
+        self.model.mark_edits.change(uid, mark.index, points=points, rect=rect)
+        mark.points = points
+        mark.rect = rect
+        self._after_mark_change(index, uid)
+
     def mark_moved(self, index: int, mark, rect) -> None:
         """A comment's icon dragged to somewhere else on its page.
 
@@ -1459,16 +1641,27 @@ class MainWindow(QMainWindow):
         if getattr(mark, "locked", False):
             return
         rect = tuple(float(v) for v in rect)
+        # A line's two points go with its rectangle: they are where it is,
+        # and the rectangle only contains them.
+        points = getattr(mark, "points", None)
+        if points:
+            dx, dy = rect[0] - mark.rect[0], rect[1] - mark.rect[1]
+            points = (points[0] + dx, points[1] + dy,
+                      points[2] + dx, points[3] + dy)
         if isinstance(mark, markup.Annotation):
             self._commit_mark_change(_("Move Mark"), index, mark)
             mark.rect = rect
+            if points:
+                mark.points = points
             mark.touch()
             self._after_mark_change(index)
             return
         uid = self.model.pages[index].uid
         self._commit_mark_change(_("Move Mark"), index, mark)
-        self.model.mark_edits.change(uid, mark.index, rect=rect)
+        self.model.mark_edits.change(uid, mark.index, rect=rect, points=points)
         mark.rect = rect
+        if points:
+            mark.points = points
         self._after_mark_change(index, uid)
 
     def mark_deleted(self, index: int, mark) -> None:
@@ -1729,7 +1922,10 @@ class MainWindow(QMainWindow):
             styles=self._styles_for(mark.kind if mine else mark.subtype),
             box=is_box,
             fill_optional=kind_here in markup.SHAPES,
-            fill=getattr(mark, "fill", None) if is_box else None,
+            fill=(getattr(mark, "fill", None)
+                  if is_box or kind_here == markup.LINE else None),
+            line=kind_here == markup.LINE,
+            ends=tuple(getattr(mark, "ends", None) or ("/None", "/None")),
             thickness=float(getattr(mark, "thickness", 1.0) or 0.0),
             border_style=getattr(mark, "border_style", "straight") or "straight",
         ), self)
@@ -1741,10 +1937,13 @@ class MainWindow(QMainWindow):
         was_modified = self.modified
         was = {"colour": getattr(mark, "colour", None),
                "opacity": getattr(mark, "opacity", None)}
-        if is_box:
+        if is_box or kind_here == markup.LINE:
             was.update(fill=getattr(mark, "fill", None),
                        thickness=getattr(mark, "thickness", 1.0),
                        border_style=getattr(mark, "border_style", "straight"))
+        if kind_here == markup.LINE:
+            was.update(ends=tuple(getattr(mark, "ends", None)
+                                  or ("/None", "/None")), rect=tuple(mark.rect))
         form.previewed.connect(
             lambda colour, opacity: self._preview_mark(
                 index, mark, colour, opacity, taken))
@@ -1870,6 +2069,14 @@ class MainWindow(QMainWindow):
         and re-render the page that shows it."""
         page = self.model.pages[index]
         scale = page.scale if page.scale else 1.0
+        kind = (mark.kind if isinstance(mark, markup.Annotation)
+                else mark.subtype)
+        if kind == markup.LINE and ({"ends", "thickness"} & set(fields)):
+            # A line's rectangle is round its ends, which change size with
+            # their style and with the line's width.
+            fields = dict(fields, rect=markup.line_rect(
+                mark.points, fields.get("ends", mark.ends) or ("/None", "/None"),
+                float(fields.get("thickness", mark.thickness) or 0.0)))
         reach = self._box_reach(mark, fields)
         if reach is not None:
             fields = dict(fields, rect=reach[0])
@@ -2281,6 +2488,10 @@ class MainWindow(QMainWindow):
             # Both styles are the one tool: the style *is* the subtype, so
             # a squiggly is not a kind of its own to be traced back.
             kind = markup.UNDERLINE
+        if kind == markup.LINE:
+            # The other kind two tools make, told apart by `/IT`.
+            return ("arrow" if str(getattr(mark, "intent", "") or "")
+                    == markup.LINE_ARROW else "line")
         for tool, made in self.MARK_KINDS.items():
             if made == kind and tool not in self.GESTURE_TOOLS:
                 return self.CANVAS_TO_STRIP.get(tool, tool)
@@ -2321,6 +2532,13 @@ class MainWindow(QMainWindow):
                 else mark.subtype)
         if icon is not None and kind == markup.TEXT:
             self._icons[tool] = icon
+        if kind == markup.LINE:
+            fill = getattr(mark, "fill", None)
+            self._boxes[tool] = {
+                "fill": tuple(fill) if fill else None,
+                "thickness": float(getattr(mark, "thickness", 1.0) or 0.0),
+                "border_style": getattr(mark, "border_style", "straight"),
+                "ends": tuple(getattr(mark, "ends", None) or ("/None", "/None"))}
         if kind in markup.SHAPES:
             fill = getattr(mark, "fill", None)
             self._boxes[tool] = {

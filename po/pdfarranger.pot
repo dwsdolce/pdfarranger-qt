@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pdfarranger-qt VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/dwsdolce/pdfarranger-qt/issues\n"
-"POT-Creation-Date: 2026-11-11 00:38+0000\n"
+"POT-Creation-Date: 2026-11-11 19:12+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -110,7 +110,12 @@ msgid "Make current properties default"
 msgstr ""
 
 #: pdfarranger_qt/canvas.py pdfarranger_qt/mainwindow.py
+#: pdfarranger_qt/toolstrip.py
 msgid "Properties..."
+msgstr ""
+
+#: pdfarranger_qt/canvas.py
+msgid "Flip Line"
 msgstr ""
 
 #: pdfarranger_qt/canvas.py
@@ -361,8 +366,8 @@ msgstr ""
 msgid "Size"
 msgstr ""
 
-#: pdfarranger_qt/dialogs.py pdfarranger_qt/properties.py
-#: pdfarranger_qt/toolstrip.py
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+#: pdfarranger_qt/properties.py pdfarranger_qt/toolstrip.py
 msgid "Colour"
 msgstr ""
 
@@ -1660,6 +1665,11 @@ msgid "Add Mark"
 msgstr ""
 
 #: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "%s Colour"
+msgstr ""
+
+#: pdfarranger_qt/mainwindow.py
 msgid "Change Mark"
 msgstr ""
 
@@ -2209,7 +2219,7 @@ msgstr ""
 msgid "Rotate"
 msgstr ""
 
-#: pdfarranger_qt/markup.py
+#: pdfarranger_qt/markup.py pdfarranger_qt/properties.py
 msgid "None"
 msgstr ""
 
@@ -2426,6 +2436,10 @@ msgstr ""
 msgid "Oval/Circle"
 msgstr ""
 
+#: pdfarranger_qt/properties.py pdfarranger_qt/tools.py
+msgid "Line"
+msgstr ""
+
 #: pdfarranger_qt/properties.py
 msgid "Review History"
 msgstr ""
@@ -2460,6 +2474,50 @@ msgstr ""
 
 #: pdfarranger_qt/properties.py
 msgid "Fill Colour"
+msgstr ""
+
+#: pdfarranger_qt/properties.py
+msgid "Open Arrow"
+msgstr ""
+
+#: pdfarranger_qt/properties.py
+msgid "Closed Arrow"
+msgstr ""
+
+#: pdfarranger_qt/properties.py
+msgid "Open Arrow (Reverse)"
+msgstr ""
+
+#: pdfarranger_qt/properties.py
+msgid "Closed Arrow (Reverse)"
+msgstr ""
+
+#: pdfarranger_qt/properties.py
+msgid "Butt"
+msgstr ""
+
+#: pdfarranger_qt/properties.py
+msgid "Diamond"
+msgstr ""
+
+#: pdfarranger_qt/properties.py
+msgid "Round"
+msgstr ""
+
+#: pdfarranger_qt/properties.py
+msgid "Square"
+msgstr ""
+
+#: pdfarranger_qt/properties.py
+msgid "Slash"
+msgstr ""
+
+#: pdfarranger_qt/properties.py
+msgid "Start"
+msgstr ""
+
+#: pdfarranger_qt/properties.py
+msgid "End"
 msgstr ""
 
 #: pdfarranger_qt/properties.py
@@ -2670,10 +2728,6 @@ msgid "Draw"
 msgstr ""
 
 #: pdfarranger_qt/tools.py
-msgid "Line"
-msgstr ""
-
-#: pdfarranger_qt/tools.py
 msgid "Arrow"
 msgstr ""
 
@@ -2703,6 +2757,23 @@ msgstr ""
 
 #: pdfarranger_qt/toolstrip.py
 msgid "No Colour"
+msgstr ""
+
+#: pdfarranger_qt/toolstrip.py
+msgid "Swatches"
+msgstr ""
+
+#: pdfarranger_qt/toolstrip.py
+msgid "More Colours"
+msgstr ""
+
+#: pdfarranger_qt/toolstrip.py
+msgid "Done"
+msgstr ""
+
+#: pdfarranger_qt/toolstrip.py
+#, python-format
+msgid "The colour in use, %s, is not one of these swatches."
 msgstr ""
 
 #: pdfarranger_qt/viewer.py

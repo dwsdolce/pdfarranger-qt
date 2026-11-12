@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PDF Arranger 1.9.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-11 00:38+0000\n"
+"POT-Creation-Date: 2026-11-11 19:12+0000\n"
 "PO-Revision-Date: 2023-06-12 10:30+0300\n"
 "Last-Translator: Manussos Pulinakis "
 "<38626261+manussos@users.noreply.github.com>\n"
@@ -137,8 +137,14 @@ msgstr "Ορισμός τρεχουσών ιδιοτήτων ως προεπιλ
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py pdfarranger_qt/mainwindow.py
+#: pdfarranger_qt/toolstrip.py
 msgid "Properties..."
 msgstr "Ιδιότητες..."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Flip Line"
+msgstr "Αντιστροφή γραμμής"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
@@ -434,8 +440,8 @@ msgid "Size"
 msgstr "Μέγεθος"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/dialogs.py pdfarranger_qt/properties.py
-#: pdfarranger_qt/toolstrip.py
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+#: pdfarranger_qt/properties.py pdfarranger_qt/toolstrip.py
 msgid "Colour"
 msgstr "Χρώμα"
 
@@ -2199,6 +2205,12 @@ msgstr "Προσθήκη σήμανσης"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "%s Colour"
+msgstr "Χρώμα: %s"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
 msgid "Change Mark"
 msgstr "Αλλαγή σήμανσης"
 
@@ -2869,7 +2881,7 @@ msgid "Rotate"
 msgstr "Περιστροφή"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/markup.py
+#: pdfarranger_qt/markup.py pdfarranger_qt/properties.py
 msgid "None"
 msgstr "Καμία"
 
@@ -3126,6 +3138,11 @@ msgstr "Ορθογώνιο/Τετράγωνο"
 msgid "Oval/Circle"
 msgstr "Οβάλ/Κύκλος"
 
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py pdfarranger_qt/tools.py
+msgid "Line"
+msgstr "Γραμμή"
+
 #: pdfarranger_qt/properties.py
 msgid "Review History"
 msgstr "Ιστορικό αναθεώρησης"
@@ -3167,6 +3184,61 @@ msgstr "Πάχος"
 #: pdfarranger_qt/properties.py
 msgid "Fill Colour"
 msgstr "Χρώμα γεμίσματος"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Open Arrow"
+msgstr "Ανοιχτό βέλος"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Closed Arrow"
+msgstr "Κλειστό βέλος"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Open Arrow (Reverse)"
+msgstr "Ανοιχτό βέλος (αντίστροφο)"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Closed Arrow (Reverse)"
+msgstr "Κλειστό βέλος (αντίστροφο)"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Butt"
+msgstr "Κάθετη γραμμή"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Diamond"
+msgstr "Ρόμβος"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Round"
+msgstr "Στρογγυλό"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Square"
+msgstr "Τετράγωνο"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Slash"
+msgstr "Πλάγια γραμμή"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Start"
+msgstr "Αρχή"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "End"
+msgstr "Τέλος"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/properties.py
@@ -3425,11 +3497,6 @@ msgstr "Σχεδίαση"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/tools.py
-msgid "Line"
-msgstr "Γραμμή"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/tools.py
 msgid "Arrow"
 msgstr "Βέλος"
 
@@ -3467,6 +3534,27 @@ msgstr "Πάχος γραμμής"
 #: pdfarranger_qt/toolstrip.py
 msgid "No Colour"
 msgstr "Χωρίς χρώμα"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/toolstrip.py
+msgid "Swatches"
+msgstr "Δείγματα"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/toolstrip.py
+msgid "More Colours"
+msgstr "Περισσότερα χρώματα"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/toolstrip.py
+msgid "Done"
+msgstr "Τέλος"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/toolstrip.py
+#, python-format
+msgid "The colour in use, %s, is not one of these swatches."
+msgstr "Το χρώμα σε χρήση, %s, δεν είναι κανένα από αυτά τα δείγματα."
 
 # machine translation, unreviewed
 #: pdfarranger_qt/viewer.py

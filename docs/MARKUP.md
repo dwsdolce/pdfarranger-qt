@@ -54,8 +54,8 @@ time.
 | | Underline | Underline | a straight or wavy line under a run of words | complete |
 | | Strikethrough | Strikethrough | a line through a run of words | complete |
 | Drawing | Draw | | freehand ink | not started |
-| | Line | | a straight line | not started |
-| | Arrow | | a line with an arrowhead | not started |
+| | Line | Line | a straight line, its ends styled | complete |
+| | Arrow | Line | a line that starts with an open arrow at its end | complete |
 | | Rectangle/Square | Rectangle/Square | a box, square with Shift | complete |
 | | Oval/Circle | Oval/Circle | an oval, a circle with Shift | complete |
 | | Text callout | | a text box with a line pointing at something | not started |
@@ -178,14 +178,48 @@ says only where it differs.
 
 #### Requirements
 
-- Colour comes from a fixed palette of twenty-one swatches: seven hues, the
-  same seven lightened, and seven greys. Each swatch's name is its tooltip.
-  No free colour picker.
-- The palette is headed **Colour**, and nothing more: it always opens from
-  something particular -- a mark's form, the selected mark's bar, the armed
-  tool's swatch -- so what it colours is already plain.
+- Colour comes from a palette of twenty-one swatches: seven hues, the same
+  seven lightened, and seven greys. Each swatch's name is its tooltip.
+- **In the properties form, a second tab, More Colours**, on every colour
+  picker there -- a mark's colour, a border's, a fill -- holds Qt's own
+  colour dialog, embedded: a grid whose first colours are the swatches,
+  hue and red-green-blue controls, a hex field and an eyedropper, for a
+  colour the swatches do not have. Qt's and not Apple's: the Mac's colour
+  panel is a window of its own and cannot sit in a tab, and Qt's is the
+  same on every system. A colour picked there is sent as it is picked, and
+  ticks a swatch only when it is one. **In the form it is a window, not a
+  pop-up**: titled for what it colours -- Colour, Border Colour, Fill
+  Colour -- dragged by its title bar off the form it would cover, and kept
+  open until Done, its close button or Escape, each of which keeps what
+  was picked. As a pop-up it could not be moved, and closed only on a
+  click outside it that nothing pointed to. **The strip's and the
+  selected mark's bar's are the swatches alone**, small pop-ups, as
+  Acrobat's are. Decided 2026-11-11,
+  after a fill Acrobat took from one of its form's pickers came out a pure
+  blue none of the swatches is.
+- **The palette is headed with the mark's name**, as Acrobat heads its own:
+  "Oval/Circle Colour" for the selected mark, or the armed tool's mark for
+  the next one; plain "Colour" where nothing names it, as in a properties
+  form. **A gear** in its corner opens the selected mark's properties form.
+  It was headed "Colour" alone from 2026-11-06 until Acrobat's own was
+  looked at again.
+- **With nothing selected, the gear opens the armed tool's form**, for its
+  next mark: titled for the mark, holding the Appearance and General tabs
+  with the tool's current defaults -- everything the mark's appearance has,
+  and its Author and Subject. OK saves it all as the tool's defaults, kept
+  between sessions; no mark changes and nothing goes on the undo stack.
+  The dates, Review History, Locked and Make Properties Default are left
+  out, since no mark exists for them -- a departure from Acrobat, which
+  shows all three tabs.
 - The tick is on the colour in use, and moves to a colour the moment it is
   picked; the palette stays open after a pick, so the slider can be used.
+  **Only on a swatch the colour is**, within a rounding margin: a colour
+  from another picker, such as the pure blue one of Acrobat's writes, opens
+  with no swatch ticked, and More Colours shows its real value. A line
+  under the swatches says so -- "The colour in use, #0000FF, is not one of
+  these swatches" -- so an unticked palette is not taken for a fault. It ticked
+  the nearest swatch until 2026-11-11, which called a colour Blue that was
+  not, and made choosing that same ticked Blue change the mark.
 - Opacity is a percentage field above a slider. Both are live and show the
   same value.
 - **Changing a mark changes that mark.** The strip's swatch, the floating
@@ -199,7 +233,9 @@ says only where it differs.
   Strikethrough and Replace selected text.
 - *Make Properties Default* sends a mark's appearance to the tool that made
   it: colour, opacity, and whatever else the kind has (an underline's style,
-  a comment's icon). Author and subject are never defaults.
+  a comment's icon). It never sends the author or the subject: copying one
+  mark's author is not a choice anyone made. Those become defaults only
+  when typed into the tool's own form, where they are.
 - Defaults are kept between sessions.
 
 **Departure from Reader.** In Reader, recolouring a mark also changes the
@@ -799,8 +835,11 @@ Made by the Add Text Comment tool. Complete.
   spelling and dictionary entries are not offered, as for notes.
 - **The properties form is *Text Box Properties*.** Appearance holds Style,
   Border Color, Opacity, Thickness and Fill Color, beside the standard tabs.
-  Style is one of nine: No Border, Straight, Short, Medium and Long dotted,
-  Short and Long Dash Dot, and a Small and a Large Cloud.
+  Style is one of ten: No Border, Straight, Short, Medium and Long dotted,
+  Short and Long Dash Dot, a dash of 8 on and 4 off then 4 on and 4 off,
+  and a Small and a Large Cloud. The dash was missed at first -- the
+  fixture's nine labelled boxes did not include it -- and found on a
+  rectangle in `corpus/Markup Drawing.pdf`.
 
 **Departure from Acrobat.** Acrobat writes Helvetica without embedding it.
 Here the font used is embedded, as the page-number and watermark dialogs
@@ -1098,6 +1137,23 @@ What every drawing tool shares. Each tool's own section adds to it.
   properties default and Properties.
 - **Notes, badges, the hover summary, the note window, replies and status**
   are as for most marks, unlike the Text Box.
+- **Faded as one piece.** A mark at less than full opacity is drawn solid
+  and then faded once, as PDF fades a fill and a stroke from one path --
+  the line knocks out the fill under it. Fading the fill and the line one
+  after the other laid the line's inner half over the fill, in a darker
+  band Acrobat does not show. The drawing written into the file was right
+  all along; the canvas was not.
+- **Flat line ends**, as PDF draws them. Qt's default square ends grew
+  each dash by half the line at both ends, which closed the gaps of a
+  thick dash altogether -- a 4 point long dash dot showed solid.
+- **Found by what is drawn, boxed only when selected.** A line is under
+  the pointer only over its line or ends, and a rectangle or an oval only
+  over its outline -- or anywhere inside when it is filled -- for hovering,
+  for a press and for a drag alike, so words inside an empty shape or
+  within a line's reach can be selected. Their box appears once they are
+  selected, never on hover, as in Acrobat; the move cursor still shows over
+  what is drawn. It was the whole box at first, for hovering and pressing,
+  which left the words inside it unreachable.
 - **A shape that draws nothing** -- a line of 0 and no fill, which a file
   can bring though the rule above stops one being made here -- is still
   found and selected by clicking inside it, and shows a thin dashed outline
@@ -1286,4 +1342,143 @@ stages given there. Complete.
 **What Acrobat writes** is a `/Circle` with `/Subj Oval` -- for the circle
 too, which in the fixture is 143.48 points both ways and has nothing else
 to tell it from the ovals -- and the same keys as the Rectangle/Square.
+
+## Line
+
+Made by the Line tool and the Arrow tool. Complete.
+
+### Requirements
+
+- **One mark, two tools.** The mark is a Line whichever tool made it, and
+  the form is *Line Properties*. The Arrow tool's line starts with an open
+  arrow at its end; otherwise the two are the same.
+- **Making one.** Any text selection is cleared when the tool is chosen. A
+  press, a drag and a release make it, or a click, a move and a second
+  click; the first point is the start of the line and the second its end.
+  **Shift keeps it to steps of 45 degrees.**
+- **Handles**: one at each end. Dragging one moves that end, Shift keeping
+  the line to steps of 45 degrees.
+- **Moving.** Dragged by the line, whether or not it is selected, with the
+  move cursor over it, as every other mark is. **Departure from Acrobat**,
+  where a line has to be selected before it can be moved: one rule here
+  for everything that moves.
+- **The properties form**: Start and End, each from the same list -- None,
+  Open, Closed, Open (Reverse), Closed (Reverse), Butt, Diamond, Round,
+  Square and Slash; Style; Colour; Thickness, from 0 to 12, applying to the
+  line and the outlines of its ends -- at 0 there is still a line, the
+  thinnest that can be drawn, and the ends have no outline; Fill Colour,
+  which fills the closed ends, with **No Colour**, which leaves them hollow
+  and writes no `/IC`; and Opacity.
+- **Line styles**: seven -- Straight, the three dotted and the two dash-dot
+  the Text Box has, and a seventh, dashed 8 on and 4 off then 4 on and 4
+  off, which only a line has. No No Border, since there is always a line,
+  and no clouds.
+- **The strip**: the colour swatch and the line thickness, as for the
+  shapes.
+- **The right-click menu** is the one most marks have, with **Flip Line**
+  at its foot, which swaps the start and the end -- which matters only when
+  the ends are styled.
+- **Notes, badges, the hover summary, the note window, replies and status**
+  are as for most marks.
+
+### Plan
+
+The fixture is page 2 of `corpus/Markup Drawing.pdf`: ten lines, one with
+each end style. **What Acrobat writes** is a `/Line` with `/Subj Line`, its
+two points in `/L`, the colour in `/C`, the fill in `/IC`, the thickness and
+a dash in `/BS`, and the ends in `/LE`, in the order of the list above:
+
+    None            /None             Butt          /Butt
+    Open            /OpenArrow        Diamond       /Diamond
+    Closed          /ClosedArrow      Round         /Circle
+    Open (Reverse)  /ROpenArrow       Square        /Square
+    Closed (Reverse) /RClosedArrow    Slash         /Slash
+
+`/LE` is left out when both ends are None. There is no `/RD`; `/Rect` is the
+line and its ends with a margin. A thickness of 0 is written `/BS /W 0`,
+and a line of 0 can still carry `/IC`.
+
+**Which tool made it** is in `/IT`: `/IT /LineArrow` for the Arrow tool's,
+and none for the Line tool's -- kept by Acrobat whatever the ends become,
+as the fixture's arrow with no ends shows. So it says which tool, not how
+the line looks, and it is written and read here the same way: written by
+the Arrow tool, kept, and read so that Make Properties Default on a line
+sets the defaults of the tool that made it.
+
+### Building it
+
+Three stages, as for the shapes, each tried in the application before the
+next:
+
+1. **The mark.** `/Line` becomes a kind this application knows. A file's
+   are read -- the two points, the ends, colour, fill, thickness, dash,
+   opacity -- and drawn by the canvas, each end in its style, left out of
+   the page image so a drag carries them; taken by the line or its ends
+   within the ink tolerance, and moved. The menu, notes, replies, badges
+   and status come from what every mark has.
+2. **Making and reshaping.** The Line and Arrow tools; made by a drag or
+   two clicks, Shift for 45 degrees; the two end handles, Shift for 45
+   degrees; written as Acrobat writes them, with a drawing of our own and
+   `/IT /LineArrow` from the Arrow tool; a file's line drawn afresh when it
+   changes; Flip Line.
+3. **The form and the strip.** Start, End, Style, Colour, Thickness, Fill
+   Colour and Opacity, live; Make Properties Default for the tool that made
+   the line; the strip's colour and thickness.
+
+**Stage 1, as built:**
+
+- **How the ends are drawn**, read off the fixture's drawings, in line
+  widths, a width of 0 counted as 1: an arrow's arms 9 long at 30 degrees
+  either side of the line, its tip pulled back by the width -- or, reversed,
+  pushed out by it -- so the point lands on the line's end; a diamond 3
+  from centre to point, a circle of radius 3, a square 6 a side, each
+  centred on the end pulled back by the width and square to the page, not
+  turned with the line; a butt 6 long across the line and a slash 18 long
+  at 60 degrees to it, both centred on the end itself. Acrobat pulls an end
+  back along the x axis only; here it is pulled back along the line, under
+  a point from Acrobat's.
+- **The ends take the line's dash**, as Acrobat, PDFGear and Stirling PDF
+  all draw them. They were drawn solid at first, a choice made here
+  without asking and taken back.
+- **Taking hold**: within the ink tolerance of the line or of an end, or
+  anywhere inside a closed end. **A move** writes `/L` and `/Rect` by the
+  same amount and keeps the producer's drawing.
+
+**Stage 2, as built:**
+
+- **Made** by a drag or by two clicks, the band a dashed line from the
+  start to the pointer; Shift turns the end to the nearest 45 degrees
+  about the start, at the same length. The Arrow tool's line has an open
+  arrow at its end and `/IT /LineArrow`; the Line tool's has neither.
+- **The handles** sit on the line's own two points. Dragging one moves that
+  end, the other holding still, Shift turning it to 45 degrees about the
+  other; the cursor over one is a crosshair.
+- **Written as Acrobat writes it**: `/L`, `/LE` only when an end is
+  styled, `/IC`, `/BS` for a dash or a width other than 1, `/CA`, and
+  `/Rect` the line and its ends grown by 5 points and half the line's
+  width -- the margin every line in the fixture has -- with a drawing of
+  our own: the line, then each end, all in the line's dash.
+- **A line from the file is drawn afresh** when its look changes or its
+  ends move apart, and keeps Acrobat's drawing when it is only moved.
+- **Flip Line**, at the foot of a line's menu, swaps its two points, so
+  the start becomes the end and the ends' styles change places.
+
+**Stage 3, as built:**
+
+- **The form** is laid out as Acrobat's: Start, Style, Colour and Opacity,
+  then End, Thickness and Fill Colour. Thickness runs from 0 to 12 whatever
+  the fill; Fill Colour has No Colour. Every change shows live, and a
+  change of ends or thickness moves `/Rect` round the new ends.
+- **"Open Arrow" and "Closed Arrow"**, with their reversed forms, where
+  Acrobat's list says only "Open" and "Closed": "Open" is already in the
+  catalogues as the File menu's verb, and with no context to tell them
+  apart a translator would give the arrow the verb's word. Agreed
+  2026-11-11.
+- **The strip's thickness** reaches 0 for a line and for the Line and
+  Arrow tools; the swatch is as for every mark.
+- **Make Properties Default** sends the ends as well as the fill,
+  thickness and style, to whichever tool made the line -- told by `/IT` --
+  so an arrow's defaults never become the Line tool's.
+- **A line of 0 keeps its dash** when it is read back, where a box's
+  border of 0 is No Border.
 

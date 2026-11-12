@@ -150,6 +150,7 @@ class ReaderView(QWidget):
     marks_drawn = Signal(str, object)
     #: A grip moved: ``(page, mark, quads)`` in the page's own space.
     mark_reshaped = Signal(int, object, object, float)
+    line_reshaped = Signal(int, object, object)
     mark_moved = Signal(int, object, object)
     mark_resized = Signal(int, object, object)
     #: The selected mark is to go: ``(page, mark)``.
@@ -175,6 +176,7 @@ class ReaderView(QWidget):
         self.canvas.mark_drawn.connect(self.mark_drawn)
         self.canvas.marks_drawn.connect(self.marks_drawn)
         self.canvas.mark_reshaped.connect(self.mark_reshaped)
+        self.canvas.line_reshaped.connect(self.line_reshaped)
         self.canvas.mark_moved.connect(self.mark_moved)
         self.canvas.mark_resized.connect(self.mark_resized)
         self.canvas.mark_deleted.connect(self.mark_deleted)

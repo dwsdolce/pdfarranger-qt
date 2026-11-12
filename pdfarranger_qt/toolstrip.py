@@ -47,14 +47,17 @@ from PySide6.QtGui import (
     QPolygonF,
 )
 from PySide6.QtWidgets import (
+    QColorDialog,
     QFrame,
     QGridLayout,
     QHBoxLayout,
     QLabel,
+    QLayout,
     QMenu,
     QPushButton,
     QSizePolicy,
     QSlider,
+    QTabWidget,
     QToolButton,
     QVBoxLayout,
     QWidget,
@@ -313,6 +316,8 @@ class ToolStrip(QFrame):
     #: A line thickness, in points, chosen from the tail's slider: for the
     #: selected shape, or the next one the armed tool makes.
     thickness_armed = Signal(float)
+    #: The colour popup's gear: open the selected mark's properties form.
+    properties_wanted = Signal()
 
     def __init__(self, parent: Optional[QWidget] = None):
         super().__init__(parent)
@@ -389,6 +394,11 @@ class ToolStrip(QFrame):
         self.text_palette = None
         self._text_editor = None
         self._palette = None
+        #: What the colour popup is headed, and whether it has a gear: the
+        #: selected mark's name, or the armed tool's mark's, set by the
+        #: window, which knows which.
+        self._palette_title = None
+        self._palette_gear = False
         self._opacity = 0.4
         #: What the swatch showed before it started following a selection.
         self._before = None
@@ -519,13 +529,21 @@ class ToolStrip(QFrame):
         self._show_tail()
         self.refresh()
 
+    def name_palette(self, title: Optional[str], gear: bool = False) -> None:
+        """Head the colour popup ``title``, with a gear when there is a
+        selected mark whose form it can open."""
+        self._palette_title = title
+        self._palette_gear = gear
+
     def _open_palette(self) -> None:
         if self._palette is None:
             self._palette = ColourPopup(self)
             self._palette.chosen.connect(self._colour_picked)
             self._palette.faded.connect(self._opacity_picked)
+            self._palette.properties_wanted.connect(self.properties_wanted)
         at = self.swatch.mapToGlobal(QPoint(self.swatch.width() + GAP, 0))
-        self._palette.show_for(self.swatch.colour, self._opacity, at)
+        self._palette.show_for(self.swatch.colour, self._opacity, at,
+                               self._palette_title, self._palette_gear)
 
     def _colour_picked(self, colour) -> None:
         self.swatch.set_colour(tuple(colour))
@@ -809,6 +827,8 @@ class MarkButtons(QWidget):
     deleted = Signal()
     #: Its thread is to be opened -- the note, and any replies under it.
     commented = Signal()
+    #: The colour popup's gear: open the selected mark's properties form.
+    properties_wanted = Signal()
 
     #: Air between the mark and the bar, in pixels.
     CLEARANCE = 8
@@ -842,6 +862,8 @@ class MarkButtons(QWidget):
         self.palette_popup = ColourPopup(self)
         self.palette_popup.chosen.connect(self.recoloured)
         self.palette_popup.faded.connect(self.faded)
+        self.palette_popup.properties_wanted.connect(self.properties_wanted)
+        self._title = None
         self.buttons["colour"].setEnabled(True)
         self.buttons["colour"].clicked.connect(self._open_palette)
         self.buttons["delete"].setEnabled(True)
@@ -855,7 +877,7 @@ class MarkButtons(QWidget):
         self.hide()
 
     def set_mark(self, colour, opacity, locked: bool = False,
-                 notes: bool = True) -> None:
+                 notes: bool = True, title: Optional[str] = None) -> None:
         """What the selected mark looks like now, for the popup to show.
 
         ``locked`` greys the two buttons that would change it, and
@@ -865,6 +887,8 @@ class MarkButtons(QWidget):
         the mark is a different kind of thing.
         """
         self._colour, self._opacity = colour, opacity
+        if title is not None:
+            self._title = title
         self._show_colour()
         self.buttons["colour"].setEnabled(not locked)
         self.buttons["delete"].setEnabled(not locked)
@@ -877,7 +901,8 @@ class MarkButtons(QWidget):
     def _open_palette(self) -> None:
         button = self.buttons["colour"]
         below = button.mapToGlobal(QPoint(0, button.height() + 2))
-        self.palette_popup.show_for(self._colour, self._opacity, below)
+        self.palette_popup.show_for(self._colour, self._opacity, below,
+                                    self._title, True)
 
     def _restyle(self) -> None:
         colour = self.palette().buttonText().color()
@@ -947,12 +972,24 @@ class ColourPopup(QWidget):
 
     Three rows of seven -- hues, the same hues lightened, and a greyscale row
     -- with a tick on the one in use, and a slider underneath reading in
-    percent. Acrobat puts a gear in the corner that opens the properties
-    form; that is left for the step which builds the form.
+    percent. **Headed with the mark's name, and a gear** in the corner that
+    opens the mark's properties form, as Acrobat's is, when there is a mark
+    to open.
+
+    **In a properties form, two tabs** -- ``more`` -- the swatches, and
+    *More Colours*: Qt's own colour dialog, embedded, for a colour the
+    swatches do not have. Qt's and not Apple's: the Mac's colour panel is a
+    window of its own and cannot sit in a tab, and Qt's is the same on
+    every system. The strip's and the selected mark's bar's are the
+    swatches alone, as Acrobat's are; the full choice is in the form.
 
     A popup rather than a menu: a menu closes on the first click, and the
     slider needs to be dragged.
     """
+
+    #: The gear was clicked: open the properties form of the mark this
+    #: popup is colouring.
+    properties_wanted = Signal()
 
     #: A colour was chosen. Sent as the choice is made, not when the popup
     #: closes, because the change shows on the page behind it.
@@ -966,22 +1003,44 @@ class ColourPopup(QWidget):
     CELL = 26
     GAP = 4
 
-    def __init__(self, parent=None, opacity: bool = True, none: bool = False):
-        super().__init__(parent, Qt.Popup)
+    def __init__(self, parent=None, opacity: bool = True, none: bool = False,
+                 more: bool = False):
+        # **In a form, a window of its own**: with More Colours it is too
+        # big for a pop-up, which cannot be moved off the form it covers and
+        # closes only on a click outside it that nothing points to. So it
+        # has a title bar to drag it by, a Done button, and stays open
+        # until closed. The strip's and the bar's stay small pop-ups.
+        super().__init__(parent, (Qt.Dialog | Qt.WindowTitleHint
+                                  | Qt.WindowCloseButtonHint) if more
+                         else Qt.Popup)
+        self.windowed = more
         self.setAutoFillBackground(True)
         outer = QVBoxLayout(self)
         outer.setContentsMargins(12, 10, 12, 10)
         outer.setSpacing(8)
-        # Just "Colour": the popup always opens from something particular --
-        # a mark's form, the selected mark's bar, the armed tool's swatch --
-        # so what it colours is already plain, and naming one kind of mark
-        # here was wrong for every other.
-        title = QLabel(_("Colour"), self)
-        font = title.font()
+        # The mark's name when there is one, "Oval/Circle Colour", as
+        # Acrobat heads its own; "Colour" where nothing names it.
+        heading = QHBoxLayout()
+        self.title = QLabel(_("Colour"), self)
+        font = self.title.font()
         font.setBold(True)
-        title.setFont(font)
-        outer.addWidget(title)
+        self.title.setFont(font)
+        heading.addWidget(self.title, 1)
+        self.gear = QToolButton(self)
+        self.gear.setAutoRaise(True)
+        self.gear.setFocusPolicy(Qt.NoFocus)
+        self.gear.setToolTip(_("Properties..."))
+        self.gear.setIcon(icon_for("cog-outline", self.palette().buttonText().color()))
+        self.gear.clicked.connect(self._gear)
+        self.gear.hide()
+        heading.addWidget(self.gear)
+        outer.addLayout(heading)
 
+        self.tabs = QTabWidget(self) if more else None
+        swatches = QWidget(self.tabs or self)
+        inner = QVBoxLayout(swatches)
+        inner.setContentsMargins(0, 6 if more else 0, 0, 0)
+        inner.setSpacing(8)
         grid = QGridLayout()
         grid.setSpacing(self.GAP)
         self.cells = []
@@ -992,7 +1051,7 @@ class ColourPopup(QWidget):
             grid.addWidget(cell, n // markup.PALETTE_COLUMNS,
                            n % markup.PALETTE_COLUMNS)
             self.cells.append(cell)
-        outer.addLayout(grid)
+        inner.addLayout(grid)
         #: *No Colour*, for a fill that may be left see-through: chosen as
         #: an empty colour, which the window above writes as no `/IC`.
         self.no_colour = QPushButton(_("No Colour"), self)
@@ -1000,7 +1059,37 @@ class ColourPopup(QWidget):
         self.no_colour.setFocusPolicy(Qt.NoFocus)
         self.no_colour.clicked.connect(lambda: self._picked(-1, ()))
         self.no_colour.setVisible(none)
-        outer.addWidget(self.no_colour)
+        inner.addWidget(self.no_colour)
+        #: Says so when the colour in use is none of the swatches -- one
+        #: from More Colours, or from another application's picker -- so an
+        #: unticked palette is not taken for one that failed to tick.
+        self.not_swatch = QLabel(self)
+        self.not_swatch.setWordWrap(True)
+        self.not_swatch.hide()
+        inner.addWidget(self.not_swatch)
+        self._quiet = False
+        self.more = None
+        if more:
+            inner.addStretch(1)
+            self.tabs.setDocumentMode(True)
+            self.tabs.addTab(swatches, _("Swatches"))
+            #: Qt's colour dialog as a panel: no buttons, a colour sent as
+            #: it is picked, the swatches filling its basic colours.
+            self.more = QColorDialog(self.tabs)
+            self.more.setWindowFlags(Qt.Widget)
+            self.more.setOptions(QColorDialog.NoButtons
+                                 | QColorDialog.DontUseNativeDialog)
+            # Its own margins, round a dialog it no longer is, were space
+            # wasted inside the tab. Its layout exists once it has options.
+            if self.more.layout() is not None:
+                self.more.layout().setContentsMargins(0, 6, 0, 0)
+            for n, (_name, colour) in enumerate(markup.PALETTE):
+                QColorDialog.setStandardColor(n, QColor.fromRgbF(*colour[:3]))
+            self.more.currentColorChanged.connect(self._mixed)
+            self.tabs.addTab(self.more, _("More Colours"))
+            outer.addWidget(self.tabs)
+        else:
+            outer.addWidget(swatches)
 
         row = QHBoxLayout()
         row.setSpacing(8)
@@ -1027,6 +1116,31 @@ class ColourPopup(QWidget):
             widget = row.itemAt(n).widget()
             if widget is not None:
                 widget.setVisible(opacity)
+        if not opacity:
+            # Hidden widgets take no room, but the row's spacing did.
+            outer.removeItem(row)
+        if more:
+            # The heading is the window's title; Done keeps what was picked,
+            # as the close button and Escape do.
+            self.title.hide()
+            done_row = QHBoxLayout()
+            done_row.addStretch(1)
+            done = QPushButton(_("Done"), self)
+            done.setDefault(True)
+            done.clicked.connect(self.close)
+            done_row.addWidget(done)
+            outer.addLayout(done_row)
+            # Always exactly the size of what it holds, on either tab: a
+            # window left larger than its contents showed a band of nothing
+            # above Done.
+            outer.setSizeConstraint(QLayout.SetFixedSize)
+
+    def keyPressEvent(self, event):
+        if self.windowed and event.key() == Qt.Key_Escape:
+            self.close()
+            event.accept()
+            return
+        super().keyPressEvent(event)
 
     def _picked(self, at: int, colour) -> None:
         """A colour was clicked: tick it, then pass it on.
@@ -1038,15 +1152,72 @@ class ColourPopup(QWidget):
         for n, cell in enumerate(self.cells):
             cell.set_chosen(n == at)
         self.no_colour.setChecked(at < 0)
+        self._say_swatch(colour)
         self.chosen.emit(colour)
 
     def _nudged(self, action):
         if action != QSlider.SliderMove:
             self.faded.emit(self.slider.value() / 100.0)
 
-    def show_for(self, colour, opacity, at) -> None:
-        """Open at ``at``, ticking ``colour`` and reading ``opacity``."""
-        chosen = markup.nearest_swatch(colour) if colour else -1
+    def _mixed(self, colour: QColor) -> None:
+        """A colour from *More Colours*: sent as it is picked, with no
+        swatch ticked unless it is one of them."""
+        if self._quiet or not colour.isValid():
+            return
+        rgb = tuple(round(v, 4) for v in colour.getRgbF()[:3])
+        exact = self._swatch_of(rgb)
+        for n, cell in enumerate(self.cells):
+            cell.set_chosen(n == exact)
+        self.no_colour.setChecked(False)
+        self._say_swatch(rgb)
+        self.chosen.emit(rgb)
+
+    @staticmethod
+    def _swatch_of(colour) -> int:
+        """The swatch ``colour`` is, or -1 when it is none of them.
+
+        **Exactly, not the nearest.** A colour from another picker -- Apple's
+        pure blue, from one of Acrobat's -- was ticked as the swatch nearest
+        it, so the palette said Blue of a colour that was not, and choosing
+        that same ticked Blue changed the mark. Within a rounding margin, so
+        a swatch read back from a file still counts as itself."""
+        if not colour:
+            return -1
+        return next((n for n, (_name, c) in enumerate(markup.PALETTE)
+                     if all(abs(a - b) < 0.003 for a, b in zip(c, colour[:3]))),
+                    -1)
+
+    def _say_swatch(self, colour) -> None:
+        """Show, under the swatches, that ``colour`` is none of them."""
+        if colour and self._swatch_of(colour) < 0:
+            self.not_swatch.setText(
+                _("The colour in use, %s, is not one of these swatches.")
+                % markup._hex(colour))
+            self.not_swatch.show()
+        else:
+            self.not_swatch.hide()
+
+    def _gear(self) -> None:
+        self.hide()
+        self.properties_wanted.emit()
+
+    def show_for(self, colour, opacity, at, title: Optional[str] = None,
+                 gear: bool = False) -> None:
+        """Open at ``at``, ticking ``colour`` and reading ``opacity``,
+        headed ``title`` -- "Colour" without one -- and with the gear when
+        there is a mark whose form it can open."""
+        self.title.setText(title or _("Colour"))
+        if self.windowed:
+            self.setWindowTitle(title or _("Colour"))
+        self.gear.setVisible(gear)
+        if colour and self.more is not None:
+            self._quiet = True
+            try:
+                self.more.setCurrentColor(QColor.fromRgbF(*colour[:3]))
+            finally:
+                self._quiet = False
+        chosen = self._swatch_of(colour)
+        self._say_swatch(colour)
         for n, cell in enumerate(self.cells):
             cell.set_chosen(n == chosen)
         self.no_colour.setChecked(not colour)

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  pdfarranger\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-11 00:38+0000\n"
+"POT-Creation-Date: 2026-11-11 19:12+0000\n"
 "PO-Revision-Date: 2026-01-21 05:07+0100\n"
 "Last-Translator: Ekaterine Papava <papava.e@gtu.ge>\n"
 "Language: ka\n"
@@ -132,8 +132,14 @@ msgstr "მიმდინარე თვისებების ნაგუ�
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py pdfarranger_qt/mainwindow.py
+#: pdfarranger_qt/toolstrip.py
 msgid "Properties..."
 msgstr "თვისებები..."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Flip Line"
+msgstr "ხაზის შებრუნება"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
@@ -414,8 +420,8 @@ msgid "Size"
 msgstr "ზომა"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/dialogs.py pdfarranger_qt/properties.py
-#: pdfarranger_qt/toolstrip.py
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
+#: pdfarranger_qt/properties.py pdfarranger_qt/toolstrip.py
 msgid "Colour"
 msgstr "ფერი"
 
@@ -2129,6 +2135,12 @@ msgstr "ნიშნის დამატება"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "%s Colour"
+msgstr "ფერი: %s"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
 msgid "Change Mark"
 msgstr "ნიშნის შეცვლა"
 
@@ -2790,7 +2802,7 @@ msgid "Rotate"
 msgstr "შებრუნება"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/markup.py
+#: pdfarranger_qt/markup.py pdfarranger_qt/properties.py
 msgid "None"
 msgstr "არცერთი"
 
@@ -3047,6 +3059,11 @@ msgstr "მართკუთხედი/კვადრატი"
 msgid "Oval/Circle"
 msgstr "ოვალი/წრე"
 
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py pdfarranger_qt/tools.py
+msgid "Line"
+msgstr "ხაზი"
+
 #: pdfarranger_qt/properties.py
 msgid "Review History"
 msgstr "გადახედვის ისტორია"
@@ -3088,6 +3105,61 @@ msgstr "სისქე"
 #: pdfarranger_qt/properties.py
 msgid "Fill Colour"
 msgstr "შევსების ფერი"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Open Arrow"
+msgstr "ღია ისარი"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Closed Arrow"
+msgstr "დახურული ისარი"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Open Arrow (Reverse)"
+msgstr "ღია ისარი (შებრუნებული)"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Closed Arrow (Reverse)"
+msgstr "დახურული ისარი (შებრუნებული)"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Butt"
+msgstr "განივი ხაზი"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Diamond"
+msgstr "რომბი"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Round"
+msgstr "მრგვალი"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Square"
+msgstr "კვადრატი"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Slash"
+msgstr "დახრილი ხაზი"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Start"
+msgstr "დასაწყისი"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "End"
+msgstr "დასასრული"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/properties.py
@@ -3346,11 +3418,6 @@ msgstr "ხატვა"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/tools.py
-msgid "Line"
-msgstr "ხაზი"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/tools.py
 msgid "Arrow"
 msgstr "ისარი"
 
@@ -3388,6 +3455,27 @@ msgstr "ხაზის სისქე"
 #: pdfarranger_qt/toolstrip.py
 msgid "No Colour"
 msgstr "ფერის გარეშე"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/toolstrip.py
+msgid "Swatches"
+msgstr "ნიმუშები"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/toolstrip.py
+msgid "More Colours"
+msgstr "სხვა ფერები"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/toolstrip.py
+msgid "Done"
+msgstr "მზადაა"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/toolstrip.py
+#, python-format
+msgid "The colour in use, %s, is not one of these swatches."
+msgstr "გამოყენებული ფერი, %s, არცერთი ამ ნიმუშთაგანი არ არის."
 
 # machine translation, unreviewed
 #: pdfarranger_qt/viewer.py
