@@ -300,15 +300,18 @@ class TestAMarkIsHitByItsInk(SelectionCase):
             with self.subTest(subtype=subtype):
                 mark, box = self.a_mark_of(subtype)
                 ink = markup.ink_box(subtype, box)
-                self.assertIsNotNone(
-                    self.canvas.mark_at(self.at((ink[1] + ink[3]) / 2, box)),
-                    "the ink itself is not a hit")
+                found = self.canvas.mark_at(self.at((ink[1] + ink[3]) / 2, box))
+                self.assertIs(found[1] if found else None, mark,
+                              "the ink itself is not a hit")
                 # The top of the run: above a cross-out's line and well
-                # above an underline's, for both of them.
+                # above an underline's, for both of them. **This mark is
+                # not taken there**: another may be -- a line in the sample
+                # crosses that spot -- and that is the line's business.
                 height = box[3] - box[1]
-                self.assertIsNone(
-                    self.canvas.mark_at(self.at(box[3] - height * 0.1, box)),
-                    "a point well away from the stroke still took the mark")
+                found = self.canvas.mark_at(self.at(box[3] - height * 0.1, box))
+                self.assertIsNot(found[1] if found else None, mark,
+                                 "a point well away from the stroke still "
+                                 "took the mark")
 
     def test_a_highlight_is_taken_anywhere_on_the_words(self):
         """Its ink *is* the quadrilateral, so nothing narrows."""

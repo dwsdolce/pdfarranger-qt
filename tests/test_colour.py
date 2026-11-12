@@ -693,16 +693,31 @@ class TestTheBarsSwatchDoesTheSame(ColourCase):
                         (0.0, 1.0, 1.0))
 
     def test_the_popup_ticks_the_selected_mark_s_colour(self):
+        """**Only when the colour is a swatch.** A colour from another
+        picker was ticked as the swatch nearest it, which called it by a
+        name it does not have; now nothing is ticked and the palette says
+        the colour is none of them."""
         mark = self.a_mark()
         self.canvas.select_mark((0, mark))
         settle(timeout_ms=200)
         bar = self.win.mark_buttons
-        bar.palette_popup.show_for(bar._colour, bar._opacity,
-                                   bar.mapToGlobal(bar.rect().topLeft()))
-        ticked = [n for n, cell in enumerate(bar.palette_popup.cells)
-                  if cell._chosen]
-        bar.palette_popup.hide()
-        self.assertEqual(ticked, [markup.nearest_swatch(mark.colour)])
+        popup = bar.palette_popup
+        popup.show_for(bar._colour, bar._opacity,
+                       bar.mapToGlobal(bar.rect().topLeft()))
+        ticked = [n for n, cell in enumerate(popup.cells) if cell._chosen]
+        said = not popup.not_swatch.isHidden()
+        popup.hide()
+        exact = popup._swatch_of(mark.colour)
+        self.assertEqual(ticked, [exact] if exact >= 0 else [])
+        self.assertEqual(said, exact < 0)
+        # And a swatch, given one, is ticked as itself.
+        swatch = markup.PALETTE[3][1]
+        popup.show_for(swatch, 1.0, bar.mapToGlobal(bar.rect().topLeft()))
+        ticked = [n for n, cell in enumerate(popup.cells) if cell._chosen]
+        said = not popup.not_swatch.isHidden()
+        popup.hide()
+        self.assertEqual(ticked, [3])
+        self.assertFalse(said)
 
 
 class TestItIsAllOneHistory(ColourCase):
