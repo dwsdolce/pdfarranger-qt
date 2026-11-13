@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PDF Arranger 1.14.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-13 05:41+0000\n"
+"POT-Creation-Date: 2026-11-13 22:55+0000\n"
 "PO-Revision-Date: 2026-06-02 17:09+0800\n"
 "Last-Translator: Puqns67 <me@puqns67.icu>\n"
 "Language: zh_CN\n"
@@ -2074,7 +2074,7 @@ msgid "Comment"
 msgstr "注释"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
+#: pdfarranger_qt/mainwindow.py pdfarranger_qt/markup.py
 msgid "Cross"
 msgstr "叉号"
 
@@ -2650,6 +2650,96 @@ msgstr "生成副本"
 #: pdfarranger_qt/mainwindow.py
 msgid "Rotate"
 msgstr "旋转"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Approved"
+msgstr "已批准"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Not Approved"
+msgstr "未批准"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Draft"
+msgstr "草稿"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Final"
+msgstr "最终版"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Experimental"
+msgstr "实验性"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Confidential"
+msgstr "机密"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Top Secret"
+msgstr "绝密"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "For Comment"
+msgstr "供评论"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "For Public Release"
+msgstr "供公开发布"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Not For Public Release"
+msgstr "不供公开发布"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "As Is"
+msgstr "按原样"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Expired"
+msgstr "已过期"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Departmental"
+msgstr "部门内部"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Sold"
+msgstr "已售出"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Sign Here"
+msgstr "在此签名"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Initial Here"
+msgstr "在此签首字母"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Witness"
+msgstr "见证人"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Check Mark"
+msgstr "勾号"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/markup.py pdfarranger_qt/properties.py
@@ -3229,6 +3319,11 @@ msgstr "下中"
 #: pdfarranger_qt/stamp.py
 msgid "Bottom right"
 msgstr "右下"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/stamppalette.py
+msgid "Stamp with date and time"
+msgstr "带日期和时间盖章"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/textpalette.py
@@ -3857,4 +3952,8 @@ msgstr "显示标题而非文件名"
 # machine translation, unreviewed
 #~ msgid "Rectangle"
 #~ msgstr "矩形"
+
+# machine translation, unreviewed
+#~ msgid "by %(author)s, %(when)s"
+#~ msgstr "%(author)s，%(when)s"
 

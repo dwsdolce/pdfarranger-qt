@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pdfarranger-qt VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/dwsdolce/pdfarranger-qt/issues\n"
-"POT-Creation-Date: 2026-11-13 05:41+0000\n"
+"POT-Creation-Date: 2026-11-13 22:55+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1752,7 +1752,7 @@ msgstr ""
 msgid "Comment"
 msgstr ""
 
-#: pdfarranger_qt/mainwindow.py
+#: pdfarranger_qt/mainwindow.py pdfarranger_qt/markup.py
 msgid "Cross"
 msgstr ""
 
@@ -2240,6 +2240,78 @@ msgstr ""
 msgid "Rotate"
 msgstr ""
 
+#: pdfarranger_qt/markup.py
+msgid "Approved"
+msgstr ""
+
+#: pdfarranger_qt/markup.py
+msgid "Not Approved"
+msgstr ""
+
+#: pdfarranger_qt/markup.py
+msgid "Draft"
+msgstr ""
+
+#: pdfarranger_qt/markup.py
+msgid "Final"
+msgstr ""
+
+#: pdfarranger_qt/markup.py
+msgid "Experimental"
+msgstr ""
+
+#: pdfarranger_qt/markup.py
+msgid "Confidential"
+msgstr ""
+
+#: pdfarranger_qt/markup.py
+msgid "Top Secret"
+msgstr ""
+
+#: pdfarranger_qt/markup.py
+msgid "For Comment"
+msgstr ""
+
+#: pdfarranger_qt/markup.py
+msgid "For Public Release"
+msgstr ""
+
+#: pdfarranger_qt/markup.py
+msgid "Not For Public Release"
+msgstr ""
+
+#: pdfarranger_qt/markup.py
+msgid "As Is"
+msgstr ""
+
+#: pdfarranger_qt/markup.py
+msgid "Expired"
+msgstr ""
+
+#: pdfarranger_qt/markup.py
+msgid "Departmental"
+msgstr ""
+
+#: pdfarranger_qt/markup.py
+msgid "Sold"
+msgstr ""
+
+#: pdfarranger_qt/markup.py
+msgid "Sign Here"
+msgstr ""
+
+#: pdfarranger_qt/markup.py
+msgid "Initial Here"
+msgstr ""
+
+#: pdfarranger_qt/markup.py
+msgid "Witness"
+msgstr ""
+
+#: pdfarranger_qt/markup.py
+msgid "Check Mark"
+msgstr ""
+
 #: pdfarranger_qt/markup.py pdfarranger_qt/properties.py
 msgid "None"
 msgstr ""
@@ -2717,6 +2789,10 @@ msgstr ""
 
 #: pdfarranger_qt/stamp.py
 msgid "Bottom right"
+msgstr ""
+
+#: pdfarranger_qt/stamppalette.py
+msgid "Stamp with date and time"
 msgstr ""
 
 #: pdfarranger_qt/textpalette.py

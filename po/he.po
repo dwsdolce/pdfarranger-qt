@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-13 05:41+0000\n"
+"POT-Creation-Date: 2026-11-13 22:55+0000\n"
 "PO-Revision-Date: 2023-06-12 11:22+0300\n"
 "Last-Translator: Yaron Shahrabani <sh.yaron@gmail.com>\n"
 "Language: he\n"
@@ -2223,7 +2223,7 @@ msgid "Comment"
 msgstr "הערה"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
+#: pdfarranger_qt/mainwindow.py pdfarranger_qt/markup.py
 msgid "Cross"
 msgstr "צלב"
 
@@ -2824,6 +2824,96 @@ msgid "Rotate"
 msgstr "סיבוב"
 
 # machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Approved"
+msgstr "מאושר"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Not Approved"
+msgstr "לא מאושר"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Draft"
+msgstr "טיוטה"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Final"
+msgstr "סופי"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Experimental"
+msgstr "ניסיוני"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Confidential"
+msgstr "חסוי"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Top Secret"
+msgstr "סודי ביותר"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "For Comment"
+msgstr "להערות"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "For Public Release"
+msgstr "לפרסום"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Not For Public Release"
+msgstr "לא לפרסום"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "As Is"
+msgstr "כמות שהוא"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Expired"
+msgstr "פג תוקף"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Departmental"
+msgstr "מחלקתי"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Sold"
+msgstr "נמכר"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Sign Here"
+msgstr "חתום כאן"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Initial Here"
+msgstr "חתום בראשי תיבות כאן"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Witness"
+msgstr "עד"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Check Mark"
+msgstr "סימן וי"
+
+# machine translation, unreviewed
 #: pdfarranger_qt/markup.py pdfarranger_qt/properties.py
 msgid "None"
 msgstr "ללא"
@@ -3401,6 +3491,11 @@ msgstr "למטה במרכז"
 #: pdfarranger_qt/stamp.py
 msgid "Bottom right"
 msgstr "למטה מימין"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/stamppalette.py
+msgid "Stamp with date and time"
+msgstr "חותמת עם תאריך ושעה"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/textpalette.py
@@ -4010,4 +4105,8 @@ msgstr "הצגת הכותרת במקום שם הקובץ"
 # machine translation, unreviewed
 #~ msgid "Rectangle"
 #~ msgstr "מלבן"
+
+# machine translation, unreviewed
+#~ msgid "by %(author)s, %(when)s"
+#~ msgstr "מאת %(author)s, %(when)s"
 

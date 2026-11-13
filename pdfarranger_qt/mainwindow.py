@@ -21,6 +21,7 @@ real menu bar with a tool bar for the common ones, which is what the platform
 expects.
 """
 
+import datetime
 import json
 import logging
 import os
@@ -30,6 +31,7 @@ from typing import List, Optional
 
 from PySide6.QtCore import (
     QEventLoop,
+    QPoint,
     QPointF,
     QProcess,
     QSize,
@@ -191,6 +193,14 @@ class MainWindow(QMainWindow):
         self.reader.canvas.mark_stroke = self._stroke_for_canvas_tool
         self.reader.canvas.drawing_changed.connect(self._refresh_state)
         self.reader.canvas.callout_reshaped.connect(self.callout_reshaped)
+        self.reader.canvas.stamp_resized.connect(self.stamp_resized)
+        #: The stamps palette, made when the tool is first armed.
+        self._stamp_palette = None
+        self.reader.canvas.stamp_size = self._stamp_size
+        self.reader.canvas.stamp_art = self._stamp_art
+        #: ``((name, line), drawing)`` for the stamp last shown under the
+        #: pointer, so it is not drawn afresh at every move.
+        self._stamp_shown = (None, None)
         # *Properties...* in the menu of a mark being made: the tool's own
         # form, whose changes the whole mark is made with.
         self.reader.canvas.tool_form_wanted.connect(
@@ -888,6 +898,8 @@ class MainWindow(QMainWindow):
         "draw": markup.INK,
         # *Text Callout*: a Text Box with a leader, told apart by `/IT`.
         "callout": markup.FREETEXT,
+        # *Stamps palette*: a Stamp, the `/Stamp` that is not a comment.
+        "stamps": markup.STAMP,
     }
 
     #: The gestures above that are not tools, and the tool each acts as --
@@ -932,6 +944,7 @@ class MainWindow(QMainWindow):
         "connected_lines": "polyline",
         "draw": "draw",
         "callout": "callout",
+        "stamps": "stamps",
     }
 
     #: And back again, for the places that start from the canvas's name --
@@ -966,6 +979,7 @@ class MainWindow(QMainWindow):
         self._offer_thickness()
         if self.reader.canvas.selected_mark() is None:
             self._name_palette()
+        self._show_stamps(name == "stamps")
         # **With text already selected, arming the tool is the gesture.**
         # Reader marks the selection the moment you choose the tool; there
         # is no second action to commit it, and waiting for one left the
@@ -1163,6 +1177,26 @@ class MainWindow(QMainWindow):
                 "large cloud" if tool == "cloud" else "straight")
             rect = markup.poly_rect(subtype, points, ends, poly_style,
                                     told.get("thickness", 1.0))
+        art = stamp_subject = None
+        if tool == "stamps":
+            # The stamp picked in the palette, our own drawing of it with
+            # the date line when asked for: centred on a click at its own
+            # size, at the page's own size, or as big as a drag made it.
+            name = (self._stamp_palette.current() if self._stamp_palette
+                    is not None else markup.STAMP_PRESETS[0][0])
+            line = self._stamp_line()
+            art = markup.preset_art(name, line)
+            chosen = name
+            preset = markup.preset_of(name)
+            # Its title in the file, as Acrobat writes "Approved".
+            stamp_subject = preset[1] if preset else None
+            x0, y0, x1, y1 = rects[-1]
+            if x1 - x0 <= 0 or y1 - y0 <= 0:
+                scale = page.scale if page.scale else 1.0
+                wide, tall = (v / scale for v in markup.preset_size(name, line))
+                rect = (x0 - wide / 2, y0 - tall / 2, x0 + wide / 2, y0 + tall / 2)
+            else:
+                rect = (x0, y0, x1, y1)
         strokes = None
         if subtype == markup.INK:
             # The strokes the canvas gathered: every point in one flat run,
@@ -1185,7 +1219,8 @@ class MainWindow(QMainWindow):
         strip_tool = self.GESTURE_TOOLS.get(self.CANVAS_TO_STRIP.get(tool, tool),
                                             self.CANVAS_TO_STRIP.get(tool, tool))
         author = self._authors.get(strip_tool) or markup.default_author()
-        subject = subject or self._subjects.get(strip_tool) or ""
+        subject = (subject or stamp_subject or self._subjects.get(strip_tool)
+                   or "")
         # A text box's border and fill as the tool was last told to make
         # them, or white, 1 point and straight.
         box = self._boxes.get(self.CANVAS_TO_STRIP.get(tool, tool), {})
@@ -1202,7 +1237,7 @@ class MainWindow(QMainWindow):
                   else None),
             thickness=markup.written_thickness(subtype, box.get("thickness", 1.0)),
             border_style=poly_style or box.get("border_style", "straight"),
-            points=points, ends=ends, strokes=strokes))
+            points=points, ends=ends, strokes=strokes, art=art))
         if tool == "replace" and quads:
             # **And its caret**, at the end of the run, in the same colour
             # and opacity. Added after the strikeout, which is the order
@@ -1750,6 +1785,72 @@ class MainWindow(QMainWindow):
         uid = self.model.pages[index].uid
         self.model.mark_edits.change(uid, mark.index, points=points, rect=rect)
         mark.points = points
+        mark.rect = rect
+        self._after_mark_change(index, uid)
+
+    def _show_stamps(self, on: bool) -> None:
+        """The stamps palette, beside the strip while its tool is armed."""
+        if not on:
+            if self._stamp_palette is not None:
+                self._stamp_palette.hide()
+            return
+        if self._stamp_palette is None:
+            from .stamppalette import StampPalette
+
+            self._stamp_palette = StampPalette(self.tool_strip.parentWidget())
+        palette, strip = self._stamp_palette, self.tool_strip
+        host = strip.parentWidget()
+        palette.adjustSize()
+        at = strip.mapTo(host, QPoint(strip.width() + 8, 0))
+        if host is not None and at.x() + palette.width() > host.width():
+            at.setX(strip.x() - 8 - palette.width())
+        palette.move(max(0, at.x()), max(0, at.y()))
+        palette.show()
+        palette.raise_()
+
+    def _stamp_line(self) -> str:
+        """The line *Stamp with date and time* puts under a stamp's word:
+        who -- the stamp tool's author -- and when."""
+        if self._stamp_palette is None or not self._stamp_palette.with_date():
+            return ""
+        now = datetime.datetime.now()
+        who = self._authors.get("stamps") or markup.default_author()
+        # In English, as the stamp's word is: see `markup.preset_art`.
+        return f"by {who}, {now.day} {now.strftime('%b %Y %H:%M')}"
+
+    def _stamp_art(self):
+        """The picked stamp's drawing, as it would be placed now."""
+        name = (self._stamp_palette.current() if self._stamp_palette is not None
+                else markup.STAMP_PRESETS[0][0])
+        key = (name, self._stamp_line())
+        if self._stamp_shown[0] != key:
+            self._stamp_shown = (key, markup.preset_art(*key))
+        return self._stamp_shown[1]
+
+    def _stamp_size(self):
+        """The picked stamp's size in points, for a drag to keep its shape."""
+        name = (self._stamp_palette.current() if self._stamp_palette is not None
+                else markup.STAMP_PRESETS[0][0])
+        return markup.preset_size(name, self._stamp_line())
+
+    def stamp_resized(self, index: int, mark, rect) -> None:
+        """A Stamp's corner let go: its rectangle now, as one step to undo.
+        **Its rectangle and nothing else** -- not the Scalable Comment's
+        angle, a new one of which drops the drawing -- so a reader fits the
+        stamp's own drawing to it."""
+        if not 0 <= index < len(self.model.pages):
+            return
+        if getattr(mark, "locked", False):
+            return
+        rect = tuple(float(v) for v in rect)
+        self._commit_mark_change(_("Resize Mark"), index, mark)
+        if isinstance(mark, markup.Annotation):
+            mark.rect = rect
+            mark.touch()
+            self._after_mark_change(index)
+            return
+        uid = self.model.pages[index].uid
+        self.model.mark_edits.change(uid, mark.index, rect=rect)
         mark.rect = rect
         self._after_mark_change(index, uid)
 
@@ -2706,6 +2807,9 @@ class MainWindow(QMainWindow):
         if markup.is_callout(mark):
             # A Text Box with a leader, told apart by `/IT`.
             return "callout"
+        if markup.is_stamp(mark):
+            # A `/Stamp` that is not a comment.
+            return "stamps"
         for tool, made in self.MARK_KINDS.items():
             if made == kind and tool not in self.GESTURE_TOOLS:
                 return self.CANVAS_TO_STRIP.get(tool, tool)

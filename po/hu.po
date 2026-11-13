@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-13 05:41+0000\n"
+"POT-Creation-Date: 2026-11-13 22:55+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: hu\n"
@@ -2281,7 +2281,7 @@ msgid "Comment"
 msgstr "Megjegyzés"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
+#: pdfarranger_qt/mainwindow.py pdfarranger_qt/markup.py
 msgid "Cross"
 msgstr "Kereszt"
 
@@ -2876,6 +2876,96 @@ msgid "Rotate"
 msgstr "Forgatás"
 
 # machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Approved"
+msgstr "Jóváhagyva"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Not Approved"
+msgstr "Nincs jóváhagyva"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Draft"
+msgstr "Vázlat"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Final"
+msgstr "Végleges"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Experimental"
+msgstr "Kísérleti"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Confidential"
+msgstr "Bizalmas"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Top Secret"
+msgstr "Szigorúan titkos"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "For Comment"
+msgstr "Véleményezésre"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "For Public Release"
+msgstr "Nyilvánosságra hozható"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Not For Public Release"
+msgstr "Nem hozható nyilvánosságra"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "As Is"
+msgstr "Ahogy van"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Expired"
+msgstr "Lejárt"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Departmental"
+msgstr "Osztályon belüli"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Sold"
+msgstr "Eladva"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Sign Here"
+msgstr "Itt írja alá"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Initial Here"
+msgstr "Itt szignálja"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Witness"
+msgstr "Tanú"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Check Mark"
+msgstr "Pipa"
+
+# machine translation, unreviewed
 #: pdfarranger_qt/markup.py pdfarranger_qt/properties.py
 msgid "None"
 msgstr "Nincs"
@@ -3453,6 +3543,11 @@ msgstr "Középen alul"
 #: pdfarranger_qt/stamp.py
 msgid "Bottom right"
 msgstr "Jobb alul"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/stamppalette.py
+msgid "Stamp with date and time"
+msgstr "Bélyegzés dátummal és idővel"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/textpalette.py
@@ -4073,4 +4168,8 @@ msgstr "A cím megjelenítése a fájlnév helyett"
 # machine translation, unreviewed
 #~ msgid "Rectangle"
 #~ msgstr "Téglalap"
+
+# machine translation, unreviewed
+#~ msgid "by %(author)s, %(when)s"
+#~ msgstr "%(author)s, %(when)s"
 

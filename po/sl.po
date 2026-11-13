@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  pdfarranger\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-13 05:41+0000\n"
+"POT-Creation-Date: 2026-11-13 22:55+0000\n"
 "PO-Revision-Date: 2023-06-06 13:27+0200\n"
 "Last-Translator: Janez G <janezgac@gmail.com>\n"
 "Language: sl_SI\n"
@@ -2257,7 +2257,7 @@ msgid "Comment"
 msgstr "Komentar"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
+#: pdfarranger_qt/mainwindow.py pdfarranger_qt/markup.py
 msgid "Cross"
 msgstr "Križec"
 
@@ -2860,6 +2860,96 @@ msgid "Rotate"
 msgstr "Zasukaj"
 
 # machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Approved"
+msgstr "Odobreno"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Not Approved"
+msgstr "Ni odobreno"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Draft"
+msgstr "Osnutek"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Final"
+msgstr "Končno"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Experimental"
+msgstr "Preizkusno"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Confidential"
+msgstr "Zaupno"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Top Secret"
+msgstr "Strogo zaupno"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "For Comment"
+msgstr "Za pripombe"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "For Public Release"
+msgstr "Za javno objavo"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Not For Public Release"
+msgstr "Ni za javno objavo"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "As Is"
+msgstr "Kakršno je"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Expired"
+msgstr "Poteklo"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Departmental"
+msgstr "Oddelčno"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Sold"
+msgstr "Prodano"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Sign Here"
+msgstr "Podpišite tukaj"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Initial Here"
+msgstr "Parafirajte tukaj"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Witness"
+msgstr "Priča"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Check Mark"
+msgstr "Kljukica"
+
+# machine translation, unreviewed
 #: pdfarranger_qt/markup.py pdfarranger_qt/properties.py
 msgid "None"
 msgstr "Brez"
@@ -3437,6 +3527,11 @@ msgstr "Spodaj na sredini"
 #: pdfarranger_qt/stamp.py
 msgid "Bottom right"
 msgstr "Spodaj desno"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/stamppalette.py
+msgid "Stamp with date and time"
+msgstr "Žig z datumom in uro"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/textpalette.py
@@ -4052,4 +4147,8 @@ msgstr "Pokaži naslov namesto imena datoteke"
 # machine translation, unreviewed
 #~ msgid "Rectangle"
 #~ msgstr "Pravokotnik"
+
+# machine translation, unreviewed
+#~ msgid "by %(author)s, %(when)s"
+#~ msgstr "%(author)s, %(when)s"
 

@@ -1061,6 +1061,10 @@ class PageCanvas(QAbstractScrollArea):
     #: A callout's box or leader reshaped by a handle, or its box dragged
     #: alone: ``(page, mark, box, points)``, both in the mark's own space.
     callout_reshaped = Signal(int, object, object, object)
+    #: A Stamp resized by a corner: ``(page, mark, rect)``. Apart from a
+    #: Scalable Comment's reshape, which carries an angle, and a new angle
+    #: means a new drawing -- a Stamp keeps its own.
+    stamp_resized = Signal(int, object, object)
     #: A gesture, as ``(tool, [(page, quads), ...])``. Text is marked one
     #: page at a time, so the list holds one page; it is a list so that a
     #: gesture is always one step to undo, however much it covered.
@@ -1141,9 +1145,24 @@ class PageCanvas(QAbstractScrollArea):
         #: or "box" for the box dragged alone.
         self._callout_shaping = None
         self._callout_drag = None
+        #: ``(page, mark, fixed, way)`` while a Stamp's corner is dragged:
+        #: the opposite corner, which holds still, and the way from it to
+        #: the corner held. The rectangle goes in `_shaping`.
+        self._stamp_resizing = None
+        #: A Stamp's drawing rendered at a size, ``{(uid, w, h): QImage}``.
+        self._art_images = {}
         #: The line a mark made with a tool would have now, as ``(thickness,
         #: opacity)``, asked of the window as `mark_colour` is.
         self.mark_stroke = None
+        #: The size in points of the stamp the palette has picked, asked of
+        #: the window, for a drag to keep its proportions.
+        self.stamp_size = None
+        #: The picked stamp's drawing, a PDF of one page, asked of the
+        #: window, to show under the pointer before it is placed.
+        self.stamp_art = None
+        #: Where the pointer is over the page while the Stamps palette tool
+        #: is armed, for the stamp drawn under it; None off the canvas.
+        self._stamp_hover = None
         #: Where the last context menu was asked for, for the entries that
         #: depend on it: Insert Vertex goes where it was clicked.
         self._menu_point = None
@@ -2661,9 +2680,7 @@ class PageCanvas(QAbstractScrollArea):
         # out because the renderer draws those -- they are page content.
         # They are still marks to take hold of.
         try:
-            marks += [m for m in self._file_marks.visible(index + 1)
-                      if m.subtype == markup.STAMP and not m.is_reply()
-                      and not markup.is_scalable_comment(m.subtype, m.icon)]
+            # (A Stamp now comes through `_file_notes`, which draws it.)
             # And the text boxes, which are taken hold of and dragged the
             # way a stamp is.
             marks += [m for m in self._file_marks.visible(index + 1)
@@ -2875,6 +2892,11 @@ class PageCanvas(QAbstractScrollArea):
     #: only difference the canvas sees is where the point goes: a stamp is
     #: placed by its centre and a comment mark by its top left corner.
     STAMP = "stamp"
+    #: *Stamps palette*: the stamp picked in the palette, placed centred on
+    #: a click at its own size or sized by a drag, its proportions kept and
+    #: its outline shown as it is dragged. Not `STAMP`, which places a
+    #: Scalable Comment.
+    STAMPS = "stamps"
 
     #: Tools whose geometry is a run of *text* rather than an area. They drag
     #: out a selection, exactly as reading does, because the quadrilaterals a
@@ -2915,8 +2937,10 @@ class PageCanvas(QAbstractScrollArea):
         self._marking = None
         self._clicked_shape = False
         self._poly_drawing = None
+        self._stamp_hover = None
         self.drawing_changed.emit()
-        if tool in self.CLICK_TOOLS or tool in self.POLY_TOOLS or tool == self.DRAW:
+        if (tool in self.CLICK_TOOLS or tool in self.POLY_TOOLS
+                or tool in (self.DRAW, self.STAMPS)):
             # A shape or a line is drawn over the page, not over words: a
             # selection left from before is not what it is for.
             self.clear_selection()
@@ -3817,6 +3841,10 @@ class PageCanvas(QAbstractScrollArea):
             self._ink_resized(position)
             return
 
+        if self._stamp_resizing is not None and event.buttons() & Qt.LeftButton:
+            self._stamp_resized(position)
+            return
+
         if self._dragging_vertex is not None and event.buttons() & Qt.LeftButton:
             page, mark, which = self._dragging_vertex
             points = list(self._poly_shaping[1])
@@ -4000,6 +4028,10 @@ class PageCanvas(QAbstractScrollArea):
             # takes the press, and a cursor that promised otherwise would be
             # the lie. The I-beam is wrong here either way.
             self._ink_cursor()
+            if self._tool == self.STAMPS:
+                # The stamp follows the pointer, under the crosshair.
+                self._stamp_hover = position
+                self.viewport().update()
             self._set_tooltip("")
             super().mouseMoveEvent(event)
             return
@@ -4051,6 +4083,10 @@ class PageCanvas(QAbstractScrollArea):
                 else mark.subtype)
         if kind == markup.LINE or kind in markup.POLYS:
             return Qt.CrossCursor
+        if markup.is_stamp(mark):
+            # Its four corners, on the diagonals.
+            return ((Qt.SizeFDiagCursor, Qt.SizeBDiagCursor)[which % 2]
+                    if 0 <= which < 4 else None)
         if markup.is_callout(mark) and which >= 8:
             # The tip and the knee, which go anywhere.
             return Qt.CrossCursor
@@ -4247,6 +4283,13 @@ class PageCanvas(QAbstractScrollArea):
                 self.viewport().update()
                 event.accept()
                 return
+            if (grip is not None and self._selected is not None
+                    and markup.is_stamp(self._selected[1])):
+                if self._stamp_resize_from(grip):
+                    self._place_mark_buttons()
+                    self.viewport().update()
+                    event.accept()
+                    return
             if grip is not None and self._selected is not None and (
                     self._selected[1].kind
                     if isinstance(self._selected[1], markup.Annotation)
@@ -4442,6 +4485,8 @@ class PageCanvas(QAbstractScrollArea):
                 placed = self.icon_rect(start)
             elif self._tool == self.TEXTBOX:
                 placed = self._text_box_made(start, QPointF(event.position()))
+            elif self._tool == self.STAMPS:
+                placed = self._stamp_placed(start, QPointF(event.position()))
             elif self._tool in self.CLICK_TOOLS:
                 end = QPointF(event.position())
                 if ((end - start).manhattanLength()
@@ -4552,9 +4597,11 @@ class PageCanvas(QAbstractScrollArea):
                 self.select_mark((page, mark))
                 # A comment's note window opens on a click, being the
                 # comment; a text box has none, and a shape's opens with its
-                # selection when it has one, as a highlight's does.
-                if (mark.kind if isinstance(mark, markup.Annotation)
-                        else mark.subtype) in (markup.TEXT, markup.STAMP):
+                # selection when it has one, as a highlight's does -- and so
+                # does a Stamp's, which is a `/Stamp` but not a comment.
+                if ((mark.kind if isinstance(mark, markup.Annotation)
+                        else mark.subtype) in (markup.TEXT, markup.STAMP)
+                        and not markup.is_stamp(mark)):
                     self.note_wanted.emit(page, mark)
             elif self._callout_drag is not None:
                 self._callout_let_go()
@@ -4569,6 +4616,19 @@ class PageCanvas(QAbstractScrollArea):
 
         if event.button() == Qt.LeftButton and self._callout_drag is not None:
             self._callout_let_go()
+            event.accept()
+            return
+
+        if event.button() == Qt.LeftButton and self._stamp_resizing is not None:
+            page, mark, _fixed, _way = self._stamp_resizing
+            shaped = self._shaping
+            self._stamp_resizing = None
+            self._shaping = None
+            self._place_mark_buttons()
+            self.viewport().update()
+            if (shaped is not None and shaped[0] is mark
+                    and tuple(shaped[1]) != tuple(mark.rect)):
+                self.stamp_resized.emit(page, mark, tuple(shaped[1]))
             event.accept()
             return
 
@@ -4809,7 +4869,7 @@ class PageCanvas(QAbstractScrollArea):
         kind = (mark.kind if isinstance(mark, markup.Annotation)
                 else mark.subtype)
         return (not cls._is_a_comment(mark)
-                and kind not in (markup.CARET, markup.FREETEXT,
+                and kind not in (markup.CARET, markup.FREETEXT, markup.STAMP,
                                  *markup.SHAPES, markup.LINE,
                                        *markup.POLYS, markup.INK))
 
@@ -4824,7 +4884,9 @@ class PageCanvas(QAbstractScrollArea):
         kind = (mark.kind if isinstance(mark, markup.Annotation)
                 else mark.subtype)
         if kind in (markup.TEXT, markup.STAMP):
-            return True
+            # A Stamp is a `/Stamp` too, and not a comment: its note is apart
+            # from its artwork, as a shape's is.
+            return not markup.is_stamp(mark)
         return kind == markup.HIGHLIGHT and (
             (getattr(mark, "subject", "") or "",
              getattr(mark, "intent", "") or "") == markup.COMMENT_ON_TEXT)
@@ -5412,6 +5474,9 @@ class PageCanvas(QAbstractScrollArea):
             if kind == markup.TEXT:
                 self._paint_note(painter, index, mark, colour)
                 continue
+            if markup.is_stamp(mark):
+                self._paint_stamp_art(painter, index, mark, offset)
+                continue
             if kind == markup.STAMP:
                 self._paint_stamp(painter, index, mark, colour, offset)
                 continue
@@ -5871,6 +5936,8 @@ class PageCanvas(QAbstractScrollArea):
         if kind == markup.STAMP:
             if getattr(mark, "locked", False):
                 return []
+            if markup.is_stamp(mark):
+                return self._corner_grips(index, mark, offset)
             return self._stamp_grips(index, mark, offset)
         if kind == markup.FREETEXT:
             if getattr(mark, "locked", False):
@@ -6176,6 +6243,96 @@ class PageCanvas(QAbstractScrollArea):
         if mine:
             return tuple(self.to_source(index, (at[0], at[1], at[0], at[1]))[:2])
         return at
+
+    #: How solid the stamp under the pointer is drawn, before it is placed.
+    GHOST = 0.5
+
+    def _paint_stamp_ghost(self, painter) -> None:
+        """**The stamp under the crosshair**, faded, as Reader's cursor
+        becomes the stamp: centred under the pointer at the size a click
+        would place it, and while a drag sizes it, at the size it is being
+        dragged to inside its dashed outline -- Acrobat shows nothing until
+        the button is let go."""
+        art = self.stamp_art() if self.stamp_art else None
+        if not art:
+            return
+        if self._marking is not None:
+            start, current = self._marking
+            placed = self._stamp_placed(start, current)
+            dragged = placed is not None and placed[1][0] != placed[1][2]
+            point = start
+        else:
+            placed, dragged, point = None, False, self._stamp_hover
+        if dragged:
+            where = self.quad_on_screen(placed[0], placed[1])
+        else:
+            if point is None:
+                return
+            index = self.page_at(point)
+            size = self.stamp_size() if self.stamp_size else None
+            at = self._point_on(index, point, False) if index is not None else None
+            if at is None or not size:
+                return
+            wide, tall = size
+            where = self.quad_on_screen(
+                index, (at[0] - wide / 2, at[1] - tall / 2,
+                        at[0] + wide / 2, at[1] + tall / 2), scaled=False)
+        if where is None or where.width() < 1:
+            return
+        ratio = max(float(painter.device().devicePixelRatioF()), 1.0)
+        pixels = (max(1, round(where.width() * ratio)),
+                  max(1, round(where.height() * ratio)))
+        key = ("ghost", len(art), hash(art), pixels)
+        image = self._art_images.get(key)
+        if image is None:
+            image = self._render_art(art, pixels)
+            if len(self._art_images) > 64:
+                self._art_images.clear()
+            self._art_images[key] = image
+        painter.save()
+        if image is not None:
+            painter.setOpacity(self.GHOST)
+            painter.drawImage(where, image)
+            painter.setOpacity(1.0)
+        if dragged:
+            pen = QPen(MARKING)
+            pen.setStyle(Qt.DashLine)
+            pen.setWidth(1)
+            painter.setPen(pen)
+            painter.setBrush(Qt.NoBrush)
+            painter.drawRect(where)
+        painter.restore()
+
+    def viewportEvent(self, event):
+        """The stamp under the pointer goes when the pointer leaves."""
+        if event.type() == QEvent.Leave and self._stamp_hover is not None:
+            self._stamp_hover = None
+            self.viewport().update()
+        return super().viewportEvent(event)
+
+    def _stamp_placed(self, start: QPointF, end: QPointF):
+        """``(page, rect)`` for a stamp: a bare point for a click, which the
+        window centres the stamp on at its own size, or for a drag a
+        rectangle from ``start`` keeping the stamp's proportions, as big as
+        the further way the pointer has gone. None off every page."""
+        index = self.page_at(start)
+        if index is None:
+            return None
+        a = self._point_on(index, start, True)
+        if a is None:
+            return None
+        if (end - start).manhattanLength() <= QApplication.startDragDistance():
+            return index, (a[0], a[1], a[0], a[1])
+        b = self._point_on(index, end, True)
+        size = self.stamp_size() if self.stamp_size else None
+        if b is None or not size or size[0] <= 0 or size[1] <= 0:
+            return index, (a[0], a[1], a[0], a[1])
+        wide, tall = size
+        dx, dy = b[0] - a[0], b[1] - a[1]
+        scale = max(abs(dx) / wide, abs(dy) / tall)
+        x2 = a[0] + math.copysign(wide * scale, dx or 1.0)
+        y2 = a[1] + math.copysign(tall * scale, dy or 1.0)
+        return index, (min(a[0], x2), min(a[1], y2), max(a[0], x2), max(a[1], y2))
 
     def _callout_made(self, start: QPointF, end: QPointF):
         """``(page, (tip, centre))`` for a callout: the tip of its leader at
@@ -6650,7 +6807,8 @@ class PageCanvas(QAbstractScrollArea):
         marks = [m for m in marks if m == self._selected or (
             m[1].kind if isinstance(m[1], markup.Annotation)
             else m[1].subtype) not in (*markup.SHAPES, markup.LINE,
-                                       *markup.POLYS, markup.INK)]
+                                       *markup.POLYS, markup.INK)
+            and not markup.is_stamp(m[1])]
         viewport = QRectF(self.viewport().rect())
         painter.save()
         painter.setRenderHint(QPainter.Antialiasing, True)
@@ -6901,7 +7059,8 @@ class PageCanvas(QAbstractScrollArea):
                         or m.subtype in markup.SHAPES
                         or m.subtype == markup.LINE
                         or m.subtype in markup.POLYS
-                        or m.subtype == markup.INK)
+                        or m.subtype == markup.INK
+                        or markup.is_stamp(m))
                     and not m.is_reply()]
         except Exception:       # noqa: BLE001 - a repaint must not fail
             return []
@@ -6961,6 +7120,119 @@ class PageCanvas(QAbstractScrollArea):
         painter.setOpacity(max(0.0, min(1.0, float(opacity))))
         painter.drawImage(box.topLeft(), image)
         painter.setOpacity(was)
+
+    def _corner_grips(self, index: int, mark, offset=None):
+        """A handle on each corner of a mark's box: top left, top right,
+        bottom right, bottom left -- a Stamp's four."""
+        where = self.note_icon_rect(index, mark, offset)
+        if where is None:
+            return []
+        size = float(self.GRIP)
+        return [QRectF(p.x() - size / 2, p.y() - size / 2, size, size)
+                for p in (where.topLeft(), where.topRight(),
+                          where.bottomRight(), where.bottomLeft())]
+
+    def _stamp_resize_from(self, grip: int) -> bool:
+        """Take hold of a Stamp's corner: the opposite one holds still."""
+        page, mark = self._selected
+        if getattr(mark, "locked", False):
+            return False
+        grips = self.grips()
+        if not 0 <= grip < 4 or len(grips) < 4:
+            return False
+        mine = isinstance(mark, markup.Annotation)
+        held = self._point_on(page, grips[grip].center(), mine)
+        fixed = self._point_on(page, grips[(grip + 2) % 4].center(), mine)
+        if held is None or fixed is None:
+            return False
+        way = (1.0 if held[0] >= fixed[0] else -1.0,
+               1.0 if held[1] >= fixed[1] else -1.0)
+        self._stamp_resizing = (page, mark, fixed, way)
+        self._shaping = (mark, tuple(mark.rect), 0.0)
+        return True
+
+    #: The smallest a Stamp's shorter side can be pulled to, in points.
+    SMALLEST_STAMP = 8.0
+
+    def _stamp_resized(self, position: QPointF) -> None:
+        """A Stamp's corner dragged: **its proportions kept**, as every
+        reader's fit of its drawing to `/Rect` keeps them, by whichever way
+        the pointer has gone further; the opposite corner holds still."""
+        page, mark, fixed, way = self._stamp_resizing
+        at = self._point_on(page, position, isinstance(mark, markup.Annotation))
+        if at is None:
+            return
+        left, bottom, right, top = (float(v) for v in mark.rect)
+        wide, tall = right - left, top - bottom
+        if wide <= 0 or tall <= 0:
+            return
+        # By the way the pointer has moved further, in proportion to the
+        # side: the larger of the two scales grew a stamp dragged mostly
+        # inwards and a little outwards.
+        across = (at[0] - fixed[0]) * way[0] / wide
+        up = (at[1] - fixed[1]) * way[1] / tall
+        scale = across if abs(across - 1.0) >= abs(up - 1.0) else up
+        scale = max(scale, self.SMALLEST_STAMP / min(wide, tall))
+        x2, y2 = fixed[0] + way[0] * wide * scale, fixed[1] + way[1] * tall * scale
+        rect = (min(fixed[0], x2), min(fixed[1], y2), max(fixed[0], x2), max(fixed[1], y2))
+        self._shaping = (mark, rect, 0.0)
+        self._place_mark_buttons()
+        self.viewport().update()
+
+    def _paint_stamp_art(self, painter, index: int, mark, offset) -> None:
+        """Draw a Stamp: its own drawing, rendered at the size it is shown
+        and fitted to its rectangle -- at the one a drag in flight has given
+        it -- at its opacity. **Drawn here and not left to the renderer**,
+        which baked it into the page so that a drag carried the outline
+        away from it."""
+        art = getattr(mark, "art", None)
+        if not art:
+            return
+        rect, _angle = self._shape_of(mark)
+        where = self.quad_on_screen(index, rect, offset,
+                                    scaled=isinstance(mark, markup.Annotation))
+        if where is None or where.width() < 1 or where.height() < 1:
+            return
+        if not where.intersects(QRectF(self.viewport().rect())):
+            return
+        ratio = max(float(painter.device().devicePixelRatioF()), 1.0)
+        size = (max(1, round(where.width() * ratio)),
+                max(1, round(where.height() * ratio)))
+        key = (id(mark), art and len(art), size)
+        image = self._art_images.get(key)
+        if image is None:
+            image = self._render_art(art, size)
+            if len(self._art_images) > 64:
+                self._art_images.clear()
+            self._art_images[key] = image
+        if image is None:
+            return
+        painter.save()
+        painter.setOpacity(painter.opacity() * self._solidity(mark))
+        painter.drawImage(where, image)
+        painter.restore()
+
+    @staticmethod
+    def _render_art(art: bytes, size):
+        """A Stamp's drawing, one page of PDF, rendered to ``size`` pixels
+        with a clear background."""
+        try:
+            import pypdfium2 as pdfium
+
+            document = pdfium.PdfDocument(art)
+            page = document[0]
+            width, height = page.get_size()
+            bitmap = page.render(scale=size[0] / width if width else 1.0,
+                                 fill_color=(255, 255, 255, 0),
+                                 draw_annots=False)
+            picture = bitmap.to_pil().convert("RGBA")
+            data = picture.tobytes()
+            image = QImage(data, picture.width, picture.height,
+                           picture.width * 4, QImage.Format_RGBA8888).copy()
+            document.close()
+            return image
+        except Exception:       # noqa: BLE001 - a repaint must not fail
+            return None
 
     def _callout_box(self, mark):
         """A callout's box as it is now, in its own space: a handle's drag
@@ -8058,8 +8330,8 @@ class PageCanvas(QAbstractScrollArea):
     def _ink_resized(self, position: QPointF) -> None:
         """A Pencil's corner dragged: **every point scaled about the
         opposite corner by the same amount across and up**, so it keeps its
-        proportions, by whichever way the pointer has gone further; the
-        line's width does not change."""
+        proportions, by whichever way the pointer has moved further in
+        proportion to the side; the line's width does not change."""
         page, mark, _which, (inner, way) = self._ink_resizing
         mine = isinstance(mark, markup.Annotation)
         at = self._point_on(page, position, mine)
@@ -8075,9 +8347,12 @@ class PageCanvas(QAbstractScrollArea):
             return
         reach = ((at[0] - width * way[0] - inner[0]) * way[0],
                  (at[1] - width * way[1] - inner[1]) * way[1])
+        # By the way the pointer has moved further, in proportion to the
+        # side, as a Stamp's corner: the larger of the two scales grew a mark
+        # dragged mostly inwards and a little outwards.
         scales = [r / span for r, span in zip(reach, (wide, tall)) if span >= 1e-6]
         smallest = 4.0 / max(wide, tall)
-        scale = max(max(scales), smallest)
+        scale = max(max(scales, key=lambda v: abs(v - 1.0)), smallest)
         scaled = []
         for x, y in zip(xs, ys):
             scaled += [inner[0] + (x - inner[0]) * scale,
@@ -8460,6 +8735,9 @@ class PageCanvas(QAbstractScrollArea):
         band belongs to the gesture rather than to the page -- it has to stay
         under the pointer even where that has wandered into a margin.
         """
+        if self._tool == self.STAMPS:
+            self._paint_stamp_ghost(painter)
+            return
         if self._marking is None:
             return
         if self._tool in self.POINT_TOOLS:

@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-13 05:41+0000\n"
+"POT-Creation-Date: 2026-11-13 22:55+0000\n"
 "PO-Revision-Date: 2022-09-01 00:40+0900\n"
 "Last-Translator: sicklylife <translation@sicklylife.jp>\n"
 "Language: ja\n"
@@ -2150,7 +2150,7 @@ msgid "Comment"
 msgstr "コメント"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/mainwindow.py
+#: pdfarranger_qt/mainwindow.py pdfarranger_qt/markup.py
 msgid "Cross"
 msgstr "バツ印"
 
@@ -2734,6 +2734,96 @@ msgid "Rotate"
 msgstr "回転"
 
 # machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Approved"
+msgstr "承認済み"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Not Approved"
+msgstr "未承認"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Draft"
+msgstr "下書き"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Final"
+msgstr "最終版"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Experimental"
+msgstr "試験的"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Confidential"
+msgstr "社外秘"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Top Secret"
+msgstr "極秘"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "For Comment"
+msgstr "コメント用"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "For Public Release"
+msgstr "公開用"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Not For Public Release"
+msgstr "非公開"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "As Is"
+msgstr "現状のまま"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Expired"
+msgstr "期限切れ"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Departmental"
+msgstr "部門内"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Sold"
+msgstr "販売済み"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Sign Here"
+msgstr "ここに署名"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Initial Here"
+msgstr "ここにイニシャル"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Witness"
+msgstr "立会人"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Check Mark"
+msgstr "チェックマーク"
+
+# machine translation, unreviewed
 #: pdfarranger_qt/markup.py pdfarranger_qt/properties.py
 msgid "None"
 msgstr "なし"
@@ -3311,6 +3401,11 @@ msgstr "下中央"
 #: pdfarranger_qt/stamp.py
 msgid "Bottom right"
 msgstr "右下"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/stamppalette.py
+msgid "Stamp with date and time"
+msgstr "日付と時刻を付けて押印"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/textpalette.py
@@ -3909,4 +4004,8 @@ msgstr "ファイル名ではなくタイトルを表示する"
 # machine translation, unreviewed
 #~ msgid "Rectangle"
 #~ msgstr "長方形"
+
+# machine translation, unreviewed
+#~ msgid "by %(author)s, %(when)s"
+#~ msgstr "%(author)s、%(when)s"
 

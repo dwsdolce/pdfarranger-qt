@@ -62,7 +62,7 @@ time.
 | | Polygon | Polygon | a closed shape of straight sides | complete |
 | | Cloud | Polygon | a polygon drawn with a scalloped edge | complete |
 | | Connected lines | Polyline | an open run of straight lines | complete |
-| | Stamps palette | | a ready-made stamp such as Approved or Draft | not started; whether to offer it is undecided |
+| | Stamps palette | Stamp | a ready-made stamp such as Approved or Draft, or one of your own | stages 1 and 2 built; being verified |
 
 Reader's signature and initials tools are not offered: this application
 does not sign documents.
@@ -1755,9 +1755,11 @@ Three stages, each tried in the application before the next:
   but its Draw tool ends with the mark, so there it needs no such rule.
 - **The corners**: dragging one scales every point about the opposite
   corner of what it draws -- its box less the line's width -- by the same
-  amount across and up, whichever way the pointer has gone further, and
-  never below 4 points; the box and handles follow, and the thickness does
-  not change.
+  amount across and up, by the way the pointer has moved further in
+  proportion to the side, and never below 4 points; the box and handles
+  follow, and the thickness does not change. It took the larger of the two
+  scales until 2026-11-13, which grew a Pencil dragged mostly inwards; the
+  Stamp's corners showed it, and both now follow the larger move.
 - **Written as Acrobat writes it**: `/InkList` a stroke to an array,
   `/BS /W` only when it is not 1, `/Subj Pencil`, `/Rect` round the curves
   and dots grown by the line's width, and a drawing of our own -- the
@@ -1927,3 +1929,168 @@ Three stages, each tried in the application before the next:
   drawing of our own.
 - **The strip**: the swatch and the thickness, Hairline to 12, for the
   armed tool and for a selected callout.
+
+## Stamp
+
+Made by the Stamps palette tool. Stages 1 and 2 built; being verified.
+
+### Requirements
+
+- **One mark, one tool.** The Stamps palette tool makes a **Stamp**, and
+  its form is *Stamp Properties*. A Stamp is a `/Stamp` that is not a
+  Scalable Comment, which is the `/Stamp` named `/Comment`.
+- **Our own artwork, not Acrobat's.** Acrobat's stamp pictures are
+  Adobe's design, shipped with Acrobat; this application does not copy
+  them. A stamp a file already has keeps its own drawing, whoever made
+  it, and is shown, moved and resized with it. New stamps are drawn to our
+  own design, as PDFGear's are -- the word in bold italic in a rounded
+  frame -- under the names the PDF standard gives them, so any reader
+  knows what each one is.
+- **The presets**, one list with no categories -- Acrobat's are its own
+  arrangement: Approved, Not Approved, Draft, Final, Experimental,
+  Confidential, Top Secret, For Comment, For Public Release, Not For
+  Public Release, As Is, Expired, Departmental and Sold, the standard's
+  fourteen; and Sign Here, Initial Here, Witness, a check mark and a
+  cross, standing for Acrobat's Sign Here set. Coloured from the palette
+  in three groups: green for approving, blue for work in progress, red for
+  restricted or refused. Shown with their words spaced, "Not Approved".
+- **Your own stamps**, as PDFGear makes them: **Text**, your words and a
+  colour from the palette in the presets' frame, or **Image**, a PNG or a
+  JPEG -- PDF and SVG perhaps later; a picture's transparency is its
+  background, so there is no Remove background. Kept with the
+  application's settings under your account, not in any document, each
+  with its own copy of its picture, and listed after the presets in every
+  document until deleted from the palette.
+- **Stamp with date and time**: a choice in the palette that adds a second
+  line as the stamp is placed -- the stamp tool's author and the date and
+  time, "by David Smith, 13 Nov 2026 10:43" -- standing for Acrobat's
+  Dynamic stamps, which fill theirs in with JavaScript.
+- **Placing one.** Any text selection is cleared when the tool is chosen.
+  The palette opens; a stamp picked from it is placed by a click, centred
+  under the pointer at its own size -- a preset 30 points tall and as wide
+  as its word, about 120 by 30 for Approved; a picture with its longer
+  side 120 points -- or by a drag, which sizes it **with an outline shown
+  as it is dragged**, keeping its proportions. **Departure from Acrobat**,
+  which shows nothing until the button is let go.
+- **Handles** on the four corners when it is selected, resizing it with
+  its proportions kept, as the fixture's three Sign Here stamps have them;
+  no turning.
+- **Taking hold anywhere in its box**, with the move cursor over it, and
+  the box shown only once it is selected, as the other drawings show
+  theirs. Its box rather than what is drawn, since a stamp all but fills
+  it and a check mark's stroke is a poor thing to aim at.
+- **The properties form**: Colour and Opacity. The colour is the note's:
+  it shows only as the note badge, the artwork keeping its own.
+- **The strip**: the colour swatch, once a stamp is picked or selected.
+- **The right-click menu** is the standard one, with the note entries.
+- **Notes as for most marks**: a stamp's note is apart from its artwork --
+  badge, hover summary, note window, replies and status.
+
+### Plan
+
+The fixture is page 3 of `corpus/Markup Drawing.pdf`: an Approved stamp
+with a note and three Sign Here stamps at three sizes. **What Acrobat
+writes**: a `/Stamp` with `/Name` the stamp's -- `/SBApproved`,
+`/SHSignHere` -- and `/Subj` its title, the note's colour in `/C`,
+opacity in `/CA`, a `/Popup`, and its artwork as the drawing, mapped onto
+`/Rect`. **Ours** writes the standard's name for a preset -- `/Approved`,
+`/NotApproved`, `/Draft` -- and a name of its own for one of yours, which
+the standard allows; `/Subj` the stamp's title; and a drawing of our own,
+a text stamp's words in an embedded font as a Text Box's are.
+
+### Building it
+
+Three stages, each tried in the application before the next:
+
+1. **The mark.** A Stamp becomes a kind this application knows apart from
+   the Scalable Comment: found by its box, selected, moved and resized by
+   its corners with its proportions kept, its own drawing kept and fitted
+   to its rectangle.
+2. **The palette and the presets.** The Stamps palette, our nineteen
+   presets drawn and written, placing by a click or a drag with its
+   outline, and Stamp with date and time.
+3. **Your own stamps, the form and the strip.** Text and Image stamps and
+   stamps imported from a PDF, kept between sessions and deletable; the
+   presets' words in the application's language; *Stamp Properties*, the
+   strip's swatch, and notes.
+
+**Agreed for stage 3** (2026-11-13):
+
+- **Words as outlines, in the application's language.** A preset's word,
+  and a text stamp's, is drawn as shapes made from a font on the computer
+  -- as Acrobat's stamps are, which carry no font, each language edition
+  having its own files -- so any script is drawn by every reader with
+  nothing embedded. `/Name` stays the standard's, which is what a stamp
+  means whatever it says.
+- **Import from PDF**: any PDF, each page a stamp, offered in the palette
+  to keep. Named from the file where it names its pages, as Acrobat's
+  stamp files do -- `SBApproved=Approved` -- so one placed is written with
+  that `/Name` and that title, and otherwise by the file's name and the
+  page. A dynamic stamp's name and date are form fields and JavaScript,
+  so it comes in as its fixed artwork alone. The application neither
+  ships Acrobat's stamp files nor reads them from where Acrobat keeps
+  them; opening one is the user's choice under their own licence.
+- **Stamp with date and time** on text stamps too, the line under their
+  words; not on image or imported stamps, which have no frame to hold it.
+- **Deleting your own stamps**: Delete on a right-click in the palette,
+  for your own only, asking first, since a deleted stamp's picture cannot
+  be had back.
+
+**Stage 1, as built:**
+
+- **Told from a Scalable Comment** by its `/Name`: a `/Stamp` whose name is
+  not one of the comment icons is a Stamp.
+- **Drawn by the canvas from its own drawing**, so a drag carries it: the
+  drawing is lifted out of the file as a PDF of one page that its box --
+  `/BBox` through `/Matrix` -- exactly fills, rendered by PDFium at the
+  size it is shown and fitted to the rectangle, at its opacity. On the
+  copy that is shown its `/AP` is emptied, as a comment's is, and the
+  drawing kept beside it for this. On the fixture's four it matches
+  Acrobat's drawing by eye. It was left to the renderer before, baked into
+  the page, so a drag moved its outline and left the stamp behind.
+- **Taking hold anywhere in its box**; the box shows once it is selected,
+  not on hover. **Four corner handles**, no turning: a corner's drag
+  keeps the proportions, the opposite corner holding still, by **the way
+  the pointer has moved further** in proportion to the side -- the larger
+  of the two scales was taken at first, and grew a stamp dragged mostly
+  inwards -- and never below 8 points on the shorter side.
+- **Written**: a move or a resize changes `/Rect` and nothing else, so the
+  stamp's own drawing is kept and fitted to it; no `/Rotate`, whose change
+  would drop the drawing.
+- **Not a comment.** Selecting a Stamp opens its note window only when it
+  has a note, and its menu is a mark's with the note entries, without
+  Copy Text. Both had taken any `/Stamp` for a Scalable Comment, which is
+  its note: a click on a stamp with no note opened an empty note editor.
+
+**Stage 2, as built:**
+
+- **The palette** opens beside the strip while the tool is armed and
+  closes with it: the nineteen drawn as they will be placed, one under
+  another, their titles in the language shown as tooltips, and *Stamp
+  with date and time* below. The stamp picked stays picked, and the tool
+  stays armed for the next.
+- **The presets' drawing**, ours: a rounded frame 2.5 points wide in the
+  stamp's colour, filled with that colour at a tenth, the word in
+  Helvetica Bold Oblique at 17 points -- one of the fonts every reader
+  has, so nothing is embedded, measured by its published widths -- and
+  for Sign Here, Initial Here and Witness the frame's left end an arrow; a
+  check mark and a cross drawn as strokes, 30 points square. Approved is
+  about 103 by 30. With the date, 38 tall, the line at 6.5 points under
+  the word: "by" the stamp tool's author, the day, month, year and time.
+- **The words are English**, the standard's own, whatever language the
+  application is shown in: that font holds only Western European
+  letters, and a word in another script would be drawn as question marks.
+- **Placed** by a click, centred under the pointer at its own size at the
+  page's own size, or by a drag from where it is pressed, as big as the
+  further way the pointer has gone with its proportions kept, **its
+  outline dashed as it is dragged**.
+- **The stamp under the crosshair**, faded to half, as Reader's cursor
+  becomes the stamp: centred under the pointer at the size a click would
+  place it, and during a drag at the size it is being dragged to, inside
+  its outline. The cursor stays the crosshair, as every drawing tool's
+  is.
+- **Written**: `/Name` the standard's for the fourteen and ours --
+  `/SignHere`, `/InitialHere`, `/Witness`, `/Check`, `/Cross` -- for the
+  rest, `/Subj` its English title, the drawing copied into the file as
+  its appearance, faded there to its opacity, and a `/Popup` for its
+  note. The canvas draws it from the same drawing as a file's stamp.

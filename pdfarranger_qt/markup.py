@@ -43,6 +43,7 @@ import copy
 import datetime
 import functools
 import getpass
+import io
 import itertools
 import math
 import re
@@ -248,6 +249,9 @@ def stamp_icon(annot) -> str:
 #: comment's drawing painted in, once the drawing has been emptied out of
 #: it. Never written to a document that is saved.
 SHOWN_INK = pikepdf.Name("/PDFArrangerShownInk")
+#: A stamp's own drawing, kept on the copy that is shown when its `/AP` is
+#: emptied there -- so the canvas, which draws it, still has it to draw.
+SHOWN_ART = pikepdf.Name("/PDFArrangerShownArt")
 
 
 def is_scalable_comment(subtype: str, icon: str) -> bool:
@@ -258,6 +262,225 @@ def is_scalable_comment(subtype: str, icon: str) -> bool:
     artwork the canvas has no drawing for, so the renderer keeps it.
     """
     return subtype == STAMP and (icon or "") in noteicons.ICONS
+
+
+def is_stamp(mark) -> bool:
+    """Whether ``mark`` is a Stamp -- Approved, Sign Here, one of yours --
+    rather than a Scalable Comment, the `/Stamp` drawn as a note's icon."""
+    kind = getattr(mark, "kind", None) or getattr(mark, "subtype", None)
+    return kind == STAMP and not is_scalable_comment(
+        kind, getattr(mark, "icon", "") or "")
+
+
+def stamp_art(annot) -> Optional[bytes]:
+    """A stamp's own drawing as a PDF of one page, the drawing's box --
+    its `/BBox` through its `/Matrix` -- exactly filling the page, so the
+    page drawn into the stamp's rectangle is the stamp as a reader draws
+    it. None when it has no drawing to show."""
+    try:
+        ap = annot.get(pikepdf.Name.AP)
+        drawn = annot.get(SHOWN_ART)
+        if drawn is None and ap is not None:
+            drawn = ap.get(pikepdf.Name.N)
+        if not isinstance(drawn, pikepdf.Stream):
+            return None
+        box = [float(v) for v in drawn.get(pikepdf.Name.BBox, [0, 0, 0, 0])]
+        m = [float(v) for v in drawn.get(pikepdf.Name.Matrix, [1, 0, 0, 1, 0, 0])]
+        corners = [(m[0] * x + m[2] * y + m[4], m[1] * x + m[3] * y + m[5])
+                   for x in (box[0], box[2]) for y in (box[1], box[3])]
+        xs, ys = [c[0] for c in corners], [c[1] for c in corners]
+        if max(xs) - min(xs) <= 0 or max(ys) - min(ys) <= 0:
+            return None
+        out = pikepdf.new()
+        form = out.copy_foreign(drawn)
+        page = pikepdf.Dictionary(
+            Type=pikepdf.Name.Page,
+            MediaBox=pikepdf.Array([min(xs), min(ys), max(xs), max(ys)]),
+            Resources=pikepdf.Dictionary(XObject=pikepdf.Dictionary(Art=form)),
+            Contents=out.make_stream(b"/Art Do"))
+        out.pages.append(pikepdf.Page(page))
+        buffer = io.BytesIO()
+        out.save(buffer)
+        return buffer.getvalue()
+    except Exception:  # noqa: BLE001 - a stamp we cannot lift is left undrawn
+        return None
+
+
+#: The presets, as ``(name, title, colour, shape)``: the standard's
+#: fourteen names first, then ours for Acrobat's Sign Here set, each
+#: coloured from the palette -- green for approving, blue for work in
+#: progress, red for restricted or refused. The title is what the palette
+#: shows and the stamp says; ``shape`` is "frame", "arrow", "check" or
+#: "cross".
+STAMP_PRESETS = (
+    ("/Approved", N_("Approved"), "Green", "frame"),
+    ("/NotApproved", N_("Not Approved"), "Red", "frame"),
+    ("/Draft", N_("Draft"), "Blue", "frame"),
+    ("/Final", N_("Final"), "Green", "frame"),
+    ("/Experimental", N_("Experimental"), "Blue", "frame"),
+    ("/Confidential", N_("Confidential"), "Red", "frame"),
+    ("/TopSecret", N_("Top Secret"), "Red", "frame"),
+    ("/ForComment", N_("For Comment"), "Blue", "frame"),
+    ("/ForPublicRelease", N_("For Public Release"), "Green", "frame"),
+    ("/NotForPublicRelease", N_("Not For Public Release"), "Red", "frame"),
+    ("/AsIs", N_("As Is"), "Blue", "frame"),
+    ("/Expired", N_("Expired"), "Red", "frame"),
+    ("/Departmental", N_("Departmental"), "Blue", "frame"),
+    ("/Sold", N_("Sold"), "Green", "frame"),
+    ("/SignHere", N_("Sign Here"), "Blue", "arrow"),
+    ("/InitialHere", N_("Initial Here"), "Blue", "arrow"),
+    ("/Witness", N_("Witness"), "Blue", "arrow"),
+    ("/Check", N_("Check Mark"), "Green", "check"),
+    ("/Cross", N_("Cross"), "Red", "cross"),
+)
+
+#: A preset's height in points, its word's size, and the date line's.
+STAMP_HEIGHT = 30.0
+STAMP_WORD = 17.0
+STAMP_LINE = 6.5
+
+#: Helvetica Bold's widths in thousandths of its size, `ord(" ")` to
+#: `ord("~")`, from the font's published metrics -- the oblique's are the
+#: same -- for measuring a stamp's words, which are set in it: one of the
+#: fonts every reader has, so nothing is embedded.
+_HELVETICA_BOLD = (
+    278, 333, 474, 556, 556, 889, 722, 238, 333, 333, 389, 584, 278, 333,
+    278, 278, 556, 556, 556, 556, 556, 556, 556, 556, 556, 556, 333, 333,
+    584, 584, 584, 611, 975, 722, 722, 722, 722, 667, 611, 778, 722, 278,
+    556, 722, 611, 833, 722, 778, 667, 778, 722, 667, 611, 722, 667, 944,
+    667, 667, 611, 333, 278, 333, 584, 556, 333, 556, 611, 556, 611, 556,
+    333, 611, 611, 278, 278, 556, 278, 889, 611, 611, 611, 611, 389, 556,
+    333, 611, 556, 778, 556, 556, 500, 389, 280, 389, 584)
+
+
+def _text_width(text: str, size: float) -> float:
+    return sum(_HELVETICA_BOLD[ord(c) - 32] if 32 <= ord(c) <= 126 else 611
+               for c in text) * size / 1000.0
+
+
+def _pdf_text(text: str) -> str:
+    """``text`` as a PDF string in WinAnsi, which the stamp's font uses."""
+    raw = text.encode("cp1252", "replace")
+    return "(" + "".join(
+        "\\" + chr(b) if chr(b) in "()\\" else chr(b) if 32 <= b < 127
+        else "\\%03o" % b for b in raw) + ")"
+
+
+def preset_of(name: str):
+    """The preset named ``name``, or None."""
+    return next((p for p in STAMP_PRESETS if p[0] == name), None)
+
+
+def preset_size(name: str, line: str = "") -> "tuple":
+    """A preset's size in points: 30 tall -- 38 with a date line -- and as
+    wide as its word, or square for a check mark or a cross."""
+    preset = preset_of(name)
+    if preset is None:
+        return (120.0, STAMP_HEIGHT)
+    _name, title, _colour, shape = preset
+    tall = STAMP_HEIGHT + (8.0 if line else 0.0)
+    if shape in ("check", "cross"):
+        return (tall, tall)
+    word = _text_width(title, STAMP_WORD)
+    wide = max(word, _text_width(line, STAMP_LINE)) + 24.0
+    if shape == "arrow":
+        wide += tall * 0.45
+    return (round(wide, 2), tall)
+
+
+def preset_art(name: str, line: str = "") -> Optional[bytes]:
+    """A preset's drawing, **our own design**, as a PDF of one page as
+    `stamp_art` gives a file's: a rounded frame in its colour, lightly
+    filled, with its word in bold italic -- the frame an arrow pointing
+    left for Sign Here, Initial Here and Witness -- or a check mark or a
+    cross; and under the word, when given, ``line``, the date line."""
+    preset = preset_of(name)
+    if preset is None:
+        return None
+    _name, title, colour_name, shape = preset
+    wide, tall = preset_size(name, line)
+    colour = swatch(colour_name)
+    tint = tuple(0.9 + 0.1 * v for v in colour[:3])
+    ink = "{:.4g} {:.4g} {:.4g}".format(*colour[:3])
+    lines = [f"{ink} RG", f"{ink} rg"]
+    if shape == "check":
+        lines += ["3.5 w 1 J 1 j",
+                  f"{tall * 0.18:.2f} {tall * 0.5:.2f} m",
+                  f"{tall * 0.42:.2f} {tall * 0.22:.2f} l",
+                  f"{tall * 0.84:.2f} {tall * 0.82:.2f} l S"]
+    elif shape == "cross":
+        lines += ["3.5 w 1 J",
+                  f"{tall * 0.2:.2f} {tall * 0.2:.2f} m {tall * 0.8:.2f} {tall * 0.8:.2f} l S",
+                  f"{tall * 0.2:.2f} {tall * 0.8:.2f} m {tall * 0.8:.2f} {tall * 0.2:.2f} l S"]
+    else:
+        half = 1.25
+        r = 5.0
+        left = tall * 0.45 if shape == "arrow" else 0.0
+        x0, y0, x1, y1 = left + half, half, wide - half, tall - half
+        k = r * _KAPPA
+        path = [f"{x0 + r:.2f} {y0:.2f} m", f"{x1 - r:.2f} {y0:.2f} l",
+                f"{x1 - r + k:.2f} {y0:.2f} {x1:.2f} {y0 + r - k:.2f} {x1:.2f} {y0 + r:.2f} c",
+                f"{x1:.2f} {y1 - r:.2f} l",
+                f"{x1:.2f} {y1 - r + k:.2f} {x1 - r + k:.2f} {y1:.2f} {x1 - r:.2f} {y1:.2f} c"]
+        if shape == "arrow":
+            path += [f"{x0:.2f} {y1:.2f} l", f"{half:.2f} {tall / 2:.2f} l",
+                     f"{x0:.2f} {y0:.2f} l h"]
+        else:
+            path += [f"{x0 + r:.2f} {y1:.2f} l",
+                     f"{x0 + r - k:.2f} {y1:.2f} {x0:.2f} {y1 - r + k:.2f} {x0:.2f} {y1 - r:.2f} c",
+                     f"{x0:.2f} {y0 + r:.2f} l",
+                     f"{x0:.2f} {y0 + r - k:.2f} {x0 + r - k:.2f} {y0:.2f} "
+                     f"{x0 + r:.2f} {y0:.2f} c h"]
+        lines += ["{:.4g} {:.4g} {:.4g} rg".format(*tint), "2.5 w 1 j"] + path + ["B", f"{ink} rg"]
+        # **In English, the standard's own words**, whatever the language
+        # the application is shown in: the font every reader has holds only
+        # Western European letters, and a translation in another script
+        # would be drawn as question marks.
+        word = title
+        inner = left + (wide - left - _text_width(word, STAMP_WORD)) / 2.0
+        base = (tall - STAMP_WORD * 0.72) / 2.0 + (4.0 if line else 0.0)
+        lines += ["BT", f"/Helv {STAMP_WORD:g} Tf",
+                  f"{inner:.2f} {base:.2f} Td", f"{_pdf_text(word)} Tj", "ET"]
+        if line:
+            at = left + (wide - left - _text_width(line, STAMP_LINE)) / 2.0
+            lines += ["BT", f"/Helv {STAMP_LINE:g} Tf", f"{at:.2f} 5.5 Td",
+                      f"{_pdf_text(line)} Tj", "ET"]
+    out = pikepdf.new()
+    font = pikepdf.Dictionary(Type=pikepdf.Name.Font, Subtype=pikepdf.Name.Type1,
+                              BaseFont=pikepdf.Name("/Helvetica-BoldOblique"),
+                              Encoding=pikepdf.Name.WinAnsiEncoding)
+    form = out.make_stream(("\n".join(lines) + "\n").encode("latin-1"))
+    form[pikepdf.Name.Type] = pikepdf.Name.XObject
+    form[pikepdf.Name.Subtype] = pikepdf.Name.Form
+    form[pikepdf.Name.BBox] = pikepdf.Array([0, 0, wide, tall])
+    form[pikepdf.Name.Resources] = pikepdf.Dictionary(
+        Font=pikepdf.Dictionary(Helv=font))
+    page = pikepdf.Dictionary(
+        Type=pikepdf.Name.Page, MediaBox=pikepdf.Array([0, 0, wide, tall]),
+        Resources=pikepdf.Dictionary(XObject=pikepdf.Dictionary(Art=form)),
+        Contents=out.make_stream(b"/Art Do"))
+    out.pages.append(pikepdf.Page(page))
+    buffer = io.BytesIO()
+    out.save(buffer)
+    return buffer.getvalue()
+
+
+def _write_stamp(pdf, entry, annotation) -> None:
+    """A Stamp's own keys: its `/Name` -- the standard's for a preset --
+    and its drawing, copied from the one-page PDF it carries and faded to
+    its opacity, mapped onto `/Rect`."""
+    entry[pikepdf.Name.Name] = pikepdf.Name(annotation.icon or "/Draft")
+    if pikepdf.Name.IT in entry:
+        del entry[pikepdf.Name.IT]
+    if annotation.art:
+        with pikepdf.open(io.BytesIO(annotation.art)) as art:
+            form = art.pages[0].obj.Resources.XObject.Art
+            copied = pdf.copy_foreign(form)
+        entry[pikepdf.Name.AP] = pikepdf.Dictionary(
+            N=pdf.make_indirect(_wrapped_in_opacity(
+                pdf, copied, getattr(annotation, "opacity", None))))
+    if solidity(annotation) != 1.0:
+        entry[pikepdf.Name.CA] = solidity(annotation)
 
 
 def drawn_colour(annot, icon: str):
@@ -812,7 +1035,7 @@ class Annotation:
                  "popup_rect", "state", "rich", "subject", "locked",
                  "intent", "icon", "group", "fill", "thickness",
                  "border_style", "text_font", "text_size", "text_colour",
-                 "points", "ends", "strokes")
+                 "points", "ends", "strokes", "art")
 
     def __init__(self, kind: str, page: int, rect: Tuple[float, ...],
                  contents: str = "", colour=None, author: Optional[str] = None,
@@ -827,7 +1050,7 @@ class Annotation:
                  fill=None, thickness: float = 1.0,
                  border_style: str = "straight", text_font=None,
                  text_size=None, text_colour=None, points=None, ends=None,
-                 strokes=None):
+                 strokes=None, art=None):
         if kind not in KINDS:
             raise ValueError(f"unknown annotation kind: {kind}")
         self.kind = kind
@@ -853,6 +1076,9 @@ class Annotation:
         self.ends = tuple(ends) if ends is not None else ("/None", "/None")
         #: A Pencil's strokes, as how many of ``points`` each one has.
         self.strokes = tuple(strokes) if strokes is not None else None
+        #: A Stamp's drawing, a PDF of one page -- `stamp_art` and
+        #: `preset_art` -- written into the file as its appearance.
+        self.art = art
         #: The `/NM` of the mark this answers, for a reply, and None for
         #: anything else. A reply is a mark in its own right -- it draws an
         #: icon, it can be selected and deleted -- and all that makes it a
@@ -1769,9 +1995,21 @@ def blank_note_icons(pdf) -> int:
                 text_box = (subtype == FREETEXT or subtype in SHAPES
                             or subtype == LINE or subtype in POLYS
                             or subtype == INK)
-                if subtype != TEXT and not text_box and not is_scalable_comment(
-                        subtype, stamp_icon(annot)):
+                artwork = (subtype == STAMP and not is_scalable_comment(
+                    subtype, stamp_icon(annot)))
+                if subtype != TEXT and not text_box and not artwork and \
+                        not is_scalable_comment(subtype, stamp_icon(annot)):
                     continue
+                if artwork:
+                    # **A stamp's artwork too**, drawn by the canvas from
+                    # its own drawing so a drag carries it: kept here, on
+                    # the copy that is shown and never saved.
+                    ap = annot.get(pikepdf.Name.AP)
+                    drawn = ap.get(pikepdf.Name.N) if ap is not None else None
+                    if isinstance(drawn, pikepdf.Stream):
+                        annot[SHOWN_ART] = drawn
+                    else:
+                        continue
                 if subtype == STAMP:
                     # The colour the drawing paints in goes with the drawing
                     # and the canvas still needs it, so it is kept on this
@@ -2180,7 +2418,9 @@ def to_dictionary(pdf, annotation: Annotation, page=None) -> pikepdf.Dictionary:
         # one icon. With seventeen to choose from the choice has to be in
         # the file, because a viewer that draws its own shows the same
         # glyph for all of them.
-    if annotation.kind == STAMP:
+    if is_stamp(annotation):
+        _write_stamp(pdf, entry, annotation)
+    elif annotation.kind == STAMP:
         # **Named `/Comment` whatever it draws, with `/IT` saying which.**
         # `/Stamp` means page content, so a reader tells a comment from a
         # rubber stamp by the name alone: named this, all seventeen are
@@ -4248,7 +4488,7 @@ class Mark:
                  "opacity", "contents", "author", "name", "parent", "state",
                  "hidden", "when", "popup_open", "popup_rect", "rich",
                  "locked", "subject", "intent", "scales", "icon",
-                 "rotate", "ink", "group", "fill", "thickness",
+                 "rotate", "ink", "art", "group", "fill", "thickness",
                  "border_style", "inset", "text_font", "text_size",
                  "text_colour", "styled", "rd", "points", "ends", "strokes")
 
@@ -4257,7 +4497,7 @@ class Mark:
                  state=None, hidden=False, index=-1, author="", when="",
                  popup_open=False, popup_rect=None, rich="", locked=False,
                  subject="", intent="", scales=False, icon="",
-                 rotate=0.0, ink=None, group=False, fill=None,
+                 rotate=0.0, ink=None, art=None, group=False, fill=None,
                  thickness=1.0, border_style="straight", inset=0.0,
                  text_font=None, text_size=None, text_colour=None,
                  styled=False, rd=None, points=None, ends=None,
@@ -4333,6 +4573,9 @@ class Mark:
         #: `/C` it was read with: ``(colour, drawn)``, or None. See
         #: `shown_colour`.
         self.ink = ink
+        #: A Stamp's own drawing as a PDF of one page, for the canvas to draw
+        #: it by -- `stamp_art` -- or None.
+        self.art = art
         #: `/RT /Group`: ``parent`` joins this mark to another as one
         #: object rather than making it a reply. The strikeout of a
         #: *Replace Selected Text* pair, whose parent is its caret.
@@ -4677,6 +4920,9 @@ def marks_in(pdf) -> "list[Mark]":
                     icon=(stamp_icon(annot) if subtype == STAMP
                           else str(annot.get(pikepdf.Name.Name, ""))),
                     ink=_ink_of(annot, subtype, colour),
+                    art=(stamp_art(annot) if subtype == STAMP
+                         and not is_scalable_comment(subtype, stamp_icon(annot))
+                         else None),
                     group=(str(annot.get(pikepdf.Name.RT, "")) == "/Group"),
                     author=str(annot.get(pikepdf.Name.T, "")),
                     when=str(annot.get(pikepdf.Name.M,
