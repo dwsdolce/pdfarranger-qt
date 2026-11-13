@@ -110,6 +110,8 @@ KIND_LABELS = {
     "/PolyLine": N_("Polyline"),
     # What the Draw tool makes, under Acrobat's name for it.
     "/Ink": N_("Pencil"),
+    # Not a subtype: a Text Box with a leader, told apart by `/IT`.
+    "callout": N_("Callout"),
 }
 
 
@@ -176,6 +178,9 @@ class Properties(NamedTuple):
     #: A Pencil's: Colour, Opacity and Thickness, 1 to 12 -- no Hairline,
     #: which is for a mark with a fill -- and nothing else.
     pencil: bool = False
+    #: A Callout's: Line Ending, Style, Line Colour and Opacity, then
+    #: Thickness and Fill Colour. Its end is the first of ``ends``.
+    callout: bool = False
     #: A tool's next mark rather than a mark: opened from the colour popup's
     #: gear with nothing selected, and saved as the tool's defaults. The
     #: Appearance and General tabs only -- no dates, no Review History, no
@@ -352,6 +357,8 @@ class MarkProperties(QDialog):
         page = QWidget(self)
         if self._was.pencil:
             return self._pencil_appearance(page)
+        if self._was.callout:
+            return self._callout_appearance(page)
         if self._was.line:
             return self._line_appearance(page)
         if self._was.box:
@@ -551,6 +558,56 @@ class MarkProperties(QDialog):
         self.fill_popup.chosen.connect(self._filled)
         return page
 
+    def _callout_appearance(self, page) -> QWidget:
+        """A callout's: Line Ending, Style, Line Colour and Opacity on the
+        left, Thickness and Fill Colour on the right -- where the other
+        drawing forms have them.
+
+        **Line Colour**, not Acrobat's Border Color: it is the box's border,
+        the leader and a closed end's outline, and stays enabled with No
+        Border, which leaves the leader drawn. **The fill has no No
+        Colour**, as a Text Box's has none."""
+        left, right = self._columns(page)
+        self.line_ends = []
+        box = QComboBox(page)
+        for _name, end in markup.LINE_ENDS:
+            box.addItem(_(self.END_LABELS[end]), end)
+        at = box.findData(self._was.ends[0] if self._was.ends else "/None")
+        box.setCurrentIndex(max(0, at))
+        box.currentIndexChanged.connect(self._box_changed)
+        left.addRow(_("Line Ending"), box)
+        self.line_ends.append(box)
+        self.border_style = QComboBox(page)
+        self.border_style.setIconSize(_StyleSample.SIZE)
+        for name in markup.BOX_STYLES:
+            if name == "none":
+                self.border_style.addItem(_("No Border"), name)
+            else:
+                self.border_style.addItem(_StyleSample.icon(name, self), "", name)
+        at = self.border_style.findData(self._was.border_style)
+        self.border_style.setCurrentIndex(max(0, at))
+        self.border_style.currentIndexChanged.connect(self._box_changed)
+        left.addRow(_("Style"), self.border_style)
+        self.swatch = _Swatch(page)
+        self.swatch.set_colour(self._colour)
+        self.swatch.clicked.connect(self._pick_colour)
+        left.addRow(_("Line Colour"), self.swatch)
+        left.addRow(_("Opacity"), self._opacity_column(page))
+        self.thickness = self._thickness_box(page)
+        right.addRow(_("Thickness"), self.thickness)
+        self.fill_swatch = _Swatch(page)
+        self.fill_swatch.set_colour(self._fill)
+        self.fill_swatch.clicked.connect(self._pick_fill)
+        right.addRow(_("Fill Colour"), self.fill_swatch)
+        self.palette_popup = ColourPopup(self, more=True)
+        self.palette_popup.chosen.connect(self._coloured)
+        self.palette_popup.faded.connect(
+            lambda value: self.slider.setValue(round(value * 100)))
+        self.fill_popup = ColourPopup(self, opacity=False, none=False, more=True)
+        self.fill_popup.chosen.connect(self._filled)
+        self._thickness_matters()
+        return page
+
     def _pencil_appearance(self, page) -> QWidget:
         """A Pencil's: Colour and Opacity on the left, Thickness on the
         right -- **where every other drawing's form has them**, so the
@@ -628,6 +685,11 @@ class MarkProperties(QDialog):
     def _box_state(self) -> dict:
         if self._was.pencil:
             return {"thickness": float(self.thickness.value())}
+        if self._was.callout:
+            return {"fill": self._fill if self._fill is not None else markup.swatch("White"),
+                    "thickness": float(self.thickness.value()),
+                    "border_style": self.border_style.currentData(),
+                    "ends": (self.line_ends[0].currentData(), "/None")}
         state = {"fill": self._fill if self._fill is not None else markup.NO_COLOUR,
                  "thickness": float(self.thickness.value()),
                  "border_style": self.border_style.currentData()}
@@ -776,6 +838,11 @@ class MarkProperties(QDialog):
             self._thickness_matters()
         if self._was.pencil:
             self._thickness_matters()
+        if self._was.callout:
+            self.border_style.setEnabled(not on)
+            self.fill_swatch.setEnabled(not on)
+            self.line_ends[0].setEnabled(not on)
+            self._thickness_matters()
         if self._was.line:
             for box in self.line_ends:
                 box.setEnabled(not on)
@@ -813,6 +880,19 @@ class MarkProperties(QDialog):
         if self._was.pencil:
             if self.thickness.value() != max(1, self._spin_value(self._was.thickness)):
                 now["thickness"] = float(self.thickness.value())
+        if self._was.callout:
+            state = self._box_state()
+            if self._fill != self._was.fill:
+                now["fill"] = state["fill"]
+            if state["border_style"] != self._was.border_style:
+                # With its thickness, as a box's: No Border is a width of 0.
+                now["border_style"] = state["border_style"]
+                now["thickness"] = state["thickness"]
+            elif (state["border_style"] != "none"
+                  and self.thickness.value() != self._spin_value(self._was.thickness)):
+                now["thickness"] = state["thickness"]
+            if state["ends"][0] != (self._was.ends or ("/None",))[0]:
+                now["ends"] = state["ends"]
         if self._was.line:
             state = self._box_state()
             if self._fill != self._was.fill:

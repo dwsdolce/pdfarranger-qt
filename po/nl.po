@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PDF-Shuffler 0.7\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-12 22:27+0000\n"
+"POT-Creation-Date: 2026-11-13 05:41+0000\n"
 "PO-Revision-Date: 2025-05-26 10:43+0200\n"
 "Last-Translator: Heimen Stoffels <vistausss@fastmail.com>\n"
 "Language: nl\n"
@@ -53,6 +53,12 @@ msgstr "Laatste streek verwijderen"
 #: pdfarranger_qt/canvas.py
 msgid "Complete"
 msgstr "Voltooien"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py pdfarranger_qt/mainwindow.py
+#: pdfarranger_qt/toolstrip.py
+msgid "Properties..."
+msgstr "Eigenschappen..."
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
@@ -154,12 +160,6 @@ msgstr "Tekstselectie inschakelen"
 #: pdfarranger_qt/canvas.py
 msgid "Make current properties default"
 msgstr "Huidige eigenschappen als standaard instellen"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/canvas.py pdfarranger_qt/mainwindow.py
-#: pdfarranger_qt/toolstrip.py
-msgid "Properties..."
-msgstr "Eigenschappen..."
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
@@ -3153,6 +3153,11 @@ msgstr "Polylijn"
 msgid "Pencil"
 msgstr "Potlood"
 
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Callout"
+msgstr "Toelichting"
+
 #: pdfarranger_qt/properties.py
 msgid "Review History"
 msgstr "Revisiegeschiedenis"
@@ -3249,6 +3254,16 @@ msgstr "Begin"
 #: pdfarranger_qt/properties.py
 msgid "End"
 msgstr "Einde"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Line Ending"
+msgstr "Lijneinde"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Line Colour"
+msgstr "Lijnkleur"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/properties.py pdfarranger_qt/toolstrip.py

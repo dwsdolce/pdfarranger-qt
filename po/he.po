@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-12 22:27+0000\n"
+"POT-Creation-Date: 2026-11-13 05:41+0000\n"
 "PO-Revision-Date: 2023-06-12 11:22+0300\n"
 "Last-Translator: Yaron Shahrabani <sh.yaron@gmail.com>\n"
 "Language: he\n"
@@ -50,6 +50,12 @@ msgstr "הסר את הקו האחרון"
 #: pdfarranger_qt/canvas.py
 msgid "Complete"
 msgstr "השלמה"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py pdfarranger_qt/mainwindow.py
+#: pdfarranger_qt/toolstrip.py
+msgid "Properties..."
+msgstr "מאפיינים..."
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
@@ -151,12 +157,6 @@ msgstr "הפעלת בחירת טקסט"
 #: pdfarranger_qt/canvas.py
 msgid "Make current properties default"
 msgstr "הגדרת המאפיינים הנוכחיים כברירת מחדל"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/canvas.py pdfarranger_qt/mainwindow.py
-#: pdfarranger_qt/toolstrip.py
-msgid "Properties..."
-msgstr "מאפיינים..."
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
@@ -3101,6 +3101,11 @@ msgstr "קו שבור"
 msgid "Pencil"
 msgstr "עיפרון"
 
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Callout"
+msgstr "בועת הסבר"
+
 #: pdfarranger_qt/properties.py
 msgid "Review History"
 msgstr "היסטוריית סקירה"
@@ -3197,6 +3202,16 @@ msgstr "התחלה"
 #: pdfarranger_qt/properties.py
 msgid "End"
 msgstr "סוף"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Line Ending"
+msgstr "סיום קו"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Line Colour"
+msgstr "צבע קו"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/properties.py pdfarranger_qt/toolstrip.py

@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-12 22:27+0000\n"
+"POT-Creation-Date: 2026-11-13 05:41+0000\n"
 "PO-Revision-Date: 2022-09-01 00:40+0900\n"
 "Last-Translator: sicklylife <translation@sicklylife.jp>\n"
 "Language: ja\n"
@@ -51,6 +51,12 @@ msgstr "最後のストロークを削除"
 #: pdfarranger_qt/canvas.py
 msgid "Complete"
 msgstr "完了"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py pdfarranger_qt/mainwindow.py
+#: pdfarranger_qt/toolstrip.py
+msgid "Properties..."
+msgstr "プロパティ..."
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
@@ -152,12 +158,6 @@ msgstr "テキスト選択を有効にする"
 #: pdfarranger_qt/canvas.py
 msgid "Make current properties default"
 msgstr "現在のプロパティを既定にする"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/canvas.py pdfarranger_qt/mainwindow.py
-#: pdfarranger_qt/toolstrip.py
-msgid "Properties..."
-msgstr "プロパティ..."
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
@@ -3011,6 +3011,11 @@ msgstr "ポリライン"
 msgid "Pencil"
 msgstr "鉛筆"
 
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Callout"
+msgstr "引き出し線"
+
 #: pdfarranger_qt/properties.py
 msgid "Review History"
 msgstr "レビュー履歴"
@@ -3107,6 +3112,16 @@ msgstr "始点"
 #: pdfarranger_qt/properties.py
 msgid "End"
 msgstr "終点"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Line Ending"
+msgstr "線の端"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Line Colour"
+msgstr "線の色"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/properties.py pdfarranger_qt/toolstrip.py

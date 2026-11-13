@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pdfarranger master\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-12 22:27+0000\n"
+"POT-Creation-Date: 2026-11-13 05:41+0000\n"
 "PO-Revision-Date: 2026-09-04 09:59+0000\n"
 "Last-Translator: Lumenman <28367232+Lumenman@users.noreply.github.com>\n"
 "Language: ru\n"
@@ -51,6 +51,12 @@ msgstr "Удалить последний штрих"
 #: pdfarranger_qt/canvas.py
 msgid "Complete"
 msgstr "Завершить"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py pdfarranger_qt/mainwindow.py
+#: pdfarranger_qt/toolstrip.py
+msgid "Properties..."
+msgstr "Свойства..."
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
@@ -144,12 +150,6 @@ msgstr "Включить выделение текста"
 #: pdfarranger_qt/canvas.py
 msgid "Make current properties default"
 msgstr "Сделать текущие свойства стандартными"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/canvas.py pdfarranger_qt/mainwindow.py
-#: pdfarranger_qt/toolstrip.py
-msgid "Properties..."
-msgstr "Свойства..."
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
@@ -2949,6 +2949,11 @@ msgstr "Ломаная"
 msgid "Pencil"
 msgstr "Карандаш"
 
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Callout"
+msgstr "Выноска"
+
 #: pdfarranger_qt/properties.py
 msgid "Review History"
 msgstr "История рецензирования"
@@ -3044,6 +3049,16 @@ msgstr "Начало"
 #: pdfarranger_qt/properties.py
 msgid "End"
 msgstr "Конец"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Line Ending"
+msgstr "Окончание линии"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Line Colour"
+msgstr "Цвет линии"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/properties.py pdfarranger_qt/toolstrip.py

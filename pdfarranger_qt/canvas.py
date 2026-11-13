@@ -1058,6 +1058,9 @@ class PageCanvas(QAbstractScrollArea):
     #: *Properties...* in the menu of a mark being made: the armed tool's
     #: form, since there is no mark yet to have one.
     tool_form_wanted = Signal()
+    #: A callout's box or leader reshaped by a handle, or its box dragged
+    #: alone: ``(page, mark, box, points)``, both in the mark's own space.
+    callout_reshaped = Signal(int, object, object, object)
     #: A gesture, as ``(tool, [(page, quads), ...])``. Text is marked one
     #: page at a time, so the list holds one page; it is a list so that a
     #: gesture is always one step to undo, however much it covered.
@@ -1132,6 +1135,12 @@ class PageCanvas(QAbstractScrollArea):
         #: dragged, ``fixed`` the opposite corner of what it draws and the
         #: way from it to the corner held; the points go in `_poly_shaping`.
         self._ink_resizing = None
+        #: ``(mark, box, points)`` while a callout's handle or box is
+        #: dragged, and the drag itself: ``(page, mark, which, box, points,
+        #: start)`` -- ``which`` a box handle 0 to 7, 8 the tip, 9 the knee,
+        #: or "box" for the box dragged alone.
+        self._callout_shaping = None
+        self._callout_drag = None
         #: The line a mark made with a tool would have now, as ``(thickness,
         #: opacity)``, asked of the window as `mark_colour` is.
         self.mark_stroke = None
@@ -2683,6 +2692,10 @@ class PageCanvas(QAbstractScrollArea):
                 if self._poly_hit(index, mark, point):
                     return (index, which, mark)
                 continue
+            if markup.is_callout(mark):
+                if self._callout_hit(index, mark, point):
+                    return (index, which, mark)
+                continue
             if kind == markup.INK:
                 if self._ink_hit(index, mark, point):
                     return (index, which, mark)
@@ -2844,6 +2857,9 @@ class PageCanvas(QAbstractScrollArea):
     LINE = "line"
     ARROW = "arrow"
     LINE_TOOLS = (LINE, ARROW)
+    #: *Text Callout*: the tip of its leader, then the centre of its box,
+    #: dragged or clicked out as a line is; Shift does nothing.
+    CALLOUT = "callout"
     #: *Polygon*, *Cloud* and *Connected Lines*: a point at each press, the
     #: next segment following the pointer, finished by a double-click,
     #: Complete or Return and thrown away by Cancel or Escape.
@@ -2852,7 +2868,7 @@ class PageCanvas(QAbstractScrollArea):
     POLYLINE = "polyline"
     POLY_TOOLS = (POLYGON, CLOUD, POLYLINE)
     #: The tools that make a mark by two clicks as well as by a drag.
-    CLICK_TOOLS = SHAPE_TOOLS + LINE_TOOLS
+    CLICK_TOOLS = SHAPE_TOOLS + LINE_TOOLS + (CALLOUT,)
 
     #: The comment tool's twin, placing a `/Stamp` instead of a `/Text`.
     #: Its gesture is the same -- a point, and then the words -- and the
@@ -3393,6 +3409,10 @@ class PageCanvas(QAbstractScrollArea):
                 if self._poly_hit(index, mark, point):
                     return (index, mark)
                 continue
+            if markup.is_callout(mark):
+                if self._callout_hit(index, mark, point):
+                    return (index, mark)
+                continue
             if kind == markup.INK:
                 if self._ink_hit(index, mark, point):
                     return (index, mark)
@@ -3758,6 +3778,11 @@ class PageCanvas(QAbstractScrollArea):
                     (position - at).manhattanLength()
                     > QApplication.startDragDistance()):
                 moved = True
+            if moved and self._callout_drag is not None:
+                self._dragging_note = (page, mark, grab, position, True)
+                self.viewport().setCursor(Qt.SizeAllCursor)
+                self._callout_dragged(position)
+                return
             if moved:
                 self._dragging_note = (page, mark, grab, position, True)
                 self.viewport().setCursor(Qt.SizeAllCursor)
@@ -3770,6 +3795,11 @@ class PageCanvas(QAbstractScrollArea):
                         float(getattr(mark, "rotate", 0.0) or 0.0))
                     self._place_mark_buttons()
                 self.viewport().update()
+            return
+
+        if (self._callout_drag is not None and self._dragging_note is None
+                and event.buttons() & Qt.LeftButton):
+            self._callout_dragged(position)
             return
 
         if self._poly_drawing is not None:
@@ -4021,6 +4051,9 @@ class PageCanvas(QAbstractScrollArea):
                 else mark.subtype)
         if kind == markup.LINE or kind in markup.POLYS:
             return Qt.CrossCursor
+        if markup.is_callout(mark) and which >= 8:
+            # The tip and the knee, which go anywhere.
+            return Qt.CrossCursor
         if kind == markup.INK:
             # Its four corners, on the diagonals.
             return ((Qt.SizeFDiagCursor, Qt.SizeBDiagCursor)[which % 2]
@@ -4142,6 +4175,17 @@ class PageCanvas(QAbstractScrollArea):
                 grab = (position - held.topLeft() if held is not None
                         else QPointF())
                 self._dragging_note = (note[0], note[2], grab, position, False)
+                # **A callout's box drags alone**, its tip holding still;
+                # its leader drags the whole mark.
+                self._callout_drag = None
+                if (markup.is_callout(note[2])
+                        and not getattr(note[2], "locked", False)):
+                    box = self._callout_box(note[2])
+                    where = self.quad_on_screen(
+                        note[0], box, scaled=isinstance(note[2], markup.Annotation))
+                    if where is not None and where.contains(position):
+                        self._callout_drag = self._callout_taken(
+                            note[0], note[2], "box", position)
                 event.accept()
                 return
             # A grip takes the press before the mark it belongs to, and
@@ -4151,6 +4195,11 @@ class PageCanvas(QAbstractScrollArea):
             # placed a second mark instead of reshaping the first -- every
             # time, because on a small stamp the handles cover most of it.
             grip = self.grip_at(position)
+            if (grip is not None and self._selected is not None
+                    and markup.is_callout(self._selected[1])):
+                if self._callout_press(grip, position):
+                    event.accept()
+                    return
             if grip is not None and self._selected is not None and (
                     self._selected[1].kind
                     if isinstance(self._selected[1], markup.Annotation)
@@ -4230,6 +4279,8 @@ class PageCanvas(QAbstractScrollArea):
                 self.viewport().update()
                 placed = (self._line_made(start, position)
                           if self._tool in self.LINE_TOOLS
+                          else self._callout_made(start, position)
+                          if self._tool == self.CALLOUT
                           else self._shape_made(start, position))
                 if placed is not None:
                     self.mark_drawn.emit(self._tool, placed[0], [placed[1]])
@@ -4403,6 +4454,8 @@ class PageCanvas(QAbstractScrollArea):
                     return
                 placed = (self._line_made(start, end)
                           if self._tool in self.LINE_TOOLS
+                          else self._callout_made(start, end)
+                          if self._tool == self.CALLOUT
                           else self._shape_made(start, end))
             else:
                 placed = self.mark_rect(start, QPointF(event.position()))
@@ -4503,10 +4556,19 @@ class PageCanvas(QAbstractScrollArea):
                 if (mark.kind if isinstance(mark, markup.Annotation)
                         else mark.subtype) in (markup.TEXT, markup.STAMP):
                     self.note_wanted.emit(page, mark)
+            elif self._callout_drag is not None:
+                self._callout_let_go()
             else:
                 rect = self._note_rect_at(page, mark, at - grab)
                 if rect is not None:
                     self.mark_moved.emit(page, mark, rect)
+            self._callout_drag = None
+            self._callout_shaping = None
+            event.accept()
+            return
+
+        if event.button() == Qt.LeftButton and self._callout_drag is not None:
+            self._callout_let_go()
             event.accept()
             return
 
@@ -5813,6 +5875,8 @@ class PageCanvas(QAbstractScrollArea):
         if kind == markup.FREETEXT:
             if getattr(mark, "locked", False):
                 return []
+            if markup.is_callout(mark):
+                return self._callout_grips(index, mark, offset)
             return self._text_box_grips(index, mark, offset)
         if kind in markup.SHAPES:
             if getattr(mark, "locked", False):
@@ -6113,6 +6177,19 @@ class PageCanvas(QAbstractScrollArea):
             return tuple(self.to_source(index, (at[0], at[1], at[0], at[1]))[:2])
         return at
 
+    def _callout_made(self, start: QPointF, end: QPointF):
+        """``(page, (tip, centre))`` for a callout: the tip of its leader at
+        ``start`` and the centre of its box at ``end``. Shift does nothing.
+        None when the two are too close to make one."""
+        index = self.page_at(start)
+        if index is None:
+            return None
+        a = self._point_on(index, start, True)
+        b = self._point_on(index, end, True)
+        if a is None or b is None or math.dist(a, b) < 1.0:
+            return None
+        return index, (a[0], a[1], b[0], b[1])
+
     def _line_made(self, start: QPointF, end: QPointF):
         """``(page, points)`` for a line from ``start`` to ``end``, its
         start first; Shift keeps it to 45 degrees. None when the two are too
@@ -6225,9 +6302,7 @@ class PageCanvas(QAbstractScrollArea):
         text box its words go in: the box inset by twice the border."""
         is_mine = isinstance(mark, markup.Annotation)
         if not is_mine:
-            inset = float(getattr(mark, "inset", 0.0) or 0.0)
-            rect = (rect[0] + inset, rect[1] + inset,
-                    rect[2] - inset, rect[3] - inset)
+            rect = self._box_within(mark, rect)
         style = markup.BORDER_STYLES.get(mark.border_style, {})
         width = float(style.get("width", mark.thickness))
         pad = 2.0 * width
@@ -6290,9 +6365,16 @@ class PageCanvas(QAbstractScrollArea):
             return
         needed = textbox.needed_height(editor.typed(), wide)
         left, bottom, right, top = began
-        tall = max(top - bottom, needed + 4.0 * width
-                   + 2.0 * float(getattr(mark, "inset", 0.0) or 0.0))
-        rect = (left, top - tall, right, top)
+        if markup.is_callout(mark) and not isinstance(mark, markup.Annotation):
+            # A file's callout: its rectangle reaches round the leader, so
+            # it grows by what the box inside it needs.
+            box = self._box_within(mark, began)
+            grow = max(0.0, needed + 4.0 * width - (box[3] - box[1]))
+            rect = (left, bottom - grow, right, top)
+        else:
+            tall = max(top - bottom, needed + 4.0 * width
+                       + 2.0 * float(getattr(mark, "inset", 0.0) or 0.0))
+            rect = (left, top - tall, right, top)
         self._shaping = (mark, rect, 0.0)
         grown, _wide, _w = self._text_area(index, mark, rect)
         if grown is not None:
@@ -6880,6 +6962,236 @@ class PageCanvas(QAbstractScrollArea):
         painter.drawImage(box.topLeft(), image)
         painter.setOpacity(was)
 
+    def _callout_box(self, mark):
+        """A callout's box as it is now, in its own space: a handle's drag
+        in flight, else its rectangle -- less `/RD` for a file's."""
+        if self._callout_shaping is not None and self._callout_shaping[0] is mark:
+            return self._callout_shaping[1]
+        rect, _angle = self._shape_of(mark)
+        if isinstance(mark, markup.Annotation):
+            return tuple(rect)
+        return self._box_within(mark, rect)
+
+    def _callout_points_now(self, mark, box):
+        """A callout's leader as it is now: a handle's drag in flight, else
+        its points moved by the top left of a drag of the whole mark --
+        which typing never moves, the box growing downwards -- and found
+        afresh to the box while typing grows it."""
+        if self._callout_shaping is not None and self._callout_shaping[0] is mark:
+            return self._callout_shaping[2]
+        points = getattr(mark, "points", None)
+        if not points or len(points) < 4:
+            return None
+        rect, _angle = self._shape_of(mark)
+        dx, dy = rect[0] - mark.rect[0], rect[3] - mark.rect[3]
+        points = tuple(v + (dx if k % 2 == 0 else dy) for k, v in enumerate(points))
+        if (self._shaping is not None and self._shaping[0] is mark
+                and len(points) >= 6):
+            points = markup.callout_points(
+                points[:2], box, markup.callout_knee(mark.points))
+        return points
+
+    def _callout_grips(self, index: int, mark, offset=None):
+        """A callout's ten handles: eight on its box, as a text box has,
+        then its tip and its knee."""
+        box = self._callout_box(mark)
+        points = self._callout_points_now(mark, box)
+        is_mine = isinstance(mark, markup.Annotation)
+        size = float(self.GRIP)
+        left, bottom, right, top = box
+        spots = [(left + (right - left) * fx, bottom + (top - bottom) * fy)
+                 for fx, fy in self.TEXT_BOX_HANDLES]
+        if points and len(points) >= 6:
+            spots += [(points[0], points[1]), (points[2], points[3])]
+        found = []
+        for x, y in spots:
+            where = self.quad_on_screen(index, (x, y, x, y), offset, scaled=is_mine)
+            if where is None:
+                return []
+            p = where.center()
+            found.append(QRectF(p.x() - size / 2, p.y() - size / 2, size, size))
+        return found
+
+    def _callout_taken(self, page: int, mark, which, position: QPointF):
+        """The start of a drag of a callout's handle or its box, or None."""
+        start = self._point_on(page, position, isinstance(mark, markup.Annotation))
+        box = self._callout_box(mark)
+        points = self._callout_points_now(mark, box)
+        if start is None or not points or len(points) < 6:
+            return None
+        return (page, mark, which, tuple(box), tuple(points), start)
+
+    def _callout_press(self, grip: int, position: QPointF) -> bool:
+        page, mark = self._selected
+        if getattr(mark, "locked", False):
+            return False
+        self._callout_drag = self._callout_taken(page, mark, grip, position)
+        return self._callout_drag is not None
+
+    def _callout_dragged(self, position: QPointF) -> None:
+        """A callout's handle or box dragged to ``position``. **The tip**
+        goes anywhere, the leader finding the side nearest it; **the knee**
+        lengthens or shortens the last stretch, square to its side; **a box
+        handle** moves the sides it is on, the opposite ones holding still;
+        **the box** moves alone. The leader always ends at the middle of the
+        nearest side."""
+        page, mark, which, box, points, start = self._callout_drag
+        at = self._point_on(page, position, isinstance(mark, markup.Annotation))
+        if at is None:
+            return
+        tip = points[:2]
+        knee = markup.callout_knee(points)
+        left, bottom, right, top = box
+        if which == "box":
+            dx, dy = at[0] - start[0], at[1] - start[1]
+            box = (left + dx, bottom + dy, right + dx, top + dy)
+        elif which == 8:
+            tip = at
+        elif which == 9:
+            end, out = points[4:6], (points[2] - points[4], points[3] - points[5])
+            span = math.hypot(*out)
+            if span < 1e-6:
+                found = markup.callout_points(tip, box, 1.0)
+                out, span = (found[2] - found[4], found[3] - found[5]), 1.0
+            knee = max(0.0, ((at[0] - end[0]) * out[0] + (at[1] - end[1]) * out[1]) / span)
+        else:
+            fx, fy = self.TEXT_BOX_HANDLES[which]
+            least = self.SMALLEST_TEXT_BOX
+            if fx == 0:
+                left = min(at[0], right - least)
+            elif fx == 1:
+                right = max(at[0], left + least)
+            if fy == 0:
+                bottom = min(at[1], top - least)
+            elif fy == 1:
+                top = max(at[1], bottom + least)
+            box = (left, bottom, right, top)
+        self._callout_shaping = (mark, tuple(box),
+                                 markup.callout_points(tip, box, knee))
+        self._place_mark_buttons()
+        self.viewport().update()
+
+    def _callout_let_go(self) -> None:
+        """A callout's drag let go: its box and leader as they ended."""
+        drag, shaped = self._callout_drag, self._callout_shaping
+        self._callout_drag = None
+        self._callout_shaping = None
+        self._place_mark_buttons()
+        self.viewport().update()
+        if drag is None or shaped is None:
+            return
+        page, mark = drag[0], drag[1]
+        if shaped[1] != drag[3] or shaped[2] != drag[4]:
+            self.callout_reshaped.emit(page, mark, shaped[1], shaped[2])
+
+    @staticmethod
+    def _box_within(mark, rect):
+        """A file's text box within its rectangle: less a cloud's reach, or
+        a callout's `/RD` side by side, which reaches round its leader."""
+        rd = getattr(mark, "rd", None) if markup.is_callout(mark) else None
+        if rd:
+            return (rect[0] + rd[0], rect[1] + rd[1],
+                    rect[2] - rd[2], rect[3] - rd[3])
+        inset = float(getattr(mark, "inset", 0.0) or 0.0)
+        return (rect[0] + inset, rect[1] + inset,
+                rect[2] - inset, rect[3] - inset)
+
+    def _callout_leader(self, mark, at, width: float, box=None):
+        """``(path, pieces, bounds)`` for a callout's leader on screen, as
+        `_callout_points_now` has it, the first stretch pulled back for the
+        end at its tip as a line's is -- or None."""
+        points = self._callout_points_now(
+            mark, box if box is not None else self._callout_box(mark))
+        if not points or len(points) < 4:
+            return None
+        pairs = list(zip(points[0::2], points[1::2]))
+        ends = getattr(mark, "ends", None) or ("/None", "/None")
+        first, pieces = markup.line_end_drawing(
+            (*pairs[0], *pairs[1]), (ends[0], "/None"), width)
+        pairs[0] = (first[0], first[1])
+        path = QPainterPath()
+        path.moveTo(at(*pairs[0]))
+        for pair in pairs[1:]:
+            path.lineTo(at(*pair))
+        bounds = path.boundingRect()
+        for kind, data, _filled in pieces:
+            for p in ([data[:2]] if kind == "circle" else data):
+                bounds = bounds.united(QRectF(at(*p), QSizeF(1, 1)))
+        return path, [(kind, data, filled, at) for kind, data, filled in pieces], bounds
+
+    def _paint_leader(self, layer, leader, colour, fill, width, scale, style):
+        """A callout's leader and the end at its tip: in the box's line
+        colour and width, dashed as its border is but **never clouded** --
+        a cloud is the box's alone -- and a closed end filled with the
+        box's fill. At 0 the leader is the thinnest line there is and a
+        closed end has no outline, as Acrobat draws it."""
+        path, pieces, _bounds = leader
+        plain = {k: v for k, v in style.items() if k != "cloud"}
+        pen = self._line_pen(colour, width, scale, plain)
+        layer.setPen(pen)
+        layer.setBrush(Qt.NoBrush)
+        layer.drawPath(path)
+        for kind, data, filled, at in pieces:
+            end = QPainterPath()
+            if kind == "circle":
+                cx, cy, r = data
+                end.addEllipse(at(cx, cy), r * scale, r * scale)
+            else:
+                end.moveTo(at(*data[0]))
+                for point in data[1:]:
+                    end.lineTo(at(*point))
+                if kind == "closed":
+                    end.closeSubpath()
+            if filled:
+                layer.fillPath(end, fill)
+            if width > 0 or not filled:
+                layer.setPen(pen)
+                layer.setBrush(Qt.NoBrush)
+                layer.drawPath(end)
+
+    def _callout_hit(self, index: int, mark, point: QPointF) -> bool:
+        """Whether a viewport point takes hold of a callout: inside its box,
+        or within the ink tolerance of its leader or the end at its tip --
+        not anywhere in the rectangle that reaches round them."""
+        is_mine = isinstance(mark, markup.Annotation)
+        box = self._callout_box(mark)
+        where = self.quad_on_screen(index, box, scaled=is_mine)
+        left, bottom, right, top = (float(v) for v in box)
+        if where is None or right <= left or top <= bottom:
+            return False
+        if where.contains(point):
+            return True
+        sx = where.width() / (right - left)
+        sy = where.height() / (top - bottom)
+
+        def at(x, y):
+            return QPointF(where.left() + (x - left) * sx,
+                           where.bottom() - (y - bottom) * sy)
+
+        style = markup.BORDER_STYLES.get(mark.border_style, {})
+        width = float(style.get("width", mark.thickness) or 0.0)
+        leader = self._callout_leader(mark, at, width, box)
+        if leader is None:
+            return False
+        path, pieces, _bounds = leader
+        stroker = QPainterPathStroker()
+        stroker.setWidth(width * sx + 2 * self.INK_TOLERANCE)
+        if stroker.createStroke(path).contains(point):
+            return True
+        for kind, data, _filled, _at in pieces:
+            end = QPainterPath()
+            if kind == "circle":
+                cx, cy, r = data
+                end.addEllipse(at(cx, cy), r * sx, r * sx)
+            else:
+                end.moveTo(at(*data[0]))
+                for p in data[1:]:
+                    end.lineTo(at(*p))
+                end.closeSubpath()
+            if end.contains(point) or stroker.createStroke(end).contains(point):
+                return True
+        return False
+
     def _paint_text_box(self, painter, index: int, mark, offset) -> None:
         """Draw a text box made in this session: its fill and its border.
 
@@ -6890,13 +7202,14 @@ class PageCanvas(QAbstractScrollArea):
         """
         rect, _angle = self._shape_of(mark)
         is_mine = isinstance(mark, markup.Annotation)
-        if not is_mine:
-            # A file's box: its rectangle takes in a cloud's reach.
-            inset = float(getattr(mark, "inset", 0.0) or 0.0)
-            rect = (rect[0] + inset, rect[1] + inset,
-                    rect[2] - inset, rect[3] - inset)
+        callout = markup.is_callout(mark)
+        if callout:
+            rect = self._callout_box(mark)
+        elif not is_mine:
+            rect = self._box_within(mark, rect)
         where = self.quad_on_screen(index, rect, offset, scaled=is_mine)
-        if where is None or not where.intersects(QRectF(self.viewport().rect())):
+        if where is None or (not callout and not where.intersects(
+                QRectF(self.viewport().rect()))):
             return
         left, bottom, right, top = (float(v) for v in rect)
         if right <= left or top <= bottom:
@@ -6927,9 +7240,16 @@ class PageCanvas(QAbstractScrollArea):
             path.addRect(QRectF(at(left + half, top - half),
                                 at(right - half, bottom + half)))
         reach = width * sx + 2.0
-        with self._as_one(painter, path.boundingRect().adjusted(
+        leader = self._callout_leader(mark, at, width, rect) if callout else None
+        bounds = path.boundingRect()
+        if leader is not None:
+            bounds = bounds.united(leader[2])
+            reach += 9 * max(width, 1.0) * sx
+        with self._as_one(painter, bounds.adjusted(
                 -reach, -reach, reach, reach), self._solidity(mark)) as layer:
             layer.setRenderHint(QPainter.Antialiasing, True)
+            if leader is not None:
+                self._paint_leader(layer, leader, border, fill, width, sx, style)
             layer.fillPath(path, fill)
             if width > 0:
                 layer.strokePath(path, self._line_pen(border, width, sx, style))
@@ -8148,8 +8468,9 @@ class PageCanvas(QAbstractScrollArea):
             # make anything of.
             return
         start, current = self._marking
-        if self._tool in self.LINE_TOOLS:
-            current = self._angled(start, current)
+        if self._tool in self.LINE_TOOLS or self._tool == self.CALLOUT:
+            if self._tool != self.CALLOUT:
+                current = self._angled(start, current)
             if (current - start).manhattanLength() < 1:
                 return
             painter.save()

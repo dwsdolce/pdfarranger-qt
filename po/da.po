@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  pdfarranger\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-12 22:27+0000\n"
+"POT-Creation-Date: 2026-11-13 05:41+0000\n"
 "PO-Revision-Date: 2023-10-22 00:28+0200\n"
 "Last-Translator: Lrss <dev@lrss.dk>\n"
 "Language: da\n"
@@ -49,6 +49,12 @@ msgstr "Fjern sidste streg"
 #: pdfarranger_qt/canvas.py
 msgid "Complete"
 msgstr "Fuldfør"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py pdfarranger_qt/mainwindow.py
+#: pdfarranger_qt/toolstrip.py
+msgid "Properties..."
+msgstr "Egenskaber..."
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
@@ -150,12 +156,6 @@ msgstr "Aktivér tekstmarkering"
 #: pdfarranger_qt/canvas.py
 msgid "Make current properties default"
 msgstr "Gør aktuelle egenskaber til standard"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/canvas.py pdfarranger_qt/mainwindow.py
-#: pdfarranger_qt/toolstrip.py
-msgid "Properties..."
-msgstr "Egenskaber..."
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
@@ -3138,6 +3138,11 @@ msgstr "Polylinje"
 msgid "Pencil"
 msgstr "Blyant"
 
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Callout"
+msgstr "Billedforklaring"
+
 #: pdfarranger_qt/properties.py
 msgid "Review History"
 msgstr "Gennemgangshistorik"
@@ -3234,6 +3239,16 @@ msgstr "Start"
 #: pdfarranger_qt/properties.py
 msgid "End"
 msgstr "Slut"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Line Ending"
+msgstr "Linjeafslutning"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Line Colour"
+msgstr "Linjefarve"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/properties.py pdfarranger_qt/toolstrip.py

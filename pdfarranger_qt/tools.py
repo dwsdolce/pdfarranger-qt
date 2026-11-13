@@ -168,9 +168,11 @@ TOOLS: List[Tool] = [
     Tool("circle", DRAWING, N_("Oval/Circle"), "circle-outline",
          "/Circle /Subj Oval, /IC, /BS, /BE, /RD",
          marks=("Oval/Circle",)),
+    # A Text Box with a leader: Light Red with a white fill, as the Text
+    # Box starts, read off the fixture's callouts at their default.
     Tool("callout", DRAWING, N_("Text callout"), "comment-text-outline",
          "/FreeText /IT /FreeTextCallout, /CL, /LE /OpenArrow",
-         colour='White'),
+         colour='Light Red', marks=("Callout",)),
     # Three tools, two marks: the Cloud tool's polygon starts with the large
     # cloud and carries `/IT /PolygonCloud`.
     Tool("polygon", DRAWING, N_("Polygon"), "pentagon-outline",

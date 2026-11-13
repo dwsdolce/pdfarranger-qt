@@ -58,7 +58,7 @@ time.
 | | Arrow | Line | a line that starts with an open arrow at its end | complete |
 | | Rectangle/Square | Rectangle/Square | a box, square with Shift | complete |
 | | Oval/Circle | Oval/Circle | an oval, a circle with Shift | complete |
-| | Text callout | | a text box with a line pointing at something | not started |
+| | Text callout | Callout | a text box with a line pointing at something | complete |
 | | Polygon | Polygon | a closed shape of straight sides | complete |
 | | Cloud | Polygon | a polygon drawn with a scalloped edge | complete |
 | | Connected lines | Polyline | an open run of straight lines | complete |
@@ -1782,3 +1782,148 @@ Three stages, each tried in the application before the next:
   Acrobat does, and changed the same day for one rule with the polygon.
 - **Properties...** in the menu of any mark being made -- a Pencil, a
   polygon, a cloud, a polyline -- opens the tool's own form.
+
+## Callout
+
+Made by the Text Callout tool. Complete.
+
+### Requirements
+
+- **One mark, one tool.** The Text Callout tool makes a **Callout**, and
+  its form is *Callout Properties*. It is a Line mark and a Text Box mark
+  joined: a leader with an end style at its tip, and a box of words.
+- **Making one.** Any text selection is cleared when the tool is chosen.
+  A press, a drag and a release, or a click, a move and a click: the first
+  point is the tip of the leader, the second the centre of the box. The
+  box is one line at 12 points, 108 by 14.4 -- the fixture's -- and is
+  ready to type in at once, as a Text Box is. **Shift does nothing.**
+- **The leader** runs from the tip to a knee, and from the knee square to
+  the middle of one side of the box: **whichever of the four sides'
+  middles is nearest the tip**, the last stretch 12 points long, as in
+  every one of the fixture's.
+- **Ten handles** when it is selected: eight on the box, one on the tip
+  and one on the knee. **The tip's** goes anywhere, and the leader moves to
+  whichever side is now nearest, so it never crosses the box. **The
+  knee's** lengthens or shortens the last stretch, which stays square to
+  its side. **The box's** resize the box, the leader staying at the middle
+  of its side.
+- **Taking hold**: by what is drawn, selected or not. **The box or its
+  words** drag the box alone, the tip holding still; **the leader** drags
+  the whole mark. A double-click in the box edits its words, as in a Text
+  Box.
+- **The properties form**: Line Ending, Style, Line Colour and Opacity on
+  the left, Thickness and Fill Colour on the right -- where the other
+  drawing forms have them. The words are styled with the text palette
+  while they are being typed, as in a Text Box, not in the form.
+  - **Line Colour** is the box's border, the leader and a closed end's
+    outline -- Acrobat's "Border Color", renamed because it colours more
+    than the border.
+  - **Line Ending** is one of the ten line ends, at the tip.
+  - **Style** is one of the box styles, No Border to the two clouds. A
+    dash is the box's border's and the leader's; **a cloud is the box's
+    alone**, the leader staying a plain line, and the leader runs through
+    the scallops to the box inside them -- both as on the fixture's.
+  - **Thickness** is Hairline to 12, the border's and the leader's alike:
+    Hairline is the thinnest line on both, written 0.01, as on the other
+    closed shapes.
+  - **No Border** is written 0, as Acrobat writes it: no border on the
+    box, the leader and the end's outline at the thinnest width there is.
+    Thickness is greyed with it, as on the other box forms, but **Line
+    Colour stays enabled**, since the leader is always drawn. **Departure
+    from Acrobat**, which greys its Border Color too and leaves the leader
+    in whatever colour it had, with no way to change it.
+  - **Fill Colour** fills the box and a closed end, and has no No Colour,
+    as a Text Box's has none.
+- **The strip**: the colour swatch -- the Line Colour -- and the line
+  thickness, Hairline to 12; the text palette while the words are typed.
+- **The right-click menu** is the standard one: Delete, Set status, the
+  panel entries, Make current properties default and Properties.
+- **Notes as for a Text Box**: its `/Contents` is the words in the box, so
+  it has Status but no note window, no replies and no badge.
+
+### Plan
+
+The fixture is page 3 of `corpus/Markup Drawing.pdf`: two callouts drawn
+out, one with a 3 point dash and one at 0, and two at the default size,
+one of them with the large cloud (`/BE /S /C /I 2`, its reach in `/RD`).
+**What Acrobat writes**: a `/FreeText` with `/IT /FreeTextCallout` and
+`/Subj Callout`; the leader in `/CL`, three points -- the tip, the knee,
+and the middle of the side; the tip's style in `/LE`, a single name; the
+fill in `/C` and the Line Colour in `/DA`, as on a Text Box; the width
+and dash in `/BS`; and `/RD` giving `/Rect` room round the box for the
+leader. At 0 Acrobat draws the box with no border, the leader at the
+thinnest width and a closed arrow filled with no outline.
+
+### Building it
+
+Three stages, each tried in the application before the next:
+
+1. **The mark.** A callout becomes a kind this application knows, read
+   and drawn by the canvas -- the box as a Text Box's, the leader, the end
+   -- found by what is drawn, and moved whole.
+2. **Making and reshaping.** The Text Callout tool, made by two points
+   and typed into; the ten handles, the leader finding its side; written
+   as Acrobat writes it, with a drawing of our own.
+3. **The form and the strip**: *Callout Properties* as above, Line
+   Colour, Hairline and No Border, and the strip's swatch and thickness.
+
+**Stage 1, as built:**
+
+- **Told from a Text Box** by `/IT /FreeTextCallout`, and read as one with
+  its leader from `/CL`, the end at its tip from `/LE`, and `/RD` side by
+  side: the box is `/Rect` less `/RD`, which reaches round the leader and
+  a cloud. A width of 0 reads as No Border.
+- **Drawn** by the canvas as a Text Box with its leader under it, faded as
+  one piece: the leader in the box's colour and width, dashed as its
+  border is but never clouded, the end pulled back as a line's is and a
+  closed one filled with the box's fill -- and at 0, the thinnest leader
+  and a closed end with no outline. On the fixture's four it matches
+  Acrobat's drawing by eye.
+- **Taking hold** inside the box or within the ink tolerance of the leader
+  or its end, not in the rest of the rectangle round them. **A move**
+  shifts `/Rect` and `/CL` by the same and keeps Acrobat's drawing.
+- **Until stage 2**: no handles, and no typing in its box; a change of
+  look took Acrobat's drawing away. Stage 2 replaced all three.
+
+**Stage 2, as built:**
+
+- **Made** by the tip and then the centre of the box, dragged or clicked
+  out as a line is but with no Shift: the box 108 by 14.4 at the page's
+  own size, Light Red with a white fill and an open arrow at the tip, as
+  the fixture's default ones are -- the tool started White, which would
+  have drawn its leader invisibly -- and typed into at once. `/Subj
+  Callout` and `/IT /FreeTextCallout`, the subject being Acrobat's.
+- **Typing** grows the box downwards from its top, in a callout made here
+  or one of Acrobat's, and the leader follows to the middle of its side.
+- **The ten handles** as the requirements have them, and **the box dragged
+  alone** from inside it, the tip holding still, while the leader drags
+  the whole mark. A box handle stops at 6 points across, as a Text Box's
+  does; the knee's at a last stretch of 0. Every one is one step to undo.
+- **Written as Acrobat writes it**: `/CL` the tip, the knee and the middle
+  of the side; `/LE` a single name; `/Rect` round the box -- grown by a
+  cloud's reach or half the line -- and the leader and its end, half the
+  line round them; `/RD` side by side from it to the box; and a drawing of
+  our own, the leader first so the box covers its end. **A file's callout**
+  keeps Acrobat's drawing when only moved, and is written afresh round its
+  box and leader once reshaped, typed into or restyled.
+- **A file's callout keeps its box as `rd`**: the box an edit records is
+  where the box sits in its rectangle, so a rebuild of the reader -- an
+  undo, a trip to Arrange -- turns it back into `rd` once the rectangle is
+  set. It was set on the record as a field the record does not have, and
+  the reader failed to load after a callout of Acrobat's was reshaped.
+
+**Stage 3, as built:**
+
+- ***Callout Properties***: Line Ending, Style, Line Colour and Opacity on
+  the left, Thickness and Fill Colour on the right, in the two columns
+  every drawing form has; the tool's own form the same, starting with an
+  open arrow, and Make Properties Default keeping the end, style,
+  thickness and fill for its next one.
+- **Thickness** Hairline to 12, Hairline written 0.01; **No Border**
+  written 0, greying Thickness while **Line Colour stays enabled**. The
+  fill's picker offers no No Colour.
+- **A file's callout restyled** -- its end, style or thickness -- has its
+  rectangle and `/RD` worked out afresh round its box and leader, and a
+  drawing of our own.
+- **The strip**: the swatch and the thickness, Hairline to 12, for the
+  armed tool and for a selected callout.

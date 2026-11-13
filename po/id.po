@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-12 22:27+0000\n"
+"POT-Creation-Date: 2026-11-13 05:41+0000\n"
 "PO-Revision-Date: 2023-06-08 10:00+0700\n"
 "Last-Translator: Abdul Munif Hanafi <amunifhanafi@gmail.com>\n"
 "Language: id\n"
@@ -51,6 +51,12 @@ msgstr "Hapus goresan terakhir"
 #: pdfarranger_qt/canvas.py
 msgid "Complete"
 msgstr "Selesaikan"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py pdfarranger_qt/mainwindow.py
+#: pdfarranger_qt/toolstrip.py
+msgid "Properties..."
+msgstr "Properti..."
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
@@ -152,12 +158,6 @@ msgstr "Aktifkan Pemilihan Teks"
 #: pdfarranger_qt/canvas.py
 msgid "Make current properties default"
 msgstr "Jadikan Properti Saat Ini sebagai Baku"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/canvas.py pdfarranger_qt/mainwindow.py
-#: pdfarranger_qt/toolstrip.py
-msgid "Properties..."
-msgstr "Properti..."
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
@@ -3168,6 +3168,11 @@ msgstr "Polilin"
 msgid "Pencil"
 msgstr "Pensil"
 
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Callout"
+msgstr "Info"
+
 #: pdfarranger_qt/properties.py
 msgid "Review History"
 msgstr "Riwayat Tinjauan"
@@ -3264,6 +3269,16 @@ msgstr "Awal"
 #: pdfarranger_qt/properties.py
 msgid "End"
 msgstr "Akhir"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Line Ending"
+msgstr "Ujung garis"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Line Colour"
+msgstr "Warna garis"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/properties.py pdfarranger_qt/toolstrip.py

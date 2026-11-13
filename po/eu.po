@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-12 22:27+0000\n"
+"POT-Creation-Date: 2026-11-13 05:41+0000\n"
 "PO-Revision-Date: 2023-01-19 20:27+0100\n"
 "Last-Translator: alexgabi\n"
 "Language: eu\n"
@@ -54,6 +54,12 @@ msgstr "Kendu azken trazua"
 #: pdfarranger_qt/canvas.py
 msgid "Complete"
 msgstr "Osatu"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py pdfarranger_qt/mainwindow.py
+#: pdfarranger_qt/toolstrip.py
+msgid "Properties..."
+msgstr "Propietateak..."
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
@@ -155,12 +161,6 @@ msgstr "Gaitu testu-hautapena"
 #: pdfarranger_qt/canvas.py
 msgid "Make current properties default"
 msgstr "Ezarri uneko propietateak lehenetsi gisa"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/canvas.py pdfarranger_qt/mainwindow.py
-#: pdfarranger_qt/toolstrip.py
-msgid "Properties..."
-msgstr "Propietateak..."
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
@@ -3171,6 +3171,11 @@ msgstr "Polilerroa"
 msgid "Pencil"
 msgstr "Arkatza"
 
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Callout"
+msgstr "Bokadilloa"
+
 #: pdfarranger_qt/properties.py
 msgid "Review History"
 msgstr "Berrikuspen-historia"
@@ -3267,6 +3272,16 @@ msgstr "Hasiera"
 #: pdfarranger_qt/properties.py
 msgid "End"
 msgstr "Amaiera"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Line Ending"
+msgstr "Lerro-amaiera"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Line Colour"
+msgstr "Lerroaren kolorea"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/properties.py pdfarranger_qt/toolstrip.py

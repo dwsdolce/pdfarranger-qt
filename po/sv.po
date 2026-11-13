@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  pdfarranger\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-12 22:27+0000\n"
+"POT-Creation-Date: 2026-11-13 05:41+0000\n"
 "PO-Revision-Date: 2026-05-24 07:36+0300\n"
 "Last-Translator: kbengs\n"
 "Language: sv\n"
@@ -49,6 +49,12 @@ msgstr "Ta bort senaste penndraget"
 #: pdfarranger_qt/canvas.py
 msgid "Complete"
 msgstr "Slutför"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py pdfarranger_qt/mainwindow.py
+#: pdfarranger_qt/toolstrip.py
+msgid "Properties..."
+msgstr "Egenskaper..."
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
@@ -150,12 +156,6 @@ msgstr "Aktivera textmarkering"
 #: pdfarranger_qt/canvas.py
 msgid "Make current properties default"
 msgstr "Gör aktuella egenskaper till standard"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/canvas.py pdfarranger_qt/mainwindow.py
-#: pdfarranger_qt/toolstrip.py
-msgid "Properties..."
-msgstr "Egenskaper..."
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
@@ -3101,6 +3101,11 @@ msgstr "Polylinje"
 msgid "Pencil"
 msgstr "Penna"
 
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Callout"
+msgstr "Pratbubbla"
+
 #: pdfarranger_qt/properties.py
 msgid "Review History"
 msgstr "Granskningshistorik"
@@ -3197,6 +3202,16 @@ msgstr "Början"
 #: pdfarranger_qt/properties.py
 msgid "End"
 msgstr "Slut"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Line Ending"
+msgstr "Linjeslut"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Line Colour"
+msgstr "Linjefärg"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/properties.py pdfarranger_qt/toolstrip.py

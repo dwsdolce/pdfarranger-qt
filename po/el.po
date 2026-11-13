@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PDF Arranger 1.9.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-12 22:27+0000\n"
+"POT-Creation-Date: 2026-11-13 05:41+0000\n"
 "PO-Revision-Date: 2023-06-12 10:30+0300\n"
 "Last-Translator: Manussos Pulinakis "
 "<38626261+manussos@users.noreply.github.com>\n"
@@ -54,6 +54,12 @@ msgstr "Αφαίρεση τελευταίας πινελιάς"
 #: pdfarranger_qt/canvas.py
 msgid "Complete"
 msgstr "Ολοκλήρωση"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py pdfarranger_qt/mainwindow.py
+#: pdfarranger_qt/toolstrip.py
+msgid "Properties..."
+msgstr "Ιδιότητες..."
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
@@ -155,12 +161,6 @@ msgstr "Ενεργοποίηση επιλογής κειμένου"
 #: pdfarranger_qt/canvas.py
 msgid "Make current properties default"
 msgstr "Ορισμός τρεχουσών ιδιοτήτων ως προεπιλογή"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/canvas.py pdfarranger_qt/mainwindow.py
-#: pdfarranger_qt/toolstrip.py
-msgid "Properties..."
-msgstr "Ιδιότητες..."
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
@@ -3184,6 +3184,11 @@ msgstr "Πολυγραμμή"
 msgid "Pencil"
 msgstr "Μολύβι"
 
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Callout"
+msgstr "Επεξήγηση"
+
 #: pdfarranger_qt/properties.py
 msgid "Review History"
 msgstr "Ιστορικό αναθεώρησης"
@@ -3280,6 +3285,16 @@ msgstr "Αρχή"
 #: pdfarranger_qt/properties.py
 msgid "End"
 msgstr "Τέλος"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Line Ending"
+msgstr "Άκρο γραμμής"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Line Colour"
+msgstr "Χρώμα γραμμής"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/properties.py pdfarranger_qt/toolstrip.py

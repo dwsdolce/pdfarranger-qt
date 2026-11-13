@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: unnamed project\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-12 22:27+0000\n"
+"POT-Creation-Date: 2026-11-13 05:41+0000\n"
 "PO-Revision-Date: 2026-05-27 19:30+0300\n"
 "Last-Translator: Dymko <Dymkovych@proton.me>\n"
 "Language: uk\n"
@@ -52,6 +52,12 @@ msgstr "Вилучити останній штрих"
 #: pdfarranger_qt/canvas.py
 msgid "Complete"
 msgstr "Завершити"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py pdfarranger_qt/mainwindow.py
+#: pdfarranger_qt/toolstrip.py
+msgid "Properties..."
+msgstr "Властивості..."
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
@@ -153,12 +159,6 @@ msgstr "Увімкнути виділення тексту"
 #: pdfarranger_qt/canvas.py
 msgid "Make current properties default"
 msgstr "Зробити поточні властивості типовими"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/canvas.py pdfarranger_qt/mainwindow.py
-#: pdfarranger_qt/toolstrip.py
-msgid "Properties..."
-msgstr "Властивості..."
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
@@ -3119,6 +3119,11 @@ msgstr "Ламана"
 msgid "Pencil"
 msgstr "Олівець"
 
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Callout"
+msgstr "Виноска"
+
 #: pdfarranger_qt/properties.py
 msgid "Review History"
 msgstr "Історія рецензування"
@@ -3215,6 +3220,16 @@ msgstr "Початок"
 #: pdfarranger_qt/properties.py
 msgid "End"
 msgstr "Кінець"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Line Ending"
+msgstr "Закінчення лінії"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Line Colour"
+msgstr "Колір лінії"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/properties.py pdfarranger_qt/toolstrip.py

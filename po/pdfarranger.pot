@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pdfarranger-qt VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/dwsdolce/pdfarranger-qt/issues\n"
-"POT-Creation-Date: 2026-11-12 22:27+0000\n"
+"POT-Creation-Date: 2026-11-13 05:41+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -42,6 +42,11 @@ msgstr ""
 
 #: pdfarranger_qt/canvas.py
 msgid "Complete"
+msgstr ""
+
+#: pdfarranger_qt/canvas.py pdfarranger_qt/mainwindow.py
+#: pdfarranger_qt/toolstrip.py
+msgid "Properties..."
 msgstr ""
 
 #: pdfarranger_qt/canvas.py
@@ -124,11 +129,6 @@ msgstr ""
 
 #: pdfarranger_qt/canvas.py
 msgid "Make current properties default"
-msgstr ""
-
-#: pdfarranger_qt/canvas.py pdfarranger_qt/mainwindow.py
-#: pdfarranger_qt/toolstrip.py
-msgid "Properties..."
 msgstr ""
 
 #: pdfarranger_qt/canvas.py
@@ -2474,6 +2474,10 @@ msgid "Pencil"
 msgstr ""
 
 #: pdfarranger_qt/properties.py
+msgid "Callout"
+msgstr ""
+
+#: pdfarranger_qt/properties.py
 msgid "Review History"
 msgstr ""
 
@@ -2551,6 +2555,14 @@ msgstr ""
 
 #: pdfarranger_qt/properties.py
 msgid "End"
+msgstr ""
+
+#: pdfarranger_qt/properties.py
+msgid "Line Ending"
+msgstr ""
+
+#: pdfarranger_qt/properties.py
+msgid "Line Colour"
 msgstr ""
 
 #: pdfarranger_qt/properties.py pdfarranger_qt/toolstrip.py

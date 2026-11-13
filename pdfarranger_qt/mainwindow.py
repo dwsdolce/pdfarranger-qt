@@ -190,6 +190,7 @@ class MainWindow(QMainWindow):
         self.reader.canvas.mark_colour = self._colour_for_canvas_tool
         self.reader.canvas.mark_stroke = self._stroke_for_canvas_tool
         self.reader.canvas.drawing_changed.connect(self._refresh_state)
+        self.reader.canvas.callout_reshaped.connect(self.callout_reshaped)
         # *Properties...* in the menu of a mark being made: the tool's own
         # form, whose changes the whole mark is made with.
         self.reader.canvas.tool_form_wanted.connect(
@@ -885,6 +886,8 @@ class MainWindow(QMainWindow):
         "polyline": markup.POLYLINE,
         # *Draw*, whose mark is a Pencil.
         "draw": markup.INK,
+        # *Text Callout*: a Text Box with a leader, told apart by `/IT`.
+        "callout": markup.FREETEXT,
     }
 
     #: The gestures above that are not tools, and the tool each acts as --
@@ -928,6 +931,7 @@ class MainWindow(QMainWindow):
         "cloud": "cloud",
         "connected_lines": "polyline",
         "draw": "draw",
+        "callout": "callout",
     }
 
     #: And back again, for the places that start from the canvas's name --
@@ -1127,6 +1131,17 @@ class MainWindow(QMainWindow):
             # text box, a rectangle or an oval is sized by whoever made it.
             rect = tuple(rects[-1])
         points = ends = None
+        if tool == "callout":
+            # The tip and the centre of the box: the box one line at 12
+            # points round the centre, at the page's own size, and the
+            # leader to the middle of its side nearest the tip.
+            tip_x, tip_y, cx, cy = rects[-1]
+            scale = page.scale if page.scale else 1.0
+            wide, tall = (v / scale for v in markup.CALLOUT_SIZE)
+            rect = (cx - wide / 2, cy - tall / 2, cx + wide / 2, cy + tall / 2)
+            told = self._boxes.get("callout", {})
+            points = markup.callout_points((tip_x, tip_y), rect)
+            ends = told.get("ends") or ("/OpenArrow", "/None")
         if subtype == markup.LINE:
             # A line's two points, start first; its rectangle is worked out
             # round them and its ends -- the tool's, as it was last told to
@@ -1217,6 +1232,10 @@ class MainWindow(QMainWindow):
             # And of the Cloud tool, kept whatever the polygon's style
             # becomes.
             return "", markup.POLYGON_CLOUD
+        if tool == "callout":
+            # A Text Box with a leader: Acrobat's subject and its intent,
+            # which is what tells the two apart.
+            return "Callout", markup.CALLOUT
         return "", ""
 
     def colour_for(self, tool: str):
@@ -1451,19 +1470,22 @@ class MainWindow(QMainWindow):
         style = self._styles.get(key) or (
             "straight" if kind in markup.UNDERLINE_STYLES.values() else None)
         box = dict(self._boxes.get(key, {}))
+        callout = tool == "callout"
         is_box = (kind == markup.FREETEXT or kind in markup.SHAPES
-                  or kind == markup.POLYGON)
+                  or kind == markup.POLYGON) and not callout
         is_line = kind in (markup.LINE, markup.POLYLINE)
         fill = box.get("fill")
         if kind == markup.FREETEXT and not fill:
             fill = markup.swatch("White")
         ends = box.get("ends") or (("/None", "/OpenArrow") if tool == "arrow"
+                                   else ("/OpenArrow", "/None") if callout
                                    else ("/None", "/None"))
         opacity = self.opacity_for(tool)
         if opacity is None:
             opacity = markup.TRANSPARENCY.get(kind, 1.0)
         form = MarkProperties(Properties(
-            kind="replace_text" if tool == "replace_text" else kind,
+            kind=("replace_text" if tool == "replace_text"
+                  else "callout" if callout else kind),
             author=self._authors.get(key) or markup.default_author(),
             subject=self._subjects.get(key) or markup.SUBJECTS.get(kind, ""),
             colour=self.colour_for(tool), opacity=opacity,
@@ -1472,12 +1494,12 @@ class MainWindow(QMainWindow):
             icons=self._icons_for(kind),
             box=is_box,
             fill_optional=kind in markup.SHAPES or kind == markup.POLYGON,
-            fill=fill if (is_box or is_line) else None,
+            fill=fill if (is_box or is_line or callout) else None,
             thickness=float(box.get("thickness", 1.0)),
             border_style=box.get("border_style") or (
                 "large cloud" if tool == "cloud" else "straight"),
             line=is_line, ends=tuple(ends), pencil=kind == markup.INK,
-            defaults_only=True), self)
+            callout=callout, defaults_only=True), self)
         if form.exec() != MarkProperties.DialogCode.Accepted:
             return
         changed = form.changed()
@@ -1511,7 +1533,7 @@ class MainWindow(QMainWindow):
 
     #: The strip's tools whose marks have a line to thicken.
     LINED_TOOLS = ("rectangle", "circle", "line", "arrow", "polygon", "cloud",
-                   "connected_lines", "draw")
+                   "connected_lines", "draw", "callout")
 
     def _offer_thickness(self, mark=None) -> None:
         """Show the strip's thickness at ``mark``'s, for a selected shape;
@@ -1528,6 +1550,11 @@ class MainWindow(QMainWindow):
                 self.tool_strip.offer_thickness(
                     float(getattr(mark, "thickness", 1.0) or 0.0), zero=True)
                 return
+            if markup.is_callout(mark):
+                # Hairline to 12: a callout always has a fill.
+                self.tool_strip.offer_thickness(
+                    float(getattr(mark, "thickness", 1.0) or 0.0), zero=True)
+                return
             if kind == markup.INK:
                 # 1 to 12: a Pencil has no fill, so no Hairline.
                 self.tool_strip.offer_thickness(
@@ -1538,7 +1565,8 @@ class MainWindow(QMainWindow):
             box = self._boxes.get(tool, {})
             self.tool_strip.offer_thickness(
                 float(box.get("thickness", 1.0)),
-                zero=tool in ("line", "arrow") or box.get("fill") is not None)
+                zero=(tool in ("line", "arrow", "callout")
+                      or box.get("fill") is not None))
         else:
             self.tool_strip.offer_thickness(None)
 
@@ -1551,7 +1579,8 @@ class MainWindow(QMainWindow):
             kind = (mark.kind if isinstance(mark, markup.Annotation)
                     else mark.subtype)
             if (kind in markup.SHAPES or kind == markup.LINE
-                    or kind in markup.POLYS or kind == markup.INK):
+                    or kind in markup.POLYS or kind == markup.INK
+                    or markup.is_callout(mark)):
                 if getattr(mark, "locked", False):
                     return
                 self._commit_mark_change(_("Change Mark"), index, mark)
@@ -1658,12 +1687,31 @@ class MainWindow(QMainWindow):
             mark.contents = text
             mark.rich = rich
             mark.rect = rect
+            if markup.is_callout(mark) and mark.points:
+                # Its leader to the middle of the side of the box it has now.
+                mark.points = markup.callout_points(
+                    mark.points[:2], rect, markup.callout_knee(mark.points))
             mark.touch()
             self._after_mark_change(index)
             return
         uid = self.model.pages[index].uid
+        extra = {}
+        if markup.is_callout(mark) and mark.points:
+            # A file's callout: the rectangle the canvas sends reaches round
+            # the leader, so the box is found inside it and the rectangle
+            # and leader worked out afresh round that.
+            rd = mark.rd or (0.0,) * 4
+            box = (rect[0] + rd[0], rect[1] + rd[1], rect[2] - rd[2], rect[3] - rd[3])
+            points = markup.callout_points(mark.points[:2], box,
+                                           markup.callout_knee(mark.points))
+            rect = markup.callout_rect(box, points, (mark.ends or ("/None",))[0],
+                                       mark.border_style, float(mark.thickness or 0.0))
+            mark.points = points
+            mark.rd = (box[0] - rect[0], box[1] - rect[1],
+                       rect[2] - box[2], rect[3] - box[3])
+            extra = {"points": points, "box": box}
         self.model.mark_edits.change(uid, mark.index, contents=text,
-                                     rich=rich, rect=rect)
+                                     rich=rich, rect=rect, **extra)
         mark.contents = text
         mark.rich = rich or ""
         mark.rect = rect
@@ -1705,6 +1753,34 @@ class MainWindow(QMainWindow):
         mark.rect = rect
         self._after_mark_change(index, uid)
 
+    def callout_reshaped(self, index: int, mark, box, points) -> None:
+        """A callout's handle let go, or its box dragged alone: its box and
+        leader now, as one step to undo. A file's has its rectangle and
+        `/RD` worked out afresh round them."""
+        if not 0 <= index < len(self.model.pages):
+            return
+        if getattr(mark, "locked", False):
+            return
+        box = tuple(float(v) for v in box)
+        points = tuple(float(v) for v in points)
+        self._commit_mark_change(_("Reshape Mark"), index, mark)
+        if isinstance(mark, markup.Annotation):
+            mark.rect = box
+            mark.points = points
+            mark.touch()
+            self._after_mark_change(index)
+            return
+        rect = markup.callout_rect(box, points, (mark.ends or ("/None",))[0],
+                                   mark.border_style, float(mark.thickness or 0.0))
+        uid = self.model.pages[index].uid
+        self.model.mark_edits.change(uid, mark.index, rect=rect, points=points,
+                                     box=box)
+        mark.rect = rect
+        mark.points = points
+        mark.rd = (box[0] - rect[0], box[1] - rect[1],
+                   rect[2] - box[2], rect[3] - box[3])
+        self._after_mark_change(index, uid)
+
     def mark_moved(self, index: int, mark, rect) -> None:
         """A comment's icon dragged to somewhere else on its page.
 
@@ -1737,7 +1813,15 @@ class MainWindow(QMainWindow):
             return
         uid = self.model.pages[index].uid
         self._commit_mark_change(_("Move Mark"), index, mark)
-        self.model.mark_edits.change(uid, mark.index, rect=rect, points=points)
+        extra = {}
+        if markup.is_callout(mark) and mark.rd:
+            # A file's callout: its box with it, which a reshape may already
+            # have recorded where it was before the move.
+            rd = mark.rd
+            extra["box"] = (rect[0] + rd[0], rect[1] + rd[1],
+                            rect[2] - rd[2], rect[3] - rd[3])
+        self.model.mark_edits.change(uid, mark.index, rect=rect, points=points,
+                                     **extra)
         mark.rect = rect
         if points:
             mark.points = points
@@ -1978,11 +2062,13 @@ class MainWindow(QMainWindow):
         said = canvas.note_bearer(index, mark)
         mine = isinstance(mark, markup.Annotation)
         kind_here = mark.kind if mine else mark.subtype
+        callout = markup.is_callout(mark)
         is_box = (kind_here == markup.FREETEXT or kind_here in markup.SHAPES
-                  or kind_here == markup.POLYGON)
+                  or kind_here == markup.POLYGON) and not callout
         is_line = kind_here in (markup.LINE, markup.POLYLINE)
         form = MarkProperties(Properties(
             kind=("replace_text" if said is not mark
+                  else "callout" if callout
                   else mark.kind if mine else mark.subtype),
             author=(getattr(mark, "author", "") or markup.default_author()),
             subject=(getattr(mark, "subject", "") or markup.SUBJECTS.get(
@@ -2004,10 +2090,11 @@ class MainWindow(QMainWindow):
             box=is_box,
             fill_optional=kind_here in markup.SHAPES or kind_here == markup.POLYGON,
             fill=(getattr(mark, "fill", None)
-                  if is_box or is_line else None),
+                  if is_box or is_line or callout else None),
             line=is_line,
             ends=tuple(getattr(mark, "ends", None) or ("/None", "/None")),
             pencil=kind_here == markup.INK,
+            callout=callout,
             thickness=float(getattr(mark, "thickness", 1.0) or 0.0),
             border_style=getattr(mark, "border_style", "straight") or "straight",
         ), self)
@@ -2021,10 +2108,13 @@ class MainWindow(QMainWindow):
                "opacity": getattr(mark, "opacity", None)}
         if kind_here == markup.INK:
             was.update(thickness=getattr(mark, "thickness", 1.0))
-        if is_box or is_line:
+        if is_box or is_line or callout:
             was.update(fill=getattr(mark, "fill", None),
                        thickness=getattr(mark, "thickness", 1.0),
                        border_style=getattr(mark, "border_style", "straight"))
+        if callout:
+            was.update(ends=tuple(getattr(mark, "ends", None)
+                                  or ("/None", "/None")))
         if is_line:
             was.update(ends=tuple(getattr(mark, "ends", None)
                                   or ("/None", "/None")), rect=tuple(mark.rect))
@@ -2178,7 +2268,20 @@ class MainWindow(QMainWindow):
             fields = dict(fields, rect=markup.line_rect(
                 mark.points, fields.get("ends", mark.ends) or ("/None", "/None"),
                 float(fields.get("thickness", mark.thickness) or 0.0)))
-        reach = self._box_reach(mark, fields)
+        if (markup.is_callout(mark) and not isinstance(mark, markup.Annotation)
+                and {"ends", "thickness", "border_style"} & set(fields)):
+            # A file's callout: its rectangle and `/RD` round its box and
+            # leader for the line and end it now has.
+            box = markup.text_box_of(mark)
+            rect = markup.callout_rect(
+                box, mark.points, fields.get("ends", mark.ends or ("/None",))[0],
+                fields.get("border_style", mark.border_style),
+                float(fields.get("thickness", mark.thickness) or 0.0))
+            fields = dict(fields, rect=rect, box=box)
+            mark.rd = (box[0] - rect[0], box[1] - rect[1],
+                       rect[2] - box[2], rect[3] - box[3])
+        reach = (None if markup.is_callout(mark)
+                 else self._box_reach(mark, fields))
         if reach is not None:
             fields = dict(fields, rect=reach[0])
             if mark.subtype in markup.SHAPES:
@@ -2231,6 +2334,10 @@ class MainWindow(QMainWindow):
         box, so the two move together or the canvas draws the new glyph in
         the old one's box. The rest are set as they are named.
         """
+        if name == "box":
+            # A callout's box is where it sits in its rectangle, kept as
+            # `rd` by whoever sends it, not a field of its own.
+            return
         if name == "style":
             kind = markup.UNDERLINE_STYLES.get(value)
             if kind is None:
@@ -2596,6 +2703,9 @@ class MainWindow(QMainWindow):
         if kind == markup.POLYGON:
             return ("cloud" if str(getattr(mark, "intent", "") or "")
                     == markup.POLYGON_CLOUD else "polygon")
+        if markup.is_callout(mark):
+            # A Text Box with a leader, told apart by `/IT`.
+            return "callout"
         for tool, made in self.MARK_KINDS.items():
             if made == kind and tool not in self.GESTURE_TOOLS:
                 return self.CANVAS_TO_STRIP.get(tool, tool)
@@ -2643,7 +2753,13 @@ class MainWindow(QMainWindow):
                 "thickness": float(getattr(mark, "thickness", 1.0) or 0.0),
                 "border_style": getattr(mark, "border_style", "straight"),
                 "ends": tuple(getattr(mark, "ends", None) or ("/None", "/None"))}
-        if kind == markup.INK:
+        if markup.is_callout(mark):
+            self._boxes[tool] = {
+                "fill": tuple(getattr(mark, "fill", None) or markup.swatch("White")),
+                "thickness": float(getattr(mark, "thickness", 1.0) or 0.0),
+                "border_style": getattr(mark, "border_style", "straight"),
+                "ends": tuple(getattr(mark, "ends", None) or ("/OpenArrow", "/None"))}
+        elif kind == markup.INK:
             self._boxes[tool] = {
                 "fill": None,
                 "thickness": float(getattr(mark, "thickness", 1.0) or 1.0),
@@ -2654,7 +2770,7 @@ class MainWindow(QMainWindow):
                 "fill": tuple(fill) if fill else None,
                 "thickness": float(getattr(mark, "thickness", 1.0) or 0.0),
                 "border_style": getattr(mark, "border_style", "straight")}
-        if kind == markup.FREETEXT:
+        if kind == markup.FREETEXT and not markup.is_callout(mark):
             self._boxes[tool] = {
                 "fill": tuple(getattr(mark, "fill", None)
                               or markup.swatch("White")),
@@ -3976,8 +4092,18 @@ class MainWindow(QMainWindow):
                         mark.rich = value or ""
                     elif name == "modified":
                         mark.when = value
+                    elif name == "box":
+                        # Not a field: where a callout's box sits in its
+                        # rectangle, which the record keeps as `rd` --
+                        # worked out below, once the rectangle is set.
+                        pass
                     else:
                         self._set_mark_field(mark, name, value, scale)
+                box = edit.get("box")
+                if box:
+                    rect = mark.rect
+                    mark.rd = (box[0] - rect[0], box[1] - rect[1],
+                               rect[2] - box[2], rect[3] - box[3])
         if going:
             canvas.forget_marks(going)
 

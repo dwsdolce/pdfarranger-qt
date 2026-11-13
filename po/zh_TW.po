@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-12 22:27+0000\n"
+"POT-Creation-Date: 2026-11-13 05:41+0000\n"
 "PO-Revision-Date: 2024-03-20 17:20+0800\n"
 "Last-Translator: 錢政維 <e.cwchien@gmail.com>\n"
 "Language: zh_TW\n"
@@ -54,6 +54,12 @@ msgstr "移除最後一筆"
 #: pdfarranger_qt/canvas.py
 msgid "Complete"
 msgstr "完成"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py pdfarranger_qt/mainwindow.py
+#: pdfarranger_qt/toolstrip.py
+msgid "Properties..."
+msgstr "屬性..."
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
@@ -155,12 +161,6 @@ msgstr "啟用文字選取"
 #: pdfarranger_qt/canvas.py
 msgid "Make current properties default"
 msgstr "將目前屬性設為預設"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/canvas.py pdfarranger_qt/mainwindow.py
-#: pdfarranger_qt/toolstrip.py
-msgid "Properties..."
-msgstr "屬性..."
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
@@ -2966,6 +2966,11 @@ msgstr "折線"
 msgid "Pencil"
 msgstr "鉛筆"
 
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Callout"
+msgstr "圖說文字"
+
 #: pdfarranger_qt/properties.py
 msgid "Review History"
 msgstr "審閱歷程記錄"
@@ -3062,6 +3067,16 @@ msgstr "起點"
 #: pdfarranger_qt/properties.py
 msgid "End"
 msgstr "終點"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Line Ending"
+msgstr "線條端點"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Line Colour"
+msgstr "線條顏色"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/properties.py pdfarranger_qt/toolstrip.py

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  pdfarranger\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-12 22:27+0000\n"
+"POT-Creation-Date: 2026-11-13 05:41+0000\n"
 "PO-Revision-Date: 2023-06-06 13:27+0200\n"
 "Last-Translator: Janez G <janezgac@gmail.com>\n"
 "Language: sl_SI\n"
@@ -50,6 +50,12 @@ msgstr "Odstrani zadnjo potezo"
 #: pdfarranger_qt/canvas.py
 msgid "Complete"
 msgstr "Dokončaj"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py pdfarranger_qt/mainwindow.py
+#: pdfarranger_qt/toolstrip.py
+msgid "Properties..."
+msgstr "Lastnosti..."
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
@@ -151,12 +157,6 @@ msgstr "Omogoči izbiranje besedila"
 #: pdfarranger_qt/canvas.py
 msgid "Make current properties default"
 msgstr "Nastavi trenutne lastnosti kot privzete"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/canvas.py pdfarranger_qt/mainwindow.py
-#: pdfarranger_qt/toolstrip.py
-msgid "Properties..."
-msgstr "Lastnosti..."
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
@@ -3137,6 +3137,11 @@ msgstr "Lomljenka"
 msgid "Pencil"
 msgstr "Svinčnik"
 
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Callout"
+msgstr "Oblaček"
+
 #: pdfarranger_qt/properties.py
 msgid "Review History"
 msgstr "Zgodovina pregleda"
@@ -3233,6 +3238,16 @@ msgstr "Začetek"
 #: pdfarranger_qt/properties.py
 msgid "End"
 msgstr "Konec"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Line Ending"
+msgstr "Konec črte"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Line Colour"
+msgstr "Barva črte"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/properties.py pdfarranger_qt/toolstrip.py

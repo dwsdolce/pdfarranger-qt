@@ -108,6 +108,70 @@ POLYLINE = "/PolyLine"
 POLYGON_CLOUD = "/PolygonCloud"
 POLYS = (POLYGON, POLYLINE)
 
+#: What the Text Callout tool makes, a Callout: a `/FreeText` -- a Text
+#: Box -- with a leader in `/CL` from a tip styled by `/LE` to the middle of
+#: a side of the box, told from a Text Box by `/IT /FreeTextCallout`.
+CALLOUT = "/FreeTextCallout"
+
+
+def is_callout(mark) -> bool:
+    """Whether ``mark`` is a Callout rather than a Text Box."""
+    kind = getattr(mark, "kind", None) or getattr(mark, "subtype", None)
+    return kind == FREETEXT and str(getattr(mark, "intent", "") or "") == CALLOUT
+
+
+#: A new callout's box, one line at 12 points, and the last stretch of its
+#: leader, square to the box -- both read off the fixture's.
+CALLOUT_SIZE = (108.0, 14.4)
+CALLOUT_KNEE = 12.0
+
+
+def callout_points(tip, box, length: float = CALLOUT_KNEE) -> "tuple":
+    """A callout's leader, ``(tip, knee, end)`` as a flat run: ``end`` the
+    middle of whichever side of ``box`` has its middle nearest ``tip``, and
+    ``knee`` ``length`` out from it, square to that side."""
+    left, bottom, right, top = (float(v) for v in box)
+    cx, cy = (left + right) / 2.0, (bottom + top) / 2.0
+    sides = (((left, cy), (-1.0, 0.0)), ((right, cy), (1.0, 0.0)),
+             ((cx, bottom), (0.0, -1.0)), ((cx, top), (0.0, 1.0)))
+    (ex, ey), (nx, ny) = min(
+        sides, key=lambda side: math.hypot(tip[0] - side[0][0], tip[1] - side[0][1]))
+    return (float(tip[0]), float(tip[1]), ex + nx * length, ey + ny * length, ex, ey)
+
+
+def callout_knee(points) -> float:
+    """How long the last stretch of a callout's leader is."""
+    if not points or len(points) < 6:
+        return CALLOUT_KNEE
+    return math.hypot(points[-2] - points[-4], points[-1] - points[-3])
+
+
+def callout_rect(box, points, end: str, style_name: str, width: float) -> "tuple":
+    """A callout's `/Rect`: its box -- grown by a cloud's reach, or by half
+    the line -- and its leader and the end at its tip, half the line round
+    them, as the fixture's reach."""
+    style = BORDER_STYLES.get(style_name, {})
+    width = float(style.get("width", width))
+    left, bottom, right, top = (float(v) for v in box)
+    grow = (cloud_inset(box, style["cloud"], width) if "cloud" in style
+            else width / 2.0)
+    xs, ys = [left - grow, right + grow], [bottom - grow, top + grow]
+    if points and len(points) >= 4:
+        _segment, pieces = line_end_drawing(tuple(points[:4]), (end, "/None"), width)
+        xs += list(points[0::2])
+        ys += list(points[1::2])
+        for kind, data, _filled in pieces:
+            if kind == "circle":
+                cx, cy, r = data
+                xs += [cx - r, cx + r]
+                ys += [cy - r, cy + r]
+            else:
+                xs += [p[0] for p in data]
+                ys += [p[1] for p in data]
+    half = width / 2.0
+    return (min(xs) - half, min(ys) - half, max(xs) + half, max(ys) + half)
+
+
 #: What the Draw tool makes, a Pencil: any number of strokes, each its own
 #: run of points in `/InkList`, drawn as curves fitted to them.
 INK = "/Ink"
@@ -1215,9 +1279,31 @@ def _patch_text_box(annot, edit, pdf=None) -> None:
             annot[pikepdf.Name.CA] = float(opacity)
         elif pikepdf.Name.CA in annot:
             del annot[pikepdf.Name.CA]
+    callout = str(annot.get(pikepdf.Name.IT, "")) == CALLOUT
+    if callout:
+        # A callout's box before the edit: `/Rect` less `/RD`.
+        was_rect = [float(v) for v in annot.Rect]
+        rd = reading.get("rd") or (0.0,) * 4
+        was_box = (was_rect[0] + rd[0], was_rect[1] + rd[1],
+                   was_rect[2] - rd[2], was_rect[3] - rd[3])
+        moved_to = edit.get("rect")
+        dx = dy = 0.0
+        if moved_to:
+            # Moved: the box goes with the rectangle.
+            dx, dy = moved_to[0] - was_rect[0], moved_to[1] - was_rect[1]
+            was_box = (was_box[0] + dx, was_box[1] + dy,
+                       was_box[2] + dx, was_box[3] + dy)
+        line = annot.get(pikepdf.Name.CL)
+        was_points = (tuple(_number(v, 0.0) + (dx if k % 2 == 0 else dy)
+                            for k, v in enumerate(line))
+                      if line is not None else None)
     rect = edit.get("rect")
     if rect:
         annot[pikepdf.Name.Rect] = pikepdf.Array([*rect])
+    points = edit.get("points")
+    if points and callout:
+        # A callout's leader, moved with its rectangle.
+        annot[pikepdf.Name.CL] = pikepdf.Array([*points])
     # The border as it ends up. **A rectangle held with a restyle is the one
     # for the new style** -- the window sends one with every change of
     # style or thickness -- so the box inside it is found by that style;
@@ -1234,7 +1320,7 @@ def _patch_text_box(annot, edit, pdf=None) -> None:
                     outer[2] - inset, outer[3] - inset)
     restyled = (edit.get("border_style") is not None
                 or edit.get("thickness") is not None)
-    if restyled:
+    if restyled and not callout:
         _write_border(annot, style_name, thickness, box_rect)
     for key, name in (("author", pikepdf.Name.T), ("subject", pikepdf.Name.Subj)):
         if edit.get(key) is not None:
@@ -1262,6 +1348,11 @@ def _patch_text_box(annot, edit, pdf=None) -> None:
     redrawn = (colour is not None or fill is not None or opacity is not None
                or contents is not None or restyled
                or (rect and reading.get("box_size") != _size(rect)))
+    if callout:
+        _patch_callout(annot, edit, pdf, reading, was_box, was_points,
+                       style_name, thickness, redrawn or restyled,
+                       family, size, ink)
+        return
     if redrawn and pdf is not None:
         box = Annotation(FREETEXT, 0, list(box_rect),
                          colour=colour or reading["colour"],
@@ -1275,6 +1366,53 @@ def _patch_text_box(annot, edit, pdf=None) -> None:
                          text_font=family, text_size=size, text_colour=ink)
         annot[pikepdf.Name.AP] = pikepdf.Dictionary(
             N=_freetext_appearance(pdf, box, [float(v) for v in annot.Rect]))
+
+
+def _patch_callout(annot, edit, pdf, reading, was_box, was_points,
+                   style_name: str, thickness: float, looks: bool,
+                   family, size, ink) -> None:
+    """`_patch_text_box` for a callout. **Moved**, its box goes with `/Rect`
+    and `/RD` and Acrobat's drawing are kept; **reshaped or restyled** --
+    the box resized or moved alone, the leader's tip or knee dragged, the
+    look changed -- its keys are written afresh round the box and the
+    leader, with a drawing of our own."""
+    line = annot.get(pikepdf.Name.CL)
+    points = tuple(_number(v, 0.0) for v in line) if line is not None else None
+    end = annot.get(pikepdf.Name.LE)
+    if isinstance(end, pikepdf.Array):
+        end = end[0] if len(end) else None
+    end = str(end) if end is not None else "/None"
+    if edit.get("ends"):
+        end = edit["ends"][0]
+    # Reshaped only when the box or the leader is not where a move alone
+    # would have put it.
+    box_now = edit.get("box")
+    reshaped = (edit.get("ends") is not None
+                or (box_now is not None
+                    and any(abs(a - b) > 0.01 for a, b in zip(box_now, was_box)))
+                or (points is not None and was_points is not None
+                    and (len(points) != len(was_points)
+                         or any(abs(a - b) > 0.01
+                                for a, b in zip(points, was_points)))))
+    if not (looks or reshaped) or pdf is None:
+        return
+    box = tuple(edit.get("box") or was_box)
+    _write_border(annot, style_name, thickness, box)
+    outer = _write_callout(annot, box, points, end, style_name, thickness)
+    colour = edit.get("colour")
+    fill = edit.get("fill")
+    drawn = Annotation(FREETEXT, 0, list(box),
+                       colour=colour or reading["colour"],
+                       fill=fill or reading["fill"],
+                       thickness=thickness, border_style=style_name,
+                       opacity=_number(annot.get(pikepdf.Name.CA)),
+                       contents=str(annot.get(pikepdf.Name.Contents, "")),
+                       rich=(str(annot[pikepdf.Name.RC])
+                             if pikepdf.Name.RC in annot else None),
+                       text_font=family, text_size=size, text_colour=ink,
+                       intent=CALLOUT, points=points, ends=(end, "/None"))
+    annot[pikepdf.Name.AP] = pikepdf.Dictionary(
+        N=_freetext_appearance(pdf, drawn, outer))
 
 
 def _write_border(entry, style_name: str, thickness: float, box,
@@ -1845,7 +1983,7 @@ class MarkEdits:
     FIELDS = ("colour", "opacity", "quads", "deleted", "contents", "popup",
               "rich", "author", "subject", "locked", "style", "icon",
               "rect", "rotate", "modified", "fill", "thickness",
-              "border_style", "points", "ends")
+              "border_style", "points", "ends", "box")
 
     def __init__(self, by_page=None):
         self._by_page: Dict[int, Dict[int, dict]] = {}
@@ -2157,10 +2295,32 @@ def _write_text_box(pdf, entry, annotation) -> None:
             or text_box_rich(annotation.contents, family, size, ink))
     _write_border(entry, annotation.border_style, annotation.thickness,
                   annotation.rect)
+    if is_callout(annotation):
+        outer = _write_callout(entry, annotation.rect, annotation.points,
+                               (annotation.ends or ("/None",))[0],
+                               annotation.border_style, annotation.thickness)
     if solidity(annotation) != 1.0:
         entry[pikepdf.Name.CA] = solidity(annotation)
     entry[pikepdf.Name.AP] = pikepdf.Dictionary(
         N=_freetext_appearance(pdf, annotation, outer))
+
+
+def _write_callout(entry, box, points, end: str, style_name: str,
+                   width: float) -> "tuple":
+    """A callout's own keys, as Acrobat writes them: the leader in `/CL`,
+    the end at its tip in `/LE` as a single name, `/IT /FreeTextCallout`,
+    `/Rect` round the box and the leader, and `/RD` side by side from it to
+    the box. Answers the `/Rect`."""
+    points = tuple(points) if points else callout_points(
+        (box[0] - 36.0, box[3] + 36.0), box)
+    entry[pikepdf.Name.CL] = pikepdf.Array([*points])
+    entry[pikepdf.Name.LE] = pikepdf.Name(end or "/None")
+    entry[pikepdf.Name.IT] = pikepdf.Name(CALLOUT)
+    outer = callout_rect(box, points, end, style_name, width)
+    entry[pikepdf.Name.Rect] = pikepdf.Array([*outer])
+    entry[pikepdf.Name.RD] = pikepdf.Array(
+        [box[0] - outer[0], box[1] - outer[1], outer[2] - box[2], outer[3] - box[3]])
+    return outer
 
 
 #: The colours a mark can be given, as Acrobat offers them: seven hues, the
@@ -3845,6 +4005,45 @@ def _freetext_appearance(pdf, annotation, outer):
             R0=pikepdf.Dictionary(Type=pikepdf.Name.ExtGState, AIS=False,
                                   CA=opacity, ca=opacity))
     left, bottom, right, top = (float(v) for v in annotation.rect)
+    if is_callout(annotation) and annotation.points:
+        # **The leader first**, so the box covers its end: in the box's
+        # colour and width, dashed as its border is but never clouded, the
+        # end at its tip pulled back as a line's is, a closed end filled
+        # with the fill -- and at 0 the thinnest line, a closed end with no
+        # outline, as Acrobat draws one.
+        end = (annotation.ends or ("/None",))[0]
+        segment, pieces = line_end_drawing(tuple(annotation.points[:4]),
+                                           (end, "/None"), width)
+        run = [(segment[0], segment[1])] + list(
+            zip(annotation.points[2::2], annotation.points[3::2]))
+        if "dash" in style:
+            lines.append("[{}] 0 d".format(" ".join(f"{v:g}" for v in style["dash"])))
+        lines.append("{:.4f} {:.4f} m".format(*run[0]))
+        lines += ["{:.4f} {:.4f} l".format(*p) for p in run[1:]]
+        lines.append("S")
+        lines.append("[] 0 d")
+        for piece, data, filled in pieces:
+            if piece == "circle":
+                cx, cy, r = data
+                k = r * _KAPPA
+                lines += ["{:.4f} {:.4f} m".format(cx, cy + r),
+                          "{:.4f} {:.4f} {:.4f} {:.4f} {:.4f} {:.4f} c".format(
+                              cx + k, cy + r, cx + r, cy + k, cx + r, cy),
+                          "{:.4f} {:.4f} {:.4f} {:.4f} {:.4f} {:.4f} c".format(
+                              cx + r, cy - k, cx + k, cy - r, cx, cy - r),
+                          "{:.4f} {:.4f} {:.4f} {:.4f} {:.4f} {:.4f} c".format(
+                              cx - k, cy - r, cx - r, cy - k, cx - r, cy),
+                          "{:.4f} {:.4f} {:.4f} {:.4f} {:.4f} {:.4f} c".format(
+                              cx - r, cy + k, cx - k, cy + r, cx, cy + r)]
+            else:
+                lines.append("{:.4f} {:.4f} m".format(*data[0]))
+                lines += ["{:.4f} {:.4f} l".format(*p) for p in data[1:]]
+            closed = piece in ("closed", "circle")
+            if closed:
+                lines.append("h")
+            lines.append({(True, True): "B", (True, False): "f",
+                          (False, True): "S", (False, False): "n"}[
+                              (filled, width > 0 or not closed)])
     if "cloud" in style:
         found = cloud_path(annotation.rect, style["cloud"], width)
         if found is not None:
@@ -4315,15 +4514,32 @@ def _text_box_reading(annot) -> dict:
     found["styled"] = spans > 1
     rect = annot.get(pikepdf.Name.Rect)
     found["box_size"] = _size(rect) if rect is not None and len(rect) == 4 else None
+    if str(annot.get(pikepdf.Name.IT, "")) == CALLOUT:
+        # A callout's leader, and `/RD` side by side: its rectangle reaches
+        # round the box for the leader as well as for a cloud.
+        line = annot.get(pikepdf.Name.CL)
+        found["points"] = (tuple(_number(v, 0.0) for v in line)
+                           if line is not None and len(line) >= 4 else None)
+        end = annot.get(pikepdf.Name.LE)
+        if isinstance(end, pikepdf.Array):
+            end = end[0] if len(end) else None
+        found["ends"] = (str(end) if end is not None else "/None", "/None")
+        found["rd"] = (tuple(_number(v, 0.0) for v in rd)
+                       if rd is not None and len(rd) == 4 else (0.0,) * 4)
     return found
 
 
 def text_box_of(mark) -> "tuple":
-    """A text box's own box: its rectangle less a cloud's reach."""
-    inset = float(getattr(mark, "inset", 0.0) or 0.0)
+    """A text box's own box: its rectangle less a cloud's reach -- or a
+    callout's, less `/RD` side by side, which reaches round the leader
+    too."""
     left, bottom, right, top = mark.rect
     if not isinstance(mark, Mark):
         return tuple(mark.rect)
+    rd = getattr(mark, "rd", None) if is_callout(mark) else None
+    if rd:
+        return (left + rd[0], bottom + rd[1], right - rd[2], top - rd[3])
+    inset = float(getattr(mark, "inset", 0.0) or 0.0)
     return (left + inset, bottom + inset, right - inset, top - inset)
 
 

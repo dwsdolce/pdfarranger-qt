@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-12 22:27+0000\n"
+"POT-Creation-Date: 2026-11-13 05:41+0000\n"
 "PO-Revision-Date: 2025-09-28 16:51+0000\n"
 "Last-Translator: Sveinn í Felli <sv1@fellsnet.is>\n"
 "Language: is\n"
@@ -50,6 +50,12 @@ msgstr "Fjarlægja síðustu stroku"
 #: pdfarranger_qt/canvas.py
 msgid "Complete"
 msgstr "Ljúka"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py pdfarranger_qt/mainwindow.py
+#: pdfarranger_qt/toolstrip.py
+msgid "Properties..."
+msgstr "Eiginleikar..."
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
@@ -151,12 +157,6 @@ msgstr "Virkja textaval"
 #: pdfarranger_qt/canvas.py
 msgid "Make current properties default"
 msgstr "Gera núverandi eiginleika sjálfgefna"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/canvas.py pdfarranger_qt/mainwindow.py
-#: pdfarranger_qt/toolstrip.py
-msgid "Properties..."
-msgstr "Eiginleikar..."
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
@@ -3117,6 +3117,11 @@ msgstr "Fjöllína"
 msgid "Pencil"
 msgstr "Blýantur"
 
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Callout"
+msgstr "Skýringarblaðra"
+
 #: pdfarranger_qt/properties.py
 msgid "Review History"
 msgstr "Yfirferðarsaga"
@@ -3213,6 +3218,16 @@ msgstr "Upphaf"
 #: pdfarranger_qt/properties.py
 msgid "End"
 msgstr "Endir"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Line Ending"
+msgstr "Línuendi"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Line Colour"
+msgstr "Litur línu"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/properties.py pdfarranger_qt/toolstrip.py

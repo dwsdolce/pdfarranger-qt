@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pdfarranger - Korean\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-12 22:27+0000\n"
+"POT-Creation-Date: 2026-11-13 05:41+0000\n"
 "PO-Revision-Date: 2026-05-25 00:41+0900\n"
 "Last-Translator: VenusGirl <venusgirl@outlook.com>\n"
 "Language: ko\n"
@@ -49,6 +49,12 @@ msgstr "마지막 획 제거"
 #: pdfarranger_qt/canvas.py
 msgid "Complete"
 msgstr "완료"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py pdfarranger_qt/mainwindow.py
+#: pdfarranger_qt/toolstrip.py
+msgid "Properties..."
+msgstr "속성..."
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
@@ -150,12 +156,6 @@ msgstr "텍스트 선택 사용"
 #: pdfarranger_qt/canvas.py
 msgid "Make current properties default"
 msgstr "현재 속성을 기본값으로 설정"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/canvas.py pdfarranger_qt/mainwindow.py
-#: pdfarranger_qt/toolstrip.py
-msgid "Properties..."
-msgstr "속성..."
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
@@ -2985,6 +2985,11 @@ msgstr "폴리라인"
 msgid "Pencil"
 msgstr "연필"
 
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Callout"
+msgstr "설명선"
+
 #: pdfarranger_qt/properties.py
 msgid "Review History"
 msgstr "검토 기록"
@@ -3081,6 +3086,16 @@ msgstr "시작"
 #: pdfarranger_qt/properties.py
 msgid "End"
 msgstr "끝"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Line Ending"
+msgstr "선 끝"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Line Colour"
+msgstr "선 색"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/properties.py pdfarranger_qt/toolstrip.py

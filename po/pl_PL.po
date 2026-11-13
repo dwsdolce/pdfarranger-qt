@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PDF-Shuffler 0.7\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-12 22:27+0000\n"
+"POT-Creation-Date: 2026-11-13 05:41+0000\n"
 "PO-Revision-Date: 2021-12-30 17:13+0100\n"
 "Last-Translator: Toratora <darex7@o2.pl>\n"
 "Language: pl_PL\n"
@@ -54,6 +54,12 @@ msgstr "Usuń ostatnie pociągnięcie"
 #: pdfarranger_qt/canvas.py
 msgid "Complete"
 msgstr "Zakończ"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py pdfarranger_qt/mainwindow.py
+#: pdfarranger_qt/toolstrip.py
+msgid "Properties..."
+msgstr "Właściwości..."
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
@@ -155,12 +161,6 @@ msgstr "Włącz zaznaczanie tekstu"
 #: pdfarranger_qt/canvas.py
 msgid "Make current properties default"
 msgstr "Ustaw bieżące właściwości jako domyślne"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/canvas.py pdfarranger_qt/mainwindow.py
-#: pdfarranger_qt/toolstrip.py
-msgid "Properties..."
-msgstr "Właściwości..."
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
@@ -3199,6 +3199,11 @@ msgstr "Łamana"
 msgid "Pencil"
 msgstr "Ołówek"
 
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Callout"
+msgstr "Objaśnienie"
+
 #: pdfarranger_qt/properties.py
 msgid "Review History"
 msgstr "Historia recenzji"
@@ -3295,6 +3300,16 @@ msgstr "Początek"
 #: pdfarranger_qt/properties.py
 msgid "End"
 msgstr "Koniec"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Line Ending"
+msgstr "Zakończenie linii"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Line Colour"
+msgstr "Kolor linii"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/properties.py pdfarranger_qt/toolstrip.py

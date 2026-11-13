@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-12 22:27+0000\n"
+"POT-Creation-Date: 2026-11-13 05:41+0000\n"
 "PO-Revision-Date: 2024-09-05 17:05+0300\n"
 "Last-Translator: Abdullah Albaroty <albaroty@gmail.com>\n"
 "Language: ar\n"
@@ -51,6 +51,12 @@ msgstr "إزالة آخر خط"
 #: pdfarranger_qt/canvas.py
 msgid "Complete"
 msgstr "إكمال"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py pdfarranger_qt/mainwindow.py
+#: pdfarranger_qt/toolstrip.py
+msgid "Properties..."
+msgstr "خصائص..."
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
@@ -152,12 +158,6 @@ msgstr "تمكين تحديد النص"
 #: pdfarranger_qt/canvas.py
 msgid "Make current properties default"
 msgstr "اجعل الخصائص الحالية افتراضية"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/canvas.py pdfarranger_qt/mainwindow.py
-#: pdfarranger_qt/toolstrip.py
-msgid "Properties..."
-msgstr "خصائص..."
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
@@ -3114,6 +3114,11 @@ msgstr "خط متعدد"
 msgid "Pencil"
 msgstr "قلم رصاص"
 
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Callout"
+msgstr "وسيلة شرح"
+
 #: pdfarranger_qt/properties.py
 msgid "Review History"
 msgstr "سجل المراجعة"
@@ -3210,6 +3215,16 @@ msgstr "البداية"
 #: pdfarranger_qt/properties.py
 msgid "End"
 msgstr "النهاية"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Line Ending"
+msgstr "نهاية الخط"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Line Colour"
+msgstr "لون الخط"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/properties.py pdfarranger_qt/toolstrip.py

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pdfarranger main\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-12 22:27+0000\n"
+"POT-Creation-Date: 2026-11-13 05:41+0000\n"
 "PO-Revision-Date: 2026-04-24 21:19+0300\n"
 "Last-Translator: Oğuz Ersen <oguz@ersen.moe>\n"
 "Language: tr\n"
@@ -50,6 +50,12 @@ msgstr "Son çizgiyi kaldır"
 #: pdfarranger_qt/canvas.py
 msgid "Complete"
 msgstr "Tamamla"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py pdfarranger_qt/mainwindow.py
+#: pdfarranger_qt/toolstrip.py
+msgid "Properties..."
+msgstr "Özellikler..."
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
@@ -151,12 +157,6 @@ msgstr "Metin Seçimini Etkinleştir"
 #: pdfarranger_qt/canvas.py
 msgid "Make current properties default"
 msgstr "Geçerli Özellikleri Varsayılan Yap"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/canvas.py pdfarranger_qt/mainwindow.py
-#: pdfarranger_qt/toolstrip.py
-msgid "Properties..."
-msgstr "Özellikler..."
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
@@ -3089,6 +3089,11 @@ msgstr "Çoklu çizgi"
 msgid "Pencil"
 msgstr "Kalem"
 
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Callout"
+msgstr "Belirtme çizgisi"
+
 #: pdfarranger_qt/properties.py
 msgid "Review History"
 msgstr "İnceleme geçmişi"
@@ -3185,6 +3190,16 @@ msgstr "Başlangıç"
 #: pdfarranger_qt/properties.py
 msgid "End"
 msgstr "Bitiş"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Line Ending"
+msgstr "Çizgi sonu"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Line Colour"
+msgstr "Çizgi rengi"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/properties.py pdfarranger_qt/toolstrip.py

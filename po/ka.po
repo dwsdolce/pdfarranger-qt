@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  pdfarranger\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-12 22:27+0000\n"
+"POT-Creation-Date: 2026-11-13 05:41+0000\n"
 "PO-Revision-Date: 2026-01-21 05:07+0100\n"
 "Last-Translator: Ekaterine Papava <papava.e@gtu.ge>\n"
 "Language: ka\n"
@@ -49,6 +49,12 @@ msgstr "ბოლო შტრიხის წაშლა"
 #: pdfarranger_qt/canvas.py
 msgid "Complete"
 msgstr "დასრულება"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py pdfarranger_qt/mainwindow.py
+#: pdfarranger_qt/toolstrip.py
+msgid "Properties..."
+msgstr "თვისებები..."
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
@@ -150,12 +156,6 @@ msgstr "ტექსტის მონიშვნის ჩართვა"
 #: pdfarranger_qt/canvas.py
 msgid "Make current properties default"
 msgstr "მიმდინარე თვისებების ნაგულისხმევად დაყენება"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/canvas.py pdfarranger_qt/mainwindow.py
-#: pdfarranger_qt/toolstrip.py
-msgid "Properties..."
-msgstr "თვისებები..."
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
@@ -3105,6 +3105,11 @@ msgstr "ტეხილი"
 msgid "Pencil"
 msgstr "ფანქარი"
 
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Callout"
+msgstr "გამოძახება"
+
 #: pdfarranger_qt/properties.py
 msgid "Review History"
 msgstr "გადახედვის ისტორია"
@@ -3201,6 +3206,16 @@ msgstr "დასაწყისი"
 #: pdfarranger_qt/properties.py
 msgid "End"
 msgstr "დასასრული"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Line Ending"
+msgstr "ხაზის ბოლო"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Line Colour"
+msgstr "ხაზის ფერი"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/properties.py pdfarranger_qt/toolstrip.py

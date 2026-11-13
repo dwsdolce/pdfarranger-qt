@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-12 22:27+0000\n"
+"POT-Creation-Date: 2026-11-13 05:41+0000\n"
 "PO-Revision-Date: 2025-12-15 00:59+0700\n"
 "Last-Translator: Loc Huynh <https://github.com/hthienloc>\n"
 "Language: vi\n"
@@ -48,6 +48,12 @@ msgstr "Xóa nét cuối"
 #: pdfarranger_qt/canvas.py
 msgid "Complete"
 msgstr "Hoàn tất"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py pdfarranger_qt/mainwindow.py
+#: pdfarranger_qt/toolstrip.py
+msgid "Properties..."
+msgstr "Thuộc tính..."
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
@@ -149,12 +155,6 @@ msgstr "Bật chọn văn bản"
 #: pdfarranger_qt/canvas.py
 msgid "Make current properties default"
 msgstr "Đặt thuộc tính hiện tại làm mặc định"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/canvas.py pdfarranger_qt/mainwindow.py
-#: pdfarranger_qt/toolstrip.py
-msgid "Properties..."
-msgstr "Thuộc tính..."
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
@@ -3097,6 +3097,11 @@ msgstr "Đường gấp khúc"
 msgid "Pencil"
 msgstr "Bút chì"
 
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Callout"
+msgstr "Chú thích"
+
 #: pdfarranger_qt/properties.py
 msgid "Review History"
 msgstr "Lịch sử duyệt"
@@ -3193,6 +3198,16 @@ msgstr "Đầu"
 #: pdfarranger_qt/properties.py
 msgid "End"
 msgstr "Cuối"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Line Ending"
+msgstr "Đầu đường kẻ"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Line Colour"
+msgstr "Màu đường kẻ"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/properties.py pdfarranger_qt/toolstrip.py

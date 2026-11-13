@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-12 22:27+0000\n"
+"POT-Creation-Date: 2026-11-13 05:41+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: hu\n"
@@ -50,6 +50,12 @@ msgstr "Utolsó vonás eltávolítása"
 #: pdfarranger_qt/canvas.py
 msgid "Complete"
 msgstr "Befejezés"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py pdfarranger_qt/mainwindow.py
+#: pdfarranger_qt/toolstrip.py
+msgid "Properties..."
+msgstr "Tulajdonságok..."
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
@@ -151,12 +157,6 @@ msgstr "Szövegkijelölés engedélyezése"
 #: pdfarranger_qt/canvas.py
 msgid "Make current properties default"
 msgstr "Jelenlegi tulajdonságok beállítása alapértelmezettként"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/canvas.py pdfarranger_qt/mainwindow.py
-#: pdfarranger_qt/toolstrip.py
-msgid "Properties..."
-msgstr "Tulajdonságok..."
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
@@ -3153,6 +3153,11 @@ msgstr "Törött vonal"
 msgid "Pencil"
 msgstr "Ceruza"
 
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Callout"
+msgstr "Szövegbuborék"
+
 #: pdfarranger_qt/properties.py
 msgid "Review History"
 msgstr "Átnézési előzmények"
@@ -3249,6 +3254,16 @@ msgstr "Kezdet"
 #: pdfarranger_qt/properties.py
 msgid "End"
 msgstr "Vég"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Line Ending"
+msgstr "Vonalvég"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Line Colour"
+msgstr "Vonalszín"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/properties.py pdfarranger_qt/toolstrip.py

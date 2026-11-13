@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  pdfarranger\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-12 22:27+0000\n"
+"POT-Creation-Date: 2026-11-13 05:41+0000\n"
 "PO-Revision-Date: 2023-07-10 15:37+0000\n"
 "Last-Translator: PavelZ\n"
 "Language: cs_CZ\n"
@@ -46,6 +46,12 @@ msgstr "Odstranit poslední tah"
 #: pdfarranger_qt/canvas.py
 msgid "Complete"
 msgstr "Dokončit"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py pdfarranger_qt/mainwindow.py
+#: pdfarranger_qt/toolstrip.py
+msgid "Properties..."
+msgstr "Vlastnosti..."
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
@@ -147,12 +153,6 @@ msgstr "Povolit výběr textu"
 #: pdfarranger_qt/canvas.py
 msgid "Make current properties default"
 msgstr "Nastavit aktuální vlastnosti jako výchozí"
-
-# machine translation, unreviewed
-#: pdfarranger_qt/canvas.py pdfarranger_qt/mainwindow.py
-#: pdfarranger_qt/toolstrip.py
-msgid "Properties..."
-msgstr "Vlastnosti..."
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
@@ -3136,6 +3136,11 @@ msgstr "Lomená čára"
 msgid "Pencil"
 msgstr "Tužka"
 
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Callout"
+msgstr "Popisek"
+
 #: pdfarranger_qt/properties.py
 msgid "Review History"
 msgstr "Historie revizí"
@@ -3232,6 +3237,16 @@ msgstr "Začátek"
 #: pdfarranger_qt/properties.py
 msgid "End"
 msgstr "Konec"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Line Ending"
+msgstr "Zakončení čáry"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Line Colour"
+msgstr "Barva čáry"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/properties.py pdfarranger_qt/toolstrip.py
