@@ -2819,7 +2819,9 @@ class TestWhatColourEachToolStartsIn(unittest.TestCase):
                              ("highlight", "Orange"),
                              ("underline", "Blue"),
                              ("strikethrough", "Light Red"),
-                             ("callout", "White"),
+                             # Its line's, as the Text Box's: the
+                             # White was its fill again.
+                             ("callout", "Light Red"),
                              ("draw", "Red"), ("stamps", "Red")):
             with self.subTest(tool=name):
                 self.assertEqual(tools.by_name(name).colour, colour)
