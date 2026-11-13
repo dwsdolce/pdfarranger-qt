@@ -862,22 +862,26 @@ class TestTheToolDecidesWhatThePointerDoes(unittest.TestCase):
         self.assertFalse(self.canvas.marking())
 
     def test_a_drag_under_a_tool_reports_where_it_was(self):
+        """Draw's stroke, reported when the Pencil is finished: every point
+        in one flat run, and how many each stroke has. It stood in for a
+        tool that sent the rectangle it dragged out until Draw made a
+        Pencil, and no tool sends one any more."""
+        from PySide6.QtCore import Qt
+        from PySide6.QtTest import QTest
+
         from pdfarranger_qt.canvas import PageCanvas
 
-        # An *area* tool, and Draw is now the only one: highlight and
-        # strikethrough mark text and so select instead (3.3), and a note is
-        # placed at a corner with a size of its own (3.4).
         self.win.set_tool(PageCanvas.DRAW)
         # Clear of the widget at (150, 550, 298, 570), so the field does not
         # take the press instead.
         self.drag(self.viewport_point(150, 690), self.viewport_point(298, 670))
+        self.assertEqual(self.marks, [])     # nothing until it is finished
+        QTest.keyClick(self.canvas.viewport(), Qt.Key_Return)
         self.assertEqual(len(self.marks), 1)
-        tool, page, rects = self.marks[0]
+        tool, page, (points, counts) = self.marks[0]
         self.assertEqual((tool, page), (PageCanvas.DRAW, 0))
-        # Always a list: an area tool sends the one rectangle it dragged out,
-        # a text tool one per run of text it covered.
-        self.assertEqual(len(rects), 1)
-        for got, want in zip(rects[0], (150.0, 670.0, 298.0, 690.0)):
+        self.assertEqual(counts, (2,))
+        for got, want in zip(points, (150.0, 690.0, 298.0, 670.0)):
             self.assertAlmostEqual(got, want, delta=1.5)
 
     def test_over_a_field_there_is_no_markup(self):
@@ -892,22 +896,24 @@ class TestTheToolDecidesWhatThePointerDoes(unittest.TestCase):
         self.assertEqual(self.marks, [])
         self.assertIsNotNone(self.canvas.editing())
 
-    def test_a_click_is_a_rectangle_with_no_width(self):
-        """What the canvas reports for a click under an *area* tool, and what
-        it means is the tool's business -- which is the whole of 3.2's
-        division. A note no longer arrives this way: 3.4 found that the corner
-        under the pointer is decided by the page's turn, so the canvas chooses
-        the box for a point tool rather than reporting the gesture raw."""
+    def test_a_click_is_a_stroke_of_one_point(self):
+        """What the canvas reports for a click under Draw: a stroke of one
+        point, which the Pencil draws as a dot. It was a rectangle with no
+        width while Draw stood in for a tool that sent rectangles."""
+        from PySide6.QtCore import Qt
+        from PySide6.QtTest import QTest
+
         from pdfarranger_qt.canvas import PageCanvas
 
         self.win.set_tool(PageCanvas.DRAW)
         where = self.viewport_point(200, 690)
         self.drag(where, where)
+        QTest.keyClick(self.canvas.viewport(), Qt.Key_Return)
         self.assertEqual(len(self.marks), 1)
-        _tool, _page, rects = self.marks[0]
-        self.assertEqual(len(rects), 1)
-        self.assertAlmostEqual(rects[0][0], rects[0][2], delta=1.0)
-        self.assertAlmostEqual(rects[0][1], rects[0][3], delta=1.0)
+        _tool, _page, (points, counts) = self.marks[0]
+        self.assertEqual(counts, (1,))
+        self.assertAlmostEqual(points[0], 200.0, delta=1.0)
+        self.assertAlmostEqual(points[1], 690.0, delta=1.0)
 
     def test_escape_puts_the_pointer_back_to_reading(self):
         from PySide6.QtCore import Qt
