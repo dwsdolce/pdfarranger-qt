@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  pdfarranger\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-13 22:55+0000\n"
+"POT-Creation-Date: 2026-11-13 23:41+0000\n"
 "PO-Revision-Date: 2026-01-21 05:07+0100\n"
 "Last-Translator: Ekaterine Papava <papava.e@gtu.ge>\n"
 "Language: ka\n"
@@ -133,7 +133,7 @@ msgstr "ძაფის წაშლა"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py pdfarranger_qt/mainwindow.py pdfarranger_qt/reader.py
-#: pdfarranger_qt/toolstrip.py
+#: pdfarranger_qt/stamppalette.py pdfarranger_qt/toolstrip.py
 msgid "Delete"
 msgstr "წაშლა"
 
@@ -452,7 +452,8 @@ msgstr "ზომა"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
-#: pdfarranger_qt/properties.py pdfarranger_qt/toolstrip.py
+#: pdfarranger_qt/properties.py pdfarranger_qt/stamppalette.py
+#: pdfarranger_qt/toolstrip.py
 msgid "Colour"
 msgstr "ფერი"
 
@@ -519,7 +520,7 @@ msgid "DRAFT"
 msgstr "მონახაზი"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/dialogs.py
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/stamppalette.py
 msgid "Text"
 msgstr "ტექსტი"
 
@@ -2192,6 +2193,66 @@ msgstr "ტექსტის ჩასწორება"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "by %(author)s, %(when)s"
+msgstr "%(author)s, %(when)s"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Image"
+msgstr "სურათი"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py pdfarranger_qt/stamppalette.py
+msgid "Images"
+msgstr "სურათები"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "That file could not be read as a picture."
+msgstr "ფაილის სურათად წაკითხვა ვერ მოხერხდა."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py pdfarranger_qt/stamppalette.py
+msgid "Import from PDF"
+msgstr "PDF-დან შემოტანა"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "PDF files"
+msgstr "PDF ფაილები"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "That file could not be read as a PDF."
+msgstr "ფაილის PDF-ად წაკითხვა ვერ მოხერხდა."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "Delete the stamp “%s”? It cannot be had back."
+msgstr "წაიშალოს შტამპი „%s“? მისი აღდგენა შეუძლებელი იქნება."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py pdfarranger_qt/stamppalette.py
+msgid "Delete Category"
+msgstr "კატეგორიის წაშლა"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid ""
+"Delete the category “%(name)s” and its %(count)d stamp? It cannot be had "
+"back."
+msgid_plural ""
+"Delete the category “%(name)s” and its %(count)d stamps? They cannot be had "
+"back."
+msgstr[0] ""
+"წაიშალოს კატეგორია „%(name)s“ და მისი %(count)d შტამპი? აღდგენა შეუძლებელი "
+"იქნება."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
 msgid "Move Mark"
 msgstr "ნიშნის გადატანა"
 
@@ -3200,6 +3261,11 @@ msgstr "ფანქარი"
 msgid "Callout"
 msgstr "გამოძახება"
 
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Stamp"
+msgstr "შტამპი"
+
 #: pdfarranger_qt/properties.py
 msgid "Review History"
 msgstr "გადახედვის ისტორია"
@@ -3498,8 +3564,43 @@ msgstr "ქვემოთ მარჯვნივ"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/stamppalette.py
+msgid "Predefined"
+msgstr "წინასწარ განსაზღვრული"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/stamppalette.py
+msgid "Resize"
+msgstr "ზომის შეცვლა"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/stamppalette.py
+msgid "Add Stamp"
+msgstr "შტამპის დამატება"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/stamppalette.py
+msgid "Text..."
+msgstr "ტექსტი…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/stamppalette.py
+msgid "Image..."
+msgstr "სურათი…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/stamppalette.py
+msgid "Import from PDF..."
+msgstr "PDF-დან შემოტანა…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/stamppalette.py
 msgid "Stamp with date and time"
 msgstr "შტამპი თარიღითა და დროით"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/stamppalette.py
+msgid "New Text Stamp"
+msgstr "ახალი ტექსტური შტამპი"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/textpalette.py

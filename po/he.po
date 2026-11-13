@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-13 22:55+0000\n"
+"POT-Creation-Date: 2026-11-13 23:41+0000\n"
 "PO-Revision-Date: 2023-06-12 11:22+0300\n"
 "Last-Translator: Yaron Shahrabani <sh.yaron@gmail.com>\n"
 "Language: he\n"
@@ -134,7 +134,7 @@ msgstr "מחיקת השרשור"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py pdfarranger_qt/mainwindow.py pdfarranger_qt/reader.py
-#: pdfarranger_qt/toolstrip.py
+#: pdfarranger_qt/stamppalette.py pdfarranger_qt/toolstrip.py
 msgid "Delete"
 msgstr "מחיקה"
 
@@ -465,7 +465,8 @@ msgstr "גודל"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
-#: pdfarranger_qt/properties.py pdfarranger_qt/toolstrip.py
+#: pdfarranger_qt/properties.py pdfarranger_qt/stamppalette.py
+#: pdfarranger_qt/toolstrip.py
 msgid "Colour"
 msgstr "צבע"
 
@@ -532,7 +533,7 @@ msgid "DRAFT"
 msgstr "טיוטה"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/dialogs.py
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/stamppalette.py
 msgid "Text"
 msgstr "טקסט"
 
@@ -2175,6 +2176,67 @@ msgstr "עריכת טקסט"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "by %(author)s, %(when)s"
+msgstr "מאת %(author)s, %(when)s"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Image"
+msgstr "תמונה"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py pdfarranger_qt/stamppalette.py
+msgid "Images"
+msgstr "תמונות"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "That file could not be read as a picture."
+msgstr "לא ניתן היה לקרוא את הקובץ כתמונה."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py pdfarranger_qt/stamppalette.py
+msgid "Import from PDF"
+msgstr "ייבוא מ־PDF"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "PDF files"
+msgstr "קובצי PDF"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "That file could not be read as a PDF."
+msgstr "לא ניתן היה לקרוא את הקובץ כ־PDF."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "Delete the stamp “%s”? It cannot be had back."
+msgstr "למחוק את החותמת „%s”? לא ניתן יהיה לשחזר אותה."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py pdfarranger_qt/stamppalette.py
+msgid "Delete Category"
+msgstr "מחיקת קטגוריה"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid ""
+"Delete the category “%(name)s” and its %(count)d stamp? It cannot be had "
+"back."
+msgid_plural ""
+"Delete the category “%(name)s” and its %(count)d stamps? They cannot be had "
+"back."
+msgstr[0] "למחוק את הקטגוריה „%(name)s” ואת החותמת %(count)d שבה? לא ניתן יהיה לשחזר."
+msgstr[1] "למחוק את הקטגוריה „%(name)s” ואת %(count)d החותמות שבה? לא ניתן יהיה לשחזר."
+msgstr[2] "למחוק את הקטגוריה „%(name)s” ואת %(count)d החותמות שבה? לא ניתן יהיה לשחזר."
+msgstr[3] "למחוק את הקטגוריה „%(name)s” ואת %(count)d החותמות שבה? לא ניתן יהיה לשחזר."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
 msgid "Move Mark"
 msgstr "הזזת סימון"
 
@@ -3196,6 +3258,11 @@ msgstr "עיפרון"
 msgid "Callout"
 msgstr "בועת הסבר"
 
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Stamp"
+msgstr "חותמת"
+
 #: pdfarranger_qt/properties.py
 msgid "Review History"
 msgstr "היסטוריית סקירה"
@@ -3494,8 +3561,43 @@ msgstr "למטה מימין"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/stamppalette.py
+msgid "Predefined"
+msgstr "מוגדרות מראש"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/stamppalette.py
+msgid "Resize"
+msgstr "שינוי גודל"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/stamppalette.py
+msgid "Add Stamp"
+msgstr "הוספת חותמת"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/stamppalette.py
+msgid "Text..."
+msgstr "טקסט…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/stamppalette.py
+msgid "Image..."
+msgstr "תמונה…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/stamppalette.py
+msgid "Import from PDF..."
+msgstr "ייבוא מ־PDF…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/stamppalette.py
 msgid "Stamp with date and time"
 msgstr "חותמת עם תאריך ושעה"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/stamppalette.py
+msgid "New Text Stamp"
+msgstr "חותמת טקסט חדשה"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/textpalette.py

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  pdfarranger\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-13 22:55+0000\n"
+"POT-Creation-Date: 2026-11-13 23:41+0000\n"
 "PO-Revision-Date: 2024-03-24 19:16+0200\n"
 "Last-Translator: \n"
 "Language: fi\n"
@@ -133,7 +133,7 @@ msgstr "Poista ketju"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py pdfarranger_qt/mainwindow.py pdfarranger_qt/reader.py
-#: pdfarranger_qt/toolstrip.py
+#: pdfarranger_qt/stamppalette.py pdfarranger_qt/toolstrip.py
 msgid "Delete"
 msgstr "Poista"
 
@@ -464,7 +464,8 @@ msgstr "Koko"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
-#: pdfarranger_qt/properties.py pdfarranger_qt/toolstrip.py
+#: pdfarranger_qt/properties.py pdfarranger_qt/stamppalette.py
+#: pdfarranger_qt/toolstrip.py
 msgid "Colour"
 msgstr "Väri"
 
@@ -531,7 +532,7 @@ msgid "DRAFT"
 msgstr "LUONNOS"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/dialogs.py
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/stamppalette.py
 msgid "Text"
 msgstr "Teksti"
 
@@ -2226,6 +2227,67 @@ msgstr "Muokkaa tekstiä"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "by %(author)s, %(when)s"
+msgstr "%(author)s, %(when)s"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Image"
+msgstr "Kuva"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py pdfarranger_qt/stamppalette.py
+msgid "Images"
+msgstr "Kuvat"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "That file could not be read as a picture."
+msgstr "Tiedostoa ei voitu lukea kuvana."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py pdfarranger_qt/stamppalette.py
+msgid "Import from PDF"
+msgstr "Tuo PDF:stä"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "PDF files"
+msgstr "PDF-tiedostot"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "That file could not be read as a PDF."
+msgstr "Tiedostoa ei voitu lukea PDF:nä."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "Delete the stamp “%s”? It cannot be had back."
+msgstr "Poistetaanko leima ”%s”? Sitä ei voi palauttaa."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py pdfarranger_qt/stamppalette.py
+msgid "Delete Category"
+msgstr "Poista luokka"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid ""
+"Delete the category “%(name)s” and its %(count)d stamp? It cannot be had "
+"back."
+msgid_plural ""
+"Delete the category “%(name)s” and its %(count)d stamps? They cannot be had "
+"back."
+msgstr[0] "Poistetaanko luokka ”%(name)s” ja sen %(count)d leima? Sitä ei voi palauttaa."
+msgstr[1] ""
+"Poistetaanko luokka ”%(name)s” ja sen %(count)d leimaa? Niitä ei voi "
+"palauttaa."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
 msgid "Move Mark"
 msgstr "Siirrä merkintää"
 
@@ -3241,6 +3303,11 @@ msgstr "Lyijykynä"
 msgid "Callout"
 msgstr "Huomautuslaatikko"
 
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Stamp"
+msgstr "Leima"
+
 #: pdfarranger_qt/properties.py
 msgid "Review History"
 msgstr "Tarkistushistoria"
@@ -3539,8 +3606,43 @@ msgstr "Alhaalla oikealla"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/stamppalette.py
+msgid "Predefined"
+msgstr "Valmiit"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/stamppalette.py
+msgid "Resize"
+msgstr "Muuta kokoa"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/stamppalette.py
+msgid "Add Stamp"
+msgstr "Lisää leima"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/stamppalette.py
+msgid "Text..."
+msgstr "Teksti…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/stamppalette.py
+msgid "Image..."
+msgstr "Kuva…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/stamppalette.py
+msgid "Import from PDF..."
+msgstr "Tuo PDF:stä…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/stamppalette.py
 msgid "Stamp with date and time"
 msgstr "Leimaa päiväys ja kellonaika"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/stamppalette.py
+msgid "New Text Stamp"
+msgstr "Uusi tekstileima"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/textpalette.py

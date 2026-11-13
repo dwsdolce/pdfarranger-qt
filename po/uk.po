@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: unnamed project\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-13 22:55+0000\n"
+"POT-Creation-Date: 2026-11-13 23:41+0000\n"
 "PO-Revision-Date: 2026-05-27 19:30+0300\n"
 "Last-Translator: Dymko <Dymkovych@proton.me>\n"
 "Language: uk\n"
@@ -136,7 +136,7 @@ msgstr "Вилучити гілку"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py pdfarranger_qt/mainwindow.py pdfarranger_qt/reader.py
-#: pdfarranger_qt/toolstrip.py
+#: pdfarranger_qt/stamppalette.py pdfarranger_qt/toolstrip.py
 msgid "Delete"
 msgstr "Видалити"
 
@@ -455,7 +455,8 @@ msgstr "Розмір"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
-#: pdfarranger_qt/properties.py pdfarranger_qt/toolstrip.py
+#: pdfarranger_qt/properties.py pdfarranger_qt/stamppalette.py
+#: pdfarranger_qt/toolstrip.py
 msgid "Colour"
 msgstr "Колір"
 
@@ -522,7 +523,7 @@ msgid "DRAFT"
 msgstr "ЧЕРНЕТКА"
 
 # machine translation, unreviewed
-#: pdfarranger_qt/dialogs.py
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/stamppalette.py
 msgid "Text"
 msgstr "Текст"
 
@@ -2194,6 +2195,72 @@ msgstr "Змінити текст"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "by %(author)s, %(when)s"
+msgstr "%(author)s, %(when)s"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Image"
+msgstr "Зображення"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py pdfarranger_qt/stamppalette.py
+msgid "Images"
+msgstr "Зображення"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "That file could not be read as a picture."
+msgstr "Не вдалося прочитати файл як зображення."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py pdfarranger_qt/stamppalette.py
+msgid "Import from PDF"
+msgstr "Імпорт із PDF"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "PDF files"
+msgstr "Файли PDF"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "That file could not be read as a PDF."
+msgstr "Не вдалося прочитати файл як PDF."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "Delete the stamp “%s”? It cannot be had back."
+msgstr "Вилучити штамп «%s»? Його не можна буде відновити."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py pdfarranger_qt/stamppalette.py
+msgid "Delete Category"
+msgstr "Вилучити категорію"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid ""
+"Delete the category “%(name)s” and its %(count)d stamp? It cannot be had "
+"back."
+msgid_plural ""
+"Delete the category “%(name)s” and its %(count)d stamps? They cannot be had "
+"back."
+msgstr[0] ""
+"Вилучити категорію «%(name)s» та її %(count)d штамп? Його не можна буде "
+"відновити."
+msgstr[1] ""
+"Вилучити категорію «%(name)s» та її %(count)d штампи? Їх не можна буде "
+"відновити."
+msgstr[2] ""
+"Вилучити категорію «%(name)s» та її %(count)d штампів? Їх не можна буде "
+"відновити."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
 msgid "Move Mark"
 msgstr "Перемістити позначку"
 
@@ -3214,6 +3281,11 @@ msgstr "Олівець"
 msgid "Callout"
 msgstr "Виноска"
 
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "Stamp"
+msgstr "Штамп"
+
 #: pdfarranger_qt/properties.py
 msgid "Review History"
 msgstr "Історія рецензування"
@@ -3512,8 +3584,43 @@ msgstr "Знизу праворуч"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/stamppalette.py
+msgid "Predefined"
+msgstr "Передвстановлені"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/stamppalette.py
+msgid "Resize"
+msgstr "Змінити розмір"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/stamppalette.py
+msgid "Add Stamp"
+msgstr "Додати штамп"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/stamppalette.py
+msgid "Text..."
+msgstr "Текст…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/stamppalette.py
+msgid "Image..."
+msgstr "Зображення…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/stamppalette.py
+msgid "Import from PDF..."
+msgstr "Імпорт із PDF…"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/stamppalette.py
 msgid "Stamp with date and time"
 msgstr "Штамп з датою і часом"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/stamppalette.py
+msgid "New Text Stamp"
+msgstr "Новий текстовий штамп"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/textpalette.py

@@ -181,8 +181,10 @@ TOOLS: List[Tool] = [
          "/Polygon /IT /PolygonCloud, /BE /I 2", marks=("Polygon",)),
     Tool("connected_lines", DRAWING, N_("Connected lines"), "vector-polyline",
          "/PolyLine, /Vertices, /LE", marks=("Polyline",)),
+    # A Stamp: our own presets, or one of yours.
     Tool("stamps", DRAWING, N_("Stamps palette"), "stamper",
-         "/Stamp, /Name, and an /AP we do not draw"),
+         "/Stamp, /Name, and an /AP of our own or yours",
+         marks=("Stamp",)),
 ]
 
 #: The tool armed when there is nothing else to be armed. Reader's too: a

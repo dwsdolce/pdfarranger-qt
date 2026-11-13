@@ -303,11 +303,21 @@ class TestTheStripAndTheCanvasAgree(StripCase):
         self.assertTrue(self.canvas().marking())
 
     def test_an_unbuilt_tool_stays_armed_and_leaves_the_canvas_reading(self):
-        """The mode is set; there is simply nothing behind it yet."""
+        """The mode is set; there is simply nothing behind it yet.
+
+        **Whichever tool is still unbuilt**, found rather than named: the
+        one named here was built each time -- Cloud, then Stamps -- and the
+        test failed for a tool that now worked. Skipped once all are."""
+        from pdfarranger_qt import tools
         from pdfarranger_qt.canvas import PageCanvas
 
-        self.strip.arm("stamps")
-        self.assertEqual(self.strip.armed(), "stamps")
+        unbuilt = next((t.name for t in tools.TOOLS
+                        if t.family != tools.POINTER
+                        and t.name not in self.win.CANVAS_TOOLS), None)
+        if unbuilt is None:
+            self.skipTest("every tool is built")
+        self.strip.arm(unbuilt)
+        self.assertEqual(self.strip.armed(), unbuilt)
         self.assertEqual(self.canvas().tool(), PageCanvas.SELECT)
 
     def test_the_canvas_disarming_itself_moves_the_strip(self):

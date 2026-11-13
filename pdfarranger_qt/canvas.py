@@ -5675,15 +5675,16 @@ class PageCanvas(QAbstractScrollArea):
         badged = self.QUADDED_SELECTABLE + (markup.CARET, *markup.SHAPES,
                                             markup.LINE, *markup.POLYS,
                                             markup.INK)
+        # And a Stamp, whose note is apart from its artwork.
         found = [m for m in self._file_marks.visible(index + 1)
-                 if m.subtype in badged
+                 if (m.subtype in badged or markup.is_stamp(m))
                  and not markup.is_reply(m)
                  and not self._paired_caret(index, m)
                  and self.carries_note(index, m)]
         try:
             if self.marks:
                 found += [m for m in (self.marks(index) or ())
-                          if m.kind in badged
+                          if (m.kind in badged or markup.is_stamp(m))
                           and not self._paired_caret(index, m)
                           and self.carries_note(index, m)]
         except Exception:       # noqa: BLE001 - a repaint must not fail

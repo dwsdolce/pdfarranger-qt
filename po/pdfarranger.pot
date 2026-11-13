@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pdfarranger-qt VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/dwsdolce/pdfarranger-qt/issues\n"
-"POT-Creation-Date: 2026-11-13 22:55+0000\n"
+"POT-Creation-Date: 2026-11-13 23:41+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -111,7 +111,7 @@ msgid "Delete Thread"
 msgstr ""
 
 #: pdfarranger_qt/canvas.py pdfarranger_qt/mainwindow.py pdfarranger_qt/reader.py
-#: pdfarranger_qt/toolstrip.py
+#: pdfarranger_qt/stamppalette.py pdfarranger_qt/toolstrip.py
 msgid "Delete"
 msgstr ""
 
@@ -392,7 +392,8 @@ msgid "Size"
 msgstr ""
 
 #: pdfarranger_qt/dialogs.py pdfarranger_qt/mainwindow.py
-#: pdfarranger_qt/properties.py pdfarranger_qt/toolstrip.py
+#: pdfarranger_qt/properties.py pdfarranger_qt/stamppalette.py
+#: pdfarranger_qt/toolstrip.py
 msgid "Colour"
 msgstr ""
 
@@ -446,7 +447,7 @@ msgstr ""
 msgid "DRAFT"
 msgstr ""
 
-#: pdfarranger_qt/dialogs.py
+#: pdfarranger_qt/dialogs.py pdfarranger_qt/stamppalette.py
 msgid "Text"
 msgstr ""
 
@@ -1711,6 +1712,55 @@ msgid "Edit Text"
 msgstr ""
 
 #: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "by %(author)s, %(when)s"
+msgstr ""
+
+#: pdfarranger_qt/mainwindow.py
+msgid "Image"
+msgstr ""
+
+#: pdfarranger_qt/mainwindow.py pdfarranger_qt/stamppalette.py
+msgid "Images"
+msgstr ""
+
+#: pdfarranger_qt/mainwindow.py
+msgid "That file could not be read as a picture."
+msgstr ""
+
+#: pdfarranger_qt/mainwindow.py pdfarranger_qt/stamppalette.py
+msgid "Import from PDF"
+msgstr ""
+
+#: pdfarranger_qt/mainwindow.py
+msgid "PDF files"
+msgstr ""
+
+#: pdfarranger_qt/mainwindow.py
+msgid "That file could not be read as a PDF."
+msgstr ""
+
+#: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid "Delete the stamp “%s”? It cannot be had back."
+msgstr ""
+
+#: pdfarranger_qt/mainwindow.py pdfarranger_qt/stamppalette.py
+msgid "Delete Category"
+msgstr ""
+
+#: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid ""
+"Delete the category “%(name)s” and its %(count)d stamp? It cannot be had "
+"back."
+msgid_plural ""
+"Delete the category “%(name)s” and its %(count)d stamps? They cannot be had "
+"back."
+msgstr[0] ""
+msgstr[1] ""
+
+#: pdfarranger_qt/mainwindow.py
 msgid "Move Mark"
 msgstr ""
 
@@ -2550,6 +2600,10 @@ msgid "Callout"
 msgstr ""
 
 #: pdfarranger_qt/properties.py
+msgid "Stamp"
+msgstr ""
+
+#: pdfarranger_qt/properties.py
 msgid "Review History"
 msgstr ""
 
@@ -2792,7 +2846,35 @@ msgid "Bottom right"
 msgstr ""
 
 #: pdfarranger_qt/stamppalette.py
+msgid "Predefined"
+msgstr ""
+
+#: pdfarranger_qt/stamppalette.py
+msgid "Resize"
+msgstr ""
+
+#: pdfarranger_qt/stamppalette.py
+msgid "Add Stamp"
+msgstr ""
+
+#: pdfarranger_qt/stamppalette.py
+msgid "Text..."
+msgstr ""
+
+#: pdfarranger_qt/stamppalette.py
+msgid "Image..."
+msgstr ""
+
+#: pdfarranger_qt/stamppalette.py
+msgid "Import from PDF..."
+msgstr ""
+
+#: pdfarranger_qt/stamppalette.py
 msgid "Stamp with date and time"
+msgstr ""
+
+#: pdfarranger_qt/stamppalette.py
+msgid "New Text Stamp"
 msgstr ""
 
 #: pdfarranger_qt/textpalette.py

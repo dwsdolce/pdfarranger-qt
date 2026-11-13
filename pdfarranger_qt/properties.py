@@ -112,6 +112,9 @@ KIND_LABELS = {
     "/Ink": N_("Pencil"),
     # Not a subtype: a Text Box with a leader, told apart by `/IT`.
     "callout": N_("Callout"),
+    # Nor this: a `/Stamp` that is not a Scalable Comment, told apart by
+    # its `/Name`.
+    "stamp": N_("Stamp"),
 }
 
 

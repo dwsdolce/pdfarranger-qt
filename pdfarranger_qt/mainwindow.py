@@ -25,12 +25,14 @@ import datetime
 import json
 import logging
 import os
+import re
 import shutil
 import sys
 from typing import List, Optional
 
 from PySide6.QtCore import (
     QEventLoop,
+    QLocale,
     QPoint,
     QPointF,
     QProcess,
@@ -79,6 +81,7 @@ from . import (
     reader,
     repair,
     stamp,
+    stampart,
     theme,
     tools,
     viewer,
@@ -1179,21 +1182,16 @@ class MainWindow(QMainWindow):
                                     told.get("thickness", 1.0))
         art = stamp_subject = None
         if tool == "stamps":
-            # The stamp picked in the palette, our own drawing of it with
-            # the date line when asked for: centred on a click at its own
-            # size, at the page's own size, or as big as a drag made it.
-            name = (self._stamp_palette.current() if self._stamp_palette
-                    is not None else markup.STAMP_PRESETS[0][0])
-            line = self._stamp_line()
-            art = markup.preset_art(name, line)
+            # The stamp picked in the palette, with the date line when
+            # asked for: centred on a click at its own size, at the page's
+            # own size, or as big as a drag made it. Its title in the file
+            # is the one it shows, as Acrobat writes "Approved".
+            name, stamp_subject, art = self._stamp_drawing(self._stamp_line())
             chosen = name
-            preset = markup.preset_of(name)
-            # Its title in the file, as Acrobat writes "Approved".
-            stamp_subject = preset[1] if preset else None
             x0, y0, x1, y1 = rects[-1]
             if x1 - x0 <= 0 or y1 - y0 <= 0:
                 scale = page.scale if page.scale else 1.0
-                wide, tall = (v / scale for v in markup.preset_size(name, line))
+                wide, tall = (v / scale for v in stampart.art_size(art))
                 rect = (x0 - wide / 2, y0 - tall / 2, x0 + wide / 2, y0 + tall / 2)
             else:
                 rect = (x0, y0, x1, y1)
@@ -1520,13 +1518,14 @@ class MainWindow(QMainWindow):
             opacity = markup.TRANSPARENCY.get(kind, 1.0)
         form = MarkProperties(Properties(
             kind=("replace_text" if tool == "replace_text"
-                  else "callout" if callout else kind),
+                  else "callout" if callout
+                  else "stamp" if tool == "stamps" else kind),
             author=self._authors.get(key) or markup.default_author(),
             subject=self._subjects.get(key) or markup.SUBJECTS.get(kind, ""),
             colour=self.colour_for(tool), opacity=opacity,
             style=style, styles=self._styles_for(kind),
             icon=self._icon_for(tool) if kind in (markup.TEXT, markup.STAMP) else "",
-            icons=self._icons_for(kind),
+            icons=() if tool == "stamps" else self._icons_for(kind),
             box=is_box,
             fill_optional=kind in markup.SHAPES or kind == markup.POLYGON,
             fill=fill if (is_box or is_line or callout) else None,
@@ -1791,16 +1790,33 @@ class MainWindow(QMainWindow):
     def _show_stamps(self, on: bool) -> None:
         """The stamps palette, beside the strip while its tool is armed."""
         if not on:
-            if self._stamp_palette is not None:
-                self._stamp_palette.hide()
+            if self._stamp_palette is not None and self._stamp_palette.isVisible():
+                # Its size and its category, for next time.
+                palette = self._stamp_palette
+                self.settings.setValue(self.STAMP_PALETTE_SETTING, json.dumps({
+                    "width": palette.width(), "height": palette.height(),
+                    "category": palette.current_category()}))
+                palette.hide()
             return
         if self._stamp_palette is None:
             from .stamppalette import StampPalette
 
             self._stamp_palette = StampPalette(self.tool_strip.parentWidget())
+            self._stamp_palette.add_wanted.connect(self._add_stamp)
+            self._stamp_palette.delete_wanted.connect(self._delete_stamp)
+            self._stamp_palette.delete_category_wanted.connect(
+                self._delete_stamp_category)
+            try:
+                kept = json.loads(self.settings.value(self.STAMP_PALETTE_SETTING, "{}")
+                                  or "{}")
+            except (TypeError, ValueError):
+                kept = {}
+            self._stamp_palette.show_stamps(self._own_stamps(),
+                                            kept.get("category", ""))
+            if kept.get("width") and kept.get("height"):
+                self._stamp_palette.resize(int(kept["width"]), int(kept["height"]))
         palette, strip = self._stamp_palette, self.tool_strip
         host = strip.parentWidget()
-        palette.adjustSize()
         at = strip.mapTo(host, QPoint(strip.width() + 8, 0))
         if host is not None and at.x() + palette.width() > host.width():
             at.setX(strip.x() - 8 - palette.width())
@@ -1815,23 +1831,152 @@ class MainWindow(QMainWindow):
             return ""
         now = datetime.datetime.now()
         who = self._authors.get("stamps") or markup.default_author()
-        # In English, as the stamp's word is: see `markup.preset_art`.
-        return f"by {who}, {now.day} {now.strftime('%b %Y %H:%M')}"
+        return _("by %(author)s, %(when)s") % {
+            "author": who, "when": QLocale().toString(
+                now, QLocale.FormatType.ShortFormat)}
+
+    #: Where your own stamps are kept, as JSON: a list of records, each
+    #: with an ``id``, its ``kind`` -- "text", "image" or "pdf" -- its
+    #: ``name`` and ``title``, and a text stamp's ``words`` and ``colour`` or
+    #: a picture's or a page's ``art``, its drawing, in base64.
+    OWN_STAMPS_SETTING = "markup/own-stamps"
+
+    def _own_stamps(self) -> list:
+        try:
+            return list(json.loads(self.settings.value(self.OWN_STAMPS_SETTING, "[]")
+                                   or "[]"))
+        except (TypeError, ValueError):
+            return []
+
+    def _keep_own_stamps(self, records: list, category: str = "") -> None:
+        self.settings.setValue(self.OWN_STAMPS_SETTING, json.dumps(records))
+        if self._stamp_palette is not None:
+            self._stamp_palette.show_stamps(records, category)
+
+    def _add_stamp(self, how: str) -> None:
+        """*Add Stamp*: a text stamp, a picture, or the pages of a PDF,
+        kept with your other stamps and listed after the presets."""
+        import base64
+        import uuid as uuid_module
+
+        from .stamppalette import PdfStampsDialog, TextStampDialog
+
+        records = self._own_stamps()
+        made = []
+        if how == "text":
+            dialog = TextStampDialog(self)
+            if dialog.exec() != QDialog.Accepted:
+                return
+            record = dialog.stamp()
+            plain = re.sub(r"[^A-Za-z0-9]", "", record["words"].title())
+            record["name"] = "/" + (plain or "TextStamp")
+            made.append(record)
+        elif how == "image":
+            path, _filter = QFileDialog.getOpenFileName(
+                self, _("Image"), "", _("Images") + " (*.png *.jpg *.jpeg)")
+            if not path:
+                return
+            art = stampart.image_art(path)
+            if art is None:
+                QMessageBox.warning(self, _("Image"),
+                                    _("That file could not be read as a picture."))
+                return
+            title = os.path.splitext(os.path.basename(path))[0]
+            plain = re.sub(r"[^A-Za-z0-9]", "", title)
+            made.append({"kind": "image", "title": title,
+                         "name": "/" + (plain or "ImageStamp"),
+                         "art": base64.b64encode(art).decode("ascii")})
+        elif how == "pdf":
+            path, _filter = QFileDialog.getOpenFileName(
+                self, _("Import from PDF"), "", _("PDF files") + " (*.pdf)")
+            if not path:
+                return
+            found = stampart.pdf_stamps(path)
+            if not found:
+                QMessageBox.warning(self, _("Import from PDF"),
+                                    _("That file could not be read as a PDF."))
+                return
+            dialog = PdfStampsDialog(found, self)
+            if dialog.exec() != QDialog.Accepted:
+                return
+            # A category of their own, named for the file.
+            group = os.path.splitext(os.path.basename(path))[0]
+            made += [{"kind": "pdf", "name": name, "title": title, "group": group,
+                      "art": base64.b64encode(art).decode("ascii")}
+                     for name, title, art in dialog.kept()]
+        for record in made:
+            record["id"] = uuid_module.uuid4().hex
+        if made:
+            from .stamppalette import category_of
+
+            # Shown in the category they went into.
+            self._keep_own_stamps(records + made, category_of(made[0]))
+
+    def _delete_stamp(self, ident: str) -> None:
+        """Delete one of your own stamps, after asking: its picture cannot
+        be had back."""
+        records = self._own_stamps()
+        record = next((r for r in records if r.get("id") == ident), None)
+        if record is None:
+            return
+        if QMessageBox.question(
+                self, _("Delete"),
+                _("Delete the stamp \u201c%s\u201d? It cannot be had back.")
+                % record.get("title", "")) != QMessageBox.Yes:
+            return
+        self._keep_own_stamps([r for r in records if r.get("id") != ident])
+
+    def _delete_stamp_category(self, category: str) -> None:
+        """Delete Category, on a PDF's: every stamp imported from it, after
+        asking."""
+        from .stamppalette import category_of
+
+        records = self._own_stamps()
+        going = [r for r in records if category_of(r) == category]
+        if not going or QMessageBox.question(
+                self, _("Delete Category"),
+                ngettext("Delete the category \u201c%(name)s\u201d and its "
+                         "%(count)d stamp? It cannot be had back.",
+                         "Delete the category \u201c%(name)s\u201d and its "
+                         "%(count)d stamps? They cannot be had back.",
+                         len(going)) % {"name": category[4:], "count": len(going)}
+        ) != QMessageBox.Yes:
+            return
+        self._keep_own_stamps([r for r in records if category_of(r) != category],
+                              "predefined")
+
+    #: The palette's size and the category it showed, as JSON.
+    STAMP_PALETTE_SETTING = "markup/stamp-palette"
+
+    def _stamp_drawing(self, line: str):
+        """``(name, title, drawing)`` for the stamp picked in the palette, a
+        preset's and a text stamp's with ``line`` under their words."""
+        from .stamppalette import own_art
+
+        key = (self._stamp_palette.current() if self._stamp_palette is not None
+               else markup.STAMP_PRESETS[0][0])
+        if key.startswith("own:"):
+            record = next((r for r in self._own_stamps()
+                           if r.get("id") == key[4:]), None)
+            if record is not None:
+                return (record.get("name") or "/Stamp", record.get("title", ""),
+                        own_art(record, line))
+            key = markup.STAMP_PRESETS[0][0]
+        preset = markup.preset_of(key)
+        return key, _(preset[1]), stampart.preset_art(key, line)
 
     def _stamp_art(self):
         """The picked stamp's drawing, as it would be placed now."""
-        name = (self._stamp_palette.current() if self._stamp_palette is not None
-                else markup.STAMP_PRESETS[0][0])
-        key = (name, self._stamp_line())
+        key = ((self._stamp_palette.current() if self._stamp_palette is not None
+                else ""), self._stamp_line())
         if self._stamp_shown[0] != key:
-            self._stamp_shown = (key, markup.preset_art(*key))
+            self._stamp_shown = (key, self._stamp_drawing(key[1])[2])
         return self._stamp_shown[1]
 
     def _stamp_size(self):
         """The picked stamp's size in points, for a drag to keep its shape."""
-        name = (self._stamp_palette.current() if self._stamp_palette is not None
-                else markup.STAMP_PRESETS[0][0])
-        return markup.preset_size(name, self._stamp_line())
+        art = self._stamp_art()
+        return stampart.art_size(art) if art else None
 
     def stamp_resized(self, index: int, mark, rect) -> None:
         """A Stamp's corner let go: its rectangle now, as one step to undo.
@@ -2164,12 +2309,14 @@ class MainWindow(QMainWindow):
         mine = isinstance(mark, markup.Annotation)
         kind_here = mark.kind if mine else mark.subtype
         callout = markup.is_callout(mark)
+        stamp = markup.is_stamp(mark)
         is_box = (kind_here == markup.FREETEXT or kind_here in markup.SHAPES
                   or kind_here == markup.POLYGON) and not callout
         is_line = kind_here in (markup.LINE, markup.POLYLINE)
         form = MarkProperties(Properties(
             kind=("replace_text" if said is not mark
                   else "callout" if callout
+                  else "stamp" if stamp
                   else mark.kind if mine else mark.subtype),
             author=(getattr(mark, "author", "") or markup.default_author()),
             subject=(getattr(mark, "subject", "") or markup.SUBJECTS.get(
@@ -2185,7 +2332,9 @@ class MainWindow(QMainWindow):
             history=self._history_of(index, said),
             style=self._style_of(mark),
             icon=getattr(mark, "icon", "") or "",
-            icons=self._icons_for(mark.kind if mine else mark.subtype),
+            # A Stamp's look is its artwork: no icon to pick.
+            icons=(() if stamp
+                   else self._icons_for(mark.kind if mine else mark.subtype)),
             icons_fixed=markup.is_reply(mark),
             styles=self._styles_for(mark.kind if mine else mark.subtype),
             box=is_box,

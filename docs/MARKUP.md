@@ -62,7 +62,7 @@ time.
 | | Polygon | Polygon | a closed shape of straight sides | complete |
 | | Cloud | Polygon | a polygon drawn with a scalloped edge | complete |
 | | Connected lines | Polyline | an open run of straight lines | complete |
-| | Stamps palette | Stamp | a ready-made stamp such as Approved or Draft, or one of your own | stages 1 and 2 built; being verified |
+| | Stamps palette | Stamp | a ready-made stamp such as Approved or Draft, or one of your own | complete |
 
 Reader's signature and initials tools are not offered: this application
 does not sign documents.
@@ -1932,7 +1932,7 @@ Three stages, each tried in the application before the next:
 
 ## Stamp
 
-Made by the Stamps palette tool. Stages 1 and 2 built; being verified.
+Made by the Stamps palette tool. Complete.
 
 ### Requirements
 
@@ -1946,8 +1946,7 @@ Made by the Stamps palette tool. Stages 1 and 2 built; being verified.
   own design, as PDFGear's are -- the word in bold italic in a rounded
   frame -- under the names the PDF standard gives them, so any reader
   knows what each one is.
-- **The presets**, one list with no categories -- Acrobat's are its own
-  arrangement: Approved, Not Approved, Draft, Final, Experimental,
+- **The presets**, in a category of their own (see the palette, below): Approved, Not Approved, Draft, Final, Experimental,
   Confidential, Top Secret, For Comment, For Public Release, Not For
   Public Release, As Is, Expired, Departmental and Sold, the standard's
   fourteen; and Sign Here, Initial Here, Witness, a check mark and a
@@ -2077,9 +2076,10 @@ Three stages, each tried in the application before the next:
   check mark and a cross drawn as strokes, 30 points square. Approved is
   about 103 by 30. With the date, 38 tall, the line at 6.5 points under
   the word: "by" the stamp tool's author, the day, month, year and time.
-- **The words are English**, the standard's own, whatever language the
-  application is shown in: that font holds only Western European
-  letters, and a word in another script would be drawn as question marks.
+- **The words were English** in stage 2, the standard's own: the font
+  they were set in holds only Western European letters, and a word in
+  another script would have been drawn as question marks. Stage 3 drew
+  them as outlines in the application's language instead.
 - **Placed** by a click, centred under the pointer at its own size at the
   page's own size, or by a drag from where it is pressed, as big as the
   further way the pointer has gone with its proportions kept, **its
@@ -2094,3 +2094,46 @@ Three stages, each tried in the application before the next:
   rest, `/Subj` its English title, the drawing copied into the file as
   its appearance, faded there to its opacity, and a `/Popup` for its
   note. The canvas draws it from the same drawing as a file's stamp.
+
+**Stage 3, as built:**
+
+- **Words as outlines**, in `stampart`, apart from `markup` because it
+  needs Qt: a stamp's words and its date line turned into paths by Qt
+  from a sans serif in bold italic on the computer, any script it can
+  draw -- Russian, Japanese, Arabic tried -- and written as filled shapes.
+  The presets' words are in the application's language; `/Subj` is the
+  title the stamp shows, as Acrobat writes its own. The date line is
+  "by" the author and the date and time in the locale's short form.
+- **Your own**, from *Add Stamp* under the list: **Text...**, your words
+  and a colour from the palette, drawn in the presets' frame as they are
+  typed, named `/` and the words run together; **Image...**, a PNG or a
+  JPEG, its longer side 120 points and its transparency kept, named for
+  the file; **Import from PDF...**, every page of a PDF offered with a
+  tick to keep it, named as the file names its pages -- Acrobat's
+  `SHWitness=Witness` -- or for the file and the page, and **sized by its
+  `/ArtBox`**, where Acrobat's files mark the stamp on a letter-sized
+  page; then its trim box; **then what is drawn on it**, found by drawing
+  the page once on a clear background, with 2 points round it -- Acrobat's
+  Standard file marks no art box, and taken whole each stamp was a speck
+  in the palette; then the page.
+- **Kept** with the application's settings as `markup/own-stamps`: a text
+  stamp by its words and colour, so its date line is drawn afresh; a
+  picture or a page by its drawing. Listed after the presets in every
+  document; **Delete** on a right-click on one of them alone, asking
+  first.
+- ***Stamp Properties***: Colour and Opacity, no icons -- a stamp's look is
+  its artwork -- for a stamp and for the tool's own form. **The note
+  badge** is worn by a stamp with a note, as by the other marks.
+- **The palette in categories**, agreed 2026-11-13 once a few imported
+  files had buried the presets in one list: a drop-down of **Predefined**,
+  **Text**, **Images**, and **one for each PDF imported**, named for the
+  file, showing one at a time; a stamp added is shown in its category.
+  **Delete Category** on a right-click on the drop-down, for a PDF's alone,
+  asking first with how many stamps go with it; deleting a PDF's last
+  stamp takes its category away too. The other three are always there.
+- **Resizable** by a grip of our own in its corner -- Qt's `QSizeGrip`
+  resizes the window it is in, and on a Mac is not shown inside one -- the stamps wrapping into as many
+  columns as it is wide, each as wide as the widest stamp shown, as
+  Acrobat's does. Its size and the category it showed are kept for next
+  time. The stamp picked is shown by its whole cell: Qt's own mark of it
+  was a bar where a label would be, and a stamp has none.
