@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pdfarranger main\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-13 23:41+0000\n"
+"POT-Creation-Date: 2026-11-14 00:53+0000\n"
 "PO-Revision-Date: 2026-04-24 21:19+0300\n"
 "Last-Translator: Oğuz Ersen <oguz@ersen.moe>\n"
 "Language: tr\n"
@@ -123,6 +123,11 @@ msgid "Open Pop-Up Note"
 msgstr "Açılır Notu Aç"
 
 # machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Save Embedded File to Disk..."
+msgstr "Gömülü dosyayı kaydet…"
+
+# machine translation, unreviewed
 #: pdfarranger_qt/canvas.py pdfarranger_qt/mainwindow.py
 msgid "Reply"
 msgstr "Yanıtla"
@@ -185,6 +190,11 @@ msgstr "%d durum"
 #: pdfarranger_qt/canvas.py pdfarranger_qt/notepanel.py
 msgid "Status"
 msgstr "Durum"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Attached file"
+msgstr "Ekli dosya"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
@@ -2241,6 +2251,36 @@ msgstr[0] "“%(name)s” kategorisi ve içindeki %(count)d damga silinsin mi? G
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
+msgid "Attach File"
+msgstr "Dosya ekle"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid ""
+"This file is %s. The PDF will grow by that much and may be too large to send"
+" by email."
+msgstr ""
+"Bu dosya %s. PDF bu kadar büyüyecek ve e-postayla göndermek için fazla büyük"
+" olabilir."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Attach"
+msgstr "Ekle"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Save Embedded File to Disk"
+msgstr "Gömülü dosyayı kaydet"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "The attached file could not be read."
+msgstr "Ekli dosya okunamadı."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
 msgid "Move Mark"
 msgstr "İşareti taşı"
 
@@ -2872,6 +2912,26 @@ msgstr "Döndür"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/markup.py
+msgid "Graph"
+msgstr "Grafik"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Paperclip"
+msgstr "Ataç"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Attachment"
+msgstr "Ek"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Tag"
+msgstr "Etiket"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
 msgid "Approved"
 msgstr "Onaylandı"
 
@@ -3247,6 +3307,11 @@ msgstr "Belirtme çizgisi"
 #: pdfarranger_qt/properties.py
 msgid "Stamp"
 msgstr "Damga"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "File Attachment"
+msgstr "Dosya eki"
 
 #: pdfarranger_qt/properties.py
 msgid "Review History"

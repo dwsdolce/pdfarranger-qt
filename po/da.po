@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  pdfarranger\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-13 23:41+0000\n"
+"POT-Creation-Date: 2026-11-14 00:53+0000\n"
 "PO-Revision-Date: 2023-10-22 00:28+0200\n"
 "Last-Translator: Lrss <dev@lrss.dk>\n"
 "Language: da\n"
@@ -122,6 +122,11 @@ msgid "Open Pop-Up Note"
 msgstr "Åbn pop op-note"
 
 # machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Save Embedded File to Disk..."
+msgstr "Gem indlejret fil …"
+
+# machine translation, unreviewed
 #: pdfarranger_qt/canvas.py pdfarranger_qt/mainwindow.py
 msgid "Reply"
 msgstr "Svar"
@@ -184,6 +189,11 @@ msgstr "%d status"
 #: pdfarranger_qt/canvas.py pdfarranger_qt/notepanel.py
 msgid "Status"
 msgstr "Status"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Attached file"
+msgstr "Vedhæftet fil"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
@@ -2278,6 +2288,36 @@ msgstr[1] "Slet kategorien “%(name)s” og dens %(count)d stempler? De kan ikk
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
+msgid "Attach File"
+msgstr "Vedhæft fil"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid ""
+"This file is %s. The PDF will grow by that much and may be too large to send"
+" by email."
+msgstr ""
+"Filen er %s. PDF'en vokser lige så meget og kan blive for stor til at sende "
+"med e-mail."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Attach"
+msgstr "Vedhæft"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Save Embedded File to Disk"
+msgstr "Gem indlejret fil"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "The attached file could not be read."
+msgstr "Den vedhæftede fil kunne ikke læses."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
 msgid "Move Mark"
 msgstr "Flyt mærke"
 
@@ -2922,6 +2962,26 @@ msgstr "Rotér"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/markup.py
+msgid "Graph"
+msgstr "Graf"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Paperclip"
+msgstr "Papirclips"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Attachment"
+msgstr "Vedhæftning"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Tag"
+msgstr "Mærkat"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
 msgid "Approved"
 msgstr "Godkendt"
 
@@ -3297,6 +3357,11 @@ msgstr "Billedforklaring"
 #: pdfarranger_qt/properties.py
 msgid "Stamp"
 msgstr "Stempel"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "File Attachment"
+msgstr "Vedhæftet fil"
 
 #: pdfarranger_qt/properties.py
 msgid "Review History"

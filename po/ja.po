@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-13 23:41+0000\n"
+"POT-Creation-Date: 2026-11-14 00:53+0000\n"
 "PO-Revision-Date: 2022-09-01 00:40+0900\n"
 "Last-Translator: sicklylife <translation@sicklylife.jp>\n"
 "Language: ja\n"
@@ -124,6 +124,11 @@ msgid "Open Pop-Up Note"
 msgstr "ポップアップノートを開く"
 
 # machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Save Embedded File to Disk..."
+msgstr "埋め込みファイルを保存…"
+
+# machine translation, unreviewed
 #: pdfarranger_qt/canvas.py pdfarranger_qt/mainwindow.py
 msgid "Reply"
 msgstr "返信"
@@ -186,6 +191,11 @@ msgstr "ステータス %d 件"
 #: pdfarranger_qt/canvas.py pdfarranger_qt/notepanel.py
 msgid "Status"
 msgstr "ステータス"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Attached file"
+msgstr "添付ファイル"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
@@ -2161,6 +2171,34 @@ msgstr[0] "カテゴリ「%(name)s」とその %(count)d 個のスタンプを�
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
+msgid "Attach File"
+msgstr "ファイルを添付"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid ""
+"This file is %s. The PDF will grow by that much and may be too large to send"
+" by email."
+msgstr "このファイルは %s あります。PDF はその分大きくなり、メールで送るには大きすぎるかもしれません。"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Attach"
+msgstr "添付"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Save Embedded File to Disk"
+msgstr "埋め込みファイルを保存"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "The attached file could not be read."
+msgstr "添付ファイルを読み込めませんでした。"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
 msgid "Move Mark"
 msgstr "マークを移動"
 
@@ -2794,6 +2832,26 @@ msgstr "回転"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/markup.py
+msgid "Graph"
+msgstr "グラフ"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Paperclip"
+msgstr "クリップ"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Attachment"
+msgstr "添付"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Tag"
+msgstr "タグ"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
 msgid "Approved"
 msgstr "承認済み"
 
@@ -3169,6 +3227,11 @@ msgstr "引き出し線"
 #: pdfarranger_qt/properties.py
 msgid "Stamp"
 msgstr "スタンプ"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "File Attachment"
+msgstr "添付ファイル"
 
 #: pdfarranger_qt/properties.py
 msgid "Review History"

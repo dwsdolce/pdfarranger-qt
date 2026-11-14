@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-13 23:41+0000\n"
+"POT-Creation-Date: 2026-11-14 00:53+0000\n"
 "PO-Revision-Date: 2025-09-28 16:51+0000\n"
 "Last-Translator: Sveinn í Felli <sv1@fellsnet.is>\n"
 "Language: is\n"
@@ -123,6 +123,11 @@ msgid "Open Pop-Up Note"
 msgstr "Opna sprettiminnispunkt"
 
 # machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Save Embedded File to Disk..."
+msgstr "Vista ívafða skrá…"
+
+# machine translation, unreviewed
 #: pdfarranger_qt/canvas.py pdfarranger_qt/mainwindow.py
 msgid "Reply"
 msgstr "Svara"
@@ -185,6 +190,11 @@ msgstr "%d staða"
 #: pdfarranger_qt/canvas.py pdfarranger_qt/notepanel.py
 msgid "Status"
 msgstr "Staða"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Attached file"
+msgstr "Viðhengd skrá"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
@@ -2266,6 +2276,36 @@ msgstr[1] ""
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
+msgid "Attach File"
+msgstr "Hengja við skrá"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid ""
+"This file is %s. The PDF will grow by that much and may be too large to send"
+" by email."
+msgstr ""
+"Þessi skrá er %s. PDF-skjalið stækkar um það og gæti orðið of stórt til að "
+"senda í tölvupósti."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Attach"
+msgstr "Hengja við"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Save Embedded File to Disk"
+msgstr "Vista ívafða skrá"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "The attached file could not be read."
+msgstr "Ekki tókst að lesa viðhengdu skrána."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
 msgid "Move Mark"
 msgstr "Færa merki"
 
@@ -2905,6 +2945,26 @@ msgstr "Snúa"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/markup.py
+msgid "Graph"
+msgstr "Graf"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Paperclip"
+msgstr "Bréfaklemma"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Attachment"
+msgstr "Viðhengi"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Tag"
+msgstr "Merki"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
 msgid "Approved"
 msgstr "Samþykkt"
 
@@ -3280,6 +3340,11 @@ msgstr "Skýringarblaðra"
 #: pdfarranger_qt/properties.py
 msgid "Stamp"
 msgstr "Stimpill"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "File Attachment"
+msgstr "Viðhengd skrá"
 
 #: pdfarranger_qt/properties.py
 msgid "Review History"

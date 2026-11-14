@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-13 23:41+0000\n"
+"POT-Creation-Date: 2026-11-14 00:53+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: hu\n"
@@ -123,6 +123,11 @@ msgid "Open Pop-Up Note"
 msgstr "Felugró jegyzet megnyitása"
 
 # machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Save Embedded File to Disk..."
+msgstr "Beágyazott fájl mentése…"
+
+# machine translation, unreviewed
 #: pdfarranger_qt/canvas.py pdfarranger_qt/mainwindow.py
 msgid "Reply"
 msgstr "Válasz"
@@ -185,6 +190,11 @@ msgstr "%d állapot"
 #: pdfarranger_qt/canvas.py pdfarranger_qt/notepanel.py
 msgid "Status"
 msgstr "Állapot"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Attached file"
+msgstr "Csatolt fájl"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
@@ -2297,6 +2307,36 @@ msgstr[1] ""
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
+msgid "Attach File"
+msgstr "Fájl csatolása"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid ""
+"This file is %s. The PDF will grow by that much and may be too large to send"
+" by email."
+msgstr ""
+"Ez a fájl %s. A PDF ennyivel nő, és lehet, hogy túl nagy lesz e-mailben "
+"küldéshez."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Attach"
+msgstr "Csatolás"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Save Embedded File to Disk"
+msgstr "Beágyazott fájl mentése"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "The attached file could not be read."
+msgstr "A csatolt fájl nem olvasható."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
 msgid "Move Mark"
 msgstr "Jelölés áthelyezése"
 
@@ -2941,6 +2981,26 @@ msgstr "Forgatás"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/markup.py
+msgid "Graph"
+msgstr "Grafikon"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Paperclip"
+msgstr "Gemkapocs"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Attachment"
+msgstr "Melléklet"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Tag"
+msgstr "Címke"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
 msgid "Approved"
 msgstr "Jóváhagyva"
 
@@ -3316,6 +3376,11 @@ msgstr "Szövegbuborék"
 #: pdfarranger_qt/properties.py
 msgid "Stamp"
 msgstr "Bélyegző"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "File Attachment"
+msgstr "Fájlmelléklet"
 
 #: pdfarranger_qt/properties.py
 msgid "Review History"

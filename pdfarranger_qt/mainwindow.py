@@ -197,10 +197,16 @@ class MainWindow(QMainWindow):
         self.reader.canvas.drawing_changed.connect(self._refresh_state)
         self.reader.canvas.callout_reshaped.connect(self.callout_reshaped)
         self.reader.canvas.stamp_resized.connect(self.stamp_resized)
+        self.reader.canvas.attachment_save_wanted.connect(self.save_attachment)
         #: The stamps palette, made when the tool is first armed.
         self._stamp_palette = None
         self.reader.canvas.stamp_size = self._stamp_size
         self.reader.canvas.stamp_art = self._stamp_art
+        self.reader.canvas.attach_icon = lambda: (
+            self._attach_icon(), self.colour_for("attach_file"))
+        #: The file the Attach File tool's click will carry, as
+        #: ``(name, size, bytes)``, while it is being placed.
+        self._attaching = None
         #: ``((name, line), drawing)`` for the stamp last shown under the
         #: pointer, so it is not drawn afresh at every move.
         self._stamp_shown = (None, None)
@@ -903,6 +909,8 @@ class MainWindow(QMainWindow):
         "callout": markup.FREETEXT,
         # *Stamps palette*: a Stamp, the `/Stamp` that is not a comment.
         "stamps": markup.STAMP,
+        # *Attach File*: a file carried in the document at a point.
+        "attach": markup.FILE_ATTACHMENT,
     }
 
     #: The gestures above that are not tools, and the tool each acts as --
@@ -948,6 +956,7 @@ class MainWindow(QMainWindow):
         "draw": "draw",
         "callout": "callout",
         "stamps": "stamps",
+        "attach_file": "attach",
     }
 
     #: And back again, for the places that start from the canvas's name --
@@ -1049,6 +1058,9 @@ class MainWindow(QMainWindow):
         """
         subtype = self.MARK_KINDS.get(tool)
         if subtype is None:
+            return
+        if tool == "attach" and not self._file_to_attach():
+            # Cancelled, or a large file declined: nothing is placed.
             return
         # **The style is the subtype**, so a tool told to default to
         # squiggly makes a different annotation, not a differently drawn
@@ -1181,6 +1193,20 @@ class MainWindow(QMainWindow):
             rect = markup.poly_rect(subtype, points, ends, poly_style,
                                     told.get("thickness", 1.0))
         art = stamp_subject = None
+        attached = payload = None
+        if tool == "attach" and getattr(self, "_attaching", None):
+            # The file asked for at the click, under the icon the tool's
+            # defaults hold, its top left at the click, at its own size on
+            # the page a reader draws it on.
+            name, size, payload = self._attaching
+            self._attaching = None
+            attached = (name, size)
+            chosen = self._attach_icon()
+            x0, y0 = rects[-1][0], rects[-1][1]
+            scale = page.scale if page.scale else 1.0
+            wide, tall = (v / scale for v in markup.ATTACHMENT_SIZES[chosen])
+            rect = (x0, y0 - tall, x0 + wide, y0)
+            art = markup.attachment_art(chosen, colour or markup.swatch("Purple"))
         if tool == "stamps":
             # The stamp picked in the palette, with the date line when
             # asked for: centred on a click at its own size, at the page's
@@ -1235,7 +1261,8 @@ class MainWindow(QMainWindow):
                   else None),
             thickness=markup.written_thickness(subtype, box.get("thickness", 1.0)),
             border_style=poly_style or box.get("border_style", "straight"),
-            points=points, ends=ends, strokes=strokes, art=art))
+            points=points, ends=ends, strokes=strokes, art=art,
+            attached=attached, payload=payload))
         if tool == "replace" and quads:
             # **And its caret**, at the end of the run, in the same colour
             # and opacity. Added after the strikeout, which is the order
@@ -1978,6 +2005,82 @@ class MainWindow(QMainWindow):
         art = self._stamp_art()
         return stampart.art_size(art) if art else None
 
+    #: Over this size a file to attach is asked about, in bytes: 20 MB,
+    #: leaving room under the 25 most mail services take for the rest.
+    LARGE_ATTACHMENT = 20 * 1000 * 1000
+
+    def _file_to_attach(self) -> bool:
+        """Ask for the file the Attach File tool's click will carry, and
+        read it, as Acrobat embeds it then. **Asked about over 20 MB**,
+        which Acrobat attaches without a word. False when cancelled."""
+        self._attaching = None
+        path, _filter = QFileDialog.getOpenFileName(self, _("Attach File"))
+        if not path:
+            return False
+        try:
+            size = os.path.getsize(path)
+        except OSError as error:
+            QMessageBox.warning(self, _("Attach File"), str(error))
+            return False
+        if size > self.LARGE_ATTACHMENT:
+            shown = QLocale().formattedDataSize(
+                size, 1, QLocale.DataSizeFormat.DataSizeSIFormat)
+            asked = QMessageBox(QMessageBox.Warning, _("Attach File"),
+                                _("This file is %s. The PDF will grow by that "
+                                  "much and may be too large to send by "
+                                  "email.") % shown, parent=self)
+            attach = asked.addButton(_("Attach"), QMessageBox.AcceptRole)
+            asked.addButton(QMessageBox.Cancel)
+            asked.exec()
+            if asked.clickedButton() is not attach:
+                return False
+        try:
+            with open(path, "rb") as source:
+                data = source.read()
+        except OSError as error:
+            QMessageBox.warning(self, _("Attach File"), str(error))
+            return False
+        self._attaching = (os.path.basename(path), len(data), data)
+        return True
+
+    def _attach_icon(self) -> str:
+        """The icon the Attach File tool places: its default, or the
+        paperclip."""
+        chosen = self._icons.get("attach_file")
+        return chosen if chosen in markup.ATTACHMENT_SIZES else "/Paperclip"
+
+    def save_attachment(self, index: int, mark) -> None:
+        """*Save Embedded File to Disk*: the file an attachment carries,
+        taken from the document being shown and written where asked. Never
+        opened: an attached file can be anything."""
+        if isinstance(mark, markup.Annotation):
+            # One attached here: its bytes are on it, read when attached.
+            found = ((mark.attached or ("attachment", 0))[0], mark.payload
+                     ) if mark.payload is not None else None
+        else:
+            data = self.reader.document_bytes()
+            if not data:
+                return
+            try:
+                found = markup.attached_bytes(data, mark.page, mark.index)
+            except Exception:  # noqa: BLE001 - a damaged attachment
+                found = None
+        if found is None:
+            QMessageBox.warning(self, _("Save Embedded File to Disk"),
+                                _("The attached file could not be read."))
+            return
+        name, content = found
+        path, _filter = QFileDialog.getSaveFileName(
+            self, _("Save Embedded File to Disk"),
+            os.path.basename(name) or "attachment")
+        if not path:
+            return
+        try:
+            with open(path, "wb") as out:
+                out.write(content)
+        except OSError as error:
+            QMessageBox.warning(self, _("Save Embedded File to Disk"), str(error))
+
     def stamp_resized(self, index: int, mark, rect) -> None:
         """A Stamp's corner let go: its rectangle now, as one step to undo.
         **Its rectangle and nothing else** -- not the Scalable Comment's
@@ -2619,6 +2722,18 @@ class MainWindow(QMainWindow):
                       (mark.rect[1] + mark.rect[3]) / 2.0)
             mark.rect = markup.stamp_rect(middle[0], middle[1], value,
                                           factor, angle)
+        if kind == markup.FILE_ATTACHMENT and name in ("icon", "colour"):
+            # Its drawing is ours from here, in its icon and colour; a new
+            # icon is its own size, hung from the same top left corner.
+            icon = mark.icon if mark.icon in markup.ATTACHMENT_SIZES else "/Paperclip"
+            if name == "icon":
+                wide, tall = markup.ATTACHMENT_SIZES[icon]
+                if isinstance(mark, markup.Annotation):
+                    wide, tall = wide / (scale or 1.0), tall / (scale or 1.0)
+                left, top = mark.rect[0], mark.rect[3]
+                mark.rect = (left, top - tall, left + wide, top)
+            mark.art = markup.attachment_art(
+                icon, mark.colour or markup.swatch("Purple"))
 
     #: What each style is called, untranslated. Marked here and translated
     #: where it is used: a label in a table reaches no catalogue at all,
@@ -2657,6 +2772,9 @@ class MainWindow(QMainWindow):
         they offer the same seventeen. What they differ in is the subtype,
         which is not something the form sets.
         """
+        if kind == markup.FILE_ATTACHMENT:
+            # Its own four, the push pin under Acrobat's name for it.
+            return tuple((value, _(label)) for value, label in markup.ATTACHMENT_ICONS)
         if kind not in (markup.TEXT, markup.STAMP):
             return ()
         return tuple((value, _(label)) for value, label in self.ICON_LABELS)

@@ -115,6 +115,7 @@ KIND_LABELS = {
     # Nor this: a `/Stamp` that is not a Scalable Comment, told apart by
     # its `/Name`.
     "stamp": N_("Stamp"),
+    "/FileAttachment": N_("File Attachment"),
 }
 
 
@@ -204,6 +205,29 @@ def _icon_badge(icon: str, colour) -> QIcon:
     """
     from .canvas import PageCanvas
 
+    if icon in markup.ATTACHMENT_SIZES:
+        # An attachment's: our own drawing of it, as the page gets it.
+        from .stamppalette import art_picture
+
+        # Centred in one box for all four, so their names line up.
+        picture = art_picture(markup.attachment_art(
+            icon, colour or markup.swatch("Purple")), 32)
+        ratio = picture.devicePixelRatio() or 1.0
+        box = QImage(48, 40, QImage.Format_ARGB32)
+        box.fill(Qt.transparent)
+        painter = QPainter(box)
+        painter.setRenderHint(QPainter.SmoothPixmapTransform, True)
+        wide = picture.width() / ratio * 32 / (picture.height() / ratio or 1)
+        if wide > 44:
+            wide, tall = 44.0, 32 * 44.0 / wide
+        else:
+            tall = 32.0
+        painter.drawPixmap(QRectF((48 - wide) / 2, (40 - tall) / 2, wide, tall),
+                           picture, QRectF(picture.rect()))
+        painter.end()
+        badge = QPixmap.fromImage(box)
+        badge.setDevicePixelRatio(2.0)
+        return QIcon(badge)
     side = 20
     image = QImage(side, side, QImage.Format_ARGB32)
     image.fill(Qt.transparent)

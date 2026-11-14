@@ -52,6 +52,7 @@ from PySide6.QtCore import (
     QByteArray,
     QEvent,
     QIODevice,
+    QLocale,
     QObject,
     QPointF,
     QRectF,
@@ -1065,6 +1066,8 @@ class PageCanvas(QAbstractScrollArea):
     #: Scalable Comment's reshape, which carries an angle, and a new angle
     #: means a new drawing -- a Stamp keeps its own.
     stamp_resized = Signal(int, object, object)
+    #: *Save Embedded File to Disk* on an attachment: ``(page, mark)``.
+    attachment_save_wanted = Signal(int, object)
     #: A gesture, as ``(tool, [(page, quads), ...])``. Text is marked one
     #: page at a time, so the list holds one page; it is a list so that a
     #: gesture is always one step to undo, however much it covered.
@@ -1160,6 +1163,10 @@ class PageCanvas(QAbstractScrollArea):
         #: The picked stamp's drawing, a PDF of one page, asked of the
         #: window, to show under the pointer before it is placed.
         self.stamp_art = None
+        #: ``(icon, colour)`` the Attach File tool would place now, asked of
+        #: the window, for its cursor.
+        self.attach_icon = None
+        self._attach_cursor = (None, None)
         #: Where the pointer is over the page while the Stamps palette tool
         #: is armed, for the stamp drawn under it; None off the canvas.
         self._stamp_hover = None
@@ -2620,9 +2627,17 @@ class PageCanvas(QAbstractScrollArea):
             return self.quad_on_screen(
                 index, rect, offset,
                 scaled=isinstance(mark, markup.Annotation))
-        shown = forms_module.to_displayed(
-            markup.icon_box(self.from_source(index, rect),
-                            getattr(mark, "icon", markup.DEFAULT_ICON)), box)
+        kind = (mark.kind if isinstance(mark, markup.Annotation)
+                else mark.subtype)
+        if kind == markup.FILE_ATTACHMENT:
+            # **Its own rectangle**, not a comment icon's box: an
+            # attachment's icon is the size its producer drew it, 7 by 17
+            # for Acrobat's paperclip, held on screen as a comment's is.
+            shown = forms_module.to_displayed(self.from_source(index, rect), box)
+        else:
+            shown = forms_module.to_displayed(
+                markup.icon_box(self.from_source(index, rect),
+                                getattr(mark, "icon", markup.DEFAULT_ICON)), box)
         zoom = self._layout.zoom
         page = self._layout.page_rect(index)
         # The file's answer, not a setting of ours. Nothing here writes a
@@ -2695,7 +2710,8 @@ class PageCanvas(QAbstractScrollArea):
                     else mark.subtype)
             if kind not in (markup.TEXT, markup.STAMP, markup.FREETEXT,
                             *markup.SHAPES, markup.LINE,
-                                       *markup.POLYS, markup.INK):
+                                       *markup.POLYS, markup.INK,
+                            markup.FILE_ATTACHMENT):
                 continue
             if kind in markup.SHAPES:
                 if self._shape_hit(index, mark, point):
@@ -2897,6 +2913,9 @@ class PageCanvas(QAbstractScrollArea):
     #: its outline shown as it is dragged. Not `STAMP`, which places a
     #: Scalable Comment.
     STAMPS = "stamps"
+    #: *Attach File*: a click, which the window answers with a file dialog
+    #: and an attachment's icon placed by its top left at the click.
+    ATTACH = "attach"
 
     #: Tools whose geometry is a run of *text* rather than an area. They drag
     #: out a selection, exactly as reading does, because the quadrilaterals a
@@ -2940,7 +2959,7 @@ class PageCanvas(QAbstractScrollArea):
         self._stamp_hover = None
         self.drawing_changed.emit()
         if (tool in self.CLICK_TOOLS or tool in self.POLY_TOOLS
-                or tool in (self.DRAW, self.STAMPS)):
+                or tool in (self.DRAW, self.STAMPS, self.ATTACH)):
             # A shape or a line is drawn over the page, not over words: a
             # selection left from before is not what it is for.
             self.clear_selection()
@@ -3268,7 +3287,8 @@ class PageCanvas(QAbstractScrollArea):
     SELECTABLE = ("/Highlight", "/StrikeOut", "/Underline", "/Squiggly",
                   markup.TEXT, markup.STAMP, markup.CARET, markup.FREETEXT,
                   *markup.SHAPES, markup.LINE,
-                                       *markup.POLYS, markup.INK)
+                                       *markup.POLYS, markup.INK,
+                  markup.FILE_ATTACHMENT)
 
     #: Of those, the ones drawn *over* a run of words. A comment's icon is
     #: the odd one: it is placed rather than sized, so it has no run to
@@ -3355,7 +3375,8 @@ class PageCanvas(QAbstractScrollArea):
                 else mark.subtype)
         if kind in (markup.TEXT, markup.STAMP, markup.FREETEXT,
                     *markup.SHAPES, markup.LINE,
-                                       *markup.POLYS, markup.INK):
+                                       *markup.POLYS, markup.INK,
+                    markup.FILE_ATTACHMENT):
             # Both comments, a text box, the shapes and a line, through one
             # call: it is the one that knows a comment mark holds its size
             # and a stamp does not, and the one that knows a gesture in
@@ -3531,13 +3552,32 @@ class PageCanvas(QAbstractScrollArea):
         return self._hovered
 
     def select_mark(self, found) -> None:
-        """Select ``(page, mark)``, or None for nothing."""
+        """Select ``(page, mark)``, or None for nothing.
+
+        **A mark placed on the page takes the text's insertion point and
+        selection away**: a shape, a line, a Pencil, a text box, a stamp,
+        an attachment, a comment's icon -- none is made from the words, and
+        a caret left behind would have the arrow keys and Copy work on text
+        nobody can see is still held. A mark made from the words -- a
+        highlight, an underline, a cross-out, a caret -- leaves both alone:
+        the tools that make those work from them."""
         if found == self._selected:
             return
+        if found is not None and self._placed_on_page(found[1]):
+            self.clear_caret()
+            self.clear_selection()
         self._selected = found
         self.viewport().update()
         self._place_mark_buttons()
         self.mark_selected.emit(found is not None)
+
+    @classmethod
+    def _placed_on_page(cls, mark) -> bool:
+        """Whether ``mark`` is placed on the page rather than made from its
+        words -- everything but a text markup and a caret."""
+        kind = (mark.kind if isinstance(mark, markup.Annotation)
+                else mark.subtype)
+        return kind not in cls.QUADDED_SELECTABLE and kind != markup.CARET
 
     def clear_marks(self) -> None:
         """Forget the document's own marks and anything selected among them."""
@@ -3933,6 +3973,7 @@ class PageCanvas(QAbstractScrollArea):
         note = (None if over_handle is not None
                 else self.note_at(position))
         named = False
+        labelled = False
         if note is not None:
             # Read without opening anything. A note's whole value is its text,
             # and a document covered in icons you have to click one at a time
@@ -3967,6 +4008,11 @@ class PageCanvas(QAbstractScrollArea):
             named = True
             if kind_here == markup.TEXT or kind_here == markup.STAMP:
                 self._set_tooltip(note[2].contents or _("Empty note"))
+            elif kind_here == markup.FILE_ATTACHMENT:
+                # It has no note: what it says is what it carries -- and
+                # it keeps saying it, there being no panel to say it instead.
+                self._set_tooltip(self._attachment_label(note[2]))
+                labelled = True
 
         # A note hanging off a highlight reads the same way. The badge is
         # what says there is one; this is what says what it says, and it
@@ -4019,7 +4065,8 @@ class PageCanvas(QAbstractScrollArea):
             return
         self._show_note_panel(None, position)
         if over_mark:
-            self._set_tooltip("")
+            if not labelled:
+                self._set_tooltip("")
             super().mouseMoveEvent(event)
             return
 
@@ -4443,6 +4490,14 @@ class PageCanvas(QAbstractScrollArea):
                 self._press = None
                 event.accept()
                 return
+            if note is not None:
+                # **Any other mark placed on the page: nothing.** It is
+                # already held from the first click, and the words behind
+                # it are not what was aimed at -- the double-click selected
+                # them, under an attachment, an icon, a stamp or a shape.
+                self._press = None
+                event.accept()
+                return
             found = self.to_page(here)
             if found is not None and self.select_word_at(*found):
                 # The anchor is left alone: select_word_at has just set it to
@@ -4487,6 +4542,11 @@ class PageCanvas(QAbstractScrollArea):
                 placed = self._text_box_made(start, QPointF(event.position()))
             elif self._tool == self.STAMPS:
                 placed = self._stamp_placed(start, QPointF(event.position()))
+            elif self._tool == self.ATTACH:
+                # A point: the window asks for the file, then places it.
+                index = self.page_at(start)
+                at = self._point_on(index, start, True) if index is not None else None
+                placed = None if at is None else (index, (at[0], at[1], at[0], at[1]))
             elif self._tool in self.CLICK_TOOLS:
                 end = QPointF(event.position())
                 if ((end - start).manhattanLength()
@@ -4870,6 +4930,7 @@ class PageCanvas(QAbstractScrollArea):
                 else mark.subtype)
         return (not cls._is_a_comment(mark)
                 and kind not in (markup.CARET, markup.FREETEXT, markup.STAMP,
+                                 markup.FILE_ATTACHMENT,
                                  *markup.SHAPES, markup.LINE,
                                        *markup.POLYS, markup.INK))
 
@@ -4915,7 +4976,8 @@ class PageCanvas(QAbstractScrollArea):
         # A text box has no note: its words are on the page. So neither the
         # entry that opens a note nor the one that answers it.
         noteless = (mark.kind if isinstance(mark, markup.Annotation)
-                    else mark.subtype) == markup.FREETEXT
+                    else mark.subtype) in (markup.FREETEXT,
+                                           markup.FILE_ATTACHMENT)
         has_note = (not noteless
                     and bool(getattr(said, "contents", "") or children))
         replied = any(getattr(m, "is_reply", bool) and m.is_reply()
@@ -4982,6 +5044,15 @@ class PageCanvas(QAbstractScrollArea):
         locked = bool(getattr(mark, "locked", False))
         if kind in markup.POLYS and getattr(mark, "points", None):
             self._add_vertex_entries(menu, index, mark, locked)
+        if kind == markup.FILE_ATTACHMENT:
+            # At the foot, in a group of its own, as Acrobat has it -- and
+            # **Save, with no Open**: an attached file can be anything, and
+            # opening one is how a document delivers what it carries.
+            menu.addSeparator()
+            save = menu.addAction(_("Save Embedded File to Disk..."))
+            save.setEnabled(bool(getattr(mark, "attached", None)))
+            save.triggered.connect(
+                lambda: self.attachment_save_wanted.emit(index, mark))
         if kind in (markup.LINE, markup.POLYLINE) and getattr(mark, "points", None):
             # At the foot, as Acrobat has it: the start becomes the end, so
             # the ends' styles change places -- the one change a flip makes
@@ -5476,6 +5547,11 @@ class PageCanvas(QAbstractScrollArea):
                 continue
             if markup.is_stamp(mark):
                 self._paint_stamp_art(painter, index, mark, offset)
+                continue
+            if kind == markup.FILE_ATTACHMENT:
+                # Its own drawing, in its icon's fixed box.
+                self._paint_stamp_art(painter, index, mark, offset,
+                                      self.note_icon_rect(index, mark, offset))
                 continue
             if kind == markup.STAMP:
                 self._paint_stamp(painter, index, mark, colour, offset)
@@ -7061,7 +7137,8 @@ class PageCanvas(QAbstractScrollArea):
                         or m.subtype == markup.LINE
                         or m.subtype in markup.POLYS
                         or m.subtype == markup.INK
-                        or markup.is_stamp(m))
+                        or markup.is_stamp(m)
+                        or m.subtype == markup.FILE_ATTACHMENT)
                     and not m.is_reply()]
         except Exception:       # noqa: BLE001 - a repaint must not fail
             return []
@@ -7122,6 +7199,21 @@ class PageCanvas(QAbstractScrollArea):
         painter.drawImage(box.topLeft(), image)
         painter.setOpacity(was)
 
+    @staticmethod
+    def _attachment_label(mark) -> str:
+        """An attachment's file, as the pointer over it says: its name and
+        its size."""
+        found = getattr(mark, "attached", None)
+        if not found:
+            return _("Attached file")
+        name, size = found
+        if size is None:
+            return name
+        # MB and KB, as the Finder and most people say them, not MiB.
+        shown = QLocale().formattedDataSize(
+            int(size), 1, QLocale.DataSizeFormat.DataSizeSIFormat)
+        return f"{name} ({shown})"
+
     def _corner_grips(self, index: int, mark, offset=None):
         """A handle on each corner of a mark's box: top left, top right,
         bottom right, bottom left -- a Stamp's four."""
@@ -7180,7 +7272,8 @@ class PageCanvas(QAbstractScrollArea):
         self._place_mark_buttons()
         self.viewport().update()
 
-    def _paint_stamp_art(self, painter, index: int, mark, offset) -> None:
+    def _paint_stamp_art(self, painter, index: int, mark, offset,
+                         where=None) -> None:
         """Draw a Stamp: its own drawing, rendered at the size it is shown
         and fitted to its rectangle -- at the one a drag in flight has given
         it -- at its opacity. **Drawn here and not left to the renderer**,
@@ -7189,9 +7282,10 @@ class PageCanvas(QAbstractScrollArea):
         art = getattr(mark, "art", None)
         if not art:
             return
-        rect, _angle = self._shape_of(mark)
-        where = self.quad_on_screen(index, rect, offset,
-                                    scaled=isinstance(mark, markup.Annotation))
+        if where is None:
+            rect, _angle = self._shape_of(mark)
+            where = self.quad_on_screen(index, rect, offset,
+                                        scaled=isinstance(mark, markup.Annotation))
         if where is None or where.width() < 1 or where.height() < 1:
             return
         if not where.intersects(QRectF(self.viewport().rect())):
@@ -8182,6 +8276,9 @@ class PageCanvas(QAbstractScrollArea):
         next one."""
         if not self.marks_area():
             return
+        if self._tool == self.ATTACH:
+            self.viewport().setCursor(self._icon_cursor())
+            return
         if self._tool != self.DRAW or self._ink_drawing is None:
             self.viewport().setCursor(Qt.CrossCursor)
             return
@@ -8364,6 +8461,27 @@ class PageCanvas(QAbstractScrollArea):
         self._shaping = (mark, markup.ink_rect(scaled, counts, width), 0.0)
         self._place_mark_buttons()
         self.viewport().update()
+
+    def _icon_cursor(self):
+        """**The icon the Attach File tool will place**, as the pointer --
+        the one its defaults hold -- its hot spot the top left corner the
+        icon is placed by; the crosshair if it cannot be drawn."""
+        found = self.attach_icon() if self.attach_icon else None
+        if not found:
+            return QCursor(Qt.CrossCursor)
+        if self._attach_cursor[0] == found:
+            return self._attach_cursor[1]
+        icon, colour = found
+        ratio = 2.0
+        image = self._render_art(markup.attachment_art(icon, colour),
+                                 tuple(round(v * 1.5 * ratio)
+                                       for v in markup.ATTACHMENT_SIZES[icon]))
+        if image is None:
+            return QCursor(Qt.CrossCursor)
+        image.setDevicePixelRatio(ratio)
+        cursor = QCursor(QPixmap.fromImage(image), 0, 0)
+        self._attach_cursor = (found, cursor)
+        return cursor
 
     def _ink_path(self, index: int, mark, offset=None):
         """``(curves, dots, scale)`` for a Pencil on screen: its strokes as

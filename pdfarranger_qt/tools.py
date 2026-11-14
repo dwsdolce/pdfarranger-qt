@@ -135,9 +135,11 @@ TOOLS: List[Tool] = [
     Tool("text_comment", COMMENT, N_("Add text comment"), "text-box-outline",
          "/FreeText",
          colour='Light Red', marks=("Text Box",)),
+    # Purple, read off Acrobat with its preferences cleared; Red was a
+    # placeholder nothing had checked.
     Tool("attach_file", COMMENT, N_("Attach file"), "paperclip",
          "/FileAttachment, /Name /Paperclip, /FS /EF",
-         colour='Red'),
+         colour='Purple', marks=("File Attachment",)),
 
     Tool("highlight", TEXT_MARKUP, N_("Highlight"), "format-color-highlight",
          "/Highlight, /QuadPoints, /CA",

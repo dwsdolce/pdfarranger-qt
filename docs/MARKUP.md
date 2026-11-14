@@ -49,7 +49,7 @@ time.
 | | Replace selected text | Replace Selected Text | propose new wording for words that are struck out | complete |
 | | Insert text | Insert Text | propose words to insert at a point | complete |
 | | Add text comment | Text Box | words written straight onto the page in a box | complete |
-| | Attach file | | a file carried in the document at a point | not started |
+| | Attach file | File Attachment | a file carried in the document at a point | complete |
 | Text markup | Highlight | Highlight | colour behind a run of words | complete |
 | | Underline | Underline | a straight or wavy line under a run of words | complete |
 | | Strikethrough | Strikethrough | a line through a run of words | complete |
@@ -165,6 +165,20 @@ says only where it differs.
   is picked up, and no change over a text box until it is. One rule is
   easier to learn than three.
 - Escape, or a click on bare page, lets go of the mark.
+- **Selecting a mark placed on the page clears the text's insertion point
+  and selection**: a comment's or a scalable comment's icon, a text box, a
+  shape, a line, a polygon, a Pencil, a callout, a stamp, an attachment --
+  none is made from the words, as the notes for their tools say, each
+  clearing the selection when chosen. **A mark made from the words** -- a
+  highlight, an underline, a strikethrough, Replace Selected Text's
+  strikeout, an Insert Text caret -- **leaves both alone**: the text tools
+  work from them. Agreed 2026-11-13; selecting any mark had left the caret
+  where it was, so the arrow keys and Copy still worked on text left
+  behind.
+- **A double-click on a mark placed on the page does nothing** but hold it
+  -- a text box or a callout aside, which it opens for typing. It selected
+  the word behind the mark. One on a mark made from the words still
+  selects the word, as it does in unmarked text.
 - *Enable Text Selection* in a mark's menu lets the next click through to
   the words underneath, for text that is otherwise covered.
 
@@ -2137,3 +2151,122 @@ Three stages, each tried in the application before the next:
   Acrobat's does. Its size and the category it showed are kept for next
   time. The stamp picked is shown by its whole cell: Qt's own mark of it
   was a bar where a label would be, and a stamp has none.
+
+## File Attachment
+
+Made by the Attach File tool. Complete.
+
+### Requirements
+
+- **One mark, one tool.** The Attach File tool makes a **File
+  Attachment**, and its form is *File Attachment Properties*.
+- **Placing one.** Any text selection is cleared when the tool is chosen,
+  and the pointer becomes the icon the tool will place -- the one its
+  defaults hold, the paperclip until another is chosen. A click opens a
+  file dialog for one file; OK places the icon at the click, by its top
+  left corner as a comment's icon is placed, in the strip's colour, and
+  Cancel places nothing.
+- **A large file is asked about.** Over **20 MB** a warning says how big
+  it is and that the PDF will grow by that much and may be too large to
+  send by email, with Attach and Cancel: 20 leaves room under the 25 MB
+  most mail services take for the rest of the file. **Departure from
+  Acrobat**, which attached 237 MB without a word.
+- **The icon** is one of four, as Acrobat's: Graph, Paperclip, Attachment
+  -- the standard's `/PushPin`, under Acrobat's name for it -- and Tag.
+  **Drawn to our own design**, Acrobat's glyphs being Adobe's; an
+  attachment a file already has keeps its drawing until its icon is
+  changed. A fixed size on screen, as a comment's icon is: it does not
+  grow with the zoom, and **is not resized**.
+- **Moving and the cursor**: taken hold of by its icon, with the move
+  cursor over it, and dragged; selected, it is outlined.
+- **No Open File.** Acrobat's menu offers it and opens the file on a
+  double-click; an attached file can be anything, and opening one is how
+  a document delivers what it carries. **Departure from Acrobat**: the
+  menu offers **Save Embedded File to Disk** and not Open File, and a
+  double-click does nothing.
+- **No notes and no replies**, as in Acrobat, whose menu for one has no
+  note entries: `/Contents` is the file's name. Status as for a Text Box.
+  The pointer over it shows the file's name and size.
+- **The properties form**: Icon, Colour and Opacity, as Acrobat's -- the
+  colour the icon's.
+- **The strip**: the colour swatch.
+- **Starting colour Purple**, read off Acrobat with its preferences
+  cleared: `tools.py` had Red, which nothing had checked.
+
+### Plan
+
+The fixture is page 1 of `corpus/Markup Attach File.pdf`: two paperclips,
+one carrying a 7 MB recording and one a PDF. **What Acrobat writes**: a
+`/FileAttachment` with `/Name` the icon, `/Subj File Attachment`,
+`/Contents` the file's name, `/C`, `/F 28` -- printed, not zoomed, not
+turned -- a 7 by 17 point `/Rect` for the paperclip, no `/Popup`, and the
+file in `/FS`: a file specification with `/F` and `/UF` its name and
+`/EF /F` the embedded file, its size in `/Params`.
+
+### Building it
+
+Three stages, each tried in the application before the next:
+
+1. **The mark.** An attachment a file has: found by its icon and drawn by
+   the canvas, its own drawing kept, moved, and its file saved to disk
+   from its menu; the pointer over it naming the file.
+2. **Making one.** The Attach File tool, its cursor, the file dialog and
+   the 20 MB warning; our four icons; written as Acrobat writes one.
+3. **The form and the strip**: *File Attachment Properties*, the icon
+   changed there, the strip's swatch, and Status.
+
+**Stage 1, as built:**
+
+- **Drawn by the canvas from its own drawing**, lifted out as a Stamp's is,
+  in its own rectangle -- not a comment icon's box -- held at that size on
+  screen whatever the zoom, as `/F` NoZoom asks and as a comment's is.
+  PDFium ignores the flag and scales it with the page, so it is drawn
+  larger there than here and in Acrobat.
+- **Taken hold of by its icon**, with the move cursor, and **moved**:
+  `/Rect` shifted at its size, its drawing and its file kept.
+- **The pointer over it** names its file and its size, in MB and kB as the
+  Finder gives them: it has no note, so no panel, and the tooltip stays.
+- **Its menu**: Delete, Set status, Make current properties default and
+  Properties, then **Save Embedded File to Disk...** in a group of its own
+  at the foot, where Acrobat's menu has it, photographed in the notes --
+  it was put first at first -- no note entries and no Copy Text. **Saved** byte for byte from the document being shown, which
+  carries the file; never opened. A double-click does nothing.
+- **No badge and no note window**: its `/Contents` is its file's name.
+
+**Stage 2, as built:**
+
+- **The tool**: its pointer the icon it will place, drawn half as large
+  again so it can be seen, its hot spot the top left corner the icon is
+  placed by. A click asks for the file; Cancel places nothing and takes
+  no undo step. Over 20 MB a warning gives the file's size, with Attach
+  and Cancel. The file is read then, as Acrobat embeds it then, and kept
+  on the mark until it is written.
+- **Placed** by its top left at the click, at its own size on the page a
+  reader draws it on, in the tool's colour -- now Purple.
+- **Our four icons**: a graph of three bars in a frame, 20 by 20; a
+  paperclip, one wire running three lines side by side, 7 by 17 -- drawn
+  first as two loops on top of each other, which read as a capsule; a
+  push pin, 13 by 20; and a tag with its hole, 20 by 13. The push pin's
+  and the tag's sizes are ours, Acrobat's fixture having neither. Each in
+  its colour with a dark edge.
+- **Written as Acrobat writes one**: `/Name` the icon, `/Subj File
+  Attachment`, `/Contents` the file's name, `/F 28`, no `/Popup`, and the
+  file in `/FS` -- `/F` and `/UF` its name, `/EF /F` the embedded file with
+  its type, and its size, MD5 checksum and dates in `/Params`. The type's
+  slash is pikepdf's to escape: escaping it first wrote `#232F`.
+- **Save Embedded File to Disk** on one made here writes the bytes it
+  carries.
+
+**Stage 3, as built:**
+
+- ***File Attachment Properties***: Colour, Opacity and Icon -- laid out as
+  a comment's form is, the other form with an icon list, so the same
+  control is in the same place -- the four icons drawn as the page gets
+  them, each centred in one box so their names line up. The tool's own
+  form the same: the icon chosen there is the one it places next, and its
+  pointer.
+- **A new icon or colour**, from the form or the strip's swatch, gives an
+  attachment our drawing in it -- one the file brought as well -- a new
+  icon its own size hung from the same top left corner; its file and its
+  place kept.
+- **Status** from its menu and the form's Review History, as a Text Box's.

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  pdfarranger\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-13 23:41+0000\n"
+"POT-Creation-Date: 2026-11-14 00:53+0000\n"
 "PO-Revision-Date: 2026-01-21 05:07+0100\n"
 "Last-Translator: Ekaterine Papava <papava.e@gtu.ge>\n"
 "Language: ka\n"
@@ -122,6 +122,11 @@ msgid "Open Pop-Up Note"
 msgstr "ამომხტომი შენიშვნის გახსნა"
 
 # machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Save Embedded File to Disk..."
+msgstr "ჩაშენებული ფაილის შენახვა…"
+
+# machine translation, unreviewed
 #: pdfarranger_qt/canvas.py pdfarranger_qt/mainwindow.py
 msgid "Reply"
 msgstr "პასუხი"
@@ -184,6 +189,11 @@ msgstr "%d სტატუსი"
 #: pdfarranger_qt/canvas.py pdfarranger_qt/notepanel.py
 msgid "Status"
 msgstr "სტატუსი"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Attached file"
+msgstr "მიმაგრებული ფაილი"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
@@ -2253,6 +2263,36 @@ msgstr[0] ""
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
+msgid "Attach File"
+msgstr "ფაილის მიმაგრება"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid ""
+"This file is %s. The PDF will grow by that much and may be too large to send"
+" by email."
+msgstr ""
+"ფაილის ზომაა %s. PDF ამდენით გაიზრდება და შეიძლება ძალიან დიდი იყოს ელფოსტით"
+" გასაგზავნად."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Attach"
+msgstr "მიმაგრება"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Save Embedded File to Disk"
+msgstr "ჩაშენებული ფაილის შენახვა"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "The attached file could not be read."
+msgstr "მიმაგრებული ფაილის წაკითხვა ვერ მოხერხდა."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
 msgid "Move Mark"
 msgstr "ნიშნის გადატანა"
 
@@ -2890,6 +2930,26 @@ msgstr "შებრუნება"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/markup.py
+msgid "Graph"
+msgstr "გრაფიკი"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Paperclip"
+msgstr "სამაგრი"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Attachment"
+msgstr "დანართი"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Tag"
+msgstr "ჭდე"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
 msgid "Approved"
 msgstr "დამტკიცებულია"
 
@@ -3265,6 +3325,11 @@ msgstr "გამოძახება"
 #: pdfarranger_qt/properties.py
 msgid "Stamp"
 msgstr "შტამპი"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "File Attachment"
+msgstr "მიმაგრებული ფაილი"
 
 #: pdfarranger_qt/properties.py
 msgid "Review History"

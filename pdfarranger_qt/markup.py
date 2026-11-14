@@ -109,6 +109,173 @@ POLYLINE = "/PolyLine"
 POLYGON_CLOUD = "/PolygonCloud"
 POLYS = (POLYGON, POLYLINE)
 
+#: What the Attach File tool makes, a File Attachment: a file carried in
+#: the document, shown as an icon -- `/Name` one of `ATTACHMENT_ICONS` --
+#: that holds its size on screen.
+FILE_ATTACHMENT = "/FileAttachment"
+#: Its four icons, as ``(name, label msgid)``: the standard's, the push pin
+#: under Acrobat's name for it.
+ATTACHMENT_ICONS = (("/Graph", N_("Graph")), ("/Paperclip", N_("Paperclip")),
+                    ("/PushPin", N_("Attachment")), ("/Tag", N_("Tag")))
+
+
+def attached_file(annot):
+    """``(name, size)`` of the file an attachment carries, or None."""
+    spec = annot.get(pikepdf.Name.FS)
+    if not isinstance(spec, pikepdf.Dictionary):
+        return None
+    name = str(spec.get(pikepdf.Name.UF, spec.get(pikepdf.Name.F, "")))
+    embedded = spec.get(pikepdf.Name.EF)
+    stream = embedded.get(pikepdf.Name.F) if embedded is not None else None
+    size = None
+    if isinstance(stream, pikepdf.Stream):
+        params = stream.get(pikepdf.Name.Params)
+        size = params.get(pikepdf.Name.Size) if params is not None else None
+        size = int(size) if size is not None else stream.get(pikepdf.Name.DL)
+        size = int(size) if size is not None else None
+    return (name, size)
+
+
+def attached_bytes(data: bytes, page: int, index: int):
+    """``(name, bytes)`` of the file the attachment ``index`` on ``page``
+    -- counted as `marks_in` counts them -- carries in the document
+    ``data``, or None."""
+    with pikepdf.open(io.BytesIO(data)) as pdf:
+        if not 1 <= page <= len(pdf.pages):
+            return None
+        at = 0
+        for annot in pdf.pages[page - 1].obj.get(pikepdf.Name.Annots) or []:
+            subtype = str(annot.get(pikepdf.Name.Subtype, ""))
+            if subtype in ("/Widget", "/Popup", "/Link"):
+                continue
+            if at == index:
+                found = attached_file(annot)
+                if found is None:
+                    return None
+                stream = annot.FS.EF.F
+                return found[0], stream.read_bytes()
+            at += 1
+    return None
+
+
+#: Each attachment icon's size in points: the paperclip's and the graph's
+#: Acrobat's, the push pin's and the tag's our own, Acrobat's fixture having
+#: none of either.
+ATTACHMENT_SIZES = {"/Paperclip": (7.0, 17.0), "/Graph": (20.0, 20.0),
+                    "/PushPin": (13.0, 20.0), "/Tag": (20.0, 13.0)}
+
+
+def attachment_icon_stream(icon: str, colour) -> Tuple[str, float, float]:
+    """An attachment's icon, **our own drawing**, as content-stream text and
+    its size: Acrobat's glyphs are Adobe's. The icon in its colour with a
+    dark edge, so it reads on paper and on ink."""
+    wide, tall = ATTACHMENT_SIZES.get(icon, ATTACHMENT_SIZES["/Paperclip"])
+    ink = "{:.4g} {:.4g} {:.4g}".format(*colour[:3])
+    edge = "0.15 0.15 0.15"
+    if icon == "/Graph":
+        ops = [f"{edge} RG 0.8 w 1 1 1 rg 0.5 0.5 19 19 re B", f"{ink} rg {edge} RG 0.5 w",
+               "3.5 3 3.5 9 re B", "8.25 3 3.5 13 re B", "13 3 3.5 6.5 re B"]
+    elif icon == "/PushPin":
+        ops = [f"{edge} RG 0.8 w", "6.5 0.5 m 6.5 8 l S", f"{ink} rg",
+               "3 8 m 10 8 l 9 12 l 4 12 l h B",
+               "4.5 12 m 8.5 12 l 8.5 15.5 l 4.5 15.5 l h B",
+               "2 15.5 m 11 15.5 l 11 19.5 l 2 19.5 l h B"]
+    elif icon == "/Tag":
+        ops = [f"{ink} rg {edge} RG 0.8 w",
+               "0.5 6.5 m 5.5 0.5 l 19.5 0.5 l 19.5 12.5 l 5.5 12.5 l h B",
+               "1 1 1 rg 6.8 6.5 m 6.8 7.3 6.15 7.9 5.4 7.9 c 4.6 7.9 4 7.3 4 6.5 c "
+               "4 5.7 4.6 5.1 5.4 5.1 c 6.15 5.1 6.8 5.7 6.8 6.5 c h B"]
+    else:
+        # A paperclip: one wire, up the middle, over a small loop at the
+        # top, down the left, round the bottom and up the right -- three
+        # lines side by side, so it reads as a clip at this size.
+        wire = ("3.5 5 m 3.5 13 l 3.5 14.4 2.9 15.2 2.35 15.2 c "
+                "1.8 15.2 1.2 14.4 1.2 13 c 1.2 3.2 l 1.2 1.7 2.2 0.9 3.5 0.9 c "
+                "4.8 0.9 5.8 1.7 5.8 3.2 c 5.8 14.2 l S")
+        ops = [f"{edge} RG 1.7 w 1 J 1 j", wire, f"{ink} RG 1.1 w", wire]
+    return "\n".join(ops) + "\n", wide, tall
+
+
+def attachment_art(icon: str, colour) -> bytes:
+    """An attachment's icon as a PDF of one page, for the canvas to draw."""
+    text, wide, tall = attachment_icon_stream(icon, colour)
+    out = pikepdf.new()
+    form = out.make_stream(text.encode("latin-1"))
+    form[pikepdf.Name.Type] = pikepdf.Name.XObject
+    form[pikepdf.Name.Subtype] = pikepdf.Name.Form
+    form[pikepdf.Name.BBox] = pikepdf.Array([0, 0, wide, tall])
+    page = pikepdf.Dictionary(
+        Type=pikepdf.Name.Page, MediaBox=pikepdf.Array([0, 0, wide, tall]),
+        Resources=pikepdf.Dictionary(XObject=pikepdf.Dictionary(Art=form)),
+        Contents=out.make_stream(b"/Art Do"))
+    out.pages.append(pikepdf.Page(page))
+    buffer = io.BytesIO()
+    out.save(buffer)
+    return buffer.getvalue()
+
+
+def _redraw_attachment(annot, pdf) -> None:
+    """An attachment the file brought, given our drawing in the icon and
+    colour it now has -- a new icon its own size from the same top left --
+    when either, or its opacity, is changed."""
+    icon = str(annot.get(pikepdf.Name.Name, "/Paperclip"))
+    if icon not in ATTACHMENT_SIZES:
+        icon = "/Paperclip"
+    colour = annot.get(pikepdf.Name.C)
+    colour = (tuple(_number(v, 0.0) for v in colour) if colour is not None
+              else swatch("Purple"))
+    text, wide, tall = attachment_icon_stream(icon, colour)
+    left, top = float(annot.Rect[0]), float(annot.Rect[3])
+    annot[pikepdf.Name.Rect] = pikepdf.Array([left, top - tall, left + wide, top])
+    stream = pikepdf.Stream(pdf, text.encode("latin-1"))
+    stream[pikepdf.Name.Type] = pikepdf.Name.XObject
+    stream[pikepdf.Name.Subtype] = pikepdf.Name.Form
+    stream[pikepdf.Name.BBox] = pikepdf.Array([0, 0, wide, tall])
+    annot[pikepdf.Name.AP] = pikepdf.Dictionary(N=pdf.make_indirect(
+        _wrapped_in_opacity(pdf, stream, _number(annot.get(pikepdf.Name.CA)))))
+
+
+def _write_attachment(pdf, entry, annotation) -> None:
+    """A File Attachment's own keys, as Acrobat writes them: `/Name` the
+    icon, `/Contents` the file's name, and the file in `/FS`, embedded with
+    its size, checksum and dates; and a drawing of our own. Its `/F 28` is
+    `_flags_for`'s."""
+    import hashlib
+    import mimetypes
+
+    icon = annotation.icon if annotation.icon in ATTACHMENT_SIZES else "/Paperclip"
+    entry[pikepdf.Name.Name] = pikepdf.Name(icon)
+    name, _size = annotation.attached or ("attachment", 0)
+    entry[pikepdf.Name.Contents] = pikepdf.String(name)
+    data = annotation.payload or b""
+    now = pdf_date()
+    embedded = pdf.make_stream(data)
+    embedded[pikepdf.Name.Type] = pikepdf.Name.EmbeddedFile
+    kind = mimetypes.guess_type(name)[0]
+    if kind:
+        # The slash as it is: pikepdf escapes it, and escaping it here
+        # wrote `#232F`, a type no reader knows.
+        embedded[pikepdf.Name.Subtype] = pikepdf.Name("/" + kind)
+    embedded[pikepdf.Name.Params] = pikepdf.Dictionary(
+        Size=len(data), CheckSum=pikepdf.String(hashlib.md5(data).digest()),
+        CreationDate=pikepdf.String(now), ModDate=pikepdf.String(now))
+    entry[pikepdf.Name.FS] = pdf.make_indirect(pikepdf.Dictionary(
+        Type=pikepdf.Name.Filespec, F=pikepdf.String(name),
+        UF=pikepdf.String(name), EF=pikepdf.Dictionary(F=embedded)))
+    colour = annotation.colour or swatch("Purple")
+    text, wide, tall = attachment_icon_stream(icon, colour)
+    left, _bottom, _right, top = (float(v) for v in annotation.rect)
+    entry[pikepdf.Name.Rect] = pikepdf.Array([left, top - tall, left + wide, top])
+    stream = pikepdf.Stream(pdf, text.encode("latin-1"))
+    stream[pikepdf.Name.Type] = pikepdf.Name.XObject
+    stream[pikepdf.Name.Subtype] = pikepdf.Name.Form
+    stream[pikepdf.Name.BBox] = pikepdf.Array([0, 0, wide, tall])
+    entry[pikepdf.Name.AP] = pikepdf.Dictionary(N=pdf.make_indirect(
+        _wrapped_in_opacity(pdf, stream, getattr(annotation, "opacity", None))))
+    if solidity(annotation) != 1.0:
+        entry[pikepdf.Name.CA] = solidity(annotation)
+
+
 #: What the Text Callout tool makes, a Callout: a `/FreeText` -- a Text
 #: Box -- with a leader in `/CL` from a tip styled by `/LE` to the middle of
 #: a side of the box, told from a Text Box by `/IT /FreeTextCallout`.
@@ -178,7 +345,8 @@ def callout_rect(box, points, end: str, style_name: str, width: float) -> "tuple
 INK = "/Ink"
 
 KINDS = (TEXT, HIGHLIGHT, STRIKEOUT, UNDERLINE, SQUIGGLY, STAMP, CARET,
-         FREETEXT, SQUARE, CIRCLE, LINE, POLYGON, POLYLINE, INK)
+         FREETEXT, SQUARE, CIRCLE, LINE, POLYGON, POLYLINE, INK,
+         FILE_ATTACHMENT)
 
 #: The two subtypes one tool writes, and which of them means what. A style
 #: is not a value inside the dictionary: it is which dictionary gets
@@ -426,7 +594,8 @@ SUBJECTS = {HIGHLIGHT: "Highlight", STRIKEOUT: "Cross-Out",
             # apart in the file.
             SQUARE: "Rectangle", CIRCLE: "Oval", LINE: "Line",
             # Acrobat's, kept in the file; the mark is called Polyline here.
-            POLYGON: "Polygon", POLYLINE: "Polygonal Line", INK: "Pencil"}
+            POLYGON: "Polygon", POLYLINE: "Polygonal Line", INK: "Pencil",
+            FILE_ATTACHMENT: "File Attachment"}
 
 #: Bit 3 of `/F`, Print. Without it a mark shows on screen and vanishes from
 #: paper, which is not what anybody means by annotating a document.
@@ -909,7 +1078,7 @@ class Annotation:
                  "popup_rect", "state", "rich", "subject", "locked",
                  "intent", "icon", "group", "fill", "thickness",
                  "border_style", "text_font", "text_size", "text_colour",
-                 "points", "ends", "strokes", "art")
+                 "points", "ends", "strokes", "art", "attached", "payload")
 
     def __init__(self, kind: str, page: int, rect: Tuple[float, ...],
                  contents: str = "", colour=None, author: Optional[str] = None,
@@ -924,7 +1093,7 @@ class Annotation:
                  fill=None, thickness: float = 1.0,
                  border_style: str = "straight", text_font=None,
                  text_size=None, text_colour=None, points=None, ends=None,
-                 strokes=None, art=None):
+                 strokes=None, art=None, attached=None, payload=None):
         if kind not in KINDS:
             raise ValueError(f"unknown annotation kind: {kind}")
         self.kind = kind
@@ -953,6 +1122,10 @@ class Annotation:
         #: A Stamp's drawing, a PDF of one page -- `stamp_art` and
         #: `preset_art` -- written into the file as its appearance.
         self.art = art
+        #: An attachment's file: ``(name, size)``, and its bytes, read when
+        #: it was attached, as Acrobat embeds it then.
+        self.attached = tuple(attached) if attached else None
+        self.payload = payload
         #: The `/NM` of the mark this answers, for a reply, and None for
         #: anything else. A reply is a mark in its own right -- it draws an
         #: icon, it can be selected and deleted -- and all that makes it a
@@ -1138,6 +1311,12 @@ def apply_edit(annot, edit, pdf=None) -> None:
         edit = {k: v for k, v in edit.items() if k != "rotate"}
         _apply_common_edit(annot, edit, pdf)
         _redraw_poly(annot, edit, pdf, was_points, was_rect)
+        return
+    if subtype == FILE_ATTACHMENT:
+        _apply_common_edit(annot, edit, pdf)
+        if pdf is not None and any(edit.get(k) is not None
+                                   for k in ("icon", "colour", "opacity")):
+            _redraw_attachment(annot, pdf)
         return
     if subtype == INK:
         was = _ink_reading(annot)
@@ -1869,8 +2048,8 @@ def blank_note_icons(pdf) -> int:
                 text_box = (subtype == FREETEXT or subtype in SHAPES
                             or subtype == LINE or subtype in POLYS
                             or subtype == INK)
-                artwork = (subtype == STAMP and not is_scalable_comment(
-                    subtype, stamp_icon(annot)))
+                artwork = ((subtype == STAMP and not is_scalable_comment(
+                    subtype, stamp_icon(annot))) or subtype == FILE_ATTACHMENT)
                 if subtype != TEXT and not text_box and not artwork and \
                         not is_scalable_comment(subtype, stamp_icon(annot)):
                     continue
@@ -2185,7 +2364,9 @@ def _flags_for(annotation) -> int:
         return UNSEEN
     if annotation.irt and not annotation.group:
         return ANCHORED
-    if annotation.kind == TEXT:
+    if annotation.kind in (TEXT, FILE_ATTACHMENT):
+        # An attachment's icon held as a comment's is: printed, not
+        # zoomed, not turned -- Acrobat's `/F 28`.
         return ANCHORED
     # A stamp falls through to Print alone. It is page content: it scales,
     # it turns, and it is pinned by nothing -- which is the whole of what
@@ -2339,6 +2520,8 @@ def to_dictionary(pdf, annotation: Annotation, page=None) -> pikepdf.Dictionary:
         _write_poly(pdf, entry, annotation)
     if annotation.kind == INK:
         _write_ink(pdf, entry, annotation)
+    if annotation.kind == FILE_ATTACHMENT:
+        _write_attachment(pdf, entry, annotation)
     if annotation.kind == CARET:
         entry[pikepdf.Name.RD] = pikepdf.Array([caret_inset(annotation.rect)] * 4)
         if solidity(annotation) != 1.0:
@@ -2535,7 +2718,7 @@ def nearest_swatch(colour):
 TRANSPARENCY = {HIGHLIGHT: 0.4, STRIKEOUT: 1.0,
                 UNDERLINE: 1.0, SQUIGGLY: 1.0, CARET: 1.0, FREETEXT: 1.0,
                 SQUARE: 1.0, CIRCLE: 1.0, LINE: 1.0, POLYGON: 1.0,
-                POLYLINE: 1.0, INK: 1.0}
+                POLYLINE: 1.0, INK: 1.0, FILE_ATTACHMENT: 1.0}
 
 
 def opacity_of(mark) -> float:
@@ -4303,8 +4486,8 @@ def add_to_page(pdf, page, marks, factor: float = 1.0) -> int:
         # Its window, which goes in `/Annots` beside it and is pointed at
         # from it. Written for every mark, commented or not, because that is
         # what Reader writes -- except a text box, which has no note and
-        # gets none from Acrobat either.
-        if placed.kind != FREETEXT:
+        # gets none from Acrobat either, nor an attachment.
+        if placed.kind not in (FREETEXT, FILE_ATTACHMENT):
             window = popup_for(pdf, entry, placed.rect, media[2],
                                placed.popup_rect)
             entry[pikepdf.Name.Popup] = window
@@ -4362,7 +4545,7 @@ class Mark:
                  "opacity", "contents", "author", "name", "parent", "state",
                  "hidden", "when", "popup_open", "popup_rect", "rich",
                  "locked", "subject", "intent", "scales", "icon",
-                 "rotate", "ink", "art", "group", "fill", "thickness",
+                 "rotate", "ink", "art", "attached", "group", "fill", "thickness",
                  "border_style", "inset", "text_font", "text_size",
                  "text_colour", "styled", "rd", "points", "ends", "strokes")
 
@@ -4371,7 +4554,8 @@ class Mark:
                  state=None, hidden=False, index=-1, author="", when="",
                  popup_open=False, popup_rect=None, rich="", locked=False,
                  subject="", intent="", scales=False, icon="",
-                 rotate=0.0, ink=None, art=None, group=False, fill=None,
+                 rotate=0.0, ink=None, art=None, attached=None, group=False,
+                 fill=None,
                  thickness=1.0, border_style="straight", inset=0.0,
                  text_font=None, text_size=None, text_colour=None,
                  styled=False, rd=None, points=None, ends=None,
@@ -4448,8 +4632,10 @@ class Mark:
         #: `shown_colour`.
         self.ink = ink
         #: A Stamp's own drawing as a PDF of one page, for the canvas to draw
-        #: it by -- `stamp_art` -- or None.
+        #: it by -- `stamp_art` -- or None. An attachment's too.
         self.art = art
+        #: An attachment's file, as ``(name, size in bytes)``.
+        self.attached = attached
         #: `/RT /Group`: ``parent`` joins this mark to another as one
         #: object rather than making it a reply. The strikeout of a
         #: *Replace Selected Text* pair, whose parent is its caret.
@@ -4716,9 +4902,10 @@ def has_note(mark) -> bool:
     ways the first time one of them changes.
     """
     kind = getattr(mark, "kind", None) or getattr(mark, "subtype", None)
-    if kind == FREETEXT:
+    if kind in (FREETEXT, FILE_ATTACHMENT):
         # Its `/Contents` is the text in the box, not a note: a text box
-        # has no note window at all.
+        # has no note window at all. Nor has an attachment, whose
+        # `/Contents` is its file's name.
         return False
     return bool(getattr(mark, "contents", "")) and _answers(mark) is None
 
@@ -4794,9 +4981,11 @@ def marks_in(pdf) -> "list[Mark]":
                     icon=(stamp_icon(annot) if subtype == STAMP
                           else str(annot.get(pikepdf.Name.Name, ""))),
                     ink=_ink_of(annot, subtype, colour),
-                    art=(stamp_art(annot) if subtype == STAMP
-                         and not is_scalable_comment(subtype, stamp_icon(annot))
-                         else None),
+                    art=(stamp_art(annot) if (subtype == STAMP
+                         and not is_scalable_comment(subtype, stamp_icon(annot)))
+                         or subtype == FILE_ATTACHMENT else None),
+                    attached=(attached_file(annot)
+                              if subtype == FILE_ATTACHMENT else None),
                     group=(str(annot.get(pikepdf.Name.RT, "")) == "/Group"),
                     author=str(annot.get(pikepdf.Name.T, "")),
                     when=str(annot.get(pikepdf.Name.M,

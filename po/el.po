@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PDF Arranger 1.9.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-13 23:41+0000\n"
+"POT-Creation-Date: 2026-11-14 00:53+0000\n"
 "PO-Revision-Date: 2023-06-12 10:30+0300\n"
 "Last-Translator: Manussos Pulinakis "
 "<38626261+manussos@users.noreply.github.com>\n"
@@ -127,6 +127,11 @@ msgid "Open Pop-Up Note"
 msgstr "Άνοιγμα αναδυόμενης σημείωσης"
 
 # machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Save Embedded File to Disk..."
+msgstr "Αποθήκευση ενσωματωμένου αρχείου…"
+
+# machine translation, unreviewed
 #: pdfarranger_qt/canvas.py pdfarranger_qt/mainwindow.py
 msgid "Reply"
 msgstr "Απάντηση"
@@ -189,6 +194,11 @@ msgstr "%d κατάσταση"
 #: pdfarranger_qt/canvas.py pdfarranger_qt/notepanel.py
 msgid "Status"
 msgstr "Κατάσταση"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/canvas.py
+msgid "Attached file"
+msgstr "Συνημμένο αρχείο"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/canvas.py
@@ -2326,6 +2336,36 @@ msgstr[1] ""
 
 # machine translation, unreviewed
 #: pdfarranger_qt/mainwindow.py
+msgid "Attach File"
+msgstr "Επισύναψη αρχείου"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+#, python-format
+msgid ""
+"This file is %s. The PDF will grow by that much and may be too large to send"
+" by email."
+msgstr ""
+"Το αρχείο είναι %s. Το PDF θα μεγαλώσει τόσο και ίσως είναι πολύ μεγάλο για "
+"αποστολή με email."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Attach"
+msgstr "Επισύναψη"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "Save Embedded File to Disk"
+msgstr "Αποθήκευση ενσωματωμένου αρχείου"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
+msgid "The attached file could not be read."
+msgstr "Το συνημμένο αρχείο δεν μπόρεσε να διαβαστεί."
+
+# machine translation, unreviewed
+#: pdfarranger_qt/mainwindow.py
 msgid "Move Mark"
 msgstr "Μετακίνηση σήμανσης"
 
@@ -2972,6 +3012,26 @@ msgstr "Περιστροφή"
 
 # machine translation, unreviewed
 #: pdfarranger_qt/markup.py
+msgid "Graph"
+msgstr "Γράφημα"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Paperclip"
+msgstr "Συνδετήρας"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Attachment"
+msgstr "Συνημμένο"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
+msgid "Tag"
+msgstr "Ετικέτα"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/markup.py
 msgid "Approved"
 msgstr "Εγκρίθηκε"
 
@@ -3347,6 +3407,11 @@ msgstr "Επεξήγηση"
 #: pdfarranger_qt/properties.py
 msgid "Stamp"
 msgstr "Σφραγίδα"
+
+# machine translation, unreviewed
+#: pdfarranger_qt/properties.py
+msgid "File Attachment"
+msgstr "Συνημμένο αρχείο"
 
 #: pdfarranger_qt/properties.py
 msgid "Review History"
