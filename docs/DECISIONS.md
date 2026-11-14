@@ -9,7 +9,7 @@ Anything not here is still open.
 > **The port's record, closed.** D1–D25 were taken while porting the GTK
 > application, which ended at phase 7. Nothing is added here now: a decision
 > taken for a piece of work since then lives in that work's own document, dated
-> and numbered within it, the way [ANNOTATIONS.md](ANNOTATIONS.md) carries its
+> and numbered within it, the way [ANNOTATIONS.md](completed/ANNOTATIONS.md) carries its
 > own. These twenty-five keep their numbers because a closed register cannot
 > rot. They are **not** cited from the source: a hundred and eleven such
 > citations were removed on 2026-11-01, and `tools/check_docs.py` now refuses

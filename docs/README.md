@@ -43,7 +43,7 @@ number at the top and moves to `completed/` when the Issue closes.
 | [completed/COMPRESSION.md](completed/COMPRESSION.md) | **Complete** — [Issue #8](https://github.com/dwsdolce/pdfarranger-qt/issues/8) is closed. What PDF24, Acrobat and Ghostscript offer, the measurements that set the defaults, and what compressing a real 1,590-page book actually did. |
 | [completed/I18N.md](completed/I18N.md) | **Complete** — the [Internationalisation milestone](https://github.com/dwsdolce/pdfarranger-qt/milestone/1) is closed. The translated interface that was not one, and what filling 33 catalogues took. |
 | [completed/MARKUP.md](completed/MARKUP.md) | **Complete** — [Issue #16](https://github.com/dwsdolce/pdfarranger-qt/issues/16) is closed. Every markup tool in the strip is built, from Highlight to Pan: making a mark, changing one that is already there, and losing nothing on the way, with the requirements, plan and as-built record for each. |
-| [ANNOTATIONS.md](ANNOTATIONS.md) | **Open** — [Issue #14](https://github.com/dwsdolce/pdfarranger-qt/issues/14). A filled form that displayed blank. Why no annotation is drawn, why form fields need more than a render flag, what saving one costs, and the decisions that put showing and authoring them in scope. |
+| [completed/ANNOTATIONS.md](completed/ANNOTATIONS.md) | **Complete** — [Issue #14](https://github.com/dwsdolce/pdfarranger-qt/issues/14) is closed. A filled form that displayed blank: why nothing was drawn, why form fields need more than a render flag, what saving one costs, and the work that made forms show, fill and save. |
 
 ## Where to put a new thing
 
@@ -56,7 +56,7 @@ number at the top and moves to `completed/` when the Issue closes.
   document. Not DECISIONS.md: that is the port's register and it is closed
 - A body of work with a beginning and an end → **an Issue and its own file**,
   the file naming the Issue at the top, moved to `completed/` when the Issue
-  closes — the guards in `tests/test_docs.py` follow it there, so a finished
+  closes — the checks in `tools/check_docs.py` follow it there, so a finished
   document still has to have its links resolve
 
 Two rules learned by getting them wrong:
@@ -68,7 +68,7 @@ every reference had to be rewritten, which is when it became clear they should
 not exist. Documentation is ephemeral; source outlives it. So the reasoning
 lives in the comment, and where a measurement justifies a decision the number is
 in the docstring — *"the worst page costs 247 ms"* — not a pointer to where the
-number was written down. `tests/test_docs.py` enforces it.
+number was written down. `tools/check_docs.py` enforces it.
 
 These files are the long form: the argument behind a decision, the measurements
 in full, the things that would bloat a docstring. Read them, and write them; do
@@ -93,7 +93,7 @@ Two consequences worth stating, because they are what makes the list trustworthy
   not be kept in step — this one listed four steps of a six-step body for a
   day, while the document had all six.
 
-      Detail doc: `docs/ANNOTATIONS.md`
+      Detail doc: `docs/completed/ANNOTATIONS.md`
 
       **Status:** what is true now.
 

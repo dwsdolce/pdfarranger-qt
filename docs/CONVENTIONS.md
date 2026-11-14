@@ -63,7 +63,7 @@ not be read off the page.
 assigned to and nothing closes; open work is an
 [Issue](https://github.com/dwsdolce/pdfarranger-qt/issues). So a checkbox in
 `docs/` is a record of something finished, and the documents describe the
-approach while GitHub holds the status. `tests/test_docs.py` enforces it.
+approach while GitHub holds the status. `tools/check_docs.py` enforces it.
 
 **Documents cite each other by title, never by position.**
 `[FINDINGS.md](FINDINGS.md), *Owning the reader's view*`. Numbers move when
@@ -77,8 +77,9 @@ measurement justifies a decision the number goes in the docstring — *"the wors
 page costs 247 ms"* — rather than a pointer to where it was written down. The
 one exception is a decision number, which is a name rather than a location.
 
-Each of these is enforced by `tests/test_docs.py`. A convention with no check is
-a wish, and this project has watched two of them rot.
+Each of these is enforced by `tools/check_docs.py`, which CI runs as a step
+of its own. A convention with no check is a wish, and this project has
+watched two of them rot.
 
 ## Temp files
 

@@ -1,17 +1,13 @@
 # Annotations
 
-**Issue:** [#14](https://github.com/dwsdolce/pdfarranger-qt/issues/14)
-
-**Status:** IN PROGRESS — Parts 1 and 2 **complete**. Tick boxes and
-single-line text fields can both be filled in; what is typed shows, survives
-undo and reaches the saved file with a drawing for it. A signed document
-refuses to be filled in or saved over, and a document derived from one is
-honestly unsigned. Part 3 built the markup model and four of its five steps,
-and is closed short: nothing it made can be reached by a user, and the tools
-it was scoped around were picked before the requirements existed.
+**Complete** — [Issue #14](https://github.com/dwsdolce/pdfarranger-qt/issues/14)
+is closed. A filled form shows all of what is in it, and can be filled in and
+saved -- tick boxes and text fields, with undo, in the file's tab order -- and
+a signed document is refused rather than quietly unsigned. Part 3, the markup
+model, was closed short and its work carried on as Issue #16, also closed.
 
 **Creating and editing markup is a separate body of work** with a document of
-its own — [MARKUP.md](completed/MARKUP.md), Issue #16 — which is where the tools, their
+its own — [MARKUP.md](MARKUP.md), Issue #16 — which is where the tools, their
 surfaces and everything they write now live. It outgrew this one. What stays
 here is showing what a file already carries, and filling in a form.
 
@@ -36,7 +32,7 @@ highlight are the same problem a second time.
 |---|---|
 | 1. Show what is in the file | **complete** — drawn, saved, printed, and measured against real forms |
 | 2. Fill fields | **complete** — nine of nine |
-| 3. Markup | in progress — the model is in; the canvas is next |
+| 3. Markup | **closed short** — the model is in, and the work carried on as [MARKUP.md](MARKUP.md), Issue #16, now closed |
 
 The first was correctness and needed no decision reversed: the application did
 not draw what the document said, and damaged a form on save. Both were bugs
@@ -135,7 +131,7 @@ three omissions above are not missing features. They are a reader that does not
 show what is in the file.
 
 This is less of a reversal than it looks. The scope boundary in
-[PORTING-NOTES.md](PORTING-NOTES.md) already admits reading on exactly this
+[PORTING-NOTES.md](../PORTING-NOTES.md) already admits reading on exactly this
 reasoning — Tier 3 is in scope *"because the Acrobat-like model in the
 background note above means opening a document and reading it, not only
 rearranging it."* Showing the whole document is the same argument applied to the
@@ -144,7 +140,7 @@ same premise.
 ### The tier classification was wrong
 
 The more interesting point is that D17 and D21 both file this under Tier 2, and
-on the definition in [PORTING-NOTES.md](PORTING-NOTES.md) it does not belong
+on the definition in [PORTING-NOTES.md](../PORTING-NOTES.md) it does not belong
 there. Tier 2 is *"content-level editing (retype text, move graphics, reflow)"*,
 and it is out of scope for a stated reason: *"PDF has no concept of paragraphs
 or text flow, only glyphs at coordinates with subset fonts."*
@@ -367,7 +363,7 @@ it.
 
 1.6 is the other half of the lesson, and it changed three assumptions this
 document had made from a single form — see
-[VALIDATION-CORPUS.md](VALIDATION-CORPUS.md) for the measurements. An empty text
+[VALIDATION-CORPUS.md](../VALIDATION-CORPUS.md) for the measurements. An empty text
 field usually has **no** appearance stream at all (0 of 164 in one form), so
 2.5 generates one from nothing rather than editing one. Auto-sized fields are 6
 to 8% of real forms, so 2.5 cannot simply refuse them. And `/DA` carries colour
@@ -603,7 +599,7 @@ W-4, the W-9, the 1099-MISC and SF-3107. The test is a `/Sig` field with a
 
 **A real signed document, measured.** A 43-page DocuSign envelope, held
 locally and deliberately not published (see
-[VALIDATION-CORPUS.md](VALIDATION-CORPUS.md)). One signature field,
+[VALIDATION-CORPUS.md](../VALIDATION-CORPUS.md)). One signature field,
 `adbe.pkcs7.detached` under `Adobe.PPKMS`, `/SigFlags 3` (SignaturesExist and
 AppendOnly), and a `/DSS` carried in a revision appended *after* the signature
 so that long-term validation data does not disturb the bytes it covers. The
@@ -788,7 +784,9 @@ once and never reused: when an item is settled it leaves this list and becomes
 a numbered decision below, so a gap in the sequence means something was
 decided, not lost. The markup questions went with the markup work.
 
-- **O5. Whether this application's name still describes it.** Not part of this
+- **O5. Whether this application's name still describes it.** Left open
+  when this work closed, 2026-11-13, as **outside it**: a question for an
+  Issue of its own if it is taken up. Not part of this
   work, but it is the same premise change, and D1 and D13 deliberately pinned
   the `QSettings` scope so a rename cannot orphan saved state. A rename would
   also move the macOS bundle identifier, which carries the Finder association.
@@ -1092,7 +1090,7 @@ places it loads a document; only the new code had it wrong.
 **2026-10-29 — steps 1.5 and 1.6.** Export no longer splits a field whose
 widgets span pages; a real government form turned out to contain one. A
 validation corpus of six public forms from three producers is recorded in
-[VALIDATION-CORPUS.md](VALIDATION-CORPUS.md), and measuring it corrected three
+[VALIDATION-CORPUS.md](../VALIDATION-CORPUS.md), and measuring it corrected three
 assumptions Part 2 would otherwise have been built on.
 
 **2026-10-29 — the corpus, extended.** Nine forms from four producers, measured

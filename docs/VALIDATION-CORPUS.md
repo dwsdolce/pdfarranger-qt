@@ -54,7 +54,7 @@ public form is published *unsigned*, because signing is what the recipient
 does. So the one genuinely signed document measured for this work — a 43-page
 DocuSign envelope — is a private document. It stays in `corpus/`, which is
 ignored, it is **not published and not described here**, and what was learned
-from it is in [ANNOTATIONS.md](ANNOTATIONS.md) as structure only: an approval
+from it is in [ANNOTATIONS.md](completed/ANNOTATIONS.md) as structure only: an approval
 signature with no `/Perms`, `/SigFlags 3`, a `/DSS` in an appended revision,
 and no fillable field anywhere in it.
 

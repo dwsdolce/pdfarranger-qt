@@ -11,7 +11,7 @@ requirements, written from what the user sees and does, and a plan, which is
 how it is built and what it puts in the file.
 
 Showing what a file already carries is a separate body of work with its own
-document, [ANNOTATIONS.md](../ANNOTATIONS.md).
+document, [ANNOTATIONS.md](ANNOTATIONS.md).
 
 ## Terms
 
