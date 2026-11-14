@@ -1,6 +1,9 @@
 # Markup
 
-**Issue:** [#16](https://github.com/dwsdolce/pdfarranger-qt/issues/16)
+**Complete** — [Issue #16](https://github.com/dwsdolce/pdfarranger-qt/issues/16)
+is closed. Every markup tool in the strip is built, from Highlight to Pan:
+the requirements each was built to, the plan, and what landed, stage by
+stage.
 
 Making a mark on a page, changing one that is already there, and losing
 nothing on the way. The work goes one tool at a time: each tool gets its
@@ -8,7 +11,7 @@ requirements, written from what the user sees and does, and a plan, which is
 how it is built and what it puts in the file.
 
 Showing what a file already carries is a separate body of work with its own
-document, [ANNOTATIONS.md](ANNOTATIONS.md).
+document, [ANNOTATIONS.md](../ANNOTATIONS.md).
 
 ## Terms
 
@@ -43,7 +46,7 @@ time.
 | Family | Tool | Mark | What it is for | State |
 |---|---|---|---|---|
 | Pointer | Select | -- | select text, and pick up marks | complete |
-| | Pan | -- | drag the page to scroll it | not started; it behaves as Select |
+| | Pan | -- | drag the page to scroll it | complete |
 | Comment | Add a comment | Comment, or Highlight | a note pinned to a point, or a note on a run of words | complete |
 | | Add a scalable comment | Scalable Comment | a note icon that is part of the page: it scales, resizes and turns | complete |
 | | Replace selected text | Replace Selected Text | propose new wording for words that are struck out | complete |
@@ -108,9 +111,8 @@ because the arrow on a split button is too small a target.
 ### Open
 
 - **Touch.** A finger arrives as a left-button drag, which selects text, so
-  on a touchscreen the page cannot be scrolled by finger. Pan was meant to
-  answer that and is not built. Whether to build Pan or to add real touch
-  handling is not decided.
+  on a touchscreen the page cannot be scrolled by finger. **Decided
+  2026-11-13: Pan answers it** -- see *Pan*, below.
 
 ## Shared by every mark
 
@@ -834,7 +836,7 @@ Made by the Add Text Comment tool. Complete.
   back through the changes in the box; once editing ends, the whole edit
   is one step in the window's undo.
 - **Every font on the system that may be embedded** is offered -- the rule
-  for every font picker, in [DESIGN.md](DESIGN.md). Acrobat's list leaves out
+  for every font picker, in [DESIGN.md](../DESIGN.md). Acrobat's list leaves out
   the same fonts. Helvetica 12 point to start.
 - **Three colours, one palette.** The border is the mark's colour -- the
   strip's swatch, as for every other mark -- and starts Light Red. The fill
@@ -2270,3 +2272,45 @@ Three stages, each tried in the application before the next:
   icon its own size hung from the same top left corner; its file and its
   place kept.
 - **Status** from its menu and the form's Review History, as a Text Box's.
+
+## Pan
+
+A tool that makes no mark: the alternative to Select that a touch screen
+needs, where a finger's drag would select text. Complete.
+
+### Requirements
+
+- **A drag pans the page**, which moves with the pointer as it is dragged
+  and stops when it is let go -- no coasting after a flick; Qt can give
+  that later if a touch screen wants it. **No text is selected** under
+  Pan.
+- **Except on a mark that can be dragged** -- a comment's icon, a stamp, a
+  text box, a shape, a line, a Pencil, a callout, an attachment -- where
+  the pointer is the move cursor and a drag moves the mark, as under
+  Select. Everywhere else the pointer is **an open hand**, and **a closed
+  hand** while it drags, words and the marks made from them included.
+- **A click without a drag is a click**: it selects a mark, opening its
+  note where it has one; it follows a link; it fills a form field. A tap
+  has to reach all three.
+- **It stays armed** until another tool is chosen; Escape goes back to
+  Select, as from any tool.
+- **Holding the space bar** turns on the hand for as long as it is held,
+  whatever tool is armed, as in Acrobat -- but not while words are being
+  typed, in a text box, a form field or a note, where it types a space.
+
+### As built
+
+In one stage, being small.
+
+- **A way of reading, not a markup tool**: the canvas counts Pan with
+  Select, so it offers no colour and starts no mark. A press that a field,
+  a mark that can be dragged or a handle has not already taken starts a
+  pan; past the drag distance the page follows the pointer by the scroll
+  bars, and the hand closes. **Let go without moving, it is a click**: a
+  mark made from the words under it is selected -- or the one held let go
+  of -- and a link followed. No anchor, no caret, no selected text.
+- **The space bar held** takes the press before every tool, a stroke or a
+  polygon under way included, and pans from wherever it lands, the hand
+  showing everywhere; let go, the armed tool is back. Not while a field
+  has the keyboard, nor in a text box's or a note's editor, which have it
+  themselves.

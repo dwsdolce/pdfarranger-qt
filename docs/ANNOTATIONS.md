@@ -11,7 +11,7 @@ and is closed short: nothing it made can be reached by a user, and the tools
 it was scoped around were picked before the requirements existed.
 
 **Creating and editing markup is a separate body of work** with a document of
-its own — [MARKUP.md](MARKUP.md), Issue #16 — which is where the tools, their
+its own — [MARKUP.md](completed/MARKUP.md), Issue #16 — which is where the tools, their
 surfaces and everything they write now live. It outgrew this one. What stays
 here is showing what a file already carries, and filling in a form.
 

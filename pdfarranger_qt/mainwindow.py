@@ -954,6 +954,8 @@ class MainWindow(QMainWindow):
         "cloud": "cloud",
         "connected_lines": "polyline",
         "draw": "draw",
+        # *Pan*, which makes no mark: a way of reading, for a touch screen.
+        "pan": "pan",
         "callout": "callout",
         "stamps": "stamps",
         "attach_file": "attach",
@@ -986,7 +988,7 @@ class MainWindow(QMainWindow):
             self._arming = False
         # The swatch follows the tool, because each tool keeps a colour of
         # its own and the swatch has to show what the next mark will be.
-        if name in self.MARK_KINDS or name in self.CANVAS_TOOLS:
+        if (name in self.MARK_KINDS or name in self.CANVAS_TOOLS) and name != "pan":
             self.tool_strip.arm_colour(self.colour_for(name))
         self._offer_thickness()
         if self.reader.canvas.selected_mark() is None:

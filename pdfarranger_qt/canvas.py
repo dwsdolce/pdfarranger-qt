@@ -1170,6 +1170,13 @@ class PageCanvas(QAbstractScrollArea):
         #: Where the pointer is over the page while the Stamps palette tool
         #: is armed, for the stamp drawn under it; None off the canvas.
         self._stamp_hover = None
+        #: ``(start, horizontal, vertical, moved)`` while the page is being
+        #: panned: where the press was, the scroll bars' values then, and
+        #: whether it has moved far enough to be a drag.
+        self._pan = None
+        #: Whether the space bar is held, which turns on the hand whatever
+        #: tool is armed.
+        self._space_pan = False
         #: Where the last context menu was asked for, for the entries that
         #: depend on it: Insert Vertex goes where it was clicked.
         self._menu_point = None
@@ -2865,6 +2872,10 @@ class PageCanvas(QAbstractScrollArea):
     #: them one mark until it is finished by Complete, Return or another
     #: tool, and thrown away by Cancel or Escape.
     DRAW = "draw"
+    #: *Pan*: a drag moves the page, for a touch screen, where a finger's
+    #: drag would select text; a click is still a click, and a mark that
+    #: can be dragged still is. Makes no mark.
+    PAN = "pan"
 
     #: *Replace Selected Text*: a strikeout over the words and a caret at
     #: their end, which the window writes as a pair. To the canvas it is a
@@ -2971,8 +2982,9 @@ class PageCanvas(QAbstractScrollArea):
         self.tool_changed.emit(tool)
 
     def marking(self) -> bool:
-        """Whether a markup tool is active, as against reading."""
-        return self._tool != self.SELECT
+        """Whether a markup tool is active, as against reading -- Pan being
+        a way of reading."""
+        return self._tool not in (self.SELECT, self.PAN)
 
     def marks_text(self) -> bool:
         """Whether the active tool marks text, and so selects rather than drags."""
@@ -3819,6 +3831,14 @@ class PageCanvas(QAbstractScrollArea):
         re-setting the same text restarts that delay and the tooltip never
         appears while the pointer drifts inside one link.
         """
+        if self._pan is not None:
+            if event.buttons() & Qt.LeftButton:
+                self._panned(QPointF(event.position()))
+            return
+        if self._space_pan:
+            # The hand everywhere while the space bar is held.
+            self.viewport().setCursor(Qt.OpenHandCursor)
+            return
         position = QPointF(event.position())
 
         # Under every tool, and before anything else looks at the pointer:
@@ -4014,6 +4034,14 @@ class PageCanvas(QAbstractScrollArea):
                 self._set_tooltip(self._attachment_label(note[2]))
                 labelled = True
 
+        if self._tool == self.PAN and not named:
+            # **An open hand**, except over a mark that can be dragged,
+            # which the branch above has given the move cursor.
+            self.viewport().setCursor(Qt.OpenHandCursor)
+            self._set_tooltip("")
+            super().mouseMoveEvent(event)
+            return
+
         # A note hanging off a highlight reads the same way. The badge is
         # what says there is one; this is what says what it says, and it
         # answers over the whole mark rather than only over the badge,
@@ -4202,6 +4230,11 @@ class PageCanvas(QAbstractScrollArea):
         extends by is decided by whether the gesture turns out to be a click or
         a drag, which is `extend_to` and `_extend_selection` respectively.
         """
+        if event.button() == Qt.LeftButton and self._space_pan:
+            # **The space bar held**: the hand, whatever tool is armed.
+            self._pan_from(QPointF(event.position()))
+            event.accept()
+            return
         if event.button() == Qt.LeftButton and self._ink_drawing is not None:
             # A Pencil on its way: every press starts its next stroke.
             self._ink_press(QPointF(event.position()))
@@ -4400,6 +4433,14 @@ class PageCanvas(QAbstractScrollArea):
                 event.accept()
                 return
 
+            if self._tool == self.PAN:
+                # **A drag pans**, anywhere a press has not already been
+                # taken -- by a field, a mark that can be dragged, a handle
+                # -- and the release decides whether it was a click.
+                self._pan_from(position)
+                event.accept()
+                return
+
             # A mark under the pointer takes the press, before reading or
             # marking does. A mark is not the page: clicking one picks it up,
             # in this reader and in every other, and that is as true with the
@@ -4522,6 +4563,10 @@ class PageCanvas(QAbstractScrollArea):
         this document's text is link as far as PDFium is concerned (see section
         6), so without this the gesture would barely work.
         """
+        if event.button() == Qt.LeftButton and self._pan is not None:
+            self._pan_let_go(QPointF(event.position()))
+            event.accept()
+            return
         if event.button() == Qt.LeftButton and self._marking is not None:
             start, end = self._marking
             self._marking = None
@@ -5281,6 +5326,14 @@ class PageCanvas(QAbstractScrollArea):
                 return
         if event.matches(QKeySequence.SelectAll):
             self.select_all_on(max(0, self.current_page()))
+            return
+        if key == Qt.Key_Space and self._focused is None:
+            # **Held, the hand**, whatever tool is armed -- not while a
+            # field is being filled, which is below, nor while words are
+            # typed in a box or a note, whose editors have the keyboard.
+            if not event.isAutoRepeat():
+                self._space_pan = True
+                self.viewport().setCursor(Qt.OpenHandCursor)
             return
         if self._focused is not None and key in (Qt.Key_Space, Qt.Key_Return,
                                                  Qt.Key_Enter):
@@ -8241,6 +8294,50 @@ class PageCanvas(QAbstractScrollArea):
                 if any(near(a, b) for a, b in zip(spots, spots[1:])):
                     return True
         return False
+
+    def keyReleaseEvent(self, event):
+        """The space bar let go: the hand goes, and the tool is back."""
+        if event.key() == Qt.Key_Space and not event.isAutoRepeat() and self._space_pan:
+            self._space_pan = False
+            if self._pan is None:
+                self.viewport().unsetCursor()
+            event.accept()
+            return
+        super().keyReleaseEvent(event)
+
+    def _pan_from(self, position: QPointF) -> None:
+        self._pan = (position, self.horizontalScrollBar().value(),
+                     self.verticalScrollBar().value(), False)
+        self.viewport().setCursor(Qt.ClosedHandCursor)
+
+    def _panned(self, position: QPointF) -> None:
+        """The page dragged with the pointer: it moves as far as the pointer
+        has, once that is far enough to be a drag."""
+        start, across, down, moved = self._pan
+        shift = position - start
+        if not moved and shift.manhattanLength() <= QApplication.startDragDistance():
+            return
+        self._pan = (start, across, down, True)
+        self.horizontalScrollBar().setValue(round(across - shift.x()))
+        self.verticalScrollBar().setValue(round(down - shift.y()))
+
+    def _pan_let_go(self, position: QPointF) -> None:
+        """A pan let go. **One that never moved was a click**: it selects a
+        mark made from the words, or lets go of the one held, and follows a
+        link -- the rest of a click, a field's, a movable mark's, having
+        already taken the press before a pan could start."""
+        _start, _across, _down, moved = self._pan
+        self._pan = None
+        self.viewport().setCursor(Qt.OpenHandCursor if (
+            self._space_pan or self._tool == self.PAN) else Qt.ArrowCursor)
+        if moved or self._space_pan:
+            return
+        picked = self.mark_at(position)
+        self.select_mark(picked)
+        if picked is None:
+            link = self.link_at(position)
+            if link is not None:
+                self.follow(link)
 
     def _ink_press(self, position: QPointF) -> bool:
         """Start a stroke of the Pencil being drawn, or of a new one; a
